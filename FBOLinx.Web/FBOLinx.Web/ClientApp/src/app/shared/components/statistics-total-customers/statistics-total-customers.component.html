@@ -1,0 +1,10 @@
+<ni-card [bgColor]="'info'" [outline]="true" class="info-card" *ngIf="options.useCard">
+    <h6 class="mt-0 title">Flight Deptartments</h6>
+    <div class="count">{{totalCustomers | number}}</div>
+    <small>Currently active</small>
+    <mat-icon>person</mat-icon>
+</ni-card>
+
+<div *ngIf="!options.useCard">
+    Flight Depts.: {{totalCustomers | number}}
+</div>

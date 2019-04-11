@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>New Customer Type</h1>
+<div mat-dialog-content>
+    <div>
+        <div>
+            <mat-form-field>
+                <input matInput placeholder="Customer Type" aria-label="Customer Type" [(ngModel)]="data.name">
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-slide-toggle color="accent" [(ngModel)]="data.allowMultiplePricingTemplates">Has multiple margins (i.e. commercial and private)</mat-slide-toggle>
+        </div>
+    </div>
+</div>
+<div class="mt-2 text-center">
+    <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1">Add Type</button>
+    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+</div>

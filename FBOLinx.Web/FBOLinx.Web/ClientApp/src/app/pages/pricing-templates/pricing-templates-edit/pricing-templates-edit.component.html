@@ -1,0 +1,78 @@
+<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+
+<div *ngIf="!pricingTemplate || isSaving">
+    <mat-spinner></mat-spinner>
+</div>
+
+<ni-card title="{{pricingTemplate.name}}" class="mb-0" *ngIf="pricingTemplate && !isSaving">
+    <div>
+        <div class="container-fluid">
+            <div>
+                <h5>General Information</h5>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <mat-slide-toggle color="accent" [(ngModel)]="pricingTemplate.default">Default</mat-slide-toggle>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <mat-form-field>
+                        <input matInput placeholder="Name" [(ngModel)]="pricingTemplate.name" />
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field>
+                        <mat-select placeholder="Type" [(ngModel)]="pricingTemplate.marginType">
+                            <mat-option *ngFor="let marginType of marginTypeDataSource" [value]="marginType.value">
+                                {{marginType.text}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-9">
+                    <h5>Price Tiers</h5>
+                </div>
+                <div class="col-3">
+                    <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">Add New</button>
+                </div>
+            </div>
+            <div *ngFor="let customerMargin of pricingTemplate.customerMargins" class="row">
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Min" (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" />
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Max" disabled="disabled" [(ngModel)]="customerMargin.max" />
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput placeholder="Margin" [(ngModel)]="customerMargin.amount" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <button mat-stroked-button color="warn" (click)="deleteCustomerMargin(customerMargin)">Delete</button>
+                </div>
+            </div>
+            <div>
+                <h5>Notes</h5>
+            </div>
+            <div>
+                <ejs-richtexteditor id='rteNotes' [(value)]='pricingTemplate.notes'></ejs-richtexteditor>
+            </div>
+            <div>
+                <br/>
+            </div>
+            <div class="row">
+                <button mat-stroked-button color="accent" (click)="savePricingTemplate()">Save</button>
+                <button mat-stroked-button color="warn" (click)="distributePricingTemplate()">Distribute</button>
+                <button mat-stroked-button (click)="cancelPricingTemplateEdit()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</ni-card>

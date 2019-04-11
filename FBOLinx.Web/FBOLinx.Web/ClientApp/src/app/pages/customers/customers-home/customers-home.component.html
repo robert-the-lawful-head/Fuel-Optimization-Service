@@ -1,0 +1,10 @@
+<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+
+<div>
+    <div *ngIf="customersData">
+        <app-customers-grid [customersData]="customersData" (editCustomerClicked)="editCustomerClicked($event)" (customerDeleted)="customerDeleted($event)"></app-customers-grid>
+    </div>
+    <div *ngIf="!customersData">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>

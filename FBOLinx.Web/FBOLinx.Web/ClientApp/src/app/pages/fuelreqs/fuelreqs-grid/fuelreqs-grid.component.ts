@@ -1,0 +1,43 @@
+import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+
+//Services
+
+@Component({
+    selector: 'app-fuelreqs-grid',
+    templateUrl: './fuelreqs-grid.component.html',
+    styleUrls: ['./fuelreqs-grid.component.scss']
+})
+/** fuelreqs-grid component*/
+export class FuelreqsGridComponent {
+    /** fuelreqs-grid ctor */
+    @Output() fuelreqDeleted = new EventEmitter<any>();
+    @Output() newFuelreqClicked = new EventEmitter<any>();
+    @Output() editFuelreqClicked = new EventEmitter<any>();
+    @Input() fuelreqsData: Array<any>;
+
+    fuelreqsDataSource: MatTableDataSource<any> = null;
+    resultsLength = 0;
+    displayedColumns: string[] = ['oid', 'customer', 'eta', 'icao', 'tailNumber', 'fbo', 'dispatchNotes', 'source'];
+
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
+
+    constructor() {
+
+    }
+
+    ngOnInit() {
+        if (!this.fuelreqsData)
+            return;
+        this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+        this.fuelreqsDataSource = new MatTableDataSource(this.fuelreqsData);
+        this.fuelreqsDataSource.sort = this.sort;
+        this.fuelreqsDataSource.paginator = this.paginator;
+        this.resultsLength = this.fuelreqsData.length;
+    }
+
+    public applyFilter(filterValue: string) {
+        this.fuelreqsDataSource.filter = filterValue.trim().toLowerCase();
+    }
+}

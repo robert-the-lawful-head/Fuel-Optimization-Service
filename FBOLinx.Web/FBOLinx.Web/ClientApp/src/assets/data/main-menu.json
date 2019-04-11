@@ -1,0 +1,106 @@
+[
+    {
+        "title": "Main",
+        "groupTitle": true
+    },
+    {
+        "title": "Dashboard (Admin)",
+        "icon": {
+            "class": "fa fa-home",
+            "bg": "#ea8080",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/dashboard-admin",
+        "roles": [ 9999 ]
+    },
+    {
+        "title": "Dashboard (FBO)",
+        "icon": {
+            "class": "fa fa-home",
+            "bg": "#ea8080",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/dashboard-fbo",
+        "roles": [ 1, 2, 4 ]
+    },
+    {
+        "title": "FBO Group",
+        "icon": {
+            "class": "fa fa-th",
+            "bg": "#E1BEE7",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/fbos",
+        "roles": [ 2 ]
+    },
+    {
+        "title": "Groups",
+        "icon": {
+            "class": "fa fa-group",
+            "bg": "#C5CAE9",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/groups",
+        "roles": [ 3 ]
+    },
+    {
+        "title": "FBOs",
+        "icon": {
+            "class": "fa fa-th",
+            "bg": "#E1BEE7",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/fbos",
+        "roles": [ 3 ]
+    },
+    {
+        "title": "FBO Prices",
+        "icon": {
+            "class": "fa fa-usd",
+            "bg": "#FBFFBC",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/fbo-prices",
+        "roles": [ 1, 2, 4 ]
+    },
+    {
+        "title": "Pricing Templates",
+        "icon": {
+            "class": "fa fa-sitemap",
+            "bg": "#C5CAE9",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/pricing-templates",
+        "roles": [ 1, 2, 4 ]
+    },
+    {
+        "title": "Customer Manager",
+        "icon": {
+            "class": "fa fa-group",
+            "bg": "#FFCCBC",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/customers",
+        "roles": [ 1, 2, 4 ]
+    },
+    {
+        "title": "Fuel Orders",
+        "icon": {
+            "class": "fa fa-tags",
+            "bg": "#B3E5FC",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/fuelreqs",
+        "roles": [ 1, 2, 4 ]
+    },
+    {
+        "title": "Ramp Fees",
+        "icon": {
+            "class": "fa fa-plane",
+            "bg": "rgb(255, 224, 130)",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/rampfees",
+        "roles": [ 1, 2, 4 ]
+    }
+]

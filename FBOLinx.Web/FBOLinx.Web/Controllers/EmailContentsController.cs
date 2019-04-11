@@ -1,0 +1,142 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using FBOLinx.Web.Data;
+using FBOLinx.Web.Models;
+using FBOLinx.Web.Services;
+
+namespace FBOLinx.Web.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class EmailContentsController : ControllerBase
+    {
+        private readonly FboLinxContext _context;
+        private IHttpContextAccessor _HttpContextAccessor;
+
+        public EmailContentsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor)
+        {
+            _HttpContextAccessor = httpContextAccessor;
+            _context = context;
+        }
+
+        // GET: api/EmailContents/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EmailContent>> GetEmailContent(int id)
+        {
+            var emailContent = await _context.EmailContent.FindAsync(id);
+
+            if (emailContent == null)
+            {
+                return NotFound();
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId)
+            {
+                return BadRequest();
+            }
+
+            return emailContent;
+        }
+
+        // GET: api/EmailContents/5
+        [HttpGet("fbo/{fboId}")]
+        public async Task<ActionResult<List<EmailContent>>> GetEmailContentForFbo([FromRoute] int fboId)
+        {
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId)
+            {
+                return BadRequest();
+            }
+
+            var emailContent = await _context.EmailContent.Where((x => x.FboId == fboId)).ToListAsync();
+
+            if (emailContent == null)
+            {
+                return NotFound();
+            }
+
+            return emailContent;
+        }
+
+        // PUT: api/EmailContents/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutEmailContent(int id, EmailContent emailContent)
+        {
+            if (id != emailContent.Oid)
+            {
+                return BadRequest();
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(emailContent).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!EmailContentExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/EmailContents
+        [HttpPost]
+        public async Task<ActionResult<EmailContent>> PostEmailContent(EmailContent emailContent)
+        {
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId)
+            {
+                return BadRequest();
+            }
+
+            _context.EmailContent.Add(emailContent);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetEmailContent", new { id = emailContent.Oid }, emailContent);
+        }
+
+        // DELETE: api/EmailContents/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<EmailContent>> DeleteEmailContent(int id)
+        {
+            var emailContent = await _context.EmailContent.FindAsync(id);
+            if (emailContent == null)
+            {
+                return NotFound();
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId)
+            {
+                return BadRequest();
+            }
+
+            _context.EmailContent.Remove(emailContent);
+            await _context.SaveChangesAsync();
+
+            return emailContent;
+        }
+
+        private bool EmailContentExists(int id)
+        {
+            return _context.EmailContent.Any(e => e.Oid == id);
+        }
+    }
+}

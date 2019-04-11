@@ -1,0 +1,354 @@
+
+<div id="landing-form">
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">Menu</a>
+            <h4>FBO<em>linx</em></h4>
+            <a class="brand animated fadeInLeft" href="#"></a>
+            <div id="primary-nav" class="nav-collapse">
+                <ul class="nav">
+                    <li class="active"><a class="anchorLink" (click)="scrollToElement(home)">Home</a></li>
+                    <li><a class="anchorLink" (click)="scrollToElement(overview)">Overview</a></li>
+                    <li><a class="anchorLink" (click)="scrollToElement(features)">Features</a></li>
+                    <li><a class="anchorLink" (click)="scrollToElement(integration)">Integration</a></li>
+                    <li><a class="anchorLink" (click)="scrollToElement(pricing)">Pricing</a></li>
+                    <li><a class="anchorLink" (click)="scrollToElement(contact)">Contact</a></li>
+                    <li style="padding-top: 2px; padding-left:8px;">
+                        <div style="vertical-align: top;">
+                            <div class="floatleftpadded" style="padding-top:7px;"><strong>UserName</strong>:</div>
+                            <div class="floatleftpadded">
+                                <input type="text" class="basicTextBox textboxfontsize" id="txtAdminLoginUserName" style="width: 100px;" [(ngModel)]="loginRequest.username" (keydown.enter)="onEnterKeyUp($event)" />
+                            </div>
+                            <div class="floatleftpadded" style="padding-top:7px;"><strong>Password</strong>:</div>
+                            <div class="floatleftpadded">
+                                <input type="password" class="basicTextBox textboxfontsize" id="txtAdminLoginPassword" style="width: 100px;" [(ngModel)]="loginRequest.password" (keydown.enter)="onEnterKeyUp($event)" />
+                            </div>
+                            <div class="floatleftpadded" style="padding-top: 3px;" *ngIf="!isLoggingIn">
+                                <button type="button" id="btnAdminLogin" (click)="attemptLogin()" (keydown.enter)="onEnterKeyUp($event)">Login</button>
+                            </div>
+                            <div class="floatleftpadded login-progress-bar-container" style="padding-top: 3px;" *ngIf="isLoggingIn">
+                                <mat-progress-bar class="example-margin"
+                                                  [color]="'primary'"
+                                                  [mode]="'indeterminate'">
+                                </mat-progress-bar>
+                            </div>
+                            <div class="floatleftpadded" style="padding-top: 7px;">
+                                <input type="checkbox" id="cbRememberMe" [(ngModel)]="rememberMe" />&nbsp;Remember Me
+                            </div>
+                            <div class="floatleftpadded" style="padding-top: 7px;">
+                                <a id="lnkForgotPassword" (click)="forgotPasswordClicked()">Forgot your password?</a>
+                            </div>
+                            <div class="floatleft">
+
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </li>
+                </ul>
+
+            </div><!--/.nav-collapse -->
+            <div id="divLogin" runat="server" class="clear" style="margin-top:9px;" *ngIf="adminLoginEnabled">
+                <!--<asp:Literal ID="litAdminLogin" runat="server"></asp:Literal>-->
+            </div>
+
+            <div id="divForgotPassword" runat="server" visible="false" class="clear" style="margin-top:9px;" *ngIf="forgotPasswordEnabled">
+                <table border="0" cellpadding="0" cellspacing="0" align="left">
+                    <tr>
+                        <td colspan="3" class="error">
+                            <!--<asp:Literal ID="litForgotPassword" runat="server"></asp:Literal>-->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="baseline" class="hdr" width="135"><strong>Forgot Password?</strong></td>
+                        <td valign="baseline" width="35" class="frmCellNoBG">Email: </td>
+                        <td valign="baseline">
+                            <input type="text" class="basicTextBox textboxfontsize" id="txtForgotPassword" style="width: 175px;"/>
+                        </td>
+                        <td valign="baseline">
+                            
+                            <!--<asp:RequiredFieldValidator ControlToValidate="txtForgotPassword" runat="server" ID="rfvForgotPassword" ErrorMessage="*" CssClass="error" ValidationGroup="ForgotPassword"></asp:RequiredFieldValidator>-->
+                        </td>
+                        <td valign="top" width="115">
+                            <button type="button" id="btnForgotPassword">Get Login Info</button>
+                        </td>
+                        <td valign="top">
+                            <a id="lnkForgotPassword">Back to Login</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div><!--/container-->
+    </div><!--/navbar-inner-->
+</div><!--/navbar-->
+
+<header id="home" #home>
+    <div class="container">
+        <div class="row animated fadeInDown">
+            <div class="span12 headline">
+                <h1>FBO Direct pricing...  from the source!</h1>
+                <blockquote>
+                    <h3>Welcome to FBO<em>linx</em></h3>
+                    <h4>A division of <em><strong>FuelerLinx</strong></em>: Aviation Fuel Management Software</h4>
+                    <p><strong>FBO<em>linx</em></strong> is the most efficient way for and FBO to push direct individual pricing to a flight department.</p>
+                    <p>It's fast, secure, and confidential!</p>
+                </blockquote>
+            </div><!--/span12-->
+        </div><!--/row-->
+        <div class="row animated fadeInUp">
+            <div class="span12">
+                <ngb-carousel *ngIf="carouselImages">
+                    <ng-template ngbSlide>
+                        <img [src]="carouselImages[0]" alt="Random first slide">
+                        <div class="span4">
+                            <h2>Push confidential fuel pricing directly to your customer</h2>
+                            <p>With a few clicks of the mouse, you can now push customized, and confidential fuel prices directly into the <em><strong>FuelerLinx</strong></em> marketplace.</p>
+                            <p><strong><em>FuelerLinx</em></strong> software is utilized by top corporate flight departments, to help manage and make more informed fuel purchasing decisions.</p>
+                            <p><strong><em>FuelerLinx</em></strong> apps help pilots and dispatchers remotely manage tech stops, fuel options, transaction reconciliation and tankering... anytime, anywhere!</p>
+                            <!--<a class="btn btn-red" href="http://fbolinx.com/FBOManagement.aspx?groupID=3">Enroll Now!</a>-->
+                        </div>
+                    </ng-template>
+                    <ng-template ngbSlide>
+                        <img [src]="carouselImages[1]" alt="Random second slide">
+                        <div class="span4 animated fadeInDownBig">
+                            <h2>Customer Connection</h2>
+                            <p>What if you could have direct access to the top fuel purchasing customers flying?  With FBO<em>linx</em>, this is possible while maintaining price confidentiality, tailored margins, and minimal effort by the FBO.</p>
+                            <p>Every flight department's volume demands are different.  For this reason, FBOs do not give the same fuel price margins for every customer.</p>
+                            <p>Gone are the days of chasing down pilots and dispatchers to get your facility known.  FBOs are trying to establish relationships with flight departments in a vast and transient market.  FBO<em>linx</em> bridges the gap by acting as a portal into <em><strong>FuelerLinx</strong></em> Aviation Fuel Management Software; accessed by the top corporate flight departments in the world today.</p>
+                    
+                            <!--<a class="btn btn-primary" href="http://fbolinx.com/FBOManagement.aspx?groupID=3">Enroll Now!</a>-->
+                        </div>
+                    </ng-template>
+                    <ng-template ngbSlide>
+                        <img [src]="carouselImages[2]" alt="Random third slide">
+                        <div class="span4 animated rotateInUpRight">
+                            <h2>Your FBOs Direct Pricing in the FuelerLinx marketplace</h2>
+                            <p>Confidential, Secure, Effective</p>
+                            <p><strong><em>FuelerLinx</em></strong> is a software system flight departments use to compare all fuel price options on a field. <em><strong>FuelerLinx</strong></em> gives flight departments the tools they need to implement cost-saving measures quickly and effectively.</p>
+                            <!--<a class="btn btn-red" href="http://fbolinx.com/FBOManagement.aspx?groupID=3">Enroll Now!</a>-->
+                            <a class="btn btn-success" href="http://www.fuelerlinx.com/testimonials/"target="_blank"><strong><em>FuelerLinx</em></strong> Testimonials</a>
+                        </div>
+                    </ng-template>
+                </ngb-carousel>
+            </div><!--/span12-->
+        </div><!--/row-->
+    </div><!--/container-->
+</header>
+
+<div class="container">
+    <!--main content-->
+    <div class="strip"></div>
+
+    <!--Overview Section-->
+    <section id="overview" #overview>
+        <div class="row">
+            <div class="span12">
+                <h2><em><i class="fa fa-bookmark"></i> FBOlinx Overview</em> <a class="up anchorLink" href="#home"><i class="fa fa-chevron-up"></i></a></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span5">
+                <h4> Overview</h4>
+                <p>FBOlinx will enable FBOs to deliver unique and confidential fuel quotes, tailored directly to an individual flight department, in <em><strong>FuelerLinx</strong></em> software.</p>
+                <p>Currently, managers at FBOs release a uniform price and tell pilots upon arrival that they will work on getting them a unique, customized price.  They shake hands and go their separate ways, and upon fueling the pilot is right back where they started, ultimately being charged the same price they were quoted in the first place.</p>
+                <p>With FBO<em>linx</em> there is now a direct pipeline from FBOs to flight departments, ensuring that the specific customer pricing delivered by FBO<em>linx</em> is provided solely for their proprietary fuel volume profile.  Simply load your pricing into FBO<em>linx</em>, and with the click of a button it will be ported directly to a customer - no one else.</p>
+                <p>FBO<em>linx</em> is a must-have for any fuel provider interested in having a more accessible relationship with customers, resulting in more business and increased efficiency.
+                <p>Get to know the latest features available now.</p>
+                <ul>
+                    <li><span class="redfontcolor">Automated</span></li>
+                    <li><span class="redfontcolor">Customizable</span></li>
+                    <li><span class="redfontcolor">Confidential and Secure</span></li>
+                    <li><span class="redfontcolor">Real Time Quoting</span></li>
+                </ul>
+            </div>
+            <div class="span3">
+                <div class="well">
+                    <strong><a href="http://www.paragonaviationgroup.com/" target="_blank"><img src="{{paragonSmallLogoImage}}" width="95" height="31"></a></strong>
+                    <hr>
+                    <p><i class="icon-tag"></i>Compatible with The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a>.</p>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row"></div>
+        <br /><!--/row-->
+    </section>
+
+    <!--Features Section-->
+    <section id="features" #features>
+        <div class="row">
+            <div class="span12">
+                <h2><em><i class="fa fa-bookmark"></i> Main Features</em> <a class="up anchorLink" href="#home"><i class="fa fa-chevron-up"></i></a></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span4 feature">
+                <h3>Fuel Quoting</h3>
+                <img src="{{featureHtml5Image}}" width="50" height="50" class="thumb" alt="thumb">
+                <p>Send unique confidential pricing to each flight department in the <em><strong>FuelerLinx</strong></em> network.</p>
+            </div>
+            <div class="span4 feature">
+                <h3>Confidential</h3>
+                <img src="{{featureLayoutImage}}" width="50" height="50" class="thumb" alt="thumb">
+                <p>Enter pricing tiers into FBO<em>linx</em>, giving customers discounted fuel depending on the amount of fuel uploaded.</p>
+            </div>
+            <div class="span4 feature">
+                <h3>Fuel Volume Breaks</h3>
+                <img src="{{featureWebfontImage}}" class="thumb" alt="thumb">
+                <p>Enter multiple pricing tiers into FBO<em>linx</em>, giving customers discounted fuel breaks related to the amount of fuel uploaded.</p>
+            </div>
+        </div><!--/row-->
+        <div class="row">
+            <div class="span4 feature">
+                <h3>Push Pricing</h3>
+                <img src="{{featureDesignImage}}" class="thumb" alt="thumb">
+                <p>Push  custom pricing in front of your customers; don't make them come to you. Make sure that pricing goes only to the flight departments you want it to... in a matter of seconds!</p>
+            </div>
+            <div class="span4 feature">
+                <h3>Secure Web Service</h3>
+                <img src="{{featureCustomizeImage}}" class="thumb" alt="thumb">
+                <p>With FBO<em>linx</em> there is now a direct pipeline from FBOs to flight departments, ensuring that the specific customer pricing delivered by FBO<em>linx</em> is provided solely for their proprietary fuel volume profile. Simply load your pricing into FBO<em>linx</em>, and with the click of a button it will be ported directly to a customer - no one else.</p>
+            </div>
+            <div class="span4 feature">
+                <h3>Your Customers</h3>
+                <img src="{{featureSupportImage}}" class="thumb" alt="thumb">
+                <p>Retail you customer relationship. FBO<em>linx</em> does not interfere with your fuel transactions or mark up the pricing that you route to your customers. </p>
+            </div>
+        </div><!--/row-->
+    </section>
+
+
+    <!--Integration Section-->
+    <section id="integration" #integration>
+        <div class="row">
+            <div class="span12">
+                <h2><em><i class="fa fa-bookmark"></i> Integration</em> <a class="up anchorLink" href="#home"><i class="fa fa-chevron-up"></i></a></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span5">
+                FBOlinx integrates with The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a>. The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a> is an exclusive membership of independent FBOs that provide an elite experience to general aviation travelers in North America. Each FBO joining The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a> goes through a comprehensive audit of facility and services offered to ensure the quality of the member base. A set of core standards has been developed to which each member FBO must adhere and maintain in order to remain in the group. The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a> is facilitated by Paragon Aviation Group.Learn more about <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a> locations. Request custom fuel pricing from The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a>.
+            </div>
+        </div>
+        <br />
+        <div class="row"></div>
+        <br /><!--/row-->
+    </section>
+
+    <!--Pricing Section-->
+    <section id="pricing" #pricing>
+        <div class="row">
+            <div class="span12">
+                <h2><em><i class="fa fa-bookmark"></i> Pricing</em> <a class="up anchorLink" href="#home"><i class="fa fa-chevron-up"></i></a></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span5">
+                <h4>It's simple</h4>
+                <ul>
+                    <li>Call (415)779-5502 to get a quote. Our low monthly subscription gets you direct access to the top corporate flight departments in aviation today. Push custom, confidential, real time, fuel pricing into the FuelerLinx marketplace.</li>
+                    <li>Sign up for a month to month subscription (no contracts, hidden costs, or sign up fees) and we will provide you with an account username and password.</li>
+                </ul>
+                <h4>Feature review</h4>
+                <ul>
+                    <li>Easy to use</li>
+                    <li>Instant price quoting</li>
+                    <li>Direct access to your customers</li>
+                    <li>Secure processing</li>
+                </ul>
+                <h4>Credit cards accepted</h4>
+                <ul>
+                    <li>Accept Visa, MasterCard, American Express and Discover Card</li>
+                    <li>Process all types of transactions - authorizations with or without deposits, credits, etc.</li>
+                </ul>
+            </div>
+        </div>
+        <br />
+        <div class="row"></div>
+        <br /><!--/row-->
+    </section>
+
+    <!--Contact Section-->
+    <section id="contact" #contact>
+        <div class="row">
+            <div class="span12">
+                <h2><em><i class="fa fa-bookmark"></i> Contact Info</em> <a class="up anchorLink" href="#home"><i class="fa fa-chevron-up"></i></a></h2>
+            </div>
+        </div>
+        <div class="row" style="padding-bottom:300px;">
+            <div class="span4">
+                <h3><strong>FBO<em>linx</em>:</strong></h3>
+                <h5><strong>A Division of DegaTech Systems Inc</strong></h5>
+                <h6><strong>creators of FuelerLinx: Aviation Fuel  Software</strong> </h6>
+                <hr>
+                <p>
+                    131 5th Avenue
+                    <br />Suite 803
+                    <br />New York, NY  10003
+                    <br />Tel.: +1(415)779-5502
+                    <br />Fax: +1(213) 271-2341
+            </div>
+            <div class="span4">
+                <h3>Email Us</h3>
+                    <fieldset>
+                        <div class="control-group">
+                            <label class="control-label" for="name">Full Name:</label>
+                            <input class="input-xlarge" type="text" id="name" [(ngModel)]="contactUsMessage.name" placeholder="Full Name">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="email">Valid Email:</label>
+                            <input type="text" class="input-xlarge" id="email" [(ngModel)]="contactUsMessage.email" placeholder="Email">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="email">Phone Number:</label>
+                            <input type="text" class="input-xlarge" id="phonenumber" [(ngModel)]="contactUsMessage.phoneNumber" placeholder="Phone">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="message">Message:</label>
+                            <textarea class="input-xlarge" id="message" rows="3" [(ngModel)]="contactUsMessage.message" placeholder="Message"></textarea>
+                        </div>
+                        <div style="width:280px">
+                            <div class="floatright">
+                                <button type="submit" class="btn btn-primary" (click)="sendContactUsEmailClicked();">Submit Now!</button>
+                            </div>
+                        </div>
+                    </fieldset>
+            </div><!--/span-->
+        </div>
+    </section>
+
+
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>-->
+    <!--<script src="js/bootstrap.min.js"></script>-->
+    <script src="../../js/jquery.anchor.js" type="text/javascript"></script>
+    <!--<script type="text/javascript" src="fancybox/jquery.fancybox.pack.js?v=2.0.6"></script>-->
+    <!--<script src="js/script.js"></script>-->
+
+    <!--<asp:contentplaceholder id="ContentPlaceHolder1" runat="server"></asp:contentplaceholder>-->
+
+
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-36200775-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+    </script>
+    <div id="modalbackgroundDiv" style="display: none;" class="modalBackground2"></div>
+
+    <div id="divContactUsConfirmation" style="display:none;text-align:center;" class="popup">
+        <span id="spanContactUsConfirmation"></span><br /><br />
+        <input type="button" value="Ok" onclick="closeDivContactUsConfirmation();">
+    </div>
+
+</div>
+</div>

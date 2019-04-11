@@ -1,0 +1,10 @@
+<ni-card [bgColor]="'info'" [outline]="true" class="info-card" *ngIf="options.useCard">
+    <h6 class="mt-0 title">Aircraft</h6>
+    <div class="count">{{totalAircraft | number}}</div>
+    <small>Across all fleets</small>
+    <mat-icon>airplanemode_active</mat-icon>
+</ni-card>
+
+<div *ngIf="!options.useCard">
+    Aircraft: {{totalAircraft | number}}
+</div>

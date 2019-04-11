@@ -1,0 +1,13 @@
+<div>
+    <div *ngIf="fbosData || currentFbo">
+        <div *ngIf="currentFbo">
+            <app-fbos-edit [fboInfo]="currentFbo" [groupInfo]="groupInfo" [fboAirportInfo]="currentFboAirport" (saveClicked)="saveFboEditClicked()" (cancelClicked)="cancelFboEditClicked()"></app-fbos-edit>
+        </div>
+        <div *ngIf="!currentFbo && fbosData">
+            <app-fbos-grid [fbosData]="fbosData" [groupInfo]="groupInfo" (editFboClicked)="editFboClicked($event)" (recordDeleted)="deleteFboClicked($event)"></app-fbos-grid>
+        </div>
+    </div>
+    <div *ngIf="!(fbosData || currentFbo)">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>

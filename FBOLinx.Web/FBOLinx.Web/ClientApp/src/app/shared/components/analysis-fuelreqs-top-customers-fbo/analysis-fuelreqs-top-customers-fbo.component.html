@@ -1,0 +1,22 @@
+<div *ngIf="!topCustomersData">
+    <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="topCustomersData">
+    <h5 class="mt-0">Top Customers (past 6 months)</h5>
+    <div class="table-responsive mb-3" *ngIf="topCustomersData.length > 0">
+        <table class="table table-sm">
+            <tbody>
+                <tr *ngFor="let customer of topCustomersData">
+                    <td>{{customer.customerName}}</td>
+                    <td class="text-right">
+                        <ni-badge [color]="'success'" [borderRadius]="false">{{customer.totalOrders}} orders</ni-badge>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="topCustomersData.length == 0">
+        No results found
+    </div>
+    <button ni-button block="true" type="accent" outline="true" lineStyle="dashed" beforeIcon="fa fa-group" (click)="viewAllCustomersClicked()">View all customers</button>
+</div>

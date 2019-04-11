@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>New Group</h1>
+<div mat-dialog-content>
+    <mat-form-field>
+        <input matInput placeholder="Group Name" aria-label="Group Name" [(ngModel)]="data.group">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="data" color="accent" cdkFocusInitial>Add FBO</button>
+    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+</div>

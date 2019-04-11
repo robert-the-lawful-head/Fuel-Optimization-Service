@@ -1,0 +1,167 @@
+<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+
+<div *ngIf="!customerInfoByGroup">
+    <mat-spinner></mat-spinner>
+</div>
+
+<ni-card title="{{customerInfoByGroup.company}}" class="mb-0" *ngIf="customerInfoByGroup">
+    <div>
+        <mat-tab-group>
+
+            <!--FBO Info Tab-->
+            <mat-tab label="Customer Details">
+                <div class="container-fluid">
+                    <div>
+                        <h5>General Information</h5>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <mat-slide-toggle color="accent" [(ngModel)]="customerInfoByGroup.active">Active</mat-slide-toggle>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-slide-toggle color="warn" [(ngModel)]="customerInfoByGroup.suspended">Suspended</mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input matInput placeholder="Company" [(ngModel)]="customerInfoByGroup.company" />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-select placeholder="Customer Type" [(ngModel)]="customerInfoByGroup.customerCompanyType" (selectionChange)="customerCompanyTypeChanged($event)">
+                                    <mat-option *ngFor="let customerCompanyType of customerCompanyTypes" [value]="customerCompanyType.oid">
+                                        {{customerCompanyType.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-select placeholder="Certificate Type" [(ngModel)]="customerInfoByGroup.certificateType">
+                                    <mat-option *ngFor="let certificateType of certificateTypes" [value]="certificateType.value">
+                                        {{certificateType.description}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input matInput placeholder="Main Phone" [(ngModel)]="customerInfoByGroup.mainPhone" />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input matInput placeholder="Address" [(ngModel)]="customerInfoByGroup.address" />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input matInput placeholder="City" [(ngModel)]="customerInfoByGroup.city" />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input matInput placeholder="State" [(ngModel)]="customerInfoByGroup.state" />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input matInput placeholder="Zip Code" [(ngModel)]="customerInfoByGroup.zipCode" />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input matInput placeholder="Country" [(ngModel)]="customerInfoByGroup.country" />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input matInput placeholder="Website" [(ngModel)]="customerInfoByGroup.website" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div>
+                        <h5>Price &amp; Margin Information</h5>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-3">
+                            <mat-slide-toggle color="accent" [(ngModel)]="customerInfoByGroup.distribute">{{customerInfoByGroup.customerType == 1 ? 'Push pricing into FuelerLinx' : 'Distribute fuel pricing email'}}</mat-slide-toggle>
+                            <a *ngIf="contactsData && contactsData.length == 0 && customerInfoByGroup.distribute && customerInfoByGroup.customerType != 1" matTooltip="This customer does not have any contacts.  Please add a contact to receive price distribution." matTooltipPosition="after">
+                                <i class="fa fa-warning" style="color: red;"></i>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-slide-toggle color="accent" [(ngModel)]="customerInfoByGroup.showJetA">Show JetA Pricing</mat-slide-toggle>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-slide-toggle color="accent" [(ngModel)]="customerInfoByGroup.show100Ll">Show 100LL Pricing</mat-slide-toggle>
+                        </div>
+                    </div>
+                    <table style="width: 100%;">
+                        <thead>
+                        <tr>
+                            <th>Pricing Template</th>
+                            <th class="text-right">
+                                <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newCustomerPricingTemplate()">Add New</button>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let customCustomerType of customCustomerTypes">
+                            <td>
+                                <mat-form-field>
+                                    <mat-select placeholder="Pricing Template" [(ngModel)]="customCustomerType.customerType">
+                                        <mat-option *ngFor="let pricingTemplate of pricingTemplatesData" [value]="pricingTemplate.oid">
+                                            {{pricingTemplate.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </td>
+                            <td class="text-right">
+                                <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomerPricingTemplate(customCustomerType)">Delete</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="mb-2 mt-2">
+                        <br />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveCustomerEdit()" class="mr-1">Save Changes</button>
+                            <button ni-button [view]="'accent'" beforeIcon="fa fa-usd" *ngIf="customerInfoByGroup.distribute" (click)="distributePricing()" class="mr-1">Distribute Pricing</button>
+                            <button mat-stroked-button (click)="cancelCustomerEdit()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <mat-tab label="Contacts">
+                <!--Contacts Grid-->
+                <div *ngIf="contactsData && !currentContactInfoByGroup">
+                    <app-contacts-grid [contactsData]="contactsData" (contactDeleted)="contactDeleted($event)" (newContactClicked)="newContactClicked()" (editContactClicked)="editContactClicked($event)"></app-contacts-grid>
+                </div>
+
+                <!--Contact Information-->
+                <div *ngIf="currentContactInfoByGroup">
+                    <app-contacts-edit [contactInfo]="currentContactInfoByGroup" (saveEditClicked)="saveEditContactClicked()" (cancelEditClicked)="cancelEditContactClicked()"></app-contacts-edit>
+                </div>
+            </mat-tab>
+
+            <mat-tab label="Aircraft">
+                <!--Customer Aircraft Grid-->
+                <div *ngIf="customerAircraftsData && customerInfoByGroup && !currentCustomerAircraft">
+                    <app-customer-aircrafts-grid [customerAircraftsData]="customerAircraftsData" [customer]="customerInfoByGroup" (editCustomerAircraftClicked)="editCustomerAircraftClicked($event)" (newCustomerAircraftAdded)="newCustomerAircraftAdded($event)"></app-customer-aircrafts-grid>
+                </div>
+
+                <!--Customer Aircraft Information/Edit-->
+                <div *ngIf="currentCustomerAircraft">
+                    <app-customer-aircrafts-edit [customerAircraftInfo]="currentCustomerAircraft" (saveEditClicked)="saveEditCustomerAircraftClicked()" cancelEditClicked="cancelEditCustomerAircraftClicked()"></app-customer-aircrafts-edit>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</ni-card>

@@ -1,0 +1,82 @@
+<div class="">
+    <div class="container-fluid">
+        <div class="row">
+            <h5>General Information</h5>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="First Name" [(ngModel)]="contactInfo.firstName" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Last Name" [(ngModel)]="contactInfo.lastName" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Title" [(ngModel)]="contactInfo.title" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Email" [(ngModel)]="contactInfo.email" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Phone" [(ngModel)]="contactInfo.phone" [textMask]="{mask: phoneMask}" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Extension" [(ngModel)]="contactInfo.extension" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Mobile" [(ngModel)]="contactInfo.mobile" [textMask]="{mask: phoneMask}" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Fax" [(ngModel)]="contactInfo.fax" [textMask]="{mask: phoneMask}" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Address" [(ngModel)]="contactInfo.address" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="City" [(ngModel)]="contactInfo.city" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="State" [(ngModel)]="contactInfo.state" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Country" [(ngModel)]="contactInfo.country" />
+                </mat-form-field>
+            </div>
+            <div class="col-md-4">
+                <mat-slide-toggle color="accent" [(ngModel)]="contactInfo.primary">Primary</mat-slide-toggle>
+            </div>
+            <div class="col-md-4">
+                <mat-slide-toggle color="primary" [(ngModel)]="contactInfo.copyAlerts">Copy on Distribution</mat-slide-toggle>
+            </div>
+        </div>
+        <div class="row">
+            <br />
+        </div>
+        <div class="row">
+            <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveEdit()" class="mr-1">Save Contact</button>
+            <button mat-stroked-button (click)="cancelEdit()">Cancel</button>
+        </div>
+    </div>
+</div>

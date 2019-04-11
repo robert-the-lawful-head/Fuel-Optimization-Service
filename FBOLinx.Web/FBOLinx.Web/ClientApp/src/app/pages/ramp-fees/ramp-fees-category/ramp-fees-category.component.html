@@ -1,0 +1,115 @@
+
+<div class="font-weight-bold">
+    <div>
+        <div *ngFor="let fee of rampFeesForCategory">
+            <div class="container-fluid mt-2">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="mat-form-field">
+                            <div class="mat-form-field-wrapper ramp-fee-details-expansion" (click)="fee.subDetailsExpanded = !fee.subDetailsExpanded;">
+                                <div class="mat-form-field-flex">
+                                    <div class="mat-form-field-infix">
+                                        <div class="ramp-fee-details-expansion-icon">
+                                            <mat-icon *ngIf="!fee.subDetailsExpanded">expand_more</mat-icon>
+                                            <mat-icon *ngIf="fee.subDetailsExpanded">expand_less</mat-icon>
+                                        </div>
+                                        <div class="ramp-fee-details-expansion-label" *ngIf="fee.categoryType != 2">
+                                            {{categoryTypes.indexOf(1) > -1 ? fee.sizeDescription : fee.categoryTypeDescription}}
+                                        </div>
+                                        <div class="ramp-fee-details-expansion-label" *ngIf="fee.categoryType == 2">
+                                            {{fee.aircraftMake}} {{fee.aircraftModel}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3 text-center">
+                        <mat-form-field>
+                            <input matInput placeholder="Ramp/Facil. Fee" type="number" [(ngModel)]="fee.price" (change)="rampFeeRequiresUpdate(fee)" />
+                            <span matPrefix>$</span>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-3 text-center">
+                        <mat-form-field>
+                            <input matInput placeholder="Avoidance" type="number" [(ngModel)]="fee.waived" (change)="rampFeeRequiresUpdate(fee)" />
+                            <span matSuffix>Gal.</span>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-3 text-center">
+                        <mat-form-field *ngIf="fee.categoryType == 1">
+                            <input matInput [(ngModel)]="fee.expirationDate" [matDatepicker]="categoryDatePicker" placeholder="Expiration Date" disabled (change)="rampFeeRequiresUpdate(fee)">
+                            <mat-datepicker-toggle matSuffix [for]="categoryDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #categoryDatePicker disabled="false"></mat-datepicker>
+                        </mat-form-field>
+                        <div>
+                            <button ni-button [view]="'error'" beforeIcon="fa fa-trash" (click)="deleteRampFee()" *ngIf="fee.categoryType != 1">Delete</button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="fee.subDetailsExpanded">
+                    <ni-card title="Applies To" class="mb-3" [headerBgColor]="'info'" [theme]="'small'">
+                        <div class="container-fluid applies-to-container">
+                            <div class="row" *ngIf="fee.categoryType==1">
+                                <div *ngFor="let aircraft of fee.appliesTo" class="col-12">
+                                    {{aircraft.make}} {{aircraft.model}}
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="fee.categoryType==2">
+                                <div>
+                                    <mat-form-field>
+                                        <mat-select placeholder="Type" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)">
+                                            <mat-option *ngFor="let aircraftType of aircraftTypes" [value]="aircraftType.aircraftId">
+                                                {{aircraftType.make}} {{aircraftType.model}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="fee.categoryType==3">
+                                <div class="col-3">
+                                    Weight Range
+                                </div>
+                                <div class="col-3">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Min. Weight" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <span matSuffix>Lbs.</span>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-3">
+                                    to
+                                </div>
+                                <div class="col-3">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Max. Weight" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <span matSuffix>Lbs.</span>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="fee.categoryType==4">
+                                <div class="col-3">
+                                    Wingspan
+                                </div>
+                                <div class="col-3">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Min. Wingspan" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <span matSuffix>Feet</span>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-3">
+                                    to
+                                </div>
+                                <div class="col-3">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Max. Wingspan" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <span matSuffix>Feet</span>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </ni-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

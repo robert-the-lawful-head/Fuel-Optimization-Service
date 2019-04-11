@@ -1,0 +1,10 @@
+<ni-card [bgColor]="'info'" [outline]="true" class="info-card" *ngIf="options.useCard">
+    <h6 class="mt-0 title">Fuel Dispatches</h6>
+    <div class="count">{{totalOrders | number}}</div>
+    <small>Since subscription start</small>
+    <mat-icon>shopping_basket</mat-icon>
+</ni-card>
+
+<div *ngIf="!options.useCard">
+    Orders: {{totalOrders | number}}
+</div>

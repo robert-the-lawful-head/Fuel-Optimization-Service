@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Delete Record?</h1>
+<div mat-dialog-content class="mt-1 mb-2">
+    <div class="text-center">
+        You are about to delete this {{data.description}} permenantly.  Are you sure?
+    </div>
+</div>
+<div mat-dialog-actions>
+    <div class="text-center col-12">
+        <button ni-button [view]="'error'" [mat-dialog-close]="data" class="mr-1">Confirm</button>
+        <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+    </div>
+</div>

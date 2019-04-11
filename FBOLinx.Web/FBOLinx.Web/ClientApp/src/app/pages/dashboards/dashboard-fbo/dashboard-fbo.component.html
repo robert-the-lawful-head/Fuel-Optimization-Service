@@ -1,0 +1,33 @@
+<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+
+<div class="row">
+    <div class="col-md-6 col-xl-3">
+        <app-statistics-total-orders [options]="statisticsOptions"></app-statistics-total-orders>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <app-statistics-total-customers [options]="statisticsOptions"></app-statistics-total-customers>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <app-statistics-total-aircraft [options]="statisticsOptions"></app-statistics-total-aircraft>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <app-statistics-orders-by-location [options]="statisticsOptions"></app-statistics-orders-by-location>
+    </div>
+</div>
+
+<ni-card>
+    <div class="row">
+        <div class="col-lg-12 col-xl-6 mb-lg-4">
+            <app-analysis-price-orders-chart></app-analysis-price-orders-chart>
+        </div>
+        <div class="col-md-6 col-xl-3 flex-xl-first mb-4 mb-md-0">
+            <app-analysis-fuelreqs-top-customers-fbo></app-analysis-fuelreqs-top-customers-fbo>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <app-analysis-fuelreqs-by-aircraft-size></app-analysis-fuelreqs-by-aircraft-size>
+        </div>
+    </div>
+</ni-card>

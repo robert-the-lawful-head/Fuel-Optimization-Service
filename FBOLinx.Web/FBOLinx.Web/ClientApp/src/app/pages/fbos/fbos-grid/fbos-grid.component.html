@@ -1,0 +1,57 @@
+<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4" *ngIf="!groupInfo"></ni-breadcrumb>
+
+<div>
+
+    <mat-form-field>
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+
+    <table mat-table [dataSource]="fbosDataSource" class="col-md-12" matSort matSortActive="icao" matSortDirection="asc">
+        <ng-container matColumnDef="icao">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ICAO</th>
+            <td mat-cell *matCellDef="let fbo">{{fbo.icao}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fbo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>FBO</th>
+            <td mat-cell *matCellDef="let fbo">{{fbo.fbo}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="active">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+            <td mat-cell *matCellDef="let fbo">{{fbo.active ? 'Active' : 'Inactive'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="edit">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let fbo">
+                <div class="pull-right">
+                    <button ni-button size="small" beforeIcon="fa fa-edit" (click)="editRecord(fbo)">Edit</button>
+                </div>
+            </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="delete">
+            <th mat-header-cell *matHeaderCellDef>
+                <div class="pull-right">
+                    <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newRecord()">Add New</button>
+                </div>
+            </th>
+            <td mat-cell *matCellDef="let fbo">
+                <div class="pull-right">
+                    <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteRecord(fbo)">Delete</button>
+                </div>
+            </td>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</div>
+
+<div>
+    <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
+</div>
+

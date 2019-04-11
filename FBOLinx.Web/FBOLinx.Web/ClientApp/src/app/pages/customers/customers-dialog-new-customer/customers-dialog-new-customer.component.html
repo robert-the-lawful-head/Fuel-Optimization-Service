@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>New Customer</h1>
+<div mat-dialog-content>
+    <div>
+        <mat-form-field>
+            <input matInput placeholder="Customer Name" aria-label="Customer Name" [(ngModel)]="data.company">
+        </mat-form-field>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1">Add Customer</button>
+    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+</div>

@@ -1,0 +1,66 @@
+<h1 mat-dialog-title>New Ramp Fee</h1>
+<div mat-dialog-content class="mt-1">
+    <mat-form-field>
+        <mat-select placeholder="Category" [(ngModel)]="data.categoryType">
+            <mat-option *ngFor="let categoryType of categoryTypes" [value]="categoryType.value">
+                {{categoryType.text}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div>
+        <mat-form-field>
+            <input matInput type="number" placeholder="Ramp/Facil. Fee" aria-label="Ramp/Facil. Fee" [(ngModel)]="data.price">
+            <span matPrefix>$</span>
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field>
+            <input matInput type="number" placeholder="Avoidance" aria-label="Ramp/Facil. Fee" [(ngModel)]="data.waived">
+            <span matSuffix>Gal.</span>
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field>
+            <input matInput [(ngModel)]="data.expirationDate" [matDatepicker]="categoryDatePicker" placeholder="Expiration Date" disabled>
+            <mat-datepicker-toggle matSuffix [for]="categoryDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #categoryDatePicker disabled="false"></mat-datepicker>
+        </mat-form-field>
+    </div>
+    <div *ngIf="data.categoryType == 2">
+        <mat-form-field>
+            <mat-select placeholder="Type" [(ngModel)]="data.categoryMinValue">
+                <mat-option *ngFor="let aircraftType of aircraftTypes" [value]="aircraftType.aircraftId">
+                    {{aircraftType.make}} {{aircraftType.model}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div *ngIf="data.categoryType == 3">
+        <mat-form-field>
+            <input matInput type="number" placeholder="Min. Weight" aria-label="Min. Weight" [(ngModel)]="data.categoryMinValue">
+            <span matSuffix>Lbs.</span>
+        </mat-form-field>
+    </div>
+    <div *ngIf="data.categoryType == 3">
+        <mat-form-field>
+            <input matInput type="number" placeholder="Max. Weight" aria-label="Max. Weight" [(ngModel)]="data.categoryMaxValue">
+            <span matSuffix>Lbs.</span>
+        </mat-form-field>
+    </div>
+    <div *ngIf="data.categoryType == 4">
+        <mat-form-field>
+            <input matInput type="number" placeholder="Min. Wingspan" aria-label="Min. Wingspan" [(ngModel)]="data.categoryMinValue">
+            <span matSuffix>Feet</span>
+        </mat-form-field>
+    </div>
+    <div *ngIf="data.categoryType == 4">
+        <mat-form-field>
+            <input matInput type="number" placeholder="Max. Wingspan" aria-label="Max. Wingspan" [(ngModel)]="data.categoryMaxValue">
+            <span matSuffix>Feet</span>
+        </mat-form-field>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" [mat-dialog-close]="data" class="mr-1">Add Ramp Fee</button>
+    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+</div>

@@ -1,0 +1,10 @@
+<ni-card [bgColor]="'info'" [outline]="true" class="info-card">
+    <h6 class="mt-0 title">Last 30 days </h6>
+    <div class="count">{{totalOrders | number}}</div>
+    <small>Uplifts @ {{icao}} - Generated via FuelerLinx</small>
+    <mat-icon>local_gas_station</mat-icon>
+</ni-card>
+
+<div *ngIf="!options.useCard">
+    Aircraft: {{totalOrders | number}}
+</div>

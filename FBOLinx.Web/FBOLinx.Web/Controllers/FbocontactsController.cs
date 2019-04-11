@@ -1,0 +1,148 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using FBOLinx.Web.Data;
+using FBOLinx.Web.Models;
+using FBOLinx.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+
+namespace FBOLinx.Web.Controllers
+{
+    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class FbocontactsController : ControllerBase
+    {
+        private readonly FboLinxContext _context;
+
+        public FbocontactsController(FboLinxContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/Fbocontacts/fbo/5
+        [HttpGet("fbo/{fboId}")]
+        public async Task<IActionResult> GetFbocontactsByFboId([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbocontacts = await GetAllFboContacts().Include("Contact").Where((x => x.Fboid == fboId)).ToListAsync();
+            
+            return Ok(fbocontacts.Select(f => new FboContactsViewModel
+            {
+                ContactId = f.ContactId,
+                FirstName = f.Contact.FirstName,
+                LastName = f.Contact.LastName,
+                Oid = f.Oid,
+                Primary = f.Contact.Primary
+            }));
+        }
+
+        // GET: api/Fbocontacts/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetFbocontacts([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbocontacts = await _context.Fbocontacts.FindAsync(id);
+
+            if (fbocontacts == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(fbocontacts);
+        }
+
+        // PUT: api/Fbocontacts/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutFbocontacts([FromRoute] int id, [FromBody] Fbocontacts fbocontacts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != fbocontacts.Oid)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(fbocontacts).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FbocontactsExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Fbocontacts
+        [HttpPost]
+        public async Task<IActionResult> PostFbocontacts([FromBody] Fbocontacts fbocontacts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Fbocontacts.Add(fbocontacts);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetFbocontacts", new { id = fbocontacts.Oid }, fbocontacts);
+        }
+
+        // DELETE: api/Fbocontacts/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteFbocontacts([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbocontacts = await _context.Fbocontacts.FindAsync(id);
+            if (fbocontacts == null)
+            {
+                return NotFound();
+            }
+
+            _context.Fbocontacts.Remove(fbocontacts);
+            await _context.SaveChangesAsync();
+
+            return Ok(fbocontacts);
+        }
+
+        private bool FbocontactsExists(int id)
+        {
+            return _context.Fbocontacts.Any(e => e.Oid == id);
+        }
+
+        private IQueryable<Fbocontacts> GetAllFboContacts()
+        {
+            return _context.Fbocontacts.AsQueryable();
+        }
+    }
+}
