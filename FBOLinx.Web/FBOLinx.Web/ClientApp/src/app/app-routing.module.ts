@@ -9,38 +9,6 @@ import { BoxedCLayoutComponent }        from './layouts/boxed-c/boxed-c.componen
 import { ExtraLayoutComponent } from './layouts/extra/extra.component';
 import { LandingSiteLayoutComponent } from './layouts/landing-site/landing-site.component';
 
-import { PageDashboardComponent }       from './pages/dashboards/dashboard-1/dashboard.component';
-import { PageDashboard2Component }      from './pages/dashboards/dashboard-2/dashboard-2.component';
-import { PageDashboard3Component }      from './pages/dashboards/dashboard-3/dashboard-3.component';
-import { PageButtonComponent }          from './pages/material-components/button/button.component';
-import { PageCardComponent }            from './pages/material-components/card/card.component';
-import { PageCheckboxComponent }        from './pages/material-components/checkbox/checkbox.component';
-import { PageChipsComponent }           from './pages/material-components/chips/chips.component';
-import { PageDialogComponent }          from './pages/material-components/dialog/dialog.component';
-import { PageIconComponent }            from './pages/material-components/icon/icon.component';
-import { PageInputComponent }           from './pages/material-components/input/input.component';
-import { PageListComponent }            from './pages/material-components/list/list.component';
-import { PageMenuComponent }            from './pages/material-components/menu/menu.component';
-import { PageProgressBarComponent }     from './pages/material-components/progress-bar/progress-bar.component';
-import { PageProgressSpinnerComponent } from './pages/material-components/progress-spinner/progress-spinner.component';
-import { PageRadioButtonComponent }     from './pages/material-components/radio-button/radio-button.component';
-import { PageSelectComponent }          from './pages/material-components/select/select.component';
-import { PageSliderComponent }          from './pages/material-components/slider/slider.component';
-import { PageSlideToggleComponent }     from './pages/material-components/slide-toggle/slide-toggle.component';
-import { PageSnackbarComponent }        from './pages/material-components/snackbar/snackbar.component';
-import { PageTabsComponent }            from './pages/material-components/tabs/tabs.component';
-import { PageToolbarComponent }         from './pages/material-components/toolbar/toolbar.component';
-import { PageTooltipComponent }         from './pages/material-components/tooltip/tooltip.component';
-
-import { PageNiAlertsComponent }        from './pages/ni-components/alert/alert.component';
-import { PageNiBadgesComponent }        from './pages/ni-components/badge/badge.component';
-import { PageNiBreadcrumbsComponent }   from './pages/ni-components/breadcrumb/breadcrumb.component';
-import { PageNiButtonsComponent }       from './pages/ni-components/buttons/buttons.component';
-import { PageNiCardsComponent }         from './pages/ni-components/card/card.component';
-import { PageNiChatComponent }          from './pages/ni-components/chat/chat.component';
-import { PageNiFilesComponent }         from './pages/ni-components/file/file.component';
-import { PageNiVTimelineComponent }     from './pages/ni-components/v-timeline/v-timeline.component';
-
 import { PageTypographyComponent }      from './pages/typography/typography.component';
 import { PageNotFoundComponent }        from './pages/not-found/not-found.component';
 
@@ -57,18 +25,12 @@ import { PageAboutUsComponent }         from './pages/pages-service/about-us/abo
 import { PageFaqComponent }             from './pages/pages-service/faq/faq.component';
 import { PageTimelineComponent }        from './pages/pages-service/timeline/timeline.component';
 import { PageInvoiceComponent }         from './pages/pages-service/invoice/invoice.component';
-import { PageNg2ChartsComponent }       from './pages/charts/ng2-charts/ng2-charts.component';
-import { PageNgxChartsComponent }       from './pages/charts/ngx-charts/ngx-charts.component';
-import { PageAmchartsComponent }        from './pages/charts/amcharts/amcharts.component';
 import { PageCalendarComponent }        from './pages/calendar/calendar.component';
 import { PageSimpleTableComponent }     from './pages/tables/simple-table/simple-table.component';
 import { PageBootstrapTablesComponent } from './pages/tables/bootstrap-tables/bootstrap-tables.component';
 import { PageSortingTableComponent }    from './pages/tables/sorting-table/sorting-table.component';
 import { PageFilteringTableComponent }  from './pages/tables/filtering-table/filtering-table.component';
 import { PagePaginationTableComponent } from './pages/tables/pagination-table/pagination-table.component';
-import { PageFormElementsComponent }    from './pages/forms/form-elements/form-elements.component';
-import { PageFormLayoutComponent }      from './pages/forms/form-layout/form-layout.component';
-import { PageFormValidationComponent }  from './pages/forms/form-validation/form-validation.component';
 import { PageGoogleMapComponent }       from './pages/maps/google-map/google-map.component';
 import { PageLeafletMapComponent }      from './pages/maps/leaflet-map/leaflet-map.component';
 import { PageWidgetsComponent }         from './pages/widgets/widgets.component';
