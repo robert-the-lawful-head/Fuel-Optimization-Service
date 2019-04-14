@@ -70,7 +70,7 @@ export class UsersGridComponent {
     }
 
     public newRecord() {
-        var newUser = { oid: 0 };
+        var newUser = { oid: 0, fboId: 0, groupId: 0 };
         if (this.fboInfo) {
             newUser.fboId = this.fboInfo.oid;
             newUser.groupId = this.fboInfo.groupId;

@@ -4,6 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+//import { CommonModule } from '@angular/common';
+
 
 //Bootstrap Assist Template Modules
 import { routes, AppRoutingModule } from './app-routing.module';
@@ -89,7 +91,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
 //Pipes
 import { DecimalPipe } from '@angular/common';
 import { DatePipe } from '@angular/common';
-import {AppPipesModule} from './app-pipes.module'
+//import {AppPipesModule} from './app-pipes.module'
 
 
 @NgModule({
@@ -144,8 +146,10 @@ import {AppPipesModule} from './app-pipes.module'
         MatToolbarModule,
         MatTooltipModule,
         TextMaskModule,
-        RouterModule.forRoot(routes, { useHash: true }),
-        AppPipesModule.forRoot()
+        RouterModule.forRoot(routes, { useHash: true })
+//        ,
+        //CommonModule,
+        //AppPipesModule
     ],
     exports: [],
     entryComponents: [],

@@ -10,9 +10,6 @@ import { EmailcontentService } from '../../../../services/emailcontent.service';
 import { PricingtemplatesService } from '../../../../services/pricingtemplates.service';
 import { SharedService } from '../../../../layouts/shared-service';
 
-//Pipes
-import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html-pipe.pipe';
-
 export interface DistributionDialogData {
     pricingTemplate: any;
     customer: any;

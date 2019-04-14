@@ -77,6 +77,7 @@ import { Page500Component }	from './extra-pages/page-500/page-500.component';
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
 import { ContactsEditComponent } from './contacts/contacts-edit/contacts-edit.component';
 import { ContactsGridComponent } from './contacts/contacts-grid/contacts-grid.component';
+import { ContactsHomeComponent } from './contacts/contacts-home/contacts-home.component';
 import { CustomersEditComponent } from './customers/customers-edit/customers-edit.component';
 import { CustomerAircraftsDialogNewAircraftComponent } from './customer-aircrafts/customer-aircrafts-dialog-new-aircraft/customer-aircrafts-dialog-new-aircraft.component';
 import { CustomerAircraftsEditComponent } from './customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
@@ -88,6 +89,7 @@ import { CustomersGridComponent } from './customers/customers-grid/customers-gri
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
 import { DashboardAdminComponent } from './dashboards/dashboard-admin/dashboard-admin.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
+import { FbosContactsComponent } from './fbos/fbos-contacts/fbos-contacts.component';
 import { FbosDialogNewFboComponent } from './fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { FboPricesHomeComponent } from './fbo-prices/fbo-prices-home/fbo-prices-home.component';
 import { FbosHomeComponent } from './fbos/fbos-home/fbos-home.component';
@@ -121,6 +123,7 @@ import { AnalysisPriceOrdersChartComponent } from '.././shared/components/analys
 import { DeleteConfirmationComponent } from '.././shared/components/delete-confirmation/delete-confirmation.component';
 import { DistributionWizardMainComponent } from '.././shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
 import { EmailContentEditComponent } from '.././shared/components/email-content-edit/email-content-edit.component';
+import { EmailContentSelectionComponent } from '.././shared/components/email-content-selection/email-content-selection.component';
 import { ForgotPasswordDialogComponent } from '.././shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
 import { StatisticsOrdersByLocationComponent } from
     '.././shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
@@ -184,8 +187,8 @@ import { AppPipesModule } from '../app-pipes.module'
      apiKey: 'AIzaSyAU9f7luK3J31nurL-Io3taRKF7w9BItQE'
     }),
     AmChartsModule,
-      LeafletModule.forRoot(),
-      AppPipesModule.forRoot()
+      LeafletModule.forRoot()
+      ,AppPipesModule
   ],
   declarations: [
     PageTypographyComponent,
@@ -217,6 +220,7 @@ import { AppPipesModule } from '../app-pipes.module'
       AuthtokenComponent,
               ContactsEditComponent,
       ContactsGridComponent,
+      ContactsHomeComponent,
       CustomerAircraftsDialogNewAircraftComponent,
       CustomerAircraftsEditComponent,
       CustomerAircraftsGridComponent,
@@ -227,6 +231,7 @@ import { AppPipesModule } from '../app-pipes.module'
       CustomersHomeComponent,
       DashboardAdminComponent,
       DashboardFboComponent,
+      FbosContactsComponent,
       FbosDialogNewFboComponent,
       FboPricesHomeComponent,
               FbosHomeComponent,
@@ -257,6 +262,7 @@ import { AppPipesModule } from '../app-pipes.module'
       DistributionWizardMainComponent,
       AccountProfileComponent,
       EmailContentEditComponent,
+      EmailContentSelectionComponent,
       ForgotPasswordDialogComponent,
       StatisticsOrdersByLocationComponent,
       StatisticsTotalAircraftComponent,
@@ -266,7 +272,6 @@ import { AppPipesModule } from '../app-pipes.module'
   exports: [],
     entryComponents: [
         DeleteConfirmationComponent,
-        DialogResultComponent,
       CalendarDialogComponent,
         CustomerAircraftsDialogNewAircraftComponent,
         CustomerCompanyTypeDialogComponent,
