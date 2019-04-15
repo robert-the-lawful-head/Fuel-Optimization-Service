@@ -9,7 +9,7 @@ import {SafeHtmlPipe} from './shared/pipes/safe-html-pipe.pipe';
     exports: [SafeHtmlPipe],
 })
 
-@NgModule({})
+
 export class AppPipesModule {
     //static forRoot() {
     //    return {

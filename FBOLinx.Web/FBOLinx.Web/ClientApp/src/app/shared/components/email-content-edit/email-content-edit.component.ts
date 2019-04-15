@@ -19,6 +19,8 @@ export interface EmailContentDialogData {
 })
 /** email-content-edit component*/
 export class EmailContentEditComponent {
+    public emailContentTypes: any[] = [];
+
     /** email-content-edit ctor */
     constructor(public dialogRef: MatDialogRef<EmailContentEditComponent>, @Inject(MAT_DIALOG_DATA) public emailContent: EmailContentDialogData,
         private emailContentService: EmailcontentService) {

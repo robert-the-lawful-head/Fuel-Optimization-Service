@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>New FBO</h1>
 <div mat-dialog-content>
-    <app-airport-autocomplete (valueChange)="airportValueChanged()" [airportContainerModel]="data"></app-airport-autocomplete>
+    <app-airport-autocomplete [airportContainerModel]="data"></app-airport-autocomplete>
     <mat-form-field>
         <input matInput placeholder="FBO Name" aria-label="FBO Name" [(ngModel)]="data.fbo">
     </mat-form-field>

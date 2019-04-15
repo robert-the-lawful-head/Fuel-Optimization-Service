@@ -147,9 +147,6 @@ import { DatePipe } from '@angular/common';
         MatTooltipModule,
         TextMaskModule,
         RouterModule.forRoot(routes, { useHash: true })
-//        ,
-        //CommonModule,
-        //AppPipesModule
     ],
     exports: [],
     entryComponents: [],

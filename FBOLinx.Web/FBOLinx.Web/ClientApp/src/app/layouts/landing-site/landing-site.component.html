@@ -49,36 +49,6 @@
                 </ul>
 
             </div><!--/.nav-collapse -->
-            <div id="divLogin" runat="server" class="clear" style="margin-top:9px;" *ngIf="adminLoginEnabled">
-                <!--<asp:Literal ID="litAdminLogin" runat="server"></asp:Literal>-->
-            </div>
-
-            <div id="divForgotPassword" runat="server" visible="false" class="clear" style="margin-top:9px;" *ngIf="forgotPasswordEnabled">
-                <table border="0" cellpadding="0" cellspacing="0" align="left">
-                    <tr>
-                        <td colspan="3" class="error">
-                            <!--<asp:Literal ID="litForgotPassword" runat="server"></asp:Literal>-->
-                        </td>
-                    </tr>
-                    <tr>
-                        <td valign="baseline" class="hdr" width="135"><strong>Forgot Password?</strong></td>
-                        <td valign="baseline" width="35" class="frmCellNoBG">Email: </td>
-                        <td valign="baseline">
-                            <input type="text" class="basicTextBox textboxfontsize" id="txtForgotPassword" style="width: 175px;"/>
-                        </td>
-                        <td valign="baseline">
-                            
-                            <!--<asp:RequiredFieldValidator ControlToValidate="txtForgotPassword" runat="server" ID="rfvForgotPassword" ErrorMessage="*" CssClass="error" ValidationGroup="ForgotPassword"></asp:RequiredFieldValidator>-->
-                        </td>
-                        <td valign="top" width="115">
-                            <button type="button" id="btnForgotPassword">Get Login Info</button>
-                        </td>
-                        <td valign="top">
-                            <a id="lnkForgotPassword">Back to Login</a>
-                        </td>
-                    </tr>
-                </table>
-            </div>
         </div><!--/container-->
     </div><!--/navbar-inner-->
 </div><!--/navbar-->

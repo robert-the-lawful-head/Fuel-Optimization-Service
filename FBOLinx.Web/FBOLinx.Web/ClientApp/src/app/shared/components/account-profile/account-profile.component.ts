@@ -9,6 +9,8 @@ export interface AccountProfileDialogData {
     role: number;
     fboId: number;
     groupId: number;
+    newPassword: string;
+    confirmPassword: string;
 }
 
 @Component({

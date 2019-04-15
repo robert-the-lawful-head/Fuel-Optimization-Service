@@ -187,8 +187,8 @@ import { AppPipesModule } from '../app-pipes.module'
      apiKey: 'AIzaSyAU9f7luK3J31nurL-Io3taRKF7w9BItQE'
     }),
     AmChartsModule,
-      LeafletModule.forRoot()
-      ,AppPipesModule
+      LeafletModule.forRoot(),
+      AppPipesModule
   ],
   declarations: [
     PageTypographyComponent,

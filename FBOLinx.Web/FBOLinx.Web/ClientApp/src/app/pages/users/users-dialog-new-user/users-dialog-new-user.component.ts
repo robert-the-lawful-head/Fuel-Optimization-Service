@@ -13,6 +13,8 @@ export interface NewUserDialogData {
     role: number;
     fboId: number;
     groupId: number;
+    newPassword: string;
+    confirmPassword: string;
 }
 
 @Component({

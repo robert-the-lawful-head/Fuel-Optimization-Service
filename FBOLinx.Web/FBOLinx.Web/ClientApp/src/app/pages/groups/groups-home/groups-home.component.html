@@ -7,7 +7,7 @@
             <app-groups-grid [groupsData]="groupsData" (editGroupClicked)="editGroupClicked($event)" (recordDeleted)="deleteGroupClicked($event)"></app-groups-grid>
         </div>
     </div>
-    <div *ngIf="!(groupsData || currentFbo)">
+    <div *ngIf="!(groupsData || currentGroup)">
         <mat-spinner></mat-spinner>
     </div>
 </div>

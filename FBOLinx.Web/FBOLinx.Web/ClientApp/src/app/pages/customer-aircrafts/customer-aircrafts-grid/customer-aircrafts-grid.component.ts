@@ -84,4 +84,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
     public deleteCustomerAircraft(customerAircraft) {
         //TODO: add delete prompt and logic
     }
+
+    public applyFilter(filterValue: string) {
+        this.customerAircraftssDataSource.filter = filterValue.trim().toLowerCase();
+    }
 }

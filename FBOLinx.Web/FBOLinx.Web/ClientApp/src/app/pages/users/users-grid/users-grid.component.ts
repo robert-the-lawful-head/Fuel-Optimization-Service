@@ -102,4 +102,8 @@ export class UsersGridComponent {
         });
         this.newUserClicked.emit();
     }
+
+    public applyFilter(filterValue: string) {
+        this.usersDataSource.filter = filterValue.trim().toLowerCase();
+    }
 }
