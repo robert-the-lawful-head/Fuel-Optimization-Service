@@ -8,7 +8,7 @@ namespace FBOLinx.Web.Models
 {
     public partial class PricingTemplate
     {
-        public enum MarginTypes : short
+        public enum MarginTypes
         {
             [Description("Cost +")]
             CostPlus = 0,
