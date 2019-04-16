@@ -312,3 +312,7 @@ GO
 ALTER TABLE CustomerInfoByGroup
     ADD CertificateType smallint
 GO
+
+ALTER TABLE PricingTemplate
+	ALTER COLUMN MarginType smallint
+GO
