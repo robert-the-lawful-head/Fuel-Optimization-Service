@@ -12,7 +12,7 @@ import { RampFeesDialogNewFeeComponent } from '../ramp-fees-dialog-new-fee/ramp-
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/'
+        link: '#/default-layout'
     },
     {
         title: 'Ramp Fees',

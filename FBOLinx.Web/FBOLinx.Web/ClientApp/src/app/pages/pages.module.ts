@@ -89,6 +89,7 @@ import { CustomersGridComponent } from './customers/customers-grid/customers-gri
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
 import { DashboardAdminComponent } from './dashboards/dashboard-admin/dashboard-admin.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
+import { DashboardHomeComponent } from './dashboards/dashboard-home/dashboard-home.component';
 import { FbosContactsComponent } from './fbos/fbos-contacts/fbos-contacts.component';
 import { FbosDialogNewFboComponent } from './fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { FboPricesHomeComponent } from './fbo-prices/fbo-prices-home/fbo-prices-home.component';
@@ -231,6 +232,7 @@ import { AppPipesModule } from '../app-pipes.module'
       CustomersHomeComponent,
       DashboardAdminComponent,
       DashboardFboComponent,
+      DashboardHomeComponent,
       FbosContactsComponent,
       FbosDialogNewFboComponent,
       FboPricesHomeComponent,

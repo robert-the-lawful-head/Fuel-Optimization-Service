@@ -14,7 +14,7 @@ import { DistributionWizardMainComponent } from '../../../shared/components/dist
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/'
+        link: '#/default-layout'
     },
     {
         title: 'Pricing Templates',
