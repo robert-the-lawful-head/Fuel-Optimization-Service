@@ -109,7 +109,7 @@ namespace FBOLinx.Web.Controllers
             if (group != null)
                 _UserService.CreateGroupLoginIfNeeded(group);
 
-            var users = await _Context.User.Where((x => x.GroupId == groupId)).ToListAsync();
+            var users = await _Context.User.Where((x => x.GroupId == groupId && x.FboId == 0)).ToListAsync();
             
             return Ok(users);
         }
@@ -275,7 +275,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            return Ok(request.User.Password);
+            return Ok(new {password = request.User.Password});
         }
 
         // DELETE: api/users/5

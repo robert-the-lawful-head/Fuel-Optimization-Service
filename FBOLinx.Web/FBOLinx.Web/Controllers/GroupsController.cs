@@ -32,7 +32,7 @@ namespace FBOLinx.Web.Controllers
         [UserRole(Models.User.UserRoles.Conductor)]
         public IEnumerable<Group> GetGroup()
         {
-            return _context.Group.OrderBy((x => x.GroupName));
+            return _context.Group.Where(x => !string.IsNullOrEmpty(x.GroupName)).OrderBy((x => x.GroupName));
         }
 
         // GET: api/Groups/5

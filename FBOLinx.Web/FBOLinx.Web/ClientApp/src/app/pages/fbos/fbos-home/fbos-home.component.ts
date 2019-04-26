@@ -74,7 +74,7 @@ export class FbosHomeComponent {
 
     //Private Methods
     private loadInitialData() {
-        if (!this.groupInfo)
+        if (!this.groupInfo && this.sharedService.currentUser.role == 3)
             this.loadAllFbos();
         else
             this.loadAllFbosForGroup();
@@ -85,6 +85,9 @@ export class FbosHomeComponent {
     }
 
     private loadAllFbosForGroup() {
-        this.fboService.getForGroup(this.groupInfo.oid).subscribe((data: any) => this.fbosData = data);
+        if (!this.groupInfo)
+            this.fboService.getForGroup(this.sharedService.currentUser.groupId).subscribe((data: any) => this.fbosData = data);
+        else
+            this.fboService.getForGroup(this.groupInfo.oid).subscribe((data: any) => this.fbosData = data);
     }
 }

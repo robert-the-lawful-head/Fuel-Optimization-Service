@@ -50,9 +50,10 @@ export class UsersHomeComponent implements OnInit {
 
     public saveUserEditClicked () {
         this.currentUser = null;
+        this.loadInitialData();
     }
 
-    public cancelFboEditClicked () {
+    public cancelUserEditClicked () {
         this.currentUser = null;
     }
 

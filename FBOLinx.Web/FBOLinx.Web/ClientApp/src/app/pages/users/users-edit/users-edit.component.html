@@ -33,7 +33,7 @@
                         <div class="col-md-6">
                             <mat-form-field *ngIf="availableroles">
                                 <mat-select placeholder="Role" [(ngModel)]="userInfo.role">
-                                    <mat-option *ngFor="let role of availableRoles" [value]="role.value">
+                                    <mat-option *ngFor="let role of availableroles" [value]="role.value">
                                         {{role.description}}
                                     </mat-option>
                                 </mat-select>

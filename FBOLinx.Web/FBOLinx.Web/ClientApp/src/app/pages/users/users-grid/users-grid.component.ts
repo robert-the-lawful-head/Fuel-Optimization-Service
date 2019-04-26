@@ -57,7 +57,11 @@ export class UsersGridComponent {
                 return;
             const deleteIndex = this.usersData.indexOf(record);
             this.userService.remove(record).subscribe(
-                result => { this.usersData.splice(deleteIndex, 1); }
+                result => {
+                    const userArray = this.usersDataSource.data;
+                    userArray.splice(deleteIndex, 1);
+                    this.usersDataSource.data = userArray;
+                }
             );
             this.userDeleted.emit(record);
         });
@@ -88,15 +92,19 @@ export class UsersGridComponent {
                 return;
             console.log('Dialog data: ', result);
             this.userService.add(result).subscribe((data: any) => {
-                result = data;
+                var savedUser = data;
+                const userArray = this.usersDataSource.data;
                 if (result.newPassword && result.newPassword != '') {
-                    this.userService.updatePassword({ user: data, newPassword: result.newPassword }).subscribe((newPass:
-                        any) => {
-                        result.password = newPass;
-                        this.usersData.push(result);
+                    this.userService.updatePassword({ user: data, newPassword: result.newPassword }).subscribe((newPassData: any) => {
+                        savedUser.password = newPassData.password;
+                        userArray.push(savedUser);
+                        this.usersDataSource.data = userArray;
+                    }, (err: any) => {
+                        console.log(err);
                     });
                 } else {
-                    this.usersData.push(result);
+                    userArray.push(newUser);
+                    this.usersDataSource.data = userArray;
                 }
             });
         });
