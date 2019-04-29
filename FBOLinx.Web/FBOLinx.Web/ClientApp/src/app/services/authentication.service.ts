@@ -39,7 +39,7 @@ export class AuthenticationService {
     }
 
     preAuth(token) {
-        var tempUser = { oid: 0, username: '', password: '', firstName: '', lastName: '', token: token, role: 0, fboId: 0, groupId: 0  };
+        var tempUser = { oid: 0, username: '', password: '', firstName: '', lastName: '', token: token, role: 0, fboId: 0, groupId: 0, impersonatedRole: null  };
         this.currentUserSubject.next(tempUser);
         return this.http.get<any>(this.accessPointUrl + '/current', { headers: this.headers })
             .pipe(map(user => {

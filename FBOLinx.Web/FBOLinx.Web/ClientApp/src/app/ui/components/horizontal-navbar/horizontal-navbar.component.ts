@@ -28,6 +28,7 @@ export class HorizontalNavbarComponent implements OnInit {
     @Output()
     sidebarState = new EventEmitter();
     showOverlay: boolean;
+    isOpened: boolean;
     public userFullName: string;
     private currentUser: any;
 
@@ -38,6 +39,7 @@ export class HorizontalNavbarComponent implements OnInit {
         private userService: UserService) {
         this.openedSidebar = false;
         this.showOverlay = false;
+        this.isOpened = false;
         this.currentUser = this.sharedService.currentUser;
         if (!this.currentUser)
             return;
@@ -47,6 +49,13 @@ export class HorizontalNavbarComponent implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    toggle(event) {
+        if (this.isOpened)
+            this.close(event);
+        else
+            this.open(event);
     }
 
     open(event) {
@@ -61,21 +70,23 @@ export class HorizontalNavbarComponent implements OnInit {
         clickedComponent.classList.add('opened');
 
         //Add class 'show-overlay'
-        this.showOverlay = true;
+        this.isOpened = true;
+        //this.showOverlay = true;
     }
 
     close(event) {
-        let clickedComponent = event.target.closest('.nav-item');
-        let items = clickedComponent.parentElement.children;
+        //let clickedComponent = event.target.closest('.nav-item');
+        //let items = clickedComponent.parentElement.children;
 
         event.preventDefault();
 
-        for (let i = 0; i < items.length; i++) {
-            items[i].classList.remove('opened');
-        }
+        //for (let i = 0; i < items.length; i++) {
+        //    items[i].classList.remove('opened');
+        //}
 
         //Remove class 'show-overlay'
-        this.showOverlay = false;
+        this.isOpened = false;
+        //this.showOverlay = false;
     }
 
     openSidebar() {
@@ -109,5 +120,12 @@ export class HorizontalNavbarComponent implements OnInit {
             });
         });
         this.close(event);
+    }
+
+    public stopManagingClicked(event) {
+        this.sharedService.currentUser.impersonatedRole = null;
+        this.sharedService.currentUser.fboId = 0;
+        this.close(event);
+        this.router.navigate(['/default-layout/fbos/']);
     }
 }

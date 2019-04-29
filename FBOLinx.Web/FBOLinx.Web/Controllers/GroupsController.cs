@@ -29,10 +29,11 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/Groups
         [HttpGet]
-        [UserRole(Models.User.UserRoles.Conductor)]
         public IEnumerable<Group> GetGroup()
         {
-            return _context.Group.Where(x => !string.IsNullOrEmpty(x.GroupName)).OrderBy((x => x.GroupName));
+            int groupId = UserService.GetClaimedGroupId(_HttpContextAccessor);
+            Models.User.UserRoles role = UserService.GetClaimedRole(_HttpContextAccessor);
+            return _context.Group.Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == Models.User.UserRoles.Conductor)).OrderBy((x => x.GroupName));
         }
 
         // GET: api/Groups/5

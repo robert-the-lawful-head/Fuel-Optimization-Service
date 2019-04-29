@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
             if (route.data && route.data.expectedRoles)
                 expectedRoles = route.data.expectedRoles;
 
-            if (expectedRoles.length == 0 || expectedRoles.indexOf(this.currentUser.role) > -1)
+            if (expectedRoles.length == 0 || expectedRoles.indexOf(this.currentUser.role) > -1 || expectedRoles.indexOf(this.currentUser.impersonatedRole) > -1)
                 return true;
         }
 

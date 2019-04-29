@@ -49,7 +49,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fbo/{fboId}")]
         public async Task<ActionResult<CustomerCompanyTypes>> GetCustomerCompanyTypesForFbo([FromRoute] int fboId)
         {
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest("Invalid FBO");
             }

@@ -126,6 +126,7 @@ import { DistributionWizardMainComponent } from '.././shared/components/distribu
 import { EmailContentEditComponent } from '.././shared/components/email-content-edit/email-content-edit.component';
 import { EmailContentSelectionComponent } from '.././shared/components/email-content-selection/email-content-selection.component';
 import { ForgotPasswordDialogComponent } from '.././shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
+import { ManageConfirmationComponent } from '.././shared/components/manage-confirmation/manage-confirmation.component';
 import { StatisticsOrdersByLocationComponent } from
     '.././shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 import { StatisticsTotalAircraftComponent } from
@@ -266,6 +267,7 @@ import { AppPipesModule } from '../app-pipes.module'
       EmailContentEditComponent,
       EmailContentSelectionComponent,
       ForgotPasswordDialogComponent,
+      ManageConfirmationComponent,
       StatisticsOrdersByLocationComponent,
       StatisticsTotalAircraftComponent,
       StatisticsTotalCustomersComponent,
@@ -283,6 +285,7 @@ import { AppPipesModule } from '../app-pipes.module'
         ForgotPasswordDialogComponent,
         FbosDialogNewFboComponent,
         GroupsDialogNewGroupComponent,
+        ManageConfirmationComponent,
       PricingTemplatesDialogNewTemplateComponent,
         RampFeesDialogNewFeeComponent,
         UsersDialogNewUserComponent

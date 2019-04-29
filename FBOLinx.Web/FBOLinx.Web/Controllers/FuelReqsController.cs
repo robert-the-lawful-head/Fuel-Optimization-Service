@@ -72,7 +72,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest("Invalid FBO");
             }
@@ -115,7 +115,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest("Invalid FBO");
             }
@@ -134,7 +134,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest("Invalid FBO");
             }
@@ -173,7 +173,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest("Invalid FBO");
             }
@@ -291,7 +291,7 @@ namespace FBOLinx.Web.Controllers
                     return BadRequest(ModelState);
                 }
 
-                if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId)
+                if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
                 {
                     return BadRequest("Invalid FBO");
                 }
@@ -345,7 +345,7 @@ namespace FBOLinx.Web.Controllers
             {
                 Models.User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
                 Models.Fboairports airport =
-                    await _context.Fboairports.Where(x => x.Fboid == user.FboId).FirstOrDefaultAsync();
+                    await _context.Fboairports.Where(x => x.Fboid == request.FboId).FirstOrDefaultAsync();
 
                 if (airport == null)
                     return NotFound();

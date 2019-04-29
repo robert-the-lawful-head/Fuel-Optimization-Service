@@ -168,8 +168,8 @@
       </div>
     </div>
 
-    <div class="nav-item" [ngClass]="{ 'opened' : false }">
-      <a href="#" (click)="open($event)" class="nav-link">
+    <div class="nav-item" [ngClass]="{ 'opened' : isOpened }">
+      <a href="#" (click)="toggle($event)" class="nav-link">
         <!--<div class="avatar"><img src="assets/content/avatar-2.jpg" width="40" height="40" alt=""></div>-->
         <div class="name" *ngIf="userFullName">{{userFullName}}</div>
       </a>
@@ -185,9 +185,12 @@
           <li>
             <a href="#" routerLink="/default-layout/calendar"><span class="icon sli-calendar"></span> Calendar</a>
           </li>-->
-          <li>
-            <a (click)="accountProfileClicked($event)"><span class="icon sli-settings"></span> Account Profile</a>
-          </li>
+            <li>
+                <a (click)="accountProfileClicked($event)"><span class="icon sli-settings"></span> Account Profile</a>
+            </li>
+            <li *ngIf="currentUser && currentUser.impersonatedRole > 0">
+                <a (click)="stopManagingClicked($event)"><span class="icon sli-settings"></span> Stop Managing FBO</a>
+            </li>
           <li>
             <a (click)="logout()"><span class="icon sli-logout"></span> Log Out</a>
           </li>

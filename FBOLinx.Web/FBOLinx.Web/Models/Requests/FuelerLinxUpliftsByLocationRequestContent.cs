@@ -11,5 +11,6 @@ namespace FBOLinx.Web.Models.Requests
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
         public string ICAO { get; set; }
+        public int FboId { get; set; }
     }
 }

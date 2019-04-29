@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 //Services
 import { FbosService } from '../../../services/fbos.service';
@@ -10,6 +11,7 @@ import { SharedService } from '../../../layouts/shared-service';
 //Components
 import { FbosDialogNewFboComponent } from '../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -41,9 +43,10 @@ export class FbosGridComponent implements OnInit {
     public pageTitle: string = 'FBOs';
     public breadcrumb: any[] = BREADCRUMBS;
     public fbosDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['icao', 'fbo', 'active', 'edit', 'delete'];
+    public displayedColumns: string[] = ['icao', 'fbo', 'active', 'manage', 'edit', 'delete'];
     public airportData: Array<any>;
     public resultsLength: number = 0;
+    public canManageFbo: boolean = false;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -53,9 +56,12 @@ export class FbosGridComponent implements OnInit {
         private fboService: FbosService,
         private fboAirportsService: FboairportsService,
         private sharedService: SharedService,
-        public deleteFboDialog: MatDialog) {
+        public deleteFboDialog: MatDialog,
+        public manageFboDialog: MatDialog,
+        private router: Router    ) {
 
         this.sharedService.emitChange(this.pageTitle);
+        this.canManageFbo = (this.sharedService.currentUser.role == 2);
     }
 
     ngOnInit() {
@@ -114,5 +120,20 @@ export class FbosGridComponent implements OnInit {
 
     public applyFilter(filterValue: string) {
         this.fbosDataSource.filter = filterValue.trim().toLowerCase();
+    }
+
+    public manageFBO(fbo) {
+        const dialogRef = this.manageFboDialog.open(ManageConfirmationComponent, {
+            width: '450px',
+            data: fbo
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result)
+                return;
+            this.sharedService.currentUser.impersonatedRole = 1;
+            this.sharedService.currentUser.fboId = result.oid;
+            this.router.navigate(['/default-layout/dashboard-fbo/']);
+        });
     }
 }

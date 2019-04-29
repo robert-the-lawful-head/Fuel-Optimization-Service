@@ -21,7 +21,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/dashboard-fbo",
-        "roles": [ 1, 2, 4 ]
+        "roles": [ 1, 4 ]
     },
     {
         "title": "FBO Group",
@@ -61,7 +61,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/fbo-prices",
-        "roles": [ 1, 2, 4 ]
+        "roles": [ 1, 4 ]
     },
     {
         "title": "Pricing Templates",
@@ -71,7 +71,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/pricing-templates",
-        "roles": [ 1, 2, 4 ]
+        "roles": [ 1, 4 ]
     },
     {
         "title": "Customer Manager",
@@ -81,7 +81,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/customers",
-        "roles": [ 1, 2, 4 ]
+        "roles": [ 1, 4 ]
     },
     {
         "title": "Fuel Orders",
@@ -91,7 +91,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/fuelreqs",
-        "roles": [ 1, 2, 4 ]
+        "roles": [ 1, 4 ]
     },
     {
         "title": "Ramp Fees",
@@ -101,6 +101,6 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/rampfees",
-        "roles": [ 1, 2, 4 ]
+        "roles": [ 1, 4 ]
     }
 ]

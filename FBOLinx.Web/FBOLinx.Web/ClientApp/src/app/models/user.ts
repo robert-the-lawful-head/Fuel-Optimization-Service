@@ -8,4 +8,5 @@ export class User {
     role: number;
     fboId: number;
     groupId: number;
+    impersonatedRole: number;
 }
