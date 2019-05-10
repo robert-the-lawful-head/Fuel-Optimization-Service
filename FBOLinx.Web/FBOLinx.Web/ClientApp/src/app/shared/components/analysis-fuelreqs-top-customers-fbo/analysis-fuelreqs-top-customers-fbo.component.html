@@ -2,7 +2,7 @@
     <mat-spinner></mat-spinner>
 </div>
 <div *ngIf="topCustomersData">
-    <h5 class="mt-0">Top Customers (past 6 months)</h5>
+    <h5 class="mt-0 cursor-pointer" (click)="redirectClicked()">Top Customers <i class="fa fa-external-link" aria-hidden="true"></i></h5>
     <div class="table-responsive mb-3" *ngIf="topCustomersData.length > 0">
         <table class="table table-sm">
             <tbody>

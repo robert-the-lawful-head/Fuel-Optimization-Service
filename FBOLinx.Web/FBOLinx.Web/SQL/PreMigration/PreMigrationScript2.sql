@@ -148,3 +148,11 @@ GO
 ALTER TABLE EmailContent
     ADD [Subject] varchar(500)
 GO    
+
+ALTER TABLE FBOPreferences
+    ADD [Omit100LLRetail] bit
+GO
+
+ALTER TABLE FBOPreferences
+    ADD [Omit100LLCost] bit
+GO

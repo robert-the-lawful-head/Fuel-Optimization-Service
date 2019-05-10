@@ -1,7 +1,7 @@
 <ni-card [bgColor]="'info'" [outline]="true" class="info-card" *ngIf="options.useCard">
-    <h6 class="mt-0 title">Fuel Dispatches</h6>
+    <h6 class="mt-0 title cursor-pointer" (click)="redirectClicked()">Fuel Orders <i class="fa fa-external-link" aria-hidden="true"></i></h6>
     <div class="count">{{totalOrders | number}}</div>
-    <small>Since subscription start</small>
+    <small>Since {{startDateString}}</small>
     <mat-icon>shopping_basket</mat-icon>
 </ni-card>
 

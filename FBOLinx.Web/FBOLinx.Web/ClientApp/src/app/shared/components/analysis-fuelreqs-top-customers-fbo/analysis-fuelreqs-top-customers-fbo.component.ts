@@ -26,14 +26,22 @@ export class AnalysisFuelreqsTopCustomersFboComponent implements OnInit {
     }
 
     ngOnInit() {
-        let startDate = moment().add(-6, 'M').format('MM/DD/YYYY');
-        let endDate = moment().format('MM/DD/YYYY');
-        this.fuelreqsService.topCustomersForFbo(this.sharedService.currentUser.fboId, {startDateTime: startDate, endDateTime: endDate}).subscribe((data: any) => {
-            this.topCustomersData = data;
-        });
+        this.refreshData();
     }
 
     public viewAllCustomersClicked() {
         this.router.navigate(['/default-layout/customers/']);
+    }
+
+    public redirectClicked() {
+        this.router.navigate(['/default-layout/customers']);
+    }
+
+    public refreshData() {
+        let startDate = this.sharedService.dashboardSettings.filterStartDate;
+        let endDate = this.sharedService.dashboardSettings.filterEndDate;
+        this.fuelreqsService.topCustomersForFbo(this.sharedService.currentUser.fboId, {startDateTime: startDate, endDateTime: endDate}).subscribe((data: any) => {
+            this.topCustomersData = data;
+        });
     }
 }

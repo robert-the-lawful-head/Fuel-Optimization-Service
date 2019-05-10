@@ -34,8 +34,16 @@ export class AnalysisPriceOrdersChartComponent implements OnInit {
     }
 
     ngOnInit() {
-        let startDate = moment().add(-6, 'M').format('MM/DD/YYYY');
-        let endDate = moment().format('MM/DD/YYYY');
+        this.refreshData();
+    }
+
+    public redirectClicked() {
+        this.router.navigate(['/default-layout/fbo-prices']);
+    }
+
+    public refreshData() {
+        let startDate = this.sharedService.dashboardSettings.filterStartDate;
+        let endDate = this.sharedService.dashboardSettings.filterEndDate;
         this.fuelreqsService.totalOrdersByMonthForFbo(this.sharedService.currentUser.fboId, { startDateTime: startDate, endDateTime: endDate }).subscribe((data: any) => {
             this.totalOrdersData = data;
             this.loadChart();
@@ -76,7 +84,7 @@ export class AnalysisPriceOrdersChartComponent implements OnInit {
             },
             'valueAxes': [{
                 'id': 'a1',
-                'title': 'Total Orders',
+                'title': 'Number of Fuel Orders',
                 'gridAlpha': 0,
                 'axisAlpha': 0
             }, {
@@ -89,7 +97,7 @@ export class AnalysisPriceOrdersChartComponent implements OnInit {
             'graphs': [{
                 'id': 'g1',
                 'valueField': 'totalOrders',
-                'title': 'Total Orders',
+                'title': 'Number of Fuel Orders',
                 'type': 'column',
                 'fillAlphas': 0.9,
                 'valueAxis': 'a1',

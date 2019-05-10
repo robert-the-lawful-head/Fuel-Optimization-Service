@@ -29,8 +29,12 @@ export class StatisticsOrdersByLocationComponent {
     }
 
     ngOnInit() {
-        let startDate = moment().add(-1, 'M').format('MM/DD/YYYY');
-        let endDate = moment().format('MM/DD/YYYY');
+        this.refreshData();
+    }
+
+    public refreshData() {
+        let startDate = this.sharedService.dashboardSettings.filterStartDate;
+        let endDate = this.sharedService.dashboardSettings.filterEndDate;
         this.fuelreqsService.getOrdersByLocation({ StartDateTime: startDate, EndDateTime: endDate, ICAO: '' , FboId: this.sharedService.currentUser.fboId}).subscribe((data: any) => {
             this.totalOrders = data.totalOrders;
             this.icao = data.icao;

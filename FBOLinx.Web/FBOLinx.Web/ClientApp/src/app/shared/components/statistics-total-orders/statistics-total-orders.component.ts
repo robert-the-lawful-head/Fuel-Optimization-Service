@@ -20,17 +20,28 @@ export class StatisticsTotalOrdersComponent implements OnInit {
 
     //Public Members
     public totalOrders: number;
+    public startDateString: string;
 
     /** statistics-total-orders ctor */
-    constructor(private fuelreqsService: FuelreqsService,
+    constructor(private router: Router,
+        private fuelreqsService: FuelreqsService,
         private sharedService: SharedService) {
         if (!this.options)
             this.options = {};
     }
 
     ngOnInit() {
-        let startDate = moment().add(-6, 'M').format('MM/DD/YYYY');
-        let endDate = moment().format('MM/DD/YYYY');
+        this.refreshData();
+    }
+
+    public redirectClicked() {
+        this.router.navigate(['/default-layout/fuelreqs']);
+    }
+
+    public refreshData() {
+        let startDate = this.sharedService.dashboardSettings.filterStartDate;
+        let endDate = this.sharedService.dashboardSettings.filterEndDate;
+        this.startDateString = moment(startDate).format('L');
         this.fuelreqsService.getForFboCount(this.sharedService.currentUser.fboId).subscribe((data: any) => {
             this.totalOrders = data;
         });

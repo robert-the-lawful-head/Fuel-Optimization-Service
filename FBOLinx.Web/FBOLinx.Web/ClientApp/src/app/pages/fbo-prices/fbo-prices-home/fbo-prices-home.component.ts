@@ -93,7 +93,6 @@ export class FboPricesHomeComponent implements OnInit {
     //Public Methods
 
     public distributePricingClicked() {
-        this.isSaved = true;
         const dialogRef = this.distributionDialog.open(DistributionWizardMainComponent, {
             data: {
                 fboId: this.sharedService.currentUser.fboId,
@@ -150,8 +149,22 @@ export class FboPricesHomeComponent implements OnInit {
                 this.savePriceChanges(stagedPrice);
             }
         }
+
+        if (this.fboPreferences.oid > 0) {
+            this.fboPreferencesService.update(this.fboPreferences).subscribe((data: any) => {});
+        } else {
+            this.fboPreferencesService.add(this.fboPreferences).subscribe((data: any) => {
+                this.fboPreferences.oid = data.oid;
+            });
+        }
+
         this.isSaved = true;
         this.requiresUpdate = false;
+    }
+
+    public fboPreferenceChange() {
+        this.requiresUpdate = true;
+        this.isSaved = false;
     }
 
     //Private Methods

@@ -9,6 +9,7 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Remotion.Linq.Clauses;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -59,22 +60,69 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var pricingTemplate = await GetAllPricingTemplates().Include("CustomerMargins").Where((x => x.Fboid == fboId)).ToListAsync();
+            var result = await (from p in _context.PricingTemplate
+                join cm in (from c in _context.CustomerMargins group c by new {c.TemplateId} into cmResults select new {templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault())} )on p.Oid equals cm.templateId into leftJoinCustomerMargins
+                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
+                join fp in (from f in _context.Fboprices
+                    where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                          && f.Fboid == fboId
+                    select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
+                from fp in leftJoinFboPrices.DefaultIfEmpty()
+                where p.Fboid == fboId
+                select new PricingTemplatesGridViewModel
+                {
+                    CustomerId = p.CustomerId,
+                    Default = p.Default,
+                    Fboid = p.Fboid,
+                    Margin = cm.maxPrice,
+                    MarginType = p.MarginType,
+                    Name = p.Name,
+                    Notes = p.Notes,
+                    Oid = p.Oid,
+                    Type = p.Type,
+                    IntoPlanePrice = fp.Price.GetValueOrDefault() +
+                                     cm.maxPrice
+                }).ToListAsync();
 
-            var pricingTemplatesVM = pricingTemplate.Select(p => new PricingTemplatesGridViewModel
+            return Ok(result);
+        }
+
+        // GET: api/PricingTemplates/fbo/5/default
+        [HttpGet("fbo/{fboId}/default")]
+        public async Task<IActionResult> GetDefaultPricingTemplateByFboId([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
             {
-                CustomerId = p.CustomerId,
-                Default = p.Default,
-                Fboid = p.Fboid,
-                Margin = p.CustomerMargins.DefaultIfEmpty().Max(x => x?.Amount ?? 0),
-                MarginType = p.MarginType,
-                Name = p.Name,
-                Notes = p.Notes,
-                Oid = p.Oid,
-                Type = p.Type
-            });
+                return BadRequest(ModelState);
+            }
 
-            return Ok(pricingTemplatesVM);
+            var result = await (from p in _context.PricingTemplate
+                join cm in (from c in _context.CustomerMargins group c by new { c.TemplateId } into cmResults select new { templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault()) }) on p.Oid equals cm.templateId into leftJoinCustomerMargins
+                                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
+                join fp in (from f in _context.Fboprices
+                    where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                          && f.Fboid == fboId
+                    select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
+                from fp in leftJoinFboPrices.DefaultIfEmpty()
+                where p.Default.GetValueOrDefault()
+                      && p.Fboid == fboId
+                select new PricingTemplatesGridViewModel
+                {
+                    CustomerId = p.CustomerId,
+                    Default = p.Default,
+                    Fboid = p.Fboid,
+                    Margin = cm.maxPrice,
+                    MarginType = p.MarginType,
+                    Name = p.Name,
+                    Notes = p.Notes,
+                    Oid = p.Oid,
+                    Type = p.Type,
+                    IntoPlanePrice = fp.Price.GetValueOrDefault() +
+                                     cm.maxPrice
+                }).ToListAsync();
+
+
+            return Ok(result);
         }
 
         // PUT: api/PricingTemplates/5

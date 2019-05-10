@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Pricing Expired</h1>
+<div mat-dialog-content class="mt-1 mb-2">
+    <div class="text-center">
+        Your fuel pricing has expired.  Please update your cost/retail values.
+    </div>
+</div>
+<div mat-dialog-actions>
+    <div class="text-center col-12">
+        <button ni-button [view]="'accent'" (click)="onConfirmClicked()" class="mr-1">Confirm</button>
+        <button ni-button [view]="'warning'" (click)="onRemindMeLaterClick()">Remind Me Later</button>
+        <button mat-stroked-button (click)="onCancelClick()">No Thanks</button>
+    </div>
+</div>

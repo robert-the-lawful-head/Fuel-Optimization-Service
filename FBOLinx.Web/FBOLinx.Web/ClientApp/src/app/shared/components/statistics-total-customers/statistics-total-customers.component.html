@@ -1,5 +1,5 @@
 <ni-card [bgColor]="'info'" [outline]="true" class="info-card" *ngIf="options.useCard">
-    <h6 class="mt-0 title">Flight Deptartments</h6>
+    <h6 class="mt-0 title cursor-pointer" (click)="redirectClicked()">Flight Departments <i class="fa fa-external-link" aria-hidden="true"></i></h6>
     <div class="count">{{totalCustomers | number}}</div>
     <small>Currently active</small>
     <mat-icon>person</mat-icon>

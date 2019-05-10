@@ -64,6 +64,7 @@ namespace FBOLinx.Web.Controllers
             var result = (from p in products
                 join f in (from f in _context.Fboprices
                         where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                        && f.Fboid == fboId
                         select f) on new {Product = p.Description, FboId = fboId} equals new
                     {
                         f.Product,

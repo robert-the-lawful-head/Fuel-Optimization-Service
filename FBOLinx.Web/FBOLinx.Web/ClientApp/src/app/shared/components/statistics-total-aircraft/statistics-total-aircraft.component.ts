@@ -20,13 +20,22 @@ export class StatisticsTotalAircraftComponent implements OnInit {
     public totalAircraft: number;
 
     /** statistics-total-aircraft ctor */
-    constructor(private customeraircraftService: CustomeraircraftsService,
+    constructor(private router: Router,
+        private customeraircraftService: CustomeraircraftsService,
         private sharedService: SharedService) {
         if (!this.options)
             this.options = {};
     }
 
     ngOnInit() {
+        this.refreshData();
+    }
+
+    public redirectClicked() {
+        this.router.navigate(['/default-layout/customers']);
+    }
+
+    public refreshData() {
         this.customeraircraftService.getCustomerAircraftsCountByGroupId(this.sharedService.currentUser.groupId).subscribe((data: any) => {
             this.totalAircraft = data;
         });
