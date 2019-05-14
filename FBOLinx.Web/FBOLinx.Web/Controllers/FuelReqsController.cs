@@ -106,6 +106,49 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqVM);
         }
 
+        // POST: api/FuelReqs/fbo/5/daterange
+        [HttpPost("fbo/{fboId}/daterange")]
+        public async Task<IActionResult> GetFuelReqsByFbo([FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            var fuelReq = await GetAllFuelRequests().Include("Customer").Include("CustomerAircraft").Include("Fbo").Where((x => x.Fboid == fboId && x.Eta > request.StartDateTime && x.Eta < request.EndDateTime)).ToListAsync();
+
+            var fuelReqVM = fuelReq.Select(f => new FuelReqsGridViewModel
+            {
+                Oid = f.Oid,
+                ActualPpg = f.ActualPpg,
+                ActualVolume = f.ActualVolume,
+                Archived = f.Archived,
+                Cancelled = f.Cancelled,
+                CustomerId = f.CustomerId,
+                DateCreated = f.DateCreated,
+                DispatchNotes = f.DispatchNotes,
+                Eta = f.Eta,
+                Etd = f.Etd,
+                Icao = f.Icao,
+                Notes = f.Notes,
+                QuotedPpg = f.QuotedPpg,
+                QuotedVolume = f.QuotedVolume,
+                Source = f.Source,
+                SourceId = f.SourceId,
+                TimeStandard = f.TimeStandard,
+                CustomerName = f.Customer?.Company,
+                TailNumber = f.CustomerAircraft?.TailNumber,
+                FboName = f.Fbo?.Fbo
+            }).OrderByDescending((x => x.Oid));
+
+            return Ok(fuelReqVM);
+        }
+
         // Get: api/FuelReqs/fbo/5
         [HttpGet("fbo/{fboId}/count")]
         public async Task<IActionResult> GetFuelReqsByFboCount([FromRoute] int fboId)

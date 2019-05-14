@@ -2,7 +2,8 @@
 
     <div>
         <mat-form-field>
-            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Name or Type">
+            <span matPrefix><i class="fa fa-search"></i></span>
         </mat-form-field>
 
         <table mat-table [dataSource]="pricingTemplatesDataSource" class="col-md-12" matSort matSortActive="name" matSortDirection="asc">

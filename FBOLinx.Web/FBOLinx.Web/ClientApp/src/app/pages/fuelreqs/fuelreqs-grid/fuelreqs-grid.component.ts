@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angu
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 
 //Services
+import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
     selector: 'app-fuelreqs-grid',
@@ -14,17 +15,19 @@ export class FuelreqsGridComponent {
     @Output() fuelreqDeleted = new EventEmitter<any>();
     @Output() newFuelreqClicked = new EventEmitter<any>();
     @Output() editFuelreqClicked = new EventEmitter<any>();
+    @Output() dateFilterChanged = new EventEmitter<any>();
     @Input() fuelreqsData: Array<any>;
 
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
     displayedColumns: string[] = ['oid', 'customer', 'eta', 'icao', 'tailNumber', 'fbo', 'dispatchNotes', 'source'];
+    public dashboardSettings: any;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
-    constructor() {
-
+    constructor(private sharedService: SharedService) {
+        this.dashboardSettings = this.sharedService.dashboardSettings;
     }
 
     ngOnInit() {
@@ -39,5 +42,9 @@ export class FuelreqsGridComponent {
 
     public applyFilter(filterValue: string) {
         this.fuelreqsDataSource.filter = filterValue.trim().toLowerCase();
+    }
+
+    public applyDateFilterChange() {
+        this.dateFilterChanged.emit();
     }
 }

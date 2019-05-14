@@ -3,7 +3,8 @@
 <div>
 
     <mat-form-field>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by ICAO or FBO Name">
+        <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
 
     <table mat-table [dataSource]="fbosDataSource" class="col-md-12" matSort matSortActive="icao" matSortDirection="asc">

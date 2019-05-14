@@ -64,8 +64,8 @@ namespace FBOLinx.Web.Controllers
                 join cm in (from c in _context.CustomerMargins group c by new {c.TemplateId} into cmResults select new {templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault())} )on p.Oid equals cm.templateId into leftJoinCustomerMargins
                 from cm in leftJoinCustomerMargins.DefaultIfEmpty()
                 join fp in (from f in _context.Fboprices
-                    where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
-                          && f.Fboid == fboId
+                    where f.EffectiveFrom.HasValue && f.EffectiveFrom <= DateTime.Now && f.EffectiveTo.HasValue && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                          && f.Fboid.GetValueOrDefault() == fboId
                     select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
                 from fp in leftJoinFboPrices.DefaultIfEmpty()
                 where p.Fboid == fboId
@@ -80,8 +80,8 @@ namespace FBOLinx.Web.Controllers
                     Notes = p.Notes,
                     Oid = p.Oid,
                     Type = p.Type,
-                    IntoPlanePrice = fp.Price.GetValueOrDefault() +
-                                     cm.maxPrice
+                    IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
+                                     (cm == null ? 0 : cm.maxPrice)
                 }).ToListAsync();
 
             return Ok(result);
@@ -98,14 +98,14 @@ namespace FBOLinx.Web.Controllers
 
             var result = await (from p in _context.PricingTemplate
                 join cm in (from c in _context.CustomerMargins group c by new { c.TemplateId } into cmResults select new { templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault()) }) on p.Oid equals cm.templateId into leftJoinCustomerMargins
-                                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
+                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
                 join fp in (from f in _context.Fboprices
-                    where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
-                          && f.Fboid == fboId
+                    where f.EffectiveFrom.HasValue && f.EffectiveFrom <= DateTime.Now && f.EffectiveTo.HasValue && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                          && f.Fboid.GetValueOrDefault() == fboId
                     select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
                 from fp in leftJoinFboPrices.DefaultIfEmpty()
-                where p.Default.GetValueOrDefault()
-                      && p.Fboid == fboId
+                where p.Fboid == fboId
+                    && p.Default.GetValueOrDefault()
                 select new PricingTemplatesGridViewModel
                 {
                     CustomerId = p.CustomerId,
@@ -117,8 +117,8 @@ namespace FBOLinx.Web.Controllers
                     Notes = p.Notes,
                     Oid = p.Oid,
                     Type = p.Type,
-                    IntoPlanePrice = fp.Price.GetValueOrDefault() +
-                                     cm.maxPrice
+                    IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
+                                     (cm == null ? 0 : cm.maxPrice)
                 }).ToListAsync();
 
 

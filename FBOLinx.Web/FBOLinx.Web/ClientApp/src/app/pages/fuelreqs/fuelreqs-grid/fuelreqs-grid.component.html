@@ -1,8 +1,29 @@
 <div>
 
-    <mat-form-field>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-    </mat-form-field>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-md-6">
+                <mat-form-field>
+                    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Customer, TailNumber, FBO, etc.">
+                    <span matPrefix><i class="fa fa-search"></i></span>
+                </mat-form-field>
+            </div>
+            <div class="col-6 col-md-3">
+                <mat-form-field>
+                    <input matInput [max]="dashboardSettings.filterEndDate" [(ngModel)]="dashboardSettings.filterStartDate" [matDatepicker]="dashboardSettingsStartDateFilter" (focus)="dashboardSettingsStartDateFilter.open()" placeholder="Start Date" (dateChange)="applyDateFilterChange({})">
+                    <mat-datepicker-toggle matSuffix [for]="dashboardSettingsStartDateFilter"></mat-datepicker-toggle>
+                    <mat-datepicker #dashboardSettingsStartDateFilter disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-6 col-md-3">
+                <mat-form-field>
+                    <input matInput [min]="dashboardSettings.filterStartDate" [(ngModel)]="dashboardSettings.filterEndDate" [matDatepicker]="dashboardSettingsEndDateFilter" (focus)="dashboardSettingsEndDateFilter.open()" placeholder="End Date" (dateChange)="applyDateFilterChange({})">
+                    <mat-datepicker-toggle matSuffix [for]="dashboardSettingsEndDateFilter"></mat-datepicker-toggle>
+                    <mat-datepicker #dashboardSettingsEndDateFilter disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
 
     <table mat-table [dataSource]="fuelreqsDataSource" class="col-md-12" matSort matSortActive="oid" matSortDirection="desc">
         <ng-container matColumnDef="oid">
@@ -38,7 +59,7 @@
         <ng-container matColumnDef="dispatchNotes">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Notes</th>
             <td mat-cell *matCellDef="let fuelreq">
-                <a style="text-underline: blue" *ngIf="fuelreq.notes"  matTooltip="{{fuelreq.notes}}" matTooltipPosition="before">Notes</a>
+                <a style="text-underline: blue" *ngIf="fuelreq.notes" matTooltip="{{fuelreq.notes}}" matTooltipPosition="before">Notes</a>
             </td>
         </ng-container>
 

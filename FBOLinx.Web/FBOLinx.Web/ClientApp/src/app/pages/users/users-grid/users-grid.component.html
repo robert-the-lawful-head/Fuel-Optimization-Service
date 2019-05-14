@@ -1,7 +1,8 @@
 <div>
 
     <mat-form-field>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Name, Role, Username, etc.">
+        <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
 
     <table mat-table [dataSource]="usersDataSource" class="col-md-12" matSort matSortActive="lastName" matSortDirection="asc">
