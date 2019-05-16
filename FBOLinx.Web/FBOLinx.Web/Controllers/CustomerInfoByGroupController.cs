@@ -291,7 +291,17 @@ namespace FBOLinx.Web.Controllers
             FBOLinx.Web.Services.PriceFetchingService priceFetchingService =
                 new FBOLinx.Web.Services.PriceFetchingService(_context);
             var customerPricingResults = await priceFetchingService.GetCustomerPricingAsync(fboId, groupId);
+            var customerAircraft = (from aircraftByCustomer in _context.CustomerAircrafts
+                where aircraftByCustomer.GroupId == groupId
+                group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
+                into results
+                select new {results.Key.CustomerId, Tails = string.Join(",", results.Select(x => x.TailNumber))});
             var customerGridVM = (from results in customerPricingResults
+                                  join ca in customerAircraft on results.CustomerId equals ca.CustomerId
+                                  //join ca in (from aircraftByCustomer in _context.CustomerAircrafts
+                                  //            where aircraftByCustomer.GroupId == groupId
+                                  //            group aircraftByCustomer by new {} into results select new {results.Key.groupId, }) on new {results.CustomerId, results.GroupId} equals new {ca.CustomerId, ca.GroupId}
+                                  into leftJoinCA from ca in leftJoinCA.DefaultIfEmpty()    
                 group results by new
                 {
                     results.CustomerId,
@@ -307,7 +317,8 @@ namespace FBOLinx.Web.Controllers
                     results.NeedsAttention,
                     results.CustomerCompanyType,
                     results.CustomerCompanyTypeName,
-                    results.HasBeenViewed
+                    results.HasBeenViewed,
+                    Tails = ca?.Tails
                 }
                 into resultsGroup
                 select new CustomersGridViewModel()
@@ -327,7 +338,8 @@ namespace FBOLinx.Web.Controllers
                     CustomerCompanyType = resultsGroup.Key.CustomerCompanyType,
                     CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
                     HasBeenViewed = resultsGroup.Key.HasBeenViewed,
-                    AllInPrice = (from customerPricing in resultsGroup select customerPricing.AllInPrice).Max()
+                    AllInPrice = (from customerPricing in resultsGroup select customerPricing.AllInPrice).Max(),
+                    TailNumbers = resultsGroup.Key.Tails
                 }).ToList();
             
             return customerGridVM;

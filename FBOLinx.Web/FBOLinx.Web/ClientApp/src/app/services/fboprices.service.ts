@@ -24,7 +24,7 @@ export class FbopricesService {
     }
 
     public getFbopricesByFboIdAndProductCurrent(fboId, product) {
-        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/product/' + product + '/current', { headers: this.headers });
+        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/product/' + encodeURIComponent(product) + '/current', { headers: this.headers });
     }
 
     public getPricesByMonthForFbo(fboId, payload) {

@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 //Services
 import { CustomermarginsService } from '../../../services/customermargins.service';
+import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -52,6 +53,8 @@ export class PricingTemplatesEditComponent {
         { text: 'Inactive', value: 3 }
     ];
     public isSaving: boolean = false;
+    public currentPrice: any;
+    public product: any;
 
     /** pricing-templates-edit ctor */
     constructor(private route: ActivatedRoute,
@@ -59,22 +62,26 @@ export class PricingTemplatesEditComponent {
         private customerMarginsService: CustomermarginsService,
         private priceTiersService: PricetiersService,
         private pricingTemplatesService: PricingtemplatesService,
+        private fbopricesService: FbopricesService,
         private sharedService: SharedService,
         public distributionDialog: MatDialog    ) {
 
         this.sharedService.emitChange(this.pageTitle);
-
+        
         //Check for passed in id
         let id = this.route.snapshot.paramMap.get('id');
-        if (!id)
+        if (!id) {
+            this.loadCurrentPrice();
             return;
-        else {
+        } else {
             this._RequiresRouting = true;
-            this.pricingTemplatesService.get({oid: id}).subscribe((data: any) => {
+            this.pricingTemplatesService.get({ oid: id }).subscribe((data: any) => {
                 this.pricingTemplate = data;
-                this.customerMarginsService.getCustomerMarginsByPricingTemplateId(this.pricingTemplate.oid).subscribe((data: any) => {
-                    this.pricingTemplate.customerMargins = data;
-                });
+                this.customerMarginsService.getCustomerMarginsByPricingTemplateId(this.pricingTemplate.oid).subscribe(
+                    (data: any) => {
+                        this.pricingTemplate.customerMargins = data;
+                        this.loadCurrentPrice();
+                    });
             });
         }
     }
@@ -148,6 +155,10 @@ export class PricingTemplatesEditComponent {
         });
     }
 
+    public customerMarginAmountChanged(customerMargin) {
+        this.calculateItpForMargin(customerMargin);
+    }
+
     //Private Methods
     private saveCustomerMargins() {
         this.pricingTemplate.customerMargins.forEach((customerMargin: any) => {
@@ -162,5 +173,29 @@ export class PricingTemplatesEditComponent {
                     this.savePricingTemplateClicked.emit();
                 this.isSaving = false;
             });
+    }
+
+    private loadCurrentPrice() {
+        this.fbopricesService.getFbopricesByFboIdAndProductCurrent(this.sharedService.currentUser.fboId, this.getCurrentProductForMarginType()).subscribe((data: any) => {
+            this.currentPrice = data;
+            for (let margin of this.pricingTemplate.customerMargins) {
+                this.calculateItpForMargin(margin);
+            }
+        });
+    }
+
+    private getCurrentProductForMarginType() {
+        if (this.pricingTemplate.marginType == 0)
+            return 'JetA Cost';
+        return 'JetA Retail';
+    }
+
+    private calculateItpForMargin(customerMargin) {
+        if (this.pricingTemplate.marginType == 0)
+            customerMargin.itp = this.currentPrice.price + Math.abs(customerMargin.amount);
+        else if (this.pricingTemplate.marginType == 1)
+            customerMargin.itp = this.currentPrice.price - Math.abs(customerMargin.amount);
+        else
+            customerMargin.itp = Math.abs(customerMargin.amount);
     }
 }

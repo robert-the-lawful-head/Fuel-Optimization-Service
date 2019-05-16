@@ -34,6 +34,9 @@ export class CustomersGridComponent implements OnInit {
     public displayedColumns: string[] = ['hasBeenViewed', 'company', 'customerCompanyTypeName', 'pricingTemplateId', 'allInPrice', 'edit', 'delete'];
     public resultsLength: number = 0;
     public allCustomerAircraft: any[];
+    public customerFilterType: number = 0;
+
+    
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -53,11 +56,7 @@ export class CustomersGridComponent implements OnInit {
         this.loadCustomerAircraftFullList();
         if (!this.customersData)
             return;
-        this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-        this.customersDataSource = new MatTableDataSource(this.customersData);
-        this.customersDataSource.sort = this.sort;
-        this.customersDataSource.paginator = this.paginator;
-        this.resultsLength = this.customersData.length;
+        this.refreshCustomerDataSource();
     }
 
     //Public Methods
@@ -140,6 +139,10 @@ export class CustomersGridComponent implements OnInit {
 
     }
 
+    public customerFilterTypeChanged(event) {
+        this.refreshCustomerDataSource();
+    }
+
     //Private Methods
     private loadCustomerAircraftFullList() {
         this.customeraircraftsService.getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId).subscribe(
@@ -147,5 +150,17 @@ export class CustomersGridComponent implements OnInit {
                 any) => {
                 this.allCustomerAircraft = data;
             });
+    }
+
+    private refreshCustomerDataSource() {
+        this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+        this.customersDataSource = new MatTableDataSource(this.customersData.filter((element: any, index: number, array: any[]) => {
+            if (this.customerFilterType == 0)
+                return true;
+            return !element.hasBeenViewed;
+        }));
+        this.customersDataSource.sort = this.sort;
+        this.customersDataSource.paginator = this.paginator;
+        this.resultsLength = this.customersData.length;
     }
 }

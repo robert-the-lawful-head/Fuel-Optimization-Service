@@ -52,8 +52,11 @@
                 </div>
                 <div class="col">
                     <mat-form-field>
-                        <input matInput placeholder="Margin" [(ngModel)]="customerMargin.amount" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
+                        <input matInput placeholder="Margin" [(ngModel)]="customerMargin.amount" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
                     </mat-form-field>
+                </div>
+                <div class="col">
+                    <div >{{customerMargin.itp | currency:'USD'}}</div>
                 </div>
                 <div class="col">
                     <button mat-stroked-button color="warn" (click)="deleteCustomerMargin(customerMargin)">Delete</button>

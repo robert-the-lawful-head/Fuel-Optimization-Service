@@ -70,7 +70,7 @@ namespace FBOLinx.Web.Controllers
                 Min = c.PriceTier.Min,
                 Max = c.PriceTier.Max,
                 MaxEntered = c.PriceTier.MaxEntered
-            }));
+            })).OrderBy(x => x.Min);
 
             return Ok(customerMarginsVM);
         }

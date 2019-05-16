@@ -30,6 +30,7 @@ namespace FBOLinx.Web.ViewModels
         public int? CustomerCompanyType { get; set; }
         public string CustomerCompanyTypeName { get; set; }
         public bool HasBeenViewed { get; set; }
+        public string TailNumbers { get; set; }
 
         public double? AllInPrice{ get; set; }
 

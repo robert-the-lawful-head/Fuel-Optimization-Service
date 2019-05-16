@@ -136,11 +136,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fboprices = await GetAllFboPrices().Where((f => f.Fboid == fboId
-                                                                && f.Product != null &&
+            var fboprices = await GetAllFboPrices().Where((f => f.Fboid == fboId && 
+                                                                f.Product != null &&
                                                                 f.Product.ToLower() == product.ToLower() &&
-                                                                f.EffectiveFrom <= DateTime.Now &&
-                                                                f.EffectiveTo < DateTime.Now)).ToListAsync();
+                                                                f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1))).FirstOrDefaultAsync();
 
             return Ok(fboprices);
         }

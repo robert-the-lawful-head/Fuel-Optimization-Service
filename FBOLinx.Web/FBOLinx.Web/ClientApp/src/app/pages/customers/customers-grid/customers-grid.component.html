@@ -1,10 +1,22 @@
 <div #customerTableContainer>
     <div class="container-fluid">
         <div class="row">
-            <div class="col">
+            <div class="col col-md-6">
                 <mat-form-field>
                     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Company, Tail, etc.">
                     <span matPrefix><i class="fa fa-search"></i></span>
+                </mat-form-field>
+            </div>
+            <div class="col col-md-3">
+                <mat-form-field>
+                    <mat-select placeholder="Search Within" [(ngModel)]="customerFilterType" (selectionChange)="customerFilterTypeChanged($event)">
+                        <mat-option [value]="0">
+                            All Customers
+                        </mat-option>
+                        <mat-option [value]="1">
+                            Customers Needing Attention
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
         </div>
@@ -15,7 +27,7 @@
         <ng-container matColumnDef="hasBeenViewed">
             <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
             <td mat-cell *matCellDef="let customer">
-                <ni-badge *ngIf="!customer.hasBeenViewed" [color]="'warning'" [borderRadius]="false" [arrow]="'right'">New!</ni-badge>
+                <ni-badge *ngIf="!customer.hasBeenViewed" [color]="'warning'" [borderRadius]="false" [arrow]="'right'">Needs Attention</ni-badge>
             </td>
         </ng-container>
         <ng-container matColumnDef="company">
