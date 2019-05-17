@@ -103,13 +103,19 @@ export class PricingTemplatesEditComponent {
     }
 
     public deleteCustomerMargin(customerMargin) {
-        this.customerMarginsService.remove(customerMargin).subscribe((data: any) => {
-            this.priceTiersService.remove({ oid: customerMargin.priceTierId }).subscribe((data: any) => {
-                this.pricingTemplate.customerMargins.splice(
-                    this.pricingTemplate.customerMargins.indexOf(customerMargin),
-                    1);
+        if (customerMargin.id == 0) {
+            this.pricingTemplate.customerMargins.splice(
+                this.pricingTemplate.customerMargins.indexOf(customerMargin),
+                1);
+        } else {
+            this.customerMarginsService.remove(customerMargin).subscribe((data: any) => {
+                this.priceTiersService.remove({ oid: customerMargin.priceTierId }).subscribe((data: any) => {
+                    this.pricingTemplate.customerMargins.splice(
+                        this.pricingTemplate.customerMargins.indexOf(customerMargin),
+                        1);
+                });
             });
-        });
+        }
     }
 
     public addCustomerMargin() {
@@ -156,6 +162,14 @@ export class PricingTemplatesEditComponent {
     }
 
     public customerMarginAmountChanged(customerMargin) {
+        var indexOfMargin = this.pricingTemplate.customerMargins.indexOf(customerMargin);
+        if (indexOfMargin > 0) {
+            var previousTier = this.pricingTemplate.customerMargins[indexOfMargin - 1];
+            if ((this.pricingTemplate.marginType == 0 || this.pricingTemplate.marginType == 2) && Math.abs(previousTier.amount) < Math.abs(customerMargin.amount))
+                customerMargin.amount = previousTier.amount + .01;
+            else if (this.pricingTemplate.marginType == 1 && Math.abs(previousTier.amount) > Math.abs(customerMargin.amount))
+                customerMargin.amount = previousTier.amount - .01;
+        }
         this.calculateItpForMargin(customerMargin);
     }
 

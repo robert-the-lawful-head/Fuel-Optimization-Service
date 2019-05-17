@@ -7,8 +7,13 @@
 <ni-card title="{{pricingTemplate.name}}" class="mb-0" *ngIf="pricingTemplate && !isSaving">
     <div>
         <div class="container-fluid">
-            <div>
-                <h5>General Information</h5>
+            <div class="row">
+                <div class="col-6">
+                    <h5>General Information</h5>
+                </div>
+                <div class="col-6 text-right font-italic" *ngIf="currentPrice && [0,1].indexOf(pricingTemplate.marginType) > -1">
+                    <h5 style="font-weight: 400;">{{currentPrice.product}}: {{currentPrice.price | currency:'USD'}}</h5>
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
@@ -31,45 +36,56 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-9">
+            <div class="row mt-2">
+                <div class="col">
                     <h5>Price Tiers</h5>
                 </div>
-                <div class="col-3">
-                    <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">Add New</button>
-                </div>
             </div>
-            <div *ngFor="let customerMargin of pricingTemplate.customerMargins" class="row">
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput placeholder="Min" (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" />
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput placeholder="Max" disabled="disabled" [(ngModel)]="customerMargin.max" />
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput placeholder="Margin" [(ngModel)]="customerMargin.amount" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <div >{{customerMargin.itp | currency:'USD'}}</div>
-                </div>
-                <div class="col">
-                    <button mat-stroked-button color="warn" (click)="deleteCustomerMargin(customerMargin)">Delete</button>
-                </div>
+            <div class="row">
+                <table class="mat-table" style="min-width: 75%;">
+                    <thead>
+                    <tr class="mat-header-row">
+                        <th class="text-center">Min. (gal)</th>
+                        <th class="text-center">Margin</th>
+                        <th class="text-center">ITP</th>
+                        <th class="text-right">
+                            <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">Add New</button>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let customerMargin of pricingTemplate.customerMargins" class="mat-row">
+                        <td class="mat-cell">
+                            <mat-form-field>
+                                <input matInput (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" />
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell">
+                            <div>
+                                <mat-form-field>
+                                    <input matInput [(ngModel)]="customerMargin.amount" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
+                                </mat-form-field>
+                            </div>
+                        </td>
+                        <td class="mat-cell text-center font-weight-bold font-italic text-right">
+                            <div>{{customerMargin.itp | currency:'USD'}}</div>
+                        </td>
+                        <td class="text-right mat-cell">
+                            <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomerMargin(customerMargin)">Delete</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            <div>
+
+            <div class="row mt-2">
                 <h5>Notes</h5>
             </div>
-            <div>
+            <div class="row">
                 <ejs-richtexteditor id='rteNotes' [(value)]='pricingTemplate.notes'></ejs-richtexteditor>
             </div>
-            <div>
-                <br/>
+            <div class="row">
+                <br />
             </div>
             <div class="row">
                 <button mat-stroked-button color="accent" (click)="savePricingTemplate()">Save</button>
