@@ -97,7 +97,8 @@ export class FboPricesHomeComponent implements OnInit {
             data: {
                 fboId: this.sharedService.currentUser.fboId,
                 groupId: this.sharedService.currentUser.groupId
-            }
+            },
+            disableClose: true
         });
 
         dialogRef.afterClosed().subscribe(result => {

@@ -25,17 +25,19 @@ body {
     .mat-nav-list .mat-subheader {
         font-family: $main-ff !important;
     }
-
     /*.mat-dialog-actions {
         flex-direction: column;
     }*/
-
     [mat-button],
     [mat-fab],
     [mat-icon-button],
     [mat-mini-fab],
     [mat-raised-button] {
         font-weight: inherit;
+    }
+
+    .mat-tooltip {
+        font-size: inherit !important;
     }
 
     .mat-button-toggle-label {

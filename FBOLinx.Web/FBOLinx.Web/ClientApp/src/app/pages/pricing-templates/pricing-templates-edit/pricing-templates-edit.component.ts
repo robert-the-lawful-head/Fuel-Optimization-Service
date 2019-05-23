@@ -147,13 +147,14 @@ export class PricingTemplatesEditComponent {
     }
 
     public distributePricingTemplate() {
-        var pricingTemplates = [this.pricingTemplate];
+        var pricingTemplate = this.pricingTemplate;
         const dialogRef = this.distributionDialog.open(DistributionWizardMainComponent, {
             data: {
-                pricingTemplates: pricingTemplates,
+                pricingTemplate: pricingTemplate,
                 fboId: this.sharedService.currentUser.fboId,
                 groupId: this.sharedService.currentUser.groupId
-            }
+            },
+            disableClose: true
         });
 
         dialogRef.afterClosed().subscribe(result => {

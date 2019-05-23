@@ -28,6 +28,12 @@ namespace FBOLinx.Web.Services
 
             try
             {
+                var defaultPricingTemplate = await _context.PricingTemplate
+                    .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
+                int defaultPricingTemplateId = 0;
+                if (defaultPricingTemplate != null)
+                    defaultPricingTemplateId = defaultPricingTemplate.Oid;
+
                 var customerPricingResults = await (from cg in _context.CustomerInfoByGroup
                     join c in _context.Customers on cg.CustomerId equals c.Oid
                     join cct in _context.CustomCustomerTypes on new {customerId = cg.CustomerId, fboId = _FboId} equals
@@ -37,7 +43,7 @@ namespace FBOLinx.Web.Services
                             fboId = cct.Fboid
                         } into leftJoinCCT
                     from cct in leftJoinCCT.DefaultIfEmpty()
-                    join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid into leftJoinPT
+                    join pt in _context.PricingTemplate on (cct == null || cct.CustomerType == 0 ? defaultPricingTemplateId : cct.CustomerType) equals pt.Oid into leftJoinPT
                     from pt in leftJoinPT.DefaultIfEmpty()
                     join ppt in _context.PriceTiers.Include("CustomerMargin") on pt.Oid equals ppt.CustomerMargin
                             .TemplateId
@@ -67,6 +73,9 @@ namespace FBOLinx.Web.Services
                         cvf.Fboid
                     } into letJoinCVF
                     from cvf in letJoinCVF.DefaultIfEmpty()
+                    join ccot in _context.CustomerCompanyTypes on new { CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(), cg.GroupId} equals new {CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId } 
+                    into leftJoinCCOT
+                    from ccot in leftJoinCCOT.DefaultIfEmpty()
                     where cg.GroupId == _GroupId
                           && (customerInfoByGroupId == 0 || cg.Oid == customerInfoByGroupId)
                           && (pricingTemplateId == 0 || pt.Oid == pricingTemplateId)
@@ -89,7 +98,9 @@ namespace FBOLinx.Web.Services
                         HasBeenViewed = (cvf != null && cvf.Oid > 0),
                         PricingTemplateName = pt == null ? "" : pt.Name,
                         MinGallons = ppt.Min,
-                        MaxGallons = ppt.Max
+                        MaxGallons = ppt.Max,
+                        CustomerCompanyType = cg.CustomerCompanyType,
+                        CustomerCompanyTypeName = ccot == null || string.IsNullOrEmpty(ccot.Name) ? "" : ccot.Name
                     }).OrderBy(x => x.Company).ToListAsync();
 
                 return customerPricingResults;

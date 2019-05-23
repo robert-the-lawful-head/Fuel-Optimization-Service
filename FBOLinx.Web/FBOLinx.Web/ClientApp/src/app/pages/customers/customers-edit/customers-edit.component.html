@@ -10,7 +10,10 @@
 
             <!--FBO Info Tab-->
             <mat-tab label="Customer Details">
-                <div class="container-fluid">
+                <div class="container-fluid" *ngIf="isLoading">
+                    <mat-spinner></mat-spinner>
+                </div>
+                <div class="container-fluid" *ngIf="!isLoading">
                     <div>
                         <h5>General Information</h5>
                     </div>
@@ -25,7 +28,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input matInput placeholder="Company" [(ngModel)]="customerInfoByGroup.company" />
+                                <input matInput placeholder="Company" [(ngModel)]="customerInfoByGroup.company"/>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
@@ -48,37 +51,37 @@
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input matInput placeholder="Main Phone" [(ngModel)]="customerInfoByGroup.mainPhone" />
+                                <input matInput placeholder="Main Phone" [(ngModel)]="customerInfoByGroup.mainPhone"/>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input matInput placeholder="Address" [(ngModel)]="customerInfoByGroup.address" />
+                                <input matInput placeholder="Address" [(ngModel)]="customerInfoByGroup.address"/>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input matInput placeholder="City" [(ngModel)]="customerInfoByGroup.city" />
+                                <input matInput placeholder="City" [(ngModel)]="customerInfoByGroup.city"/>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input matInput placeholder="State" [(ngModel)]="customerInfoByGroup.state" />
+                                <input matInput placeholder="State" [(ngModel)]="customerInfoByGroup.state"/>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input matInput placeholder="Zip Code" [(ngModel)]="customerInfoByGroup.zipCode" />
+                                <input matInput placeholder="Zip Code" [(ngModel)]="customerInfoByGroup.zipCode"/>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input matInput placeholder="Country" [(ngModel)]="customerInfoByGroup.country" />
+                                <input matInput placeholder="Country" [(ngModel)]="customerInfoByGroup.country"/>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input matInput placeholder="Website" [(ngModel)]="customerInfoByGroup.website" />
+                                <input matInput placeholder="Website" [(ngModel)]="customerInfoByGroup.website"/>
                             </mat-form-field>
                         </div>
                     </div>
@@ -89,7 +92,7 @@
                     <div class="row mb-2">
                         <div class="col-md-3">
                             <mat-slide-toggle color="accent" [(ngModel)]="customerInfoByGroup.distribute">{{customerInfoByGroup.customerType == 1 ? 'Push pricing into FuelerLinx' : 'Distribute fuel pricing email'}}</mat-slide-toggle>
-                            <a *ngIf="contactsData && contactsData.length == 0 && customerInfoByGroup.distribute && customerInfoByGroup.customerType != 1" matTooltip="This customer does not have any contacts.  Please add a contact to receive price distribution." matTooltipPosition="after">
+                            <a *ngIf="!hasContactForPriceDistribution && customerInfoByGroup.distribute && customerInfoByGroup.customerType != 1" matTooltip="This customer does not have any contacts setup to receive price distribution." matTooltipPosition="after">
                                 <i class="fa fa-warning" style="color: red;"></i>
                             </a>
                         </div>
@@ -113,7 +116,7 @@
                         <tr *ngFor="let customCustomerType of customCustomerTypes">
                             <td>
                                 <mat-form-field>
-                                    <mat-select placeholder="Pricing Template" [(ngModel)]="customCustomerType.customerType">
+                                    <mat-select placeholder="Pricing Template" [(ngModel)]="customCustomerType.customerType" (selectionChange)="pricingTemplateSelectionChanged(customCustomerType)">
                                         <mat-option *ngFor="let pricingTemplate of pricingTemplatesData" [value]="pricingTemplate.oid">
                                             {{pricingTemplate.name}}
                                         </mat-option>
@@ -127,12 +130,12 @@
                         </tbody>
                     </table>
                     <div class="mb-2 mt-2">
-                        <br />
+                        <br/>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveCustomerEdit()" class="mr-1">Save Changes</button>
-                            <button ni-button [view]="'accent'" beforeIcon="fa fa-usd" *ngIf="customerInfoByGroup.distribute" (click)="distributePricing()" class="mr-1">Distribute Pricing</button>
+                            <button ni-button [view]="'accent'" beforeIcon="fa fa-usd" *ngIf="customerInfoByGroup.distribute && customCustomerTypes && customCustomerTypes.length > 0 && hasContactForPriceDistribution" (click)="distributePricing()" class="mr-1" [matTooltipPosition]="'above'" matTooltip="Prepare and send an email containing fuel pricing for this customer.">Distribute Pricing</button>
                             <button mat-stroked-button (click)="cancelCustomerEdit()">Cancel</button>
                         </div>
                     </div>

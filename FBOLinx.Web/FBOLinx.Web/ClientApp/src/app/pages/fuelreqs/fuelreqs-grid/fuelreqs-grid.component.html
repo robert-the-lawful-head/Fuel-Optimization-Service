@@ -59,7 +59,7 @@
         <ng-container matColumnDef="dispatchNotes">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Notes</th>
             <td mat-cell *matCellDef="let fuelreq">
-                <a style="text-underline: blue" *ngIf="fuelreq.notes" matTooltip="{{fuelreq.notes}}" matTooltipPosition="before">Notes</a>
+                <a style="text-underline: blue" *ngIf="fuelreq.notes && fuelreq.notes.length > 0" matTooltip="{{fuelreq.notes}}" matTooltipPosition="before">Notes</a>
             </td>
         </ng-container>
 

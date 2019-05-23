@@ -45,6 +45,8 @@ export class DistributionWizardMainComponent implements OnInit {
     public availableCustomers: any[];
     public distributionPreview: string;
     public validityMessage: string;
+    public isForSingleCustomer: boolean = false;
+    public isForSinglePricingTemplate: boolean = false;
 
 
     //Added services
@@ -58,7 +60,10 @@ export class DistributionWizardMainComponent implements OnInit {
         private emailContentService: EmailcontentService,
         private pricingtemplatesService: PricingtemplatesService,
         private formBuilder: FormBuilder) {
-
+        if (this.data.customer != null)
+            this.isForSingleCustomer = true;
+        else if (this.data.pricingTemplate != null)
+            this.isForSinglePricingTemplate = true;
     }
 
     ngOnInit() {
@@ -89,12 +94,17 @@ export class DistributionWizardMainComponent implements OnInit {
         //Subscribe to necessary changes
         this.firstFormGroup.get('pricingTemplate').valueChanges.subscribe(val => {
             this.data.pricingTemplate = val;
-            this.loadAvailableCustomers();
+            //Only reload customers if they've already been loaded
+            if (this.availableCustomers && this.availableCustomers.length > 0)
+                this.loadAvailableCustomers();
         });
-        this.firstFormGroup.get('customerCompanyType').valueChanges.subscribe(val => {
-            this.data.customerCompanyType = val;
-            this.loadAvailableCustomers();
-        });
+        // ***Removing customer type selection for now***
+        //this.firstFormGroup.get('customerCompanyType').valueChanges.subscribe(val => {
+        //    this.data.customerCompanyType = val;
+        //    //Only reload customers if they've already been loaded
+        //    if (this.availableCustomers && this.availableCustomers.length > 0)
+        //        this.loadAvailableCustomers();
+        //});
     }
 
     public pricingTemplateChanged() {

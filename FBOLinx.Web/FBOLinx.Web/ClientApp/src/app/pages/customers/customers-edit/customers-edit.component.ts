@@ -61,6 +61,8 @@ export class CustomersEditComponent {
     public isSaving: boolean = false;
     public certificateTypes: any[];
     public customerCompanyTypes: any[];
+    public isLoading: boolean = false;
+    public hasContactForPriceDistribution: boolean = false;
 
     //Input/Output Bindings
     @Output() saveCustomerClicked = new EventEmitter<any>();
@@ -191,18 +193,45 @@ export class CustomersEditComponent {
     }
 
     public distributePricing() {
+        this.isLoading = true;
         var customer = this.customerInfoByGroup;
         var data = {
             customer: customer,
             fboId: this.sharedService.currentUser.fboId,
             groupId: this.sharedService.currentUser.groupId
         };
-        const dialogRef = this.dialog.open(DistributionWizardMainComponent, {
-            data: data
-        });
 
-        dialogRef.afterClosed().subscribe(result => {
+        //Update customer information
+        this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((result: any) => {
+            for (let customCustomerType of this.customCustomerTypes) {
+                customCustomerType.customerId = this.customerInfoByGroup.customerId;
+            }
+            var pricingTemplatesToUpdate = [];
 
+            for (let customCustomerType of this.customCustomerTypes) {
+                if (customCustomerType.requiresUpdate)
+                    pricingTemplatesToUpdate.push(customCustomerType);
+            }
+
+            this.customCustomerTypesService.updateCollection(pricingTemplatesToUpdate).subscribe((result: any) => {
+                this.customCustomerTypesService
+                    .getForFboAndCustomer(this.sharedService.currentUser.fboId, this.customerInfoByGroup.customerId).subscribe(
+                        (result:
+                            any) => {
+                            this.customCustomerTypes = result;
+                            this.isLoading = false;
+
+                            //Show dispatch dialog
+                            const dialogRef = this.dialog.open(DistributionWizardMainComponent, {
+                                data: data,
+                                disableClose: true
+                            });
+
+                            dialogRef.afterClosed().subscribe(result => {
+
+                            });
+                        });
+            });
         });
     }
 
@@ -255,6 +284,10 @@ export class CustomersEditComponent {
         });
     }
 
+    public pricingTemplateSelectionChanged(customCustomerType) {
+        customCustomerType.requiresUpdate = true;
+    }
+
     //Private Methods
     private loadCustomerContacts() {
         this.contactInfoByGroupsService.getCustomerContactInfoByGroup(this.sharedService.currentUser.groupId, this.customerInfoByGroup.customerId).subscribe(
@@ -262,6 +295,13 @@ export class CustomersEditComponent {
                 any) => {
                 this.contactsData = data;
                 this.currentContactInfoByGroup = null;
+                this.hasContactForPriceDistribution = false;
+                if (!this.contactsData)
+                    return;
+                for (let contact of this.contactsData) {
+                    if (contact.copyAlerts)
+                        this.hasContactForPriceDistribution = true;
+                }
             });
     }
 

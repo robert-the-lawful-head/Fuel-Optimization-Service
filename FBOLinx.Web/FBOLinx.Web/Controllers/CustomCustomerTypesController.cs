@@ -47,8 +47,26 @@ namespace FBOLinx.Web.Controllers
         public async Task<ActionResult<List<CustomCustomerTypes>>> GetCustomCustomerTypesForCustomer([FromRoute] int fboId, [FromRoute] int customerId)
         {
             var customCustomerTypes = await _context.CustomCustomerTypes.Where((x => x.CustomerId == customerId && x.Fboid == fboId)).ToListAsync();
+
+            if (customCustomerTypes != null && customCustomerTypes.Count > 0)
+                return customCustomerTypes;
+
+            //If no previous pricing template was attached, grab the default
+            var defaultPricingTemplate = await _context.PricingTemplate
+                .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
             
-            return customCustomerTypes;
+            if (defaultPricingTemplate == null)
+                return null;
+            
+            var defaultCustomerType = new CustomCustomerTypes()
+            {
+                CustomerId = customerId,
+                CustomerType = defaultPricingTemplate.Oid,
+                Fboid = fboId
+            };
+            var defaultResult = new List<CustomCustomerTypes>();
+            defaultResult.Add(defaultCustomerType);
+            return defaultResult;
         }
 
         // PUT: api/CustomCustomerTypes/5
@@ -89,6 +107,20 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCustomCustomerTypes", new { id = customCustomerTypes.Oid }, customCustomerTypes);
+        }
+
+        [HttpPost("collection")]
+        public async Task<ActionResult<List<CustomCustomerTypes>>> UpdateCustomCustomerTypeCollection(List<CustomCustomerTypes> customCustomerTypesCollection)
+        {
+            foreach (var customCustomerType in customCustomerTypesCollection)
+            {
+                if (customCustomerType.Oid > 0)
+                    _context.CustomCustomerTypes.Update(customCustomerType);
+                else
+                    _context.CustomCustomerTypes.Add(customCustomerType);
+            }
+            await _context.SaveChangesAsync();
+            return customCustomerTypesCollection;
         }
 
         // DELETE: api/CustomCustomerTypes/5

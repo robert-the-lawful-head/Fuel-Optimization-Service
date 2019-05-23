@@ -167,10 +167,10 @@ namespace FBOLinx.Web.Services
                 //Convert to a SendGrid message and use their API to send it
                 Services.MailService mailService = new MailService(_MailSettings);
                 var sendGridMessage = mailMessage.GetSendGridMessage();
-                sendGridMessage.Asm.GroupId = 10326;
+                sendGridMessage.Asm = new ASM() {GroupId = 10326 };
 
                 var result = await mailService.SendAsync(sendGridMessage);
-                if (result.StatusCode == HttpStatusCode.OK)
+                if (result.StatusCode == HttpStatusCode.OK || result.StatusCode == HttpStatusCode.Accepted)
                     MarkDistributionRecordAsComplete(distributionQueueRecord);
                 else
                 {

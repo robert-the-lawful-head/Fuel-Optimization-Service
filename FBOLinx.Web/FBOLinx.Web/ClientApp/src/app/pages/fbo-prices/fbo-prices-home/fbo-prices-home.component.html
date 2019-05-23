@@ -216,7 +216,7 @@
             <ni-card title="Distribution Log" [headerBgColor]="'warning'" class="mb-0">
                 <div>
                     <div class="container-fluid">
-                        <div class="row font-weight-bold small">
+                        <div class="row font-weight-bold small mb-1">
                             <div class="col-3">
                                 Date Sent
                             </div>
@@ -231,18 +231,18 @@
                             </div>
                         </div>
                         <hr />
-                        <div class="row font-weight-bold small" *ngFor="let logRecord of distributionLog">
+                        <div class="row small mt-2" *ngFor="let logRecord of distributionLog">
                             <div class="col-3">
-                                {{logRecord.DateSent | date:'medium'}}
+                                {{logRecord.dateSent | date:'medium'}}
                             </div>
                             <div class="col-3">
-                                {{logRecord.PricingTemplateName}}
+                                {{logRecord.pricingTemplateName}}
                             </div>
                             <div class="col-3">
-                                {{logRecord.PricingTemplateName}}
+                                {{logRecord.customerName}}
                             </div>
                             <div class="col-3">
-                                {{logRecord.CustomerCompanyTypeName}}
+                                {{logRecord.customerCompanyTypeName}}
                             </div>
                         </div>
                     </div>

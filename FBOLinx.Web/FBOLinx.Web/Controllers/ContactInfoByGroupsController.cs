@@ -72,7 +72,8 @@ namespace FBOLinx.Web.Controllers
                     FirstName = cibg.FirstName,
                     LastName = cibg.LastName,
                     Title = cibg.Title,
-                    Primary = cibg.Primary
+                    Primary = cibg.Primary,
+                    CopyAlerts = cibg.CopyAlerts
                 });
 
             return Ok(customerContactInfoByGroupVM);
