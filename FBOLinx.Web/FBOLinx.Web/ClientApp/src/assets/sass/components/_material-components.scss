@@ -199,6 +199,12 @@ body {
         overflow: auto;
     }
 
+    .mat-dialog-content {
+        .mat-tab-body.mat-tab-body-active {
+            max-height: 400px;
+        }
+    }
+
     .mat-icon {
         position: relative;
     }

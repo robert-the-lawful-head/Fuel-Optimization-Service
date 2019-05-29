@@ -103,10 +103,13 @@ export class HorizontalNavbarComponent implements OnInit {
         this.userService.getCurrentUser().subscribe((data: any) => {
             const dialogRef = this.accountProfileDialog.open(AccountProfileComponent,
                 {
-                    width: '450px',
+                    height: '550px',
+                    width: '650px',
                     data: data
                 });
             dialogRef.afterClosed().subscribe(result => {
+                if (!result)
+                    return;
                 console.log('Dialog data: ', result);
                 this.userService.update(result).subscribe((data: any) => {
                     if (result.newPassword && result.newPassword != '') {

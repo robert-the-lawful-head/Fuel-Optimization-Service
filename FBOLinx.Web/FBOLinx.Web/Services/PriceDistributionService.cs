@@ -130,7 +130,8 @@ namespace FBOLinx.Web.Services
 
                 MailMessage mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(_MailSettings.MailUserName);
-                var recipients = GetRecipients(customer);
+                var recipients = GetRecipientsForCustomer(customer);
+                var fboRecipients = await GetRecipientsForFbo();
                 foreach (ContactInfoByGroup contactInfoByGroup in recipients)
                 {
                     if (_MailSettings.IsValidEmailRecipient(contactInfoByGroup.Email))
@@ -140,6 +141,16 @@ namespace FBOLinx.Web.Services
                 {
                     MarkDistributionRecordAsComplete(distributionQueueRecord);
                     return;
+                }
+                if (fboRecipients != null && fboRecipients.Count > 0)
+                {
+                    foreach (var fboRecipient in fboRecipients)
+                    {
+                        if (fboRecipient.Contact == null)
+                            continue;
+                        if (_MailSettings.IsValidEmailRecipient(fboRecipient.Contact.Email))
+                            mailMessage.CC.Add(new MailAddress(fboRecipient.Contact.Email));
+                    }
                 }
 
                 string body = await GetMailBody(customer, validPricingTemplates);
@@ -315,7 +326,7 @@ namespace FBOLinx.Web.Services
                 "PriceSummary" + ".html");
         }
 
-        private List<Models.ContactInfoByGroup> GetRecipients(Models.CustomerInfoByGroup customer)
+        private List<Models.ContactInfoByGroup> GetRecipientsForCustomer(Models.CustomerInfoByGroup customer)
         {
             var result = (from cc in _context.CustomerContacts
                 join c in _context.Contacts on cc.ContactId equals c.Oid
@@ -325,6 +336,14 @@ namespace FBOLinx.Web.Services
                       && cibg.CopyAlerts.GetValueOrDefault()
                       && !string.IsNullOrEmpty(cibg.Email)
                 select cibg).ToList();
+            return result;
+        }
+
+        private async Task<List<Models.Fbocontacts>> GetRecipientsForFbo()
+        {
+            var result = await _context.Fbocontacts.Include("Contact")
+                .Where((x => x.Fboid == _DistributePricingRequest.FboId)).ToListAsync();
+
             return result;
         }
 
