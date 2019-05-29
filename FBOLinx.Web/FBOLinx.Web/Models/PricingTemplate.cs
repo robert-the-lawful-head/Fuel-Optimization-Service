@@ -53,5 +53,9 @@ namespace FBOLinx.Web.Models
 
         [InverseProperty("PricingTemplate")]
         public ICollection<AircraftPrices> AircraftPrices { get; set; }
+
+        [InverseProperty("PricingTemplates")]
+        [ForeignKey("Fboid")]
+        public Models.Fbos Fbo { get; set; }
     }
 }

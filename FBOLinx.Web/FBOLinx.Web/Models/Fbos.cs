@@ -81,5 +81,11 @@ namespace FBOLinx.Web.Models
 
         [InverseProperty("Fbo")]
         public ICollection<FuelReq> FuelReqs { get; set; }
+
+        [InverseProperty("Fbo")]
+        public ICollection<PricingTemplate> PricingTemplates { get; set; }
+
+        [InverseProperty("Fbo")]
+        public Models.Fbopreferences Preferences { get; set; }
     }
 }

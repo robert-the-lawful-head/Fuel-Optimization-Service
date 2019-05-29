@@ -27,10 +27,10 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-6 col-md-3">
-                            <mat-slide-toggle color="accent" (change)="fboPreferenceChange()" [(ngModel)]="fboPreferences.omitJetARetail">Hide JetA Retail</mat-slide-toggle>
+                            <mat-slide-toggle color="accent" (change)="retailJetAToggled()" [(ngModel)]="fboPreferences.omitJetARetail">Hide JetA Retail</mat-slide-toggle>
                         </div>
                         <div class="col-6 col-md-3">
-                            <mat-slide-toggle color="accent" (change)="fboPreferenceChange()" [(ngModel)]="fboPreferences.omitJetACost">Hide JetA Cost</mat-slide-toggle>
+                            <mat-slide-toggle color="accent" (change)="costJetAToggled()" [(ngModel)]="fboPreferences.omitJetACost">Hide JetA Cost</mat-slide-toggle>
                         </div>
                         <div class="col-6 col-md-3">
                             <mat-slide-toggle color="accent" (change)="fboPreferenceChange()" [(ngModel)]="fboPreferences.omit100LLRetail">Hide 100LL Retail</mat-slide-toggle>

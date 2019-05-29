@@ -24,7 +24,7 @@ export class PricingTemplatesGridComponent implements OnInit {
 
     //Public Members
     public pricingTemplatesDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['name', 'intoPlanePrice', 'notes', 'marginTypeDescription', 'default', 'edit', 'delete'];
+    public displayedColumns: string[] = ['isInvalid', 'name', 'intoPlanePrice', 'notes', 'marginTypeDescription', 'default', 'edit', 'delete'];
     public resultsLength: number = 0;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;

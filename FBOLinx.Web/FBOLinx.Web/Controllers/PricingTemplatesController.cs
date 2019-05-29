@@ -60,7 +60,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            var fbo = _context.Fbos.Include("Preferences").Where(x => x.Oid == fboId);
+
             var result = await (from p in _context.PricingTemplate
+                join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
                 join cm in (from c in _context.CustomerMargins group c by new {c.TemplateId} into cmResults select new {templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault())} )on p.Oid equals cm.templateId into leftJoinCustomerMargins
                 from cm in leftJoinCustomerMargins.DefaultIfEmpty()
                 join fp in (from f in _context.Fboprices
@@ -81,7 +84,8 @@ namespace FBOLinx.Web.Controllers
                     Oid = p.Oid,
                     Type = p.Type,
                     IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
-                                     (cm == null ? 0 : cm.maxPrice)
+                                     (cm == null ? 0 : cm.maxPrice),
+                    IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false
                 }).ToListAsync();
 
             return Ok(result);

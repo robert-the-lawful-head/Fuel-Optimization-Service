@@ -22,5 +22,9 @@ namespace FBOLinx.Web.Models
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
+
+        [InverseProperty("Preferences")]
+        [ForeignKey("Fboid")]
+        public Models.Fbos Fbo { get; set; }
     }
 }

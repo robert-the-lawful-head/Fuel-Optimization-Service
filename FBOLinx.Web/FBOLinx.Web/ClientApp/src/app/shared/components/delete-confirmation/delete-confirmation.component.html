@@ -1,7 +1,11 @@
-<h1 mat-dialog-title>Delete Record?</h1>
+<h1 mat-dialog-title *ngIf="!data.customTitle">Delete Record?</h1>
+<h1 mat-dialog-title *ngIf="data.customTitle">{{data.customTitle}}</h1>
 <div mat-dialog-content class="mt-1 mb-2">
-    <div class="text-center">
+    <div class="text-center" *ngIf="!data.customText">
         You are about to delete this {{data.description}} permenantly.  Are you sure?
+    </div>
+    <div class="text-center" *ngIf="data.customText">
+        {{data.customText}}
     </div>
 </div>
 <div mat-dialog-actions>

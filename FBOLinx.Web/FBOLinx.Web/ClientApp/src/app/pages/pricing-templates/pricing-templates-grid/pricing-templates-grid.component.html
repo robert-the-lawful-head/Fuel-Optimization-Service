@@ -7,6 +7,14 @@
         </mat-form-field>
 
         <table mat-table [dataSource]="pricingTemplatesDataSource" class="col-md-12" matSort matSortActive="name" matSortDirection="asc">
+
+            <ng-container matColumnDef="isInvalid">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                <td mat-cell *matCellDef="let pricingTemplate">
+                    <ni-badge *ngIf="pricingTemplate.isInvalid" [color]="'danger'" [borderRadius]="false" [arrow]="'right'" [matTooltipPosition]="'after'" [matTooltip]="'The pricing used by this template has been hidden/disabled in the FBO Prices section.'">Invalid</ni-badge>
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
                 <td mat-cell *matCellDef="let pricingTemplate">{{pricingTemplate.name}}</td>

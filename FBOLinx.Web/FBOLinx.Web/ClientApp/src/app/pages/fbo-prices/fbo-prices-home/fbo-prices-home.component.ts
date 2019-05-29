@@ -7,10 +7,12 @@ import { DistributionService } from '../../../services/distribution.service';
 import { FbofeesService } from '../../../services/fbofees.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FbopreferencesService } from '../../../services/fbopreferences.service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 //Components
 import * as moment from 'moment';
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
@@ -61,6 +63,7 @@ export class FboPricesHomeComponent implements OnInit {
     public currentPricingEffectiveTo: Date = new Date();
     public stagedPricingEffectiveFrom: Date = new Date();
     public stagedPricingEffectiveTo: Date = new Date();
+    public pricingTemplates: any[];
 
     //Additional Public Members for direct reference (date filtering/restrictions)
     public currentFboPriceJetARetail: any;
@@ -77,8 +80,10 @@ export class FboPricesHomeComponent implements OnInit {
         private fboFeesService: FbofeesService,
         private fboPricesService: FbopricesService,
         private fboPreferencesService: FbopreferencesService,
+        private pricingTemplateService: PricingtemplatesService,
         private sharedService: SharedService,
-        public distributionDialog: MatDialog) {
+        public distributionDialog: MatDialog,
+        public warningDialog: MatDialog) {
 
         this.sharedService.emitChange(this.pageTitle);
     }
@@ -88,6 +93,7 @@ export class FboPricesHomeComponent implements OnInit {
         this.loadFboPreferences();
         this.loadFboFees();
         this.loadDistributionLog();
+        this.loadPricingTemplates();
     }
 
     //Public Methods
@@ -168,6 +174,56 @@ export class FboPricesHomeComponent implements OnInit {
         this.isSaved = false;
     }
 
+    public costJetAToggled() {
+        if (!this.fboPreferences.omitJetACost) {
+            this.fboPreferenceChange();
+            return;
+        }
+        var templatesAffected = 0;
+        for (let template of this.pricingTemplates) {
+            if (template.marginType == 0)
+                templatesAffected += 1;
+        }
+        var customText = 'Disabling JetA Cost will make ' + templatesAffected + ' pricing templates invalid.';
+        const dialogRef = this.warningDialog.open(DeleteConfirmationComponent, {
+            data: { item: this.fboPreferences, customText: customText, customTitle: 'Warning' }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                this.fboPreferences.omitJetACost = false;
+            } else {
+                this.fboPreferences.omitJetACost = true;
+                this.fboPreferenceChange();
+            }
+        });
+    }
+
+    public retailJetAToggled() {
+        if (!this.fboPreferences.omitJetARetail) {
+            this.fboPreferenceChange();
+            return;
+        }
+        var templatesAffected = 0;
+        for (let template of this.pricingTemplates) {
+            if (template.marginType == 1)
+                templatesAffected += 1;
+        }
+        var customText = 'Disabling JetA Retail will make ' + templatesAffected + ' pricing templates invalid.';
+        const dialogRef = this.warningDialog.open(DeleteConfirmationComponent, {
+            data: { item: this.fboPreferences, customText: customText, customTitle: 'Warning' }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                this.fboPreferences.omitJetARetail = false;
+            } else {
+                this.fboPreferences.omitJetARetail = true;
+                this.fboPreferenceChange();
+            }
+        });
+    }
+
     //Private Methods
     private loadCurrentFboPrices() {
         this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
@@ -238,6 +294,12 @@ export class FboPricesHomeComponent implements OnInit {
                     this.distributionLog = [];
             }
         );
+    }
+
+    private loadPricingTemplates() {
+        this.pricingTemplateService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+            this.pricingTemplates = data;
+        });
     }
 
     private savePriceChanges(price) {
