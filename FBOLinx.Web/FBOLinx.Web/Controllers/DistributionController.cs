@@ -86,7 +86,7 @@ namespace FBOLinx.Web.Controllers
                     CustomerName = cg != null ? cg.Company : "All",
                     PricingTemplateName = pt != null ? pt.Name : "All",
                     CustomerCompanyTypeName = cct != null ? cct.Name : "All"
-                }).ToListAsync();
+                }).OrderByDescending(x => x.DateSent).ToListAsync();
             //var distributionLog = _context.DistributionLog.Where((x => x.Fboid == fboId)).OrderByDescending((x => x.DateSent)).Take(resultCount);
 
             return Ok(distributionLog);
