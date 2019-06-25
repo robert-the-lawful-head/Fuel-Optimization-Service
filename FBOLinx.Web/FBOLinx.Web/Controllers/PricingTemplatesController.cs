@@ -59,9 +59,7 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            var fbo = _context.Fbos.Include("Preferences").Where(x => x.Oid == fboId);
-
+            
             var result = await (from p in _context.PricingTemplate
                 join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
                 join cm in (from c in _context.CustomerMargins group c by new {c.TemplateId} into cmResults select new {templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault())} )on p.Oid equals cm.templateId into leftJoinCustomerMargins
@@ -74,18 +72,19 @@ namespace FBOLinx.Web.Controllers
                 where p.Fboid == fboId
                 select new PricingTemplatesGridViewModel
                 {
-                    CustomerId = p.CustomerId,
-                    Default = p.Default,
+                    CustomerId = p.CustomerId.GetValueOrDefault(),
+                    Default = p.Default.GetValueOrDefault(),
                     Fboid = p.Fboid,
-                    Margin = cm.maxPrice,
-                    MarginType = p.MarginType,
+                    Margin = cm == null ? 0 : cm.maxPrice,
+                    MarginType = p.MarginType.GetValueOrDefault(),
                     Name = p.Name,
                     Notes = p.Notes,
                     Oid = p.Oid,
-                    Type = p.Type,
+                    Type = p.Type.GetValueOrDefault(),
                     IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
                                      (cm == null ? 0 : cm.maxPrice),
-                    IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false
+                    IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
+                    IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee))
                 }).ToListAsync();
 
             return Ok(result);
@@ -144,6 +143,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             _context.Entry(pricingTemplate).State = EntityState.Modified;
+            FixOtherDefaults(pricingTemplate);
 
             try
             {
@@ -173,7 +173,20 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            FixOtherDefaults(pricingTemplate);
+
             _context.PricingTemplate.Add(pricingTemplate);
+            var priceTier = new PriceTiers() {Min = 1, Max = 99999, MaxEntered = 0};
+            _context.PriceTiers.Add(priceTier);
+            var customerMargin = new CustomerMargins()
+            {
+                Amount = 0,
+                TemplateId = pricingTemplate.Oid,
+                PriceTierId = priceTier.Oid
+            };
+
+            _context.CustomerMargins.Add(customerMargin);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetPricingTemplate", new { id = pricingTemplate.Oid }, pricingTemplate);
@@ -208,6 +221,20 @@ namespace FBOLinx.Web.Controllers
         private IQueryable<PricingTemplate> GetAllPricingTemplates()
         {
             return _context.PricingTemplate.AsQueryable();
+        }
+
+        private void FixOtherDefaults(PricingTemplate pricingTemplate)
+        {
+            if (pricingTemplate.Default.GetValueOrDefault())
+            {
+                var otherDefaults = _context.PricingTemplate.Where(x =>
+                    x.Fboid == pricingTemplate.Fboid && x.Default.GetValueOrDefault() && x.Oid != pricingTemplate.Oid);
+                foreach (var otherDefault in otherDefaults)
+                {
+                    otherDefault.Default = false;
+                    _context.Entry(otherDefault).State = EntityState.Modified;
+                }
+            }
         }
     }
 }

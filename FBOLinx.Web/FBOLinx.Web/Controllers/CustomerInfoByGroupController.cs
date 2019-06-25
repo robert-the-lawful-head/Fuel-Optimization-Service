@@ -318,7 +318,8 @@ namespace FBOLinx.Web.Controllers
                     results.CustomerCompanyType,
                     results.CustomerCompanyTypeName,
                     results.HasBeenViewed,
-                    Tails = ca?.Tails
+                    Tails = ca?.Tails,
+                    results.IsPricingExpired
                 }
                 into resultsGroup
                 select new CustomersGridViewModel()
@@ -339,7 +340,8 @@ namespace FBOLinx.Web.Controllers
                     CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
                     HasBeenViewed = resultsGroup.Key.HasBeenViewed,
                     AllInPrice = (from customerPricing in resultsGroup select customerPricing.AllInPrice).Max(),
-                    TailNumbers = resultsGroup.Key.Tails
+                    TailNumbers = resultsGroup.Key.Tails,
+                    IsPricingExpired = resultsGroup.Key.IsPricingExpired
                 }).ToList();
             
             return customerGridVM;

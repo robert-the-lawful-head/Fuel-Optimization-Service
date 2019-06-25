@@ -33,6 +33,7 @@ namespace FBOLinx.Web.ViewModels
         public string TailNumbers { get; set; }
 
         public double? AllInPrice{ get; set; }
+        public bool IsPricingExpired { get; set; }
 
         public string DefaultCustomerTypeDescription
         {

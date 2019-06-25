@@ -22,7 +22,10 @@
 
             <ng-container matColumnDef="intoPlanePrice">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>ITP</th>
-                <td mat-cell *matCellDef="let pricingTemplate">{{pricingTemplate.intoPlanePrice | currency:'USD'}}</td>
+                <td mat-cell *matCellDef="let pricingTemplate">
+                    <span *ngIf="!pricingTemplate.isPricingExpired">{{pricingTemplate.intoPlanePrice | currency:'USD'}}</span>
+                    <span *ngIf="pricingTemplate.isPricingExpired" style="color: red; font-weight: bold;">Expired</span>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="marginTypeDescription">

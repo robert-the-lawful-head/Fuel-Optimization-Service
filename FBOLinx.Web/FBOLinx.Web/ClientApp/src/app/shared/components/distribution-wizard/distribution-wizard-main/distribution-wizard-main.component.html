@@ -177,7 +177,7 @@
         Price distribution has been started.  You can now close this window.
     </div>
 </div>
-<div mat-dialog-actions *ngIf="isDistributionComplete" style="flex-direction: column">
+<div mat-dialog-actions *ngIf="isDistributionComplete || (validityMessage && validityMessage.length > 0)" style="flex-direction: column">
     <button ni-button [mat-dialog-close]="data">Close</button>
 </div>
 

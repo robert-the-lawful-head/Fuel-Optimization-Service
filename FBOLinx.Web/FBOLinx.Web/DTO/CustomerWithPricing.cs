@@ -30,6 +30,7 @@ namespace FBOLinx.Web.DTO
         public int? CustomerCompanyType { get; set; }
         public string CustomerCompanyTypeName { get; set; }
         public bool HasBeenViewed { get; set; }
+        public bool IsPricingExpired { get; set; }
 
         public double? AllInPrice
         {

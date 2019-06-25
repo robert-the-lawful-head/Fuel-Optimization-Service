@@ -103,7 +103,7 @@ export class PricingTemplatesEditComponent {
     }
 
     public deleteCustomerMargin(customerMargin) {
-        if (customerMargin.id == 0) {
+        if (customerMargin.oid == 0) {
             this.pricingTemplate.customerMargins.splice(
                 this.pricingTemplate.customerMargins.indexOf(customerMargin),
                 1);
@@ -172,6 +172,10 @@ export class PricingTemplatesEditComponent {
                 customerMargin.amount = previousTier.amount - .01;
         }
         this.calculateItpForMargin(customerMargin);
+    }
+
+    public marginTypeChange() {
+        this.loadCurrentPrice();
     }
 
     //Private Methods

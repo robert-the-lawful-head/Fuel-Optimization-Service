@@ -100,7 +100,8 @@ namespace FBOLinx.Web.Services
                         MinGallons = ppt.Min,
                         MaxGallons = ppt.Max,
                         CustomerCompanyType = cg.CustomerCompanyType,
-                        CustomerCompanyTypeName = ccot == null || string.IsNullOrEmpty(ccot.Name) ? "" : ccot.Name
+                        CustomerCompanyTypeName = ccot == null || string.IsNullOrEmpty(ccot.Name) ? "" : ccot.Name,
+                        IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null || pt.MarginType != PricingTemplate.MarginTypes.FlatFee))
                     }).OrderBy(x => x.Company).ToListAsync();
 
                 return customerPricingResults;
