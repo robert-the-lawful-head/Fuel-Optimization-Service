@@ -178,14 +178,6 @@ namespace FBOLinx.Web.Controllers
             _context.PricingTemplate.Add(pricingTemplate);
             var priceTier = new PriceTiers() {Min = 1, Max = 99999, MaxEntered = 0};
             _context.PriceTiers.Add(priceTier);
-            var customerMargin = new CustomerMargins()
-            {
-                Amount = 0,
-                TemplateId = pricingTemplate.Oid,
-                PriceTierId = priceTier.Oid
-            };
-
-            _context.CustomerMargins.Add(customerMargin);
 
             await _context.SaveChangesAsync();
 

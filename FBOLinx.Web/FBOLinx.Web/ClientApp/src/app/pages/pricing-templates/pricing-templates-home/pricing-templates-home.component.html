@@ -3,7 +3,7 @@
 <div>
     <div *ngIf="pricingTemplatesData || currentPricingTemplate">
         <div>
-            <app-pricing-templates-grid [pricingTemplatesData]="pricingTemplatesData" (editPricingTemplateClicked)="editPricingTemplateClicked($event)" (deletePricingTemplateClicked)="deletePricingTemplateClicked($event)"></app-pricing-templates-grid>
+            <app-pricing-templates-grid [pricingTemplatesData]="pricingTemplatesData" (newPricingTemplateAdded)="newPricingTemplateAdded($event)" (editPricingTemplateClicked)="editPricingTemplateClicked($event)" (deletePricingTemplateClicked)="deletePricingTemplateClicked($event)"></app-pricing-templates-grid>
         </div>
     </div>
     <div *ngIf="!(pricingTemplatesData || currentPricingTemplate)">

@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatTable } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 //Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { PricetiersService } from '../../../services/pricetiers.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 //Components
@@ -20,6 +21,7 @@ export class PricingTemplatesGridComponent implements OnInit {
     //Input/Output Bindings
     @Output() editPricingTemplateClicked = new EventEmitter<any>();
     @Output() deletePricingTemplateClicked = new EventEmitter<any>();
+    @Output() newPricingTemplateAdded = new EventEmitter<any>();
     @Input() pricingTemplatesData: Array<any>;
 
     //Public Members
@@ -33,6 +35,7 @@ export class PricingTemplatesGridComponent implements OnInit {
     /** pricing-templates-grid ctor */
     constructor(public newTemplateDialog: MatDialog,
         private pricingTemplatesService: PricingtemplatesService,
+        private priceTiersService: PricetiersService,
         private sharedService: SharedService    ) {
 
     }
@@ -53,15 +56,19 @@ export class PricingTemplatesGridComponent implements OnInit {
     }
 
     public addNewPricingTemplate() {
-        const dialogRef = this.newTemplateDialog.open(PricingTemplatesDialogNewTemplateComponent, {
-                data: {}
+        const dialogRef = this.newTemplateDialog.open(PricingTemplatesDialogNewTemplateComponent,
+            {
+                data: {
+                    fboId: this.sharedService.currentUser.fboId,
+                    marginType: 1,
+                    customerMargins: [{min: 1, max: 99999, amount: 0, itp: 0}]
+                }
             });
 
         dialogRef.afterClosed().subscribe(result => {
-            result.fboId = this.sharedService.currentUser.fboId;
-            this.pricingTemplatesService.add(result).subscribe((data: any) => {
-                this.editPricingTemplate(data);
-            });
+            if (!result)
+                return;
+            this.newPricingTemplateAdded.emit();
         });
     }
 

@@ -1,12 +1,121 @@
 <h1 mat-dialog-title>New Pricing Template</h1>
 <div mat-dialog-content>
-    <div>
-        <mat-form-field>
-            <input matInput placeholder="Template Name" aria-label="Template Name" [(ngModel)]="data.name">
-        </mat-form-field>
+    <div class="container-fluid" *ngIf="isSaving">
+        <div class="row">
+            <div class="col">
+                <mat-spinner></mat-spinner>
+            </div>
+        </div>
     </div>
-</div>
-<div mat-dialog-actions>
-    <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1">Add Template</button>
-    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+    <mat-horizontal-stepper [linear]="true" #stepper *ngIf="!isSaving">
+        <mat-step [stepControl]="firstFormGroup">
+            <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>Template Name</ng-template>
+                <div class="container-fluid inner-content">
+                    <div class="row mt-2 mb-2">
+                        <div class="col-8">
+                            <mat-form-field>
+                                <input matInput placeholder="Template Name" aria-label="Template Name" formControlName="templateName">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-4 mt-3">
+                            <mat-slide-toggle color="accent" formControlName="templateDefault">Default</mat-slide-toggle>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right mt-2">
+                    <button mat-button [mat-dialog-close]="">Cancel</button>
+                    <button mat-button matStepperNext>Next</button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="secondFormGroup">
+            <form [formGroup]="secondFormGroup">
+                <ng-template matStepLabel>Pricing &amp; Margins</ng-template>
+                <div class="container-fluid inner-content">
+                    <div class="row mb-4 mt-2">
+                        <div class="col-6">
+                            <mat-form-field>
+                                <mat-select placeholder="Type" (selectionChange)="marginTypeChange()" formControlName="marginType">
+                                    <mat-option *ngFor="let marginType of marginTypeDataSource" [value]="marginType.value">
+                                        {{marginType.text}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-6 text-right font-italic" *ngIf="currentPrice && [0,1].indexOf(data.marginType) > -1">
+                            <h5 style="font-weight: 400;">{{currentPrice.product}}: {{currentPrice.price | currency:'USD'}}</h5>
+                        </div>
+                    </div>
+                    <div class="row mt-2" style="border-top: 1px solid; border-top-style: outset;">
+                        <div class="col">
+                            <h5>Price Tiers</h5>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <table class="mat-table" style="min-width: 75%;">
+                                <thead>
+                                <tr class="mat-header-row">
+                                    <th class="text-center mat-header-cell">Min. (gal)</th>
+                                    <th class="text-center mat-header-cell">Margin</th>
+                                    <th class="text-center mat-header-cell">ITP</th>
+                                    <th class="text-center mat-header-cell">
+                                        <button ni-button  size="small" [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">Add New</button>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let customerMargin of data.customerMargins" class="mat-row">
+                                    <td class="mat-cell text-right">
+                                        <mat-form-field>
+                                            <input matInput class="text-right" (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" [ngModelOptions]="{standalone: true}" />
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="mat-cell">
+                                        <div>
+                                            <mat-form-field>
+                                                <input matInput [(ngModel)]="customerMargin.amount" (blur)="customerMarginAmountChanged(customerMargin)" [ngModelOptions]="{standalone: true}" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
+                                            </mat-form-field>
+                                            
+                                        </div>
+                                    </td>
+                                    <td class="mat-cell text-center font-weight-bold font-italic text-right">
+                                        <div>{{customerMargin.itp | currency:'USD'}}</div>
+                                    </td>
+                                    <td class="text-right mat-cell">
+                                        <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomerMargin(customerMargin)">Delete</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right mt-2">
+                    <button mat-button [mat-dialog-close]="">Cancel</button>
+                    <button mat-button (click)="stepper.reset()">Reset</button>
+                    <button mat-button matStepperPrevious>Back</button>
+                    <button mat-button matStepperNext>Next</button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="thirdFormGroup">
+            <form [formGroup]="thirdFormGroup">
+                <ng-template matStepLabel>Notes</ng-template>
+                <div class="container-fluid inner-content">
+                    <div class="row mt-2 mb-2">
+                        <div class="col">
+                            <ejs-richtexteditor id='rteNotes' [(value)]='data.notes'></ejs-richtexteditor>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right mt-2">
+                    <button mat-button [mat-dialog-close]="">Cancel</button>
+                    <button mat-button matStepperPrevious>Back</button>
+                    <button mat-button (click)="addTemplateClicked()">Add Template</button>
+                </div>
+            </form>
+        </mat-step>
+    </mat-horizontal-stepper>
 </div>

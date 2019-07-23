@@ -82,4 +82,12 @@ export class PricingTemplatesHomeComponent {
     public cancelPricingTemplateEditclicked() {
         this.currentPricingTemplate = null;
     }
+
+    public newPricingTemplateAdded(event) {
+        this.pricingTemplatesData = null;
+        this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+            this.pricingTemplatesData = data;
+            this.currentPricingTemplate = null;
+        });
+    }
 }
