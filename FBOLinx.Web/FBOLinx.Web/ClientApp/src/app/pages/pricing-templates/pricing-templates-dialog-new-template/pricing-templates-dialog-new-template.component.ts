@@ -114,11 +114,26 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     public fixCustomerMargins() {
         for (let i in this.data.customerMargins) {
             let indexNumber = Number(i);
+            if (!this.data.customerMargins[indexNumber].min || this.data.customerMargins[indexNumber].min == '') {
+                if (indexNumber == 0)
+                    this.data.customerMargins[indexNumber].min = 1;
+                else
+                    this.data.customerMargins[indexNumber].min =
+                        (this.data.customerMargins[indexNumber - 1].min + 1);
+            }
+
+            if (indexNumber > 0 && this.data.customerMargins[indexNumber].min == this.data.customerMargins[indexNumber - 1].min) {
+                this.data.customerMargins[indexNumber].min =
+                    (this.data.customerMargins[indexNumber - 1].min + 1);
+            }
+
             if (this.data.customerMargins.length > (indexNumber + 1) &&
                 this.data.customerMargins[indexNumber + 1].min > 0)
                 this.data.customerMargins[i].max = this.data.customerMargins[indexNumber + 1].min - 1;
             else
                 this.data.customerMargins[i].max = 99999;
+
+            this.calculateItpForMargin(this.data.customerMargins[indexNumber]);
         }
     }
 

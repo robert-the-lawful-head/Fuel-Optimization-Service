@@ -138,11 +138,26 @@ export class PricingTemplatesEditComponent {
     public fixCustomerMargins() {
         for (let i in this.pricingTemplate.customerMargins) {
             let indexNumber = Number(i);
+            if (!this.pricingTemplate.customerMargins[indexNumber].min || this.pricingTemplate.customerMargins[indexNumber].min == '') {
+                if (indexNumber == 0)
+                    this.pricingTemplate.customerMargins[indexNumber].min = 1;
+                else
+                    this.pricingTemplate.customerMargins[indexNumber].min =
+                        (this.pricingTemplate.customerMargins[indexNumber - 1].min + 1);
+            }
+
+            if (indexNumber > 0 && this.pricingTemplate.customerMargins[indexNumber].min == this.pricingTemplate.customerMargins[indexNumber - 1].min) {
+                this.pricingTemplate.customerMargins[indexNumber].min =
+                    (this.pricingTemplate.customerMargins[indexNumber - 1].min + 1);
+            }
+                
             if (this.pricingTemplate.customerMargins.length > (indexNumber + 1) &&
                 this.pricingTemplate.customerMargins[indexNumber + 1].min > 0)
                 this.pricingTemplate.customerMargins[i].max = this.pricingTemplate.customerMargins[indexNumber + 1].min - 1;
             else
                 this.pricingTemplate.customerMargins[i].max = 99999;
+
+            this.calculateItpForMargin(this.pricingTemplate.customerMargins[indexNumber]);
         }
     }
 
