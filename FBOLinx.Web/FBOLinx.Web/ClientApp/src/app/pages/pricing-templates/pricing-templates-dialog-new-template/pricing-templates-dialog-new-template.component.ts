@@ -114,7 +114,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     public fixCustomerMargins() {
         for (let i in this.data.customerMargins) {
             let indexNumber = Number(i);
-            if (!this.data.customerMargins[indexNumber].min || this.data.customerMargins[indexNumber].min == '') {
+            if (!this.data.customerMargins[indexNumber].min || this.data.customerMargins[indexNumber].min == 0) {
                 if (indexNumber == 0)
                     this.data.customerMargins[indexNumber].min = 1;
                 else
