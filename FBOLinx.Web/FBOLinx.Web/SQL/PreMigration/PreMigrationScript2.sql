@@ -157,6 +157,10 @@ ALTER TABLE FBOPreferences
     ADD [Omit100LLCost] bit
 GO
 
+ALTER TABLE CustomerInfoByGroup
+    ALTER COLUMN EmailSubscription bit NULL
+GO
+
 
 /****** Object:  StoredProcedure [dbo].[up_Load_Group]    Script Date: 07/14/2019 19:56:24 ******/
 SET ANSI_NULLS ON

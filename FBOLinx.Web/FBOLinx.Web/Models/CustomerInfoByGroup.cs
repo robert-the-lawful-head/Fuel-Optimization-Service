@@ -68,7 +68,6 @@ namespace FBOLinx.Web.Models
         public bool? Suspended { get; set; }
         public int? DefaultTemplate { get; set; }
         public Customers.CustomerSources? CustomerType { get; set; }
-        [Required]
         public bool? EmailSubscription { get; set; }
         [Column("SFID")]
         public string Sfid { get; set; }
