@@ -209,7 +209,7 @@ namespace FBOLinx.Web.Controllers
             return CreatedAtAction("GetUser", new { id = user.Oid }, user);
         }
 
-        // POST: api/users
+        // POST: api/users/resetpassword
         [AllowAnonymous]
         [HttpPost("resetpassword")]
         public async Task<IActionResult> PostResetPassword([FromBody] UserResetPasswordRequest request)
@@ -242,7 +242,7 @@ namespace FBOLinx.Web.Controllers
             return Ok();
         }
 
-        // POST: api/users
+        // POST: api/users/newpassword
         [HttpPost("newpassword")]
         public async Task<IActionResult> PostUserUpdatePassword([FromBody] UserUpdatePasswordRequest request)
         {
@@ -278,6 +278,51 @@ namespace FBOLinx.Web.Controllers
             return Ok(new {password = request.User.Password});
         }
 
+        // POST: api/users
+        [HttpPost("run-login-checks")]
+        public async Task<IActionResult> PostInitiateUser()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+
+                int fboId = UserService.GetClaimedFboId(_HttpContextAccessor);
+
+                var existingPricingTemplates =
+                    await _Context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync();
+                if (existingPricingTemplates != null && existingPricingTemplates.Count != 0)
+                    return Ok();
+
+                //Add a default pricing template - project #1c5383
+                var newTemplate = new PricingTemplate()
+                {
+                    Default = true,
+                    Fboid = fboId,
+                    Name = "Posted Retail",
+                    MarginType = PricingTemplate.MarginTypes.RetailMinus,
+                    Notes = ""
+                };
+
+                await _Context.PricingTemplate.AddAsync(newTemplate);
+                await _Context.SaveChangesAsync();
+
+                await AddDefaultCustomerMargins(newTemplate.Oid, 1, 500);
+                await AddDefaultCustomerMargins(newTemplate.Oid, 501, 750);
+                await AddDefaultCustomerMargins(newTemplate.Oid, 751, 1000);
+                await AddDefaultCustomerMargins(newTemplate.Oid, 1001, 99999);
+            }
+            catch (System.Exception exception)
+            {
+                //Resume the login without issue
+            }
+
+            return Ok();
+        }
+
         // DELETE: api/users/5
         [HttpDelete("{id}")]
         [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin, Models.User.UserRoles.Primary)]
@@ -308,6 +353,23 @@ namespace FBOLinx.Web.Controllers
         private bool UserExists(int id)
         {
             return _Context.Group.Any(e => e.Oid == id);
+        }
+
+        private async Task AddDefaultCustomerMargins(int priceTemplateId, double min, double max)
+        {
+            var newPriceTier = new PriceTiers() { Min = min, Max = max, MaxEntered = max};
+            await _Context.PriceTiers.AddAsync(newPriceTier);
+            await _Context.SaveChangesAsync();
+
+            var newCustomerMargin = new CustomerMargins()
+            {
+                Amount = 0,
+                TemplateId = priceTemplateId,
+                PriceTierId = newPriceTier.Oid
+            };
+            await _Context.CustomerMargins.AddAsync(newCustomerMargin);
+            await _Context.SaveChangesAsync();
+
         }
     }
 }

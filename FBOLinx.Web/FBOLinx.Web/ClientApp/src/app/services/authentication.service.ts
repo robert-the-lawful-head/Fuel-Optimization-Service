@@ -55,6 +55,10 @@ export class AuthenticationService {
             }));
     }
 
+    public postAuth() {
+        return this.http.post(this.accessPointUrl + '/run-login-checks', { headers: this.headers });
+    }
+
     logout() {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
