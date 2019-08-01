@@ -127,7 +127,6 @@ import { EmailContentEditComponent } from '.././shared/components/email-content-
 import { EmailContentSelectionComponent } from '.././shared/components/email-content-selection/email-content-selection.component';
 import { ForgotPasswordDialogComponent } from '.././shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
 import { ManageConfirmationComponent } from '.././shared/components/manage-confirmation/manage-confirmation.component';
-import {NeedsAttentionComponent} from '.././shared/components/needs-attention/needs-attention.component';
 import { PricingExpiredNotificationComponent } from '.././shared/components/pricing-expired-notification/pricing-expired-notification.component';
 import { StatisticsOrdersByLocationComponent } from
     '.././shared/components/statistics-orders-by-location/statistics-orders-by-location.component';

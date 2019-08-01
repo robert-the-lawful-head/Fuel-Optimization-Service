@@ -12,7 +12,6 @@ import { FbopricesService } from '../../../services/fboprices.service';
 
 //Components
 import { AccountProfileComponent } from '../../../shared/components/account-profile/account-profile.component';
-import {NeedsAttentionComponent} from '../../../shared/components/needs-attention/needs-attention.component';
 
 @Component({
     moduleId: module.id,
