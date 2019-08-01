@@ -21,8 +21,11 @@
     </div>
     <div>
         <mat-form-field>
-            <input matInput type="email" placeholder="Email Login" aria-label="Email Login" [(ngModel)]="data.username">
+            <input matInput name="userLoginEmail" placeholder="Email Login" aria-label="Email Login" [(ngModel)]="data.username" [email]="true" #userLoginEmail="ngModel">
         </mat-form-field>
+    </div>
+    <div *ngIf="userLoginEmail.errors?.email" style="color: red;">
+        Please enter a valid email address.
     </div>
     <div>
         <mat-form-field>
@@ -39,6 +42,6 @@
     </div>
 </div>
 <div class="mt-2 text-center">
-    <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword === data.confirmPassword">Add User</button>
+    <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword === data.confirmPassword && !userLoginEmail.errors?.email">Add User</button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
 </div>

@@ -164,7 +164,7 @@ export class DistributionWizardMainComponent implements OnInit {
     private loadAvailablePricingTemplates() {
         this.pricingtemplatesService.getByFbo(this.data.fboId).subscribe((data: any) => {
             this.availablePricingTemplates = data;
-            this.availablePricingTemplates.splice(0,0,{ oid: 0, name: '--All Pricing Templates--' });
+            this.availablePricingTemplates.splice(0,0,{ oid: 0, name: '--All Margin Templates--' });
             if (!this.data.pricingTemplate || this.data.pricingTemplate.oid == 0)
                 this.data.pricingTemplate = this.availablePricingTemplates[0];
             else {

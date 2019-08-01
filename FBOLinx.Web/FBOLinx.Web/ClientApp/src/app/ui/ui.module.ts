@@ -35,6 +35,8 @@ import {
   MatTooltipModule
 } from '@angular/material';
 
+import { NiComponentsModule } from '../ni-components/ni-components.module';
+
 import { HorizontalNavbarComponent } from './components/horizontal-navbar/horizontal-navbar.component';
 import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-navbar.component';
 import { AdditionNavbarComponent } from './components/addition-navbar/addition-navbar.component';
@@ -63,7 +65,8 @@ import { FooterComponent } from './components/footer/footer.component';
   imports: [
     HttpClientModule,
     CommonModule,
-    RouterModule,
+      RouterModule,
+      NiComponentsModule,
     MatAutocompleteModule,
     MatButtonModule,
     MatButtonToggleModule,
@@ -93,7 +96,7 @@ import { FooterComponent } from './components/footer/footer.component';
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    MatTooltipModule
+      MatTooltipModule
   ]
 })
 export class UIModule { }

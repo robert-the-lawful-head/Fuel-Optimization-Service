@@ -59,7 +59,10 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+
+            var jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost")
+                .FirstOrDefaultAsync();
+
             var result = await (from p in _context.PricingTemplate
                 join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
                 join cm in (from c in _context.CustomerMargins group c by new {c.TemplateId} into cmResults select new {templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault())} )on p.Oid equals cm.templateId into leftJoinCustomerMargins
@@ -84,7 +87,8 @@ namespace FBOLinx.Web.Controllers
                     IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
                                      (cm == null ? 0 : cm.maxPrice),
                     IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
-                    IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee))
+                    IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                    YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
                 }).ToListAsync();
 
             return Ok(result);

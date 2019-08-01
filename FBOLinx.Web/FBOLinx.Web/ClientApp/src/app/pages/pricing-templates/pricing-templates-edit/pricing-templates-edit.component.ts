@@ -18,11 +18,11 @@ const BREADCRUMBS: any[] = [
         link: '#/default-layout'
     },
     {
-        title: 'Pricing Templates',
+        title: 'Margin Templates',
         link: '#/default-layout/pricing-templates'
     },
     {
-        title: 'Edit Pricing Template',
+        title: 'Edit Margin Template',
         link: ''
     }
 ];
@@ -44,7 +44,7 @@ export class PricingTemplatesEditComponent {
     @Input() pricingTemplate: any;
 
     //Public Members
-    public pageTitle: string = 'Edit Pricing Template';
+    public pageTitle: string = 'Edit Margin Template';
     public breadcrumb: any[] = BREADCRUMBS;
     public marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
@@ -88,7 +88,7 @@ export class PricingTemplatesEditComponent {
 
     public savePricingTemplate() {
         this.isSaving = true;
-        //Update the pricing template first
+        //Update the margin template first
         this.pricingTemplatesService.update(this.pricingTemplate).subscribe((data: any) => {
             this.saveCustomerMargins();
         });

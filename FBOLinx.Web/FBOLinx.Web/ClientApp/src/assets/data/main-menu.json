@@ -64,7 +64,7 @@
         "roles": [ 1, 4 ]
     },
     {
-        "title": "Pricing Templates",
+        "title": "Margin Templates",
         "icon": {
             "class": "fa fa-sitemap",
             "bg": "#C5CAE9",

@@ -25,5 +25,6 @@ namespace FBOLinx.Web.ViewModels
         public double IntoPlanePrice { get; set; }
         public bool IsInvalid { get; set; }
         public bool IsPricingExpired { get; set; }
+        public double? YourMargin { get; set; }
     }
 }

@@ -106,7 +106,7 @@
                     <table style="width: 100%;">
                         <thead>
                         <tr>
-                            <th>Pricing Template</th>
+                            <th>Margin Template</th>
                             <th class="text-right">
                                 <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newCustomerPricingTemplate()">Add New</button>
                             </th>
@@ -116,7 +116,7 @@
                         <tr *ngFor="let customCustomerType of customCustomerTypes">
                             <td>
                                 <mat-form-field>
-                                    <mat-select placeholder="Pricing Template" [(ngModel)]="customCustomerType.customerType" (selectionChange)="pricingTemplateSelectionChanged(customCustomerType)">
+                                    <mat-select placeholder="Margin Template" [(ngModel)]="customCustomerType.customerType" (selectionChange)="pricingTemplateSelectionChanged(customCustomerType)">
                                         <mat-option *ngFor="let pricingTemplate of pricingTemplatesData" [value]="pricingTemplate.oid">
                                             {{pricingTemplate.name}}
                                         </mat-option>

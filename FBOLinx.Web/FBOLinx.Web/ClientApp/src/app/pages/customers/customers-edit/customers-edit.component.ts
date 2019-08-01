@@ -267,7 +267,7 @@ export class CustomersEditComponent {
 
     public deleteCustomerPricingTemplate(customCustomerType) {
         const dialogRef = this.deleteCustomerDialog.open(DeleteConfirmationComponent, {
-            data: { item: customCustomerType, description: 'customer\'s pricing template' }
+            data: { item: customCustomerType, description: 'customer\'s margin template' }
         });
 
         dialogRef.afterClosed().subscribe(result => {

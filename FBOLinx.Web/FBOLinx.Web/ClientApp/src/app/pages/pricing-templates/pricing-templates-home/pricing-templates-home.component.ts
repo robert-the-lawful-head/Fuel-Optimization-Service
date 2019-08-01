@@ -16,7 +16,7 @@ const BREADCRUMBS: any[] = [
         link: '#/default-layout'
     },
     {
-        title: 'Pricing Templates',
+        title: 'Margin Templates',
         link: '#/default-layout/pricing-templates'
     }
 ];
@@ -30,7 +30,7 @@ const BREADCRUMBS: any[] = [
 export class PricingTemplatesHomeComponent {
 
     //Public Members
-    public pageTitle: string = 'Pricing Templates';
+    public pageTitle: string = 'Margin Templates';
     public breadcrumb: any[] = BREADCRUMBS;
     public pricingTemplatesData: Array<any>;
     public currentPricingTemplate: any;
@@ -54,7 +54,7 @@ export class PricingTemplatesHomeComponent {
 
     public deletePricingTemplateClicked(pricingTemplate) {
         const dialogRef = this.deleteFBODialog.open(DeleteConfirmationComponent, {
-            data: { item: pricingTemplate, description: 'pricing template' }
+            data: { item: pricingTemplate, description: 'margin template' }
         });
 
         dialogRef.afterClosed().subscribe(result => {

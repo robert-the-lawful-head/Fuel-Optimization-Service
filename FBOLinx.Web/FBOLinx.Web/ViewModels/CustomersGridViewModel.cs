@@ -34,6 +34,7 @@ namespace FBOLinx.Web.ViewModels
 
         public double? AllInPrice{ get; set; }
         public bool IsPricingExpired { get; set; }
+        
 
         public string DefaultCustomerTypeDescription
         {

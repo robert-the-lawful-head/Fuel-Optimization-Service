@@ -184,7 +184,7 @@ export class FboPricesHomeComponent implements OnInit {
             if (template.marginType == 0)
                 templatesAffected += 1;
         }
-        var customText = 'Disabling JetA Cost will make ' + templatesAffected + ' pricing templates invalid.';
+        var customText = 'Disabling JetA Cost will make ' + templatesAffected + ' margin templates invalid.';
         const dialogRef = this.warningDialog.open(DeleteConfirmationComponent, {
             data: { item: this.fboPreferences, customText: customText, customTitle: 'Warning' }
         });
@@ -209,7 +209,7 @@ export class FboPricesHomeComponent implements OnInit {
             if (template.marginType == 1)
                 templatesAffected += 1;
         }
-        var customText = 'Disabling JetA Retail will make ' + templatesAffected + ' pricing templates invalid.';
+        var customText = 'Disabling JetA Retail will make ' + templatesAffected + ' margin templates invalid.';
         const dialogRef = this.warningDialog.open(DeleteConfirmationComponent, {
             data: { item: this.fboPreferences, customText: customText, customTitle: 'Warning' }
         });

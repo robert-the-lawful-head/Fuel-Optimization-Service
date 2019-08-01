@@ -23,8 +23,11 @@
                         </div>
                         <div class="col-6">
                             <mat-form-field>
-                                <input matInput type="email" placeholder="Email Login" aria-label="Email Login" [(ngModel)]="data.username">
+                                <input matInput type="email" placeholder="Email Login" aria-label="Email Login" [(ngModel)]="data.username" [email]="true" #userLoginEmail="ngModel">
                             </mat-form-field>
+                            <div *ngIf="userLoginEmail.errors?.email" style="color: red;">
+                                Please enter a valid email address.
+                            </div>
                         </div>
                         <div class="col-6">
                             <mat-form-field *ngIf="availableroles">
@@ -53,7 +56,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12 mt-2 text-center">
-                            <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="!data.confirmPassword || !data.newPassword || data.confirmPassword.length == 0 || data.newPassword.length == 0 || data.newPassword === data.confirmPassword">Save</button>
+                            <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="(!data.confirmPassword || !data.newPassword || data.confirmPassword.length == 0 || data.newPassword.length == 0 || data.newPassword === data.confirmPassword)  && !userLoginEmail.errors?.email">Save</button>
                             <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
                         </div>
                     </div>
