@@ -1,5 +1,12 @@
 <ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
 
+<div class="row">
+    <ni-card [outline]="true">
+        <app-fbo-prices-home style="width: 100%;"></app-fbo-prices-home>
+    </ni-card>
+    
+</div>
+
 <div class="row" *ngIf="dashboardSettings">
     <div class="col-6">
         <mat-form-field>
@@ -34,7 +41,7 @@
     </div>
 </div>
 
-<ni-card>
+<!--<ni-card>
     <div class="row">
         <div class="col-lg-12 col-xl-6 mb-lg-4">
             <app-analysis-price-orders-chart #analysisPriceOrdersChart></app-analysis-price-orders-chart>
@@ -46,4 +53,4 @@
             <app-analysis-fuelreqs-by-aircraft-size #analysisFuelreqsByAircraftSize></app-analysis-fuelreqs-by-aircraft-size>
         </div>
     </div>
-</ni-card>
+</ni-card>-->

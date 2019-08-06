@@ -23,7 +23,7 @@
     </div>
     
 
-    <table mat-table [dataSource]="customersDataSource" class="col-md-12" matSort matSortActive="icao" matSortDirection="asc" #customerTable>
+    <table mat-table [dataSource]="customersDataSource" class="col-md-12" matSort matSortActive="hasBeenViewed" matSortDirection="asc" #customerTable>
         <ng-container matColumnDef="hasBeenViewed">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Clients w/out Pricing</th>
             <td mat-cell *matCellDef="let customer">

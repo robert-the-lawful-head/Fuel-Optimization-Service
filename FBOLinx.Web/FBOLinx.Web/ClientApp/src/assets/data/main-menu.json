@@ -54,16 +54,6 @@
         "roles": [ 3 ]
     },
     {
-        "title": "FBO Prices",
-        "icon": {
-            "class": "fa fa-usd",
-            "bg": "#FBFFBC",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "routing": "/default-layout/fbo-prices",
-        "roles": [ 1, 4 ]
-    },
-    {
         "title": "Margin Templates",
         "icon": {
             "class": "fa fa-sitemap",

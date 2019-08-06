@@ -17,16 +17,16 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
 
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '#/default-layout/dashboard-home'
-    },
-    {
-        title: 'Manage Prices',
-        link: ''
-    }
-];
+//const BREADCRUMBS: any[] = [
+//    {
+//        title: 'Main',
+//        link: '#/default-layout/dashboard-home'
+//    },
+//    {
+//        title: 'Manage Prices',
+//        link: ''
+//    }
+//];
 
 @Component({
     selector: 'app-fbo-prices-home',
@@ -38,7 +38,7 @@ export class FboPricesHomeComponent implements OnInit {
 
     //Public Members
     public pageTitle: string = 'Pricing';
-    public breadcrumb: any[] = BREADCRUMBS;
+    //public breadcrumb: any[] = BREADCRUMBS;
     public pricingJetARetail: any;
     public pricingJetACost: any;
     public pricing100LLRetail: any;
@@ -85,7 +85,7 @@ export class FboPricesHomeComponent implements OnInit {
         public distributionDialog: MatDialog,
         public warningDialog: MatDialog) {
 
-        this.sharedService.emitChange(this.pageTitle);
+        //this.sharedService.emitChange(this.pageTitle);
     }
 
     ngOnInit(): void {
