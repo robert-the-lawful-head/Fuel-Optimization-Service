@@ -8,12 +8,14 @@ import { CustomeraircraftsService } from '../../../services/customeraircrafts.se
 import { CustomersService } from '../../../services/customers.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 
 //Components
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 import * as XLSX from 'xlsx';
+import { CustomermarginsService } from '../../../services/customermargins.service';
 
 @Component({
     selector: 'app-customers-grid',
@@ -28,6 +30,8 @@ export class CustomersGridComponent implements OnInit {
     @Output() customerDeleted = new EventEmitter<any>();
     @Input() customersData: Array<any>;
 
+    @Input() pricingTemplatesData: Array<any>;
+
     //Public Members
     @ViewChild('customerTableContainer') table: ElementRef;
     public customersDataSource: MatTableDataSource<any> = null;
@@ -36,6 +40,7 @@ export class CustomersGridComponent implements OnInit {
     public allCustomerAircraft: any[];
     public customerFilterType: number = 0;
 
+    public pricingTemplatesDataSource: MatTableDataSource<any> = null;
     
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -48,14 +53,20 @@ export class CustomersGridComponent implements OnInit {
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         public deleteCustomerDialog: MatDialog,
-        public customeraircraftsService: CustomeraircraftsService) {
+        public customeraircraftsService: CustomeraircraftsService,
+        public customerMarginsService: CustomermarginsService,
+        private pricingTemplatesService: PricingtemplatesService,) {
 
     }
 
     ngOnInit() {
         this.loadCustomerAircraftFullList();
+        //this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
+        this.pricingTemplatesDataSource = new MatTableDataSource(this.pricingTemplatesData);
+        console.log(this.pricingTemplatesData);
         if (!this.customersData)
             return;
+        console.log(this.customersData);
         this.refreshCustomerDataSource();
     }
 
@@ -162,5 +173,18 @@ export class CustomersGridComponent implements OnInit {
         this.customersDataSource.sort = this.sort;
         this.customersDataSource.paginator = this.paginator;
         this.resultsLength = this.customersData.length;
+    }
+
+    private onMarginChange(newValue, customer) {
+
+        var vm = {
+            id: customer.customerId,
+            customerMarginName: newValue,
+            fboid: this.sharedService.currentUser.fboId
+        }
+        this.customerMarginsService.updatecustomermargin(vm).subscribe(
+            (data:
+                any) => {
+            });
     }
 }

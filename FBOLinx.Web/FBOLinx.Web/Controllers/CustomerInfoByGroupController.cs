@@ -369,6 +369,43 @@ namespace FBOLinx.Web.Controllers
                     TailNumbers = resultsGroup.Key.Tails,
                     IsPricingExpired = resultsGroup.Key.IsPricingExpired
                 }).ToList();
+
+
+            var jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost")
+                .FirstOrDefaultAsync();
+
+            var result = await (from p in _context.PricingTemplate
+                                join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
+                                join cm in (from c in _context.CustomerMargins group c by new { c.TemplateId } into cmResults select new { templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault()) }) on p.Oid equals cm.templateId into leftJoinCustomerMargins
+                                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
+                                join fp in (from f in _context.Fboprices
+                                            where f.EffectiveFrom.HasValue && f.EffectiveFrom <= DateTime.Now && f.EffectiveTo.HasValue && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                                                  && f.Fboid.GetValueOrDefault() == fboId
+                                            select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
+                                from fp in leftJoinFboPrices.DefaultIfEmpty()
+                                where p.Fboid == fboId
+                                select new PricingTemplatesGridViewModel
+                                {
+                                    CustomerId = p.CustomerId.GetValueOrDefault(),
+                                    Default = p.Default.GetValueOrDefault(),
+                                    Fboid = p.Fboid,
+                                    Margin = cm == null ? 0 : cm.maxPrice,
+                                    MarginType = p.MarginType.GetValueOrDefault(),
+                                    Name = p.Name,
+                                    Notes = p.Notes,
+                                    Oid = p.Oid,
+                                    Type = p.Type.GetValueOrDefault(),
+                                    IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
+                                                     (cm == null ? 0 : cm.maxPrice),
+                                    IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
+                                    IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                                    YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
+                                }).ToListAsync();
+
+            foreach (var model in customerGridVM)
+            {
+                model.PricingTemplatesList = result;
+            }
             
             return customerGridVM;
         }
