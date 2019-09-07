@@ -83,6 +83,7 @@ import { PricetiersService } from './services/pricetiers.service';
 import { PricingtemplatesService } from './services/pricingtemplates.service';
 import { RampfeesService } from './services/rampfees.service';
 import { RampfeesettingsService } from './services/rampfeesettings.service';
+import { TemporaryAddOnMarginService } from './services/temporaryaddonmargin.service';
 import { UserService } from './services/user.service';
 
 //Helpers
@@ -153,7 +154,7 @@ import { DatePipe } from '@angular/common';
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-        AcukwikairportsService, AircraftsService, AircraftpricesService, AuthenticationService, ContactinfobygroupsService, ContactsService, CustomcustomertypesService, CustomeraircraftsService, CustomerCompanyTypesService, CustomercontactsService, CustomerinfobygroupService, CustomermarginsService, CustomersService, CustomersviewedbyfboService, DistributionService, EmailcontentService, FboairportsService, FbocontactsService, FbofeesService, FbopreferencesService, FbopricesService, FbosService, FuelreqsService, GroupsService, LandingsiteService, PricetiersService, PricingtemplatesService, RampfeesService, RampfeesettingsService, UserService],
+        AcukwikairportsService, AircraftsService, AircraftpricesService, AuthenticationService, ContactinfobygroupsService, ContactsService, CustomcustomertypesService, CustomeraircraftsService, CustomerCompanyTypesService, CustomercontactsService, CustomerinfobygroupService, CustomermarginsService, CustomersService, CustomersviewedbyfboService, DistributionService, EmailcontentService, FboairportsService, FbocontactsService, FbofeesService, FbopreferencesService, FbopricesService, FbosService, FuelreqsService, GroupsService, LandingsiteService, PricetiersService, PricingtemplatesService, RampfeesService, RampfeesettingsService, TemporaryAddOnMarginService, UserService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

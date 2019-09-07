@@ -316,3 +316,17 @@ GO
 ALTER TABLE PricingTemplate
 	ALTER COLUMN MarginType smallint
 GO
+
+CREATE TABLE [dbo].[TempAddOnMargin](
+	[id] [int] NOT NULL,
+	[fboId] [int] NOT NULL,
+	[effectiveFrom] [date] NOT NULL,
+	[effectiveTo] [date] NOT NULL,
+	[marginJet] [decimal](18, 0) NULL,
+	[marginAvgas] [decimal](18, 0) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO

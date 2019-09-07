@@ -24,4 +24,5 @@ import { PricetiersService } from './pricetiers.service';
 import { PricingtemplatesService } from './pricingtemplates.service';
 import { RampfeesService } from './rampfees.service';
 import { RampfeesettingsService } from './rampfeesettings.service';
+import { TemporaryAddOnMarginService } from './temporaryaddonmargin.service';
 import { UserService } from './user.service';

@@ -23,7 +23,7 @@
     <PackageReference Include="IdentityServer4" Version="2.3.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +40,7 @@
     <None Remove="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
     <None Remove="ClientApp\src\app\services\index.ts" />
+    <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <None Remove="ClientApp\src\app\shared\pipes\safe-html-pipe.pipe.ts" />
   </ItemGroup>
 
@@ -55,6 +56,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\pipes\safe-html-pipe.pipe.ts" />
   </ItemGroup>
 

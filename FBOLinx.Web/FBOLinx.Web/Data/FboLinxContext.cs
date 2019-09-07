@@ -49,7 +49,7 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<CustomerCompanyTypes> CustomerCompanyTypes { get; set; }
         public virtual DbSet<DistributionQueue> DistributionQueue { get; set; }
         public virtual DbSet<DistributionErrors> DistributionErrors { get; set; }
-
+        public virtual DbSet<TempAddOnMargin> TempAddOnMargin { get; set; }
 
         // Unable to generate entity type for table 'dbo.AdminEmails'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.FBOContacts'. Please see the warning messages.
@@ -304,6 +304,31 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.Name).IsUnicode(false);
 
                 entity.Property(e => e.Notes).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TempAddOnMargin>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.EffectiveFrom)
+                    .HasColumnName("effectiveFrom")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.EffectiveTo)
+                    .HasColumnName("effectiveTo")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.FboId).HasColumnName("fboId");
+
+                entity.Property(e => e.MarginAvgas)
+                    .HasColumnName("marginAvgas")
+                    .HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.MarginJet)
+                    .HasColumnName("marginJet")
+                    .HasColumnType("decimal(18, 0)");
             });
 
             modelBuilder.Entity<ContactInfoByGroup>(entity =>
