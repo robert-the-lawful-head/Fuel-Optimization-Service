@@ -113,9 +113,18 @@ export class FboPricesHomeComponent implements OnInit {
     }
 
     public fboPriceRequiresUpdate(price) {
-        this.requiresUpdate = true;
-        this.isSaved = false;
-        price.requiresUpdate = true;
+        if (this.currentFboPriceJetACost.price == 0 || this.currentFboPriceJetACost.price == null || this.currentFboPriceJetARetail.price == 0 || this.currentFboPriceJetARetail.price == null) {
+            this.requiresUpdate = false;
+            price.requiresUpdate = false;
+        }
+        else {
+            this.requiresUpdate = true;
+            this.isSaved = false;
+            price.requiresUpdate = true;
+        }
+        //this.requiresUpdate = true;
+        //this.isSaved = false;
+        //price.requiresUpdate = true;
     }
 
     public fboCurrentPriceDateChange() {
@@ -167,6 +176,8 @@ export class FboPricesHomeComponent implements OnInit {
 
         this.isSaved = true;
         this.requiresUpdate = false;
+
+        
     }
 
     public fboPreferenceChange() {
@@ -323,6 +334,7 @@ export class FboPricesHomeComponent implements OnInit {
             if (fboPrice.product == product)
                 result = fboPrice;
         }
+        console.log(result);
         return result;
     }
 

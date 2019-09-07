@@ -32,8 +32,9 @@ namespace FBOLinx.Web.ViewModels
         public bool HasBeenViewed { get; set; }
         public string TailNumbers { get; set; }
 
-        public double? AllInPrice{ get; set; }
+        public double? AllInPrice { get; set; }
         public bool IsPricingExpired { get; set; }
+        public List<PricingTemplatesGridViewModel> PricingTemplatesList { get; set; }
         
 
         public string DefaultCustomerTypeDescription
