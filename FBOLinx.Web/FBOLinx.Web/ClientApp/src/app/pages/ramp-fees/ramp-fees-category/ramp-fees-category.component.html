@@ -37,11 +37,11 @@
                         </mat-form-field>
                     </div>
                     <div class="col-3 text-center">
-                        <mat-form-field *ngIf="fee.categoryType == 1">
+                        <!--<mat-form-field *ngIf="fee.categoryType == 1">
                             <input matInput [(ngModel)]="fee.expirationDate" [matDatepicker]="categoryDatePicker" placeholder="Expiration Date" disabled (change)="rampFeeRequiresUpdate(fee)">
                             <mat-datepicker-toggle matSuffix [for]="categoryDatePicker"></mat-datepicker-toggle>
                             <mat-datepicker #categoryDatePicker disabled="false"></mat-datepicker>
-                        </mat-form-field>
+                        </mat-form-field>-->
                         <div>
                             <button ni-button [view]="'error'" beforeIcon="fa fa-trash" (click)="deleteRampFee()" *ngIf="fee.categoryType != 1">Delete</button>
                         </div>

@@ -32,6 +32,7 @@ export class RampFeesHomeComponent implements OnInit {
     public breadcrumb: any[] = BREADCRUMBS;
     public rampFees: any[];
     public requiresUpdate: boolean = false;
+    public expirationDate;
 
     /** ramp-fees-home ctor */
     constructor(private route: ActivatedRoute,
@@ -45,6 +46,7 @@ export class RampFeesHomeComponent implements OnInit {
     ngOnInit() {
         this.rampFeesService.getForFbo({ oid: this.sharedService.currentUser.fboId }).subscribe((data: any) => {
             this.rampFees = data;
+            this.expirationDate = data[1].expirationDate;
         });
     }
 
@@ -71,6 +73,14 @@ export class RampFeesHomeComponent implements OnInit {
     public rampFeeDeleted() {
         this.loadRampFees();
     }
+
+    public rampFeeRequiresUpdate() {
+    this.rampFees.forEach(fee => {
+        fee.ExpirationDate = this.expirationDate;
+            this.updateRampFee(fee);
+
+    });
+}
 
     public saveChanges() {
         this.rampFees.forEach(fee => {

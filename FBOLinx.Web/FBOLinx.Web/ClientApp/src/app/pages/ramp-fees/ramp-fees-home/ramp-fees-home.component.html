@@ -13,6 +13,13 @@
                     <div class="pull-right" *ngIf="requiresUpdate">
                         <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveChanges()">Save Changes</button>
                     </div>
+                    <div class="pull-left mr-1" *ngIf="rampFees[1].categoryType == 1">
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="expirationDate" [matDatepicker]="categoryDatePicker" placeholder="Expiration Date" disabled (ngModelChange)="rampFeeRequiresUpdate()">
+                            <mat-datepicker-toggle matSuffix [for]="categoryDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #categoryDatePicker disabled="false"></mat-datepicker>
+                        </mat-form-field>
+                </div>
                     <div class="pull-right mr-1">
                         <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addNewRampFeeClicked()">Add New</button>
                     </div>
@@ -33,7 +40,7 @@
                 </mat-panel-description>
             </mat-expansion-panel-header>
 
-            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Business Jets'" [categoryTypes]="[1]" [supportedValues]="[0,1,2,3,5,7,16]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
+            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Business Jets'" [categoryTypes]="[1]" [supportedValues]="[0,1,2,3,5,7,16]" [sortedValues]="[7,1,2,3,16,5]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
 
 
         </mat-expansion-panel>

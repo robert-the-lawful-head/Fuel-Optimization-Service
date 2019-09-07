@@ -23,11 +23,13 @@ export class RampFeesCategoryComponent implements OnInit {
     @Input() categoryTitle: string;
     @Input() categoryTypes: Array<number>;
     @Input() supportedValues: Array<number> = [];
+    @Input() sortedValues: Array<number> = [];
 
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
     public rampFeesForCategory: Array<any> = [];
-    
+    public tmpArray: Array<any> = [];
+
     /** ramp-fees-category ctor */
     constructor(private aircraftsService: AircraftsService,
         private rampFeesService: RampfeesService,
@@ -41,9 +43,14 @@ export class RampFeesCategoryComponent implements OnInit {
         this.rampFees.forEach(fee => {
             if (this.categoryTypes.indexOf(fee.categoryType) > -1) {
             if (this.supportedValues.length == 0 || this.supportedValues.indexOf(fee.categoryMinValue) > -1)
-                this.rampFeesForCategory.push(fee);
+                    this.rampFeesForCategory.push(fee);
+                    this.tmpArray.push(fee);
             }
                 
+        });
+
+        this.tmpArray.forEach(fee => {
+                this.rampFeesForCategory.splice(this.sortedValues.indexOf(fee.categoryMinValue), 1, fee);
         });
     }
 
