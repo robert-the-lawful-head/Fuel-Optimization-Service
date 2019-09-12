@@ -20,6 +20,7 @@ import { FbosService } from './fbos.service';
 import { FuelreqsService } from './fuelreqs.service';
 import { GroupsService } from './groups.service';
 import { LandingsiteService } from './landingsite.service';
+import { Parametri } from './paremeters.service';
 import { PricetiersService } from './pricetiers.service';
 import { PricingtemplatesService } from './pricingtemplates.service';
 import { RampfeesService } from './rampfees.service';

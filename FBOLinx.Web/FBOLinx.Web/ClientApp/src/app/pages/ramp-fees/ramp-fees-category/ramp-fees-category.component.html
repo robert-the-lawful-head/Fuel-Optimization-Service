@@ -1,4 +1,3 @@
-
 <div class="font-weight-bold">
     <div>
         <div *ngFor="let fee of rampFeesForCategory">
@@ -72,7 +71,7 @@
                                 </div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input matInput placeholder="Min. Weight" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <input matInput placeholder="Min. Weight" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)" />
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
                                 </div>
@@ -81,7 +80,7 @@
                                 </div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input matInput placeholder="Max. Weight" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <input matInput placeholder="Max. Weight" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)" />
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
                                 </div>
@@ -92,7 +91,7 @@
                                 </div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input matInput placeholder="Min. Wingspan" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <input matInput placeholder="Min. Wingspan" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)" />
                                         <span matSuffix>Feet</span>
                                     </mat-form-field>
                                 </div>
@@ -101,7 +100,7 @@
                                 </div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input matInput placeholder="Max. Wingspan" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <input matInput placeholder="Max. Wingspan" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)" />
                                         <span matSuffix>Feet</span>
                                     </mat-form-field>
                                 </div>

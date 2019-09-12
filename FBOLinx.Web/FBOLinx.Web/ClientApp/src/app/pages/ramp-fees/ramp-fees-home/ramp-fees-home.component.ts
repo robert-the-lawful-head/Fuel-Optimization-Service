@@ -5,9 +5,11 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 //Services
 import { RampfeesService } from '../../../services/rampfees.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { Parametri } from '../../../services/paremeters.service';
 
 //Components
 import { RampFeesDialogNewFeeComponent } from '../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component';
+import { first } from 'rxjs/operators';
 
 const BREADCRUMBS: any[] = [
     {
@@ -32,14 +34,16 @@ export class RampFeesHomeComponent implements OnInit {
     public breadcrumb: any[] = BREADCRUMBS;
     public rampFees: any[];
     public requiresUpdate: boolean = false;
-    public expirationDate;
+    public expirationDate: any;
+    public subscription: any;
 
     /** ramp-fees-home ctor */
     constructor(private route: ActivatedRoute,
         private router: Router,
         private rampFeesService: RampfeesService,
         private sharedService: SharedService,
-        public newRampFeeDialog: MatDialog) {
+        public newRampFeeDialog: MatDialog,
+        private messageService: Parametri) {
         this.sharedService.emitChange(this.pageTitle);
     }
 
@@ -47,6 +51,8 @@ export class RampFeesHomeComponent implements OnInit {
         this.rampFeesService.getForFbo({ oid: this.sharedService.currentUser.fboId }).subscribe((data: any) => {
             this.rampFees = data;
             this.expirationDate = data[1].expirationDate;
+            this.messageService.updateMessage(this.expirationDate);
+            this.messageService.getMessage().subscribe((mymessage: any) => this.expirationDate = mymessage);
         });
     }
 
@@ -80,6 +86,9 @@ export class RampFeesHomeComponent implements OnInit {
             this.updateRampFee(fee);
 
     });
+        this.messageService.updateMessage(this.expirationDate);
+        this.loadRampFees();
+
 }
 
     public saveChanges() {

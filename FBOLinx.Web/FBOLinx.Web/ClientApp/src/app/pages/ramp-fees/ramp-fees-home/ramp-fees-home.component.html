@@ -54,7 +54,7 @@
                 </mat-panel-description>
             </mat-expansion-panel-header>
 
-            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Turbo Props'" [categoryTypes]="[1]" [supportedValues]="[6,8,11,12,13,14,15]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
+            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Turbo Props'" [categoryTypes]="[1]" [supportedValues]="[6,8,11,12,13,14,15]" [sortedValues]="[6,8,11,12,13,14,15]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
 
 
         </mat-expansion-panel>
@@ -69,7 +69,7 @@
                 </mat-panel-description>
             </mat-expansion-panel-header>
 
-            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Helicopters'" [categoryTypes]="[1]" [supportedValues]="[4,9,10]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
+            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Helicopters'" [categoryTypes]="[1]" [supportedValues]="[4,9,10]"  [sortedValues]="[4,9,10]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
 
 
         </mat-expansion-panel>

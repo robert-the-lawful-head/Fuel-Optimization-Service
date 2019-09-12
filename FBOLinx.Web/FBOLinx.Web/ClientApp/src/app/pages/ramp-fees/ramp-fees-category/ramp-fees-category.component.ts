@@ -24,6 +24,7 @@ export class RampFeesCategoryComponent implements OnInit {
     @Input() categoryTypes: Array<number>;
     @Input() supportedValues: Array<number> = [];
     @Input() sortedValues: Array<number> = [];
+    @Input() expirationDate: any;
 
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
@@ -50,7 +51,9 @@ export class RampFeesCategoryComponent implements OnInit {
         });
 
         this.tmpArray.forEach(fee => {
+            if (fee.categoryMinValue > 0 && this.sortedValues.indexOf(fee.categoryMinValue) > -1) {
                 this.rampFeesForCategory.splice(this.sortedValues.indexOf(fee.categoryMinValue), 1, fee);
+            }
         });
     }
 
