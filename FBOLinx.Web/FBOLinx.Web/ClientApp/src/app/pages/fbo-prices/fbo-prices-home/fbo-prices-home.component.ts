@@ -64,6 +64,7 @@ export class FboPricesHomeComponent implements OnInit {
     public stagedPricingEffectiveFrom: Date = new Date();
     public stagedPricingEffectiveTo: Date = new Date();
     public pricingTemplates: any[];
+    public activePrice: boolean = false;
 
     //Additional Public Members for direct reference (date filtering/restrictions)
     public currentFboPriceJetARetail: any;
@@ -248,6 +249,9 @@ export class FboPricesHomeComponent implements OnInit {
                 this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
                 if (this.currentFboPrice100LLCost.effectiveFrom != null) {
                     this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
+                    if (this.currentFboPrice100LLCost.effectiveFrom <= new Date() && this.currentFboPrice100LLCost.effectiveTo > new Date()) {
+                        this.activePrice = true;
+                    }
                 } else {
                     this.currentPricingEffectiveFrom = new Date();
                 }

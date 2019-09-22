@@ -45,19 +45,36 @@
 </div>-->
 <div class="row">
     <div class="col-md-3 mt-3">
-        <ni-card [bgColor]="'info'" [outline]="true" [color]="'success'" *ngIf="currentFboPriceJetARetail && currentFboPriceJetARetail.price > 0">
+        <ni-card [bgColor]="'info'" [outline]="true" [color]="'success'" *ngIf="(currentFboPriceJetARetail && currentFboPriceJetARetail.price > 0) || activePrice;else notValid">
             <h6 class="mt-0 title">CURRENT POSTED RETAIL (JET A)</h6>
             <h4 class="mt-0">
                 {{currentFboPriceJetARetail.price | currency:'USD'}}
             </h4>
         </ni-card>
-        <ni-card [bgColor]="'info'" [outline]="true" [color]="'danger'" *ngIf="currentFboPriceJetACost && currentFboPriceJetACost.price > 0">
+        <ng-template #notValid>
+            <ni-card [bgColor]="'info'" [outline]="true" [color]="'success'">
+                <h6 class="mt-0 title">CURRENT POSTED RETAIL (JET A)</h6>
+                <h4 class="mt-0">
+                    EXPIRED
+                </h4>
+            </ni-card>
+        </ng-template>
+        <ni-card [bgColor]="'info'" [outline]="true" [color]="'danger'" *ngIf="(currentFboPriceJetACost && currentFboPriceJetACost.price > 0) || activePrice;else notValidJet">
             <h6 class="mt-0 title">CURRENT COST (JET A)</h6>
             <h4 class="mt-0">
                 {{currentFboPriceJetACost.price | currency:'USD'}}
             </h4>
             <small>Cost pricing is confidential and not publicly displayed.  It is only used to calculate Cost+ Pricing</small>
         </ni-card>
+        <ng-template #notValidJet>
+            <ni-card [bgColor]="'info'" [outline]="true" [color]="'danger'">
+                <h6 class="mt-0 title">CURRENT COST (JET A)</h6>
+                <h4 class="mt-0">
+                    EXPIRED
+                </h4>
+                <small>Cost pricing is confidential and not publicly displayed.  It is only used to calculate Cost+ Pricing</small>
+            </ni-card>
+        </ng-template>
     </div>
 <div class="col-md-8 mt-3">
     <ni-card title="Update your pricing here" [headerBgColor]="'success'" class="mb-0">
