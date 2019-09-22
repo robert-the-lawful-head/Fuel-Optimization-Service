@@ -57,7 +57,7 @@ export class FboPricesHomeComponent implements OnInit {
     public requiresUpdate: boolean;
     public isSaved: boolean;
     public minimumAllowedDate: Date = new Date();
-    public maximumCurrentEffectiveTo: Date = new Date();
+    //public maximumCurrentEffectiveTo: Date = new Date();
     public minimumStagedEffectiveFrom: Date = new Date();
     public currentPricingEffectiveFrom: Date = new Date();
     public currentPricingEffectiveTo: Date = new Date();
@@ -136,6 +136,8 @@ export class FboPricesHomeComponent implements OnInit {
         }
         this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
         this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
+        this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+        this.minimumAllowedDate = this.currentPricingEffectiveFrom;
     }
 
     public fboStagedPriceDateChange() {
@@ -146,7 +148,7 @@ export class FboPricesHomeComponent implements OnInit {
             stagedPrice.requiresUpdate = true;
         }
         this.currentPricingEffectiveTo = new Date(moment(this.stagedPricingEffectiveFrom).add(-1, 'days').format('MM/DD/YYYY'));
-        this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
+        //this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
     }
 
     public saveChangesClicked() {
@@ -273,7 +275,7 @@ export class FboPricesHomeComponent implements OnInit {
                 this.stagedPricingEffectiveTo = new Date(moment(this.stagedPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
             }
             this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
-            this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
+            //this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
             this.setAllDateLimits();
         });
     }
