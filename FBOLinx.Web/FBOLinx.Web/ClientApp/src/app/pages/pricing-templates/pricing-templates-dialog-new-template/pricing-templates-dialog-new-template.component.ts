@@ -14,6 +14,8 @@ export interface NewPricingTemplateDialogData {
     name: string;
     fboId: number;
     marginType: number;
+    subject: string;
+    email: string;
     notes: string;
     customerMargins: NewPricingTemplateMargin[];
     default: boolean;
@@ -41,7 +43,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     public secondFormGroup: FormGroup;
     public thirdFormGroup: FormGroup;
     public currentPrice: any;
+    public title: string;
     public isSaving: boolean;
+    public total: number = 0;
     public marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
         { text: 'Retail -', value: 1 },
@@ -58,6 +62,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         private fbopricesService: FbopricesService) {
 
         this.loadCurrentPrice();
+        this.title = 'New Margin Template';
     }
 
     ngOnInit() {
@@ -73,7 +78,6 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             emailContentSignature: ['', Validators.required],
             emailContentSignatureName: ['', Validators.required]
         });
-
         //Subscribe to necessary changes
         this.secondFormGroup.get('marginType').valueChanges.subscribe(val => {
             this.data.marginType = val;
@@ -134,6 +138,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 this.data.customerMargins[i].max = 99999;
 
             this.calculateItpForMargin(this.data.customerMargins[indexNumber]);
+            for (let margin of this.data.customerMargins) {
+                this.total += margin.amount;
+            }
         }
     }
 
@@ -147,6 +154,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 customerMargin.amount = previousTier.amount - .01;
         }
         this.calculateItpForMargin(customerMargin);
+        for (let margin of this.data.customerMargins) {
+            this.total += margin.amount;
+        }
     }
 
     public deleteCustomerMargin(customerMargin) {

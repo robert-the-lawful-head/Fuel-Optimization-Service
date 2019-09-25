@@ -31,6 +31,7 @@ namespace FBOLinx.Web.Models
         public int? CustomerId { get; set; }
         public bool? Default { get; set; }
         public string Notes { get; set; }
+        public string Email { get; set; }
         public short? Type { get; set; }
         public MarginTypes? MarginType { get; set; }
 
