@@ -32,6 +32,7 @@ namespace FBOLinx.Web.Models
         public bool? Default { get; set; }
         public string Notes { get; set; }
         public string Email { get; set; }
+        public string Subject { get; set; }
         public short? Type { get; set; }
         public MarginTypes? MarginType { get; set; }
 

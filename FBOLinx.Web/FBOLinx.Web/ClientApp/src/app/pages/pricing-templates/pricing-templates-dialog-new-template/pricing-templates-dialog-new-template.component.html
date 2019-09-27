@@ -110,7 +110,7 @@
                 <div class="row mt-2 mb-2">
                     <div class="col">
                         <mat-form-field>
-                            <input matInput placeholder="Subject" aria-label="Subject" />
+                            <input matInput placeholder="Subject" [(value)]='data.subject' aria-label="Subject" />
                         </mat-form-field>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
                 </div>
                     <div class="row mt-2 mb-2">
                         <div class="col">
-                            <ejs-richtexteditor id='rteEmail' data- [(value)]='data.email'></ejs-richtexteditor>
+                            <ejs-richtexteditor id='rteEmail'  [(value)]='data.email'></ejs-richtexteditor>
                         </div>
                     </div>
                     <div class="row mt-2 mb-2">

@@ -333,3 +333,6 @@ GO
 
 alter table PricingTemplate add Email varchar(max) null
 GO
+
+alter table PricingTemplate add Subject varchar(max) null
+GO
