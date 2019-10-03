@@ -114,7 +114,7 @@ export class FboPricesHomeComponent implements OnInit {
     }
 
     public fboPriceRequiresUpdate(price) {
-        if (this.currentFboPriceJetACost.price == 0 || this.currentFboPriceJetACost.price == null || this.currentFboPriceJetARetail.price == 0 || this.currentFboPriceJetARetail.price == null) {
+        if (price.price == 0 || price.price == null) {
             this.requiresUpdate = false;
             price.requiresUpdate = false;
         }
@@ -160,7 +160,6 @@ export class FboPricesHomeComponent implements OnInit {
                 this.savePriceChanges(price);
             }
         }
-
         for (let stagedPrice of this.stagedPrices) {
             if (stagedPrice.requiresUpdate) {
                 stagedPrice.effectiveFrom = this.stagedPricingEffectiveFrom;

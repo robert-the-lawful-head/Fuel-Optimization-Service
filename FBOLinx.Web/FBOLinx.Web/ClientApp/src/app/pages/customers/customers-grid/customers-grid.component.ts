@@ -16,6 +16,7 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 
 import * as XLSX from 'xlsx';
 import { CustomermarginsService } from '../../../services/customermargins.service';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
     selector: 'app-customers-grid',
@@ -35,10 +36,14 @@ export class CustomersGridComponent implements OnInit {
     //Public Members
     @ViewChild('customerTableContainer') table: ElementRef;
     public customersDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['hasBeenViewed', 'company', 'customerCompanyTypeName', 'pricingTemplateId', 'allInPrice', 'edit', 'delete'];
+    public displayedColumns: string[] = ['selectAll','hasBeenViewed', 'company', 'customerCompanyTypeName', 'pricingTemplateId', 'allInPrice', 'delete'];
     public resultsLength: number = 0;
     public allCustomerAircraft: any[];
     public customerFilterType: number = 0;
+
+    public selectAll: boolean = false;
+    public selectedRows: number;
+    public globalMargin: any;
 
     public pricingTemplatesDataSource: MatTableDataSource<any> = null;
     
@@ -68,6 +73,7 @@ export class CustomersGridComponent implements OnInit {
             return;
         console.log(this.customersData);
         this.refreshCustomerDataSource();
+        this.selectAll = false;
     }
 
     //Public Methods
@@ -88,6 +94,25 @@ export class CustomersGridComponent implements OnInit {
     public editCustomer(customer) {
         const clonedCustomer = Object.assign({}, customer);
         this.editCustomerClicked.emit(clonedCustomer);
+    }
+
+    public selectAction()
+    {
+        this.customersData.forEach(fee => {
+            fee.selectAll = this.selectAll ? true : false;
+        });
+        this.selectedRows = this.selectAll ? this.customersData.length: 0;
+    }
+
+    public selectUnique() {
+        if (this.selectedRows == this.customersData.length) {
+            this.selectAll = false;
+            this.selectedRows = this.selectedRows - 1;
+        }
+        //if (this.selectedRows == this.customersData.length + 1) {
+        //    this.selectAll = true;
+        //    this.selectedRows = this.selectedRows + 1;
+        //}
     }
 
     public newCustomer() {

@@ -63,7 +63,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = (from p in products
                 join f in (from f in _context.Fboprices
-                        where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                        where f.EffectiveFrom.Value.ToUniversalTime() <= DateTime.Now && f.EffectiveTo.Value.ToUniversalTime() > DateTime.UtcNow.AddDays(-1)
                         && f.Fboid == fboId
                         select f) on new {Product = p.Description, FboId = fboId} equals new
                     {
@@ -102,7 +102,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = (from p in products
                 join f in (from f in _context.Fboprices
-                        where f.EffectiveFrom > DateTime.Now
+                        where f.EffectiveFrom.Value.ToUniversalTime() > DateTime.UtcNow
                         select f) on new { Product = p.Description, FboId = fboId } equals new
                     {
                         f.Product,
@@ -117,9 +117,9 @@ namespace FBOLinx.Web.Controllers
                     Fboid = fboId,
                     Product = p.Description,
                     Price = f?.Price,
-                    EffectiveFrom = f?.EffectiveFrom,
-                    EffectiveTo = f?.EffectiveTo,
-                    TimeStamp = f?.Timestamp,
+                    EffectiveFrom = f?.EffectiveFrom.Value.ToUniversalTime(),
+                    EffectiveTo = f?.EffectiveTo.Value.ToUniversalTime(),
+                    TimeStamp = f?.Timestamp.Value.ToUniversalTime(),
                     SalesTax = f?.SalesTax,
                     Currency = f?.Currency
                 });
@@ -139,7 +139,7 @@ namespace FBOLinx.Web.Controllers
             var fboprices = await GetAllFboPrices().Where((f => f.Fboid == fboId && 
                                                                 f.Product != null &&
                                                                 f.Product.ToLower() == product.ToLower() &&
-                                                                f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1))).FirstOrDefaultAsync();
+                                                                f.EffectiveFrom.Value.ToUniversalTime() <= DateTime.UtcNow && f.EffectiveTo.Value.ToUniversalTime() > DateTime.UtcNow.AddDays(-1))).FirstOrDefaultAsync();
 
             return Ok(fboprices);
         }
@@ -157,12 +157,12 @@ namespace FBOLinx.Web.Controllers
             var fboPricesByMonth = (from f in _context.Fboprices
                 where f.Product.ToLower() == request.Product.ToLower()
                       && f.Fboid == fboId
-                      && f.EffectiveFrom >= request.StartDateTime
-                      && f.EffectiveFrom <= request.EndDateTime
+                      && f.EffectiveFrom.Value.ToUniversalTime() >= request.StartDateTime
+                      && f.EffectiveFrom.Value.ToUniversalTime() <= request.EndDateTime
                 group f by new
                 {
-                    Month = f.EffectiveFrom.GetValueOrDefault().Month,
-                    Year = f.EffectiveFrom.Value.Year
+                    Month = f.EffectiveFrom.Value.ToUniversalTime().Month,
+                    Year = f.EffectiveFrom.Value.ToUniversalTime().Year
                 }
                 into results
                 select new
@@ -193,7 +193,9 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                fboprices.Timestamp = DateTime.Now;
+                fboprices.EffectiveFrom = fboprices.EffectiveFrom.Value.ToUniversalTime();
+                fboprices.EffectiveTo = fboprices.EffectiveTo.Value.ToUniversalTime();
+                fboprices.Timestamp = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -220,7 +222,9 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            fboprices.Timestamp = DateTime.Now;
+            fboprices.EffectiveFrom = fboprices.EffectiveFrom.Value.ToUniversalTime();
+            fboprices.EffectiveTo = fboprices.EffectiveTo.Value.ToUniversalTime();
+            fboprices.Timestamp = DateTime.UtcNow;
             _context.Fboprices.Add(fboprices);
             await _context.SaveChangesAsync();
 

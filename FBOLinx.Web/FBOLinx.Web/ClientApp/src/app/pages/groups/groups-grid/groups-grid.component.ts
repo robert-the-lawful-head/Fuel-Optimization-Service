@@ -39,7 +39,7 @@ export class GroupsGridComponent implements OnInit  {
     public pageTitle: string = 'Groups';
     public breadcrumb: any[] = BREADCRUMBS;
     public groupsDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['group', 'active', 'edit', 'delete'];
+    public displayedColumns: string[] = ['group', 'active', 'delete'];
     public resultsLength: number = 0;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;

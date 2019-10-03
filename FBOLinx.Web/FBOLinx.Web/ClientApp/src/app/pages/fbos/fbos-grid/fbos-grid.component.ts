@@ -43,7 +43,7 @@ export class FbosGridComponent implements OnInit {
     public pageTitle: string = 'FBOs';
     public breadcrumb: any[] = BREADCRUMBS;
     public fbosDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['icao', 'fbo', 'active', 'edit', 'delete'];
+    public displayedColumns: string[] = ['icao', 'fbo', 'active', 'delete'];
     public airportData: Array<any>;
     public resultsLength: number = 0;
     public canManageFbo: boolean = false;
@@ -63,7 +63,7 @@ export class FbosGridComponent implements OnInit {
         this.sharedService.emitChange(this.pageTitle);
         this.canManageFbo = (this.sharedService.currentUser.role == 2);
         if (this.canManageFbo)
-            this.displayedColumns = ['icao', 'fbo', 'active', 'manage', 'edit', 'delete'];
+            this.displayedColumns = ['icao', 'fbo', 'active', 'manage','delete'];
     }
 
     ngOnInit() {

@@ -248,8 +248,21 @@ body {
         }
     }
 
-    .mat-header-row,
     .mat-row {
+        padding: 0 $module-rem;
+
+        &:hover {
+            background-color: #2680EB;
+            cursor: pointer;
+        }
+
+        .mat-cell,
+        .mat-header-cell {
+            padding: 0 $module-rem;
+        }
+    }
+
+    .mat-header-row {
         padding: 0 $module-rem;
 
         .mat-cell,

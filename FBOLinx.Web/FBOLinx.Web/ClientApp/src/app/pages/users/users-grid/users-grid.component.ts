@@ -23,7 +23,7 @@ export class UsersGridComponent {
     @Input() groupInfo: any;
 
     public usersDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['firstName', 'lastName', 'username', 'roleDescription', 'edit', 'delete'];
+    public displayedColumns: string[] = ['firstName', 'lastName', 'username', 'roleDescription','delete'];
     public resultsLength: number = 0;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
