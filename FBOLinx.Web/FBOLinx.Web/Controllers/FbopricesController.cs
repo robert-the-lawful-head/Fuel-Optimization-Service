@@ -62,29 +62,29 @@ namespace FBOLinx.Web.Controllers
             var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
 
             var result = (from p in products
-                join f in (from f in _context.Fboprices
-                        where f.EffectiveFrom.Value.ToUniversalTime() <= DateTime.Now && f.EffectiveTo.Value.ToUniversalTime() > DateTime.UtcNow.AddDays(-1)
-                        && f.Fboid == fboId
-                        select f) on new {Product = p.Description, FboId = fboId} equals new
-                    {
-                        f.Product,
-                        FboId = f.Fboid.GetValueOrDefault()
-                    }
-                    into leftJoinFBOPrices
-                from f in leftJoinFBOPrices.DefaultIfEmpty()
+                          join f in (from f in _context.Fboprices
+                                     where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                                     && f.Fboid == fboId
+                                     select f) on new { Product = p.Description, FboId = fboId } equals new
+                                     {
+                                         f.Product,
+                                         FboId = f.Fboid.GetValueOrDefault()
+                                     }
+                              into leftJoinFBOPrices
+                          from f in leftJoinFBOPrices.DefaultIfEmpty()
 
-                select new
-                {
-                    Oid = f?.Oid ?? 0,
-                    Fboid = fboId,
-                    Product = p.Description,
-                    Price = f?.Price,
-                    EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
-                    EffectiveTo = f?.EffectiveTo,
-                    TimeStamp = f?.Timestamp,
-                    SalesTax = f?.SalesTax,
-                    Currency = f?.Currency
-                });
+                          select new
+                          {
+                              Oid = f?.Oid ?? 0,
+                              Fboid = fboId,
+                              Product = p.Description,
+                              Price = f?.Price,
+                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
+                              EffectiveTo = f?.EffectiveTo,
+                              TimeStamp = f?.Timestamp,
+                              SalesTax = f?.SalesTax,
+                              Currency = f?.Currency
+                          });
 
             return Ok(result);
         }
@@ -101,28 +101,28 @@ namespace FBOLinx.Web.Controllers
             var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
 
             var result = (from p in products
-                join f in (from f in _context.Fboprices
-                        where f.EffectiveFrom.Value.ToUniversalTime() > DateTime.UtcNow
-                        select f) on new { Product = p.Description, FboId = fboId } equals new
-                    {
-                        f.Product,
-                        FboId = f.Fboid.GetValueOrDefault()
-                    }
-                    into leftJoinFBOPrices
-                from f in leftJoinFBOPrices.DefaultIfEmpty()
+                          join f in (from f in _context.Fboprices
+                                     where f.EffectiveFrom > DateTime.Now
+                                     select f) on new { Product = p.Description, FboId = fboId } equals new
+                                     {
+                                         f.Product,
+                                         FboId = f.Fboid.GetValueOrDefault()
+                                     }
+                              into leftJoinFBOPrices
+                          from f in leftJoinFBOPrices.DefaultIfEmpty()
 
-                select new
-                {
-                    Oid = f?.Oid ?? 0,
-                    Fboid = fboId,
-                    Product = p.Description,
-                    Price = f?.Price,
-                    EffectiveFrom = f?.EffectiveFrom.Value.ToUniversalTime(),
-                    EffectiveTo = f?.EffectiveTo.Value.ToUniversalTime(),
-                    TimeStamp = f?.Timestamp.Value.ToUniversalTime(),
-                    SalesTax = f?.SalesTax,
-                    Currency = f?.Currency
-                });
+                          select new
+                          {
+                              Oid = f?.Oid ?? 0,
+                              Fboid = fboId,
+                              Product = p.Description,
+                              Price = f?.Price,
+                              EffectiveFrom = f?.EffectiveFrom,
+                              EffectiveTo = f?.EffectiveTo,
+                              TimeStamp = f?.Timestamp,
+                              SalesTax = f?.SalesTax,
+                              Currency = f?.Currency
+                          });
 
             return Ok(result);
         }
@@ -136,10 +136,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fboprices = await GetAllFboPrices().Where((f => f.Fboid == fboId && 
+            var fboprices = await GetAllFboPrices().Where((f => f.Fboid == fboId &&
                                                                 f.Product != null &&
                                                                 f.Product.ToLower() == product.ToLower() &&
-                                                                f.EffectiveFrom.Value.ToUniversalTime() <= DateTime.UtcNow && f.EffectiveTo.Value.ToUniversalTime() > DateTime.UtcNow.AddDays(-1))).FirstOrDefaultAsync();
+                                                                f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1))).FirstOrDefaultAsync();
 
             return Ok(fboprices);
         }
@@ -155,22 +155,22 @@ namespace FBOLinx.Web.Controllers
             }
 
             var fboPricesByMonth = (from f in _context.Fboprices
-                where f.Product.ToLower() == request.Product.ToLower()
-                      && f.Fboid == fboId
-                      && f.EffectiveFrom.Value.ToUniversalTime() >= request.StartDateTime
-                      && f.EffectiveFrom.Value.ToUniversalTime() <= request.EndDateTime
-                group f by new
-                {
-                    Month = f.EffectiveFrom.Value.ToUniversalTime().Month,
-                    Year = f.EffectiveFrom.Value.ToUniversalTime().Year
-                }
+                                    where f.Product.ToLower() == request.Product.ToLower()
+                                          && f.Fboid == fboId
+                                          && f.EffectiveFrom >= request.StartDateTime
+                                          && f.EffectiveFrom <= request.EndDateTime
+                                    group f by new
+                                    {
+                                        Month = f.EffectiveFrom.GetValueOrDefault().Month,
+                                        Year = f.EffectiveFrom.Value.Year
+                                    }
                 into results
-                select new
-                {
-                    Month = results.Key.Month,
-                    Year = results.Key.Year,
-                    AveragePrice = results.Average((x => x.Price))
-                });
+                                    select new
+                                    {
+                                        Month = results.Key.Month,
+                                        Year = results.Key.Year,
+                                        AveragePrice = results.Average((x => x.Price))
+                                    });
 
             return Ok(fboPricesByMonth);
         }
@@ -193,9 +193,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                fboprices.EffectiveFrom = fboprices.EffectiveFrom.Value.ToUniversalTime();
-                fboprices.EffectiveTo = fboprices.EffectiveTo.Value.ToUniversalTime();
-                fboprices.Timestamp = DateTime.UtcNow;
+                fboprices.Timestamp = DateTime.Now;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -222,9 +220,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            fboprices.EffectiveFrom = fboprices.EffectiveFrom.Value.ToUniversalTime();
-            fboprices.EffectiveTo = fboprices.EffectiveTo.Value.ToUniversalTime();
-            fboprices.Timestamp = DateTime.UtcNow;
+            fboprices.Timestamp = DateTime.Now;
             _context.Fboprices.Add(fboprices);
             await _context.SaveChangesAsync();
 
