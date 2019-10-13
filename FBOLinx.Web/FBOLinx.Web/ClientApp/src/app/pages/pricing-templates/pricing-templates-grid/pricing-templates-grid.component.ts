@@ -50,7 +50,12 @@ export class PricingTemplatesGridComponent implements OnInit {
         this.resultsLength = this.pricingTemplatesData.length;
     }
 
-    public editPricingTemplate(pricingTemplate) {
+    public editPricingTemplate(pricingTemplate, $event) {
+        if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
+            //$event.preventDefault();
+            $event.stopPropagation();
+            return;
+        }
         const clonedRecord = Object.assign({}, pricingTemplate);
         this.editPricingTemplateClicked.emit(clonedRecord);
     }

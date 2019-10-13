@@ -91,7 +91,12 @@ export class CustomersGridComponent implements OnInit {
         });
     }
 
-    public editCustomer(customer) {
+    public editCustomer(customer, $event) {
+        if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
+            //$event.preventDefault();
+            $event.stopPropagation();
+            return;
+        }
         const clonedCustomer = Object.assign({}, customer);
         this.editCustomerClicked.emit(clonedCustomer);
     }
@@ -126,7 +131,7 @@ export class CustomersGridComponent implements OnInit {
                 result.customerId = data.oid;
                 this.customerInfoByGroupService.add(result).subscribe((customerInfoByGroupData: any) => {
                     result.customerInfoByGroupId = customerInfoByGroupData.oid;
-                    this.editCustomer(result);
+                    this.editCustomer(result,Event);
                 });
             });
         });

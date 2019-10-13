@@ -318,7 +318,7 @@ ALTER TABLE PricingTemplate
 GO
 
 CREATE TABLE [dbo].[TempAddOnMargin](
-	[id] [int] NOT NULL,
+	[id] [int] NOT NULL IDENTITY (1, 1),
 	[fboId] [int] NOT NULL,
 	[effectiveFrom] [date] NOT NULL,
 	[effectiveTo] [date] NOT NULL,

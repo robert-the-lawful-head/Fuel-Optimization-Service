@@ -93,7 +93,12 @@ export class FbosGridComponent implements OnInit {
         });
     }
 
-    public editRecord(record) {
+    public editRecord(record,$event) {
+        if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
+            //$event.preventDefault();
+            $event.stopPropagation();
+            return;
+        }
         const clonedRecord = Object.assign({}, record);
         this.editFboClicked.emit(clonedRecord);
     }
@@ -113,7 +118,7 @@ export class FbosGridComponent implements OnInit {
                 this.fboAirportsService.add({ oid: 0, fboId: data.oid, icao: result.airport.icao, iata: result.airport.iata })
                     .subscribe((fboAirportData:
                         any) => {
-                        this.editRecord(data);
+                        this.editRecord(data,event);
                     });
             });
         });

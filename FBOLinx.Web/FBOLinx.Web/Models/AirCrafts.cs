@@ -23,7 +23,7 @@ namespace FBOLinx.Web.Models
             LightHelicopter = 4,
             [Description("Wide Body")]
             WideBody = 5,
-            [Description("Single Turbo Prop")]
+            [Description("Single Turboprop")]
             SingleTurboProp = 6,
             [Description("Very Light Jet")]
             VeryLightJet = 7,
@@ -37,7 +37,7 @@ namespace FBOLinx.Web.Models
             LightTwin = 11,
             [Description("Heavy Twin")]
             HeavyTwin = 12,
-            [Description("Light Turbo Prop")]
+            [Description("Light Turboprop")]
             LightTurboProp = 13,
             [Description("Medium Turbo Prop")]
             MediumTurboprop = 14,

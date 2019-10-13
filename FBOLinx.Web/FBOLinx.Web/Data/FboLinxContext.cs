@@ -308,10 +308,6 @@ namespace FBOLinx.Web.Data
 
             modelBuilder.Entity<TempAddOnMargin>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .ValueGeneratedNever();
-
                 entity.Property(e => e.EffectiveFrom)
                     .HasColumnName("effectiveFrom")
                     .HasColumnType("date");

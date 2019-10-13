@@ -68,7 +68,7 @@
         <ng-container matColumnDef="pricingTemplateId">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Margin</th>
             <td mat-cell *matCellDef="let customer">
-                <select id="pricingtemplates" name="ddlPricingTemplate"  [(ngModel)]="customer.pricingTemplateName" (ngModelChange)="onMarginChange($event, customer)">
+                <select id="pricingtemplates" name="ddlPricingTemplate"  [(ngModel)]="customer.pricingTemplateName" (ngModelChange)="onMarginChange($event, customer);$event.stopPropagation();">
                     <option *ngFor="let pricingTemplate of customer.pricingTemplatesList" value="{{pricingTemplate.name}}">{{pricingTemplate.name}}</option>
                 </select>
             </td>
@@ -113,14 +113,14 @@
             </th>
             <td mat-cell *matCellDef="let customer">
                 <div class="pull-right">
-                    <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomer(customer)">Delete</button>
+                    <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomer(customer);$event.stopPropagation();">Delete</button>
                 </div>
             </td>
         </ng-container>
 
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editCustomer(row)"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editCustomer(row,$event)"></tr>
     </table>
 </div>
 

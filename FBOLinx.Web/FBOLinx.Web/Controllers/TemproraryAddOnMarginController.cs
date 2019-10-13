@@ -68,7 +68,7 @@ namespace FBOLinx.Web.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
                 if (tempMarginExists(tempAddOnMargin.FboId))
                 {

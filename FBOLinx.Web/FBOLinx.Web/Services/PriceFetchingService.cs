@@ -67,6 +67,16 @@ namespace FBOLinx.Web.Services
                         product = fp.Product
                     } into leftJoinFP
                     from fp in leftJoinFP.DefaultIfEmpty()
+                    join tmp in _context.TempAddOnMargin.Where((x =>
+                                                        x.EffectiveFrom < DateTime.Now &&
+                                                         x.EffectiveTo > DateTime.Now)) on new
+                                                        {
+                                                            fboId = (pt != null ? pt.Fboid : 0)
+                                                        } equals new
+                                                        {
+                                                            fboId = tmp.FboId
+                                                        } into leftJoinTMP
+                                                    from tmp in leftJoinTMP.DefaultIfEmpty()                                
                     join cvf in _context.CustomersViewedByFbo on new {cg.CustomerId, Fboid = _FboId} equals new
                     {
                         cvf.CustomerId,
@@ -88,7 +98,7 @@ namespace FBOLinx.Web.Services
                         DefaultCustomerType = cg.CustomerType,
                         MarginType = pt.MarginType,
                         FboPrice = fp.Price,
-                        CustomerMarginAmount = ppt.CustomerMargin.Amount,
+                        CustomerMarginAmount = pt.MarginTypeProduct == "JetA Retail" ? ppt.CustomerMargin.Amount + (double)tmp.MarginJet : ppt.CustomerMargin.Amount,
                         FboFeeAmount = ff.FeeAmount,
                         Suspended = cg.Suspended,
                         FuelerLinxId = c.FuelerlinxId,

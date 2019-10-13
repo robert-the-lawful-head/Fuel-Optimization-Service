@@ -128,6 +128,7 @@ import { EmailContentSelectionComponent } from '.././shared/components/email-con
 import { ForgotPasswordDialogComponent } from '.././shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
 import { ManageConfirmationComponent } from '.././shared/components/manage-confirmation/manage-confirmation.component';
 import { PricingExpiredNotificationComponent } from '.././shared/components/pricing-expired-notification/pricing-expired-notification.component';
+import { TemporaryAddOnMarginComponent } from '.././shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import { StatisticsOrdersByLocationComponent } from
     '.././shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 import { StatisticsTotalAircraftComponent } from
@@ -270,6 +271,7 @@ import { AppPipesModule } from '../app-pipes.module'
       ForgotPasswordDialogComponent,
       ManageConfirmationComponent,
       PricingExpiredNotificationComponent,
+      TemporaryAddOnMarginComponent,
       StatisticsOrdersByLocationComponent,
       StatisticsTotalAircraftComponent,
       StatisticsTotalCustomersComponent,
@@ -289,6 +291,7 @@ import { AppPipesModule } from '../app-pipes.module'
         GroupsDialogNewGroupComponent,
         ManageConfirmationComponent,
         PricingExpiredNotificationComponent,
+        TemporaryAddOnMarginComponent,
       PricingTemplatesDialogNewTemplateComponent,
         RampFeesDialogNewFeeComponent,
         UsersDialogNewUserComponent

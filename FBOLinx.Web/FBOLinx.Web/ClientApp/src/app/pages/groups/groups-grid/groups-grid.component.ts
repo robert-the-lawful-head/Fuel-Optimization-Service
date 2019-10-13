@@ -81,7 +81,12 @@ export class GroupsGridComponent implements OnInit  {
         });
     }
 
-    public editRecord(record) {
+    public editRecord(record,$event) {
+        if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
+            //$event.preventDefault();
+            $event.stopPropagation();
+            return;
+        }
         const clonedRecord = Object.assign({}, record);
         this.editGroupClicked.emit(clonedRecord);
     }
@@ -96,7 +101,7 @@ export class GroupsGridComponent implements OnInit  {
             console.log('Dialog data: ', result);
             result.active = true;
             this.groupsService.add(result).subscribe((data: any) => {
-                this.editRecord(data);
+                this.editRecord(data,Event);
             });
         });
         this.newGroupClicked.emit();
