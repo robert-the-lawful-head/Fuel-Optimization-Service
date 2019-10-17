@@ -98,7 +98,7 @@ namespace FBOLinx.Web.Services
                         DefaultCustomerType = cg.CustomerType,
                         MarginType = pt.MarginType,
                         FboPrice = fp.Price,
-                        CustomerMarginAmount = pt.MarginTypeProduct == "JetA Retail" ? ppt.CustomerMargin.Amount + (double)tmp.MarginJet : ppt.CustomerMargin.Amount,
+                        CustomerMarginAmount = pt.MarginTypeProduct == "JetA Retail" && tmp.MarginJet.HasValue ? ppt.CustomerMargin.Amount + (double)tmp.MarginJet.Value ?? 0 : ppt.CustomerMargin.Amount,
                         FboFeeAmount = ff.FeeAmount,
                         Suspended = cg.Suspended,
                         FuelerLinxId = c.FuelerlinxId,

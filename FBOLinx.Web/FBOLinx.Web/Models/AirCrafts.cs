@@ -39,9 +39,9 @@ namespace FBOLinx.Web.Models
             HeavyTwin = 12,
             [Description("Light Turboprop")]
             LightTurboProp = 13,
-            [Description("Medium Turbo Prop")]
+            [Description("Medium Turboprop")]
             MediumTurboprop = 14,
-            [Description("Heavy Turbo Prop")]
+            [Description("Heavy Turboprop")]
             HeavyTurboprop = 15,
             [Description("Super Heavy Jet")]
             SuperHeavyJet = 16
