@@ -8,8 +8,6 @@ import {FbopricesService} from '../../services/fboprices.service';
 //Components
 import {PricingExpiredNotificationComponent} from
     '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
-import { TemporaryAddOnMarginComponent } from
-    '../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import * as moment from 'moment';
 
 @Component({
@@ -30,8 +28,7 @@ export class DefaultLayoutComponent implements OnInit {
 
     constructor(private _sharedService: SharedService,
         private fboPricesService: FbopricesService,
-        public expiredPricingDialog: MatDialog,
-        public tempAddOnMargin: MatDialog) {
+        public expiredPricingDialog: MatDialog) {
         this.openedSidebar = false;
         this.boxed = false;
         this.compress = false;
@@ -68,31 +65,19 @@ export class DefaultLayoutComponent implements OnInit {
 
     //Private Methods
 
-    private callTemporaryAddOn() {
-
-        const dialogRefTemp = this.tempAddOnMargin.open(TemporaryAddOnMarginComponent,
-            {
-                //panelClass:'tmpAddclass'
-                data: {}
-            });
-    }
     private checkCurrentPrices() {
         var remindMeLaterFlag = localStorage.getItem('pricingExpiredNotification');
         var noThanksFlag = sessionStorage.getItem('pricingExpiredNotification');
         if (noThanksFlag) {
-            this.callTemporaryAddOn();
             return;
         }
         if (remindMeLaterFlag && moment(moment().format('L')).isAfter(moment(remindMeLaterFlag))) {
-            this.callTemporaryAddOn();
             return;
         }
         this.fboPricesService.getFbopricesByFboIdCurrent(this._sharedService.currentUser.fboId).subscribe(
             (data: any) => {
                 for (let fboPrice of data) {
-                    if (fboPrice.price > 0) {
-                        this.callTemporaryAddOn();
-                    }
+                    if (fboPrice.price > 0) 
                         return;
                 }
 
@@ -102,7 +87,7 @@ export class DefaultLayoutComponent implements OnInit {
                     });
 
                 dialogRef.afterClosed().subscribe(result => {
-                    this.callTemporaryAddOn();
+                    
                 });
 
             });

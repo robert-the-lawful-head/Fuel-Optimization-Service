@@ -22,7 +22,7 @@
         </div>
         <div class="col-6">
             <mat-form-field>
-                <input matInput type="text" [(ngModel)]="data.MarginJet" required>
+                <input matInput type="text" autocomplete="off" [(ngModel)]="data.MarginJet" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}" required>
                 <span matPrefix>$</span>
             </mat-form-field>
         </div>

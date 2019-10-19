@@ -72,7 +72,15 @@ namespace FBOLinx.Web.Controllers
                                      }
                               into leftJoinFBOPrices
                           from f in leftJoinFBOPrices.DefaultIfEmpty()
-
+                          join s in (from s in _context.TempAddOnMargin
+                                     where s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1)
+                                     && s.FboId == fboId
+                                     select s) on new { FboId = fboId } equals new
+                                     {
+                                         FboId = s.FboId
+                                     }
+                              into tmpJoin
+                          from s in tmpJoin.DefaultIfEmpty()
                           select new
                           {
                               Oid = f?.Oid ?? 0,
@@ -83,7 +91,10 @@ namespace FBOLinx.Web.Controllers
                               EffectiveTo = f?.EffectiveTo,
                               TimeStamp = f?.Timestamp,
                               SalesTax = f?.SalesTax,
-                              Currency = f?.Currency
+                              Currency = f?.Currency,
+                              tempJet = s?.MarginJet,
+                              tempAvg = s?.MarginAvgas,
+                              tempId = s?.Id
                           });
 
             return Ok(result);

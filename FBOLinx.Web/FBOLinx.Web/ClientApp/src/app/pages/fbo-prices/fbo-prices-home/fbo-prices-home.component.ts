@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -9,10 +9,12 @@ import { FbopricesService } from '../../../services/fboprices.service';
 import { FbopreferencesService } from '../../../services/fbopreferences.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
 
 //Components
 import * as moment from 'moment';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { TemporaryAddOnMarginComponent } from '../../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
@@ -27,7 +29,13 @@ import { DistributionWizardMainComponent } from '../../../shared/components/dist
 //        link: ''
 //    }
 //];
-
+export interface temporaryAddOnMargin {
+    id: any;
+    fboId: any;
+    EffectiveFrom: any;
+    EffectiveTo: any;
+    MarginJet: any;
+}
 @Component({
     selector: 'app-fbo-prices-home',
     templateUrl: './fbo-prices-home.component.html',
@@ -44,6 +52,11 @@ export class FboPricesHomeComponent implements OnInit {
     public pricing100LLRetail: any;
     public pricing100LLCost: any;
     public currentPrices: any[];
+    public dateFrom: any;
+    public dateTo : any;
+    public TempValueJet: any;
+    public TempValueAvgas: any;
+    public TempValueId: any;
     public stagedPrices: any[];
     public fboPreferences: any;
     public fboFees: any[];
@@ -82,9 +95,12 @@ export class FboPricesHomeComponent implements OnInit {
         private fboPricesService: FbopricesService,
         private fboPreferencesService: FbopreferencesService,
         private pricingTemplateService: PricingtemplatesService,
+        private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private sharedService: SharedService,
         public distributionDialog: MatDialog,
-        public warningDialog: MatDialog) {
+        public warningDialog: MatDialog,
+        public tempAddOnMargin: MatDialog,
+        public deleteFBODialog: MatDialog) {
 
         //this.sharedService.emitChange(this.pageTitle);
     }
@@ -97,7 +113,19 @@ export class FboPricesHomeComponent implements OnInit {
         this.loadPricingTemplates();
     }
 
+
+
     //Public Methods
+    jetChangedHandler(event: temporaryAddOnMargin) {
+        this.dateFrom = new Date(moment(event.EffectiveFrom).add(1, 'days').format('MM/DD/YYYY'));
+        this.dateTo = new Date(moment(event.EffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
+        //alert($event.MarginJet);
+        if (this.dateFrom < new Date() &&
+            this.dateTo > new Date()) {
+            this.TempValueId = event.id;
+            this.TempValueJet = event.MarginJet;
+        }
+    }
 
     public distributePricingClicked() {
         const dialogRef = this.distributionDialog.open(DistributionWizardMainComponent, {
@@ -212,6 +240,23 @@ export class FboPricesHomeComponent implements OnInit {
         });
     }
 
+
+    public deleteMargin(tempaddonmargin) {
+        const dialogRef = this.deleteFBODialog.open(DeleteConfirmationComponent, {
+            data: { item: tempaddonmargin, description: 'temporary add-on margin' }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result)
+                return;
+            this.temporaryAddOnMargin.remove(tempaddonmargin).subscribe((data: any) => {
+                dialogRef.close();
+                this.TempValueJet = null;
+                this.TempValueId = null;
+                this.TempValueAvgas = null;
+            });
+        });
+    }
     public retailJetAToggled() {
         if (!this.fboPreferences.omitJetARetail) {
             this.fboPreferenceChange();
@@ -246,6 +291,9 @@ export class FboPricesHomeComponent implements OnInit {
                 this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
                 this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
                 this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
+                this.TempValueJet = data[0].tempJet;;
+                this.TempValueAvgas = data[0].tempAvg;
+                this.TempValueId = data[0].tempId;
                 if (this.currentFboPrice100LLCost.effectiveFrom != null) {
                     this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
                     if (this.currentFboPrice100LLCost.effectiveFrom <= new Date() && this.currentFboPrice100LLCost.effectiveTo > new Date()) {

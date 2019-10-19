@@ -365,6 +365,7 @@ namespace FBOLinx.Web.Controllers
                     CustomerCompanyType = resultsGroup.Key.CustomerCompanyType,
                     CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
                     HasBeenViewed = resultsGroup.Key.HasBeenViewed,
+                    SelectAll = false,
                     AllInPrice = (from customerPricing in resultsGroup select customerPricing.AllInPrice).Max(),
                     TailNumbers = resultsGroup.Key.Tails,
                     IsPricingExpired = resultsGroup.Key.IsPricingExpired

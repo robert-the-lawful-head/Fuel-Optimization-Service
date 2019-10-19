@@ -1,6 +1,5 @@
-<div
-  class="card-wrap"
-  [ngClass]="{
+<div class="card-wrap"
+     [ngClass]="{
     'success-card': bgColor === 'success',
     'info-card': bgColor === 'info',
     'warning-card': bgColor === 'warning',
@@ -12,17 +11,15 @@
     'bg-image-card': bgImage,
     'outline-card': outline
   }"
-  [ngStyle]="{
+     [ngStyle]="{
    'background-color': customBgColor,
    'background-image': 'url(' + bgImage + ')',
    'border-color': customBgColor,
    'color': customColor
-  }"
->
-  <h3
-    class="card-header h5"
-    *ngIf="title"
-      [ngClass]="{
+  }">
+    <h3 class="card-header h5"
+        *ngIf="title"
+        [ngClass]="{
       'text-right': align === 'right',
       'text-center': align === 'center',
       'success-card-header': headerBgColor === 'success',
@@ -34,17 +31,16 @@
     'warning-color-card-header': headerColor === 'warning',
     'danger-color-card-header': headerColor === 'danger',
       'small-header': theme === 'small'
-    }"
-  >{{title}}</h3>
-
-  <div
-    class="card-content"
-    [ngClass]="{
+    }">
+        {{title}}
+        <button *ngIf="!tempId" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 float-right" (click)="openAddOnMargin()">Add On Margin</button>
+    </h3>
+    <div class="card-content"
+         [ngClass]="{
       'text-right': align === 'right',
       'text-center': align === 'center'
     }"
-    [ngStyle]="{'padding': indents}"
-  >
-    <ng-content></ng-content>
-  </div>
+         [ngStyle]="{'padding': indents}">
+        <ng-content></ng-content>
+    </div>
 </div>

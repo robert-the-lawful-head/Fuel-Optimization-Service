@@ -1,28 +1,58 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+
+import { TemporaryAddOnMarginComponent } from '../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
+import { MatDialog } from '@angular/material';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'ni-card',
-  templateUrl: './ni-card.component.html',
-  styleUrls: ['./ni-card.component.scss'],
-  host: {
-    '[class.ni-card]': 'true'
-  }
+    selector: 'ni-card',
+    templateUrl: './ni-card.component.html',
+    styleUrls: ['./ni-card.component.scss'],
+    host: {
+        '[class.ni-card]': 'true'
+    }
 })
+
+
 export class NiCardComponent implements OnInit {
-  @Input() title: string = '';
-  @Input() bgColor: string = '';
-  @Input() customBgColor: string = '';
-  @Input() color: string = '';
-  @Input() customColor: string = '';
-  @Input() bgImage: string = '';
-  @Input() outline: boolean = false;
-  @Input() indents: any = '';
+    vId: any;
+    vEffectiveFrom: any;
+    vEffectiveTo: any;
+    vJet: any;
+    @Output() jetChanged: EventEmitter<any> = new EventEmitter();
+    @Input() title: string = '';
+    @Input() tempId: string = '';
+    @Input() bgColor: string = '';
+    @Input() customBgColor: string = '';
+    @Input() color: string = '';
+    @Input() customColor: string = '';
+    @Input() bgImage: string = '';
+    @Input() outline: boolean = false;
+    @Input() indents: any = '';
     @Input() align: string = 'left';
     @Input() headerBgColor: string = '';
     @Input() headerColor: string = '';
-  @Input() theme: string = '';
+    @Input() theme: string = '';
 
-  constructor() {}
+    constructor(public tempAddOnMargin: MatDialog, public deleteFBODialog: MatDialog) { }
 
-  ngOnInit() {}
+    ngOnInit() { }
+
+    openDialog(): Observable<any> {
+        const dialogRef = this.tempAddOnMargin.open(TemporaryAddOnMarginComponent, {
+            data: { EffectiveFrom: this.vEffectiveFrom, EffectiveTo: this.vEffectiveTo, MarginJet: this.vJet, Id: this.vId }
+        });
+        dialogRef.componentInstance.idChanged1.subscribe((result) => {
+            console.log(result);
+            this.jetChanged.emit(result);
+
+        });
+        return dialogRef.afterClosed();
+    }
+    private openAddOnMargin() {
+
+        this.openDialog();
+
+
+    }
 }

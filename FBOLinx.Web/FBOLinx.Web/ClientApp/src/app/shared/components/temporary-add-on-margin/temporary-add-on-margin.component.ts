@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, EventEmitter, Output, Optional } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -10,11 +10,11 @@ import * as moment from 'moment';
 import { Validators } from '@angular/forms';
 
 export interface temporaryAddOnMargin {
-    id: number;
-    fboId: number;
+    id: any;
+    fboId: any;
     EffectiveFrom: any;
     EffectiveTo: any;
-    MarginJet: string;
+    MarginJet: any;
 }
 @Component({
     selector: 'app-temporary-add-on-margin',
@@ -24,10 +24,14 @@ export interface temporaryAddOnMargin {
 })
 
 export class TemporaryAddOnMarginComponent {
-
+    public id: any;
+    public jet: any;
+    public effectivefrom: any;
+    public effectiveto: any;
+    @Output() idChanged1: EventEmitter<any> = new EventEmitter();
 
     constructor(private router: Router,
-        public dialogRef: MatDialogRef<TemporaryAddOnMarginComponent>, @Inject(MAT_DIALOG_DATA) public data: temporaryAddOnMargin,
+        public dialogRef: MatDialogRef<TemporaryAddOnMarginComponent>, @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
         private temporaryAddOnMargin: TemporaryAddOnMarginService,
     private sharedService: SharedService) {
 
@@ -36,7 +40,8 @@ export class TemporaryAddOnMarginComponent {
 
     public add() {
         this.data.fboId = this.sharedService.currentUser.fboId;
-        this.temporaryAddOnMargin.add(this.data).subscribe((savedTemplate: any) => {
+        this.temporaryAddOnMargin.add(this.data).subscribe((savedTemplate: temporaryAddOnMargin) => {
+            this.idChanged1.emit({ id: savedTemplate.id, EffectiveFrom: this.data.EffectiveFrom, EffectiveTo: this.data.EffectiveTo, MarginJet: this.data.MarginJet});
             this.dialogRef.close(); 
         });
     }

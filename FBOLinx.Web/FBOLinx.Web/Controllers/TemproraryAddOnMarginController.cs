@@ -80,7 +80,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            return CreatedAtAction("GetTempMargin", new { id = tempAddOnMargin.FboId }, tempAddOnMargin);
+            return CreatedAtAction("GetTempMargin", new { id = tempAddOnMargin.Id }, tempAddOnMargin);
         }
 
         [HttpPut("{id}")]
