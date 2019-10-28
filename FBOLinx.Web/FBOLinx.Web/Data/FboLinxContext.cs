@@ -319,12 +319,10 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.FboId).HasColumnName("fboId");
 
                 entity.Property(e => e.MarginAvgas)
-                    .HasColumnName("marginAvgas")
-                    .HasColumnType("decimal(18, 0)");
+                    .HasColumnName("marginAvgas");
 
                 entity.Property(e => e.MarginJet)
-                    .HasColumnName("marginJet")
-                    .HasColumnType("decimal(18, 0)");
+                    .HasColumnName("marginJet");
             });
 
             modelBuilder.Entity<ContactInfoByGroup>(entity =>

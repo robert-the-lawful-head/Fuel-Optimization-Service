@@ -17,8 +17,8 @@ namespace FBOLinx.Web.Models
         [Column("effectiveTo")]
         public DateTime EffectiveTo { get; set; }
         [Column("marginJet")]
-        public float? MarginJet { get; set; }
+        public double? MarginJet { get; set; }
         [Column("marginAvgas")]
-        public float? MarginAvgas { get; set; }
+        public double? MarginAvgas { get; set; }
     }
 }
