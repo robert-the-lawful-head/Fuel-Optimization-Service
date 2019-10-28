@@ -22,6 +22,7 @@ export class NiCardComponent implements OnInit {
     @Output() jetChanged: EventEmitter<any> = new EventEmitter();
     @Input() title: string = '';
     @Input() tempId: string = '';
+    @Input() visible: string = '';
     @Input() bgColor: string = '';
     @Input() customBgColor: string = '';
     @Input() color: string = '';

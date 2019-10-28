@@ -33,7 +33,7 @@
       'small-header': theme === 'small'
     }">
         {{title}}
-        <button *ngIf="!tempId" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 float-right" (click)="openAddOnMargin()">Add On Margin</button>
+        <button *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 float-right" (click)="openAddOnMargin()">Add On Margin</button>
     </h3>
     <div class="card-content"
          [ngClass]="{
