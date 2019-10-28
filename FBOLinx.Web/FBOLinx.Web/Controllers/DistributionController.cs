@@ -43,7 +43,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (fboId != UserService.GetClaimedFboId(_HttpContextAccessor))
+            if (fboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
                 return BadRequest(ModelState);
 
             var distributionLog = await (from dl in _context.DistributionLog
