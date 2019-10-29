@@ -1,0 +1,27 @@
+<h1 mat-dialog-title>Preview: {{data.name}}</h1>
+<div mat-dialog-content class="mt-1 mb-2">
+    <div class="row">
+        <div class="col-12 text-left" *ngIf="!edit">
+            Subject: {{data.subject}}
+        </div>
+        <div class="col-12 text-left" *ngIf="edit">
+            <mat-form-field>
+                <input matInput [(ngModel)]="data.subject" placeholder="Subject" autocomplete="off">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-left" [innerHTML]="data.email" *ngIf="!edit">
+        </div>
+        <div class="col" *ngIf="edit">
+            <ejs-richtexteditor #typeEmail id='rteEmail' (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()" [(value)]='data.email'></ejs-richtexteditor>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <div class="text-center float-right col-12">
+        <button ni-button [view]="'accent'" class="mr-1" (click)="edit=true" *ngIf="!edit">Edit Message</button>
+        <button ni-button [view]="'success'" *ngIf="!edit">Distribute Pricing</button>
+        <button ni-button [view]="'success'" *ngIf="edit" (click)="update()">Save</button>
+    </div>
+</div>

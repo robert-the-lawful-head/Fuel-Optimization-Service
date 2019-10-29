@@ -1,26 +1,48 @@
 <a href="#" class="open-navbar"  (click)="openNavbar($event)">
-  <i class="icon fa fa-object-ungroup"></i>
+  <i class="icon fa fa-envelope"></i>
 </a>
 
 <div class="navbar-wrap">
-  <div class="navbar-header">
-    {{ title }}
-  </div>
-
-  <div class="navbar-content">
-    <div>
-      <h5 class="mt-0">Frameworks</h5>
-      <p class="mb-1">Angular</p>
-      <mat-progress-bar mode="determinate" color="accent" [value]="98"></mat-progress-bar>
-
-      <p class="mb-1">React</p>
-      <mat-progress-bar mode="determinate" color="accent" [value]="85"></mat-progress-bar>
-
-      <p class="mb-1">Vue.js</p>
-      <mat-progress-bar mode="determinate" color="accent" [value]="40"></mat-progress-bar>
-
-      <p class="mb-1">Backbone.js</p>
-      <mat-progress-bar mode="determinate" color="accent" [value]="38"></mat-progress-bar>
+    <div class="navbar-header">
+        {{ title }}
     </div>
-  </div>
+
+    <div class="navbar-content">
+        <div>
+            <table mat-table [dataSource]="marginTemplateDataSource" matSort #marginTable>
+                <!--<h5 class="mt-0">Frameworks</h5>-->
+                <ng-container matColumnDef="template">
+                    <td class="mb-1 col-10" mat-cell *matCellDef="let pricingTemplate">
+                        {{pricingTemplate.name}}
+                        <button ni-button [view]="'accent'" *ngIf="pricingTemplate.changeText && !pricingTemplate.sent" size="small" (click)="OpenMarginInfo(pricingTemplate.oid)">Preview</button>
+                        <p *ngIf="pricingTemplate.sent">Sent!</p>
+                        <mat-progress-bar mode="determinate" *ngIf="!pricingTemplate.changeText && !pricingTemplate.sent" color="warn" [value]="85"></mat-progress-bar>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="toggle">
+                    <td class="mb-1 col-2" mat-cell *matCellDef="let pricingTemplate">
+                        <mat-slide-toggle (change)="pricingTemplate.toSend=!pricingTemplate.toSend"></mat-slide-toggle>
+                    </td>
+                </ng-container>
+                <!--<mat-progress-bar mode="determinate" color="accent" [value]="98"></mat-progress-bar>
+
+                <p class="mb-1">React</p>
+                <mat-progress-bar mode="determinate" color="accent" [value]="85"></mat-progress-bar>
+
+                <p class="mb-1">Vue.js</p>
+                <mat-progress-bar mode="determinate" color="accent" [value]="40"></mat-progress-bar>
+
+                <p class="mb-1">Backbone.js</p>
+                <mat-progress-bar mode="determinate" color="accent" [value]="38"></mat-progress-bar>-->
+                <tr mat-header-row></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (mouseenter)="row.changeText=true" (mouseleave)="row.changeText=false"></tr>
+            </table>
+        </div>
+        <div>
+            <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
+        </div>
+    </div>
+    <div class="navbar-footer m-md-3">
+        <button ni-button class="float-right" [view]="'success'" (click)="sendMails()">Distribute Pricing</button>
+    </div>
 </div>

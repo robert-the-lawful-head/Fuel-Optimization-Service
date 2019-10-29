@@ -11,6 +11,7 @@ import { SharedService } from '../../../layouts/shared-service';
 
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
 const BREADCRUMBS: any[] = [
     {
@@ -42,8 +43,12 @@ export class PricingTemplatesEditComponent {
     @Output() savePricingTemplateClicked = new EventEmitter<any>();
     @Output() cancelPricingTemplateEditclicked = new EventEmitter<any>();
     @Input() pricingTemplate: any;
+    @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
+    @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
 
     //Public Members
+    public focus: any = false;
+    public count: number = 0;
     public pageTitle: string = 'Edit Margin Template';
     public breadcrumb: any[] = BREADCRUMBS;
     public marginTypeDataSource: Array<any> = [
@@ -83,6 +88,41 @@ export class PricingTemplatesEditComponent {
                         this.loadCurrentPrice();
                     });
             });
+        }
+    }
+
+    public disableToolbarNote() {
+        this.rteObj.toolbarSettings.enable = false;
+
+    }
+
+    public enableToolbarNote() {
+        this.rteObj.toolbarSettings.enable = true;
+    }
+
+    public disableToolbarEmail() {
+        this.rteEmail.toolbarSettings.enable = false;
+
+    }
+
+    public enableToolbarEmail() {
+        this.rteEmail.toolbarSettings.enable = true;
+    }
+
+    public onFocus() {
+        this.focus = true;
+    }
+
+    public outFocus() {
+        this.focus = false;
+        this.count = 0;
+    }
+
+
+    public onType(customerMargin, event) {
+        this.count = this.count + 1;
+        if (this.focus && this.count == 1) {
+            customerMargin.amount = event.key / 100;
         }
     }
 

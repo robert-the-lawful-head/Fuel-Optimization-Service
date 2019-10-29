@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 //Services
@@ -8,6 +8,7 @@ import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
 export interface NewPricingTemplateDialogData {
     oid: number;
@@ -15,8 +16,8 @@ export interface NewPricingTemplateDialogData {
     fboId: number;
     marginType: number;
     subject: string;
-    email: string;
-    notes: string;
+    email: any;
+    notes: any;
     customerMargins: NewPricingTemplateMargin[];
     default: boolean;
 }
@@ -42,7 +43,11 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     public firstFormGroup: FormGroup;
     public secondFormGroup: FormGroup;
     public thirdFormGroup: FormGroup;
+    @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
+    @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
     public currentPrice: any;
+    public focus: any = false;
+    public count: number = 0;
     public title: string;
     public isSaving: boolean;
     public total: number = 0;
@@ -75,19 +80,40 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             marginType: ['', Validators.required]
         });
         this.thirdFormGroup = this.formBuilder.group({
-            emailContentSignature: ['', Validators.required],
-            emailContentSignatureName: ['', Validators.required]
+            subject: ['', Validators.required],
+            email: ['', Validators.required]
         });
         //Subscribe to necessary changes
         this.secondFormGroup.get('marginType').valueChanges.subscribe(val => {
             this.data.marginType = val;
         });
 
+
         this.secondFormGroup.patchValue({
             marginType: this.data.marginType
         });
+
+
+    }
+    public disableToolbarNote() {
+        this.rteObj.toolbarSettings.enable = false;
+
     }
 
+    public enableToolbarNote() {
+        this.rteObj.toolbarSettings.enable = true;
+        this.disableToolbarEmail();
+    }
+
+    public disableToolbarEmail() {
+        this.rteEmail.toolbarSettings.enable = false;
+
+    }
+
+    public enableToolbarEmail() {
+        this.rteEmail.toolbarSettings.enable = true;
+        this.disableToolbarNote();
+    }
     //Public Methods
     public onCancelClick(): void {
         this.dialogRef.close();
@@ -97,6 +123,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.loadCurrentPrice();
     }
 
+    
     public addCustomerMargin() {
         let customerMargin = {
             oid: 0,
@@ -144,6 +171,27 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         }
     }
 
+    public empty(customerMargin) {
+        customerMargin.amount = 0;
+    }
+
+    public onFocus() {
+        this.focus =true;
+    }
+
+    public outFocus() {
+        this.focus = false;
+        this.count = 0;
+    }
+
+
+    public onType(customerMargin, event) {
+        this.count = this.count + 1;
+        if (this.focus && this.count == 1) {
+            customerMargin.amount = event.key/100;
+        }
+    }
+
     public customerMarginAmountChanged(customerMargin) {
         var indexOfMargin = this.data.customerMargins.indexOf(customerMargin);
         if (indexOfMargin > 0) {
@@ -175,13 +223,18 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         }
     }
 
+
     public addTemplateClicked() {
         this.isSaving = true;
 
         this.data.name = this.firstFormGroup.get('templateName').value;
         this.data.marginType = Number(this.secondFormGroup.get('marginType').value);
         this.data.default = (this.firstFormGroup.get('templateDefault').value == true);
-
+        //this.data.notes = this.thirdFormGroup.get('note').value;
+        //alert(JSON.stringify(this.data));
+        /*this.data.notes = this.thirdFormGroup.value.notes;
+        this.data.email = this.thirdFormGroup.value.email;
+        this.data.subject = this.thirdFormGroup.value.subject;*/
         this.pricingTemplatesService.add(this.data).subscribe((savedTemplate: any) => {
             this.data.customerMargins.forEach((customerMargin: any) => {
                 customerMargin.templateId = savedTemplate.oid;
@@ -213,9 +266,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     private calculateItpForMargin(customerMargin) {
         if (this.data.marginType == 0)
-            customerMargin.itp = this.currentPrice.price + Math.abs(customerMargin.amount);
+            customerMargin.itp = this.currentPrice ? this.currentPrice.price :  0 + Math.abs(customerMargin.amount);
         else if (this.data.marginType == 1)
-            customerMargin.itp = this.currentPrice.price - Math.abs(customerMargin.amount);
+            customerMargin.itp = this.currentPrice ? this.currentPrice.price : 0  - Math.abs(customerMargin.amount);
         else
             customerMargin.itp = Math.abs(customerMargin.amount);
     }

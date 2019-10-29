@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 //Services
 import {FbopricesService} from '../../services/fboprices.service';
-
+import { PricingtemplatesService } from '../../services/pricingtemplates.service';
 //Components
 import {PricingExpiredNotificationComponent} from
     '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
@@ -25,9 +25,11 @@ export class DefaultLayoutComponent implements OnInit {
     rtl: boolean;
     @Input()
     openedSidebar: boolean;
+    public pricingTemplatesData : any[];
 
     constructor(private _sharedService: SharedService,
         private fboPricesService: FbopricesService,
+        private pricingTemplatesService: PricingtemplatesService,
         public expiredPricingDialog: MatDialog) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -35,6 +37,7 @@ export class DefaultLayoutComponent implements OnInit {
         this.menuStyle = 'style-3';
         this.rtl = false;
 
+        this.pricingTemplatesService.getByFbo(this._sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
         _sharedService.changeEmitted$.subscribe(
             title => {
                 this.pageTitle = title;

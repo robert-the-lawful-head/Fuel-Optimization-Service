@@ -156,7 +156,7 @@ export class FboPricesHomeComponent implements OnInit {
         //price.requiresUpdate = true;
     }
 
-    public fboCurrentPriceDateChange() {
+    public fboCurrentPriceDateChange(event) {
         this.requiresUpdate = true;
         for (let price of this.currentPrices) {
             price.effectiveFrom = this.currentPricingEffectiveFrom;
@@ -165,8 +165,10 @@ export class FboPricesHomeComponent implements OnInit {
         }
         this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
         this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
-        this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
-        this.minimumAllowedDate = this.currentPricingEffectiveFrom;
+        if (event != 'hide') {
+            this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+            this.minimumAllowedDate = this.currentPricingEffectiveFrom;
+        }
     }
 
     public fboStagedPriceDateChange() {

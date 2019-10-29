@@ -123,6 +123,7 @@ import { AnalysisFuelreqsTopCustomersFboComponent } from
 import { AnalysisPriceOrdersChartComponent } from '.././shared/components/analysis-price-orders-chart/analysis-price-orders-chart.component';
 import { DeleteConfirmationComponent } from '.././shared/components/delete-confirmation/delete-confirmation.component';
 import { DistributionWizardMainComponent } from '.././shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
+import { DistributionWizardReviewComponent } from '.././shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { EmailContentEditComponent } from '.././shared/components/email-content-edit/email-content-edit.component';
 import { EmailContentSelectionComponent } from '.././shared/components/email-content-selection/email-content-selection.component';
 import { ForgotPasswordDialogComponent } from '.././shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
@@ -265,6 +266,7 @@ import { AppPipesModule } from '../app-pipes.module'
       AnalysisPriceOrdersChartComponent,
       DeleteConfirmationComponent,
       DistributionWizardMainComponent,
+      DistributionWizardReviewComponent,
       AccountProfileComponent,
       EmailContentEditComponent,
       EmailContentSelectionComponent,
@@ -285,6 +287,7 @@ import { AppPipesModule } from '../app-pipes.module'
         CustomerCompanyTypeDialogComponent,
         CustomersDialogNewCustomerComponent,
         DistributionWizardMainComponent,
+        DistributionWizardReviewComponent,
         AccountProfileComponent,
         ForgotPasswordDialogComponent,
         FbosDialogNewFboComponent,

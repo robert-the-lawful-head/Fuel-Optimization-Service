@@ -65,7 +65,8 @@ namespace FBOLinx.Web.Controllers
 
             var result = await (from p in _context.PricingTemplate
                 join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
-                join cm in (from c in _context.CustomerMargins group c by new {c.TemplateId} into cmResults select new {templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault())} )on p.Oid equals cm.templateId into leftJoinCustomerMargins
+                join cm in (from c in _context.CustomerMargins join tm in (_context.PriceTiers) on c.PriceTierId equals tm.Oid
+                            group c by new {c.TemplateId} into cmResults select new {templateId = cmResults.Key.TemplateId, maxPrice = cmResults.FirstOrDefault().Amount} )on p.Oid equals cm.templateId into leftJoinCustomerMargins
                 from cm in leftJoinCustomerMargins.DefaultIfEmpty()
                 join fp in (from f in _context.Fboprices
                     where f.EffectiveFrom.HasValue && f.EffectiveFrom <= DateTime.Now && f.EffectiveTo.HasValue && f.EffectiveTo > DateTime.Now.AddDays(-1)
@@ -78,14 +79,16 @@ namespace FBOLinx.Web.Controllers
                     CustomerId = p.CustomerId.GetValueOrDefault(),
                     Default = p.Default.GetValueOrDefault(),
                     Fboid = p.Fboid,
-                    Margin = cm == null ? 0 : cm.maxPrice,
+                    Margin = cm == null ? 0 : cm.maxPrice.Value,
                     MarginType = p.MarginType.GetValueOrDefault(),
                     Name = p.Name,
                     Notes = p.Notes,
                     Oid = p.Oid,
                     Type = p.Type.GetValueOrDefault(),
+                    Subject = p.Subject,
+                    Email = p.Email,
                     IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
-                                     (cm == null ? 0 : cm.maxPrice),
+                                     (cm == null ? 0 : cm.maxPrice.Value),
                     IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
                     IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
                     YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
@@ -122,6 +125,8 @@ namespace FBOLinx.Web.Controllers
                     MarginType = p.MarginType,
                     Name = p.Name,
                     Notes = p.Notes,
+                    Subject = p.Subject,
+                    Email = p.Email,
                     Oid = p.Oid,
                     Type = p.Type,
                     IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
