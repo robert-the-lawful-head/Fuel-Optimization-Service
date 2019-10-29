@@ -75,12 +75,29 @@
                 <small>Cost pricing is confidential and not publicly displayed.  It is only used to calculate Cost+ Pricing</small>
             </ni-card>
         </ng-template>
-        <ni-card id="{{TempValueId}}"  [bgColor]="'info'"  [outline]="true" [color]="'info'" *ngIf="(TempValueJet && TempValueJet > 0)">
-            <h6 class="mt-0 title">TEMPORARY ADD-ON MARGIN (ALL)</h6>
+        <ni-card id="{{TempValueId}}" [bgColor]="'info'" [outline]="true" [color]="'info'" *ngIf="(TempValueJet && TempValueJet > 0)">
+            <h6 class="mt-0 title">TEMPORARY ADD-ON MARGIN (JET A)</h6>
             <h4 class="mt-0">
                 {{TempValueJet | currency:'USD'}}
             </h4>
-            <button ni-button [view]="'error'" [padding]="'padding'" class="mr-1 float-md-right customButton" (click)="deleteMargin(TempValueId)">Clear Current Add-On Pricing</button>
+            <div class="row">
+                <div class="col-6">
+                    <mat-form-field>
+                        <input matInput [(ngModel)]="currentPricingEffectiveFrom" disabled placeholder="Effective From">
+                        <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDatePickerEdit"></mat-datepicker-toggle>
+                        <mat-datepicker #currentPricingEffectiveFromDatePickerEdit disabled="true"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="col-6">
+                    <mat-form-field>
+                        <input matInput [(ngModel)]="currentPricingEffectiveTo" disabled placeholder="Effective To">
+                        <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveToDatePickerEdit"></mat-datepicker-toggle>
+                        <mat-datepicker #currentPricingEffectiveToDatePickerEdit disabled="true"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+            <button ni-button [view]="'error'" [padding]="'padding'" class="mr-1 float-md-right customButton" (click)="deleteMargin(TempValueId)">Clear Margin</button>
+            <button ni-button [view]="'error'" [padding]="'padding'" class="mr-1 float-md-right customButton">Edit</button>
         </ni-card>
     </div>
 <div class="col-md-8 mt-3">
