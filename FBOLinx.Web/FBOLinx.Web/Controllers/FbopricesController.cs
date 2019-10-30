@@ -94,7 +94,9 @@ namespace FBOLinx.Web.Controllers
                               Currency = f?.Currency,
                               tempJet = s?.MarginJet,
                               tempAvg = s?.MarginAvgas,
-                              tempId = s?.Id
+                              tempId = s?.Id,
+                              tempDateFrom = s?.EffectiveFrom,
+                              tempDateTo = s?.EffectiveTo
                           });
 
             return Ok(result);

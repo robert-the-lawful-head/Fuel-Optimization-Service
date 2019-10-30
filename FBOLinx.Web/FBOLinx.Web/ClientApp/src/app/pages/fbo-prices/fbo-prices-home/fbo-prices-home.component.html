@@ -50,6 +50,11 @@
             <h4 class="mt-0">
                 {{currentFboPriceJetARetail.price | currency:'USD'}}
             </h4>
+            <mat-form-field>
+                <input matInput [(ngModel)]="TempDateFrom" disabled placeholder="Effective To">
+                <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDatePick"></mat-datepicker-toggle>
+                <mat-datepicker #currentPricingEffectiveFromDatePick disabled="true"></mat-datepicker>
+            </mat-form-field>
         </ni-card>
         <ng-template #notValid>
             <ni-card [bgColor]="'success'" [outline]="true" [color]="'success'">
@@ -64,6 +69,11 @@
             <h4 class="mt-0">
                 {{currentFboPriceJetACost.price | currency:'USD'}}
             </h4>
+            <mat-form-field>
+                <input matInput [(ngModel)]="TempDateFrom" disabled placeholder="Effective To">
+                <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDtPicker"></mat-datepicker-toggle>
+                <mat-datepicker #currentPricingEffectiveFromDtPicker disabled="true"></mat-datepicker>
+            </mat-form-field>
             <small>Cost pricing is confidential and not publicly displayed.  It is only used to calculate Cost+ Pricing</small>
         </ni-card>
         <ng-template #notValidJet>
@@ -76,28 +86,28 @@
             </ni-card>
         </ng-template>
         <ni-card id="{{TempValueId}}" [bgColor]="'info'" [outline]="true" [color]="'info'" *ngIf="(TempValueJet && TempValueJet > 0)">
-            <h6 class="mt-0 title">TEMPORARY ADD-ON MARGIN (JET A)</h6>
+            <h6 class="mt-0 title">TEMPORARY ADD-ON MARGIN (ALL)</h6>
             <h4 class="mt-0">
-                {{TempValueJet | currency:'USD'}}
+                {{TempValueJet | currency:'USD'}}  (JET A)
             </h4>
             <div class="row">
                 <div class="col-6">
                     <mat-form-field>
-                        <input matInput [(ngModel)]="currentPricingEffectiveFrom" disabled placeholder="Effective From">
+                        <input matInput [(ngModel)]="TempDateFrom" disabled placeholder="Effective From">
                         <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDatePickerEdit"></mat-datepicker-toggle>
                         <mat-datepicker #currentPricingEffectiveFromDatePickerEdit disabled="true"></mat-datepicker>
                     </mat-form-field>
                 </div>
                 <div class="col-6">
                     <mat-form-field>
-                        <input matInput [(ngModel)]="currentPricingEffectiveTo" disabled placeholder="Effective To">
+                        <input matInput [(ngModel)]="TempDateTo" disabled placeholder="Effective To">
                         <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveToDatePickerEdit"></mat-datepicker-toggle>
                         <mat-datepicker #currentPricingEffectiveToDatePickerEdit disabled="true"></mat-datepicker>
                     </mat-form-field>
                 </div>
             </div>
             <button ni-button [view]="'error'" [padding]="'padding'" class="mr-1 float-md-right customButton" (click)="deleteMargin(TempValueId)">Clear Margin</button>
-            <button ni-button [view]="'error'" [padding]="'padding'" class="mr-1 float-md-right customButton">Edit</button>
+            <button ni-button [padding]="'padding'" class="mr-1 float-md-right customButton temporary" (click)="editTempAd()">Edit</button>
         </ni-card>
     </div>
 <div class="col-md-8 mt-3">

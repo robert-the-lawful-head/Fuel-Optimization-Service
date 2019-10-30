@@ -120,7 +120,7 @@
                 </div>
                 <div class="row mt-2 mb-2">
                     <div class="col">
-                        <ejs-richtexteditor #typeRTE id='rteNotes' (focusout)="enableToolbarNote()" (focus)="disableToolbarNote()" [(value)]='data.notes'></ejs-richtexteditor>
+                        <ejs-richtexteditor #typeRTE id='rteNotes' [toolbarSettings]='{enable:false}' [(value)]='data.notes'></ejs-richtexteditor>
                     </div>
                 </div>
                 <div class="row mt-2 mb-2" style="font-size:0.8rem;">

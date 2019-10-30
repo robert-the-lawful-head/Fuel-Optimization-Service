@@ -28,22 +28,34 @@ export class TemporaryAddOnMarginComponent {
     public jet: any;
     public effectivefrom: any;
     public effectiveto: any;
+    public stringButton: any;
     @Output() idChanged1: EventEmitter<any> = new EventEmitter();
+    @Output() jetChanged: EventEmitter<any> = new EventEmitter(); 
 
     constructor(private router: Router,
         public dialogRef: MatDialogRef<TemporaryAddOnMarginComponent>, @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
         private temporaryAddOnMargin: TemporaryAddOnMarginService,
-    private sharedService: SharedService) {
-
+        private sharedService: SharedService) {
+        this.stringButton = this.data.update ? 'Update' : 'Save & Append';
+        this.data.EffectiveFrom = new Date(this.data.EffectiveFrom);
+        this.data.EffectiveTo = new Date(this.data.EffectiveTo);
     }
 
 
     public add() {
-        this.data.fboId = this.sharedService.currentUser.fboId;
-        this.temporaryAddOnMargin.add(this.data).subscribe((savedTemplate: temporaryAddOnMargin) => {
-            this.idChanged1.emit({ id: savedTemplate.id, EffectiveFrom: this.data.EffectiveFrom, EffectiveTo: this.data.EffectiveTo, MarginJet: this.data.MarginJet});
-            this.dialogRef.close(); 
-        });
+        if (this.data.update) {
+            this.temporaryAddOnMargin.update(this.data).subscribe((savedTemplate: temporaryAddOnMargin) => {
+                this.jetChanged.emit(savedTemplate);
+                this.dialogRef.close();
+            });
+        }
+        else {
+            this.data.fboId = this.sharedService.currentUser.fboId;
+            this.temporaryAddOnMargin.add(this.data).subscribe((savedTemplate: temporaryAddOnMargin) => {
+                this.idChanged1.emit({ id: savedTemplate.id, EffectiveFrom: this.data.EffectiveFrom, EffectiveTo: this.data.EffectiveTo, MarginJet: this.data.MarginJet });
+                this.dialogRef.close();
+            });
+        }
     }
 
     public onCancelClick(): void {

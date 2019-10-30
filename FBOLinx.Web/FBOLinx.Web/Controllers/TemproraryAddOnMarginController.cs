@@ -91,7 +91,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != tempAddOnMargin.FboId)
+            if (id != tempAddOnMargin.Id)
             {
                 return BadRequest();
             }

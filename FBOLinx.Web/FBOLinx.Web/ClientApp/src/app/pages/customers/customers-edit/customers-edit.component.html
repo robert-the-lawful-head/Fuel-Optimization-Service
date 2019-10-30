@@ -21,9 +21,6 @@
                         <div class="col-md-6">
                             <mat-slide-toggle color="accent" [(ngModel)]="customerInfoByGroup.active">Active</mat-slide-toggle>
                         </div>
-                        <div class="col-md-6">
-                            <mat-slide-toggle color="warn" [(ngModel)]="customerInfoByGroup.suspended">Suspended</mat-slide-toggle>
-                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
@@ -135,7 +132,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveCustomerEdit()" class="mr-1">Save Changes</button>
-                            <button ni-button [view]="'accent'" beforeIcon="fa fa-usd" *ngIf="customerInfoByGroup.distribute && customCustomerTypes && customCustomerTypes.length > 0 && hasContactForPriceDistribution" (click)="distributePricing()" class="mr-1" [matTooltipPosition]="'above'" matTooltip="Prepare and send an email containing fuel pricing for this customer.">Distribute Pricing</button>
+                            <!--<button ni-button [view]="'accent'" beforeIcon="fa fa-usd" *ngIf="customerInfoByGroup.distribute && customCustomerTypes && customCustomerTypes.length > 0 && hasContactForPriceDistribution" (click)="distributePricing()" class="mr-1" [matTooltipPosition]="'above'" matTooltip="Prepare and send an email containing fuel pricing for this customer.">Distribute Pricing</button>-->
                             <button mat-stroked-button (click)="cancelCustomerEdit()">Cancel</button>
                         </div>
                     </div>

@@ -43,7 +43,6 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     public firstFormGroup: FormGroup;
     public secondFormGroup: FormGroup;
     public thirdFormGroup: FormGroup;
-    @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
     @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
     public currentPrice: any;
     public focus: any = false;
@@ -54,8 +53,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     public marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
         { text: 'Retail -', value: 1 },
-        { text: 'Flat Fee', value: 2 },
-        { text: 'Inactive', value: 3 }
+        { text: 'Flat Fee', value: 2 }
     ];
 
     /** pricing-templates-dialog-new-template ctor */
@@ -95,16 +93,6 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
 
     }
-    public disableToolbarNote() {
-        this.rteObj.toolbarSettings.enable = false;
-
-    }
-
-    public enableToolbarNote() {
-        this.rteObj.toolbarSettings.enable = true;
-        this.disableToolbarEmail();
-    }
-
     public disableToolbarEmail() {
         this.rteEmail.toolbarSettings.enable = false;
 
@@ -112,7 +100,6 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     public enableToolbarEmail() {
         this.rteEmail.toolbarSettings.enable = true;
-        this.disableToolbarNote();
     }
     //Public Methods
     public onCancelClick(): void {

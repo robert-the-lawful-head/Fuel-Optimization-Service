@@ -57,6 +57,8 @@ export class FboPricesHomeComponent implements OnInit {
     public TempValueJet: any;
     public TempValueAvgas: any;
     public TempValueId: any;
+    public TempDateFrom: any;
+    public TempDateTo: any;
     public stagedPrices: any[];
     public fboPreferences: any;
     public fboFees: any[];
@@ -117,6 +119,7 @@ export class FboPricesHomeComponent implements OnInit {
 
     //Public Methods
     jetChangedHandler(event: temporaryAddOnMargin) {
+        //this.TempValueId = null;
         this.dateFrom = new Date(moment(event.EffectiveFrom).add(1, 'days').format('MM/DD/YYYY'));
         this.dateTo = new Date(moment(event.EffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
         //alert($event.MarginJet);
@@ -124,6 +127,8 @@ export class FboPricesHomeComponent implements OnInit {
             this.dateTo > new Date()) {
             this.TempValueId = event.id;
             this.TempValueJet = event.MarginJet;
+            this.TempDateFrom = moment(event.EffectiveFrom, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY");
+            this.TempDateTo = moment(event.EffectiveTo, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY");
         }
     }
 
@@ -242,7 +247,12 @@ export class FboPricesHomeComponent implements OnInit {
         });
     }
 
+    public editTempAd() {
+        const dialogRef = this.tempAddOnMargin.open(TemporaryAddOnMarginComponent, {
+            data: { EffectiveFrom: this.TempDateFrom, EffectiveTo: this.TempDateTo, id: this.TempValueId, MarginAvgas: this.TempValueAvgas, fboId: this.sharedService.currentUser.fboId, MarginJet: this.TempValueJet,update: true  }
 
+        });
+    }
     public deleteMargin(tempaddonmargin) {
         const dialogRef = this.deleteFBODialog.open(DeleteConfirmationComponent, {
             data: { item: tempaddonmargin, description: 'temporary add-on margin' }
@@ -256,6 +266,8 @@ export class FboPricesHomeComponent implements OnInit {
                 this.TempValueJet = null;
                 this.TempValueId = null;
                 this.TempValueAvgas = null;
+                this.TempDateFrom = null;
+                this.TempDateTo = null;
             });
         });
     }
@@ -296,6 +308,8 @@ export class FboPricesHomeComponent implements OnInit {
                 this.TempValueJet = data[0].tempJet;;
                 this.TempValueAvgas = data[0].tempAvg;
                 this.TempValueId = data[0].tempId;
+                this.TempDateFrom = moment(data[0].tempDateFrom, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY");
+                this.TempDateTo = moment(data[0].tempDateTo, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY");
                 if (this.currentFboPrice100LLCost.effectiveFrom != null) {
                     this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
                     if (this.currentFboPrice100LLCost.effectiveFrom <= new Date() && this.currentFboPrice100LLCost.effectiveTo > new Date()) {

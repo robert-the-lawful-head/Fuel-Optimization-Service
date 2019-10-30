@@ -88,6 +88,13 @@ $types: (
         }
     }
 
+    &.temporary {
+        background: main-color(50) !important;
+        color: $info-contrast !important;
+        hover-bg: darken(main-color(50), 10%);
+        hover-color: darken(main-color(50), 10%)
+    }
+
     .btn-line {
         border-width: $btn-border-width;
         border-style: $btn-border-style;
