@@ -92,11 +92,15 @@ export class CustomersGridComponent implements OnInit {
     }
 
     public editCustomer(customer, $event) {
-        if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
-            //$event.preventDefault();
-            $event.stopPropagation();
-            return;
-        }
+        //if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
+        //    //$event.preventDefault();
+        //    $event.stopPropagation();
+        //    return;
+        //}
+
+        //$event.stopPropagation();
+        //return;
+
         const clonedCustomer = Object.assign({}, customer);
         this.editCustomerClicked.emit(clonedCustomer);
     }
@@ -129,6 +133,9 @@ export class CustomersGridComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             this.customersService.add(result).subscribe((data: any) => {
                 result.customerId = data.oid;
+               
+                result.GroupId = this.sharedService.currentUser.groupId;
+                
                 this.customerInfoByGroupService.add(result).subscribe((customerInfoByGroupData: any) => {
                     result.customerInfoByGroupId = customerInfoByGroupData.oid;
                     this.editCustomer(result,Event);
