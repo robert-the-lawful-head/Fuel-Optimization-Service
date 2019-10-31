@@ -127,8 +127,8 @@ export class FboPricesHomeComponent implements OnInit {
             this.dateTo > new Date()) {
             this.TempValueId = event.id;
             this.TempValueJet = event.MarginJet;
-            this.TempDateFrom = moment(event.EffectiveFrom, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY");
-            this.TempDateTo = moment(event.EffectiveTo, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY");
+            this.TempDateFrom = moment(event.EffectiveFrom).add(1, 'days').format("MM/DD/YYYY");
+            this.TempDateTo = moment(event.EffectiveTo).add(1, 'days').format("MM/DD/YYYY");
         }
     }
 
@@ -252,6 +252,22 @@ export class FboPricesHomeComponent implements OnInit {
             data: { EffectiveFrom: this.TempDateFrom, EffectiveTo: this.TempDateTo, id: this.TempValueId, MarginAvgas: this.TempValueAvgas, fboId: this.sharedService.currentUser.fboId, MarginJet: this.TempValueJet,update: true  }
 
         });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result)
+                return;
+            this.TempDateFrom = moment(result.EffectiveFrom).format("MM/DD/YYYY");
+            this.TempDateTo = moment(result.EffectiveTo).format("MM/DD/YYYY");
+            this.TempValueAvgas = result.MarginAvgas;
+            this.TempValueJet = result.MarginJet;
+
+            if (new Date(this.TempDateFrom) > new Date() ||
+                new Date(this.TempDateTo) < new Date()) {
+                this.TempValueId = null;
+                this.TempValueJet = null;
+                this.TempValueAvgas = null;
+            }
+        });
     }
     public deleteMargin(tempaddonmargin) {
         const dialogRef = this.deleteFBODialog.open(DeleteConfirmationComponent, {
@@ -308,8 +324,8 @@ export class FboPricesHomeComponent implements OnInit {
                 this.TempValueJet = data[0].tempJet;;
                 this.TempValueAvgas = data[0].tempAvg;
                 this.TempValueId = data[0].tempId;
-                this.TempDateFrom = moment(data[0].tempDateFrom, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY");
-                this.TempDateTo = moment(data[0].tempDateTo, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY");
+                this.TempDateFrom = moment(data[0].tempDateFrom).add(1, 'days').format("MM/DD/YYYY");
+                this.TempDateTo = moment(data[0].tempDateTo).add(1, 'days').format("MM/DD/YYYY");
                 if (this.currentFboPrice100LLCost.effectiveFrom != null) {
                     this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
                     if (this.currentFboPrice100LLCost.effectiveFrom <= new Date() && this.currentFboPrice100LLCost.effectiveTo > new Date()) {

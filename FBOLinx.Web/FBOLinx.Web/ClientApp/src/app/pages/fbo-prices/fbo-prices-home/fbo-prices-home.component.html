@@ -47,14 +47,20 @@
     <div class="col-md-3 mt-3">
         <ni-card [bgColor]="'success'" [outline]="true" [color]="'success'" *ngIf="(currentFboPriceJetARetail && currentFboPriceJetARetail.price > 0) || activePrice;else notValid">
             <h6 class="mt-0 title">CURRENT POSTED RETAIL (JET A)</h6>
-            <h4 class="mt-0">
-                {{currentFboPriceJetARetail.price | currency:'USD'}}
-            </h4>
-            <mat-form-field>
-                <input matInput [(ngModel)]="TempDateFrom" disabled placeholder="Effective To">
-                <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDatePick"></mat-datepicker-toggle>
-                <mat-datepicker #currentPricingEffectiveFromDatePick disabled="true"></mat-datepicker>
-            </mat-form-field>
+            <div class="row">
+                <div class="col-6">
+                    <h4 class="mt-0">
+                        {{currentFboPriceJetARetail.price | currency:'USD'}}
+                    </h4>
+                    </div>
+                <div class="col-6">
+                    <mat-form-field>
+                        <input matInput [(ngModel)]="currentFboPriceJetARetail.effectiveTo" disabled placeholder="Effective To">
+                        <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDatePick"></mat-datepicker-toggle>
+                        <mat-datepicker #currentPricingEffectiveFromDatePick disabled="true"></mat-datepicker>
+                    </mat-form-field>
+                    </div>
+                </div>
         </ni-card>
         <ng-template #notValid>
             <ni-card [bgColor]="'success'" [outline]="true" [color]="'success'">
@@ -66,14 +72,22 @@
         </ng-template>
         <ni-card [bgColor]="'danger'" [outline]="true" [color]="'danger'" *ngIf="(currentFboPriceJetACost && currentFboPriceJetACost.price > 0) || activePrice;else notValidJet">
             <h6 class="mt-0 title">CURRENT COST (JET A)</h6>
-            <h4 class="mt-0">
-                {{currentFboPriceJetACost.price | currency:'USD'}}
-            </h4>
-            <mat-form-field>
-                <input matInput [(ngModel)]="TempDateFrom" disabled placeholder="Effective To">
-                <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDtPicker"></mat-datepicker-toggle>
-                <mat-datepicker #currentPricingEffectiveFromDtPicker disabled="true"></mat-datepicker>
-            </mat-form-field>
+            <div class="row">
+                <div class="col-6">
+
+                    <h4 class="mt-0">
+                        {{currentFboPriceJetACost.price | currency:'USD'}}
+                    </h4>
+                </div>
+                <div class="col-6">
+
+                    <mat-form-field>
+                        <input matInput [(ngModel)]="currentFboPriceJetACost.effectiveTo" disabled placeholder="Effective To">
+                        <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDtPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #currentPricingEffectiveFromDtPicker disabled="true"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
             <small>Cost pricing is confidential and not publicly displayed.  It is only used to calculate Cost+ Pricing</small>
         </ni-card>
         <ng-template #notValidJet>

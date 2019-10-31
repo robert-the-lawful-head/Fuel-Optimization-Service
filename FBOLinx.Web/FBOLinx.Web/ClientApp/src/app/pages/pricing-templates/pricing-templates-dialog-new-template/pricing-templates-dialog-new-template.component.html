@@ -37,7 +37,7 @@
                 <div class="container-fluid inner-content">
                     <div class="row mb-4 mt-2">
                         <div class="col-3">
-                            <mat-form-field>
+                            <mat-form-field class="col-8">
                                 <mat-select placeholder="Type" (selectionChange)="marginTypeChange()" formControlName="marginType">
                                     <mat-option *ngFor="let marginType of marginTypeDataSource" [value]="marginType.value">
                                         {{marginType.text
@@ -60,7 +60,7 @@
             <table class="mat-table" style="min-width: 75%;">
                 <thead>
                     <tr class="mat-header-row">
-                        <th class="text-center mat-header-cell text-lg-right">Min. (gal)</th>
+                        <th class="text-center mat-header-cell text-lg-center">Min. (gal)</th>
                         <th class="text-center mat-header-cell text-lg-center">Margin</th>
                         <th class="text-center mat-header-cell">All-in</th>
                         <th class="text-center mat-header-cell">
@@ -70,14 +70,14 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let customerMargin of data.customerMargins" class="mat-row">
-                        <td class="mat-cell text-right">
-                            <mat-form-field class="col-8">
+                        <td class="mat-cell text-center">
+                            <mat-form-field class="col-4">
                                 <input matInput class="text-lg-right" (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" [ngModelOptions]="{standalone: true}" />
                             </mat-form-field>
                         </td>
-                        <td class="mat-cell text-left">
+                        <td class="mat-cell text-center">
                             <div>
-                                <mat-form-field class="col-8">
+                                <mat-form-field class="col-4">
                                     <input matInput class="text-lg-right" [(ngModel)]="customerMargin.amount" [ngModelOptions]="{standalone: true}" (focus)="onFocus()" (focusout)="outFocus()"  (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)"   currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
                                 </mat-form-field>
 
