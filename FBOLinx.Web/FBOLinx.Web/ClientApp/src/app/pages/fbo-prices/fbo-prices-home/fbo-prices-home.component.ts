@@ -120,15 +120,15 @@ export class FboPricesHomeComponent implements OnInit {
     //Public Methods
     jetChangedHandler(event: temporaryAddOnMargin) {
         //this.TempValueId = null;
-        this.dateFrom = new Date(moment(event.EffectiveFrom).add(1, 'days').format('MM/DD/YYYY'));
-        this.dateTo = new Date(moment(event.EffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
+        this.dateFrom = new Date(moment(event.EffectiveFrom).format('MM/DD/YYYY'));
+        this.dateTo = new Date(moment(event.EffectiveTo).format('MM/DD/YYYY'));
         //alert($event.MarginJet);
-        if (this.dateFrom < new Date() &&
+        if (this.dateFrom <= new Date() &&
             this.dateTo > new Date()) {
             this.TempValueId = event.id;
             this.TempValueJet = event.MarginJet;
-            this.TempDateFrom = moment(event.EffectiveFrom).add(1, 'days').format("MM/DD/YYYY");
-            this.TempDateTo = moment(event.EffectiveTo).add(1, 'days').format("MM/DD/YYYY");
+            this.TempDateFrom = moment(event.EffectiveFrom).format("MM/DD/YYYY");
+            this.TempDateTo = moment(event.EffectiveTo).format("MM/DD/YYYY");
         }
     }
 
@@ -324,8 +324,8 @@ export class FboPricesHomeComponent implements OnInit {
                 this.TempValueJet = data[0].tempJet;;
                 this.TempValueAvgas = data[0].tempAvg;
                 this.TempValueId = data[0].tempId;
-                this.TempDateFrom = moment(data[0].tempDateFrom).add(1, 'days').format("MM/DD/YYYY");
-                this.TempDateTo = moment(data[0].tempDateTo).add(1, 'days').format("MM/DD/YYYY");
+                this.TempDateFrom = moment(data[0].tempDateFrom).format("MM/DD/YYYY");
+                this.TempDateTo = moment(data[0].tempDateTo).format("MM/DD/YYYY");
                 if (this.currentFboPrice100LLCost.effectiveFrom != null) {
                     this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
                     if (this.currentFboPrice100LLCost.effectiveFrom <= new Date() && this.currentFboPrice100LLCost.effectiveTo > new Date()) {

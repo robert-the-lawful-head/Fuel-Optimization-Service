@@ -54,8 +54,7 @@ export class PricingTemplatesEditComponent {
     public marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
         { text: 'Retail -', value: 1 },
-        { text: 'Flat Fee', value: 2 },
-        { text: 'Inactive', value: 3 }
+        { text: 'Flat Fee', value: 2 }
     ];
     public isSaving: boolean = false;
     public currentPrice: any;

@@ -20,7 +20,7 @@ export class ContactsGridComponent {
     @Input() contactsData: Array<any>;
 
     contactsDataSource: MatTableDataSource<any> = null;
-    displayedColumns: string[] = ['firstName', 'lastName', 'title', 'primary', 'edit', 'delete'];
+    displayedColumns: string[] = ['firstName', 'lastName', 'title', 'primary', 'delete'];
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -42,10 +42,10 @@ export class ContactsGridComponent {
 
     //Public Methods
     public deleteRecord(record) {
-        this.contactDeleted.emit();
+        this.contactDeleted.emit(record);
     }
 
-    public editRecord(record) {
+    public editRecord(record,$event) {
         const clonedRecord = Object.assign({}, record);
         console.log(clonedRecord);
         this.editContactClicked.emit(clonedRecord);;

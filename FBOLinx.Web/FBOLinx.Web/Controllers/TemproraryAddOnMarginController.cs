@@ -56,12 +56,16 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost]
+        [Obsolete]
         public async Task<IActionResult> InsertTemporaryAddOnMargin([FromBody] TempAddOnMargin tempAddOnMargin)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            TimeZone.CurrentTimeZone.ToLocalTime(tempAddOnMargin.EffectiveFrom);
+            TimeZone.CurrentTimeZone.ToLocalTime(tempAddOnMargin.EffectiveTo);
 
             _context.TempAddOnMargin.Add(tempAddOnMargin);
             try

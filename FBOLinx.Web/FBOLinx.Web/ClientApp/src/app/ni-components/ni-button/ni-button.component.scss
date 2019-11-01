@@ -95,6 +95,10 @@ $types: (
         hover-color: darken(main-color(50), 10%)
     }
 
+    &.padding {
+        margin-top: ($module-rem * 2);
+    }
+
     .btn-line {
         border-width: $btn-border-width;
         border-style: $btn-border-style;

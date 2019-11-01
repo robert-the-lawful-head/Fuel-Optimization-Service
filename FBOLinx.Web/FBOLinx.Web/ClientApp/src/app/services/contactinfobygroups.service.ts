@@ -24,7 +24,7 @@ export class ContactinfobygroupsService {
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + '/' + payload.oid, { headers: this.headers });
+        return this.http.delete(this.accessPointUrl + '/' + payload, { headers: this.headers });
     }
 
     public update(payload) {
