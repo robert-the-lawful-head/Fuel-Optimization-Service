@@ -128,6 +128,7 @@ import { EmailContentEditComponent } from '.././shared/components/email-content-
 import { EmailContentSelectionComponent } from '.././shared/components/email-content-selection/email-content-selection.component';
 import { ForgotPasswordDialogComponent } from '.././shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
 import { ManageConfirmationComponent } from '.././shared/components/manage-confirmation/manage-confirmation.component';
+import { NotificationComponent } from '.././shared/components/notification/notification.component';
 import { PricingExpiredNotificationComponent } from '.././shared/components/pricing-expired-notification/pricing-expired-notification.component';
 import { TemporaryAddOnMarginComponent } from '.././shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import { StatisticsOrdersByLocationComponent } from
@@ -272,6 +273,7 @@ import { AppPipesModule } from '../app-pipes.module'
       EmailContentSelectionComponent,
       ForgotPasswordDialogComponent,
       ManageConfirmationComponent,
+      NotificationComponent,
       PricingExpiredNotificationComponent,
       TemporaryAddOnMarginComponent,
       StatisticsOrdersByLocationComponent,
@@ -293,6 +295,7 @@ import { AppPipesModule } from '../app-pipes.module'
         FbosDialogNewFboComponent,
         GroupsDialogNewGroupComponent,
         ManageConfirmationComponent,
+        NotificationComponent,
         PricingExpiredNotificationComponent,
         TemporaryAddOnMarginComponent,
       PricingTemplatesDialogNewTemplateComponent,

@@ -3,7 +3,7 @@
     <mat-spinner></mat-spinner>
 </div>
 
-<div class="container-fluid" *ngIf="currentPrices && distributionLog">
+<div class="container-fluid" *ngIf="(currentPrices && distributionLog) || show">
     <div class="row mb-2" *ngIf="isSaved">
         <div class="text-center col-12">
             <ni-badge [size]="'medium'" [color]="'success'">Your changes have been saved.</ni-badge>

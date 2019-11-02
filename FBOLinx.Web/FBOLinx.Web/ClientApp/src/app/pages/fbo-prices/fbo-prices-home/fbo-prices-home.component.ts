@@ -14,6 +14,7 @@ import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmar
 //Components
 import * as moment from 'moment';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 import { TemporaryAddOnMarginComponent } from '../../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 
 //Components
@@ -71,6 +72,7 @@ export class FboPricesHomeComponent implements OnInit {
     public isLoadingFboFees: boolean;
     public requiresUpdate: boolean;
     public isSaved: boolean;
+    public show: boolean;
     public minimumAllowedDate: Date = new Date();
     //public maximumCurrentEffectiveTo: Date = new Date();
     public minimumStagedEffectiveFrom: Date = new Date();
@@ -102,7 +104,8 @@ export class FboPricesHomeComponent implements OnInit {
         public distributionDialog: MatDialog,
         public warningDialog: MatDialog,
         public tempAddOnMargin: MatDialog,
-        public deleteFBODialog: MatDialog) {
+        public deleteFBODialog: MatDialog,
+        public notificationDialog: MatDialog) {
 
         //this.sharedService.emitChange(this.pageTitle);
     }
@@ -130,6 +133,13 @@ export class FboPricesHomeComponent implements OnInit {
             this.TempDateFrom = moment(event.EffectiveFrom).format("MM/DD/YYYY");
             this.TempDateTo = moment(event.EffectiveTo).format("MM/DD/YYYY");
         }
+
+        this.show = true;
+        this.isSaved = true;
+        this.delay(5000).then(any => {
+            this.show = false;
+            this.isSaved = false;
+        });
     }
 
     public distributePricingClicked() {
@@ -212,6 +222,9 @@ export class FboPricesHomeComponent implements OnInit {
         }
 
         this.isSaved = true;
+        this.delay(5000).then(any => {
+            this.isSaved = false;
+        });
         this.requiresUpdate = false;
 
         
@@ -246,7 +259,9 @@ export class FboPricesHomeComponent implements OnInit {
             }
         });
     }
-
+    async delay(ms: number) {
+        await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() => console.log("fired"));
+    }
     public editTempAd() {
         const dialogRef = this.tempAddOnMargin.open(TemporaryAddOnMarginComponent, {
             data: { EffectiveFrom: this.TempDateFrom, EffectiveTo: this.TempDateTo, id: this.TempValueId, MarginAvgas: this.TempValueAvgas, fboId: this.sharedService.currentUser.fboId, MarginJet: this.TempValueJet,update: true  }
@@ -267,6 +282,13 @@ export class FboPricesHomeComponent implements OnInit {
                 this.TempValueJet = null;
                 this.TempValueAvgas = null;
             }
+            this.show = true;
+            this.isSaved = true;
+            this.delay(5000).then(any => {
+                this.show = false;
+                this.isSaved = false;
+            });
+
         });
     }
     public deleteMargin(tempaddonmargin) {
