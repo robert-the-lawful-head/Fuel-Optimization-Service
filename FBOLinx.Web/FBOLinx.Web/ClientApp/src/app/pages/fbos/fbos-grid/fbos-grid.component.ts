@@ -103,6 +103,10 @@ export class FbosGridComponent implements OnInit {
         this.editFboClicked.emit(clonedRecord);
     }
 
+    public contactAdded(data) {
+        alert("ace");
+    }
+
     public newRecord() {
         let airportData = this.airportData;
         const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
@@ -113,9 +117,11 @@ export class FbosGridComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             console.log('Dialog data: ', result);
             this.fboService.add(result).subscribe((data: any) => {
+                alert(JSON.stringify(result));
+                alert(JSON.stringify(data));
                 if (!result.airport)
                     return;
-                this.fboAirportsService.add({ oid: 0, fboId: data.oid, icao: result.airport.icao, iata: result.airport.iata })
+                this.fboAirportsService.add({fboId: data.oid, icao: result.airport.icao, iata: result.airport.iata })
                     .subscribe((fboAirportData:
                         any) => {
                         this.editRecord(data,event);

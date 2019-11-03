@@ -137,14 +137,12 @@ export class CustomersEditComponent {
     }
 
     public contactDeleted(contact) {
-        alert(this.contactsData.length);
         this.customerContactsService.remove(contact.customerContactId).subscribe((data: any) => {
             this.contactInfoByGroupsService.remove(contact.contactInfoByGroupId).subscribe((data: any) => {
                 //delete this.contactsData[contact];
                 //this.contactsData = this.cont.splice(contact.contactInfoByGroupId, 1);
                 let index = this.contactsData.findIndex(d => d.customerContactId === contact.customerContactId); //find index in your array
                 this.contactsData.splice(0, 1);//remove element from array
-                alert(this.contactsData.length);
             });
         });
     }

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, EventEmitter, Output } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 //Services
@@ -20,7 +20,7 @@ export interface NewFBODialogData {
 })
 /** fbos-dialog-new-fbo component*/
 export class FbosDialogNewFboComponent {
-
+    @Output() contactAdded = new EventEmitter<any>();
     /** fbos-dialog-new-fbo ctor */
     constructor(public dialogRef: MatDialogRef<FbosDialogNewFboComponent>, @Inject(MAT_DIALOG_DATA) public data: NewFBODialogData) {
     }
@@ -32,4 +32,8 @@ export class FbosDialogNewFboComponent {
     public onCancelClick(): void {
         this.dialogRef.close();
     }
+
+    /*public addFbo() {
+        this.contactAdded.emit(this.data);
+    }*/
 }

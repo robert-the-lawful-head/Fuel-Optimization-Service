@@ -55,14 +55,14 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let customerMargin of pricingTemplate.customerMargins" class="mat-row">
-                            <td class="mat-cell">
-                                <mat-form-field>
+                            <td class="mat-cell text-center">
+                                <mat-form-field class="col-4">
                                     <input matInput (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" />
                                 </mat-form-field>
                             </td>
-                            <td class="mat-cell">
+                            <td class="mat-cell text-center">
                                 <div>
-                                    <mat-form-field>
+                                    <mat-form-field class="col-4">
                                         <input matInput [(ngModel)]="customerMargin.amount" (focus)="onFocus()" (focusout)="outFocus()"  (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
                                     </mat-form-field>
                                 </div>
