@@ -264,8 +264,8 @@ export class FboPricesHomeComponent implements OnInit {
     }
     public editTempAd() {
         const dialogRef = this.tempAddOnMargin.open(TemporaryAddOnMarginComponent, {
-            data: { EffectiveFrom: this.TempDateFrom, EffectiveTo: this.TempDateTo, id: this.TempValueId, MarginAvgas: this.TempValueAvgas, fboId: this.sharedService.currentUser.fboId, MarginJet: this.TempValueJet,update: true  }
-
+            data: { MarginJet: this.TempValueJet,EffectiveFrom: this.TempDateFrom, EffectiveTo: this.TempDateTo, id: this.TempValueId, MarginAvgas: this.TempValueAvgas, fboId: this.sharedService.currentUser.fboId,update: true  },
+            autoFocus: false
         });
 
         dialogRef.afterClosed().subscribe(result => {
