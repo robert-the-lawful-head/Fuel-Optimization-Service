@@ -1,4 +1,4 @@
-import { Component, Inject, EventEmitter, Output, Optional } from '@angular/core';
+import { Component, Inject, EventEmitter, Output, Optional, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -29,8 +29,14 @@ export class TemporaryAddOnMarginComponent {
     public effectivefrom: any;
     public effectiveto: any;
     public stringButton: any;
+    public help: boolean;
+    public helpOne: boolean;
+    public pom: any;
+    public counter: number = 0;
+    public brojac: number = 0;
     @Output() idChanged1: EventEmitter<any> = new EventEmitter();
-    @Output() jetChanged: EventEmitter<any> = new EventEmitter(); 
+    @Output() jetChanged: EventEmitter<any> = new EventEmitter();
+    @ViewChild("prm") btn: ElementRef;
 
     constructor(private router: Router,
         public dialogRef: MatDialogRef<TemporaryAddOnMarginComponent>, @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
@@ -41,6 +47,39 @@ export class TemporaryAddOnMarginComponent {
         this.data.EffectiveTo = new Date(this.data.EffectiveTo);
     }
 
+    public onType(data, event) {
+        this.brojac += 1;
+        if (event.key === data.MarginJet * 100) {
+            this.counter = 0;
+        }
+        if (this.helpOne) {
+            //data.MarginJet = (data.MarginJet * 100 - event.key * 0.01);
+            data.MarginJet = (data.MarginJet * 100 - event.key)/ 1000 + event.key*0.01;
+            this.helpOne = false;
+        }
+        if (this.help) {
+            data.MarginJet = data.MarginJet * 10;
+            this.help = false;
+            this.helpOne = true;
+        }
+        if (event.key === '.' && this.counter === 0 && this.brojac<3) {
+            this.help = true;
+            this.counter += 1;
+        }
+    }
+
+    public setSelectionRange(input, selectionStart, selectionEnd) {
+        if (input.setSelectionRange) {
+            input.focus();
+            input.setSelectionRange(selectionStart, selectionEnd);
+        } else if (input.createTextRange) {
+            var range = input.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', selectionEnd);
+            range.moveStart('character', selectionStart);
+            range.select();
+        }
+    }
 
     public add() {
         if (this.data.update) {

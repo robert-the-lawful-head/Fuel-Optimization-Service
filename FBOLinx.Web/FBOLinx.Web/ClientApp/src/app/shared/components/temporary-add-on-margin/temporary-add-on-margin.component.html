@@ -3,14 +3,14 @@
     <div class="row">
         <div class="col-6">
             <mat-form-field>
-                <input matInput [matDatepicker]="categoryDatePickerFrom" placeholder="Effective from" [(ngModel)]="data.EffectiveFrom" required>
+                <input matInput [matDatepicker]="categoryDatePickerFrom" (focus)="categoryDatePickerFrom.open()" placeholder="Effective from" [(ngModel)]="data.EffectiveFrom" required>
                 <mat-datepicker-toggle matSuffix [for]="categoryDatePickerFrom"></mat-datepicker-toggle>
                 <mat-datepicker #categoryDatePickerFrom disabled="false"></mat-datepicker>
             </mat-form-field>
         </div>
         <div class="col-6">
             <mat-form-field>
-                <input matInput [matDatepicker]="categoryDatePickerTo" placeholder="Effective To" [(ngModel)]="data.EffectiveTo" disabled required>
+                <input matInput [matDatepicker]="categoryDatePickerTo" (focus)="categoryDatePickerTo.open()" placeholder="Effective To" [(ngModel)]="data.EffectiveTo" required>
                 <mat-datepicker-toggle matSuffix [for]="categoryDatePickerTo"></mat-datepicker-toggle>
                 <mat-datepicker #categoryDatePickerTo disabled="false"></mat-datepicker>
             </mat-form-field>
@@ -22,7 +22,7 @@
         </div>
         <div class="col-6">
             <mat-form-field>
-                <input matInput type="text" autocomplete="off" [(ngModel)]="data.MarginJet" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}" required>
+                <input matInput type="text" autocomplete="off" (keyup)="onType(data,$event)" [(ngModel)]="data.MarginJet" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}" required>
                 <span matPrefix>$</span>
             </mat-form-field>
         </div>
