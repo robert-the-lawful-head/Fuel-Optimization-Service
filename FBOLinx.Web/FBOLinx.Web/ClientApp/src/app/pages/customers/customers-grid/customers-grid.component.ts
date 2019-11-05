@@ -17,6 +17,7 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 import * as XLSX from 'xlsx';
 import { CustomermarginsService } from '../../../services/customermargins.service';
 import { forEach } from '@angular/router/src/utils/collection';
+import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
 
 @Component({
     selector: 'app-customers-grid',
@@ -57,6 +58,7 @@ export class CustomersGridComponent implements OnInit {
         private customersService: CustomersService,
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
+        private customersViewedByFboService: CustomersviewedbyfboService,
         public deleteCustomerDialog: MatDialog,
         public customeraircraftsService: CustomeraircraftsService,
         public customerMarginsService: CustomermarginsService,
@@ -92,14 +94,13 @@ export class CustomersGridComponent implements OnInit {
     }
 
     public editCustomer(customer, $event) {
-        //if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
-        //    //$event.preventDefault();
-        //    $event.stopPropagation();
-        //    return;
-        //}
-
-        //$event.stopPropagation();
-        //return;
+        if ($event.srcElement) {
+            if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
+                //$event.preventDefault();
+                $event.stopPropagation();
+                return;
+            }
+        }
 
         const clonedCustomer = Object.assign({}, customer);
         this.editCustomerClicked.emit(clonedCustomer);
@@ -135,7 +136,11 @@ export class CustomersGridComponent implements OnInit {
                 result.customerId = data.oid;
                
                 result.GroupId = this.sharedService.currentUser.groupId;
-                
+
+                this.customersViewedByFboService.add({ fboId: this.sharedService.currentUser.fboId, groupId: this.sharedService.currentUser.groupId, customerId: result.customerId }).subscribe((data:
+                    any) => {
+                });
+
                 this.customerInfoByGroupService.add(result).subscribe((customerInfoByGroupData: any) => {
                     result.customerInfoByGroupId = customerInfoByGroupData.oid;
                     this.editCustomer(result,Event);
