@@ -87,14 +87,21 @@ export class FbosGridComponent implements OnInit {
                 return;
             const deleteIndex = this.fbosData.indexOf(record);
             this.fboService.remove(record).subscribe(
-                result => { this.fbosData.splice(deleteIndex, 1); }
+                result => {
+                    this.fbosData.splice(this.fbosData.indexOf(record), 1);
+                    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+                    this.fbosDataSource = new MatTableDataSource(this.fbosData);
+                    this.fbosDataSource.sort = this.sort;
+                    this.fbosDataSource.paginator = this.paginator;
+                    this.resultsLength = this.fbosData.length;
+                }
             );
             this.recordDeleted.emit(record);
         });
     }
 
     public editRecord(record,$event) {
-        if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
+        if ($event != null && ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox'))) {
             //$event.preventDefault();
             $event.stopPropagation();
             return;
@@ -103,9 +110,9 @@ export class FbosGridComponent implements OnInit {
         this.editFboClicked.emit(clonedRecord);
     }
 
-    public contactAdded(data) {
-        alert("ace");
-    }
+    //public contactAdded(data) {
+    //    alert("ace");
+    //}
 
     public newRecord() {
         let airportData = this.airportData;
@@ -116,15 +123,14 @@ export class FbosGridComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             console.log('Dialog data: ', result);
+            result.groupId = this.groupInfo.oid;
             this.fboService.add(result).subscribe((data: any) => {
-                alert(JSON.stringify(result));
-                alert(JSON.stringify(data));
                 if (!result.airport)
                     return;
-                this.fboAirportsService.add({fboId: data.oid, icao: result.airport.icao, iata: result.airport.iata })
+                this.fboAirportsService.add({ fboId: data.oid, icao: result.airport.icao, iata: result.airport.iata, })
                     .subscribe((fboAirportData:
                         any) => {
-                        this.editRecord(data,event);
+                        this.editRecord(data, null);
                     });
             });
         });
