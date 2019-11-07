@@ -92,9 +92,10 @@ export class TemporaryAddOnMarginComponent {
             });
         }
         else {
-            this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DDT00:00:00.000") + "Z";
+            alert(this.data.EffectiveFrom);
+            this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DD");
             this.data.EffectiveTo = moment(this.data.EffectiveTo).format("YYYY-MM-DDT00:00:00.000") + "Z";
-
+            alert(this.data.EffectiveFrom);
             this.data.fboId = this.sharedService.currentUser.fboId;
             this.temporaryAddOnMargin.add(this.data).subscribe((savedTemplate: temporaryAddOnMargin) => {
                 this.idChanged1.emit({ id: savedTemplate.id, EffectiveFrom: this.data.EffectiveFrom, EffectiveTo: this.data.EffectiveTo, MarginJet: this.data.MarginJet });

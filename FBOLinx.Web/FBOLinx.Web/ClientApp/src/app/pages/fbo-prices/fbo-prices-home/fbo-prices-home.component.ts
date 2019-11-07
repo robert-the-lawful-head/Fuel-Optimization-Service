@@ -126,8 +126,7 @@ export class FboPricesHomeComponent implements OnInit {
         this.dateFrom = new Date(moment(event.EffectiveFrom).format('MM/DD/YYYY'));
         this.dateTo = new Date(moment(event.EffectiveTo).format('MM/DD/YYYY'));
         //alert($event.MarginJet);
-        if (this.dateFrom <= new Date() &&
-            this.dateTo >= new Date(moment().format('MM/DD/YYYY'))) {
+        if (this.dateTo >= new Date(moment().format('MM/DD/YYYY'))) {
             this.TempValueId = event.id;
             this.TempValueJet = event.MarginJet;
             this.TempDateFrom = moment(event.EffectiveFrom).format("MM/DD/YYYY");
@@ -271,13 +270,12 @@ export class FboPricesHomeComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (!result)
                 return;
-            this.TempDateFrom = moment(result.EffectiveTo).format("MM/DD/YYYY");
+            this.TempDateFrom = moment(result.EffectiveFrom).format("MM/DD/YYYY");
             this.TempDateTo = moment(result.EffectiveTo).format("MM/DD/YYYY");
             this.TempValueAvgas = result.MarginAvgas;
             this.TempValueJet = result.MarginJet;
 
-            if (new Date(this.TempDateFrom) > new Date(moment().format("MM/DD/YYYY")) ||
-                new Date(this.TempDateTo) < new Date(moment().format("MM/DD/YYYY"))) {
+            if (new Date(this.TempDateTo) < new Date(moment().format("MM/DD/YYYY"))) {
                 this.TempValueId = null;
                 this.TempValueJet = null;
                 this.TempValueAvgas = null;

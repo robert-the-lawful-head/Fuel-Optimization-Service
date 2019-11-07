@@ -73,8 +73,7 @@ namespace FBOLinx.Web.Controllers
                               into leftJoinFBOPrices
                           from f in leftJoinFBOPrices.DefaultIfEmpty()
                           join s in (from s in _context.TempAddOnMargin
-                                     where s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1)
-                                     && s.FboId == fboId
+                                     where s.FboId == fboId && s.EffectiveTo >= DateTime.Now
                                      select s) on new { FboId = fboId } equals new
                                      {
                                          FboId = s.FboId
