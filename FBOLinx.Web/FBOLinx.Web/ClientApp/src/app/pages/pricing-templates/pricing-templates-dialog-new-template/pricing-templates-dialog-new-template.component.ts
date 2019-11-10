@@ -44,6 +44,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     public secondFormGroup: FormGroup;
     public thirdFormGroup: FormGroup;
     @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
+    @ViewChild('typeNotes') rteObj: RichTextEditorComponent;
     public currentPrice: any;
     public focus: any = false;
     public count: number = 0;
@@ -93,6 +94,16 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
 
     }
+
+    onKey(event: KeyboardEvent) {
+        //alert(this.data.notes);
+        null;
+    }
+
+    public modelChanged(event) {
+        alert(event);
+    }
+
     public disableToolbarEmail() {
         this.rteEmail.toolbarSettings.enable = false;
 
@@ -219,9 +230,10 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.data.default = (this.firstFormGroup.get('templateDefault').value == true);
         //this.data.notes = this.thirdFormGroup.get('note').value;
         //alert(JSON.stringify(this.data));
-        /*this.data.notes = this.thirdFormGroup.value.notes;
-        this.data.email = this.thirdFormGroup.value.email;
+        //this.data.notes = this.thirdFormGroup.get('notes').value;
+        /*this.data.email = this.thirdFormGroup.value.email;
         this.data.subject = this.thirdFormGroup.value.subject;*/
+        //alert(this.rteObj.contentModule.getEditPanel().textContent);
         this.pricingTemplatesService.add(this.data).subscribe((savedTemplate: any) => {
             this.data.customerMargins.forEach((customerMargin: any) => {
                 customerMargin.templateId = savedTemplate.oid;

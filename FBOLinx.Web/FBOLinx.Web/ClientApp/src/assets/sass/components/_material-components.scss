@@ -262,6 +262,13 @@ body {
         }
     }
 
+    .mat-row-not-hover {
+        &:hover {
+            background-color: transparent !important;
+            cursor:default !important;
+        }
+    }
+
     .mat-header-row {
         padding: 0 $module-rem;
 

@@ -123,14 +123,14 @@ export class FboPricesHomeComponent implements OnInit {
     //Public Methods
     jetChangedHandler(event: temporaryAddOnMargin) {
         //this.TempValueId = null;
-        this.dateFrom = new Date(moment(event.EffectiveFrom).format('MM/DD/YYYY'));
-        this.dateTo = new Date(moment(event.EffectiveTo).format('MM/DD/YYYY'));
+        this.dateFrom = new Date(event.EffectiveFrom);
+        this.dateTo = new Date(event.EffectiveTo);
         //alert($event.MarginJet);
         if (this.dateTo >= new Date(moment().format('MM/DD/YYYY'))) {
             this.TempValueId = event.id;
             this.TempValueJet = event.MarginJet;
-            this.TempDateFrom = moment(event.EffectiveFrom).format("MM/DD/YYYY");
-            this.TempDateTo = moment(event.EffectiveTo).format("MM/DD/YYYY");
+            this.TempDateFrom = event.EffectiveFrom;// moment(event.EffectiveFrom).format("MM/DD/YYYY");
+            this.TempDateTo = event.EffectiveTo;// moment(event.EffectiveTo).format("MM/DD/YYYY");
         }
 
         this.show = true;
@@ -270,12 +270,12 @@ export class FboPricesHomeComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (!result)
                 return;
-            this.TempDateFrom = moment(result.EffectiveFrom).format("MM/DD/YYYY");
-            this.TempDateTo = moment(result.EffectiveTo).format("MM/DD/YYYY");
+            this.TempDateFrom = result.EffectiveFrom;
+            this.TempDateTo = result.EffectiveTo;
             this.TempValueAvgas = result.MarginAvgas;
             this.TempValueJet = result.MarginJet;
 
-            if (new Date(this.TempDateTo) < new Date(moment().format("MM/DD/YYYY"))) {
+            if (new Date(this.TempDateTo) < new Date() {
                 this.TempValueId = null;
                 this.TempValueJet = null;
                 this.TempValueAvgas = null;
@@ -291,7 +291,7 @@ export class FboPricesHomeComponent implements OnInit {
     }
     public deleteMargin(tempaddonmargin) {
         const dialogRef = this.deleteFBODialog.open(DeleteConfirmationComponent, {
-            data: { item: tempaddonmargin, description: 'temporary add-on margin' }
+            data: { item: tempaddonmargin, description: 'temporary add-on margin', customTitle: 'Delete Temporary Margin?' }
         });
 
         dialogRef.afterClosed().subscribe(result => {

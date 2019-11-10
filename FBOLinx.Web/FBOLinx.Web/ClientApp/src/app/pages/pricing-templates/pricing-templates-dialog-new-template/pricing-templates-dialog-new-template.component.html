@@ -69,7 +69,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let customerMargin of data.customerMargins" class="mat-row">
+                    <tr *ngFor="let customerMargin of data.customerMargins" class="mat-row mat-row-not-hover">
                         <td class="mat-cell text-center">
                             <mat-form-field class="col-4">
                                 <input matInput class="text-lg-right" (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" [ngModelOptions]="{standalone: true}" />
@@ -110,7 +110,7 @@
                 <div class="row mt-2 mb-2">
                     <div class="col">
                         <mat-form-field>
-                            <input matInput placeholder="Subject" formControlName="subject" [(ngModel)]="data.subject" aria-label="Subject" />
+                            <input matInput placeholder="Subject" formControlName="subject" [(ngModel)]="data.subject" aria-label="Subject" autocomplete="off" />
                         </mat-form-field>
                     </div>
                 </div>
@@ -120,7 +120,8 @@
                 </div>
                 <div class="row mt-2 mb-2">
                     <div class="col">
-                        <ejs-richtexteditor #typeNote id='rteNotes' [toolbarSettings]='{enable:false}' [(value)]='data.notes'></ejs-richtexteditor>
+                        {{data.notes}}
+                        <ejs-richtexteditor [ngModelOptions]="{standalone: true}" id='rteNotes' [toolbarSettings]='{enable:false}' (ngModelChange)="data.notes = $event" [(ngModel)]="data.notes"  [(value)]='data.notes'></ejs-richtexteditor>
                     </div>
                 </div>
                 <div class="row mt-2 mb-2" style="font-size:0.8rem;">
@@ -130,7 +131,8 @@
                 </div>
                 <div class="row mt-2 mb-2">
                     <div class="col">
-                        <ejs-richtexteditor #typeEmail id='rteEmail' (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()"  [(value)]='data.email'></ejs-richtexteditor>
+                        {{data.email}}
+                        <ejs-richtexteditor #typeEmail id='rteEmail' (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()" [(value)]='data.email'></ejs-richtexteditor>
                     </div>
                 </div>
             </div>
