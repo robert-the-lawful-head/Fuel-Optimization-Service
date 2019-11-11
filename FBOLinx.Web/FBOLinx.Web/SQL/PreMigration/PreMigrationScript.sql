@@ -320,8 +320,8 @@ GO
 CREATE TABLE [dbo].[TempAddOnMargin](
 	[id] [int] NOT NULL IDENTITY (1, 1),
 	[fboId] [int] NOT NULL,
-	[effectiveFrom] [date] NOT NULL,
-	[effectiveTo] [date] NOT NULL,
+	[effectiveFrom] [datetime] NOT NULL,
+	[effectiveTo] [datetime] NOT NULL,
 	[marginJet] [float] NULL,
 	[marginAvgas] [float] NULL,
 PRIMARY KEY CLUSTERED 

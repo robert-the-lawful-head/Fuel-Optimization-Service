@@ -310,11 +310,11 @@ namespace FBOLinx.Web.Data
             {
                 entity.Property(e => e.EffectiveFrom)
                     .HasColumnName("effectiveFrom")
-                    .HasColumnType("date");
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.EffectiveTo)
                     .HasColumnName("effectiveTo")
-                    .HasColumnType("date");
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.FboId).HasColumnName("fboId");
 

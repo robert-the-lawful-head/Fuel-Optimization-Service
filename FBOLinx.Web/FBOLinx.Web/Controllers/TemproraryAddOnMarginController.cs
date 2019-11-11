@@ -30,7 +30,14 @@ namespace FBOLinx.Web.Controllers
             }
 
 
-            var tempMargin = await _context.TempAddOnMargin.Where(x => x.FboId == id).FirstOrDefaultAsync();
+            var tempMargin = await _context.TempAddOnMargin.Where(x => x.FboId == id).Select(x=> new TempAddOnMargin {
+                Id = x.Id,
+                FboId = x.FboId,
+                EffectiveFrom = x.EffectiveFrom.ToLocalTime(),
+                EffectiveTo = x.EffectiveTo.ToLocalTime(),
+                MarginAvgas = x.MarginAvgas,
+                MarginJet = x.MarginJet
+            }) .FirstOrDefaultAsync();
 
             return Ok(tempMargin);
         }
@@ -64,8 +71,8 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            TimeZone.CurrentTimeZone.ToLocalTime(tempAddOnMargin.EffectiveFrom);
-            TimeZone.CurrentTimeZone.ToLocalTime(tempAddOnMargin.EffectiveTo);
+            //tempAddOnMargin.EffectiveFrom.ToUniversalTime();
+            //tempAddOnMargin.EffectiveTo.ToUniversalTime();
 
             _context.TempAddOnMargin.Add(tempAddOnMargin);
             try

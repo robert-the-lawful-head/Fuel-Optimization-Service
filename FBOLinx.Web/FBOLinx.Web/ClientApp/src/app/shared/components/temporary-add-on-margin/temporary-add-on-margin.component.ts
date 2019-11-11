@@ -12,9 +12,9 @@ import { Validators } from '@angular/forms';
 export interface temporaryAddOnMargin {
     id: any;
     fboId: any;
-    EffectiveFrom: any;
-    EffectiveTo: any;
-    MarginJet: any;
+    effectiveFrom: any;
+    effectiveTo: any;
+    marginJet: any;
 }
 @Component({
     selector: 'app-temporary-add-on-margin',
@@ -85,21 +85,19 @@ export class TemporaryAddOnMarginComponent {
         if (this.data.update) {
 
             //this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DDT00:00:00.000") + "Z";
-            this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DD");
-            this.data.EffectiveTo = moment(this.data.EffectiveTo).format("YYYY-MM-DD");
+            /*this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DD");
+            this.data.EffectiveTo = moment(this.data.EffectiveTo).format("YYYY-MM-DD");*/
             this.temporaryAddOnMargin.update(this.data).subscribe((savedTemplate: temporaryAddOnMargin) => {
                 this.jetChanged.emit(savedTemplate);
                 this.dialogRef.close();
             });
         }
         else {
-            //alert(this.data.EffectiveFrom);
-            this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DD");
-            this.data.EffectiveTo = moment(this.data.EffectiveTo).format("YYYY-MM-DD");
-            //alert(this.data.EffectiveFrom);
+            /*this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DD");
+            this.data.EffectiveTo = moment(this.data.EffectiveTo).format("YYYY-MM-DD");*/
             this.data.fboId = this.sharedService.currentUser.fboId;
             this.temporaryAddOnMargin.add(this.data).subscribe((savedTemplate: temporaryAddOnMargin) => {
-                this.idChanged1.emit({ id: savedTemplate.id, EffectiveFrom: this.data.EffectiveFrom, EffectiveTo: this.data.EffectiveTo, MarginJet: this.data.MarginJet });
+                this.idChanged1.emit({ id: savedTemplate.id, EffectiveFrom: savedTemplate.effectiveFrom, EffectiveTo: savedTemplate.effectiveTo, MarginJet: savedTemplate.marginJet });
                 this.dialogRef.close();
             });
         }

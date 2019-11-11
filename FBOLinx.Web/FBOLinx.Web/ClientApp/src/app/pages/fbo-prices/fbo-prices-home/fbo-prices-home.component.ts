@@ -63,6 +63,7 @@ export class FboPricesHomeComponent implements OnInit {
     public stagedPrices: any[];
     public fboPreferences: any;
     public fboFees: any[];
+    public lcl : any;
     public distributionLog: any[];
     public isLoadingJetARetail: boolean;
     public isLoadingJetACost: boolean;
@@ -123,14 +124,14 @@ export class FboPricesHomeComponent implements OnInit {
     //Public Methods
     jetChangedHandler(event: temporaryAddOnMargin) {
         //this.TempValueId = null;
-        this.dateFrom = new Date(event.EffectiveFrom);
-        this.dateTo = new Date(event.EffectiveTo);
+        //this.dateFrom = new Date(moment(event.EffectiveFrom).local().format("MM/DD/YYYY"));
+        this.dateTo = new Date(moment.utc(event.EffectiveTo).toDate());
         //alert($event.MarginJet);
-        if (this.dateTo >= new Date(moment().format('MM/DD/YYYY'))) {
+        if (this.dateTo >= new Date(moment.utc().toDate())) {
             this.TempValueId = event.id;
             this.TempValueJet = event.MarginJet;
-            this.TempDateFrom = event.EffectiveFrom;// moment(event.EffectiveFrom).format("MM/DD/YYYY");
-            this.TempDateTo = event.EffectiveTo;// moment(event.EffectiveTo).format("MM/DD/YYYY");
+            this.TempDateFrom = moment(moment.utc(event.EffectiveFrom).toDate()).format('MM/DD/YYYY');// moment(event.EffectiveFrom).format("MM/DD/YYYY");
+            this.TempDateTo = moment(moment.utc(event.EffectiveTo).toDate()).format('MM/DD/YYYY');;// moment(event.EffectiveTo).format("MM/DD/YYYY");
         }
 
         this.show = true;
@@ -270,12 +271,12 @@ export class FboPricesHomeComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (!result)
                 return;
-            this.TempDateFrom = result.EffectiveFrom;
-            this.TempDateTo = result.EffectiveTo;
+            this.TempDateFrom = moment(moment.utc(result.EffectiveFrom).toDate()).format('MM/DD/YYYY');
+            this.TempDateTo = moment(moment.utc(result.EffectiveTo).toDate()).format('MM/DD/YYYY');
             this.TempValueAvgas = result.MarginAvgas;
             this.TempValueJet = result.MarginJet;
 
-            if (new Date(this.TempDateTo) < new Date() {
+            if (new Date(moment.utc(result.EffectiveTo).toDate()) < new Date(moment.utc().toDate())) {
                 this.TempValueId = null;
                 this.TempValueJet = null;
                 this.TempValueAvgas = null;
@@ -346,8 +347,10 @@ export class FboPricesHomeComponent implements OnInit {
                 this.TempValueId = data[0].tempId;
                 this.currentFboPriceJetACost.effectiveTo = moment(this.currentFboPriceJetACost.effectiveTo).format("MM/DD/YYYY");
                 this.currentFboPriceJetARetail.effectiveTo = moment(this.currentFboPriceJetARetail.effectiveTo).format("MM/DD/YYYY");
-                this.TempDateFrom = moment(data[0].tempDateFrom).format("MM/DD/YYYY");
-                this.TempDateTo = moment(data[0].tempDateTo).format("MM/DD/YYYY");
+                console.log(moment(data[0].tempDateFrom).utc());
+                this.lcl = moment(data[0].tempDateFrom).utc();
+                this.TempDateFrom = moment(moment.utc(data[0].tempDateFrom).toDate()).format('MM/DD/YYYY');
+                this.TempDateTo = moment(moment.utc(data[0].tempDateTo).toDate()).format('MM/DD/YYYY');
                 if (this.currentFboPrice100LLCost.effectiveFrom != null) {
                     this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
                     if (this.currentFboPrice100LLCost.effectiveFrom <= new Date() && this.currentFboPrice100LLCost.effectiveTo > new Date()) {
