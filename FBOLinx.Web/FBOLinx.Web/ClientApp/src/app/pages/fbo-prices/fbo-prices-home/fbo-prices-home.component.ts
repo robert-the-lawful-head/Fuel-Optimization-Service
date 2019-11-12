@@ -126,8 +126,10 @@ export class FboPricesHomeComponent implements OnInit {
         //this.TempValueId = null;
         //this.dateFrom = new Date(moment(event.EffectiveFrom).local().format("MM/DD/YYYY"));
         this.dateTo = new Date(moment.utc(event.EffectiveTo).toDate());
-        //alert($event.MarginJet);
-        if (this.dateTo >= new Date(moment.utc().toDate())) {
+        //alert($event.MarginJet);var now = new Date();
+        var now = new Date();
+        now.setHours(0, 0, 0, 0);
+        if (this.dateTo >= new Date(moment.utc(now).toDate())) {
             this.TempValueId = event.id;
             this.TempValueJet = event.MarginJet;
             this.TempDateFrom = moment(moment.utc(event.EffectiveFrom).toDate()).format('MM/DD/YYYY');// moment(event.EffectiveFrom).format("MM/DD/YYYY");
@@ -275,8 +277,9 @@ export class FboPricesHomeComponent implements OnInit {
             this.TempDateTo = moment(moment.utc(result.EffectiveTo).toDate()).format('MM/DD/YYYY');
             this.TempValueAvgas = result.MarginAvgas;
             this.TempValueJet = result.MarginJet;
-
-            if (new Date(moment.utc(result.EffectiveTo).toDate()) < new Date(moment.utc().toDate())) {
+            var now = new Date();
+            now.setHours(0, 0, 0, 0);
+            if (new Date(moment.utc(result.EffectiveTo).toDate()) < new Date(moment.utc(now).toDate())) {
                 this.TempValueId = null;
                 this.TempValueJet = null;
                 this.TempValueAvgas = null;

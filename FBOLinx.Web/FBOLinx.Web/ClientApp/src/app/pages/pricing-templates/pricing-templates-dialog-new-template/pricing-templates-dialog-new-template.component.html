@@ -120,8 +120,7 @@
                 </div>
                 <div class="row mt-2 mb-2">
                     <div class="col">
-                        {{data.notes}}
-                        <ejs-richtexteditor [ngModelOptions]="{standalone: true}" id='rteNotes' [toolbarSettings]='{enable:false}' (ngModelChange)="data.notes = $event" [(ngModel)]="data.notes"  [(value)]='data.notes'></ejs-richtexteditor>
+                        <ejs-richtexteditor #typeNotes id='rteNotes' [toolbarSettings]='{enable:false}' [(value)]='data.notes'></ejs-richtexteditor>
                     </div>
                 </div>
                 <div class="row mt-2 mb-2" style="font-size:0.8rem;">
@@ -131,7 +130,6 @@
                 </div>
                 <div class="row mt-2 mb-2">
                     <div class="col">
-                        {{data.email}}
                         <ejs-richtexteditor #typeEmail id='rteEmail' (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()" [(value)]='data.email'></ejs-richtexteditor>
                     </div>
                 </div>
