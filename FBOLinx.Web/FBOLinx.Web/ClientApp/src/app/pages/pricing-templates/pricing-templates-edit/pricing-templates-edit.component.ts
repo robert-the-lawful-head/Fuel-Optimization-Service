@@ -249,7 +249,14 @@ export class PricingTemplatesEditComponent {
     }
 
     private loadCurrentPrice() {
-        this.fbopricesService.getFbopricesByFboIdAndProductCurrent(this.sharedService.currentUser.fboId, this.getCurrentProductForMarginType()).subscribe((data: any) => {
+        //this.fbopricesService.getFbopricesByFboIdAndProductCurrent(this.sharedService.currentUser.fboId, this.getCurrentProductForMarginType()).subscribe((data: any) => {
+        //    this.currentPrice = data;
+        //    for (let margin of this.pricingTemplate.customerMargins) {
+        //        this.calculateItpForMargin(margin);
+        //    }
+        //});
+
+        this.fbopricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId).subscribe((data: any) => {
             this.currentPrice = data;
             for (let margin of this.pricingTemplate.customerMargins) {
                 this.calculateItpForMargin(margin);
@@ -264,11 +271,19 @@ export class PricingTemplatesEditComponent {
     }
 
     private calculateItpForMargin(customerMargin) {
-        if (this.pricingTemplate.marginType == 0)
-            customerMargin.itp = this.currentPrice.price + Math.abs(customerMargin.amount);
-        else if (this.pricingTemplate.marginType == 1)
-            customerMargin.itp = this.currentPrice.price - Math.abs(customerMargin.amount);
-        else
-            customerMargin.itp = Math.abs(customerMargin.amount);
+        for (let m of this.currentPrice) {
+            if (this.pricingTemplate.marginType == 0 && this.getCurrentProductForMarginType() == m.product) {
+                customerMargin.itp = m ? m.price : 0 + Math.abs(customerMargin.amount);
+                return;
+            }
+            else if (this.pricingTemplate.marginType == 1 && this.getCurrentProductForMarginType() == m.product) {
+                customerMargin.itp = m ? m.price : 0 - Math.abs(customerMargin.amount);
+                return;
+            }
+            else if (this.pricingTemplate.marginType > 1) {
+                customerMargin.itp = Math.abs(customerMargin.amount);
+                return;
+            }
+        }
     }
 }

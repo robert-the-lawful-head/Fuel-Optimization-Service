@@ -45,7 +45,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     public thirdFormGroup: FormGroup;
     @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
     @ViewChild('typeNotes') rteObj: RichTextEditorComponent;
-    public currentPrice: any;
+    public currentPrice: any[];
     public focus: any = false;
     public count: number = 0;
     public title: string;
@@ -251,12 +251,18 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     //Private Methods
     private loadCurrentPrice() {
-        this.fbopricesService.getFbopricesByFboIdAndProductCurrent(this.data.fboId, this.getCurrentProductForMarginType()).subscribe((data: any) => {
+        /*this.fbopricesService.getFbopricesByFboIdAndProductCurrent(this.data.fboId, this.getCurrentProductForMarginType()).subscribe((data: any) => {
             this.currentPrice = data;
             for (let margin of this.data.customerMargins) {
                 this.calculateItpForMargin(margin);
             }
-        });
+        });*/
+        this.fbopricesService.getFbopricesByFboIdCurrent(this.data.fboId).subscribe((data: any) => {
+            this.currentPrice = data;
+                for (let margin of this.data.customerMargins) {
+                    this.calculateItpForMargin(margin);
+                }
+        })
     }
 
     private getCurrentProductForMarginType() {
@@ -266,11 +272,19 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     private calculateItpForMargin(customerMargin) {
-        if (this.data.marginType == 0)
-            customerMargin.itp = this.currentPrice ? this.currentPrice.price :  0 + Math.abs(customerMargin.amount);
-        else if (this.data.marginType == 1)
-            customerMargin.itp = this.currentPrice ? this.currentPrice.price : 0  - Math.abs(customerMargin.amount);
-        else
-            customerMargin.itp = Math.abs(customerMargin.amount);
+        for (let m of this.currentPrice) {
+            if (this.data.marginType == 0 && this.getCurrentProductForMarginType() == m.product) {
+                customerMargin.itp = m ? m.price : 0 + Math.abs(customerMargin.amount);
+                return;
+            }
+            else if (this.data.marginType == 1 && this.getCurrentProductForMarginType() == m.product) {
+                customerMargin.itp = m ? m.price : 0 - Math.abs(customerMargin.amount);
+                return;
+            }
+            else if (this.data.marginType>1) {
+                customerMargin.itp = Math.abs(customerMargin.amount);
+                return;
+                }
+        }
     }
 }

@@ -8,11 +8,8 @@
     <div>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-6">
+                <div class="col">
                     <h5>General Information</h5>
-                </div>
-                <div class="col-6 text-right font-italic" *ngIf="currentPrice && [0,1].indexOf(pricingTemplate.marginType) > -1">
-                    <h5 style="font-weight: 400;">{{currentPrice.product}}: {{currentPrice.price | currency:'USD'}}</h5>
                 </div>
             </div>
             <div class="row">
@@ -37,8 +34,11 @@
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col">
-                    <h5>Volume Discounts</h5>
+                <div class="col-4">
+                    <h5>Volume Tiers</h5>
+                </div>
+                <div class="col-8 text-left font-italic" *ngIf="currentPrice && [0,1,2].indexOf(pricingTemplate.marginType) > -1">
+                    <h5 style="font-weight: 600;margin:0 !important" *ngFor="let tmp of currentPrice"><span *ngIf="tmp.price">{{tmp.product}}: {{tmp.price | currency:'USD'}}</span></h5>
                 </div>
             </div>
             <div class="row">
