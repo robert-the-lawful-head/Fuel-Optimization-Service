@@ -42,23 +42,23 @@ export class TemporaryAddOnMarginComponent {
         public dialogRef: MatDialogRef<TemporaryAddOnMarginComponent>, @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
         private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private sharedService: SharedService) {
-        this.stringButton = this.data.update ? 'Update' : 'Save & Append';
+        this.stringButton = this.data.update ? 'Add Margin' : 'Add Margin';
         this.data.EffectiveFrom = new Date(this.data.EffectiveFrom);
         this.data.EffectiveTo = new Date(this.data.EffectiveTo);
     }
 
     public onType(data, event) {
         this.brojac += 1;
-        if (event.key === data.MarginJet * 100) {
+        if (event.key === data.MarginJet * 10000) {
             this.counter = 0;
         }
         if (this.helpOne) {
             //data.MarginJet = (data.MarginJet * 100 - event.key * 0.01);
-            data.MarginJet = (data.MarginJet * 100 - event.key)/ 1000 + event.key*0.01;
+            data.MarginJet = (data.MarginJet * 10000 - event.key)/ 100000 + event.key*0.0001;
             this.helpOne = false;
         }
         if (this.help) {
-            data.MarginJet = data.MarginJet * 10;
+            data.MarginJet = data.MarginJet * 1000;
             this.help = false;
             this.helpOne = true;
         }

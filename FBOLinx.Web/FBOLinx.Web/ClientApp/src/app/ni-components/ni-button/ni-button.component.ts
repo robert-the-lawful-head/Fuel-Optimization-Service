@@ -17,6 +17,7 @@ import { Component, OnInit, Input } from '@angular/core';
     '[class.ni-btn-success]': 'view === "success"',
     '[class.ni-btn-warning]': 'view === "warning"',
     '[class.ni-btn-error]': 'view === "error"',
+    '[class.ni-btn-blank]': 'view === "blank"',
     '[class.ni-btn-customButton]': 'padding === "padding"',
     '[class.ni-btn-outline]': 'outline',
     '[class.ni-btn-gradient]': 'gradient',

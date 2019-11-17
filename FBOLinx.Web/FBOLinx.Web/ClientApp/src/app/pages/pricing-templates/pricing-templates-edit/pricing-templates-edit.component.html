@@ -38,7 +38,7 @@
                     <h5>Volume Tiers</h5>
                 </div>
                 <div class="col-8 text-left font-italic" *ngIf="currentPrice && [0,1,2].indexOf(pricingTemplate.marginType) > -1">
-                    <h5 style="font-weight: 600;margin:0 !important" *ngFor="let tmp of currentPrice"><span *ngIf="tmp.price">{{tmp.product}}: {{tmp.price | currency:'USD'}}</span></h5>
+                    <h5 [ngStyle]="{'font-weight':getCurrentProductForMarginType() === tmp.product && [0,1].indexOf(pricingTemplate.marginType) > -1 ? '600' : '300' }" style="margin:0 !important" *ngFor="let tmp of currentPrice"><span *ngIf="tmp.price">{{tmp.product}}: {{tmp.price | currency:'USD'}}</span></h5>
                 </div>
             </div>
             <div class="row">
@@ -46,8 +46,9 @@
                     <thead>
                         <tr class="mat-header-row">
                             <th class="text-center">Min. (gal)</th>
-                            <th class="text-center">Margin</th>
-                            <th class="text-center">ITP</th>
+                            <th class="text-center" *ngIf="pricingTemplate.marginType==1">Discount</th>
+                            <th class="text-center" *ngIf="pricingTemplate.marginType!=2">Your ITP Margin</th>
+                            <th class="text-center">All-in</th>
                             <th class="text-right">
                                 <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">Add New</button>
                             </th>
@@ -60,15 +61,24 @@
                                     <input matInput (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" />
                                 </mat-form-field>
                             </td>
-                            <td class="mat-cell text-center">
-                                <div>
-                                    <mat-form-field class="col-4">
-                                        <input matInput [(ngModel)]="customerMargin.amount" (focus)="onFocus()" (focusout)="outFocus()"  (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
-                                    </mat-form-field>
-                                </div>
+                            <td class="mat-cell text-center" *ngIf="pricingTemplate.marginType==1">
+                                <mat-form-field class="col-4">
+                                    <input matInput (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" />
+                                </mat-form-field>
                             </td>
-                            <td class="mat-cell text-center font-weight-bold font-italic text-right">
-                                <div>{{customerMargin.itp | currency:'USD'}}</div>
+                            <td class="mat-cell text-center col-4" *ngIf="pricingTemplate.marginType!=2">
+                                    <mat-form-field class="col-4" *ngIf="[0,2].indexOf(pricingTemplate.marginType)  > -1">
+                                        <input matInput [(ngModel)]="customerMargin.amount" (focus)="onFocus()" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
+                                    </mat-form-field>
+                                    <div *ngIf="[1].indexOf(pricingTemplate.marginType)  > -1">
+                                        <div >{{customerMargin.amount | currency:'USD'}}</div>
+                                    </div>
+                            </td>
+                            <td class="mat-cell text-center font-weight-bold font-italic text-right col-4">
+                                <div *ngIf="pricingTemplate.marginType!=2">${{customerMargin.itp | number:'1.4-4'}}</div>
+                                <mat-form-field class="col-4" *ngIf="pricingTemplate.marginType==2">
+                                    <input matInput [(ngModel)]="customerMargin.itp" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />
+                                </mat-form-field>
                             </td>
                             <td class="text-right mat-cell">
                                 <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomerMargin(customerMargin)">Delete</button>

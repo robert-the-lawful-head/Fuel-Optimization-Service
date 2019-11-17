@@ -53,6 +53,9 @@ $types: (
     color: $error-contrast,
     hover-bg: darken($error-color, 10%),
     hover-color: darken($error-contrast, 10%)
+  ),
+    blank: (
+    bg: $blank-color
   )
 );
 

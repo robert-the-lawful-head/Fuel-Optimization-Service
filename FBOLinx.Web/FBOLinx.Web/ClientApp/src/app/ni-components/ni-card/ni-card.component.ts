@@ -42,7 +42,8 @@ export class NiCardComponent implements OnInit {
     openDialog(): Observable<any> {
         const dialogRef = this.tempAddOnMargin.open(TemporaryAddOnMarginComponent, {
             data: { EffectiveFrom: this.vEffectiveFrom, EffectiveTo: this.vEffectiveTo, MarginJet: this.vJet, Id: this.vId, update: false },
-            autoFocus: false
+            autoFocus: false,
+            panelClass: 'my-panel'
         });
         dialogRef.componentInstance.idChanged1.subscribe((result) => {
             console.log(result);

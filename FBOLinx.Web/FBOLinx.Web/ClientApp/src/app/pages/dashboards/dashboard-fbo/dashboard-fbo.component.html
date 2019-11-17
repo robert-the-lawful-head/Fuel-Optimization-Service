@@ -8,15 +8,15 @@
 </div>
 
 <div class="row" *ngIf="dashboardSettings">
-    <div class="col-6">
-        <mat-form-field>
+    <div class="col-2">
+        <mat-form-field class="col-8">
             <input matInput [max]="dashboardSettings.filterEndDate" [(ngModel)]="dashboardSettings.filterStartDate" [matDatepicker]="dashboardSettingsStartDateFilter" (focus)="dashboardSettingsStartDateFilter.open()" placeholder="Start Date" (dateChange)="applyDateFilterChange({})">
             <mat-datepicker-toggle matSuffix [for]="dashboardSettingsStartDateFilter"></mat-datepicker-toggle>
             <mat-datepicker #dashboardSettingsStartDateFilter disabled="false"></mat-datepicker>
         </mat-form-field>
     </div>
-    <div class="col-6">
-        <mat-form-field>
+    <div class="col-2">
+        <mat-form-field class="col-8">
             <input matInput [min]="dashboardSettings.filterStartDate" [(ngModel)]="dashboardSettings.filterEndDate" [matDatepicker]="dashboardSettingsEndDateFilter" (focus)="dashboardSettingsEndDateFilter.open()" placeholder="End Date" (dateChange)="applyDateFilterChange({})">
             <mat-datepicker-toggle matSuffix [for]="dashboardSettingsEndDateFilter"></mat-datepicker-toggle>
             <mat-datepicker #dashboardSettingsEndDateFilter disabled="false"></mat-datepicker>

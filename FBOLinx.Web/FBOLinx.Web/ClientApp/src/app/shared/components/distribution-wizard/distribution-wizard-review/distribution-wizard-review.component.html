@@ -14,14 +14,14 @@
         <div class="col-12 text-left" [innerHTML]="data.email" *ngIf="!edit">
         </div>
         <div class="col" *ngIf="edit">
-            <ejs-richtexteditor #typeEmail id='rteEmail' (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()" [(value)]='data.email'></ejs-richtexteditor>
+            <ejs-richtexteditor #typeEmail id='rteEmail' [(value)]='data.email'></ejs-richtexteditor>
         </div>
     </div>
 </div>
 <div mat-dialog-actions>
     <div class="text-center float-right col-12">
-        <button ni-button [view]="'accent'" class="mr-1" (click)="edit=true" *ngIf="!edit">Edit Message</button>
-        <button ni-button [view]="'success'" *ngIf="!edit">Distribute Pricing</button>
+        <button ni-button [view]="'blank'" class="mr-1" style="border:1px solid #000;" (click)="edit=true" *ngIf="!edit">Edit Message</button>
+        <button ni-button [view]="'success'" *ngIf="!edit">Close Preview</button>
         <button ni-button [view]="'success'" *ngIf="edit" (click)="update()">Save</button>
     </div>
 </div>

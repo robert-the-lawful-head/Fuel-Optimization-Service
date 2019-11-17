@@ -30,12 +30,12 @@
             </ng-container>
 
             <ng-container matColumnDef="yourMargin">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Your Margin (Private)</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>ITP Margin (Cost +) or Discount (Retail -)</th>
                 <td mat-cell *matCellDef="let pricingTemplate">{{pricingTemplate.yourMargin | currency:'USD'}}</td>
             </ng-container>
 
             <ng-container matColumnDef="intoPlanePrice">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>ITP</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>All-In</th>
                 <td mat-cell *matCellDef="let pricingTemplate">
                     <span *ngIf="!pricingTemplate.isPricingExpired">{{pricingTemplate.intoPlanePrice | currency:'USD'}}</span>
                     <span *ngIf="pricingTemplate.isPricingExpired" style="color: red; font-weight: bold;">Expired</span>

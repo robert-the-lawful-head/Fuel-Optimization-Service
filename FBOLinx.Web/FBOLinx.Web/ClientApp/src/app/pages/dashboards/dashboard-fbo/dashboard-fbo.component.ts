@@ -42,6 +42,8 @@ export class DashboardFboComponent {
     public breadcrumb: any[] = BREADCRUMBS;
     public statisticsOptions: any = { useCard: true };
     public dashboardSettings: any;
+    public fboid: any;
+    public groupid: any;
 
     @ViewChild('statisticsTotalOrders') private statisticsTotalOrders: StatisticsTotalOrdersComponent;
     @ViewChild('statisticsTotalCustomers') private statisticsTotalCustomers: StatisticsTotalCustomersComponent;
@@ -54,6 +56,8 @@ export class DashboardFboComponent {
     /** dashboard-fbo ctor */
     constructor(private sharedService: SharedService) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
+        this.fboid = this.sharedService.currentUser.fboId;
+        this.groupid = this.sharedService.currentUser.groupId;
         this.sharedService.emitChange(this.pageTitle);
     }
 

@@ -22,7 +22,7 @@
         </div>
         <div class="col-6">
             <mat-form-field>
-                <input matInput type="text" autocomplete="off" (keyup)="onType(data,$event)" [(ngModel)]="data.MarginJet" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}" required>
+                <input matInput type="text" autocomplete="off" (keyup)="onType(data,$event)" [(ngModel)]="data.MarginJet" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.',precision: 4}" required>
                 <span matPrefix>$</span>
             </mat-form-field>
         </div>
@@ -41,7 +41,7 @@
 </div>
         <div mat-dialog-actions class="float-right row">
             <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
-            <button ni-button [view]="'success'" [mat-dialog-close]="data" class="mr-1 m-2" (click)="add()" [disabled]="!(data.MarginJet!=null && data.EffectiveFrom!=null && data.EffectiveTo!=null)">{{stringButton}}</button>
+            <button ni-button [view]="'error'" [mat-dialog-close]="data" class="mr-1 m-2" (click)="add()" [disabled]="!(data.MarginJet!=null && data.EffectiveFrom!=null && data.EffectiveTo!=null)">{{stringButton}}</button>
         </div>
 <div class="clearfix"></div>
         <footer class="text-center mt-4">Note: This temporary amount will be added on top of all existing margins in your account</footer>

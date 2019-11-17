@@ -69,11 +69,16 @@ export class AdditionNavbarComponent implements OnInit {
 
         });
     }
-
+    async delay(ms: number) {
+        await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() => console.log("fired"));
+    }
     public sendMails() {
         this.pricingTemplatesData.forEach(x => {
             if (x.toSend) {
                 x.sent = true;
+                this.delay(5000).then(any => {
+                    x.sent = false;
+                });
             }
         })
 

@@ -47,7 +47,7 @@
     </mat-form-field>
     </div>
     <div class="col-9 text-right font-weight-bold" *ngIf="currentPrice && [0,1].indexOf(data.marginType) > -1">
-        <h5 style="font-weight: 600;margin:0 !important" *ngFor="let tmp of currentPrice"><span *ngIf="tmp.price">{{tmp.product}}: {{tmp.price | currency:'USD'}}</span></h5>
+        <h5 style="font-weight: 600;margin:0 !important" *ngFor="let tmp of currentPrice"><span *ngIf="tmp.price">{{tmp.product}}: ${{tmp.price | number:'1.4-4'}}</span></h5>
     </div>
     </div>
     <div class="row mt-2" style="border-top: 1px solid; border-top-style: outset;">
@@ -84,13 +84,13 @@
                         <td class="mat-cell text-center">
                             <div>
                                 <mat-form-field class="col-4">
-                                    <input matInput class="text-lg-right" [(ngModel)]="customerMargin.amount" [ngModelOptions]="{standalone: true}" (focus)="onFocus()" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
+                                    <input matInput class="text-lg-right" [(ngModel)]="customerMargin.amount" [ngModelOptions]="{standalone: true}" (focus)="onFocus()" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />
                                 </mat-form-field>
 
                             </div>
                         </td>
                         <td class="mat-cell text-center font-weight-bold font-italic text-right" *ngIf="data.marginType<2">
-                            <div>{{customerMargin.itp | currency:'USD'}}</div>
+                            <div>${{customerMargin.itp | number:'1.4-4'}}</div>
                         </td>
                         <td class="text-right mat-cell">
                             <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomerMargin(customerMargin)">Delete</button>

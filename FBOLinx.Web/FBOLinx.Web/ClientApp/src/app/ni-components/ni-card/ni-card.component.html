@@ -32,8 +32,14 @@
     'danger-color-card-header': headerColor === 'danger',
       'small-header': theme === 'small'
     }">
-        {{title}}
-        <button *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 float-right" (click)="openAddOnMargin()">Add On Margin</button>
+        <div class="row">
+            <div class="col-10">
+                {{title}}
+            </div>
+            <div class="col-2">
+                <button *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1" (click)="openAddOnMargin()">Add On Margin</button>
+            </div>
+        </div>
     </h3>
     <div class="card-content"
          [ngClass]="{
