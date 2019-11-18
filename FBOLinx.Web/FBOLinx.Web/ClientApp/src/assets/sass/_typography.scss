@@ -144,24 +144,31 @@ button {
     text-align: right;
   }
 }
+.my-panel {
+    max-width: 25vw !important;
+}
 .my-panel .mat-dialog-container {
     padding: 0 !important;
-
     .bck {
         background: #fff;
     }
 
     .mat-dialog-content {
-        padding: 24px 48px;
+        //padding: 24px 48px;
+        padding:0;
         margin: -24px 0;
+        overflow:hidden;
     }
 
     footer {
         padding: 0 24px;
+        padding-bottom:14px !important;
+        padding-top:14px !important;
+        line-height:normal;
     }
 
-    .row{
-        margin:0 !important;
+    .row {
+        margin: 0 !important;
     }
 }
 

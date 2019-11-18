@@ -9,3 +9,10 @@
     font-family: Roboto, "Helvetica Neue", sans-serif;
     line-height: 1.32;
 }
+body .mat-form-field-flex .mat-form-field-prefix  {
+    padding-right: 0;
+}
+
+.updateClass .mat-form-field-label-wrapper{
+    left:-10px !important;
+}

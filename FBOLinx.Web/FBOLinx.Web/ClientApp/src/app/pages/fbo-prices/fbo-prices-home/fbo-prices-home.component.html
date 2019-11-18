@@ -162,7 +162,7 @@
                     <div class="col-3" *ngIf="currentFboPriceJetACost && currentFboPriceJetARetail">
                         <div class="row">
                             <div class="col-6 text-left">
-                                <mat-form-field>
+                                <mat-form-field class="updateClass">
                                     <input matInput class="text-left" placeholder="Cost" autocomplete="off" [(ngModel)]="currentFboPriceJetACost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(currentFboPriceJetACost)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />
                                     <span matPrefix>$</span>
                                 </mat-form-field>

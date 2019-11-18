@@ -2,6 +2,7 @@ import { OnInit, Component, Inject, ViewChild } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { PricingtemplatesService } from "../../../../services/pricingtemplates.service";
 import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor";
+import { CustomermarginsService } from "../../../../services/customermargins.service";
 
 @Component({
     selector: 'app-distribution-wizard-review',
@@ -11,12 +12,19 @@ import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor"
 /** distribution-wizard-rewiew component*/
 export class DistributionWizardReviewComponent implements OnInit {
     public edit: boolean = false;
+    public customerMargins: any[];
     @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
 
     constructor(public dialogRef: MatDialogRef<DistributionWizardReviewComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-        private pricingTemplatesService: PricingtemplatesService) { }
+        private pricingTemplatesService: PricingtemplatesService,
+        private customerMarginsService: CustomermarginsService) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.customerMarginsService.getCustomerMarginsByPricingTemplateId(this.data.oid).subscribe(
+            (data: any) => {
+                this.customerMargins = data;
+            });
+    }
 
     public changeStatus() {
         this.edit = true;

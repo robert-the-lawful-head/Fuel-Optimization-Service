@@ -8,20 +8,23 @@
 </div>
 
 <div class="row" *ngIf="dashboardSettings">
-    <div class="col-2">
-        <mat-form-field class="col-8">
-            <input matInput [max]="dashboardSettings.filterEndDate" [(ngModel)]="dashboardSettings.filterStartDate" [matDatepicker]="dashboardSettingsStartDateFilter" (focus)="dashboardSettingsStartDateFilter.open()" placeholder="Start Date" (dateChange)="applyDateFilterChange({})">
-            <mat-datepicker-toggle matSuffix [for]="dashboardSettingsStartDateFilter"></mat-datepicker-toggle>
-            <mat-datepicker #dashboardSettingsStartDateFilter disabled="false"></mat-datepicker>
-        </mat-form-field>
-    </div>
-    <div class="col-2">
-        <mat-form-field class="col-8">
+    <div class="col-3 row" style="margin:0 !important;padding:0 !important">
+        <div class="col-4">
+            <mat-form-field >
+                <input matInput [max]="dashboardSettings.filterEndDate" [(ngModel)]="dashboardSettings.filterStartDate" [matDatepicker]="dashboardSettingsStartDateFilter" (focus)="dashboardSettingsStartDateFilter.open()" placeholder="Start Date" (dateChange)="applyDateFilterChange({})">
+                <mat-datepicker-toggle matSuffix [for]="dashboardSettingsStartDateFilter"></mat-datepicker-toggle>
+                <mat-datepicker #dashboardSettingsStartDateFilter disabled="false"></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-4"></div>
+    <div class="col-4">
+        <mat-form-field>
             <input matInput [min]="dashboardSettings.filterStartDate" [(ngModel)]="dashboardSettings.filterEndDate" [matDatepicker]="dashboardSettingsEndDateFilter" (focus)="dashboardSettingsEndDateFilter.open()" placeholder="End Date" (dateChange)="applyDateFilterChange({})">
             <mat-datepicker-toggle matSuffix [for]="dashboardSettingsEndDateFilter"></mat-datepicker-toggle>
             <mat-datepicker #dashboardSettingsEndDateFilter disabled="false"></mat-datepicker>
         </mat-form-field>
     </div>
+</div>
 </div>
 <div class="row">
     <div class="col-md-6 col-xl-3">

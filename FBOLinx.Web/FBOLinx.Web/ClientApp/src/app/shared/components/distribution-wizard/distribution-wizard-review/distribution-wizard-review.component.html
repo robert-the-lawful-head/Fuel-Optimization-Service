@@ -11,17 +11,43 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-12 text-left" [innerHTML]="data.email" *ngIf="!edit">
+        <div class="col-6" *ngIf="customerMargins">
+            <div class="text-center font-weight-bold mt-4">{{data.marginType == 1 ? 'Retail-' : data.marginType==0 ? 'Cost+' : 'Flat Fee'}}</div>
+            <div class="row mt-2" style="font-size:11px;"><div class="col-6">Volume (gal.)</div><div class="col-2"></div><div class="col-4">Price</div></div>
+            <table class="mat-table mt-2" style="min-width: 75%;">
+                <thead>
+                    <tr class="mat-header-row">
+                        <th class="text-center">Min</th>
+                        <th class="text-center">Max</th>
+                        <th class="text-center">All-in</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let customerMargin of customerMargins;" class="mat-row mat-row-not-hover text-left">
+                        <td class="mat-cell text-center">
+                            {{customerMargin.min}}
+                        </td>
+                        <td class="mat-cell text-center">
+                            {{customerMargin.max == 0 ? customerMargin.min + 249 : customerMargin.max}}
+                        </td>
+                        <td class="mat-cell text-center">
+                            ${{customerMargin.itp | number:'1.4-4'}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="col" *ngIf="edit">
+        <div class="col-6 mt-4 pt-4" [innerHTML]="data.email" *ngIf="!edit">
+        </div>
+        <div class="col-6 mt-4 pt-4" *ngIf="edit">
             <ejs-richtexteditor #typeEmail id='rteEmail' [(value)]='data.email'></ejs-richtexteditor>
         </div>
     </div>
-</div>
+    </div>
 <div mat-dialog-actions>
     <div class="text-center float-right col-12">
         <button ni-button [view]="'blank'" class="mr-1" style="border:1px solid #000;" (click)="edit=true" *ngIf="!edit">Edit Message</button>
-        <button ni-button [view]="'success'" *ngIf="!edit">Close Preview</button>
+        <button ni-button [view]="'success'" [mat-dialog-close]="" *ngIf="!edit">Close Preview</button>
         <button ni-button [view]="'success'" *ngIf="edit" (click)="update()">Save</button>
     </div>
 </div>
