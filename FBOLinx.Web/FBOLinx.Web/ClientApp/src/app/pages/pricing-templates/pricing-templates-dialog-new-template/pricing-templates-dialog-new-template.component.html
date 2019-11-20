@@ -40,8 +40,7 @@
                             <mat-form-field class="col-8">
                                 <mat-select placeholder="Type" (selectionChange)="marginTypeChange()" formControlName="marginType">
                                     <mat-option *ngFor="let marginType of marginTypeDataSource" [value]="marginType.value">
-                                        {{marginType.text
-    }}
+                                        {{marginType.text}}
     </mat-option>
     </mat-select>
     </mat-form-field>

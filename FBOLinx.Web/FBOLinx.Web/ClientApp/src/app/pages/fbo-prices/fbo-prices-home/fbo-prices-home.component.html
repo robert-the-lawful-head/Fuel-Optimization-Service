@@ -109,9 +109,9 @@
             <h6 class="mt-0">TEMPORARY ADD-ON MARGIN (ALL)</h6>
             <div class="row">
                 <div class="col-6">
-                    <h4 class="mt-0">
-                        ${{TempValueJet | number:'1.4-4' }}  (JET A)
-                    </h4>
+                    <h6 class="mt-0">
+                        ${{TempValueJet | number:'1.2-2' }}  (JET A)
+                    </h6>
                     </div>
                 <div class="col-3">
                     <div class="table disabledData">
@@ -163,7 +163,7 @@
                         <div class="row">
                             <div class="col-6 text-left">
                                 <mat-form-field class="updateClass">
-                                    <input matInput class="text-left" placeholder="Cost" autocomplete="off" [(ngModel)]="currentFboPriceJetACost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(currentFboPriceJetACost)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />
+                                   <input matInput class="text-left" placeholder="Cost" autocomplete="off" [(ngModel)]="currentFboPriceJetACost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(currentFboPriceJetACost)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />
                                     <span matPrefix>$</span>
                                 </mat-form-field>
                             </div>
