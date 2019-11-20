@@ -54,7 +54,7 @@
                     </h4>
                     </div>
                 <div class="col-3">
-                    <div class="table disabledData">
+                    <div class="table disabledData" style="color:#9e9e9e !important; font-size: 12px !important; font-weight: 500 !important;">
                         <span>Effective To</span>
                         <div class="float-none" ></div>
                         <span style="display:block">
@@ -81,7 +81,7 @@
                     </h4>
                 </div>
                 <div class="col-3">
-                    <div class="table disabledData">
+                    <div class="table disabledData" style="color:#9e9e9e !important; font-size: 12px !important; font-weight: 500 !important;">
                         <span>Effective To</span>
                         <div class="float-none"></div>
                         <span style="display:block">
@@ -108,21 +108,21 @@
         <ni-card id="{{TempValueId}}" [bgColor]="'danger'" [outline]="true" [color]="'danger'" *ngIf="(TempValueJet && TempValueJet > 0)">
             <h6 class="mt-0">TEMPORARY ADD-ON MARGIN (ALL)</h6>
             <div class="row">
-                <div class="col-6">
-                    <h6 class="mt-0">
+                <div class="col-4">
+                    <h6 class="mt-0" style="font-size:15px !important;">
                         ${{TempValueJet | number:'1.2-2' }}  (JET A)
                     </h6>
                     </div>
-                <div class="col-3">
-                    <div class="table disabledData">
+                <div class="col-4">
+                    <div class="table disabledData" style="color:#9e9e9e !important; font-size: 12px !important; font-weight: 500 !important;">
                         <span>Effective From</span>
                         <span style="display:block">
                             {{TempDateFrom}}
                         </span>
                     </div>
                 </div>
-                <div class="col-3">
-                    <div class="table disabledData">
+                <div class="col-4">
+                    <div class="table disabledData" style="color:#9e9e9e !important; font-size: 12px !important; font-weight: 500 !important;">
                         <span>Effective To</span>
                         <span style="display:block">
                             {{TempDateTo}}
