@@ -94,6 +94,9 @@ export class FboPricesHomeComponent implements OnInit {
     public stagedFboPrice100LLRetail: any;
     public stagedFboPrice100LLCost: any;
 
+    public staticCurrentFboPriceJetARetail: any;
+    public staticCurrentFboPriceJetACost: any;
+
      /** fbo-prices-home ctor */
     constructor(private distributionService: DistributionService,
         private fboFeesService: FbofeesService,
@@ -205,6 +208,12 @@ export class FboPricesHomeComponent implements OnInit {
                 price.effectiveFrom = this.currentPricingEffectiveFrom;
                 price.effectiveTo = this.currentPricingEffectiveTo;
                 this.savePriceChanges(price);
+                if (this.currentFboPriceJetARetail) {
+                    this.staticCurrentFboPriceJetARetail = this.currentFboPriceJetARetail.price;
+                }
+                if (this.currentFboPriceJetACost) {
+                    this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
+                }
             }
         }
         for (let stagedPrice of this.stagedPrices) {
@@ -369,6 +378,13 @@ export class FboPricesHomeComponent implements OnInit {
                     this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
                 }
                 this.loadStagedFboPrices();
+                
+                if (this.currentFboPriceJetARetail) {
+                    this.staticCurrentFboPriceJetARetail = this.currentFboPriceJetARetail.price;
+                }
+                if (this.currentFboPriceJetACost) {
+                    this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
+                }
             });
     }
 
