@@ -54,7 +54,7 @@
                     </h4>
                     </div>
                 <div class="col-3">
-                    <div class="table disabledData" style="color:#9e9e9e !important; font-size: 12px !important; font-weight: 500 !important;">
+                    <div class="table disabledData">
                         <span>Effective To</span>
                         <div class="float-none" ></div>
                         <span style="display:block">
@@ -81,7 +81,7 @@
                     </h4>
                 </div>
                 <div class="col-3">
-                    <div class="table disabledData" style="color:#9e9e9e !important; font-size: 12px !important; font-weight: 500 !important;">
+                    <div class="table disabledData">
                         <span>Effective To</span>
                         <div class="float-none"></div>
                         <span style="display:block">
@@ -108,21 +108,21 @@
         <ni-card id="{{TempValueId}}" [bgColor]="'danger'" [outline]="true" [color]="'danger'" *ngIf="(TempValueJet && TempValueJet > 0)">
             <h6 class="mt-0">TEMPORARY ADD-ON MARGIN (ALL)</h6>
             <div class="row">
-                <div class="col-4">
-                    <h6 class="mt-0" style="font-size:15px !important;">
-                        ${{TempValueJet | number:'1.2-2' }}  (JET A)
-                    </h6>
+                <div class="col-6">
+                    <h4 class="mt-0">
+                        ${{TempValueJet | number:'1.4-4' }}  (JET A)
+                    </h4>
                     </div>
-                <div class="col-4">
-                    <div class="table disabledData" style="color:#9e9e9e !important; font-size: 12px !important; font-weight: 500 !important;">
+                <div class="col-3">
+                    <div class="table disabledData">
                         <span>Effective From</span>
                         <span style="display:block">
                             {{TempDateFrom}}
                         </span>
                     </div>
                 </div>
-                <div class="col-4">
-                    <div class="table disabledData" style="color:#9e9e9e !important; font-size: 12px !important; font-weight: 500 !important;">
+                <div class="col-3">
+                    <div class="table disabledData">
                         <span>Effective To</span>
                         <span style="display:block">
                             {{TempDateTo}}
@@ -135,63 +135,63 @@
             <div class="clearfix"></div>
         </ni-card>
     </div>
-<div class="col-md-8 mt-3">
-    <ni-card title="Update your pricing here" [headerBgColor]="'success'" (jetChanged)="jetChangedHandler($event)" [visible]="'true'" [tempId]="TempValueId" class="mb-0">
-        <div>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-2">
-                        <mat-form-field>
-                            <input matInput [(ngModel)]="currentPricingEffectiveFrom" [matDatepicker]="currentPricingEffectiveFromDatePicker" (focus)="currentPricingEffectiveFromDatePicker.open()" placeholder="Effective From" (dateChange)="fboCurrentPriceDateChange(null)">
-                            <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDatePicker"></mat-datepicker-toggle>
-                            <mat-datepicker #currentPricingEffectiveFromDatePicker></mat-datepicker>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-2">
-                        <mat-form-field>
-                            <input matInput id="idTo" [min]="minimumAllowedDate" [(ngModel)]="currentPricingEffectiveTo" [matDatepicker]="currentPricingEffectiveToDatePicker" (focus)="currentPricingEffectiveToDatePicker.open()" placeholder="Effective To" (dateChange)="fboCurrentPriceDateChange('hide')">
-                            <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveToDatePicker"></mat-datepicker-toggle>
-                            <mat-datepicker #currentPricingEffectiveToDatePicker disabled="false"></mat-datepicker>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-1">
-                        <div style="position: absolute; bottom: 40%;">
-                            JetA
+    <div class="col-md-8 mt-3">
+        <ni-card title="Update your pricing here" [headerBgColor]="'success'" (jetChanged)="jetChangedHandler($event)" [visible]="'true'" [tempId]="TempValueId" class="mb-0">
+            <div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-2">
+                            <mat-form-field>
+                                <input matInput [(ngModel)]="currentPricingEffectiveFrom" [matDatepicker]="currentPricingEffectiveFromDatePicker" (focus)="currentPricingEffectiveFromDatePicker.open()" placeholder="Effective From" (dateChange)="fboCurrentPriceDateChange(null)">
+                                <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDatePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #currentPricingEffectiveFromDatePicker></mat-datepicker>
+                            </mat-form-field>
                         </div>
-                    </div>
-                    <div class="col-3" *ngIf="currentFboPriceJetACost && currentFboPriceJetARetail">
-                        <div class="row">
-                            <div class="col-6 text-left">
-                                <mat-form-field class="updateClass">
-                                   <input matInput class="text-left" placeholder="Cost" autocomplete="off" [(ngModel)]="currentFboPriceJetACost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(currentFboPriceJetACost)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />
-                                    <span matPrefix>$</span>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-6">
-                                <mat-form-field >
-                                    <input class="text-left" matInput placeholder="Retail" autocomplete="off" [(ngModel)]="currentFboPriceJetARetail.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(currentFboPriceJetARetail)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />
-                                    <span matPrefix>$</span>
-                                </mat-form-field>
+                        <div class="col-2">
+                            <mat-form-field>
+                                <input matInput id="idTo" [min]="minimumAllowedDate" [(ngModel)]="currentPricingEffectiveTo" [matDatepicker]="currentPricingEffectiveToDatePicker" (focus)="currentPricingEffectiveToDatePicker.open()" placeholder="Effective To" (dateChange)="fboCurrentPriceDateChange('hide')">
+                                <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveToDatePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #currentPricingEffectiveToDatePicker disabled="false"></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-1">
+                            <div style="position: absolute; bottom: 40%;font-weight:800">
+                                Jet A
                             </div>
                         </div>
-                        
-                    </div>
-                    <div class="col-4">
-                            <div *ngIf="requiresUpdate" class="text-center">
+                        <div class="col-3" *ngIf="currentFboPriceJetACost && currentFboPriceJetARetail">
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    <mat-form-field>
+                                        <input class="text-left" matInput placeholder="Retail" autocomplete="off" [(ngModel)]="currentFboPriceJetARetail.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(currentFboPriceJetARetail)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />
+                                        <span matPrefix class="prefixDollar">$</span>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-6">
+                                    <mat-form-field >
+                                        <input matInput class="text-left" placeholder="Cost" autocomplete="off" [(ngModel)]="currentFboPriceJetACost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(currentFboPriceJetACost)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />
+                                        <span matPrefix class="prefixDollar">$</span>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-3">
+                            <!--*ngIf="requiresUpdate"-->
+                            <div class="text-center">
                                 <button ni-button [view]="'success'" class="mr-1" (click)="saveChangesClicked()">Post Live Pricing</button>
                             </div>
+                        </div>
                     </div>
-                </div>
 
-                <!--<div class="row mt-1">
+                    <!--<div class="row mt-1">
                     <div class="col-12">
                         <div class="float-right" *ngIf="requiresUpdate">
                             <button ni-button [view]="'success'" class="mr-1" (click)="saveChangesClicked()">Post Live Pricing</button>
                         </div>
                     </div>
                 </div>-->
-
-                <!--<div class="row" *ngIf="currentFboPrice100LLCost && currentFboPrice100LLRetail && (!fboPreferences.omit100LLCost || !fboPreferences.omit100LLRetail)">
+                    <!--<div class="row" *ngIf="currentFboPrice100LLCost && currentFboPrice100LLRetail && (!fboPreferences.omit100LLCost || !fboPreferences.omit100LLRetail)">
                     <div class="col-3">
                         <div style="position: absolute; bottom: 40%;">
                             100LL
@@ -210,7 +210,7 @@
                         </mat-form-field>
                     </div>
                 </div>-->
-                <!--<div class="row font-weight-bold small">
+                    <!--<div class="row font-weight-bold small">
                     <div class="col-3">
                         Fuel Type
                     </div>
@@ -253,108 +253,57 @@
                         </mat-form-field>
                     </div>
                 </div>-->
-            </div>
-        </div>
-    </ni-card>
-</div>
-<!--<div class="col-md-6 mt-3">
-    <ni-card title="Staged Prices" [headerBgColor]="'info'" class="mb-0">
-        <div>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-6">
-                        <mat-form-field>
-                            <input matInput [min]="stagedPricingEffectiveFrom" [(ngModel)]="stagedPricingEffectiveFrom" [matDatepicker]="stagedPricingEffectiveFromDatePicker" (focus)="stagedPricingEffectiveFromDatePicker.open()" placeholder="Effective From" (dateChange)="fboStagedPriceDateChange({})">
-                            <mat-datepicker-toggle matSuffix [for]="stagedPricingEffectiveFromDatePicker"></mat-datepicker-toggle>
-                            <mat-datepicker #stagedPricingEffectiveFromDatePicker disabled="false"></mat-datepicker>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-6">
-                        <mat-form-field>
-                            <input matInput [min]="stagedPricingEffectiveFrom" [(ngModel)]="stagedPricingEffectiveTo" [matDatepicker]="stagedPricingEffectiveToDatePicker" (focus)="stagedPricingEffectiveToDatePicker.open()" placeholder="Effective To" (dateChange)="fboStagedPriceDateChange({})">
-                            <mat-datepicker-toggle matSuffix [for]="stagedPricingEffectiveToDatePicker"></mat-datepicker-toggle>
-                            <mat-datepicker #stagedPricingEffectiveToDatePicker disabled="false"></mat-datepicker>
-                        </mat-form-field>
-                    </div>
                 </div>
-                <div class="row" *ngIf="stagedFboPriceJetACost && stagedFboPriceJetARetail && (!fboPreferences.omitJetACost || !fboPreferences.omitJetARetail)">
-                    <div class="col-3">
-                        <div style="position: absolute; bottom: 40%;">
-                            JetA
+            </div>
+        </ni-card>
+        <ni-card title="Staged Prices" [headerBgColor]="'info'" class="mb-0 mt-3">
+            <div>
+                <div class="container-fluid">
+                    <div *ngFor="let pom of stagedFboPriceJetA">
+                        <div class="row"  *ngIf="(pom.CostPrice && pom.CostPrice > 0) || (pom.RetailPrice && pom.RetailPrice > 0)">
+                        <div class="col-2">
+                            <mat-form-field class="disabledInput">
+                                <input matInput disabled [(ngModel)]="pom.effectiveFrom"  placeholder="Effective From" >
+                                
+                            </mat-form-field>
                         </div>
-                    </div>
-                    <div class="col-3" *ngIf="!fboPreferences.omitJetACost">
-                        <mat-form-field>
-                            <input matInput placeholder="Cost" [(ngModel)]="stagedFboPriceJetACost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(stagedFboPriceJetACost)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}"/>
-                            <span matPrefix>$</span>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-3" *ngIf="!fboPreferences.omitJetARetail">
-                        <mat-form-field>
-                            <input matInput placeholder="Retail" [(ngModel)]="stagedFboPriceJetARetail.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(stagedFboPriceJetARetail)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}"/>
-                            <span matPrefix>$</span>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row" *ngIf="stagedFboPrice100LLCost && stagedFboPrice100LLRetail && (!fboPreferences.omit100LLCost || !fboPreferences.omit100LLRetail)">
-                    <div class="col-3">
-                        <div style="position: absolute; bottom: 40%;">
-                            100LL
+                        <div class="col-2">
+                            <mat-form-field class="disabledInput">
+                                <input matInput disabled  [(ngModel)]="pom.effectiveTo"  placeholder="Effective To">
+                                
+                            </mat-form-field>
                         </div>
-                    </div>
-                    <div class="col-3" *ngIf="!fboPreferences.omit100LLCost">
-                        <mat-form-field>
-                            <input matInput placeholder="Cost" [(ngModel)]="stagedFboPrice100LLCost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(stagedFboPrice100LLCost)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}"/>
-                            <span matPrefix>$</span>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-3" *ngIf="!fboPreferences.omit100LLRetail">
-                        <mat-form-field>
-                            <input matInput placeholder="Retail" [(ngModel)]="stagedFboPrice100LLRetail.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(stagedFboPrice100LLRetail)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}"/>
-                            <span matPrefix>$</span>
-                        </mat-form-field>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </ni-card>
-</div>-->
-<!--<div class="col-md-6 mt-3">
-    <ni-card title="Distribution Log" [headerBgColor]="'warning'" class="mb-0">
-        <div>
-            <div class="container-fluid">
-                <div class="row font-weight-bold small mb-1">
-                    <div class="col-3">
-                        Date Sent
-                    </div>
-                    <div class="col-3">
-                        Margin Template
-                    </div>
-                    <div class="col-3">
-                        Customer
-                    </div>
-                    <div class="col-3">
-                        Customer Type
-                    </div>
-                </div>
-                <hr/>
-                <div class="row small mt-2" *ngFor="let logRecord of distributionLog">
-                    <div class="col-3">
-                        {{logRecord.dateSent | date:'medium'}}
-                    </div>
-                    <div class="col-3">
-                        {{logRecord.pricingTemplateName}}
-                    </div>
-                    <div class="col-3">
-                        {{logRecord.customerName}}
-                    </div>
-                    <div class="col-3">
-                        {{logRecord.customerCompanyTypeName}}
+                        <div class="col-1">
+                            <div style="position: absolute; bottom: 40%;font-weight:800">
+                                {{pom.product}}
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    <mat-form-field class="disabledInput">
+                                        <input class="text-left" disabled matInput placeholder="Retail" [(ngModel)]="pom.RetailPrice" type="text" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />
+                                        <span matPrefix class="prefixDollar">$</span>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-6">
+                                    <mat-form-field class="disabledInput">
+                                        <input matInput disabled class="text-left" placeholder="Cost" [(ngModel)]="pom.CostPrice" type="text"  currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />
+                                        <span matPrefix class="prefixDollar">$</span>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-center">
+                                <button ni-button [view]="'error'" class="mr-1" (click)="removeStaged(pom)">Clear Staged Price</button>
+                            </div>
+                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </ni-card>
-</div>-->
+        </ni-card>
+    </div>
 </div>
 </div>

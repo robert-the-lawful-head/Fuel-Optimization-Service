@@ -9,6 +9,7 @@ import { SharedService } from '../../../layouts/shared-service';
 
 //Components
 import { PricingTemplatesDialogNewTemplateComponent } from '../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-pricing-templates-grid',
@@ -33,7 +34,7 @@ export class PricingTemplatesGridComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
 
     /** pricing-templates-grid ctor */
-    constructor(public newTemplateDialog: MatDialog,
+    constructor(public newTemplateDialog: MatDialog, private router: Router,
         private pricingTemplatesService: PricingtemplatesService,
         private priceTiersService: PricetiersService,
         private sharedService: SharedService    ) {

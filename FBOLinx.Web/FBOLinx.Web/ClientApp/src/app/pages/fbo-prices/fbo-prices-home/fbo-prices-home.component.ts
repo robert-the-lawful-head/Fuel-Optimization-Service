@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -40,7 +40,8 @@ export interface temporaryAddOnMargin {
 @Component({
     selector: 'app-fbo-prices-home',
     templateUrl: './fbo-prices-home.component.html',
-    styleUrls: ['./fbo-prices-home.component.scss']
+    styleUrls: ['./fbo-prices-home.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 /** fbo-prices-home component*/
 export class FboPricesHomeComponent implements OnInit {
@@ -89,10 +90,8 @@ export class FboPricesHomeComponent implements OnInit {
     public currentFboPriceJetACost: any;
     public currentFboPrice100LLRetail: any;
     public currentFboPrice100LLCost: any;
-    public stagedFboPriceJetARetail: any;
-    public stagedFboPriceJetACost: any;
-    public stagedFboPrice100LLRetail: any;
-    public stagedFboPrice100LLCost: any;
+    public stagedFboPriceJetA: any[];
+    public stagedFboPrice100LL: any;
 
      /** fbo-prices-home ctor */
     constructor(private distributionService: DistributionService,
@@ -180,15 +179,15 @@ export class FboPricesHomeComponent implements OnInit {
             price.effectiveTo = this.currentPricingEffectiveTo;
             price.requiresUpdate = true;
         }
-        this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
-        this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
+       // this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
+        //this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
         if (event != 'hide') {
             this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
             this.minimumAllowedDate = this.currentPricingEffectiveFrom;
         }
     }
 
-    public fboStagedPriceDateChange() {
+   /* public fboStagedPriceDateChange() {
         this.requiresUpdate = true;
         for (let stagedPrice of this.stagedPrices) {
             stagedPrice.effectiveFrom = this.stagedPricingEffectiveFrom;
@@ -197,24 +196,18 @@ export class FboPricesHomeComponent implements OnInit {
         }
         this.currentPricingEffectiveTo = new Date(moment(this.stagedPricingEffectiveFrom).add(-1, 'days').format('MM/DD/YYYY'));
         //this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
-    }
+    }*/
 
     public saveChangesClicked() {
         for (let price of this.currentPrices) {
-            if (price.requiresUpdate) {
+            //if (price.requiresUpdate) {
                 price.effectiveFrom = this.currentPricingEffectiveFrom;
-                price.effectiveTo = this.currentPricingEffectiveTo;
+            price.effectiveTo = this.currentPricingEffectiveTo;
                 this.savePriceChanges(price);
-            }
-        }
-        for (let stagedPrice of this.stagedPrices) {
-            if (stagedPrice.requiresUpdate) {
-                stagedPrice.effectiveFrom = this.stagedPricingEffectiveFrom;
-                stagedPrice.effectiveTo = this.stagedPricingEffectiveTo;
-                this.savePriceChanges(stagedPrice);
-            }
+            //}
         }
 
+        this.loadCurrentFboPrices();
         if (this.fboPreferences.oid > 0) {
             this.fboPreferencesService.update(this.fboPreferences).subscribe((data: any) => {});
         } else {
@@ -222,14 +215,13 @@ export class FboPricesHomeComponent implements OnInit {
                 this.fboPreferences.oid = data.oid;
             });
         }
-
         this.isSaved = true;
         this.delay(5000).then(any => {
             this.isSaved = false;
         });
-        this.requiresUpdate = false;
+        //this.requiresUpdate = false;
 
-        
+
     }
 
     public fboPreferenceChange() {
@@ -375,20 +367,11 @@ export class FboPricesHomeComponent implements OnInit {
     public loadStagedFboPrices() {
         this.fboPricesService.getFbopricesByFboIdStaged(this.sharedService.currentUser.fboId).subscribe((data: any) => {
             this.stagedPrices = data;
-            this.stagedFboPrice100LLCost = this.getStagedPriceByProduct('100LL Cost');
-            this.stagedFboPrice100LLRetail = this.getStagedPriceByProduct('100LL Retail');
-            this.stagedFboPriceJetACost = this.getStagedPriceByProduct('JetA Cost');
-            this.stagedFboPriceJetARetail = this.getStagedPriceByProduct('JetA Retail');
-            if (this.stagedFboPrice100LLCost.effectiveFrom != null) {
-                this.stagedPricingEffectiveFrom = this.stagedFboPrice100LLCost.effectiveFrom;
-                this.stagedPricingEffectiveTo = this.stagedFboPrice100LLCost.effectiveTo;
-            } else {
-                this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
-                this.stagedPricingEffectiveTo = new Date(moment(this.stagedPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
-            }
-            this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
+            this.stagedFboPriceJetA = this.getStagedPriceByProduct('JetA');
+            this.stagedFboPrice100LL = this.getStagedPriceByProduct('100LL');
+            //this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
             //this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
-            this.setAllDateLimits();
+            //this.setAllDateLimits();
         });
     }
 
@@ -400,6 +383,12 @@ export class FboPricesHomeComponent implements OnInit {
                     this.fboPreferences = { fboId: this.sharedService.currentUser.fboId };
                 this.isLoadingFboPreferences = false;
             });
+    }
+
+    public removeStaged(data) {
+        this.fboPricesService.remove(data).subscribe((data: any) => {
+            this.loadCurrentFboPrices();
+        });
     }
 
     private loadFboFees() {
@@ -453,22 +442,58 @@ export class FboPricesHomeComponent implements OnInit {
     }
 
     private getStagedPriceByProduct(product) {
-        var result = { fboId: this.sharedService.currentUser.fboId, groupId: this.sharedService.currentUser.groupId, oid: 0 };
-        for (let fboPrice of this.stagedPrices) {
-            if (fboPrice.product == product)
-                result = fboPrice;
-        }
+        let result = [];
+        this.stagedPrices.forEach(function (value) {
+            if (((value.product == 'JetA Retail' || value.product == 'JetA Cost') && product == 'JetA') || ((value.product == '100LL Retail' || value.product == '100LL Cost') && product == '100LL')) {
+                var item = result.find(x => moment(moment.utc(x.effectiveFrom).toDate()).format('MM/DD/YYYY') == moment(moment.utc(value.effectiveFrom).toDate()).format('MM/DD/YYYY') && moment(moment.utc(x.effectiveTo).toDate()).format('MM/DD/YYYY') == moment(moment.utc(value.effectiveTo).toDate()).format('MM/DD/YYYY'));
+                //alert(JSON.stringify(value) + ' product-' + product);
+                //result.find(x => x.oid == value.oid);
+                if (item == undefined) {
+                    var pm = { RetailPrice: 0, CostPrice: 0, oid: 0, fboid: 0, product: '', effectiveFrom: null, effectiveTo: null, timestamp: null, salesTaxCost: 0, currencyCost: 0, salesTaxRetail: 0, currencyRetail: 0 };
+                    pm.oid = value.oid;
+                    pm.fboid = value.fboid;
+                    pm.effectiveFrom = moment(moment.utc(value.effectiveFrom).toDate()).format('MM/DD/YYYY');
+                    pm.effectiveTo = moment(moment.utc(value.effectiveTo).toDate()).format('MM/DD/YYYY');
+                    pm.timestamp = value.timestamp;
+
+                    pm.product = product;
+                }
+                if ((value.product == 'JetA Retail' && product == 'JetA') || (value.product == '100LL Retail' && product == '100LL')) {
+                    if (item == undefined) {
+                        pm.RetailPrice = value.price;
+                        pm.currencyRetail = value.currency;
+                    }
+                    else {
+                        item.RetailPrice = value.price;
+                        item.currencyRetail = value.currency;
+                    }
+                }
+                if ((value.product == 'JetA Cost' && product == 'JetA') || (value.product == '100LL Cost' && product == '100LL')) {
+                    if (item == undefined) {
+                        pm.CostPrice = value.price;
+                        pm.currencyCost = value.currency;
+                    }
+                    else {
+                        item.CostPrice = value.price;
+                        item.currencyCost = value.currency;
+                    }
+                }
+                if (item == undefined) {
+                    result.push(pm);
+                }
+            }
+        }); 
         return result;
     }
 
-    private setAllDateLimits() {
+   /* private setAllDateLimits() {
         this.setEffectiveDateValidation(this.stagedFboPrice100LLCost, this.currentFboPrice100LLCost);
         this.setEffectiveDateValidation(this.stagedFboPrice100LLRetail, this.currentFboPrice100LLRetail);
         this.setEffectiveDateValidation(this.stagedFboPriceJetACost, this.currentFboPriceJetACost);
         this.setEffectiveDateValidation(this.stagedFboPriceJetARetail, this.currentFboPriceJetARetail);
-    }
+    }*/
 
-    private setEffectiveDateValidation(currentFboPrice, stagedFboPrice) {
+    /*private setEffectiveDateValidation(currentFboPrice, stagedFboPrice) {
         if (!stagedFboPrice || !currentFboPrice)
             return;
         if (stagedFboPrice.effectiveFrom != null) {
@@ -477,5 +502,5 @@ export class FboPricesHomeComponent implements OnInit {
         if (currentFboPrice.effectiveTo != null) {
             stagedFboPrice.minDate = new Date(moment(currentFboPrice.effectiveTo).format('MM/DD/YYYY'));
         }
-    }
+    }*/
 }

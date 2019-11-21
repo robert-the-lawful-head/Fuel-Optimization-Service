@@ -111,6 +111,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
+            var types = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.ProductPriceType));
 
             var result = (from p in products
                           join f in (from f in _context.Fboprices
@@ -122,7 +123,6 @@ namespace FBOLinx.Web.Controllers
                                      }
                               into leftJoinFBOPrices
                           from f in leftJoinFBOPrices.DefaultIfEmpty()
-
                           select new
                           {
                               Oid = f?.Oid ?? 0,
@@ -253,11 +253,12 @@ namespace FBOLinx.Web.Controllers
             {
                 return NotFound();
             }
-
-            _context.Fboprices.Remove(fboprices);
+            var fbopricesRange = await _context.Fboprices.Where(x => x.EffectiveFrom == fboprices.EffectiveFrom && x.EffectiveTo == fboprices.EffectiveTo && x.Fboid == fboprices.Fboid).ToListAsync();
+            //_context.Fboprices.Remove(fboprices);
+            _context.Fboprices.RemoveRange(fbopricesRange);
             await _context.SaveChangesAsync();
 
-            return Ok(fboprices);
+            return Ok(fbopricesRange);
         }
 
         private bool FbopricesExists(int id)

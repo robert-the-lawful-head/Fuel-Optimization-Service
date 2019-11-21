@@ -20,6 +20,13 @@ namespace FBOLinx.Web.Models
             [Description("100LL Retail")]
             Fuel100LRetail = 3
         }
+        public enum ProductPriceType
+        {
+            [Description("JetA")]
+            FuelJetA = 0,
+            [Description("100LL")]
+            Fuel100LL = 2
+        }
 
         [Key]
         [Column("OID")]

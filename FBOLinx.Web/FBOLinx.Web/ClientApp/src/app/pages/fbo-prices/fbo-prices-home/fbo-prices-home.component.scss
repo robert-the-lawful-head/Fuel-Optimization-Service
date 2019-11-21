@@ -16,3 +16,10 @@ body .mat-form-field-flex .mat-form-field-prefix  {
 .updateClass .mat-form-field-label-wrapper{
     left:-10px !important;
 }
+body .disabledInput .mat-form-field-wrapper .mat-form-field-underline {
+    background-image: none !important;
+}
+
+body .disabledInput .mat-form-field-flex .mat-form-field-prefix {
+    color: rgba(0, 0, 0, 0.38);
+}

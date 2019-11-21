@@ -27,6 +27,7 @@ export class AdditionNavbarComponent implements OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('marginTableContainer') table: ElementRef;
+    @ViewChild('nodeInput') fileInput: ElementRef;
     @Input() templatelst: any[];
     constructor(private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
@@ -64,7 +65,11 @@ export class AdditionNavbarComponent implements OnInit {
             {
                 data: this.filtered
             });
+        dialogRef.componentInstance.idChanged1.subscribe((result) => {
+            this.fileInput.nativeElement.click()
+           // this.openNavbar(event);
 
+        });
         dialogRef.afterClosed().subscribe(result => {
 
         });

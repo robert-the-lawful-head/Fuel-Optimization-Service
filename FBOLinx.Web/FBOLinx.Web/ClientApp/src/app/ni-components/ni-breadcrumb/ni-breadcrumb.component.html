@@ -14,10 +14,10 @@
      </div>
     <div class="col-4">
         <div class="row">
-            <div class="col-5 retailCl" *ngIf="currentFboPriceJetARetail.price && currentFboPriceJetARetail.price > 0">
+            <div class="col-5 retailCl" *ngIf="currentFboPriceJetARetail">
                 <h6 class="mt-1 mb-1 title p-1">RETAIL (JET A)    ${{currentFboPriceJetARetail.price | number:'1.4-4'}}</h6>
             </div>
-            <div class="col-5 costCl" *ngIf="currentFboPriceJetACost.price && currentFboPriceJetACost.price > 0">
+            <div class="col-5 costCl" *ngIf="currentFboPriceJetACost ">
                 <h6 class="mt-1 mb-1 title p-1">COST (JET A)    ${{currentFboPriceJetACost.price | number:'1.4-4'}}</h6>
             </div>
         </div>
