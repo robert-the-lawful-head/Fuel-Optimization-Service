@@ -53,7 +53,8 @@ export class FboPricesHomeComponent implements OnInit {
 	public pricingJetACost: any;
 	public pricing100LLRetail: any;
 	public pricing100LLCost: any;
-	public currentPrices: any[];
+    public currentPrices: any[];
+    public pom: any[];
 	public dateFrom: any;
 	public dateTo : any;
 	public TempValueJet: any;
@@ -63,7 +64,8 @@ export class FboPricesHomeComponent implements OnInit {
 	public TempDateTo: any;
 	public stagedPrices: any[];
 	public fboPreferences: any;
-	public fboFees: any[];
+    public fboFees: any[];
+    public price: any;
 	public lcl : any;
 	public distributionLog: any[];
 	public isLoadingJetARetail: boolean;
@@ -72,7 +74,7 @@ export class FboPricesHomeComponent implements OnInit {
 	public isLoading100LLCost: boolean;
 	public isLoadingFboPreferences: boolean;
 	public isLoadingFboFees: boolean;
-	public requiresUpdate: boolean;
+	public requiresUpdate: boolean = true;
 	public isSaved: boolean;
 	public show: boolean;
 	public minimumAllowedDate: Date = new Date();
@@ -83,7 +85,11 @@ export class FboPricesHomeComponent implements OnInit {
 	public stagedPricingEffectiveFrom: Date = new Date();
 	public stagedPricingEffectiveTo: Date = new Date();
 	public pricingTemplates: any[];
-	public activePrice: boolean = false;
+    public activePrice: boolean = false;
+    public newRetail: any;
+    public newCost: any;
+    public jtCost: any;
+    public jtRetail: any;
 
 	//Additional Public Members for direct reference (date filtering/restrictions)
 	public currentFboPriceJetARetail: any;
@@ -160,27 +166,43 @@ export class FboPricesHomeComponent implements OnInit {
 		});
 	}
 
-	public fboPriceRequiresUpdate(price) {
-		if (price.price == 0 || price.price == null) {
-			this.requiresUpdate = false;
-			price.requiresUpdate = false;
-		}
-		else {
-			this.requiresUpdate = true;
-			this.isSaved = false;
-			price.requiresUpdate = true;
-		}
+    public fboPriceRequiresUpdate(price,vl) {
+        if (!(price == 0 || price == null) && this.requiresUpdate) {
+            this.isSaved = false;
+            if (vl == 'JetA Retail') {
+                this.jtRetail = price;
+                this.currentFboPriceJetARetail.price = price;
+            }
+            if (vl == 'JetA Cost') {
+                this.jtCost = price;
+                this.currentFboPriceJetACost.price = price;
+            }
+            //price.requiresUpdate = false;
+        }
+        else {
+            if (vl == 'JetA Retail') {
+                this.jtRetail = price;
+                this.newRetail = price;
+            }
+            if (vl == 'JetA Cost') {
+                 this.jtCost = price;
+                this.newCost = price;
+            }
+        }
 		//this.requiresUpdate = true;
 		//this.isSaved = false;
 		//price.requiresUpdate = true;
 	}
 
 	public fboCurrentPriceDateChange(event) {
-		this.requiresUpdate = true;
-		for (let price of this.currentPrices) {
-			price.effectiveFrom = this.currentPricingEffectiveFrom;
-			price.effectiveTo = this.currentPricingEffectiveTo;
-			price.requiresUpdate = true;
+		this.requiresUpdate = false;
+        for (let price of this.currentPrices) {
+            if (moment(moment.utc(price.effectiveFrom).toDate()).format('MM/DD/YYYY') == moment(moment.utc(this.currentPricingEffectiveFrom).toDate()).format('MM/DD/YYYY') && moment(moment.utc(price.effectiveTo).toDate()).format('MM/DD/YYYY') == moment(moment.utc(this.currentPricingEffectiveTo).toDate()).format('MM/DD/YYYY')) {
+                this.requiresUpdate = true;
+            }
+            price.effectiveFrom = moment(moment.utc(this.currentPricingEffectiveFrom).toDate()).format('MM/DD/YYYY');
+            price.effectiveTo = moment(moment.utc(this.currentPricingEffectiveTo).toDate()).format('MM/DD/YYYY');
+			//price.requiresUpdate = true;
 		}
 	   // this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
 		//this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
@@ -202,33 +224,63 @@ export class FboPricesHomeComponent implements OnInit {
 	}*/
 
 	public saveChangesClicked() {
-		for (let price of this.currentPrices) {
-			//if (price.requiresUpdate) {
-				price.effectiveFrom = this.currentPricingEffectiveFrom;
-			price.effectiveTo = this.currentPricingEffectiveTo;
-				this.savePriceChanges(price);
-		}
-
-		this.loadCurrentFboPrices();
+        //for (let price of this.currentPrices) {
+        console.log(this.currentFboPriceJetACost.price);
+        if (this.requiresUpdate == false) {
+            //et pom = Object.assign({}, this.currentPrices);
+            for (let price of this.currentPrices) {
+                let dateCost = this.currentFboPriceJetACost.effectiveTo;
+                let priceCost = this.currentFboPriceJetACost.price;
+                let dateRetasil = this.currentFboPriceJetARetail.effectiveTo;
+                let priceRetail = this.currentFboPriceJetARetail.price;
+                price.oid = 0;
+                price.effectiveFrom = this.currentPricingEffectiveFrom;
+                price.effectiveTo = this.currentPricingEffectiveTo;
+                price.price = price.product == 'JetA Retail' ? this.newRetail : price.product == 'JetA Cost' ? this.newCost : null;
+                //alert(JSON.stringify(price));
+                this.savePriceChanges(price);
+                this.currentFboPriceJetACost.effectiveTo = dateCost;
+                this.currentFboPriceJetACost.price = priceCost;
+                this.currentFboPriceJetARetail.effectiveTo = dateRetasil;
+                this.currentFboPriceJetARetail.price = priceRetail;
+                console.log(this.currentFboPriceJetACost.price);
+            }
+        }
+        else {
+            for (let price of this.currentPrices) {
+                /*price.effectiveFrom = this.currentPricingEffectiveFrom;
+                price.effectiveTo = this.currentPricingEffectiveTo;*/
+                price.price = price.product == 'JetA Retail' ? this.currentFboPriceJetARetail.price : price.product == 'JetA Cost' ? this.currentFboPriceJetACost.price : null;
+                this.savePriceChanges(price);
+            }
+        }
+        this.currentFboPriceJetARetail.price = this.jtRetail;
+        this.currentFboPriceJetACost.price = this.jtCost;
 		if (this.fboPreferences.oid > 0) {
 			this.fboPreferencesService.update(this.fboPreferences).subscribe((data: any) => {});
 		} else {
 			this.fboPreferencesService.add(this.fboPreferences).subscribe((data: any) => {
 				this.fboPreferences.oid = data.oid;
 			});
-		}
+        }
+        console.log(this.currentFboPriceJetACost.price);
+        this.show = true;
 		this.isSaved = true;
 		this.delay(5000).then(any => {
-			this.isSaved = false;
-		});
-		//this.requiresUpdate = false;
+            this.isSaved = false;
+            this.show = false;
+            this.requiresUpdate = true;
+        });
 
+        this.loadCurrentFboPrices();
+        console.log(this.currentFboPriceJetACost.price);
 
 	}
 
 	public fboPreferenceChange() {
 		this.requiresUpdate = true;
-		this.isSaved = false;
+        this.isSaved = false;
+        this.show = false;
 	}
 
 	public costJetAToggled() {
@@ -369,7 +421,8 @@ export class FboPricesHomeComponent implements OnInit {
 				}
 				if (this.currentFboPriceJetACost) {
 					this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
-				}
+                }
+                
 			});
 	}
 
@@ -395,8 +448,14 @@ export class FboPricesHomeComponent implements OnInit {
 	}
 
 	public removeStaged(data) {
-		this.fboPricesService.remove(data).subscribe((data: any) => {
-			this.loadCurrentFboPrices();
+        this.fboPricesService.remove(data).subscribe((data: any) => {
+            this.isSaved = true;
+            this.show = true;
+            this.delay(3000).then(any => {
+                this.isSaved = false;
+                this.show = false;
+            });
+            this.loadCurrentFboPrices();
 		});
 	}
 
@@ -425,11 +484,15 @@ export class FboPricesHomeComponent implements OnInit {
 		});
 	}
 
-	private savePriceChanges(price) {
-		if (!price.oid || price.oid == null) 
-			this.fboPricesService.add(price).subscribe((data: any) => price.oid = data.oid);
-		else
-			this.fboPricesService.update(price).subscribe((data: any) => {});
+    private savePriceChanges(price) {
+        //if (!price.oid || price.oid == null)
+        if (this.requiresUpdate) {
+            this.fboPricesService.update(price).subscribe((data: any) => { });
+        } else {
+            this.fboPricesService.add(price).subscribe((data: any) => { });
+        }
+		//else
+		//	this.fboPricesService.update(price).subscribe((data: any) => {});
 	}
 
 	private saveFboPreferences() {
@@ -458,14 +521,14 @@ export class FboPricesHomeComponent implements OnInit {
 				//alert(JSON.stringify(value) + ' product-' + product);
 				//result.find(x => x.oid == value.oid);
 				if (item == undefined) {
-					var pm = { RetailPrice: 0, CostPrice: 0, oid: 0, fboid: 0, product: '', effectiveFrom: null, effectiveTo: null, timestamp: null, salesTaxCost: 0, currencyCost: 0, salesTaxRetail: 0, currencyRetail: 0 };
+					var pm = { RetailPrice: 0, CostPrice: 0, oid: 0, fboid: 0, product: '',description:'', effectiveFrom: null, effectiveTo: null, timestamp: null, salesTaxCost: 0, currencyCost: 0, salesTaxRetail: 0, currencyRetail: 0 };
 					pm.oid = value.oid;
 					pm.fboid = value.fboid;
 					pm.effectiveFrom = moment(moment.utc(value.effectiveFrom).toDate()).format('MM/DD/YYYY');
 					pm.effectiveTo = moment(moment.utc(value.effectiveTo).toDate()).format('MM/DD/YYYY');
-					pm.timestamp = value.timestamp;
-
-					pm.product = product;
+                    pm.timestamp = value.timestamp;
+                    pm.product = value.product;
+					pm.description = product;
 				}
 				if ((value.product == 'JetA Retail' && product == 'JetA') || (value.product == '100LL Retail' && product == '100LL')) {
 					if (item == undefined) {

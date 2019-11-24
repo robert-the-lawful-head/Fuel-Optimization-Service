@@ -3,13 +3,8 @@
                  <div class="col-1 float-right"><a  (click)="closeDialog()" ><i class="fa fa-times"style="font-size:22px;font-weight:100;"></i></a> </div></div>
 <div mat-dialog-content class="mt-1 mb-4 ml-3 row">
     <div class="row">
-        <div class="col-12 text-left" *ngIf="!edit">
+        <div class="col-12 text-left">
             Subject: {{data.subject}}
-        </div>
-        <div class="col-12 text-left" *ngIf="edit">
-            <mat-form-field>
-                <input matInput [(ngModel)]="data.subject" placeholder="Subject" autocomplete="off">
-            </mat-form-field>
         </div>
     </div>
     <div class="row">
@@ -17,7 +12,7 @@
             <div class="text-center font-weight-bold mt-4">{{data.marginType == 1 ? 'Retail-' : data.marginType==0 ? 'Cost+' : 'Flat Fee'}}</div>
             <div class="row mt-2" style="font-size:11px;"><div class="col-8 float-left">Volume (gal.)</div><div class="col-4 float-right">Price</div></div>
             <div class="row">
-                <table class="mat-table mt-2" style="min-width: 75%;">
+                <table class="mat-table mt-2" style="min-width: 65%;max-width:75%">
                     <thead>
                         <tr class="mat-header-row">
                             <th class="text-center">Min</th>
@@ -41,10 +36,7 @@
                 </table>
             </div>
         </div>
-            <div class="col-6 mt-4 pt-4" [innerHTML]="data.email" *ngIf="!edit">
-            </div>
-            <div class="col-6 mt-4 pt-4" *ngIf="edit">
-                <ejs-richtexteditor #typeEmail id='rteEmail' [(value)]='data.email'></ejs-richtexteditor>
+            <div class="col-6 mt-4 pt-4" [innerHTML]="data.email">
             </div>
         </div>
     </div>

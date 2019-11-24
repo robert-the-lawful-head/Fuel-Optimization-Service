@@ -111,7 +111,6 @@ namespace FBOLinx.Web.Controllers
             }
 
             var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
-            var types = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.ProductPriceType));
 
             var result = (from p in products
                           join f in (from f in _context.Fboprices
@@ -134,7 +133,7 @@ namespace FBOLinx.Web.Controllers
                               TimeStamp = f?.Timestamp,
                               SalesTax = f?.SalesTax,
                               Currency = f?.Currency
-                          });
+                          }).OrderBy(x=>x.EffectiveFrom);
 
             return Ok(result);
         }
@@ -237,6 +236,7 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetFboprices", new { id = fboprices.Oid }, fboprices);
+
         }
 
         // DELETE: api/Fboprices/5

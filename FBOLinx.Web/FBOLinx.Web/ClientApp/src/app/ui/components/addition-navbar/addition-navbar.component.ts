@@ -63,7 +63,8 @@ export class AdditionNavbarComponent implements OnInit {
 
         const dialogRef = this.templateDialog.open(DistributionWizardReviewComponent,
             {
-                data: this.filtered
+                data: this.filtered,
+                panelClass:'wizard'
             });
         dialogRef.componentInstance.idChanged1.subscribe((result) => {
             this.fileInput.nativeElement.click()
@@ -76,6 +77,10 @@ export class AdditionNavbarComponent implements OnInit {
     }
     async delay(ms: number) {
         await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() => console.log("fired"));
+    }
+    public changeSentOption(item) {
+        item.toSend = !item.toSend;
+        item.val = item.toSend ? item.val === undefined ? 0 + 33.33 : item.val + 33.33 : item.val - 33.33;
     }
     public sendMails() {
         this.pricingTemplatesData.forEach(x => {

@@ -16,12 +16,12 @@
                         {{pricingTemplate.name}}
                         <button ni-button [view]="'accent'" *ngIf="pricingTemplate.changeText && !pricingTemplate.sent" size="small" (click)="OpenMarginInfo(pricingTemplate.oid)">Preview</button>
                         <p *ngIf="pricingTemplate.sent">Sent!</p>
-                        <mat-progress-bar mode="determinate" *ngIf="!pricingTemplate.changeText && !pricingTemplate.sent" color="warn" [value]="85"></mat-progress-bar>
+                        <mat-progress-bar mode="determinate" *ngIf="!pricingTemplate.changeText && !pricingTemplate.sent" color="#2196F3" [(value)]="pricingTemplate.val"></mat-progress-bar>
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="toggle">
                     <td class="mb-1 col-2" mat-cell *matCellDef="let pricingTemplate">
-                        <mat-slide-toggle (change)="pricingTemplate.toSend=!pricingTemplate.toSend"></mat-slide-toggle>
+                        <mat-slide-toggle (change)="changeSentOption(pricingTemplate)"></mat-slide-toggle>
                     </td>
                 </ng-container>
                 <!--<mat-progress-bar mode="determinate" color="accent" [value]="98"></mat-progress-bar>
