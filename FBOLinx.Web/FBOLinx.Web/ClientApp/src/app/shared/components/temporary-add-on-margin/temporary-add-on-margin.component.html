@@ -47,7 +47,7 @@
     <div class="row" style="margin-bottom: 3em !important;">
         <div class="col-11">
 
-            <button ni-button style="margin-right:0px !important; float:right;" [view]="'error'" [mat-dialog-close]="data" class="mr-1 m-2" (click)="add()" [disabled]="!(data.MarginJet!=null && data.EffectiveFrom!=null && data.EffectiveTo!=null)">{{stringButton}}</button>
+            <button ni-button style="margin-right:0px !important; float:right;" [view]="'error'" [mat-dialog-close]="data" class="mr-1 m-2" (click)="add()" [disabled]="!(data.MarginJet!=null && data.MarginJet!='0.0000' && data.EffectiveFrom!=null && data.EffectiveTo!=null)">{{stringButton}}</button>
             <button mat-stroked-button (click)="onCancelClick()" class="mr-1 m-2" style="float: right !important;">Cancel</button>
         </div>
         <div class="col-1"></div>
