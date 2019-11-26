@@ -30,6 +30,7 @@ export interface NewPricingTemplateMargin {
     priceTierId: number;
     max: number;
     templatesId: number;
+    allin: number;
 }
 
 @Component({
@@ -130,44 +131,76 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             min: 1,
             max: 99999,
             amount: 0,
-            itp: 0
+            itp: 0,
+            allin: 0
         };
         if (this.data.customerMargins.length > 0) {
             customerMargin.min =
                 this.data.customerMargins[this.data.customerMargins.length - 1].min + 250;
         }
         this.data.customerMargins.push(customerMargin);
-        this.fixCustomerMargins();
+       // this.fixCustomerMargins();
     }
 
-    public fixCustomerMargins() {
-        for (let i in this.data.customerMargins) {
-            let indexNumber = Number(i);
-            if (!this.data.customerMargins[indexNumber].min || this.data.customerMargins[indexNumber].min == 0) {
-                if (indexNumber == 0)
-                    this.data.customerMargins[indexNumber].min = 1;
-                else
-                    this.data.customerMargins[indexNumber].min =
-                        (this.data.customerMargins[indexNumber - 1].min + 1);
+    public updateCustomerMargin(margin) {
+        console.log(margin);
+        console.log(this.data.marginType);
+        console.log(this.currentPrice);
+        if (this.data.marginType == 0) {
+
+        }
+        else if (this.data.marginType == 1) {
+            if (margin.amount && margin.min) {
+                var jetACost = this.currentPrice[0];
+                var jetARetail = this.currentPrice[1];
+                console.log(jetACost.price);
+                margin.allin = jetARetail.price - margin.amount;
+                if (margin.allin) {
+                    margin.itp = margin.allin - jetACost.price;
+                }
             }
-
-            if (indexNumber > 0 && this.data.customerMargins[indexNumber].min == this.data.customerMargins[indexNumber - 1].min) {
-                this.data.customerMargins[indexNumber].min =
-                    (this.data.customerMargins[indexNumber - 1].min + 1);
-            }
-
-            if (this.data.customerMargins.length > (indexNumber + 1) &&
-                this.data.customerMargins[indexNumber + 1].min > 0)
-                this.data.customerMargins[i].max = this.data.customerMargins[indexNumber + 1].min - 1;
-            else
-                this.data.customerMargins[i].max = 99999;
-
-            this.calculateItpForMargin(this.data.customerMargins[indexNumber]);
-            for (let margin of this.data.customerMargins) {
-                this.total += margin.amount;
+        }
+        else if (this.data.marginType == 2) {
+            if (margin.amount && margin.min) {
+                var jetACost = this.currentPrice[0];
+                var jetARetail = this.currentPrice[1];
+                console.log(jetACost.price);
+                margin.allin = jetARetail.price - margin.amount;
+                if (margin.allin) {
+                    margin.itp = margin.allin - jetACost.price;
+                }
             }
         }
     }
+
+    //public fixCustomerMargins() {
+    //    for (let i in this.data.customerMargins) {
+    //        let indexNumber = Number(i);
+    //        if (!this.data.customerMargins[indexNumber].min || this.data.customerMargins[indexNumber].min == 0) {
+    //            if (indexNumber == 0)
+    //                this.data.customerMargins[indexNumber].min = 1;
+    //            else
+    //                this.data.customerMargins[indexNumber].min =
+    //                    (this.data.customerMargins[indexNumber - 1].min + 1);
+    //        }
+
+    //        if (indexNumber > 0 && this.data.customerMargins[indexNumber].min == this.data.customerMargins[indexNumber - 1].min) {
+    //            this.data.customerMargins[indexNumber].min =
+    //                (this.data.customerMargins[indexNumber - 1].min + 1);
+    //        }
+
+    //        if (this.data.customerMargins.length > (indexNumber + 1) &&
+    //            this.data.customerMargins[indexNumber + 1].min > 0)
+    //            this.data.customerMargins[i].max = this.data.customerMargins[indexNumber + 1].min - 1;
+    //        else
+    //            this.data.customerMargins[i].max = 99999;
+
+    //        this.calculateItpForMargin(this.data.customerMargins[indexNumber]);
+    //        for (let margin of this.data.customerMargins) {
+    //            this.total += margin.amount;
+    //        }
+    //    }
+    //}
 
     public empty(customerMargin) {
         customerMargin.amount = 0;
@@ -199,7 +232,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             else if (this.data.marginType == 1 && Math.abs(previousTier.amount) > Math.abs(customerMargin.amount))
                 customerMargin.amount = previousTier.amount - .01;
         }
-        this.calculateItpForMargin(customerMargin);
+       // this.calculateItpForMargin(customerMargin);
         for (let margin of this.data.customerMargins) {
             this.total += margin.amount;
         }
@@ -223,6 +256,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
 
     public addTemplateClicked() {
+       
         this.isSaving = true;
 
         this.data.name = this.firstFormGroup.get('templateName').value;
@@ -260,7 +294,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.fbopricesService.getFbopricesByFboIdCurrent(this.data.fboId).subscribe((data: any) => {
             this.currentPrice = data;
                 for (let margin of this.data.customerMargins) {
-                    this.calculateItpForMargin(margin);
+                   // this.calculateItpForMargin(margin);
                 }
         })
     }
@@ -286,5 +320,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 return;
                 }
         }
+    }
+
+    private calculateRetailVolumeTiers() {
+
     }
 }
