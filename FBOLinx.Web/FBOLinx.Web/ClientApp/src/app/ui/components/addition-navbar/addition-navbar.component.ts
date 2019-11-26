@@ -4,7 +4,7 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { SharedService } from '../../../layouts/shared-service';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { DistributionService } from '../../../services/distribution.service';
-import moment = require('moment');
+import * as moment from 'moment';
 
 @Component({
   selector: 'addition-navbar',
