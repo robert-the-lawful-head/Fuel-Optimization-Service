@@ -62,10 +62,10 @@ export class TemporaryAddOnMarginComponent {
             this.help = false;
             this.helpOne = true;
         }
-        if (event.key === '.' && this.counter === 0 && this.brojac<3) {
-            this.help = true;
-            this.counter += 1;
-        }
+        //if (event.key === '.' && this.counter === 0 && this.brojac<3) {
+        //    this.help = true;
+        //    this.counter += 1;
+        //}
     }
 
     public setSelectionRange(input, selectionStart, selectionEnd) {
