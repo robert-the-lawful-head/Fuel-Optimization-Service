@@ -3,6 +3,8 @@ import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/m
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
+import { DistributionService } from '../../../services/distribution.service';
+import moment = require('moment');
 
 @Component({
   selector: 'addition-navbar',
@@ -24,6 +26,9 @@ export class AdditionNavbarComponent implements OnInit {
     public marginTemplateDataSource: MatTableDataSource<any> = null;
     public pricingTemplatesData: any[];
     public filtered: any;
+    public distributionLog: any[];
+    public timeLeft: number = 0;
+    public interval : any;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('marginTableContainer') table: ElementRef;
@@ -31,9 +36,11 @@ export class AdditionNavbarComponent implements OnInit {
     @Input() templatelst: any[];
     constructor(private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
-        public templateDialog: MatDialog) {
+        public templateDialog: MatDialog,
+        public distributionService: DistributionService) {
     this.title = 'Margins to be distributed';
         this.open = false;
+        
         //this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData);
   }
 
@@ -44,6 +51,24 @@ export class AdditionNavbarComponent implements OnInit {
   }
 
     ngOnInit() {
+        this.distributionService.getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50).subscribe((data:
+            any) => {
+            this.distributionLog = data;
+            if (!this.distributionLog) {
+                this.distributionLog = [];
+            }
+            else {
+                this.distributionLog.forEach(obj => {
+                    this.templatelst.forEach(m => {
+                        if (obj.pricingTemplateId === m.oid) {
+                            m.text = 'Last sent ' + moment(moment.utc(obj.dateSent).toDate()).format('MM/DD/YYYY HH:mm');
+                        }
+                    })
+
+                })
+            }
+        }
+        );
         this.pricingTemplatesData = this.templatelst;
         this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
         //this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData);
@@ -80,15 +105,31 @@ export class AdditionNavbarComponent implements OnInit {
     }
     public changeSentOption(item) {
         item.toSend = !item.toSend;
-        item.val = item.toSend ? item.val === undefined ? 0 + 33.33 : item.val + 33.33 : item.val - 33.33;
+      //  item.val = item.toSend ? item.val === undefined ? 0 + 33.33 : item.val + 33.33 : item.val - 33.33;
     }
     public sendMails() {
         this.pricingTemplatesData.forEach(x => {
             if (x.toSend) {
-                x.sent = true;
-                this.delay(5000).then(any => {
+                var request = {
+                    fboId: this.sharedService.currentUser.fboId,
+                    groupId: this.sharedService.currentUser.groupId,
+                    pricingTemplate: x
+                };
+                this.distributionService.distributePricing(request).subscribe((data: any) => {
+                });
+                this.interval = setInterval(() => {
+                    if (this.timeLeft <= 3) {
+                        this.timeLeft++;
+                        x.val = this.timeLeft === 3 ? 100 : 0 + (33.33 * this.timeLeft);
+                        if (this.timeLeft == 3) {
+                            x.sent = true;
+                        }
+                    } 
+                }, 1000)
+                this.delay(8000).then(any => {
                     x.sent = false;
                 });
+                x.text = 'Last sent ' + moment(new Date()).format('MM/DD/YYYY HH:mm');
             }
         })
 
