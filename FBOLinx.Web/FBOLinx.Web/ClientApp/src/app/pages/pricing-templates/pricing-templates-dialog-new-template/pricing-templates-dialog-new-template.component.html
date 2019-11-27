@@ -63,7 +63,7 @@
                         <!--<th class="text-center mat-header-cell text-lg-center" *ngIf="data.marginType==1">Discount</th>-->
                         <th class="text-center mat-header-cell text-lg-center"  *ngIf="data.marginType>0">Discount</th>
                         <th class="text-center mat-header-cell text-lg-center"><span *ngIf="data.marginType<2">Your ITP Margin</span><span *ngIf="data.marginType>1">All-in</span></th>
-                        <th class="text-center mat-header-cell" *ngIf="data.marginType<2">All-in</th>
+                        <th class="text-center mat-header-cell">All-in</th>
                         <th class="text-center mat-header-cell">
                             <button ni-button size="small" [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">Add New</button>
                         </th>

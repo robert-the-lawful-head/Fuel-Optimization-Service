@@ -53,8 +53,8 @@ export class PricingTemplatesEditComponent {
     public breadcrumb: any[] = BREADCRUMBS;
     public marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
-        { text: 'Retail -', value: 1 },
-        { text: 'Flat Fee', value: 2 }
+        { text: 'Retail -', value: 1 }
+        //{ text: 'Flat Fee', value: 2 }
     ];
     public isSaving: boolean = false;
     public currentPrice: any;
@@ -84,6 +84,7 @@ export class PricingTemplatesEditComponent {
                 this.customerMarginsService.getCustomerMarginsByPricingTemplateId(this.pricingTemplate.oid).subscribe(
                     (data: any) => {
                         this.pricingTemplate.customerMargins = data;
+                        
                         this.loadCurrentPrice();
                     });
             });
@@ -164,14 +165,17 @@ export class PricingTemplatesEditComponent {
             priceTierId: 0,
             min: 1,
             max: 99999,
-            amount: 0
+            amount: 0,
+            itp: 0,
+            allin: 0
         };
         if (this.pricingTemplate.customerMargins.length > 0) {
             customerMargin.min =
                 this.pricingTemplate.customerMargins[this.pricingTemplate.customerMargins.length - 1].min + 250;
         }
         this.pricingTemplate.customerMargins.push(customerMargin);
-        this.fixCustomerMargins();
+       
+       // this.fixCustomerMargins();
     }
 
     public fixCustomerMargins() {
@@ -197,6 +201,26 @@ export class PricingTemplatesEditComponent {
                 this.pricingTemplate.customerMargins[i].max = 99999;
 
             this.calculateItpForMargin(this.pricingTemplate.customerMargins[indexNumber]);
+        }
+    }
+
+    public updateCustomerMargin(margin) {
+        var jetACost = this.currentPrice.filter(item => item.product == 'JetA Cost')[0].price;
+        var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
+
+        if (this.pricingTemplate.marginType == 0) {
+            if (margin.min && margin.itp) {
+                margin.allin = jetACost + margin.itp;
+            }
+
+        }
+        else if (this.pricingTemplate.marginType == 1) {
+            if (margin.amount && margin.min) {
+                margin.allin = jetARetail - margin.amount;
+                if (margin.allin) {
+                    margin.itp = margin.allin - jetACost;
+                }
+            }
         }
     }
 
@@ -259,7 +283,8 @@ export class PricingTemplatesEditComponent {
         this.fbopricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId).subscribe((data: any) => {
             this.currentPrice = data;
             for (let margin of this.pricingTemplate.customerMargins) {
-                this.calculateItpForMargin(margin);
+                //this.calculateItpForMargin(margin);
+                this.updateCustomerMargin(margin);
             }
         });
     }

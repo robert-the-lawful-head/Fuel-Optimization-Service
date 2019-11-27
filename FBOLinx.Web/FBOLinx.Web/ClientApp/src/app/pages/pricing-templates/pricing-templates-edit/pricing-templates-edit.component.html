@@ -57,28 +57,25 @@
                     <tbody>
                         <tr *ngFor="let customerMargin of pricingTemplate.customerMargins" class="mat-row">
                             <td class="mat-cell text-center">
-                                <mat-form-field class="col-4">
-                                    <input matInput (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" />
+                                <mat-form-field class="col-6">
+                                    <!--<input matInput (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" />-->
+                                    <input matInput (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" [(ngModel)]="customerMargin.min" />
                                 </mat-form-field>
                             </td>
-                            <td class="mat-cell text-center" *ngIf="pricingTemplate.marginType==1">
-                                <mat-form-field class="col-4">
-                                    <input matInput (keyup.enter)="fixCustomerMargins()" (blur)="fixCustomerMargins()" [(ngModel)]="customerMargin.min" />
+
+                            <td class="mat-cell text-center" *ngIf="pricingTemplate.marginType>0">
+                                <mat-form-field class="col-6">
+                                    <input matInput [(ngModel)]="customerMargin.amount" (focus)="onFocus()" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
                                 </mat-form-field>
                             </td>
-                            <td class="mat-cell text-center col-4" *ngIf="pricingTemplate.marginType!=2">
-                                    <mat-form-field class="col-4" *ngIf="[0,2].indexOf(pricingTemplate.marginType)  > -1">
-                                        <input matInput [(ngModel)]="customerMargin.amount" (focus)="onFocus()" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
-                                    </mat-form-field>
-                                    <div *ngIf="[1].indexOf(pricingTemplate.marginType)  > -1">
-                                        <div >{{customerMargin.amount | currency:'USD'}}</div>
-                                    </div>
-                            </td>
-                            <td class="mat-cell text-center font-weight-bold font-italic text-right col-4">
-                                <div *ngIf="pricingTemplate.marginType!=2">${{customerMargin.itp | number:'1.4-4'}}</div>
-                                <mat-form-field class="col-4" *ngIf="pricingTemplate.marginType==2">
-                                    <input matInput [(ngModel)]="customerMargin.itp" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />
+                            <td class="mat-cell text-center font-weight-bold font-italic text-right">
+                                <div *ngIf="pricingTemplate.marginType==1">${{customerMargin.itp | number:'1.4-4'}}</div>
+                                <mat-form-field class="col-6" *ngIf="pricingTemplate.marginType==0">
+                                    <input matInput [(ngModel)]="customerMargin.itp" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />
                                 </mat-form-field>
+                            </td>
+                            <td class="mat-cell text-center font-weight-bold font-italic text-right col-3">
+                                <div>${{customerMargin.allin | number:'1.4-4'}}</div>
                             </td>
                             <td class="text-right mat-cell">
                                 <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomerMargin(customerMargin)">Delete</button>
