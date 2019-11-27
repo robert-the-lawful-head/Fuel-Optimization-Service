@@ -67,7 +67,7 @@ export class PricingTemplatesGridComponent implements OnInit {
                 data: {
                     fboId: this.sharedService.currentUser.fboId,
                     marginType: 1,
-                    customerMargins: [{min: 1, max: 99999, amount: 0, itp: 0}]
+                    customerMargins: [{min: 1, max: 99999, amount: 0, itp: 0, allin: 0}]
                 }
             });
 

@@ -54,8 +54,8 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     public total: number = 0;
     public marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
-        { text: 'Retail -', value: 1 },
-        { text: 'Flat Fee', value: 2 }
+        { text: 'Retail -', value: 1 }
+        //{ text: 'Flat Fee', value: 2 }
     ];
 
     /** pricing-templates-dialog-new-template ctor */
@@ -143,34 +143,25 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     public updateCustomerMargin(margin) {
-        console.log(margin);
-        console.log(this.data.marginType);
-        console.log(this.currentPrice);
+        var jetACost = this.currentPrice.filter(item => item.product == 'JetA Cost')[0].price;
+        var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
+
         if (this.data.marginType == 0) {
+            if (margin.min && margin.itp) {
+                margin.allin = jetACost + margin.itp;
+            }
 
         }
         else if (this.data.marginType == 1) {
             if (margin.amount && margin.min) {
-                var jetACost = this.currentPrice[0];
-                var jetARetail = this.currentPrice[1];
+
                 console.log(jetACost.price);
-                margin.allin = jetARetail.price - margin.amount;
+                margin.allin = jetARetail - margin.amount;
                 if (margin.allin) {
-                    margin.itp = margin.allin - jetACost.price;
+                    margin.itp = margin.allin - jetACost;
                 }
             }
-        }
-        else if (this.data.marginType == 2) {
-            if (margin.amount && margin.min) {
-                var jetACost = this.currentPrice[0];
-                var jetARetail = this.currentPrice[1];
-                console.log(jetACost.price);
-                margin.allin = jetARetail.price - margin.amount;
-                if (margin.allin) {
-                    margin.itp = margin.allin - jetACost.price;
-                }
-            }
-        }
+        }        
     }
 
     //public fixCustomerMargins() {
@@ -293,6 +284,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         });*/
         this.fbopricesService.getFbopricesByFboIdCurrent(this.data.fboId).subscribe((data: any) => {
             this.currentPrice = data;
+            console.log(this.data.customerMargins);
                 for (let margin of this.data.customerMargins) {
                    // this.calculateItpForMargin(margin);
                 }
