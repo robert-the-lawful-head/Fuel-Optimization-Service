@@ -38,7 +38,7 @@
                     <h5>Volume Tiers</h5>
                 </div>
                 <div class="col-8 text-left font-italic" *ngIf="currentPrice && [0,1,2].indexOf(pricingTemplate.marginType) > -1">
-                    <h5 [ngStyle]="{'font-weight':getCurrentProductForMarginType() === tmp.product && [0,1].indexOf(pricingTemplate.marginType) > -1 ? '600' : '300' }" style="margin:0 !important" *ngFor="let tmp of currentPrice"><span *ngIf="tmp.price">{{tmp.product}}: ${{tmp.price | number: '1.4-4'}}</span></h5>
+                    <h5 [ngStyle]="{'font-weight':getCurrentProductForMarginType() === tmp.product && [0,1].indexOf(pricingTemplate.marginType) > -1 ? '600' : '300' }" style="margin:0 !important" *ngFor="let tmp of currentPrice"><span *ngIf="tmp.price && (tmp.product=='JetA Cost' || tmp.product=='JetA Retail')">{{tmp.product}}: ${{tmp.price | number: '1.4-4'}}</span></h5>
                 </div>
             </div>
             <div class="row">

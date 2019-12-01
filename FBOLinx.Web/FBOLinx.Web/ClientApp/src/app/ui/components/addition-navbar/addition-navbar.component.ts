@@ -58,10 +58,12 @@ export class AdditionNavbarComponent implements OnInit {
                 this.distributionLog = [];
             }
             else {
-                this.distributionLog.forEach(obj => {
-                    this.templatelst.forEach(m => {
+                this.templatelst.forEach(m => {
+                    this.distributionLog.forEach(obj => {
                         if (obj.pricingTemplateId === m.oid) {
-                            m.text = 'Last sent ' + moment(moment.utc(obj.dateSent).toDate()).format('MM/DD/YYYY HH:mm');
+                            if (m.text===undefined) {
+                                m.text = 'Last sent ' + moment(moment.utc(obj.dateSent).toDate()).format('MM/DD/YYYY HH:mm');
+                            }
                         }
                     })
 
@@ -69,7 +71,11 @@ export class AdditionNavbarComponent implements OnInit {
             }
         }
         );
-        this.pricingTemplatesData = this.templatelst;
+        this.pricingTemplatesData = this.templatelst.filter((element: any, index: number, array: any[]) => {
+            //return true;
+            return array.indexOf(array.find(t => t.oid === element.oid && t.text === element.text && t.name === element.name)) === index;
+        });
+
         this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
         //this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData);
         this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData.filter((element: any, index: number, array: any[]) => {
@@ -82,7 +88,6 @@ export class AdditionNavbarComponent implements OnInit {
         //this.marginTemplateDataSource.paginator = this.paginator;
         //this.pricingTemplatesData.length;
     }
-
     public OpenMarginInfo(event) {
         this.filtered = this.pricingTemplatesData.find(({ oid }) => oid === event);
 

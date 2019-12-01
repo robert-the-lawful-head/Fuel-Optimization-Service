@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { MatDialog,  MAT_DIALOG_DATA } from '@angular/material';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 //Services

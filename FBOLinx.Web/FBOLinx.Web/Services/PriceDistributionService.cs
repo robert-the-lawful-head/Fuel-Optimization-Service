@@ -14,6 +14,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
@@ -65,7 +66,10 @@ namespace FBOLinx.Web.Services
 
             foreach (var customer in customers)
             {
-                await GenerateDistributionMailMessage(customer);
+                
+                    await GenerateDistributionMailMessage(customer);
+                
+                
             }
         }
 
@@ -118,7 +122,7 @@ namespace FBOLinx.Web.Services
         {
             var distributionQueueRecord = _context.DistributionQueue.Where((x =>
                 x.CustomerId == customer.CustomerId && x.Fboid == _DistributePricingRequest.FboId &&
-                x.GroupId == _DistributePricingRequest.GroupId)).FirstOrDefault();
+                x.GroupId == _DistributePricingRequest.GroupId && x.DistributionLogId==_DistributionLogID)).FirstOrDefault();
             try
             {
                 var validPricingTemplates = await GetValidPricingTemplates(customer);
@@ -134,7 +138,7 @@ namespace FBOLinx.Web.Services
                 var fboRecipients = await GetRecipientsForFbo();
                 foreach (ContactInfoByGroup contactInfoByGroup in recipients)
                 {
-                    if (_MailSettings.IsValidEmailRecipient(contactInfoByGroup.Email))
+                        if (_MailSettings.IsValidEmailRecipient(contactInfoByGroup.Email))
                         mailMessage.To.Add(new MailAddress(contactInfoByGroup.Email));
                 }
                 if (mailMessage.To.Count == 0)
@@ -153,41 +157,43 @@ namespace FBOLinx.Web.Services
                     }
                 }
 
-                string body = await GetMailBody(customer, validPricingTemplates);
+                string str = _DistributePricingRequest.PricingTemplate.MarginTypeProduct == "JetA Retail" ? "Retail -" : _DistributePricingRequest.PricingTemplate.MarginTypeProduct == "JetA Retail" ? "Cost +" : "Fleet Fee";
+                string body = await getCustomBody(_DistributePricingRequest.PricingTemplate.Oid,str, _DistributePricingRequest.FboId);//_DistributePricingRequest.PricingTemplate.Email;//await GetMailBody(customer, validPricingTemplates);
 
-                //Add the price breakdown as an image to prevent parsing
+                    //Add the price breakdown as an image to prevent parsing
                 byte[] priceBreakdownImage = await GetPriceBreakdownImage(customer, validPricingTemplates);
 
-                var imageStream = new MemoryStream(priceBreakdownImage);
-                Attachment priceBreakdownAttachment = new Attachment(imageStream, new ContentType("image/jpeg"));
-                priceBreakdownAttachment.ContentDisposition.Inline = true;
-                priceBreakdownAttachment.Name = "PriceBreakdown.jpg";
-                var linkedResource = new LinkedResource(imageStream, new ContentType("image/jpeg"));
-                linkedResource.ContentId = Guid.NewGuid().ToString();
-                priceBreakdownAttachment.ContentId = linkedResource.ContentId;
-                body = body.Replace("%PRICE_BREAKDOWN_CONTENT_ID%", linkedResource.ContentId);
-                mailMessage.Attachments.Add(priceBreakdownAttachment);
+                    var imageStream = new MemoryStream(priceBreakdownImage);
+                    Attachment priceBreakdownAttachment = new Attachment(imageStream, new ContentType("image/jpeg"));
+                    priceBreakdownAttachment.ContentDisposition.Inline = true;
+                    priceBreakdownAttachment.Name = "PriceBreakdown.jpg";
+                    var linkedResource = new LinkedResource(imageStream, new ContentType("image/jpeg"));
+                    linkedResource.ContentId = Guid.NewGuid().ToString();
+                    priceBreakdownAttachment.ContentId = linkedResource.ContentId;
+                    body = body.Replace("%PRICE_BREAKDOWN_CONTENT_ID%", linkedResource.ContentId);
+                    mailMessage.Attachments.Add(priceBreakdownAttachment);
 
-                body = body.Replace("%PRICE_BREAKDOWN_IMAGE_BASE64%", System.Convert.ToBase64String(priceBreakdownImage));
+                    body = body.Replace("%PRICE_BREAKDOWN_IMAGE_BASE64%", System.Convert.ToBase64String(priceBreakdownImage));
 
-                mailMessage.From = new MailAddress("donotreply@fbolinx.com");
-                mailMessage.Body = body;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Subject = _DistributePricingRequest.EmailContentGreeting.Subject;
+                    mailMessage.From = new MailAddress("donotreply@fbolinx.com");
+                    mailMessage.Body = body;
+                    mailMessage.IsBodyHtml = true;
+                    mailMessage.Subject = _DistributePricingRequest.PricingTemplate.Subject ?? "Distribution pricing";
 
-                //Convert to a SendGrid message and use their API to send it
-                Services.MailService mailService = new MailService(_MailSettings);
-                var sendGridMessage = mailMessage.GetSendGridMessage();
-                sendGridMessage.Asm = new ASM() {GroupId = 10326 };
+                    //Convert to a SendGrid message and use their API to send it
+                    Services.MailService mailService = new MailService(_MailSettings);
+                    var sendGridMessage = mailMessage.GetSendGridMessage();
+                    sendGridMessage.Asm = new ASM() { GroupId = 10326 };
 
-                var result = await mailService.SendAsync(sendGridMessage);
-                if (result.StatusCode == HttpStatusCode.OK || result.StatusCode == HttpStatusCode.Accepted)
-                    MarkDistributionRecordAsComplete(distributionQueueRecord);
-                else
-                {
-                    var mailError = await result.Body.ReadAsStringAsync();
-                    throw new System.Exception(mailError);
-                }
+                    var result = await mailService.SendAsync(sendGridMessage);
+                    if (result.StatusCode == HttpStatusCode.OK || result.StatusCode == HttpStatusCode.Accepted)
+                        MarkDistributionRecordAsComplete(distributionQueueRecord);
+                    else
+                    {
+                        var mailError = await result.Body.ReadAsStringAsync();
+                        throw new System.Exception(mailError);
+                    }
+                
             }
             catch (System.Exception exception)
             {
@@ -198,7 +204,7 @@ namespace FBOLinx.Web.Services
                 {
                     DistributionLogId = _DistributionLogID,
                     DistributionQueueId = distributionQueueRecord.Oid,
-                    ErrorDateTime = DateTime.Now
+                    ErrorDateTime = DateTime.Now.ToUniversalTime()
                 };
                 if (exception.InnerException != null)
                     errorRecord.Error = exception.Message + "***" + exception.InnerException.StackTrace + "****" + exception.StackTrace;
@@ -213,7 +219,7 @@ namespace FBOLinx.Web.Services
         {
             if (distributionQueueRecord == null)
                 return;
-            distributionQueueRecord.DateSent = DateTime.Now;
+            distributionQueueRecord.DateSent = DateTime.Now.ToUniversalTime();
             distributionQueueRecord.IsCompleted = true;
             _context.DistributionQueue.Update(distributionQueueRecord);
             _context.SaveChanges();
@@ -241,7 +247,57 @@ namespace FBOLinx.Web.Services
             body = await PerformBodyReplacements(customer, body, pricingTemplates);
             return body;
         }
-        
+
+        private async Task<string> getCustomBody(int num,string id,int fboId)
+        {
+            var pom = await new Controllers.CustomerMarginsController(_context).GetCustomerMarginsByPricingTemplateId(num);
+            var res = pom as OkObjectResult;
+            /*var prom = await new Controllers.FbopricesController(_context).GetFbopricesByFboIdCurrent(fboId);
+            var resProm = prom as OkObjectResult;*/
+            string body = "";
+            //string title = id == 1 ? "Retail-" : id == 0 ? "Cost+" : "Flat Fee";
+            body = "<div style=\"500 13px/25px Roboto, \"Helvetica Neue\", sans-serif;display:flex;flex-wrap:wrap;box-sizing:border-box;\"><div style=\"max-width: 20%;\"><div style=\"font-weight: bold;text-align:center !important;margin-top:1.5rem !important;min-width: 65%;max-width:75%\">" + id + "</div><div style=\"font-size:11px;min-width: 65%;max-width:75%\"><div style=\"max-width:66.66666667%;flex:0 0 66.66666667%;float:left !important\">Volume(gal.)</div><div style=\"max-width:33.33333333%;flex:0 0 33.33333333%;float:right !important\">Price</div></div><div>";
+            body += "<table style=\"min-width: 65%;max-width:75%;border-spacing:0;margin-bottom:0;margin-top:0.5rem !important;border-collapse:collapse !important;display:table !important;\"><thead><tr style=\"display:table-row;vertical-align:middle;\"><th style=\"text-align:center !important;display:table-cell;font-weight:bold\">Min</th><th style=\"text-align:center !important;display:table-cell;font-weight:bold\">Max</th><th style=\"text-align:center !important;display:table-cell;font-weight:bold\">All-in</th></tr></thead>";
+            body += "<tbody style=\"border:1px solid #000;display:table-row-group;vertical-align:middle;border-spacing:0\">";
+            foreach(var pm in res.Value as IEnumerable<CustomerMarginsGridViewModel>)
+            {
+                //int nmb = await updateCustomerMargin(pm, resProm);
+                double? bd = pm.Min == 0 ? pm.Min + 249 : pm.Max;
+                body += "<tr class=\"mat-row mat-row-not-hover text-left\"><td cstyle=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + pm.Min + "</td><td style=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + bd.ToString();
+                body += "</td><td style=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">$" + pm.Amount + "</td></tr>";
+            }
+            body += "</tbody></table></div></div><div style=\"max-width: 20%;\">" + _DistributePricingRequest.PricingTemplate.Email + "</div></div>";
+
+            return body;
+        }
+
+    //    private Task<int> updateCustomerMargin(CustomerMarginsGridViewModel pm, OkObjectResult prom)
+    //    {
+    //    var jetACost = 
+    //    var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
+    //    int allin = 0;
+    //    if (this.data.marginType == 0)
+    //    {
+    //        if (pm.Min!=null && pm.itp)
+    //        {
+    //                allin = jetACost + pm;
+    //        }
+
+    //    }
+    //    else if (pm.marginType == 1)
+    //    {
+    //            if (pm.Amount != null && pm.Min != null)
+    //        {
+    //            allin = jetARetail - pm.amount;
+    //            if (margin.allin)
+    //            {
+    //                margin.itp = margin.allin - jetACost;
+    //            }
+    //        }
+    //    }
+    //    return allin;
+    //}
+
         private async Task<string> PerformBodyReplacements(Models.CustomerInfoByGroup customer, string body, List<Models.PricingTemplate> pricingTemplates)
         {
             body = body.Replace("%GREETING%", _DistributePricingRequest.EmailContentGreeting.EmailContentHtml);
@@ -390,7 +446,7 @@ namespace FBOLinx.Web.Services
             {
                 CustomerCompanyType = _DistributePricingRequest.CustomerCompanyType,
                 CustomerId = _DistributePricingRequest.Customer?.CustomerId,
-                DateSent = DateTime.Now,
+                DateSent = DateTime.Now.ToUniversalTime(),
                 Fboid = _DistributePricingRequest.FboId,
                 GroupId = _DistributePricingRequest.GroupId,
                 PricingTemplateId = _DistributePricingRequest.PricingTemplate?.Oid,
