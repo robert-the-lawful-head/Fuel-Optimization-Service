@@ -95,7 +95,8 @@
                         <td class="mat-cell text-center font-weight-bold font-italic text-right" *ngIf="data.marginType==0">
                             <div>
                                 <mat-form-field class="col-4">
-                                    <input matInput class="text-lg-right" [(ngModel)]="customerMargin.itp" [ngModelOptions]="{standalone: true}" (focus)="onFocus()" (focusout)="outFocus()" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 2}" />
+                                    <!--<input matInput class="text-lg-right" [(ngModel)]="customerMargin.itp" [ngModelOptions]="{standalone: true}" (focus)="onFocus()" (focusout)="outFocus()" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 2}" />-->
+                                    <input matInput class="text-lg-right" [(ngModel)]="customerMargin.amount" [ngModelOptions]="{standalone: true}" (focus)="onFocus()" (focusout)="outFocus()" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 2}" />
                                 </mat-form-field>
                             </div>
                         </td>

@@ -205,12 +205,13 @@ export class PricingTemplatesEditComponent {
     }
 
     public updateCustomerMargin(margin) {
+        
         var jetACost = this.currentPrice.filter(item => item.product == 'JetA Cost')[0].price;
         var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
 
         if (this.pricingTemplate.marginType == 0) {
-            if (margin.min && margin.itp) {
-                margin.allin = jetACost + margin.itp;
+            if (margin.min && margin.amount) {
+                margin.allin = jetACost + margin.amount;
             }
 
         }

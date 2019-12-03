@@ -147,8 +147,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
 
         if (this.data.marginType == 0) {
-            if (margin.min && margin.itp) {
-                margin.allin = jetACost + margin.itp;
+            if (margin.min && margin.amount) {
+                //margin.allin = jetACost + margin.itp;
+                margin.allin = jetACost + margin.amount;
             }
 
         }
@@ -261,6 +262,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
        // alert((this.rteObj.contentModule.getEditPanel()).innerHTML);
         //return;
         this.data.notes = (this.rteObj.contentModule.getEditPanel()).innerHTML;
+
         this.pricingTemplatesService.add(this.data).subscribe((savedTemplate: any) => {
             this.data.customerMargins.forEach((customerMargin: any) => {
                 customerMargin.templateId = savedTemplate.oid;

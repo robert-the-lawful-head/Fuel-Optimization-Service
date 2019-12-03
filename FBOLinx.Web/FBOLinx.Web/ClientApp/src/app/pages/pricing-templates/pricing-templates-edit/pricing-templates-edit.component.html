@@ -47,7 +47,8 @@
                         <tr class="mat-header-row">
                             <th class="text-center">Min. (gal)</th>
                             <th class="text-center" *ngIf="pricingTemplate.marginType==1">Discount</th>
-                            <th class="text-center" *ngIf="pricingTemplate.marginType!=2">Your ITP Margin</th>
+                            <th class="text-center" *ngIf="pricingTemplate.marginType==0">Your ITP Margin</th>
+                            <th class="text-center" *ngIf="pricingTemplate.marginType>0">Your ITP Margin</th>
                             <th class="text-center">All-in</th>
                             <th class="text-right">
                                 <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">Add New</button>
@@ -71,7 +72,8 @@
                             <td class="mat-cell text-center font-weight-bold font-italic text-right">
                                 <div *ngIf="pricingTemplate.marginType==1">${{customerMargin.itp | number:'1.4-4'}}</div>
                                 <mat-form-field class="col-6" *ngIf="pricingTemplate.marginType==0">
-                                    <input matInput [(ngModel)]="customerMargin.itp" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />
+                                    <!--<input matInput [(ngModel)]="customerMargin.itp" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />-->
+                                    <input matInput [(ngModel)]="customerMargin.amount" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />
                                 </mat-form-field>
                             </td>
                             <td class="mat-cell text-center font-weight-bold font-italic text-right col-3">
