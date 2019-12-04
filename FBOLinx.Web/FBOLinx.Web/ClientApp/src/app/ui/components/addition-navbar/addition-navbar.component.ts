@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, ElementRef, HostListener } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -33,6 +33,7 @@ export class AdditionNavbarComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('marginTableContainer') table: ElementRef;
     @ViewChild('nodeInput') fileInput: ElementRef;
+    @ViewChild("insideElement") insideElement;
     @Input() templatelst: any[];
     constructor(private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
@@ -49,7 +50,6 @@ export class AdditionNavbarComponent implements OnInit {
 
     this.open = !this.open;
   }
-
     ngOnInit() {
         this.distributionService.getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50).subscribe((data:
             any) => {
@@ -88,6 +88,8 @@ export class AdditionNavbarComponent implements OnInit {
         //this.marginTemplateDataSource.paginator = this.paginator;
         //this.pricingTemplatesData.length;
     }
+
+
     public OpenMarginInfo(event) {
         this.filtered = this.pricingTemplatesData.find(({ oid }) => oid === event);
 
@@ -111,6 +113,24 @@ export class AdditionNavbarComponent implements OnInit {
     public changeSentOption(item) {
         item.toSend = !item.toSend;
       //  item.val = item.toSend ? item.val === undefined ? 0 + 33.33 : item.val + 33.33 : item.val - 33.33;
+    }
+
+    @HostListener('document:click', ['$event'])
+    public onClick(targetElement) {
+       /* console.log(targetElement);
+        const clickedInside = this.insideElement.nativeElement.contains(targetElement);
+        console.log("test");
+        if (!clickedInside) {
+            console.log('outside clicked');
+        }*/
+        console.log(targetElement);
+        //console.log(targetElement.path.toString());
+        let term = 'addition-navbar';
+        console.log(targetElement.target.offsetParent.className.lastIndexOf("addition-navbar") > -1);
+       // targetElement.path.forEach(element => element[1].nodeName);
+        if (this.open && !(targetElement.target.offsetParent.className.lastIndexOf("addition-navbar") > -1 || targetElement.target.offsetParent.className.lastIndexOf("open-navbar") > -1)) {
+            this.open = !this.open;
+        }
     }
     public sendMails() {
         this.pricingTemplatesData.forEach(x => {

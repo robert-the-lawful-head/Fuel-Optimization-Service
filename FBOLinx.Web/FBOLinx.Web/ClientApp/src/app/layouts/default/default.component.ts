@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { SharedService } from '../shared-service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 
 //Services
 import {FbopricesService} from '../../services/fboprices.service';
@@ -25,7 +25,7 @@ export class DefaultLayoutComponent implements OnInit {
     rtl: boolean;
     @Input()
     openedSidebar: boolean;
-    public pricingTemplatesData : any[];
+    public pricingTemplatesData: any[];
 
     constructor(private _sharedService: SharedService,
         private fboPricesService: FbopricesService,

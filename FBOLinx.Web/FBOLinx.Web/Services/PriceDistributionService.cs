@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -66,8 +67,10 @@ namespace FBOLinx.Web.Services
 
             foreach (var customer in customers)
             {
-                
+                if (customer.CustomerId == 2815)
+                {
                     await GenerateDistributionMailMessage(customer);
+                }
                 
                 
             }
@@ -126,11 +129,11 @@ namespace FBOLinx.Web.Services
             try
             {
                 var validPricingTemplates = await GetValidPricingTemplates(customer);
-                if (validPricingTemplates == null || validPricingTemplates.Count == 0)
+                /*if (validPricingTemplates == null || validPricingTemplates.Count == 0)
                 {
                     MarkDistributionRecordAsComplete(distributionQueueRecord);
                     return;
-                }
+                }*/
 
                 MailMessage mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(_MailSettings.MailUserName);
@@ -146,7 +149,7 @@ namespace FBOLinx.Web.Services
                     MarkDistributionRecordAsComplete(distributionQueueRecord);
                     return;
                 }
-                if (fboRecipients != null && fboRecipients.Count > 0)
+               /* if (fboRecipients != null && fboRecipients.Count > 0)
                 {
                     foreach (var fboRecipient in fboRecipients)
                     {
@@ -155,7 +158,7 @@ namespace FBOLinx.Web.Services
                         if (_MailSettings.IsValidEmailRecipient(fboRecipient.Contact.Email))
                             mailMessage.CC.Add(new MailAddress(fboRecipient.Contact.Email));
                     }
-                }
+                }*/
 
                 string str = _DistributePricingRequest.PricingTemplate.MarginTypeProduct == "JetA Retail" ? "Retail -" : _DistributePricingRequest.PricingTemplate.MarginTypeProduct == "JetA Retail" ? "Cost +" : "Fleet Fee";
                 string body = await getCustomBody(_DistributePricingRequest.PricingTemplate.Oid,str, _DistributePricingRequest.FboId);//_DistributePricingRequest.PricingTemplate.Email;//await GetMailBody(customer, validPricingTemplates);
@@ -247,13 +250,17 @@ namespace FBOLinx.Web.Services
             body = await PerformBodyReplacements(customer, body, pricingTemplates);
             return body;
         }
+        public Expression<Func<dynamic, bool>> GetSelectXpr(string filter, string value)
+        {
+            return null;
+        }
 
         private async Task<string> getCustomBody(int num,string id,int fboId)
         {
             var pom = await new Controllers.CustomerMarginsController(_context).GetCustomerMarginsByPricingTemplateId(num);
             var res = pom as OkObjectResult;
-            /*var prom = await new Controllers.FbopricesController(_context).GetFbopricesByFboIdCurrent(fboId);
-            var resProm = prom as OkObjectResult;*/
+            var prom = await new Controllers.FbopricesController(_context).GetFbopricesByFboIdCurrent(fboId);
+            var resProm = prom as OkObjectResult;
             string body = "";
             //string title = id == 1 ? "Retail-" : id == 0 ? "Cost+" : "Flat Fee";
             body = "<div style=\"500 13px/25px Roboto, \"Helvetica Neue\", sans-serif;display:flex;flex-wrap:wrap;box-sizing:border-box;\"><div style=\"max-width: 20%;\"><div style=\"font-weight: bold;text-align:center !important;margin-top:1.5rem !important;min-width: 65%;max-width:75%\">" + id + "</div><div style=\"font-size:11px;min-width: 65%;max-width:75%\"><div style=\"max-width:66.66666667%;flex:0 0 66.66666667%;float:left !important\">Volume(gal.)</div><div style=\"max-width:33.33333333%;flex:0 0 33.33333333%;float:right !important\">Price</div></div><div>";
@@ -261,6 +268,10 @@ namespace FBOLinx.Web.Services
             body += "<tbody style=\"border:1px solid #000;display:table-row-group;vertical-align:middle;border-spacing:0\">";
             foreach(var pm in res.Value as IEnumerable<CustomerMarginsGridViewModel>)
             {
+                var slexp = GetSelectXpr("test", "test");
+                IEnumerable<dynamic> tst = resProm.Value as IEnumerable<dynamic>;
+               // var pm11 = tst.Where(slexp).Select(x => x).FirstOrDefault();
+                var pom1 = tst.GetType().GetProperties().Where(x => x.Name == "Product").Select(s => s).FirstOrDefault();
                 //int nmb = await updateCustomerMargin(pm, resProm);
                 double? bd = pm.Min == 0 ? pm.Min + 249 : pm.Max;
                 body += "<tr class=\"mat-row mat-row-not-hover text-left\"><td cstyle=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + pm.Min + "</td><td style=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + bd.ToString();
@@ -271,32 +282,32 @@ namespace FBOLinx.Web.Services
             return body;
         }
 
-    //    private Task<int> updateCustomerMargin(CustomerMarginsGridViewModel pm, OkObjectResult prom)
-    //    {
-    //    var jetACost = 
-    //    var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
-    //    int allin = 0;
-    //    if (this.data.marginType == 0)
-    //    {
-    //        if (pm.Min!=null && pm.itp)
-    //        {
-    //                allin = jetACost + pm;
-    //        }
+        //    private Task<int> updateCustomerMargin(CustomerMarginsGridViewModel pm, OkObjectResult prom)
+        //    {
+        //    var jetACost = 
+        //    var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
+        //    int allin = 0;
+        //    if (this.data.marginType == 0)
+        //    {
+        //        if (pm.Min!=null && pm.itp)
+        //        {
+        //                allin = jetACost + pm;
+        //        }
 
-    //    }
-    //    else if (pm.marginType == 1)
-    //    {
-    //            if (pm.Amount != null && pm.Min != null)
-    //        {
-    //            allin = jetARetail - pm.amount;
-    //            if (margin.allin)
-    //            {
-    //                margin.itp = margin.allin - jetACost;
-    //            }
-    //        }
-    //    }
-    //    return allin;
-    //}
+        //    }
+        //    else if (pm.marginType == 1)
+        //    {
+        //            if (pm.Amount != null && pm.Min != null)
+        //        {
+        //            allin = jetARetail - pm.amount;
+        //            if (margin.allin)
+        //            {
+        //                margin.itp = margin.allin - jetACost;
+        //            }
+        //        }
+        //    }
+        //    return allin;
+        //}
 
         private async Task<string> PerformBodyReplacements(Models.CustomerInfoByGroup customer, string body, List<Models.PricingTemplate> pricingTemplates)
         {

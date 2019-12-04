@@ -3,7 +3,7 @@
 
   <vertical-navbar></vertical-navbar>
   <div *ngIf="pricingTemplatesData">
-      <addition-navbar [templatelst]="pricingTemplatesData"></addition-navbar>
+      <addition-navbar #insideElement [templatelst]="pricingTemplatesData"></addition-navbar>
   </div>
   <main class="main-content">
     <div class="main-content-wrap">
