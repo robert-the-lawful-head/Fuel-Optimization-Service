@@ -67,11 +67,7 @@ namespace FBOLinx.Web.Services
 
             foreach (var customer in customers)
             {
-                if (customer.CustomerId == 2815)
-                {
                     await GenerateDistributionMailMessage(customer);
-                }
-                
                 
             }
         }
