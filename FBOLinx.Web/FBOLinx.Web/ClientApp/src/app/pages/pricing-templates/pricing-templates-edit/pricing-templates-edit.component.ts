@@ -92,7 +92,7 @@ export class PricingTemplatesEditComponent {
     }
 
     public disableToolbarNote() {
-        this.rteObj.toolbarSettings.enable = false;
+        //this.rteObj.toolbarSettings.enable = false;
 
     }
 
@@ -101,8 +101,7 @@ export class PricingTemplatesEditComponent {
     }
 
     public disableToolbarEmail() {
-        this.rteEmail.toolbarSettings.enable = false;
-
+        //this.rteEmail.toolbarSettings.enable = false;
     }
 
     public enableToolbarEmail() {
