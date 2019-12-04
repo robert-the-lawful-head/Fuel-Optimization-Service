@@ -67,7 +67,6 @@ export class HorizontalNavbarComponent implements OnInit {
     }
 
     toggle(event) {
-        alert('ok');
         if (this.isOpened)
             this.close(event);
         else
