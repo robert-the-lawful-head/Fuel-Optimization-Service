@@ -286,16 +286,17 @@ namespace FBOLinx.Web.Controllers
             }
 
             var customersWithoutMargins = await (from cg in _context.CustomerInfoByGroup
-                join c in _context.Customers on cg.CustomerId equals c.Oid
-                join cct in _context.CustomCustomerTypes on new {customerId = cg.CustomerId, fboId = fboId} equals
-                    new
-                    {
-                        customerId = cct.CustomerId,
-                        fboId = cct.Fboid
-                    } into leftJoinCCT
-                from cct in leftJoinCCT.DefaultIfEmpty()
-                where cct == null
-                select cg).ToListAsync();
+                                                 join c in _context.Customers on cg.CustomerId equals c.Oid
+                                                 join cct in _context.CustomCustomerTypes on new { customerId = cg.CustomerId, fboId = fboId } equals
+                                                     new
+                                                     {
+                                                         customerId = cct.CustomerId,
+                                                         fboId = cct.Fboid
+                                                     } into leftJoinCCT
+                                                 from cct in leftJoinCCT.DefaultIfEmpty()
+                                                 where cg.GroupId == groupId && cct == null
+                                                 //where cct == null
+                                                 select cg).ToListAsync();
 
             if (count == 0)
                 return Ok(customersWithoutMargins);
