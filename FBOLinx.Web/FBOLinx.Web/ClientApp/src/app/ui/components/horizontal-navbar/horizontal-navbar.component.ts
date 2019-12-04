@@ -67,6 +67,7 @@ export class HorizontalNavbarComponent implements OnInit {
     }
 
     toggle(event) {
+        alert('ok');
         if (this.isOpened)
             this.close(event);
         else
@@ -87,6 +88,12 @@ export class HorizontalNavbarComponent implements OnInit {
         //Add class 'show-overlay'
         this.isOpened = true;
         //this.showOverlay = true;
+    }
+
+    openUpdate() {
+        this.loadCustomersWithoutMargins(5);
+        this.needsAttentionMenu.isOpened = !this.needsAttentionMenu.isOpened;
+        
     }
 
     close(event) {
@@ -172,7 +179,8 @@ export class HorizontalNavbarComponent implements OnInit {
         this.viewAllNotifications = false;
     }
 
-    private loadCustomersWithoutMargins(count) {
+    //private loadCustomersWithoutMargins(count) {
+    public loadCustomersWithoutMargins(count) {
         if (!count)
             count = 0;
         this.customerInfoByGroupService

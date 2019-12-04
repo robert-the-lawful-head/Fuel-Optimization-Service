@@ -11,45 +11,46 @@
   <h1 class="page-title">{{ title }}</h1>
 
   <div class="nav-items">
-    <div class="nav-item" [ngClass]="{ 'opened' : needsAttentionMenu.isOpened }">
-      <a (click)="needsAttentionMenu.isOpened = !needsAttentionMenu.isOpened" class="nav-link">
-        <span class="icon sli-bell"></span>
-        <span class="marker"></span>
-      </a>
+      <div class="nav-item" [ngClass]="{ 'opened' : needsAttentionMenu.isOpened }">
+          <!--<a (click)="needsAttentionMenu.isOpened = !needsAttentionMenu.isOpened" class="nav-link">-->
+          <a (click)="openUpdate()" class="nav-link">
+              <span class="icon sli-bell"></span>
+              <span class="marker"></span>
+          </a>
 
-      <div class="dropdown-menu">
-        <h4 class="menu-title" *ngIf="(hasLoadedJetACost && (!currrentJetACostPricing)) || (hasLoadedJetARetail && (!currrentJetARetailPricing)) || (customersWithoutMargins && customersWithoutMargins.length > 0)">Notifications</h4>
+          <div class="dropdown-menu">
+              <h4 class="menu-title" *ngIf="(hasLoadedJetACost && (!currrentJetACostPricing)) || (hasLoadedJetARetail && (!currrentJetARetailPricing)) || (customersWithoutMargins && customersWithoutMargins.length > 0)">Notifications</h4>
 
-          <ul>
-              <!--JetA Cost Notification-->
-              <li *ngIf="hasLoadedJetACost && (!currrentJetACostPricing)">
-                  <a>
-                      <span class="icon sli-feed"></span>
-                      <div class="content">
-                          <span class="desc">Your cost pricing has expired!</span>
-                          <span class="date"></span>
-                          <div class="text-right">
-                              <button ni-button [view]="'accent'" size="small" (click)="updatePricingClicked($event)" class="mr-1">Update Pricing</button>
+              <ul>
+                  <!--JetA Cost Notification-->
+                  <li *ngIf="hasLoadedJetACost && (!currrentJetACostPricing)">
+                      <a>
+                          <span class="icon sli-feed"></span>
+                          <div class="content">
+                              <span class="desc">Your cost pricing has expired!</span>
+                              <span class="date"></span>
+                              <div class="text-right">
+                                  <button ni-button [view]="'accent'" size="small" (click)="updatePricingClicked($event)" class="mr-1">Update Pricing</button>
+                              </div>
                           </div>
-                      </div>
-                  </a>
-              </li>
+                      </a>
+                  </li>
 
-              <!--JetA Retail Notification-->
-              <li *ngIf="hasLoadedJetARetail && (!currrentJetARetailPricing)">
-                  <a>
-                      <span class="icon sli-feed"></span>
-                      <div class="content">
-                          <span class="desc">Your retail pricing has expired!</span>
-                          <span class="date"></span>
-                          <div class="text-right">
-                              <button ni-button [view]="'accent'" size="small" (click)="updatePricingClicked($event)" class="mr-1">Update Pricing</button>
+                  <!--JetA Retail Notification-->
+                  <li *ngIf="hasLoadedJetARetail && (!currrentJetARetailPricing)">
+                      <a>
+                          <span class="icon sli-feed"></span>
+                          <div class="content">
+                              <span class="desc">Your retail pricing has expired!</span>
+                              <span class="date"></span>
+                              <div class="text-right">
+                                  <button ni-button [view]="'accent'" size="small" (click)="updatePricingClicked($event)" class="mr-1">Update Pricing</button>
+                              </div>
                           </div>
-                      </div>
-                  </a>
-              </li>
+                      </a>
+                  </li>
 
-              <!--Customers without margins-->
+                  <!--Customers without margins-->
                   <li *ngFor="let customer of customersWithoutMargins">
                       <a>
                           <span class="icon sli-exclamation"></span>
@@ -62,14 +63,14 @@
                           </div>
                       </a>
                   </li>
-              
-          </ul>
 
-          <div class="menu-footer">
-              <a (click)="viewAllNotificationsClicked()">View all notifications</a>
+              </ul>
+
+              <div class="menu-footer">
+                  <a (click)="viewAllNotificationsClicked()">View all notifications</a>
+              </div>
           </div>
       </div>
-    </div>
 
     <div class="nav-item" [ngClass]="{ 'opened' : false }" style="display: none;">
       <a (click)="toggle($event)" class="nav-link">
