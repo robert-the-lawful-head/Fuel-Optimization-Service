@@ -119,18 +119,19 @@ namespace FBOLinx.Web.Services
 
         private async Task GenerateDistributionMailMessage(Models.CustomerInfoByGroup customer)
         {
-            var distributionQueueRecord = _context.DistributionQueue.Where((x =>
-                x.CustomerId == customer.CustomerId && x.Fboid == _DistributePricingRequest.FboId &&
-                x.GroupId == _DistributePricingRequest.GroupId && x.DistributionLogId==_DistributionLogID)).FirstOrDefault();
             try
             {
                 var validPricingTemplates = await GetValidPricingTemplates(customer);
-                /*if (validPricingTemplates == null || validPricingTemplates.Count == 0)
+                if (validPricingTemplates == null || validPricingTemplates.Count == 0)
                 {
-                    MarkDistributionRecordAsComplete(distributionQueueRecord);
                     return;
-                }*/
+                }
 
+                storeSingleCustomer(customer);
+
+                var distributionQueueRecord = _context.DistributionQueue.Where((x =>
+                    x.CustomerId == customer.CustomerId && x.Fboid == _DistributePricingRequest.FboId &&
+                    x.GroupId == _DistributePricingRequest.GroupId && x.DistributionLogId == _DistributionLogID)).FirstOrDefault();
                 MailMessage mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(_MailSettings.MailUserName);
                 var recipients = GetRecipientsForCustomer(customer);
@@ -221,6 +222,19 @@ namespace FBOLinx.Web.Services
             distributionQueueRecord.DateSent = DateTime.Now.ToUniversalTime();
             distributionQueueRecord.IsCompleted = true;
             _context.DistributionQueue.Update(distributionQueueRecord);
+            _context.SaveChanges();
+        }
+
+        private void storeSingleCustomer(CustomerInfoByGroup customer)
+        {
+            DistributionQueue queue = new DistributionQueue()
+            {
+                CustomerId = customer.CustomerId,
+                DistributionLogId = _DistributionLogID,
+                Fboid = _DistributePricingRequest.FboId,
+                GroupId = _DistributePricingRequest.GroupId
+            };
+            _context.DistributionQueue.Add(queue);
             _context.SaveChanges();
         }
 
@@ -414,7 +428,7 @@ namespace FBOLinx.Web.Services
         {
             SaveEmailContent();
             LogDistributionRecord();
-            StoreCustomerDistributionQueue(customers);
+           // StoreCustomerDistributionQueue(customers);
         }
 
         private void SaveEmailContent()
