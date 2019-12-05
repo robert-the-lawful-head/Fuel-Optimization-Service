@@ -119,6 +119,7 @@ namespace FBOLinx.Web.Services
 
         private async Task GenerateDistributionMailMessage(Models.CustomerInfoByGroup customer)
         {
+            DistributionQueue distributionQueueRecord = new DistributionQueue();
             try
             {
                 var validPricingTemplates = await GetValidPricingTemplates(customer);
@@ -129,7 +130,7 @@ namespace FBOLinx.Web.Services
 
                 storeSingleCustomer(customer);
 
-                var distributionQueueRecord = _context.DistributionQueue.Where((x =>
+                distributionQueueRecord = _context.DistributionQueue.Where((x =>
                     x.CustomerId == customer.CustomerId && x.Fboid == _DistributePricingRequest.FboId &&
                     x.GroupId == _DistributePricingRequest.GroupId && x.DistributionLogId == _DistributionLogID)).FirstOrDefault();
                 MailMessage mailMessage = new MailMessage();
