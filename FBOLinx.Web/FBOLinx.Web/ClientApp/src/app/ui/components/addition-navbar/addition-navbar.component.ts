@@ -126,9 +126,10 @@ export class AdditionNavbarComponent implements OnInit {
         console.log(targetElement);
         //console.log(targetElement.path.toString());
         let term = 'addition-navbar';
-        console.log(targetElement.target.offsetParent.className.lastIndexOf("addition-navbar") > -1);
-       // targetElement.path.forEach(element => element[1].nodeName);
-        if (this.open && !(targetElement.target.offsetParent.className.lastIndexOf("addition-navbar") > -1 || targetElement.target.offsetParent.className.lastIndexOf("open-navbar") > -1)) {
+        // targetElement.path.forEach(element => element[1].nodeName);
+        if (this.open && targetElement.target.nodeName != "svg" && !(targetElement.target.className == "ng-star-inserted" || targetElement.target.offsetParent.className.lastIndexOf("addition-navbar") > -1 || targetElement.target.textContent == "$Cost" || targetElement.target.offsetParent.className.lastIndexOf("addition-navbar") > -1 || targetElement.target.offsetParent.className.lastIndexOf("open-navbar") > -1 || targetElement.target.offsetParent.className.lastIndexOf("mat-slide-toggle-thumb-container") > -1 || targetElement.target.offsetParent.tagName == 'MAT-PROGRESS-BAR' || targetElement.target.nodeName == 'MAT-PROGRESS-BAR' || targetElement.target.offsetParent.className.lastIndexOf("btn-text") > -1 || targetElement.target.offsetParent.className.lastIndexOf("ng-star-inserted") > -1 || targetElement.target.offsetParent.className.lastIndexOf("mat-progress-bar-element") > -1 || targetElement.target.offsetParent.innerText == 'Distribute Pricing' || targetElement.target.offsetParent.offsetParent.className == "addition-navbar")) {
+
+            console.log(true);
             this.open = !this.open;
         }
     }
