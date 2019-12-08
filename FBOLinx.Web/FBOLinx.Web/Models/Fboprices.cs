@@ -38,5 +38,7 @@ namespace FBOLinx.Web.Models
         public double? SalesTax { get; set; }
         [StringLength(50)]
         public string Currency { get; set; }
+        [NotMapped]
+        public int? Id { get; set; }
     }
 }

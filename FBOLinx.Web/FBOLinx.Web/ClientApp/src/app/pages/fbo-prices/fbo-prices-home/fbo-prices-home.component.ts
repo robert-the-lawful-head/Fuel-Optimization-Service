@@ -54,6 +54,7 @@ export class FboPricesHomeComponent implements OnInit {
 	public pricing100LLRetail: any;
 	public pricing100LLCost: any;
     public currentPrices: any[];
+    public currentPircesAll: any[];
     public pom: any[];
 	public dateFrom: any;
 	public dateTo : any;
@@ -76,7 +77,8 @@ export class FboPricesHomeComponent implements OnInit {
 	public isLoadingFboFees: boolean;
 	public requiresUpdate: boolean = true;
 	public isSaved: boolean;
-	public show: boolean;
+    public show: boolean;
+    public greska: boolean = false;
 	public minimumAllowedDate: Date = new Date();
 	//public maximumCurrentEffectiveTo: Date = new Date();
 	public minimumStagedEffectiveFrom: Date = new Date();
@@ -90,6 +92,7 @@ export class FboPricesHomeComponent implements OnInit {
     public newCost: any;
     public jtCost: any;
     public jtRetail: any;
+    public priceGroup: number;
 
 	//Additional Public Members for direct reference (date filtering/restrictions)
 	public currentFboPriceJetARetail: any;
@@ -206,9 +209,14 @@ export class FboPricesHomeComponent implements OnInit {
 		}
 	   // this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
 		//this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
-		if (event != 'hide') {
-			this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
-			this.minimumAllowedDate = this.currentPricingEffectiveFrom;
+        if (event != 'hide') {
+            this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+            this.minimumAllowedDate = this.currentPricingEffectiveFrom;
+            for (let price of this.currentPrices) {
+                price.effectiveFrom = moment(moment.utc(this.currentPricingEffectiveFrom).toDate()).format('MM/DD/YYYY');
+                price.effectiveTo = moment(moment.utc(this.currentPricingEffectiveTo).toDate()).format('MM/DD/YYYY');
+                //price.requiresUpdate = true;
+            }
 		}
 	}
 
@@ -225,26 +233,27 @@ export class FboPricesHomeComponent implements OnInit {
 
 	public saveChangesClicked() {
         //for (let price of this.currentPrices) {
+        let arr = [];
         console.log(this.currentFboPriceJetACost.price);
         if (this.requiresUpdate == false) {
             //et pom = Object.assign({}, this.currentPrices);
             for (let price of this.currentPrices) {
-                let dateCost = this.currentFboPriceJetACost.effectiveTo;
-                let priceCost = this.currentFboPriceJetACost.price;
-                let dateRetasil = this.currentFboPriceJetARetail.effectiveTo;
-                let priceRetail = this.currentFboPriceJetARetail.price;
                 price.oid = 0;
                 price.effectiveFrom = this.currentPricingEffectiveFrom;
                 price.effectiveTo = this.currentPricingEffectiveTo;
-                price.price = price.product == 'JetA Retail' ? this.newRetail : price.product == 'JetA Cost' ? this.newCost : null;
-                //alert(JSON.stringify(price));
-                this.savePriceChanges(price);
-                this.currentFboPriceJetACost.effectiveTo = dateCost;
-                this.currentFboPriceJetACost.price = priceCost;
-                this.currentFboPriceJetARetail.effectiveTo = dateRetasil;
-                this.currentFboPriceJetARetail.price = priceRetail;
+                price.price = price.product == 'JetA Retail' ? this.newRetail === undefined ? this.currentFboPriceJetARetail.price : this.newRetail : price.product == 'JetA Cost' ? this.newCost === undefined ? this.currentFboPriceJetACost.price : this.newCost : null;
+                arr.push(price);
                 console.log(this.currentFboPriceJetACost.price);
             }
+            this.savePriceChangesAll(arr);
+            let dateCost = this.currentFboPriceJetACost.effectiveTo;
+            let priceCost = this.currentFboPriceJetACost.price;
+            let dateRetasil = this.currentFboPriceJetARetail.effectiveTo;
+            let priceRetail = this.currentFboPriceJetARetail.price;
+            this.currentFboPriceJetACost.effectiveTo = dateCost;
+            this.currentFboPriceJetACost.price = priceCost;
+            this.currentFboPriceJetARetail.effectiveTo = dateRetasil;
+            this.currentFboPriceJetARetail.price = priceRetail;
         }
         else {
             for (let price of this.currentPrices) {
@@ -253,6 +262,14 @@ export class FboPricesHomeComponent implements OnInit {
                 price.price = price.product == 'JetA Retail' ? this.currentFboPriceJetARetail.price : price.product == 'JetA Cost' ? this.currentFboPriceJetACost.price : null;
                 this.savePriceChanges(price);
             }
+            this.show = true;
+            this.isSaved = true;
+            this.delay(5000).then(any => {
+                this.isSaved = false;
+                this.requiresUpdate = true;
+                this.show = false;
+            });
+            this.loadCurrentFboPrices();
         }
         this.currentFboPriceJetARetail.price = this.jtRetail;
         this.currentFboPriceJetACost.price = this.jtCost;
@@ -264,16 +281,8 @@ export class FboPricesHomeComponent implements OnInit {
 			});
         }
         console.log(this.currentFboPriceJetACost.price);
-        this.show = true;
-		this.isSaved = true;
-		this.delay(5000).then(any => {
-            this.isSaved = false;
-            this.show = false;
-            this.requiresUpdate = true;
-        });
-
-        this.loadCurrentFboPrices();
-        console.log(this.currentFboPriceJetACost.price);
+       
+        this.priceGroup = null;
 
 	}
 
@@ -488,12 +497,33 @@ export class FboPricesHomeComponent implements OnInit {
         //if (!price.oid || price.oid == null)
         if (this.requiresUpdate) {
             this.fboPricesService.update(price).subscribe((data: any) => { });
-        } else {
-            this.fboPricesService.add(price).subscribe((data: any) => { });
-        }
+        } 
 		//else
 		//	this.fboPricesService.update(price).subscribe((data: any) => {});
-	}
+    }
+    private savePriceChangesAll(price) {
+        this.fboPricesService.checkifExistFrboPrice(this.sharedService.currentUser.fboId, price).subscribe((data: any) => {
+            //alert(JSON.stringify(data));
+            if (data != null) {
+                this.show = true;
+                this.greska = true;
+                this.delay(5000).then(any => {
+                    this.show = false;
+                    this.greska = false;
+                });
+            }
+            else {
+                this.show = true;
+                this.isSaved = true;
+                this.delay(5000).then(any => {
+                    this.isSaved = false;
+                    this.requiresUpdate = true;
+                    this.show = false;
+                });
+            }
+            this.loadCurrentFboPrices();
+        })
+    }
 
 	private saveFboPreferences() {
 		if (!this.fboPreferences.oid || this.fboPreferences.oid == 0) {
@@ -517,18 +547,20 @@ export class FboPricesHomeComponent implements OnInit {
 		let result = [];
 		this.stagedPrices.forEach(function (value) {
 			if (((value.product == 'JetA Retail' || value.product == 'JetA Cost') && product == 'JetA') || ((value.product == '100LL Retail' || value.product == '100LL Cost') && product == '100LL')) {
-				var item = result.find(x => moment(moment.utc(x.effectiveFrom).toDate()).format('MM/DD/YYYY') == moment(moment.utc(value.effectiveFrom).toDate()).format('MM/DD/YYYY') && moment(moment.utc(x.effectiveTo).toDate()).format('MM/DD/YYYY') == moment(moment.utc(value.effectiveTo).toDate()).format('MM/DD/YYYY'));
-				//alert(JSON.stringify(value) + ' product-' + product);
+                //var item = result.find(x => moment(moment.utc(x.effectiveFrom).toDate()).format('MM/DD/YYYY') == moment(moment.utc(value.effectiveFrom).toDate()).format('MM/DD/YYYY') && moment(moment.utc(x.effectiveTo).toDate()).format('MM/DD/YYYY') == moment(moment.utc(value.effectiveTo).toDate()).format('MM/DD/YYYY'));
+                var item = result.find(x => x.groupId == value.groupId);
+                //alert(JSON.stringify(value) + ' product-' + product);
 				//result.find(x => x.oid == value.oid);
 				if (item == undefined) {
-					var pm = { RetailPrice: 0, CostPrice: 0, oid: 0, fboid: 0, product: '',description:'', effectiveFrom: null, effectiveTo: null, timestamp: null, salesTaxCost: 0, currencyCost: 0, salesTaxRetail: 0, currencyRetail: 0 };
+                    var pm = { RetailPrice: 0, CostPrice: 0, oid: 0, fboid: 0, product: '', description: '', effectiveFrom: null, effectiveTo: null, timestamp: null, salesTaxCost: 0, currencyCost: 0, salesTaxRetail: 0, currencyRetail: 0, groupId:null };
 					pm.oid = value.oid;
 					pm.fboid = value.fboid;
 					pm.effectiveFrom = moment(moment.utc(value.effectiveFrom).toDate()).format('MM/DD/YYYY');
 					pm.effectiveTo = moment(moment.utc(value.effectiveTo).toDate()).format('MM/DD/YYYY');
                     pm.timestamp = value.timestamp;
                     pm.product = value.product;
-					pm.description = product;
+                    pm.description = product;
+                    pm.groupId = value.groupId;
 				}
 				if ((value.product == 'JetA Retail' && product == 'JetA') || (value.product == '100LL Retail' && product == '100LL')) {
 					if (item == undefined) {

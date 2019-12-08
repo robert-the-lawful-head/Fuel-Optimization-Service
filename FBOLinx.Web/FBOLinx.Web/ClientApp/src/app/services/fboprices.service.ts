@@ -27,6 +27,10 @@ export class FbopricesService {
         return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/product/' + encodeURIComponent(product) + '/current', { headers: this.headers });
     }
 
+    public checkifExistFrboPrice(fboId, payload) {
+        return this.http.post(this.accessPointUrl + '/fbo/' + fboId + '/check/', payload, { headers: this.headers });
+    }
+
     public getPricesByMonthForFbo(fboId, payload) {
         return this.http.post(this.accessPointUrl + '/analysis/prices-by-month/fbo/' + fboId,
             payload,

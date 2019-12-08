@@ -41,12 +41,12 @@ namespace FBOLinx.Web.Controllers
             }
 
             var fboprices = await _context.Fboprices.FindAsync(id);
-
             if (fboprices == null)
             {
                 return NotFound();
             }
 
+            fboprices.Id = _context.MappingPrices.Where(x => x.FboPriceId == fboprices.Oid).Select(x => x.GroupId).FirstOrDefault();
             return Ok(fboprices);
         }
 
@@ -122,6 +122,7 @@ namespace FBOLinx.Web.Controllers
                                      }
                               into leftJoinFBOPrices
                           from f in leftJoinFBOPrices.DefaultIfEmpty()
+                          join m in _context.MappingPrices on f.Oid equals m.FboPriceId
                           select new
                           {
                               Oid = f?.Oid ?? 0,
@@ -132,7 +133,8 @@ namespace FBOLinx.Web.Controllers
                               EffectiveTo = f?.EffectiveTo,
                               TimeStamp = f?.Timestamp,
                               SalesTax = f?.SalesTax,
-                              Currency = f?.Currency
+                              Currency = f?.Currency,
+                              groupId = m?.GroupId
                           }).OrderBy(x=>x.EffectiveFrom);
 
             return Ok(result);
@@ -151,6 +153,40 @@ namespace FBOLinx.Web.Controllers
                                                                 f.Product != null &&
                                                                 f.Product.ToLower() == product.ToLower() &&
                                                                 f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1))).FirstOrDefaultAsync();
+
+            return Ok(fboprices);
+        }
+
+        // POST: api/Fboprices/fbo/5/check/from/12.10.2019/to/18.10.2019
+        [HttpPost("fbo/{fboId}/check")]
+        public async Task<IActionResult> checkifExistFrboPrice([FromRoute] int fboId, [FromBody] IEnumerable<Fboprices> vfboprices)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var pm = vfboprices.FirstOrDefault();
+            var fboprices = await GetAllFboPrices().Where(f => f.Fboid == fboId && f.Price != null && ((pm.EffectiveFrom >= f.EffectiveFrom && pm.EffectiveFrom < f.EffectiveTo) || (pm.EffectiveTo > f.EffectiveFrom && pm.EffectiveTo < f.EffectiveTo))).FirstOrDefaultAsync();
+            int num = 0;
+            if (fboprices == null)
+            {
+                foreach(var pom in vfboprices)
+                {
+                    MappingPrices map = new MappingPrices();
+                    pom.Timestamp = DateTime.Now;
+                    _context.Fboprices.Add(pom);
+                    await _context.SaveChangesAsync();
+                    if (num == 0)
+                    {
+                        num = _context.MappingPrices.Select(x => x.GroupId).DefaultIfEmpty(0).Max() + 1;
+                    }
+                    map.GroupId = num;
+                    map.FboPriceId = pom.Oid;
+                    _context.MappingPrices.Add(map);
+                    await _context.SaveChangesAsync();
+                }
+            }
+              
 
             return Ok(fboprices);
         }
@@ -226,6 +262,8 @@ namespace FBOLinx.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> PostFboprices([FromBody] Fboprices fboprices)
         {
+            int num = 0;
+            MappingPrices map = new MappingPrices();
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -233,6 +271,14 @@ namespace FBOLinx.Web.Controllers
 
             fboprices.Timestamp = DateTime.Now;
             _context.Fboprices.Add(fboprices);
+            await _context.SaveChangesAsync();
+            if (fboprices.Id == null)
+            {
+                num = _context.MappingPrices.Select(x => x.GroupId).DefaultIfEmpty(0).Max() + 1;
+            }
+            map.GroupId = fboprices.Id ?? num;
+            map.FboPriceId = fboprices.Oid;
+            _context.MappingPrices.Add(map);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetFboprices", new { id = fboprices.Oid }, fboprices);

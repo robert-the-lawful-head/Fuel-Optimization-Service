@@ -336,3 +336,12 @@ GO
 
 alter table PricingTemplate add Subject varchar(max) null
 GO
+
+  create table  [dbo].[MappingPrices](
+oid int not null IDENTITY (1, 1),
+groupId int not null,
+fboPriceId int not null,
+PRIMARY KEY (oid),
+    FOREIGN KEY (fboPriceId) REFERENCES fboprices(OID)
+)
+GO

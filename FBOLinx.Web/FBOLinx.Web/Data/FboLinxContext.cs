@@ -50,6 +50,7 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<DistributionQueue> DistributionQueue { get; set; }
         public virtual DbSet<DistributionErrors> DistributionErrors { get; set; }
         public virtual DbSet<TempAddOnMargin> TempAddOnMargin { get; set; }
+        public virtual DbSet<MappingPrices> MappingPrices { get; set; }
 
         // Unable to generate entity type for table 'dbo.AdminEmails'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.FBOContacts'. Please see the warning messages.
