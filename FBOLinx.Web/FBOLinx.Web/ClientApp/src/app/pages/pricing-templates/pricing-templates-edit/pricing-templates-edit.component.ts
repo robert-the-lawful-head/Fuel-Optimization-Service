@@ -209,13 +209,13 @@ export class PricingTemplatesEditComponent {
         var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
 
         if (this.pricingTemplate.marginType == 0) {
-            if (margin.min && margin.amount) {
+            if (margin.min !=null && margin.amount !=null) {
                 margin.allin = jetACost + margin.amount;
             }
 
         }
         else if (this.pricingTemplate.marginType == 1) {
-            if (margin.amount && margin.min) {
+            if (margin.amount !=null && margin.min !=null) {
                 margin.allin = jetARetail - margin.amount;
                 if (margin.allin) {
                     margin.itp = margin.allin - jetACost;
