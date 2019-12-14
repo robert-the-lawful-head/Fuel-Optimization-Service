@@ -34,4 +34,8 @@ export class AcukwikairportsService {
     public search(value) {
         return this.http.get(this.accessPointUrl + '/search/' + value, { headers: this.headers });
     }
+
+    public getAcukwikFboHandlerDetailByIcao(icao) {
+        return this.http.get(this.accessPointUrl + '/' + icao + '/fbo-handler-detail', { headers: this.headers });
+    }
 }

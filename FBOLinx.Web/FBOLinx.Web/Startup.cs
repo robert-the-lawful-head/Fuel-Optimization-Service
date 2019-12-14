@@ -1,4 +1,5 @@
 using System.Text;
+using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Services;
@@ -83,6 +84,9 @@ namespace FBOLinx.Web
             services.AddScoped<Auth.UserRoleAttribute>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            //Auth services
+            services.AddScoped<IAPIKeyManager, APIKeyManager>();
 
             //Add file provider
             IFileProvider physicalProvider = new PhysicalFileProvider(System.IO.Directory.GetCurrentDirectory());

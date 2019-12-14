@@ -51,6 +51,7 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<DistributionErrors> DistributionErrors { get; set; }
         public virtual DbSet<TempAddOnMargin> TempAddOnMargin { get; set; }
         public virtual DbSet<MappingPrices> MappingPrices { get; set; }
+        public virtual DbSet<IntegrationPartners> IntegrationPartners { get; set; }
 
         // Unable to generate entity type for table 'dbo.AdminEmails'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.FBOContacts'. Please see the warning messages.
@@ -407,6 +408,11 @@ namespace FBOLinx.Web.Data
             modelBuilder.Entity<DistributionErrors>(entity =>
             {
                 entity.Property(e => e.Error).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<IntegrationPartners>(entity =>
+            {
+                entity.Property(e => e.PartnerName).IsUnicode(false);
             });
         }
     }

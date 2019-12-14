@@ -1,6 +1,6 @@
 <mat-form-field>
     <input matInput type="text" placeholder="Airport" aria-label="Airport" [formControl]="searchControl" [matAutocomplete]="auto" [(ngModel)]="airportContainerModel.airport">
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-        <mat-option *ngFor="let airport of filteredAirports | async" [value]="airport" (optionSelected)="selected(airport)">{{airport.icao}} - {{airport.fullAirportName}}</mat-option>
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="selected(airportContainerModel.airport)">
+        <mat-option *ngFor="let airport of filteredAirports | async" [value]="airport">{{airport.icao}} - {{airport.fullAirportName}}</mat-option>
     </mat-autocomplete>
 </mat-form-field>

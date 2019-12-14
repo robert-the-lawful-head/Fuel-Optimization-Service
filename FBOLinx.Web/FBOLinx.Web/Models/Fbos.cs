@@ -71,6 +71,8 @@ namespace FBOLinx.Web.Models
         [Required]
         public bool? InitialSetupPhase { get; set; }
         public bool DisableCost { get; set; }
+        [Column("AcukwikFBOHandlerID")]
+        public int? AcukwikFBOHandlerId { get; set; }
 
         [ForeignKey("GroupId")]
         [InverseProperty("Fbos")]

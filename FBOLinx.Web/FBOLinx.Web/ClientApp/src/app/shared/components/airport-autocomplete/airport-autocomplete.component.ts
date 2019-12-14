@@ -93,7 +93,7 @@ export class AirportAutocompleteComponent implements OnInit {
         return airport ? airport.icao + ' - ' + airport.fullAirportName : undefined;
     }
 
-    selected(airport) {
+    public selected(airport) {
         console.log(airport);
         this.airportModel = airport;
         //send to parent or do whatever you want to do
