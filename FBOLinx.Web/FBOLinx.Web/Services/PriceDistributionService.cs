@@ -11,6 +11,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using EFCore.BulkExtensions;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
@@ -224,15 +225,15 @@ namespace FBOLinx.Web.Services
                 var dynamicTemplateData = new ExampleTemplateData
                 {
                     recipientCompanyName = customer.Company,
-                    templateEmailBodyMessage = _DistributePricingRequest.PricingTemplate.Email,
-                    templateNotesMessage =  _DistributePricingRequest.PricingTemplate.Notes,
+                    templateEmailBodyMessage = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Email),
+                    templateNotesMessage =  HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Notes),
                     fboName = fbo.Fbo,
                     fboICAOCode = fboIcao,
                     fboAddress = fbo.Address,
                     fboCity = fbo.City,
                     fboState = fbo.State,
                     fboZip = fbo.ZipCode,
-                    Subject = _DistributePricingRequest.PricingTemplate.Subject ?? "Distribution pricing"
+                    Subject = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Subject) ?? "Distribution pricing"
                 };
                 sendGridMessageWithTemplate.SetTemplateData(dynamicTemplateData);
 
