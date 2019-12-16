@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -10,6 +11,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using EFCore.BulkExtensions;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
@@ -223,15 +225,15 @@ namespace FBOLinx.Web.Services
                 var dynamicTemplateData = new ExampleTemplateData
                 {
                     recipientCompanyName = customer.Company,
-                    templateEmailBodyMessage = _DistributePricingRequest.PricingTemplate.Email,
-                    templateNotesMessage =  _DistributePricingRequest.PricingTemplate.Notes,
+                    templateEmailBodyMessage = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Email),
+                    templateNotesMessage =  HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Notes),
                     fboName = fbo.Fbo,
                     fboICAOCode = fboIcao,
                     fboAddress = fbo.Address,
                     fboCity = fbo.City,
                     fboState = fbo.State,
                     fboZip = fbo.ZipCode,
-                    Subject = _DistributePricingRequest.PricingTemplate.Subject ?? "Distribution pricing"
+                    Subject = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Subject) ?? "Distribution pricing"
                 };
                 sendGridMessageWithTemplate.SetTemplateData(dynamicTemplateData);
 
@@ -418,20 +420,64 @@ namespace FBOLinx.Web.Services
             var priceResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, pricingTemplate.Oid);
 
             //string priceBreakdownTemplate = GetPriceBreakdownTemplate().Replace("%PRICING_TEMPLATE_NAME%", pricingTemplate.Name).Replace("%PRICING_TEMPLATE_NOTES%", pricingTemplate.Notes);
-            string priceBreakdownTemplate = GetPriceBreakdownTemplate().Replace("%PRICING_TEMPLATE_NAME%", pricingTemplate.Name).Replace("%PRICING_TEMPLATE_NOTES%", "");
+            //string priceBreakdownTemplate = GetPriceBreakdownTemplate().Replace("%PRICING_TEMPLATE_NAME%", pricingTemplate.Name).Replace("%PRICING_TEMPLATE_NOTES%", "");
+            string priceBreakdownTemplate = GetPriceBreakdownTemplate();
             string rowHTMLTemplate = GetPriceBreakdownRowTemplate();
             StringBuilder rowsHTML = new StringBuilder();
-
+            int loopIndex = 0;
             foreach (DTO.CustomerWithPricing model in priceResults)
             {
                 string row = rowHTMLTemplate;
-                row =  row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
-                row = row.Replace("%MAX_GALLON%", model.MaxGallons.GetValueOrDefault().ToString());
-                row = row.Replace("%ITP%",
-                    String.Format("{0:C}",
-                        (model.CustomerMarginAmount.GetValueOrDefault() + model.FboFeeAmount.GetValueOrDefault())));
+
+                if(model.MinGallons > 999)
+                {
+                    string output = Convert.ToDouble(model.MaxGallons).ToString("#,##", CultureInfo.InvariantCulture);
+                    row = row.Replace("%MIN_GALLON%", output);
+                }
+                else
+                {
+                    row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
+                }
+                //row =  row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
+
+                if (loopIndex + 1 < priceResults.Count)
+                {
+                    var next = priceResults[loopIndex + 1];
+                    Double maxValue = Convert.ToDouble(next.MinGallons) - 1;
+
+                    if(maxValue > 999)
+                    {
+                        string output = Convert.ToDouble(next.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+                        row = row.Replace("%MAX_GALLON%", output);
+                    }
+                    else
+                    {
+                        row = row.Replace("%MAX_GALLON%", maxValue.ToString());
+                    }
+
+                    //row = row.Replace("%MAX_GALLON%", maxValue.ToString());
+                }
+                else
+                {
+                    if(model.MaxGallons > 999)
+                    {
+                        string output = Convert.ToDouble(model.MaxGallons).ToString("#,##", CultureInfo.InvariantCulture);
+                        row = row.Replace("%MAX_GALLON%", output);
+                    }
+                    else
+                    {
+                        row = row.Replace("%MAX_GALLON%", model.MaxGallons.GetValueOrDefault().ToString());
+                    }
+                    
+                }
+                    
+                //row = row.Replace("%MAX_GALLON%", model.MaxGallons.GetValueOrDefault().ToString());
+                //row = row.Replace("%ITP%",
+                //    String.Format("{0:C}",
+                //        (model.CustomerMarginAmount.GetValueOrDefault() + model.FboFeeAmount.GetValueOrDefault())));
                 row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice)));
                 rowsHTML.Append(row);
+                loopIndex++;
             }
 
             return priceBreakdownTemplate.Replace("%PRICE_BREAKDOWN_ROWS%", rowsHTML.ToString());
