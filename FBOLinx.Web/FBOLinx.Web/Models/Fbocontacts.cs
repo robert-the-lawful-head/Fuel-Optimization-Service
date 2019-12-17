@@ -19,5 +19,9 @@ namespace FBOLinx.Web.Models
         [ForeignKey("ContactId")]
         [InverseProperty("FboContact")]
         public Contacts Contact { get; set; }
+
+        [ForeignKey("Fboid")]
+        [InverseProperty("Contacts")]
+        public Fbos Fbo { get; set; }
     }
 }
