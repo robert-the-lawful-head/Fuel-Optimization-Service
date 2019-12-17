@@ -218,15 +218,38 @@ export class CustomersGridComponent implements OnInit {
     }
 
     private onMarginChange(newValue, customer) {
+        var filteredList = this.customersData.filter(function (item) {
+            return item.selectAll == true
+        });
 
-        var vm = {
-            id: customer.customerId,
-            customerMarginName: newValue,
-            fboid: this.sharedService.currentUser.fboId
-        }
-        this.customerMarginsService.updatecustomermargin(vm).subscribe(
-            (data:
-                any) => {
+        if (filteredList.length > 0) {
+            filteredList.forEach(selectedItem => {
+                var vm = {
+                    id: selectedItem.customerId,
+                    customerMarginName: newValue,
+                    fboid: this.sharedService.currentUser.fboId
+                }
+                this.customerMarginsService.updatecustomermargin(vm).subscribe(
+                    (data:
+                        any) => {
+                        selectedItem.pricingTemplateName = newValue;
+                    });
+
+
             });
+        }
+        else {
+            var vm = {
+                id: customer.customerId,
+                customerMarginName: newValue,
+                fboid: this.sharedService.currentUser.fboId
+            }
+            this.customerMarginsService.updatecustomermargin(vm).subscribe(
+                (data:
+                    any) => {
+                });
+        }
+
+       
     }
 }
