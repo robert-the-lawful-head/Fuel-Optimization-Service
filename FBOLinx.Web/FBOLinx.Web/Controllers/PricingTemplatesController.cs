@@ -185,8 +185,10 @@ namespace FBOLinx.Web.Controllers
             FixOtherDefaults(pricingTemplate);
 
             _context.PricingTemplate.Add(pricingTemplate);
-            var priceTier = new PriceTiers() {Min = 1, Max = 99999, MaxEntered = 0};
-            _context.PriceTiers.Add(priceTier);
+
+            //Commented out by Angel (Dec 17th) because it creates duplicate null price tiers https://prnt.sc/qbvy3b
+            //var priceTier = new PriceTiers() {Min = 1, Max = 99999, MaxEntered = 0};
+            //_context.PriceTiers.Add(priceTier);
 
             await _context.SaveChangesAsync();
 

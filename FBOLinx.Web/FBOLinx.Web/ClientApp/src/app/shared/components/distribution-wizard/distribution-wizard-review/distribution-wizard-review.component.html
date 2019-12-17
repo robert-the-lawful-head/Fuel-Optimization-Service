@@ -1,32 +1,32 @@
 <div class="row" style="margin-top:-12px !important">
-    <div class="col-11"><h1 mat-dialog-title>Preview: {{data.name}}</h1></div>
+    <div class="col-11"><h1 mat-dialog-title style="font-size:20px !important;">Preview: {{data.name}}</h1></div>
                  <div class="col-1 float-right"><a  (click)="closeDialog()" ><i class="fa fa-times"style="font-size:22px;font-weight:100;"></i></a> </div></div>
 <div mat-dialog-content class="mt-1 mb-4 ml-3 row">
     <div class="row">
         <div class="col-12 text-left">
-            Subject: {{data.subject}}
+            <strong>Subject:</strong> {{data.subject}}
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+        <div class="col-12 text-left" style="display:flex !important;">
+            <strong>Body:</strong>&nbsp;<span [innerHTML]='data.email'></span>
         </div>
     </div>
     <div class="row" #custMargin>
-        <div class="col-6" *ngIf="customerMargins">
+        <div class="col-12" *ngIf="customerMargins">
             <div class="text-center font-weight-bold mt-4" style="min-width: 65%;max-width:75%">{{data.marginType == 1 ? 'Retail-' : data.marginType==0 ? 'Cost+' : 'Flat Fee'}}</div>
-            <div class="row mt-2" style="font-size:11px;min-width: 65%;max-width:75%"><div class="col-8 float-left">Volume (gal.)</div><div class="col-4 float-right">Price</div></div>
             <div class="row">
                 <table class="mat-table mt-2" style="min-width: 65%;max-width:75%">
                     <thead>
                         <tr class="mat-header-row">
-                            <th class="text-center">Min</th>
-                            <th class="text-center">Max</th>
-                            <th class="text-center">All-in</th>
+                            <th class="text-center">Volume (gal.)</th>
+                            <th class="text-center">Price</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let customerMargin of customerMargins;" class="mat-row mat-row-not-hover text-left">
                             <td class="mat-cell">
-                                {{customerMargin.min}}
-                            </td>
-                            <td class="mat-cell text-center">
-                                {{customerMargin.max == 0 ? customerMargin.min + 249 : customerMargin.max}}
+                                {{customerMargin.min}} - {{customerMargin.max}}
                             </td>
                             <td class="mat-cell text-center">
                                 ${{customerMargin.allin | number:'1.4-4'}}
@@ -36,10 +36,13 @@
                 </table>
             </div>
         </div>
-            <div class="col-6 mt-4 pt-4" [innerHTML]="data.email">
-            </div>
+    </div>
+    <div class="row" style="margin-top:20px;">
+        <div class="col-12 text-left" style="display:flex !important;">
+            <strong>Notes:</strong>&nbsp;<span [innerHTML]='data.notes'></span>
         </div>
     </div>
+</div>
 <div mat-dialog-actions class="row">
     <div class="text-center float-right col-12">
         <button ni-button [view]="'blank'" class="mr-1" style="border:1px solid #000;" (click)="editPricingTemplate(data)" *ngIf="!edit">Edit Message</button>

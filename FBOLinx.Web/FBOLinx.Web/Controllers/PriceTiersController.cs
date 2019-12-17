@@ -109,8 +109,25 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            int indexLoopPriceTier = 0;
+
             foreach (CustomerMarginsGridViewModel customerMarginsGridViewModel in customerMargins)
             {
+                if((indexLoopPriceTier + 1) < customerMargins.Count)
+                {
+                    var nextPriceTier = customerMargins[indexLoopPriceTier + 1];
+                    if (nextPriceTier != null)
+                    {
+                        customerMarginsGridViewModel.Max = nextPriceTier.Min - 1;
+                        indexLoopPriceTier++;
+                    }
+                }
+                else
+                {
+                    customerMarginsGridViewModel.Max = 99999;
+                }
+
+
                 PriceTiers priceTier = new PriceTiers()
                 {
                     Max = customerMarginsGridViewModel.Max,
