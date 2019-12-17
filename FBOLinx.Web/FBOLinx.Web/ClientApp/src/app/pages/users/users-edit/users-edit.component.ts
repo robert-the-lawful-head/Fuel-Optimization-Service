@@ -49,7 +49,13 @@ export class UsersEditComponent implements OnInit  {
     /** Public Methods */
     public saveEdit() {
         this.userService.update(this.userInfo).subscribe(() => {
-            
+            if (this.userInfo.newPassword && this.userInfo.newPassword != '') {
+                this.userService.updatePassword({ user: this.userInfo, newPassword: this.userInfo.newPassword }).subscribe(
+                    (newPass:
+                        any) => {
+                        this.userInfo.password = newPass;
+                    });
+            }
         });
         this.saveClicked.emit(this.userInfo);
     }

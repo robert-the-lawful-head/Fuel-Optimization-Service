@@ -89,5 +89,8 @@ namespace FBOLinx.Web.Models
 
         [InverseProperty("Fbo")]
         public Models.Fbopreferences Preferences { get; set; }
+
+        [InverseProperty("Fbo")]
+        public ICollection<Fbocontacts> Contacts { get; set; }
     }
 }

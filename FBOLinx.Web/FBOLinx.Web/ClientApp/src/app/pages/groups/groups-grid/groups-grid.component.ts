@@ -81,11 +81,16 @@ export class GroupsGridComponent implements OnInit  {
         });
     }
 
-    public editRecord(record,$event) {
-        if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
-            //$event.preventDefault();
-            $event.stopPropagation();
-            return;
+    public editRecord(record, $event) {
+        if ($event.srcElement) {
+            if ($event.srcElement.nodeName.toLowerCase() == 'button' ||
+                $event.srcElement.nodeName.toLowerCase() == 'select' ||
+                ($event.srcElement.nodeName.toLowerCase() == 'input' &&
+                    $event.srcElement.getAttribute('type') == 'checkbox')) {
+                //$event.preventDefault();
+                $event.stopPropagation();
+                return;
+            }
         }
         const clonedRecord = Object.assign({}, record);
         this.editGroupClicked.emit(clonedRecord);

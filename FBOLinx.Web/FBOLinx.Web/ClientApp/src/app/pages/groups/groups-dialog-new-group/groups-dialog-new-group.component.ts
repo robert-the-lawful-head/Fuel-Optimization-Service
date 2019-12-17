@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 //Interfaces
 export interface NewGroupDialogData {
     oid: number;
-    group: string;
+    groupName: string;
     domain: string;
     active: boolean;
 }
@@ -18,7 +18,7 @@ export interface NewGroupDialogData {
 export class GroupsDialogNewGroupComponent {
     /** groups-dialog-new-group ctor */
     constructor(public dialogRef: MatDialogRef<GroupsDialogNewGroupComponent>, @Inject(MAT_DIALOG_DATA) public data: NewGroupDialogData) {
-
+        data.active = true;
     }
 
     onCancelClick(): void {
