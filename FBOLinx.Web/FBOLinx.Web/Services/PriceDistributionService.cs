@@ -221,7 +221,6 @@ namespace FBOLinx.Web.Services
                 var fboIcao = _context.Fboairports.FirstOrDefault(s => s.Fboid == fbo.Oid).Icao;
 
                 _DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
-
                 var dynamicTemplateData = new ExampleTemplateData
                 {
                     recipientCompanyName = customer.Company,

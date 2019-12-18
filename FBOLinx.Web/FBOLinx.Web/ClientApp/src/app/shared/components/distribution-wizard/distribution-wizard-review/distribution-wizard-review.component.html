@@ -4,7 +4,7 @@
 <div mat-dialog-content class="mt-1 mb-4 ml-3 row">
     <div class="row">
         <div class="col-12 text-left">
-            <strong>Subject:</strong> {{data.subject}}
+            <strong>Subject:</strong>&nbsp;<span [innerHTML]='data.subject'></span>
         </div>
     </div>
     <div class="row" style="margin-top:10px;">
