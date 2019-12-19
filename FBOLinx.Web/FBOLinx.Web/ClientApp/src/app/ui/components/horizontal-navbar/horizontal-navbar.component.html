@@ -15,7 +15,7 @@
           <!--<a (click)="needsAttentionMenu.isOpened = !needsAttentionMenu.isOpened" class="nav-link">-->
           <a (click)="openUpdate()" class="nav-link">
               <span class="icon sli-bell"></span>
-              <span [ngClass]="{ 'marker' : customersWithoutMargins && customersWithoutMargins.length > 0 }"></span>
+              <span [ngClass]="{ 'marker' : (customersWithoutMargins && customersWithoutMargins.length > 0) || (hasLoadedJetACost && (!currrentJetACostPricing)) || (hasLoadedJetARetail && (!currrentJetARetailPricing))}"></span>
           </a>
 
           <div class="dropdown-menu">
