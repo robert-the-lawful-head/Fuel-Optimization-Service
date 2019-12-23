@@ -98,6 +98,14 @@ namespace FBOLinx.Web.Controllers
                               tempDateTo = s?.EffectiveTo
                           });
 
+            foreach (var item in result)
+            {
+                if (item != null)
+                {
+
+                }
+            }
+
             return Ok(result);
         }
 
@@ -122,7 +130,7 @@ namespace FBOLinx.Web.Controllers
                                      }
                               into leftJoinFBOPrices
                           from f in leftJoinFBOPrices.DefaultIfEmpty()
-                          join m in _context.MappingPrices on f.Oid equals m.FboPriceId
+                          join m in _context.MappingPrices on (f?.Oid).GetValueOrDefault() equals m.FboPriceId
                           select new
                           {
                               Oid = f?.Oid ?? 0,
@@ -136,6 +144,14 @@ namespace FBOLinx.Web.Controllers
                               Currency = f?.Currency,
                               groupId = m?.GroupId
                           }).OrderBy(x=>x.EffectiveFrom);
+
+            foreach(var item in result)
+            {
+                if(item != null)
+                {
+
+                }
+            }
 
             return Ok(result);
         }

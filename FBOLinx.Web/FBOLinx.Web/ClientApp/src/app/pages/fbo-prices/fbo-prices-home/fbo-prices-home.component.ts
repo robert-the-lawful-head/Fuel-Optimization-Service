@@ -197,7 +197,7 @@ export class FboPricesHomeComponent implements OnInit {
 		//price.requiresUpdate = true;
 	}
 
-	public fboCurrentPriceDateChange(event) {
+    public fboCurrentPriceDateChange(event) {
 		this.requiresUpdate = false;
         for (let price of this.currentPrices) {
             if (moment(moment.utc(price.effectiveFrom).toDate()).format('MM/DD/YYYY') == moment(moment.utc(this.currentPricingEffectiveFrom).toDate()).format('MM/DD/YYYY') && moment(moment.utc(price.effectiveTo).toDate()).format('MM/DD/YYYY') == moment(moment.utc(this.currentPricingEffectiveTo).toDate()).format('MM/DD/YYYY')) {
@@ -257,11 +257,16 @@ export class FboPricesHomeComponent implements OnInit {
         }
         else {
             for (let price of this.currentPrices) {
-                /*price.effectiveFrom = this.currentPricingEffectiveFrom;
-                price.effectiveTo = this.currentPricingEffectiveTo;*/
+                console.log(price);
+                //console.log(this.currentPricingEffectiveFrom);
+                //console.log(this.currentPricingEffectiveTo);
+                price.effectiveFrom = this.currentPricingEffectiveFrom;
+                price.effectiveTo = this.currentPricingEffectiveTo;
+                
                 price.price = price.product == 'JetA Retail' ? this.currentFboPriceJetARetail.price : price.product == 'JetA Cost' ? this.currentFboPriceJetACost.price : null;
                 this.savePriceChanges(price);
             }
+            
             this.show = true;
             this.isSaved = true;
             this.delay(5000).then(any => {
@@ -420,8 +425,14 @@ export class FboPricesHomeComponent implements OnInit {
 				}
 				if (this.currentFboPrice100LLCost.effectiveTo != null) {
 					this.currentPricingEffectiveTo = this.currentFboPrice100LLCost.effectiveTo;
-				} else {
-					this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+                } else {
+                    if (this.currentPricingEffectiveFrom) {
+                        this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+                    }
+                    else {
+                        this.currentPricingEffectiveTo = new Date(moment(new Date()).add(6, 'days').format('MM/DD/YYYY'));
+                    }
+					
 				}
 				this.loadStagedFboPrices();
 				
