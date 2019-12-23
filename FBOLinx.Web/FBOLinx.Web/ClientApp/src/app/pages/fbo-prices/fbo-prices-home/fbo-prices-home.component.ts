@@ -265,6 +265,7 @@ export class FboPricesHomeComponent implements OnInit {
                 
                 price.price = price.product == 'JetA Retail' ? this.currentFboPriceJetARetail.price : price.product == 'JetA Cost' ? this.currentFboPriceJetACost.price : null;
                 this.savePriceChanges(price);
+                this.loadCurrentFboPrices();
             }
             
             this.show = true;
@@ -400,13 +401,14 @@ export class FboPricesHomeComponent implements OnInit {
 	//Private Methods
 	private loadCurrentFboPrices() {
 		this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
-			.subscribe((data: any) => {
+            .subscribe((data: any) => {
+                console.log(data);
 				this.currentPrices = data;
 				this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
 				this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
 				this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
 				this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
-				this.TempValueJet = data[0].tempJet;;
+				this.TempValueJet = data[0].tempJet;
 				this.TempValueAvgas = data[0].tempAvg;
 				this.TempValueId = data[0].tempId;
 				this.currentFboPriceJetACost.effectiveTo = moment(this.currentFboPriceJetACost.effectiveTo).format("MM/DD/YYYY");

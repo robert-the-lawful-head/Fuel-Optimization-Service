@@ -63,7 +63,8 @@ namespace FBOLinx.Web.Controllers
 
             var result = (from p in products
                           join f in (from f in _context.Fboprices
-                                     where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                                         //where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                                     where  f.EffectiveTo > DateTime.Now.AddDays(-1)
                                      && f.Fboid == fboId
                                      select f) on new { Product = p.Description, FboId = fboId } equals new
                                      {
@@ -98,13 +99,6 @@ namespace FBOLinx.Web.Controllers
                               tempDateTo = s?.EffectiveTo
                           });
 
-            foreach (var item in result)
-            {
-                if (item != null)
-                {
-
-                }
-            }
 
             return Ok(result);
         }
@@ -145,14 +139,6 @@ namespace FBOLinx.Web.Controllers
                               groupId = m?.GroupId
                           }).OrderBy(x=>x.EffectiveFrom);
 
-            foreach(var item in result)
-            {
-                if(item != null)
-                {
-
-                }
-            }
-
             return Ok(result);
         }
 
@@ -168,7 +154,8 @@ namespace FBOLinx.Web.Controllers
             var fboprices = await GetAllFboPrices().Where((f => f.Fboid == fboId &&
                                                                 f.Product != null &&
                                                                 f.Product.ToLower() == product.ToLower() &&
-                                                                f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1))).FirstOrDefaultAsync();
+                                                                //f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1))).FirstOrDefaultAsync();
+                                                                f.EffectiveTo > DateTime.Now.AddDays(-1))).FirstOrDefaultAsync();
 
             return Ok(fboprices);
         }
@@ -252,15 +239,36 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(fboprices).State = EntityState.Modified;
+         //   _context.Entry(fboprices).State = EntityState.Modified;
 
             try
             {
-                fboprices.Timestamp = DateTime.Now;
-                await _context.SaveChangesAsync();
+                if (FbopricesExists(id))
+                {
+                    _context.Entry(fboprices).State = EntityState.Modified;
+                    fboprices.Timestamp = DateTime.Now;
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    Fboprices newFboPrice = new Fboprices();
+                    newFboPrice.Currency = fboprices.Currency;
+                    newFboPrice.EffectiveFrom = fboprices.EffectiveFrom;
+                    newFboPrice.EffectiveTo = fboprices.EffectiveTo;
+                    newFboPrice.Fboid = fboprices.Fboid;
+                    newFboPrice.Price = fboprices.Price;
+                    newFboPrice.Product = fboprices.Product;
+                    newFboPrice.SalesTax = fboprices.SalesTax;
+                    newFboPrice.Timestamp = DateTime.Now;
+                    newFboPrice.Timestamp = DateTime.Now;
+                    _context.Fboprices.Add(newFboPrice);
+                    await _context.SaveChangesAsync();
+                }
+                //fboprices.Timestamp = DateTime.Now;
+                //await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
-            {
+            catch (DbUpdateConcurrencyException ex)
+            {                
                 if (!FbopricesExists(id))
                 {
                     return NotFound();
