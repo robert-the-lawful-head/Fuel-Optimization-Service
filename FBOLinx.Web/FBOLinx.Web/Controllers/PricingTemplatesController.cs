@@ -62,6 +62,49 @@ namespace FBOLinx.Web.Controllers
 
             var jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost")
                 .FirstOrDefaultAsync();
+            var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
+            var resultPrices = (from p in products
+                          join f in (from f in _context.Fboprices
+                                         //where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                                     where f.EffectiveTo > DateTime.Now.AddDays(-1)
+                                     && f.Fboid == fboId
+                                     select f) on new { Product = p.Description, FboId = fboId } equals new
+                                     {
+                                         f.Product,
+                                         FboId = f.Fboid.GetValueOrDefault()
+                                     }
+                              into leftJoinFBOPrices
+                          from f in leftJoinFBOPrices.DefaultIfEmpty()
+                          join s in (from s in _context.TempAddOnMargin
+                                     where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
+                                     select s) on new { FboId = fboId } equals new
+                                     {
+                                         FboId = s.FboId
+                                     }
+                              into tmpJoin
+                          from s in tmpJoin.DefaultIfEmpty()
+                          select new
+                          {
+                              Oid = f?.Oid ?? 0,
+                              Fboid = fboId,
+                              Product = p.Description,
+                              Price = f?.Price,
+                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
+                              EffectiveTo = f?.EffectiveTo,
+                              TimeStamp = f?.Timestamp,
+                              SalesTax = f?.SalesTax,
+                              Currency = f?.Currency,
+                              tempJet = s?.MarginJet,
+                              tempAvg = s?.MarginAvgas,
+                              tempId = s?.Id,
+                              tempDateFrom = s?.EffectiveFrom,
+                              tempDateTo = s?.EffectiveTo
+                          });
+
+            var jetACost = resultPrices.FirstOrDefault(s => s.Product == "JetA Cost").Price;
+            var jetARetail = resultPrices.FirstOrDefault(s => s.Product == "JetA Retail").Price;
+            var marginPrice = _context.TempAddOnMargin.FirstOrDefault(s => s.FboId == fboId && s.EffectiveTo > DateTime.Now);
+            
 
             var result = await (from p in _context.PricingTemplate
                 join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
@@ -87,12 +130,29 @@ namespace FBOLinx.Web.Controllers
                     Type = p.Type.GetValueOrDefault(),
                     Subject = p.Subject,
                     Email = p.Email,
-                    IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
+                    //IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
+                    //                 (cm == null ? 0 : cm.maxPrice.Value),
+                    IntoPlanePrice = (jetaACostRecord == null ? 0 : jetaACostRecord.Price.GetValueOrDefault()) +
                                      (cm == null ? 0 : cm.maxPrice.Value),
                     IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
                     IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                    //YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
                     YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
                 }).ToListAsync();
+
+            //foreach(var res in result)
+            //{
+            //    if(res.MarginTypeDescription == "Retail -")
+            //    {
+
+            //    }
+            //    else if(res.MarginTypeDescription == "Cost +")
+            //    {
+            //        res.IntoPlanePrice = res.Margin + jetACost.Value;
+            //    }
+            //}
+
+            result = result.GroupBy(s => s.Oid).Select(g => g.First()).ToList();
 
             return Ok(result);
         }
