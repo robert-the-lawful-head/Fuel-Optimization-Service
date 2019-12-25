@@ -37,8 +37,8 @@
 
     <table mat-table [dataSource]="customersDataSource" class="col-md-12" matSort matSortActive="hasBeenViewed" matSortDirection="asc" #customerTable>
         <ng-container matColumnDef="selectAll">''
-            <th mat-header-cell *matHeaderCellDef><input type="checkbox" [(ngModel)]="selectAll" (change)="selectAction()"></th>
-            <td mat-cell *matCellDef="let customer"><input type="checkbox" [(ngModel)]="customer.selectAll" value="{{customer.selectAll}}" (change)="selectUnique()"></td>
+            <th mat-header-cell *matHeaderCellDef><input type="checkbox" class="checkboxHeight" [(ngModel)]="selectAll" (change)="selectAction()"></th>
+            <td mat-cell *matCellDef="let customer"><input type="checkbox" class="checkboxHeight" [(ngModel)]="customer.selectAll" value="{{customer.selectAll}}" (change)="selectUnique()"></td>
         </ng-container>
         <ng-container matColumnDef="hasBeenViewed">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Clients w/out Pricing</th>
@@ -68,7 +68,7 @@
         <ng-container matColumnDef="pricingTemplateId">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Margin</th>
             <td mat-cell *matCellDef="let customer">
-                <select id="pricingtemplates" name="ddlPricingTemplate"  [(ngModel)]="customer.pricingTemplateName" (ngModelChange)="onMarginChange($event, customer);$event.stopPropagation();">
+                <select id="pricingtemplates" name="ddlPricingTemplate" class="dropdownHeight" [(ngModel)]="customer.pricingTemplateName" (ngModelChange)="onMarginChange($event, customer);$event.stopPropagation();">
                     <option *ngFor="let pricingTemplate of customer.pricingTemplatesList" value="{{pricingTemplate.name}}">{{pricingTemplate.name}}</option>
                 </select>
             </td>
