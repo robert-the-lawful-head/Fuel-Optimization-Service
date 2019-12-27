@@ -158,7 +158,8 @@ export class CustomersGridComponent implements OnInit {
         var exportData = this.customersDataSource.filteredData.map(function(item) {
             return {
                 Company: item.company,
-                Source: item.customerCompanyTypeName,
+                //Source: item.customerCompanyTypeName,
+                Source: item.customerCompanyTypeName == 'FuelerLinx' ? 'FBOLinx Network' : item.customerCompanyTypeName,
                 'Assigned Price Tier': item.pricingTemplateName,
                 Price: item.allInPrice
             }
