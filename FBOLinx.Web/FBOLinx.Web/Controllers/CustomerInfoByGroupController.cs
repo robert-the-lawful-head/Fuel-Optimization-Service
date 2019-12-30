@@ -99,7 +99,7 @@ namespace FBOLinx.Web.Controllers
                 int totalRows = customerList.Count;
 
                 worksheet.Cells[1, 1].Value = "Company";
-                worksheet.Cells[1, 2].Value = "FBOLinx Network";
+                worksheet.Cells[1, 2].Value = "Source";
                 worksheet.Cells[1, 3].Value = "Assigned Price Tier";
                 worksheet.Cells[1, 4].Value = "Price";
                 int i = 0;

@@ -19,6 +19,7 @@ import { TemporaryAddOnMarginComponent } from '../../../shared/components/tempor
 
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
+import { getDate } from 'date-fns';
 
 //const BREADCRUMBS: any[] = [
 //    {
@@ -85,7 +86,8 @@ export class FboPricesHomeComponent implements OnInit {
 	public currentPricingEffectiveFrom: Date = new Date();
 	public currentPricingEffectiveTo: Date = new Date();
 	public stagedPricingEffectiveFrom: Date = new Date();
-	public stagedPricingEffectiveTo: Date = new Date();
+    public stagedPricingEffectiveTo: Date = new Date();
+    public todayDate: Date = new Date();
 	public pricingTemplates: any[];
     public activePrice: boolean = false;
     public newRetail: any;
@@ -93,6 +95,7 @@ export class FboPricesHomeComponent implements OnInit {
     public jtCost: any;
     public jtRetail: any;
     public priceGroup: number;
+    public buttonTextValue: any;
 
 	//Additional Public Members for direct reference (date filtering/restrictions)
 	public currentFboPriceJetARetail: any;
@@ -122,7 +125,8 @@ export class FboPricesHomeComponent implements OnInit {
 		//this.sharedService.emitChange(this.pageTitle);
 	}
 
-	ngOnInit(): void {
+    ngOnInit(): void {
+        this.buttonTextValue = "Post Live Pricing";
 		this.loadCurrentFboPrices();
 		this.loadFboPreferences();
 		this.loadFboFees();
@@ -198,6 +202,13 @@ export class FboPricesHomeComponent implements OnInit {
 	}
 
     public fboCurrentPriceDateChange(event) {
+        var CurrentDate = new Date();
+        if (this.currentPricingEffectiveFrom > CurrentDate) {
+            this.buttonTextValue = "Stage Price";
+        }
+        else {
+            this.buttonTextValue = "Post Live Pricing";
+        }
 		this.requiresUpdate = false;
         for (let price of this.currentPrices) {
             if (moment(moment.utc(price.effectiveFrom).toDate()).format('MM/DD/YYYY') == moment(moment.utc(this.currentPricingEffectiveFrom).toDate()).format('MM/DD/YYYY') && moment(moment.utc(price.effectiveTo).toDate()).format('MM/DD/YYYY') == moment(moment.utc(this.currentPricingEffectiveTo).toDate()).format('MM/DD/YYYY')) {
@@ -210,6 +221,8 @@ export class FboPricesHomeComponent implements OnInit {
 	   // this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
 		//this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
         if (event != 'hide') {
+
+            
             this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
             this.minimumAllowedDate = this.currentPricingEffectiveFrom;
             for (let price of this.currentPrices) {
@@ -402,7 +415,6 @@ export class FboPricesHomeComponent implements OnInit {
 	private loadCurrentFboPrices() {
 		this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
-                console.log(data);
 				this.currentPrices = data;
 				this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
 				this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
@@ -413,12 +425,12 @@ export class FboPricesHomeComponent implements OnInit {
 				this.TempValueId = data[0].tempId;
 				this.currentFboPriceJetACost.effectiveTo = moment(this.currentFboPriceJetACost.effectiveTo).format("MM/DD/YYYY");
 				this.currentFboPriceJetARetail.effectiveTo = moment(this.currentFboPriceJetARetail.effectiveTo).format("MM/DD/YYYY");
-				console.log(moment(data[0].tempDateFrom).utc());
 				this.lcl = moment(data[0].tempDateFrom).utc();
 				this.TempDateFrom = moment(moment.utc(data[0].tempDateFrom).toDate()).format('MM/DD/YYYY');
 				this.TempDateTo = moment(moment.utc(data[0].tempDateTo).toDate()).format('MM/DD/YYYY');
-				if (this.currentFboPrice100LLCost.effectiveFrom != null) {
-					this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
+                if (this.currentFboPrice100LLCost.effectiveFrom != null) {
+					//this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
+                    this.currentPricingEffectiveFrom = new Date();
 					if (this.currentFboPrice100LLCost.effectiveFrom <= new Date() && this.currentFboPrice100LLCost.effectiveTo > new Date()) {
 						this.activePrice = true;
 					}
@@ -434,8 +446,8 @@ export class FboPricesHomeComponent implements OnInit {
                     else {
                         this.currentPricingEffectiveTo = new Date(moment(new Date()).add(6, 'days').format('MM/DD/YYYY'));
                     }
-					
-				}
+                }
+
 				this.loadStagedFboPrices();
 				
 				if (this.currentFboPriceJetARetail) {
@@ -444,7 +456,6 @@ export class FboPricesHomeComponent implements OnInit {
 				if (this.currentFboPriceJetACost) {
 					this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
                 }
-                
 			});
 	}
 

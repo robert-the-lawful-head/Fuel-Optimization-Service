@@ -147,7 +147,7 @@
                         <div class="row">
                             <div class="col-2">
                                 <mat-form-field>
-                                    <input matInput [(ngModel)]="currentPricingEffectiveFrom" [matDatepicker]="currentPricingEffectiveFromDatePicker" (focus)="currentPricingEffectiveFromDatePicker.open()" placeholder="Effective From" (dateChange)="fboCurrentPriceDateChange(null)">
+                                    <input matInput [min]="todayDate" [(ngModel)]="currentPricingEffectiveFrom" [matDatepicker]="currentPricingEffectiveFromDatePicker" (focus)="currentPricingEffectiveFromDatePicker.open()" placeholder="Effective From" (dateChange)="fboCurrentPriceDateChange(null)">
                                     <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDatePicker"></mat-datepicker-toggle>
                                     <mat-datepicker #currentPricingEffectiveFromDatePicker></mat-datepicker>
                                 </mat-form-field>
@@ -184,7 +184,7 @@
                             <div class="col-3">
                                 <!--*ngIf="requiresUpdate"-->
                                 <div class="text-center">
-                                    <button ni-button [view]="'success'" class="mr-1" (click)="saveChangesClicked()">Post Live Pricing</button>
+                                    <button ni-button [view]="'success'" class="mr-1" (click)="saveChangesClicked()"><span [innerHtml]="buttonTextValue"></span></button>
                                 </div>
                             </div>
                         </div>
