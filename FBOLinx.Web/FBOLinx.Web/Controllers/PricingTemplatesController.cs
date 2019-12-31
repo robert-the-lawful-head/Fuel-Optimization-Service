@@ -152,6 +152,28 @@ namespace FBOLinx.Web.Controllers
             //    }
             //}
 
+            foreach (var res in result)
+            {
+                if (res.Oid != 0)
+                {
+                    var margins = _context.CustomerMargins.FirstOrDefault(s => s.TemplateId == res.Oid && s.PriceTierId != 0);
+
+                    if (margins != null)
+                    {
+                        if (res.MarginTypeDescription == "Retail -")
+                        {
+                            res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetARetail.Value;
+                            res.YourMargin = res.IntoPlanePrice - jetACost.Value;
+                        }
+                        else if (res.MarginTypeDescription == "Cost +")
+                        {
+                            res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetACost.Value;
+                            res.YourMargin = res.IntoPlanePrice - jetACost.Value;
+                        }
+                    }
+                }
+            }
+
             result = result.GroupBy(s => s.Oid).Select(g => g.First()).ToList();
 
             return Ok(result);
