@@ -112,8 +112,9 @@ namespace FBOLinx.Web.Controllers
                             group c by new {c.TemplateId} into cmResults select new {templateId = cmResults.Key.TemplateId, maxPrice = cmResults.FirstOrDefault().Amount} )on p.Oid equals cm.templateId into leftJoinCustomerMargins
                 from cm in leftJoinCustomerMargins.DefaultIfEmpty()
                 join fp in (from f in _context.Fboprices
-                    where f.EffectiveFrom.HasValue && f.EffectiveFrom <= DateTime.Now && f.EffectiveTo.HasValue && f.EffectiveTo > DateTime.Now.AddDays(-1)
-                          && f.Fboid.GetValueOrDefault() == fboId
+                                //where f.EffectiveFrom.HasValue && f.EffectiveFrom <= DateTime.Now && f.EffectiveTo.HasValue && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                            where f.EffectiveTo > DateTime.Now.AddDays(-1)
+                                  && f.Fboid.GetValueOrDefault() == fboId
                     select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
                 from fp in leftJoinFboPrices.DefaultIfEmpty()
                 where p.Fboid == fboId
@@ -162,13 +163,39 @@ namespace FBOLinx.Web.Controllers
                     {
                         if (res.MarginTypeDescription == "Retail -")
                         {
-                            res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetARetail.Value;
-                            res.YourMargin = res.IntoPlanePrice - jetACost.Value;
+                            if (jetARetail != null)
+                            {
+                                res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetARetail.Value;
+                            }
+                            else
+                            {
+                                res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
+                            }
+                            
+                            if(jetACost != null)
+                            {
+                                res.YourMargin = res.IntoPlanePrice - jetACost.Value;
+                            }
+                            else
+                            {
+                                res.YourMargin = res.IntoPlanePrice - 0;
+                            }
+                            
                         }
                         else if (res.MarginTypeDescription == "Cost +")
                         {
-                            res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetACost.Value;
-                            res.YourMargin = res.IntoPlanePrice - jetACost.Value;
+                            if(jetACost != null)
+                            {
+                                res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetACost.Value;
+                                res.YourMargin = res.IntoPlanePrice - jetACost.Value;
+                            }
+                            else
+                            {
+                                res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
+                                res.YourMargin = res.IntoPlanePrice - 0;
+                            }
+                            
+                            
                         }
                     }
                 }
