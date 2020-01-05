@@ -216,7 +216,7 @@ export class PricingTemplatesEditComponent {
         }
         else if (this.pricingTemplate.marginType == 1) {
             if (margin.amount !=null && margin.min !=null) {
-                margin.allin = jetARetail + margin.amount;
+                margin.allin = jetARetail - margin.amount;
                 if (margin.allin) {
                     margin.itp = margin.allin - jetACost;
                 }
