@@ -302,7 +302,7 @@ export class FboPricesHomeComponent implements OnInit {
         console.log(this.currentFboPriceJetACost.price);
        
         this.priceGroup = null;
-
+        this.buttonTextValue = "Post Live Pricing";
 	}
 
 	public fboPreferenceChange() {
@@ -415,6 +415,7 @@ export class FboPricesHomeComponent implements OnInit {
 	private loadCurrentFboPrices() {
 		this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
+                console.log(data);
 				this.currentPrices = data;
 				this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
 				this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
@@ -428,10 +429,11 @@ export class FboPricesHomeComponent implements OnInit {
 				this.lcl = moment(data[0].tempDateFrom).utc();
 				this.TempDateFrom = moment(moment.utc(data[0].tempDateFrom).toDate()).format('MM/DD/YYYY');
 				this.TempDateTo = moment(moment.utc(data[0].tempDateTo).toDate()).format('MM/DD/YYYY');
-                if (this.currentFboPrice100LLCost.effectiveFrom != null) {
-					//this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
-                    this.currentPricingEffectiveFrom = new Date();
-					if (this.currentFboPrice100LLCost.effectiveFrom <= new Date() && this.currentFboPrice100LLCost.effectiveTo > new Date()) {
+                //if (this.currentFboPrice100LLCost.effectiveFrom != null) {
+                if (this.currentFboPriceJetACost.effectiveFrom != null) {
+                    this.currentPricingEffectiveFrom = this.currentFboPriceJetACost.effectiveFrom;
+                    //this.currentPricingEffectiveFrom = new Date();
+                    if (this.currentFboPriceJetACost.effectiveFrom <= new Date() && this.currentFboPriceJetACost.effectiveTo > new Date()) {
 						this.activePrice = true;
 					}
 				} else {

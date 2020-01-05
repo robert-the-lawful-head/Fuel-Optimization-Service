@@ -77,7 +77,7 @@ export class DistributionWizardReviewComponent implements OnInit {
         }
         else if (this.data.marginType == 1) {
             if (margin.amount && margin.min) {
-                margin.allin = jetARetail + margin.amount;
+                margin.allin = jetARetail - margin.amount;
                 if (margin.allin) {
                     margin.itp = margin.allin - jetACost;
                 }
