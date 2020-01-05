@@ -24,12 +24,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let customerMargin of customerMargins;" class="mat-row mat-row-not-hover text-left">
+                        <tr *ngFor="let customerMargin of customerMargins; let last = last" class="mat-row mat-row-not-hover text-left">
                             <td class="mat-cell">
-                                {{customerMargin.min}} - {{customerMargin.max}}
+                                {{customerMargin.min}}<span *ngIf="last">+</span> <span *ngIf="!last">&nbsp;- {{customerMargin.max}}</span>
                             </td>
                             <td class="mat-cell text-center">
-                                ${{customerMargin.allin | number:'1.4-4'}}
+                                ${{customerMargin.amount | number:'1.4-4'}}
                             </td>
                         </tr>
                     </tbody>
