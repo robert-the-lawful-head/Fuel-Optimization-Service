@@ -404,7 +404,11 @@ namespace FBOLinx.Web.Controllers
                                     YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
                                 }).ToListAsync();
 
-            
+            foreach (var model in customerGridVM)
+            {
+                model.PricingTemplatesList = result;
+            }
+
             return customerGridVM;
         }
     }
