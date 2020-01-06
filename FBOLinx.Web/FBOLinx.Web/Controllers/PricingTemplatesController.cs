@@ -174,7 +174,8 @@ namespace FBOLinx.Web.Controllers
                             
                             if(jetACost != null)
                             {
-                                res.YourMargin = res.IntoPlanePrice - jetACost.Value;
+                                //res.YourMargin = res.IntoPlanePrice - jetACost.Value;
+                                res.YourMargin = res.Margin;
                             }
                             else
                             {
