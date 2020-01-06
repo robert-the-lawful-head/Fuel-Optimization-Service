@@ -348,7 +348,15 @@ namespace FBOLinx.Web.Services
                 var pom1 = tst.GetType().GetProperties().Where(x => x.Name == "Product").Select(s => s).FirstOrDefault();
                 //int nmb = await updateCustomerMargin(pm, resProm);
                 double? bd = pm.Min == 0 ? pm.Min + 249 : pm.Max;
-                body += "<tr class=\"mat-row mat-row-not-hover text-left\"><td cstyle=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + pm.Min + "</td><td style=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + bd.ToString();
+                if (pm.Max.ToString().Equals("99999"))
+                {
+                    body += "<tr class=\"mat-row mat-row-not-hover text-left\"><td cstyle=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + pm.Min + "+</td><td style=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">&nbsp;</td>";
+                }
+                else
+                {
+                    body += "<tr class=\"mat-row mat-row-not-hover text-left\"><td cstyle=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + pm.Min + "</td><td style=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + bd.ToString();
+                }
+                //body += "<tr class=\"mat-row mat-row-not-hover text-left\"><td cstyle=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + pm.Min + "</td><td style=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">" + bd.ToString();
                 body += "</td><td style=\"padding:0 0.6875rem;padding-right:24px;text-align:center !important\">$" + pm.Amount + "</td></tr>";
             }
             body += "</tbody></table></div></div><div style=\"max-width: 20%;\">" + _DistributePricingRequest.PricingTemplate.Email + "</div></div>";
@@ -428,19 +436,20 @@ namespace FBOLinx.Web.Services
             {
                 string row = rowHTMLTemplate;
 
-                if(model.MinGallons > 999)
-                {
-                    string output = Convert.ToDouble(model.MaxGallons).ToString("#,##", CultureInfo.InvariantCulture);
-                    row = row.Replace("%MIN_GALLON%", output);
-                }
-                else
-                {
-                    row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
-                }
+                //if(model.MinGallons > 999)
+                //{
+                //    string output = Convert.ToDouble(model.MaxGallons).ToString("#,##", CultureInfo.InvariantCulture);
+                //    row = row.Replace("%MIN_GALLON%", output);
+                //}
+                //else
+                //{
+                //    row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
+                //}
                 //row =  row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
 
                 if (loopIndex + 1 < priceResults.Count)
                 {
+                    row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
                     var next = priceResults[loopIndex + 1];
                     Double maxValue = Convert.ToDouble(next.MinGallons) - 1;
 
@@ -458,16 +467,22 @@ namespace FBOLinx.Web.Services
                 }
                 else
                 {
-                    if(model.MaxGallons > 999)
-                    {
-                        string output = Convert.ToDouble(model.MaxGallons).ToString("#,##", CultureInfo.InvariantCulture);
-                        row = row.Replace("%MAX_GALLON%", output);
-                    }
-                    else
-                    {
-                        row = row.Replace("%MAX_GALLON%", model.MaxGallons.GetValueOrDefault().ToString());
-                    }
-                    
+                    //if(model.MaxGallons > 999)
+                    //{
+                    //    string output = Convert.ToDouble(model.MaxGallons).ToString("#,##", CultureInfo.InvariantCulture);
+                    //    row = row.Replace("%MAX_GALLON%", output);
+                    //}
+                    //else
+                    //{
+                    //    row = row.Replace("%MAX_GALLON%", model.MaxGallons.GetValueOrDefault().ToString());
+                    //}
+                    string output = Convert.ToDouble(model.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+
+                    output = output + "+";
+                    //row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
+                    row = row.Replace("%MIN_GALLON%", output);
+                    row = row.Replace("%MAX_GALLON%", "");
+                    row = row.Replace("-", "");
                 }
                     
                 //row = row.Replace("%MAX_GALLON%", model.MaxGallons.GetValueOrDefault().ToString());
