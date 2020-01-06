@@ -165,7 +165,7 @@ namespace FBOLinx.Web.Controllers
                         {
                             if (jetARetail != null)
                             {
-                                res.IntoPlanePrice = Convert.ToDouble(margins.Amount) - jetARetail.Value;
+                                res.IntoPlanePrice = jetARetail.Value - Convert.ToDouble(margins.Amount);
                             }
                             else
                             {
