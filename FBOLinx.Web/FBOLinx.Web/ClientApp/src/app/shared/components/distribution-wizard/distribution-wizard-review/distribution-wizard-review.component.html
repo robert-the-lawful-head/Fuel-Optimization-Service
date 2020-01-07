@@ -29,7 +29,7 @@
                                 {{customerMargin.min}}<span *ngIf="last">+</span> <span *ngIf="!last">&nbsp;- {{customerMargin.max}}</span>
                             </td>
                             <td class="mat-cell text-center">
-                                ${{customerMargin.amount | number:'1.4-4'}}
+                                ${{customerMargin.allin | number:'1.4-4'}}
                             </td>
                         </tr>
                     </tbody>
