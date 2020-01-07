@@ -162,12 +162,14 @@ export class CustomersEditComponent {
     }
 
     public saveEditContactClicked() {
+        this.saveCustomerEdit();
         if (this.currentContactInfoByGroup.contactId == 0) {
             this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
                 this.currentContactInfoByGroup.contactId = data.oid;
                 this.saveContactInfoByGroup();
             });
         } else {
+            this.saveCustomerEdit();
             this.saveContactInfoByGroup();
         }
     }
@@ -177,10 +179,13 @@ export class CustomersEditComponent {
     }
 
     public newCustomerAircraftAdded() {
+        this.saveCustomerEdit();
         this.loadCustomerAircrafts();
+        
     }
 
     public editCustomerAircraftClicked(customerAircraft) {
+        this.saveCustomerEdit();
         this.selectedCustomerAircraftRecord = customerAircraft;
         this.customerAircraftsService.get({ oid: customerAircraft.oid })
             .subscribe((data: any) => this.currentCustomerAircraft = data);
