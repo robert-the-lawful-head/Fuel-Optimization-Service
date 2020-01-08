@@ -72,6 +72,10 @@ export class PricingTemplatesEditComponent {
 
         this.sharedService.emitChange(this.pageTitle);
         
+        
+    }
+
+    ngOnInit(): void {
         //Check for passed in id
         let id = this.route.snapshot.paramMap.get('id');
         if (!id) {
@@ -84,7 +88,7 @@ export class PricingTemplatesEditComponent {
                 this.customerMarginsService.getCustomerMarginsByPricingTemplateId(this.pricingTemplate.oid).subscribe(
                     (data: any) => {
                         this.pricingTemplate.customerMargins = data;
-                        
+
                         this.loadCurrentPrice();
                     });
             });
@@ -97,6 +101,7 @@ export class PricingTemplatesEditComponent {
     }
 
     public enableToolbarNote() {
+        this.pricingTemplate.notes = this.rteObj.getText();
         this.rteObj.toolbarSettings.enable = true;
     }
 
@@ -105,6 +110,7 @@ export class PricingTemplatesEditComponent {
     }
 
     public enableToolbarEmail() {
+        this.pricingTemplate.email = this.rteEmail.getText();
         this.rteEmail.toolbarSettings.enable = true;
     }
 
@@ -127,6 +133,7 @@ export class PricingTemplatesEditComponent {
 
     public savePricingTemplate() {
         this.isSaving = true;
+        
         //Update the margin template first
         this.pricingTemplatesService.update(this.pricingTemplate).subscribe((data: any) => {
             this.saveCustomerMargins();

@@ -104,7 +104,7 @@
                 <h5>Notes</h5>
             </div>
             <div class="row">
-                <ejs-richtexteditor #typeRTE id='rteNotes' (focusout)="enableToolbarNote()" (focus)="disableToolbarNote()" [(value)]='pricingTemplate.notes'></ejs-richtexteditor>
+                <ejs-richtexteditor #typeRTE id='rteNotes' (focusout)="enableToolbarNote()" (focus)="disableToolbarNote()"  [(ngModel)]='pricingTemplate.notes'></ejs-richtexteditor>
             </div>
             <div class="row">
                 <br />
@@ -114,7 +114,7 @@
                 <h5>Distribution Emails</h5>
             </div>
             <div class="row">
-                <ejs-richtexteditor #typeEmail id='rteEmail' (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()"  [(value)]='pricingTemplate.email'></ejs-richtexteditor>
+                <ejs-richtexteditor #typeEmail id='rteEmail' (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()" [(ngModel)]='pricingTemplate.email'></ejs-richtexteditor>
             </div>
             <div class="row">
                 <br />
