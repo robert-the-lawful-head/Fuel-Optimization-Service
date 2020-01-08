@@ -52,7 +52,7 @@ export class ContactsGridComponent {
                 //delete this.contactsData[contact];
                 //this.contactsData = this.cont.splice(contact.contactInfoByGroupId, 1);
                 let index = this.contactsData.findIndex(d => d.customerContactId === record.customerContactId); //find index in your array
-                this.contactsData.splice(0, 1);//remove element from array
+                this.contactsData.splice(index, 1);//remove element from array
                 this.contactsDataSource = new MatTableDataSource(this.contactsData);
                 this.contactsDataSource.sort = this.sort;
                 this.contactsDataSource.paginator = this.paginator;
