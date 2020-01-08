@@ -77,12 +77,18 @@ export class DefaultLayoutComponent implements OnInit {
         if (remindMeLaterFlag && moment(moment().format('L')).isAfter(moment(remindMeLaterFlag))) {
             return;
         }
-        this.fboPricesService.getFbopricesByFboIdCurrent(this._sharedService.currentUser.fboId).subscribe(
+        this.fboPricesService.checkFboExpiredPricing(this._sharedService.currentUser.fboId).subscribe(
             (data: any) => {
-                for (let fboPrice of data) {
-                    if (fboPrice.price > 0) 
+                //for (let fboPrice of data) {
+                //    if (fboPrice.price > 0) 
+                //        return;
+                //}
+                if(data){
+                    if (data.price > 0) {
                         return;
+                    }
                 }
+                
 
                 const dialogRef = this.expiredPricingDialog.open(PricingExpiredNotificationComponent,
                     {

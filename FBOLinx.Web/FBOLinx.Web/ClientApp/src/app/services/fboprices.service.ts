@@ -19,6 +19,10 @@ export class FbopricesService {
         return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/current', { headers: this.headers });
     }
 
+    public checkFboExpiredPricing(fboId) {
+        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/ispricingexpired', { headers: this.headers });
+    }
+
     public getFbopricesByFboIdStaged(fboId) {
         return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/staged', { headers: this.headers });
     }

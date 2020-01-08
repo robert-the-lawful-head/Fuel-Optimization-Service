@@ -221,8 +221,6 @@ export class FboPricesHomeComponent implements OnInit {
 	   // this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
 		//this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
         if (event != 'hide') {
-
-            
             this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
             this.minimumAllowedDate = this.currentPricingEffectiveFrom;
             for (let price of this.currentPrices) {
@@ -439,8 +437,22 @@ export class FboPricesHomeComponent implements OnInit {
 				} else {
 					this.currentPricingEffectiveFrom = new Date();
 				}
-				if (this.currentFboPrice100LLCost.effectiveTo != null) {
-					this.currentPricingEffectiveTo = this.currentFboPrice100LLCost.effectiveTo;
+				//if (this.currentFboPrice100LLCost.effectiveTo != null) {
+				//	this.currentPricingEffectiveTo = this.currentFboPrice100LLCost.effectiveTo;
+    //            } else {
+    //                if (this.currentPricingEffectiveFrom) {
+    //                    this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+    //                }
+    //                else {
+    //                    this.currentPricingEffectiveTo = new Date(moment(new Date()).add(6, 'days').format('MM/DD/YYYY'));
+    //                }
+                //            }
+                console.log(this.currentFboPriceJetACost);
+                if (this.currentFboPriceJetACost.effectiveTo != null) {
+
+                    this.currentPricingEffectiveTo = new Date(moment(this.currentFboPriceJetACost.effectiveTo).format('MM/DD/YYYY'));
+                    console.log(this.currentPricingEffectiveTo);
+                    console.log(this.currentFboPriceJetACost.effectiveTo);
                 } else {
                     if (this.currentPricingEffectiveFrom) {
                         this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
@@ -530,23 +542,33 @@ export class FboPricesHomeComponent implements OnInit {
     private savePriceChangesAll(price) {
         this.fboPricesService.checkifExistFrboPrice(this.sharedService.currentUser.fboId, price).subscribe((data: any) => {
             //alert(JSON.stringify(data));
-            if (data != null) {
-                this.show = true;
-                this.greska = true;
-                this.delay(5000).then(any => {
-                    this.show = false;
-                    this.greska = false;
-                });
-            }
-            else {
+            //if (data != null) {
+            //    this.show = true;
+            //    this.greska = true;
+            //    this.delay(5000).then(any => {
+            //        this.show = false;
+            //        this.greska = false;
+            //    });
+            //}
+            //else {
+            //    this.show = true;
+            //    this.isSaved = true;
+            //    this.delay(5000).then(any => {
+            //        this.isSaved = false;
+            //        this.requiresUpdate = true;
+            //        this.show = false;
+            //    });
+            //}
+            this.delay(2000).then(any => {
                 this.show = true;
                 this.isSaved = true;
-                this.delay(5000).then(any => {
-                    this.isSaved = false;
-                    this.requiresUpdate = true;
-                    this.show = false;
-                });
-            }
+            });
+                           
+            this.delay(6000).then(any => {
+                this.isSaved = false;
+                this.requiresUpdate = true;
+                this.show = false;
+            });
             this.loadCurrentFboPrices();
         })
     }
