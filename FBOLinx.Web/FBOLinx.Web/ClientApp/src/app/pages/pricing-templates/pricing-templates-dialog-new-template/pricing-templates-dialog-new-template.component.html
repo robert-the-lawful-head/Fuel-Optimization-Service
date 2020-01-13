@@ -132,34 +132,36 @@
                 <div class="row mt-2 mb-2">
                     <div class="col">
                         <mat-form-field>
-                            <input matInput placeholder="Subject" formControlName="subject" [(ngModel)]="data.subject" aria-label="Subject" autocomplete="off" />
+                            <input matInput placeholder="Email Subject" formControlName="subject" [(ngModel)]="data.subject" aria-label="Email Subject" autocomplete="off" />
                         </mat-form-field>
                     </div>
                 </div>
                 <div class="row mt-2 mb-2" style="font-size:0.8rem;">
                     <span class="font-weight-bold" style="font-size:1rem;">
-                        Notes</span>  &nbsp;&nbsp;&nbsp; To show to all FuelerLinx customers
-                </div>
-                <div class="row mt-2 mb-2">
-                    <div class="col">
-                        <ejs-richtexteditor #typeNotes id='rteNotes' [toolbarSettings]='{enable:false}' [(value)]='data.notes'></ejs-richtexteditor>
-                    </div>
-                </div>
-                <div class="row mt-2 mb-2" style="font-size:0.8rem;">
-                    <span class="font-weight-bold" style="font-size:1rem;">
-                        Email
+                        Email Greeting
                     </span> &nbsp;&nbsp;&nbsp;  The body of the email to accompany your distribution emails
                 </div>
                 <div class="row mt-2 mb-2">
                     <div class="col">
-                        <ejs-richtexteditor #typeEmail id='rteEmail' (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()" [(value)]='data.email'></ejs-richtexteditor>
+                        <ejs-richtexteditor #typeEmail id='rteEmail' placeholder="Greetings from our FBO! Here are our latest prices..." (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()" [(value)]='data.email'></ejs-richtexteditor>
                     </div>
                 </div>
+                <div class="row mt-2 mb-2" style="font-size:0.8rem;">
+                    <span class="font-weight-bold" style="font-size:1rem;">
+                        Fuel Notes
+                    </span>  &nbsp;&nbsp;&nbsp; To show to all FuelerLinx customers
+                </div>
+                <div class="row mt-2 mb-2">
+                    <div class="col">
+                        <ejs-richtexteditor #typeNotes id='rteNotes' placeholder="Hours of operation are from 7:00am-6:00pm..." [toolbarSettings]='{enable:false}' [(value)]='data.notes'></ejs-richtexteditor>
+                    </div>
+                </div>
+
             </div>
                 <div class="text-right mt-2">
                     <button mat-button [mat-dialog-close]="">Cancel</button>
                     <button mat-button matStepperPrevious>Back</button>
-                    <button mat-button (click)="addTemplateClicked()">Add Template</button>
+                    <button mat-button (click)="addTemplateClicked()">Save Template</button>
                 </div>
 </form>
     </mat-step>
