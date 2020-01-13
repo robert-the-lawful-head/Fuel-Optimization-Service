@@ -35,6 +35,7 @@ namespace FBOLinx.Web.ViewModels
 
         public double? AllInPrice { get; set; }
         public bool IsPricingExpired { get; set; }
+        public int? FleetSize { get; set; }
         public List<PricingTemplatesGridViewModel> PricingTemplatesList { get; set; }
         
 

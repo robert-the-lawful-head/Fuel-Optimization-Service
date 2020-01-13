@@ -37,7 +37,7 @@ export class CustomersGridComponent implements OnInit {
     //Public Members
     @ViewChild('customerTableContainer') table: ElementRef;
     public customersDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['selectAll','hasBeenViewed', 'company', 'customerCompanyTypeName', 'pricingTemplateId', 'allInPrice', 'delete'];
+    public displayedColumns: string[] = ['selectAll', 'hasBeenViewed', 'company', 'customerCompanyTypeName', 'pricingTemplateId', 'allInPrice', 'fleetSize', 'delete'];
     public resultsLength: number = 0;
     public allCustomerAircraft: any[];
     public customerFilterType: number = 0;
@@ -203,6 +203,7 @@ export class CustomersGridComponent implements OnInit {
             (data:
                 any) => {
                 this.allCustomerAircraft = data;
+                console.log(data);
             });
     }
 
