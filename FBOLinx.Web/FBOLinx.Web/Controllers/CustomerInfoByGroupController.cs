@@ -325,6 +325,7 @@ namespace FBOLinx.Web.Controllers
                                         group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
                     into results
                                         select new { results.Key.CustomerId, Tails = string.Join(",", results.Select(x => x.TailNumber)) });
+
                 var customerGridVM = (from results in customerPricingResults
                                       join ca in customerAircraft on results.CustomerId equals ca.CustomerId
                                       //join ca in (from aircraftByCustomer in _context.CustomerAircrafts
@@ -376,6 +377,10 @@ namespace FBOLinx.Web.Controllers
                                           FleetSize = resultsGroup.Key.Tails == null ? 0 : resultsGroup.Key.Tails.Length
                                       }).ToList();
 
+
+                customerGridVM = customerGridVM.GroupBy(p => p.CustomerId)
+                  .Select(g => g.First())
+                  .ToList();
 
                 var jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost")
                     .FirstOrDefaultAsync();
