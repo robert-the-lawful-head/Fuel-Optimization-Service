@@ -87,7 +87,6 @@ export class AccountProfileComponent {
         if (!this.sharedService.currentUser.fboId || this.sharedService.currentUser.fboId == 0)
             return;
         this.fbosService.get({ oid: this.sharedService.currentUser.fboId }).subscribe((fboData: any) => {
-            this.fboInfo = fboData;
             this.fboContactsService.getForFbo(this.fboInfo).subscribe((data: any) => this.contactsData = data);
         });
         
@@ -107,9 +106,17 @@ export class AccountProfileComponent {
                 if (supportedRoleValues.indexOf(role.value) > -1)
                     this.availableroles.push(role);
             }
-            if (this.data.role > 0)
-                return;
-            this.data.role = this.availableroles[this.availableroles.length - 1].Value;
+            //if (this.data.role > 0)
+            //    return;
+
+            if (this.availableroles.length > 1) {
+                this.data.role = this.availableroles[this.availableroles.length - 1].Value;
+            }
+            else {
+                this.data.role = this.availableroles[0].value;
+            }
+
+            //this.data.role = this.availableroles[this.availableroles.length - 1].Value;
         });
     }
 }
