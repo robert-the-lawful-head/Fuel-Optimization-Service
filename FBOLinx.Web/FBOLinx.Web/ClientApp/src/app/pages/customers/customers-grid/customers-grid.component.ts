@@ -45,7 +45,7 @@ export class CustomersGridComponent implements OnInit {
     public selectAll: boolean = false;
     public selectedRows: number;
     public globalMargin: any;
-
+    public pageIndex: number = 0;
     public pricingTemplatesDataSource: MatTableDataSource<any> = null;
     
 
@@ -76,6 +76,26 @@ export class CustomersGridComponent implements OnInit {
         console.log(this.customersData);
         this.refreshCustomerDataSource();
         this.selectAll = false;
+
+        if (sessionStorage.getItem('isCustomerEdit')) {
+            if (sessionStorage.getItem('isCustomerEdit') == '1') {
+                if (sessionStorage.getItem('pageIndex')) {
+                    this.paginator.pageIndex = sessionStorage.getItem('pageIndex') as any;
+                    sessionStorage.removeItem('pageIndex');
+                    sessionStorage.removeItem('isCustomerEdit');
+                }
+                else {
+                    this.paginator.pageIndex = 0;
+                }
+            }
+        }
+        else {
+            this.paginator.pageIndex = 0;
+        }
+    }
+
+    onPageChanged(e) {
+        sessionStorage.setItem('pageIndex', e.pageIndex);
     }
 
     //Public Methods

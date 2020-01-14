@@ -115,25 +115,32 @@ export class CustomersEditComponent {
     //Public Methods
     public saveCustomerEdit() {
         this.isSaving = true;
-
+        
         //Update customer information
         this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((data: any) => {
             for (let customCustomerType of this.customCustomerTypes) {
                 this.saveCustomCustomerType(customCustomerType);
             }
             //Update other aspects
-            if (this._RequiresRouting)
+            if (this._RequiresRouting) {
+                sessionStorage.setItem('isCustomerEdit', '1');
                 this.router.navigate(['/default-layout/customers/']);
-            else
+            }
+            else {
                 this.saveCustomerClicked.emit();
+            }
+                
         });
     }
 
     public cancelCustomerEdit() {
-        if (this._RequiresRouting)
+        if (this._RequiresRouting) {
+            sessionStorage.setItem('isCustomerEdit', '1');
             this.router.navigate(['/default-layout/customers/']);
-        else
+        }
+        else {
             this.cancelCustomerEditclicked.emit();
+        }
     }
 
     public contactDeleted(contact) {
