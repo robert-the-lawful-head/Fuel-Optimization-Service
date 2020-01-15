@@ -323,7 +323,7 @@ namespace FBOLinx.Web.Controllers
                 var customerAircraft = (from aircraftByCustomer in _context.CustomerAircrafts
                                         where aircraftByCustomer.GroupId == groupId
                                         group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
-                    into results
+                                        into results
                                         select new { results.Key.CustomerId, Tails = string.Join(",", results.Select(x => x.TailNumber)) });
 
                 var customerGridVM = (from results in customerPricingResults
@@ -373,8 +373,8 @@ namespace FBOLinx.Web.Controllers
                                           SelectAll = false,
                                           AllInPrice = (from customerPricing in resultsGroup select customerPricing.AllInPrice).Max(),
                                           TailNumbers = resultsGroup.Key.Tails,
-                                          IsPricingExpired = resultsGroup.Key.IsPricingExpired,
-                                          FleetSize = resultsGroup.Key.Tails == null ? 0 : resultsGroup.Key.Tails.Length
+                                          IsPricingExpired = resultsGroup.Key.IsPricingExpired
+                                          //FleetSize = resultsGroup.Key.Tails == null ? 0 : resultsGroup.Key.Tails.Length
                                       }).ToList();
 
 
@@ -416,6 +416,10 @@ namespace FBOLinx.Web.Controllers
                 foreach (var model in customerGridVM)
                 {
                     model.PricingTemplatesList = result;
+
+                    model.FleetSize = (from ca in _context.CustomerAircrafts
+                                       where ca.GroupId.GetValueOrDefault() == groupId && ca.CustomerId == model.CustomerId
+                                       select ca).Count();
                 }
 
                 customerGridVM = customerGridVM.OrderByDescending(s => s.FleetSize).ToList();
