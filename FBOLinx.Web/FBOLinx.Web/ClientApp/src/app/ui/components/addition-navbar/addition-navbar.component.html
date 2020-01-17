@@ -13,17 +13,20 @@
                 <!--<h5 class="mt-0">Frameworks</h5>-->
                 <ng-container matColumnDef="template">
                     <td class="mb-1 col-10" mat-cell *matCellDef="let pricingTemplate">
-                        <span class="row col-12">
-                            {{pricingTemplate.name}}
-                        </span>
                         <div class="row">
-                            <div class="col-8" style="font-size:9px;margin-left:0px !important;vertical-align: baseline;line-height:18px;" *ngIf="pricingTemplate.text">
-                                {{pricingTemplate.text}}
+                            <div class="col-8">
+                                {{pricingTemplate.name}}
                             </div>
                             <div class="col-4" style="padding-left:0px !important">
                                 <button ni-button [view]="'accent'" *ngIf="pricingTemplate.changeText && !pricingTemplate.sent" size="small" (click)="OpenMarginInfo(pricingTemplate.oid)">Preview</button>
                                 <p *ngIf="pricingTemplate.sent">Sent!</p>
                             </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-8" style="font-size:9px;margin-left:0px !important;vertical-align: baseline;line-height:18px;" *ngIf="pricingTemplate.text">
+                                {{pricingTemplate.text}}
+                            </div>
+                           
                         </div>
                         <!--*ngIf="!pricingTemplate.changeText && !pricingTemplate.sent"-->
                         <div class="row col-12">
