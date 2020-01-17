@@ -54,13 +54,14 @@
     .open-navbar {
         align-items: center;
         background: main-color(50);
-        border: 1px solid main-color(50);
+        /*border: 1px solid main-color(50);*/
+        border: 1px solid #E5E6E9;
         border-right: 0;
         border-radius: $shape 0 0 $shape;
         color: main-contrast(50);
         display: flex;
         font-size: 20px;
-        height: 50px;
+        height: 100px;
         justify-content: center;
         margin-right: -1px;
         position: absolute;
