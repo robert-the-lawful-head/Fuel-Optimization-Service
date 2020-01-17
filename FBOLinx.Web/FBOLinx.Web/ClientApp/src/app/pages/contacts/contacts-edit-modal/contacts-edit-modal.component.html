@@ -1,0 +1,75 @@
+<h1 mat-dialog-title>Contact Information</h1>
+<div mat-dialog-content *ngIf="data">
+    <div class="row">
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="First Name" [(ngModel)]="data.firstName" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="Last Name" [(ngModel)]="data.lastName" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="Title" [(ngModel)]="data.title" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="Email" [(ngModel)]="data.email" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="Phone" [(ngModel)]="data.phone" [textMask]="{mask: phoneMask}" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="Extension" [(ngModel)]="data.extension" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="Mobile" [(ngModel)]="data.mobile" [textMask]="{mask: phoneMask}" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="Fax" [(ngModel)]="data.fax" [textMask]="{mask: phoneMask}" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="Address" [(ngModel)]="data.address" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="City" [(ngModel)]="data.city" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="State" [(ngModel)]="data.state" />
+            </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input matInput placeholder="Country" [(ngModel)]="data.country" />
+            </mat-form-field>
+        </div>
+        <div class="col-md-4">
+            <mat-slide-toggle color="accent" [(ngModel)]="data.primary">Primary</mat-slide-toggle>
+        </div>
+        <div class="col-md-4">
+            <mat-slide-toggle color="accent" [(ngModel)]="data.copyAlerts">Copy on Distribution</mat-slide-toggle>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button ni-button [view]="'success'" [mat-dialog-close]="data" beforeIcon="fa fa-floppy-o" (click)="saveEdit()" class="mr-1">Save Contact</button>
+    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+</div>

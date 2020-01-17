@@ -60,21 +60,30 @@ namespace FBOLinx.Web.Controllers
             }
 
             var customerContactInfoByGroupVM = (from cc in _context.CustomerContacts
-                join c in _context.Contacts on cc.ContactId equals c.Oid
-                join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
-                where cibg.GroupId == groupId
-                && cc.CustomerId == customerId
-                select new CustomerContactsByGroupGridViewModel()
-                {
-                    ContactInfoByGroupId = cibg.Oid,
-                    CustomerContactId = cc.Oid,
-                    ContactId = c.Oid,
-                    FirstName = cibg.FirstName,
-                    LastName = cibg.LastName,
-                    Title = cibg.Title,
-                    Primary = cibg.Primary,
-                    CopyAlerts = cibg.CopyAlerts
-                });
+                                                join c in _context.Contacts on cc.ContactId equals c.Oid
+                                                join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
+                                                where cibg.GroupId == groupId
+                                                && cc.CustomerId == customerId
+                                                select new CustomerContactsByGroupGridViewModel()
+                                                {
+                                                    ContactInfoByGroupId = cibg.Oid,
+                                                    CustomerContactId = cc.Oid,
+                                                    ContactId = c.Oid,
+                                                    FirstName = cibg.FirstName,
+                                                    LastName = cibg.LastName,
+                                                    Title = cibg.Title,
+                                                    Address = cibg.Address,
+                                                    City = cibg.City,
+                                                    Email = cibg.Email,
+                                                    Extension = cibg.Extension,
+                                                    Fax = cibg.Fax,
+                                                    Mobile = cibg.Mobile,
+                                                    Phone = cibg.Phone,
+                                                    State = cibg.State,
+                                                    Country = cibg.Country,
+                                                    Primary = cibg.Primary,
+                                                    CopyAlerts = cibg.CopyAlerts
+                                                });
 
             return Ok(customerContactInfoByGroupVM);
         }

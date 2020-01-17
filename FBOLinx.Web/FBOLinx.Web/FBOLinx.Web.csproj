@@ -39,6 +39,8 @@
     <None Remove="ClientApp\src\app\helpers\index.ts" />
     <None Remove="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
+    <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.spec.ts" />
+    <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <None Remove="ClientApp\src\app\services\index.ts" />
     <None Remove="ClientApp\src\app\services\paremeters.service.ts" />
     <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
@@ -58,6 +60,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\helpers\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\paremeters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />

@@ -76,6 +76,7 @@ import { Page500Component }	from './extra-pages/page-500/page-500.component';
 
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
 import { ContactsEditComponent } from './contacts/contacts-edit/contacts-edit.component';
+import { ContactsDialogNewContactComponent } from './contacts/contacts-edit-modal/contacts-edit-modal.component';
 import { ContactsGridComponent } from './contacts/contacts-grid/contacts-grid.component';
 import { ContactsHomeComponent } from './contacts/contacts-home/contacts-home.component';
 import { CustomersEditComponent } from './customers/customers-edit/customers-edit.component';
@@ -142,6 +143,7 @@ import { StatisticsTotalOrdersComponent } from
 
  //Pipes
 import { AppPipesModule } from '../app-pipes.module'
+
 
 
 @NgModule({
@@ -224,7 +226,8 @@ import { AppPipesModule } from '../app-pipes.module'
     PageWidgetsComponent,
     PageLayoutsComponent,
       AuthtokenComponent,
-              ContactsEditComponent,
+      ContactsEditComponent,
+      ContactsDialogNewContactComponent,
       ContactsGridComponent,
       ContactsHomeComponent,
       CustomerAircraftsDialogNewAircraftComponent,
@@ -288,6 +291,7 @@ import { AppPipesModule } from '../app-pipes.module'
         CustomerAircraftsDialogNewAircraftComponent,
         CustomerCompanyTypeDialogComponent,
         CustomersDialogNewCustomerComponent,
+        ContactsDialogNewContactComponent,
         DistributionWizardMainComponent,
         DistributionWizardReviewComponent,
         AccountProfileComponent,
