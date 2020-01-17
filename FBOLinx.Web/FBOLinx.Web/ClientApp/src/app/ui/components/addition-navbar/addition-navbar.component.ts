@@ -39,7 +39,7 @@ export class AdditionNavbarComponent implements OnInit {
         private sharedService: SharedService,
         public templateDialog: MatDialog,
         public distributionService: DistributionService) {
-        this.title = 'Margins to be distributed';
+        this.title = 'Distribute Prices';
         this.open = false;
         
         //this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData);
