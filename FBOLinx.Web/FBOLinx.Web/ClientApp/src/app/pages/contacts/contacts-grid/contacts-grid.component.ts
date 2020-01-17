@@ -23,7 +23,7 @@ export class ContactsGridComponent {
     @Input() contactsData: Array<any>;
 
     contactsDataSource: MatTableDataSource<any> = null;
-    displayedColumns: string[] = ['firstName', 'lastName', 'title', 'primary', 'delete'];
+    displayedColumns: string[] = ['firstName', 'lastName', 'title', 'email', 'phone', 'copyAlerts', 'delete'];
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
