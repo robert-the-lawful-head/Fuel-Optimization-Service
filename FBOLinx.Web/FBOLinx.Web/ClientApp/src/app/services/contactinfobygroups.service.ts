@@ -28,6 +28,12 @@ export class ContactinfobygroupsService {
     }
 
     public update(payload) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
+        if (payload.oid) {
+            return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
+        }
+        else if (payload.contactInfoByGroupId) {
+            payload.Oid = payload.contactInfoByGroupId;
+            return this.http.put(this.accessPointUrl + '/' + payload.Oid, payload, { headers: this.headers });
+        }
     }
 }

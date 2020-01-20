@@ -8,6 +8,8 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 import { CustomercontactsService } from '../../../services/customercontacts.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
+import { SharedService } from '../../../layouts/shared-service';
+
 
 @Component({
     selector: 'app-contacts-grid',
@@ -32,6 +34,7 @@ export class ContactsGridComponent {
     constructor(public deleteUserDialog: MatDialog,
         private contactsService: ContactsService,
         private contactInfoByGroupsService: ContactinfobygroupsService,
+        private sharedService: SharedService,
         private customerContactsService: CustomercontactsService) {
         
     }
@@ -61,13 +64,41 @@ export class ContactsGridComponent {
         //this.contactDeleted.emit(record);
     }
 
-    public editRecord(record,$event) {
-        const clonedRecord = Object.assign({}, record);
-        console.log(clonedRecord);
-        this.editContactClicked.emit(clonedRecord);;
+    public editRecord(record, $event) {
+        if ($event.target) {
+            if ($event.target.className.indexOf('mat-slide-toggle') > -1) {
+                $event.stopPropagation();
+                return false;
+            }
+            else {
+                const clonedRecord = Object.assign({}, record);
+                console.log(clonedRecord);
+                this.editContactClicked.emit(clonedRecord);;
+            }
+        }
+        else {
+            const clonedRecord = Object.assign({}, record);
+            console.log(clonedRecord);
+            this.editContactClicked.emit(clonedRecord);;
+        }
+        
     }
 
     public newRecord() {
         this.newContactClicked.emit();
+    }
+
+    public UpdateCopyAlertsValue(value) {
+
+        if (value.copyAlerts) {
+            value.copyAlerts = !value.copyAlerts;
+        }
+        else {
+            value.copyAlerts = true;
+        }
+        
+        value.GroupId = this.sharedService.currentUser.groupId;
+        this.contactInfoByGroupsService.update(value).subscribe((data: any) => {
+        });
     }
 }
