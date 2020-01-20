@@ -5,6 +5,7 @@
 <div class="navbar-wrap">
     <div class="navbar-header">
         {{ title }}
+        <mat-slide-toggle color="accent" (click)="SelectAllTemplates();" (change)="SelectAllTemplates();" [checked]="selectAll" style="margin-left:10px;">All</mat-slide-toggle>
     </div>
 
     <div class="navbar-content">
@@ -36,7 +37,7 @@
                 </ng-container>
                 <ng-container matColumnDef="toggle">
                     <td class="mb-1 col-2" mat-cell *matCellDef="let pricingTemplate">
-                        <mat-slide-toggle (change)="changeSentOption(pricingTemplate)"></mat-slide-toggle>
+                        <mat-slide-toggle #selectAll [checked]="pricingTemplate.toSend" (ngModel)="pricingTemplate.toSend"  (change)="changeSentOption(pricingTemplate)"></mat-slide-toggle>
                     </td>
                 </ng-container>
                 <!--<mat-progress-bar mode="determinate" color="accent" [value]="98"></mat-progress-bar>

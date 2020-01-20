@@ -28,7 +28,8 @@ export class AdditionNavbarComponent implements OnInit {
     public filtered: any;
     public distributionLog: any[];
     public timeLeft: number = 0;
-    public interval : any;
+    public interval: any;
+    public selectAll: boolean;
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('marginTableContainer') table: ElementRef;
@@ -75,7 +76,7 @@ export class AdditionNavbarComponent implements OnInit {
             //return true;
             return array.indexOf(array.find(t => t.oid === element.oid && t.text === element.text && t.name === element.name)) === index;
         });
-
+        this.selectAll = false;
         this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
         //this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData);
         this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData.filter((element: any, index: number, array: any[]) => {
@@ -112,6 +113,9 @@ export class AdditionNavbarComponent implements OnInit {
     }
     public changeSentOption(item) {
         item.toSend = !item.toSend;
+        if (!item.toSend) {
+            this.selectAll = false;
+        }
       //  item.val = item.toSend ? item.val === undefined ? 0 + 33.33 : item.val + 33.33 : item.val - 33.33;
     }
 
@@ -159,5 +163,13 @@ export class AdditionNavbarComponent implements OnInit {
             }
         })
 
+    }
+
+    public SelectAllTemplates() {
+        this.selectAll = true;
+        console.log(this.pricingTemplatesData);
+        this.pricingTemplatesData.forEach(x => {
+            x.toSend = this.selectAll;
+        })
     }
 }
