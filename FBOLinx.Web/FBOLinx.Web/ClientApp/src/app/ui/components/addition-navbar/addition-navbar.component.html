@@ -5,7 +5,7 @@
 <div class="navbar-wrap">
     <div class="navbar-header">
         {{ title }}
-        <mat-slide-toggle color="accent" (click)="SelectAllTemplates();" (change)="SelectAllTemplates();" [checked]="selectAll" style="margin-left:10px;">All</mat-slide-toggle>
+        <mat-slide-toggle color="accent" (change)="SelectAllTemplates($event);" [checked]="selectAll" style="margin-left:10px;">All</mat-slide-toggle>
     </div>
 
     <div class="navbar-content">

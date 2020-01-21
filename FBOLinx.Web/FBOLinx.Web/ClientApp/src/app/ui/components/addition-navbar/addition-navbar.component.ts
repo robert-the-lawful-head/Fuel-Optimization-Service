@@ -165,8 +165,9 @@ export class AdditionNavbarComponent implements OnInit {
 
     }
 
-    public SelectAllTemplates() {
-        this.selectAll = true;
+    public SelectAllTemplates(event) {
+        console.log(event);
+        this.selectAll = !this.selectAll;
         console.log(this.pricingTemplatesData);
         this.pricingTemplatesData.forEach(x => {
             x.toSend = this.selectAll;
