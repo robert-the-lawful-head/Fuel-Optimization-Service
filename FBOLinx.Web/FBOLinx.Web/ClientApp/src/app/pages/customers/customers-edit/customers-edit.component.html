@@ -4,6 +4,13 @@
     <mat-spinner></mat-spinner>
 </div>
 
+<div class="row sticky-top stickyStyle">
+    <div class="col-md-6">
+        <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveCustomerEdit()" class="mr-1">Save Changes</button>
+        <button mat-stroked-button style="background-color:white;" (click)="cancelCustomerEdit()">Cancel</button>
+    </div>
+</div>
+
 <ni-card title="{{customerInfoByGroup.company}}" class="mb-0" *ngIf="customerInfoByGroup">
     <div>
         <mat-tab-group>
@@ -117,8 +124,8 @@
                             <tr>
                                 <th>Margin Template</th>
                                 <!--<th class="text-right">
-                    <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newCustomerPricingTemplate()">Add New</button>
-                </th>-->
+                                    <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newCustomerPricingTemplate()">Add New</button>
+                                </th>-->
                             </tr>
                         </thead>
                         <tbody>
@@ -133,19 +140,18 @@
                                     </mat-form-field>
                                 </td>
                                 <!--<td class="text-right">
-                    <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomerPricingTemplate(customCustomerType)">Delete</button>
-                </td>-->
+                                    <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomerPricingTemplate(customCustomerType)">Delete</button>
+                                </td>-->
                             </tr>
                         </tbody>
                     </table>
                     <div class="mb-2 mt-2">
                         <br />
                     </div>
-                    <div class="row">
+                    <div class="row" style="display:none;">
                         <div class="col-md-12">
                             <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveCustomerEdit()" class="mr-1">Save Changes</button>
-                            <!--<button ni-button [view]="'accent'" beforeIcon="fa fa-usd" *ngIf="customerInfoByGroup.distribute && customCustomerTypes && customCustomerTypes.length > 0 && hasContactForPriceDistribution" (click)="distributePricing()" class="mr-1" [matTooltipPosition]="'above'" matTooltip="Prepare and send an email containing fuel pricing for this customer.">Distribute Pricing</button>-->
-                            <button mat-stroked-button (click)="cancelCustomerEdit()">Cancel</button>
+                            <button mat-stroked-button style="background-color:white;" (click)="cancelCustomerEdit()">Cancel</button>
                         </div>
                     </div>
                 </div>
