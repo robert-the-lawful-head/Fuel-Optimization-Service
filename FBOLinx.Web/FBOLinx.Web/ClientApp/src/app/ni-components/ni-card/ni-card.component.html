@@ -35,11 +35,8 @@
       'small-header': theme === 'small'
     }">
         <div class="row">
-            <div class="col-10">
-                {{title}}
-            </div>
-            <div class="col-2">
-                <button *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1" (click)="openAddOnMargin()">Add On Margin</button>
+            <div class="col-12">
+                {{title}}&nbsp;<button *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 pull-right" (click)="openAddOnMargin()">Add On Margin</button>
             </div>
         </div>
     </h3>
