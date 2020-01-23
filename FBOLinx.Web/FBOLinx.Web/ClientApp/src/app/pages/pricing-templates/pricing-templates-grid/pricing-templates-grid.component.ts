@@ -75,11 +75,13 @@ export class PricingTemplatesGridComponent implements OnInit {
             if (!result)
                 return;
             this.newPricingTemplateAdded.emit();
+            window.location.reload();
         });
     }
 
     public deletePricingTemplate(pricingTemplate) {
         this.deletePricingTemplateClicked.emit(pricingTemplate);
+        window.location.reload();
     }
 
     public applyFilter(filterValue: string) {
