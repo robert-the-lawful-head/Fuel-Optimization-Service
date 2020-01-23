@@ -3,3 +3,22 @@
     padding-top: 5px;
     background-color:white;
 }
+
+
+.card-container-right {
+    display: inline;
+    float: right;
+}
+
+.card-container-left {
+    display: inline;
+}
+
+::ng-deep .mat-card-header-text {
+    padding-bottom: 10px;
+    padding-top: 5px;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
