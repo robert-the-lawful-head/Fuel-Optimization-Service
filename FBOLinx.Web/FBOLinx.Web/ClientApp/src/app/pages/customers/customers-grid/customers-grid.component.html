@@ -37,12 +37,11 @@
 
     <table mat-table [dataSource]="customersDataSource" class="col-md-12" matSort matSortActive="hasBeenViewed" matSortDirection="asc" #customerTable>
         <ng-container matColumnDef="selectAll">
-            ''
-            <th mat-header-cell *matHeaderCellDef><input type="checkbox" class="checkboxHeight" [(ngModel)]="selectAll" (change)="selectAction()"></th>
+            <th mat-header-cell *matHeaderCellDef><input type="checkbox" id="a" class="checkboxHeight" [(ngModel)]="selectAll" (change)="selectAction()"> <label for="a">Select All</label></th>
             <td mat-cell *matCellDef="let customer"><input type="checkbox" class="checkboxHeight" [(ngModel)]="customer.selectAll" value="{{customer.selectAll}}" (change)="selectUnique()"></td>
         </ng-container>
         <ng-container matColumnDef="hasBeenViewed">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Clients w/out Pricing</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Needs Attention</th>
             <td mat-cell *matCellDef="let customer">
                 <div>
                     <ni-badge *ngIf="!customer.hasBeenViewed" [color]="'warning'" [borderRadius]="false" [arrow]="'right'">Needs Attention</ni-badge>
