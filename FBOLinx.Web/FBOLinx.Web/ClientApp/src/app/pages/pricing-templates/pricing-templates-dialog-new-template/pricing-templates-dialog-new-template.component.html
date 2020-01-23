@@ -45,9 +45,6 @@
     </mat-select>
     </mat-form-field>
     </div>
-    <div class="col-9 text-right font-weight-bold" *ngIf="currentPrice && [0,1].indexOf(data.marginType) > -1">
-        <h5 style="font-weight: 600;margin:0 !important" *ngFor="let tmp of currentPrice"><span *ngIf="tmp.price">{{tmp.product}}: ${{tmp.price | number:'1.4-4'}}</span></h5>
-    </div>
     </div>
     <div class="row mt-2" style="border-top: 1px solid; border-top-style: outset;">
         <div class="col">
