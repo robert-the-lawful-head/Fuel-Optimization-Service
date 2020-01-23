@@ -4,6 +4,13 @@
     <mat-spinner></mat-spinner>
 </div>
 
+<div class="row sticky-top stickyStyle">
+    <div class="col-md-12">
+        <button mat-stroked-button (click)="cancelPricingTemplateEdit()" class="float-right">Cancel</button>
+        <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="savePricingTemplate()" class="mr-1 float-right">Save Changes</button>
+    </div>
+</div>
+
 <ni-card title="{{pricingTemplate.name}}" class="mb-0" *ngIf="pricingTemplate && !isSaving">
     <div>
         <div class="container-fluid">
@@ -120,8 +127,10 @@
                 <br />
             </div>
             <div class="row">
-                <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="savePricingTemplate()" class="mr-1">Save Changes</button>
-                <button mat-stroked-button (click)="cancelPricingTemplateEdit()">Cancel</button>
+                <div class="col-md-12" style="padding-right:0 !important;">
+                    <button mat-stroked-button (click)="cancelPricingTemplateEdit()" class="float-right">Cancel</button>
+                    <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="savePricingTemplate()" class="mr-1 float-right">Save Changes</button>
+                </div>
             </div>
         </div>
     </div>
