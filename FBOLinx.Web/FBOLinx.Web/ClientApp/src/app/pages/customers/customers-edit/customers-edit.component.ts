@@ -118,7 +118,6 @@ export class CustomersEditComponent {
     //Public Methods
     public saveCustomerEdit() {
         this.isSaving = true;
-        
         //Update customer information
         this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((data: any) => {
             for (let customCustomerType of this.customCustomerTypes) {
@@ -133,6 +132,26 @@ export class CustomersEditComponent {
                 this.saveCustomerClicked.emit();
             }
                 
+        });
+    }
+
+    public saveDirectCustomerEdit() {
+        this.isSaving = true;
+        this._RequiresRouting = true;
+        //Update customer information
+        this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((data: any) => {
+            for (let customCustomerType of this.customCustomerTypes) {
+                this.saveCustomCustomerType(customCustomerType);
+            }
+            //Update other aspects
+            if (this._RequiresRouting) {
+                sessionStorage.setItem('isCustomerEdit', '1');
+                this.router.navigate(['/default-layout/customers/']);
+            }
+            else {
+                this.saveCustomerClicked.emit();
+            }
+
         });
     }
 
