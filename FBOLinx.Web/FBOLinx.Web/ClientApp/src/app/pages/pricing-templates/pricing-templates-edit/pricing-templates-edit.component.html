@@ -70,14 +70,15 @@
 
                             <td class="mat-cell text-center" *ngIf="pricingTemplate.marginType>0">
                                 <mat-form-field class="col-6">
-                                    <input matInput [(ngModel)]="customerMargin.amount" (focus)="onFocus()" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />
+                                    <!--<input matInput [(ngModel)]="customerMargin.amount" (focus)="onFocus()" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.'}" />-->
+                                    <input matInput type="number" step="0.01" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Cost" (click)="$event.target.select()"  (focus)="onFocus()" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" [ngModel]="customerMargin.amount">
                                 </mat-form-field>
                             </td>
                             <td class="mat-cell text-center font-weight-bold font-italic text-right">
                                 <div *ngIf="pricingTemplate.marginType==1">${{customerMargin.itp | number:'1.4-4'}}</div>
                                 <mat-form-field class="col-6" *ngIf="pricingTemplate.marginType==0">
-                                    <!--<input matInput [(ngModel)]="customerMargin.itp" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />-->
-                                    <input matInput [(ngModel)]="customerMargin.amount" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />
+                                    <!--<input matInput [(ngModel)]="customerMargin.amount" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" currencyMask [options]="{prefix: '$', thousands: ',', decimal: '.', precision: 4}" />-->
+                                    <input matInput type="number" step="0.01" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" [ngModel]="customerMargin.amount">
                                 </mat-form-field>
                             </td>
                             <td class="mat-cell text-center font-weight-bold font-italic text-right col-3">

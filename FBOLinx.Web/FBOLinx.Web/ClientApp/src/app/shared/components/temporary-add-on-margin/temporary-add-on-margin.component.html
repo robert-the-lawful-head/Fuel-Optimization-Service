@@ -27,7 +27,8 @@
         </div>
         <div class="col-4">
             <mat-form-field>
-                <input matInput type="text" autocomplete="off" (keyup)="onType(data,$event)" [(ngModel)]="data.MarginJet" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.',precision: 2}" required>
+                <!--<input matInput type="text" autocomplete="off" (keyup)="onType(data,$event)" [(ngModel)]="data.MarginJet" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.',precision: 4}" required>-->
+                <input matInput required type="number" step="0.01" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" (keyup)="onType(data,$event)" (blur)="updateCustomerMargin(customerMargin)" [ngModel]="data.MarginJet">
                 <span matPrefix>$</span>
             </mat-form-field>
         </div>
