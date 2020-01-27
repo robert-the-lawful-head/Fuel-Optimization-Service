@@ -172,6 +172,7 @@ export class CustomersEditComponent {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result != 'cancel') {
+                this._RequiresRouting = false;
                 this.saveCustomerEdit();
                 if (this.currentContactInfoByGroup.contactId == 0) {
                     this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
