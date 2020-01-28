@@ -119,6 +119,11 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     public marginTypeChange() {
+        this.data.customerMargins.forEach((customerMargin: any) => {
+            customerMargin.amount = 0;
+            customerMargin.itp = 0;
+            customerMargin.allin = 0;
+        });
         this.loadCurrentPrice();
     }
 

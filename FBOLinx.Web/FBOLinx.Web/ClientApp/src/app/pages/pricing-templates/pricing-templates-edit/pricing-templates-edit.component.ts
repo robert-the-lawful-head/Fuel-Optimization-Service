@@ -257,6 +257,7 @@ export class PricingTemplatesEditComponent {
                 customerMargin.amount = previousTier.amount - .01;
         }
         this.calculateItpForMargin(customerMargin);
+        this.calculateAllInForMargin(customerMargin);
     }
 
     public marginTypeChange() {
@@ -315,6 +316,26 @@ export class PricingTemplatesEditComponent {
             else if (this.pricingTemplate.marginType > 1) {
                 customerMargin.itp = Math.abs(customerMargin.amount);
                 return;
+            }
+        }
+    }
+
+    private calculateAllInForMargin(customerMargin) {
+        var jetACost = this.currentPrice.filter(item => item.product == 'JetA Cost')[0].price;
+        var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
+
+        if (this.pricingTemplate.marginType == 0) {
+            if (customerMargin.min != null && customerMargin.amount != null) {
+                customerMargin.allin = jetACost + customerMargin.amount;
+            }
+
+        }
+        else if (this.pricingTemplate.marginType == 1) {
+            if (customerMargin.amount != null && customerMargin.min != null) {
+                customerMargin.allin = jetARetail - customerMargin.amount;
+                if (customerMargin.allin) {
+                    customerMargin.itp = customerMargin.allin - jetACost;
+                }
             }
         }
     }
