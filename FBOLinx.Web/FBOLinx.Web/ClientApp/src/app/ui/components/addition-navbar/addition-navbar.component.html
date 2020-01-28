@@ -5,7 +5,7 @@
 <div class="navbar-wrap">
     <div class="navbar-header">
         {{ title }}
-        <mat-slide-toggle color="accent" (change)="SelectAllTemplates($event);" [checked]="selectAll" style="margin-left:10px;">All</mat-slide-toggle>
+        <mat-slide-toggle color="accent" (change)="SelectAllTemplates($event);" [labelPosition]="labelPosition" [checked]="selectAll" style="margin-left:217px;">All</mat-slide-toggle>
     </div>
 
     <div class="navbar-content">
@@ -15,7 +15,7 @@
                 <ng-container matColumnDef="template">
                     <td class="mb-1 col-10" mat-cell *matCellDef="let pricingTemplate">
                         <div class="row">
-                            <div class="col-8">
+                            <div class="col-6">
                                 {{pricingTemplate.name}}
                             </div>
                             <div class="col-4" style="padding-left:0px !important">
@@ -54,8 +54,11 @@
         <div>
             <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
         </div>
+        <div style="margin-top:20px; margin-right:10px;">
+            <button ni-button class="float-right" [view]="'success'" (click)="sendMails()">{{buttontext}}</button>
+        </div>
     </div>
     <div class="navbar-footer m-md-3">
-        <button ni-button class="float-right" [view]="'success'" (click)="sendMails()">Distribute Pricing</button>
+        <!--<button ni-button class="float-right" [view]="'success'" (click)="sendMails()">Distribute Pricing</button>-->
     </div>
 </div>

@@ -8,9 +8,9 @@
     position: fixed;
     right: 0;
     top: $navbar-height;
-    transform: translate(300px, 0);
+    transform: translate(450px, 0);
     transition: .2s transform 0s $animation, 0s z-index .2s $animation;
-    width: 300px;
+    width: 450px;
     z-index: 9997;
 
     table {
@@ -105,3 +105,4 @@
         }
     }
 }
+

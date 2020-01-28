@@ -30,6 +30,8 @@ export class AdditionNavbarComponent implements OnInit {
     public timeLeft: number = 0;
     public interval: any;
     public selectAll: boolean;
+    labelPosition = 'before';
+    buttontext = 'Distribute Pricing';
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('marginTableContainer') table: ElementRef;
@@ -132,12 +134,15 @@ export class AdditionNavbarComponent implements OnInit {
         let term = 'addition-navbar';
         // targetElement.path.forEach(element => element[1].nodeName);
         if (this.open && targetElement.target.nodeName != "svg" && !(targetElement.target.className == "ng-star-inserted" || targetElement.target.offsetParent.className.lastIndexOf("addition-navbar") > -1 || targetElement.target.textContent == "$Cost" || targetElement.target.offsetParent.className.lastIndexOf("addition-navbar") > -1 || targetElement.target.offsetParent.className.lastIndexOf("open-navbar") > -1 || targetElement.target.offsetParent.className.lastIndexOf("mat-slide-toggle-thumb-container") > -1 || targetElement.target.offsetParent.tagName == 'MAT-PROGRESS-BAR' || targetElement.target.nodeName == 'MAT-PROGRESS-BAR' || targetElement.target.offsetParent.className.lastIndexOf("btn-text") > -1 || targetElement.target.offsetParent.className.lastIndexOf("ng-star-inserted") > -1 || targetElement.target.offsetParent.className.lastIndexOf("mat-progress-bar-element") > -1 || targetElement.target.offsetParent.innerText == 'Distribute Pricing' || targetElement.target.offsetParent.offsetParent.className == "addition-navbar")) {
-
-            console.log(true);
-            this.open = !this.open;
+            if (targetElement.target.innerText !== 'Sent!') {
+                this.open = !this.open;
+            }
+            
+            //this.open = !this.open;
         }
     }
     public sendMails() {
+        
         this.pricingTemplatesData.forEach(x => {
             if (x.toSend) {
                 var request = {
@@ -160,7 +165,12 @@ export class AdditionNavbarComponent implements OnInit {
                     x.sent = false;
                 });
                 x.text = 'Last sent ' + moment(new Date()).format('MM/DD/YYYY HH:mm');
+                this.buttontext = 'Sent!';    
             }
+            
+            setTimeout(() => {
+                this.buttontext = 'Distribute Pricing';
+            }, 5000);
         })
 
     }
@@ -172,5 +182,8 @@ export class AdditionNavbarComponent implements OnInit {
         this.pricingTemplatesData.forEach(x => {
             x.toSend = this.selectAll;
         })
+    }
+    public ReloadResults() {
+        alert('refresh results');
     }
 }
