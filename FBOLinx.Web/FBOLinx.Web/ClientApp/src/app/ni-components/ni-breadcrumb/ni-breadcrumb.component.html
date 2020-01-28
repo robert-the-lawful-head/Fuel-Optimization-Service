@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-4">
+    <div class="col-md-4">
     <ul class="breadcrumb" [ngClass]="getClasses()">
         <li *ngFor="let item of menu; let last = last">
             <a href="{{item.link}}" *ngIf="item.link"><span class="icon {{item.icon}}" *ngIf="item.icon"></span>{{item.title}}</a>
@@ -12,14 +12,12 @@
         </li>
     </ul>
      </div>
-    <div class="col-8">
-        <div class="row">
-            <div class="col-5 retailCl" *ngIf="currentFboPriceJetARetail">
-                <h6 class="mt-1 mb-1 title p-1" style="text-align: center;">RETAIL (JET A)    ${{currentFboPriceJetARetail.price | number:'1.4-4'}}</h6>
-            </div>
-            <div class="col-5 costCl" *ngIf="currentFboPriceJetACost">
-                <h6 class="mt-1 mb-1 title p-1" style="text-align: center;">COST (JET A)    ${{currentFboPriceJetACost.price | number:'1.4-4'}}</h6>
-            </div>
+    <div class="col-md-8 justify-content-end" style="display:inherit;">
+        <div class="col-md-4 retailCl" *ngIf="currentFboPriceJetARetail">
+            <h6 class="mt-1 mb-1 title p-1" style="text-align: center;">RETAIL (JET A)&nbsp;&nbsp;${{currentFboPriceJetARetail.price | number:'1.4-4'}}</h6>
+        </div>
+        <div class="col-md-4 costCl" style="margin-right:24px;" *ngIf="currentFboPriceJetACost">
+            <h6 class="mt-1 mb-1 title p-1" style="text-align: center;">COST (JET A)&nbsp;&nbsp;${{currentFboPriceJetACost.price | number:'1.4-4'}}</h6>
         </div>
     </div>
 </div>
