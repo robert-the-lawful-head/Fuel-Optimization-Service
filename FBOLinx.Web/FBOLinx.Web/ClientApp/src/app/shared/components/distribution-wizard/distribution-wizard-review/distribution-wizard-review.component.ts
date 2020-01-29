@@ -48,6 +48,7 @@ export class DistributionWizardReviewComponent implements OnInit {
     ngOnInit() {
         this.customerMarginsService.getCustomerMarginsByPricingTemplateId(this.data.oid).subscribe(
             (data: any) => {
+                console.log(data);
                 this.customerMargins = data;
                 this.data.customerMargins = data;
                 this.fbopricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId).subscribe((dates: any) => {
@@ -69,14 +70,29 @@ export class DistributionWizardReviewComponent implements OnInit {
         var jetACost = this.currentPrice.filter(item => item.product == 'JetA Cost')[0].price;
         var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
         margin.allin = 0;
+        //if (this.data.marginType == 0) {
+        //    if (margin.min && margin.itp) {
+        //        margin.allin = jetACost + margin.itp;
+        //    }
+
+        //}
+        //else if (this.data.marginType == 1) {
+        //    if (margin.amount && margin.min) {
+        //        margin.allin = jetARetail - margin.amount;
+        //        if (margin.allin) {
+        //            margin.itp = margin.allin - jetACost;
+        //        }
+        //    }
+        //}
+
         if (this.data.marginType == 0) {
-            if (margin.min && margin.itp) {
-                margin.allin = jetACost + margin.itp;
+            if (margin.min != null && margin.amount != null) {
+                margin.allin = jetACost + margin.amount;
             }
 
         }
         else if (this.data.marginType == 1) {
-            if (margin.amount && margin.min) {
+            if (margin.amount != null && margin.min != null) {
                 margin.allin = jetARetail - margin.amount;
                 if (margin.allin) {
                     margin.itp = margin.allin - jetACost;
