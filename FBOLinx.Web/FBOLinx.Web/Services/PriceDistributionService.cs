@@ -335,6 +335,7 @@ namespace FBOLinx.Web.Services
             var res = pom as OkObjectResult;
             var prom = await new Controllers.FbopricesController(_context).GetFbopricesByFboIdCurrent(fboId);
             var resProm = prom as OkObjectResult;
+         
             string body = "";
             //string title = id == 1 ? "Retail-" : id == 0 ? "Cost+" : "Flat Fee";
             body = "<div style=\"500 13px/25px Roboto, \"Helvetica Neue\", sans-serif;display:flex;flex-wrap:wrap;box-sizing:border-box;\"><div style=\"max-width: 20%;\"><div style=\"font-weight: bold;text-align:center !important;margin-top:1.5rem !important;min-width: 65%;max-width:75%\">" + id + "</div><div style=\"font-size:11px;min-width: 65%;max-width:75%\"><div style=\"max-width:66.66666667%;flex:0 0 66.66666667%;float:left !important\">Volume(gal.)</div><div style=\"max-width:33.33333333%;flex:0 0 33.33333333%;float:right !important\">Price</div></div><div>";
@@ -342,11 +343,8 @@ namespace FBOLinx.Web.Services
             body += "<tbody style=\"border:1px solid #000;display:table-row-group;vertical-align:middle;border-spacing:0\">";
             foreach(var pm in res.Value as IEnumerable<CustomerMarginsGridViewModel>)
             {
-                var slexp = GetSelectXpr("test", "test");
                 IEnumerable<dynamic> tst = resProm.Value as IEnumerable<dynamic>;
-               // var pm11 = tst.Where(slexp).Select(x => x).FirstOrDefault();
                 var pom1 = tst.GetType().GetProperties().Where(x => x.Name == "Product").Select(s => s).FirstOrDefault();
-                //int nmb = await updateCustomerMargin(pm, resProm);
                 double? bd = pm.Min == 0 ? pm.Min + 249 : pm.Max;
                 if (pm.Max.ToString().Equals("99999"))
                 {
@@ -425,6 +423,8 @@ namespace FBOLinx.Web.Services
         {
             PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
             var priceResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, pricingTemplate.Oid);
+
+            priceResults = priceResults.GroupBy(s => s.MinGallons).Select(s => s.Last()).ToList();
 
             //string priceBreakdownTemplate = GetPriceBreakdownTemplate().Replace("%PRICING_TEMPLATE_NAME%", pricingTemplate.Name).Replace("%PRICING_TEMPLATE_NOTES%", pricingTemplate.Notes);
             //string priceBreakdownTemplate = GetPriceBreakdownTemplate().Replace("%PRICING_TEMPLATE_NAME%", pricingTemplate.Name).Replace("%PRICING_TEMPLATE_NOTES%", "");
