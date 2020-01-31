@@ -440,6 +440,19 @@ export class CustomersEditComponent {
             });
     }
 
+    private toggleChange($event) {
+        if ($event.checked) {
+            this.customerInfoByGroup.showJetA = true;
+            this.customerInfoByGroup.show100Ll = true;
+            this.customerInfoByGroup.distribute = true;
+        }
+        else {
+            this.customerInfoByGroup.showJetA = false;
+            this.customerInfoByGroup.show100Ll = false;
+            this.customerInfoByGroup.distribute = false;
+        }
+    }
+
     private loadPricingTemplates() {
         this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
             this.pricingTemplatesData = data;

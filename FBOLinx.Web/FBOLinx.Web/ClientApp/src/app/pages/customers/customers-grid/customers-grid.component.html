@@ -75,10 +75,11 @@
         </ng-container>
 
         <ng-container matColumnDef="allInPrice">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ITP</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>All-in</th>
             <td mat-cell *matCellDef="let customer">
-                <span *ngIf="!customer.isPricingExpired">{{customer.allInPrice | currency:'USD'}}</span>
-                <span *ngIf="customer.isPricingExpired" style="color: red; font-weight: bold;">Expired</span>
+                <span *ngIf="!customer.active" style="color: red; font-weight: bold;">Inactive</span>
+                <span *ngIf="!customer.isPricingExpired && customer.active">{{customer.allInPrice | currency:'USD'}}</span>
+                <span *ngIf="customer.isPricingExpired && customer.active" style="color: red; font-weight: bold;">Expired</span>
             </td>
         </ng-container>
 

@@ -420,6 +420,8 @@ namespace FBOLinx.Web.Controllers
                     model.FleetSize = (from ca in _context.CustomerAircrafts
                                        where ca.GroupId.GetValueOrDefault() == groupId && ca.CustomerId == model.CustomerId
                                        select ca).Count();
+
+                    model.Active = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == model.CustomerId && s.GroupId == model.GroupId).Active;
                 }
 
                 customerGridVM = customerGridVM.OrderByDescending(s => s.FleetSize).ToList();

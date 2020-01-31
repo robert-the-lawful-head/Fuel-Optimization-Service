@@ -38,7 +38,7 @@ namespace FBOLinx.Web.ViewModels
         public int? FleetSize { get; set; }
         public List<PricingTemplatesGridViewModel> PricingTemplatesList { get; set; }
         
-
+        public bool? Active { get; set; }
         public string DefaultCustomerTypeDescription
         {
             get
