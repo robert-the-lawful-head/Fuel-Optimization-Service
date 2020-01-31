@@ -169,16 +169,16 @@
                             <div class="col-3" *ngIf="currentFboPriceJetACost && currentFboPriceJetARetail">
                                 <div class="row">
                                     <div class="col-6 text-left">
-                                        <mat-form-field title="Your Retail values should be inclusive of all taxes/fees">
+                                        <mat-form-field>
                                             <!--<input class="text-left" matInput title="" placeholder="Retail*" autocomplete="off" [ngModel]="currentFboPriceJetARetail.price" type="text" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Retail')" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />-->
-                                            <input matInput type="number" step="0.01" placeholder="Retail*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="currentFboPriceJetARetail.price | number:'1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Retail')">
+                                            <input matInput type="number" step="0.01" title="Your Retail values should be inclusive of all taxes/fees" placeholder="Retail*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="currentFboPriceJetARetail.price | number:'1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Retail')">
                                             <span matPrefix class="prefixDollar">$</span>
                                         </mat-form-field>
                                     </div>
                                     <div class="col-6">
-                                        <mat-form-field title="Your Cost values should be inclusive of all taxes/fees">
+                                        <mat-form-field>
                                             <!--<input matInput class="text-left" title="" placeholder="Cost*" autocomplete="off" [ngModel]="currentFboPriceJetACost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Cost')" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />-->
-                                            <input matInput type="number" step="0.01" placeholder="Cost*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="currentFboPriceJetACost.price | number:'1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Cost')">
+                                            <input matInput type="number" step="0.01"  title="Your Cost values should be inclusive of all taxes/fees" placeholder="Cost*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="currentFboPriceJetACost.price | number:'1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Cost')">
                                             <span matPrefix class="prefixDollar">$</span>
                                         </mat-form-field>
                                     </div>
