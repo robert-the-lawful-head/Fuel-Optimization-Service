@@ -19,11 +19,13 @@ namespace FBOLinx.Web.Controllers
     public class GroupsController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly FuelerLinxContext _fcontext;
         private readonly IHttpContextAccessor _HttpContextAccessor;
 
-        public GroupsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _fcontext = fcontext;
             _HttpContextAccessor = httpContextAccessor;
         }
 
@@ -112,8 +114,20 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+
+            //try
+            //{
+                
+            //}
+            //catch(Exception ex)
+            //{
+            //    var sss = ex.Message;
+            //}
+
             _context.Group.Add(@group);
             await _context.SaveChangesAsync();
+
+            _fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + @group.GroupName + "', @GroupID=" + @group.Oid + "");
 
             return CreatedAtAction("GetGroup", new { id = @group.Oid }, @group);
         }
@@ -143,6 +157,11 @@ namespace FBOLinx.Web.Controllers
         private bool GroupExists(int id)
         {
             return _context.Group.Any(e => e.Oid == id);
+        }
+
+        private void InsertNewGroupInfo()
+        {
+
         }
     }
 }

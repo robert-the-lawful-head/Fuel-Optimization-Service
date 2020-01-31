@@ -68,6 +68,9 @@ namespace FBOLinx.Web
             services.AddDbContext<DegaContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DegaContext")));
 
+            services.AddDbContext<FuelerLinxContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("FuelerLinxContext")));
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
