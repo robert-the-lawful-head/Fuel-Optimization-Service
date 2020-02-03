@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -7,273 +7,679 @@ import { DistributionService } from '../../../services/distribution.service';
 import { FbofeesService } from '../../../services/fbofees.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FbopreferencesService } from '../../../services/fbopreferences.service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
 
 //Components
 import * as moment from 'moment';
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import { TemporaryAddOnMarginComponent } from '../../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
+import { getDate } from 'date-fns';
 
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '#/'
-    },
-    {
-        title: 'Manage Prices',
-        link: ''
-    }
-];
-
+//const BREADCRUMBS: any[] = [
+//    {
+//        title: 'Main',
+//        link: '#/default-layout/dashboard-home'
+//    },
+//    {
+//        title: 'Manage Prices',
+//        link: ''
+//    }
+//];
+export interface temporaryAddOnMargin {
+	id: any;
+	fboId: any;
+	EffectiveFrom: any;
+	EffectiveTo: any;
+	MarginJet: any;
+}
 @Component({
-    selector: 'app-fbo-prices-home',
-    templateUrl: './fbo-prices-home.component.html',
-    styleUrls: ['./fbo-prices-home.component.scss']
+	selector: 'app-fbo-prices-home',
+	templateUrl: './fbo-prices-home.component.html',
+	styleUrls: ['./fbo-prices-home.component.scss'],
+	encapsulation: ViewEncapsulation.None
 })
 /** fbo-prices-home component*/
 export class FboPricesHomeComponent implements OnInit {
 
-    //Public Members
-    public pageTitle: string = 'Pricing';
-    public breadcrumb: any[] = BREADCRUMBS;
-    public pricingJetARetail: any;
-    public pricingJetACost: any;
-    public pricing100LLRetail: any;
-    public pricing100LLCost: any;
+	//Public Members
+	public pageTitle: string = 'Pricing';
+	//public breadcrumb: any[] = BREADCRUMBS;
+	public pricingJetARetail: any;
+	public pricingJetACost: any;
+	public pricing100LLRetail: any;
+	public pricing100LLCost: any;
     public currentPrices: any[];
-    public stagedPrices: any[];
-    public fboPreferences: any;
+    public currentPircesAll: any[];
+    public pom: any[];
+	public dateFrom: any;
+	public dateTo : any;
+	public TempValueJet: any;
+	public TempValueAvgas: any;
+	public TempValueId: any;
+	public TempDateFrom: any;
+	public TempDateTo: any;
+	public stagedPrices: any[];
+	public fboPreferences: any;
     public fboFees: any[];
-    public distributionLog: any[];
-    public isLoadingJetARetail: boolean;
-    public isLoadingJetACost: boolean;
-    public isLoading100LLRetail: boolean;
-    public isLoading100LLCost: boolean;
-    public isLoadingFboPreferences: boolean;
-    public isLoadingFboFees: boolean;
-    public requiresUpdate: boolean;
-    public isSaved: boolean;
-    public minimumAllowedDate: Date = new Date();
-    public maximumCurrentEffectiveTo: Date = new Date();
-    public minimumStagedEffectiveFrom: Date = new Date();
-    public currentPricingEffectiveFrom: Date = new Date();
-    public currentPricingEffectiveTo: Date = new Date();
-    public stagedPricingEffectiveFrom: Date = new Date();
+    public price: any;
+	public lcl : any;
+	public distributionLog: any[];
+	public isLoadingJetARetail: boolean;
+	public isLoadingJetACost: boolean;
+	public isLoading100LLRetail: boolean;
+	public isLoading100LLCost: boolean;
+	public isLoadingFboPreferences: boolean;
+	public isLoadingFboFees: boolean;
+	public requiresUpdate: boolean = true;
+	public isSaved: boolean;
+    public show: boolean;
+    public greska: boolean = false;
+    public saveOk: boolean = true;
+	public minimumAllowedDate: Date = new Date();
+	//public maximumCurrentEffectiveTo: Date = new Date();
+	public minimumStagedEffectiveFrom: Date = new Date();
+	public currentPricingEffectiveFrom: Date = new Date();
+	public currentPricingEffectiveTo: Date = new Date();
+	public stagedPricingEffectiveFrom: Date = new Date();
     public stagedPricingEffectiveTo: Date = new Date();
+    public todayDate: Date = new Date();
+	public pricingTemplates: any[];
+    public activePrice: boolean = false;
+    public newRetail: any;
+    public newCost: any;
+    public jtCost: any;
+    public jtRetail: any;
+    public priceGroup: number;
+    public buttonTextValue: any;
 
-    //Additional Public Members for direct reference (date filtering/restrictions)
-    public currentFboPriceJetARetail: any;
-    public currentFboPriceJetACost: any;
-    public currentFboPrice100LLRetail: any;
-    public currentFboPrice100LLCost: any;
-    public stagedFboPriceJetARetail: any;
-    public stagedFboPriceJetACost: any;
-    public stagedFboPrice100LLRetail: any;
-    public stagedFboPrice100LLCost: any;
+	//Additional Public Members for direct reference (date filtering/restrictions)
+	public currentFboPriceJetARetail: any;
+	public currentFboPriceJetACost: any;
+	public currentFboPrice100LLRetail: any;
+	public currentFboPrice100LLCost: any;
+	public stagedFboPriceJetA: any[];
+	public stagedFboPrice100LL: any;
 
-     /** fbo-prices-home ctor */
-    constructor(private distributionService: DistributionService,
-        private fboFeesService: FbofeesService,
-        private fboPricesService: FbopricesService,
-        private fboPreferencesService: FbopreferencesService,
-        private sharedService: SharedService,
-        public distributionDialog: MatDialog) {
+	public staticCurrentFboPriceJetARetail: any;
+	public staticCurrentFboPriceJetACost: any;
 
-        this.sharedService.emitChange(this.pageTitle);
-    }
+	 /** fbo-prices-home ctor */
+	constructor(private distributionService: DistributionService,
+		private fboFeesService: FbofeesService,
+		private fboPricesService: FbopricesService,
+		private fboPreferencesService: FbopreferencesService,
+		private pricingTemplateService: PricingtemplatesService,
+		private temporaryAddOnMargin: TemporaryAddOnMarginService,
+		private sharedService: SharedService,
+		public distributionDialog: MatDialog,
+		public warningDialog: MatDialog,
+		public tempAddOnMargin: MatDialog,
+		public deleteFBODialog: MatDialog,
+		public notificationDialog: MatDialog) {
+
+		//this.sharedService.emitChange(this.pageTitle);
+	}
 
     ngOnInit(): void {
-        this.loadCurrentFboPrices();
-        this.loadFboPreferences();
-        this.loadFboFees();
-        this.loadDistributionLog();
-    }
+        this.buttonTextValue = "Update Live Pricing";
+		this.loadCurrentFboPrices();
+		this.loadFboPreferences();
+		this.loadFboFees();
+		this.loadDistributionLog();
+        this.loadPricingTemplates();
 
-    //Public Methods
+	}
 
-    public distributePricingClicked() {
-        this.isSaved = true;
-        const dialogRef = this.distributionDialog.open(DistributionWizardMainComponent, {
-            data: {
-                fboId: this.sharedService.currentUser.fboId,
-                groupId: this.sharedService.currentUser.groupId
+
+
+	//Public Methods
+	jetChangedHandler(event: temporaryAddOnMargin) {
+		//this.TempValueId = null;
+		//this.dateFrom = new Date(moment(event.EffectiveFrom).local().format("MM/DD/YYYY"));
+		this.dateTo = new Date(moment.utc(event.EffectiveTo).toDate());
+		//alert($event.MarginJet);var now = new Date();
+		var now = new Date();
+		now.setHours(0, 0, 0, 0);
+		if (this.dateTo >= new Date(moment.utc(now).toDate())) {
+			this.TempValueId = event.id;
+			this.TempValueJet = event.MarginJet;
+			this.TempDateFrom = moment(moment.utc(event.EffectiveFrom).toDate()).format('MM/DD/YYYY');// moment(event.EffectiveFrom).format("MM/DD/YYYY");
+			this.TempDateTo = moment(moment.utc(event.EffectiveTo).toDate()).format('MM/DD/YYYY');;// moment(event.EffectiveTo).format("MM/DD/YYYY");
+		}
+
+		this.show = true;
+		this.isSaved = true;
+		this.delay(5000).then(any => {
+			this.show = false;
+			this.isSaved = false;
+		});
+	}
+
+	public distributePricingClicked() {
+		const dialogRef = this.distributionDialog.open(DistributionWizardMainComponent, {
+			data: {
+				fboId: this.sharedService.currentUser.fboId,
+				groupId: this.sharedService.currentUser.groupId
+			},
+			disableClose: true
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			this.loadDistributionLog();
+		});
+	}
+
+    public fboPriceRequiresUpdate(price,vl) {
+        if (!(price == 0 || price == null) && this.requiresUpdate) {
+            this.isSaved = false;
+            if (vl == 'JetA Retail') {
+                this.jtRetail = price;
+                this.currentFboPriceJetARetail.price = price;
             }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            this.loadDistributionLog();
-        });
-    }
-
-    public fboPriceRequiresUpdate(price) {
-        this.requiresUpdate = true;
-        this.isSaved = false;
-        price.requiresUpdate = true;
-    }
-
-    public fboCurrentPriceDateChange() {
-        this.requiresUpdate = true;
-        for (let price of this.currentPrices) {
-            price.effectiveFrom = this.currentPricingEffectiveFrom;
-            price.effectiveTo = this.currentPricingEffectiveTo;
-            price.requiresUpdate = true;
+            if (vl == 'JetA Cost') {
+                this.jtCost = price;
+                this.currentFboPriceJetACost.price = price;
+            }
+            //price.requiresUpdate = false;
         }
-        this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
-        this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
-    }
-
-    public fboStagedPriceDateChange() {
-        this.requiresUpdate = true;
-        for (let stagedPrice of this.stagedPrices) {
-            stagedPrice.effectiveFrom = this.stagedPricingEffectiveFrom;
-            stagedPrice.effectiveTo = this.stagedPricingEffectiveTo;
-            stagedPrice.requiresUpdate = true;
+        else {
+            if (vl == 'JetA Retail') {
+                this.jtRetail = price;
+                this.newRetail = price;
+            }
+            if (vl == 'JetA Cost') {
+                 this.jtCost = price;
+                this.newCost = price;
+            }
         }
-        this.currentPricingEffectiveTo = new Date(moment(this.stagedPricingEffectiveFrom).add(-1, 'days').format('MM/DD/YYYY'));
-        this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
-    }
 
-    public saveChangesClicked() {
+        if (vl == 'JetA Retail') {
+            this.jtRetail = price;
+            this.newRetail = price;
+            this.checkOkPriceSave(this.currentPricingEffectiveFrom, this.currentPricingEffectiveTo, this.jtRetail, this.jtCost);
+        }
+        if (vl == 'JetA Cost') {
+            this.jtCost = price;
+            this.newCost = price;
+            this.checkOkPriceSave(this.currentPricingEffectiveFrom, this.currentPricingEffectiveTo, this.jtRetail, this.jtCost);
+        }
+
+        
+	}
+
+    public fboCurrentPriceDateChange(event) {
+        var CurrentDate = new Date();
+        if (this.currentPricingEffectiveFrom > CurrentDate) {
+            this.buttonTextValue = "Stage Price";
+        }
+        else {
+            this.buttonTextValue = "Update Live Pricing";
+        }
+		this.requiresUpdate = false;
         for (let price of this.currentPrices) {
-            if (price.requiresUpdate) {
+            if (moment(moment.utc(price.effectiveFrom).toDate()).format('MM/DD/YYYY') == moment(moment.utc(this.currentPricingEffectiveFrom).toDate()).format('MM/DD/YYYY') && moment(moment.utc(price.effectiveTo).toDate()).format('MM/DD/YYYY') == moment(moment.utc(this.currentPricingEffectiveTo).toDate()).format('MM/DD/YYYY')) {
+                this.requiresUpdate = true;
+            }
+            price.effectiveFrom = moment(moment.utc(this.currentPricingEffectiveFrom).toDate()).format('MM/DD/YYYY');
+            price.effectiveTo = moment(moment.utc(this.currentPricingEffectiveTo).toDate()).format('MM/DD/YYYY');
+			//price.requiresUpdate = true;
+		}
+	   // this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
+		//this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
+        if (event != 'hide') {
+            this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+            this.minimumAllowedDate = this.currentPricingEffectiveFrom;
+            for (let price of this.currentPrices) {
+                price.effectiveFrom = moment(moment.utc(this.currentPricingEffectiveFrom).toDate()).format('MM/DD/YYYY');
+                price.effectiveTo = moment(moment.utc(this.currentPricingEffectiveTo).toDate()).format('MM/DD/YYYY');
+                //price.requiresUpdate = true;
+            }
+        }
+
+        this.checkOkPriceSave(this.currentPricingEffectiveFrom, this.currentPricingEffectiveTo, this.currentFboPriceJetARetail.price, this.currentFboPriceJetACost.price);
+	}
+
+   /* public fboStagedPriceDateChange() {
+		this.requiresUpdate = true;
+		for (let stagedPrice of this.stagedPrices) {
+			stagedPrice.effectiveFrom = this.stagedPricingEffectiveFrom;
+			stagedPrice.effectiveTo = this.stagedPricingEffectiveTo;
+			stagedPrice.requiresUpdate = true;
+		}
+		this.currentPricingEffectiveTo = new Date(moment(this.stagedPricingEffectiveFrom).add(-1, 'days').format('MM/DD/YYYY'));
+		//this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
+	}*/
+
+	public saveChangesClicked() {
+        //for (let price of this.currentPrices) {
+        let arr = [];
+        console.log(this.currentFboPriceJetACost.price);
+
+        if (this.requiresUpdate == false) {
+            //et pom = Object.assign({}, this.currentPrices);
+            for (let price of this.currentPrices) {
+                price.oid = 0;
                 price.effectiveFrom = this.currentPricingEffectiveFrom;
                 price.effectiveTo = this.currentPricingEffectiveTo;
+                price.price = price.product == 'JetA Retail' ? this.newRetail === undefined ? this.currentFboPriceJetARetail.price : this.newRetail : price.product == 'JetA Cost' ? this.newCost === undefined ? this.currentFboPriceJetACost.price : this.newCost : null;
+                arr.push(price);
+                console.log(this.currentFboPriceJetACost.price);
+            }
+            this.savePriceChangesAll(arr);
+            let dateCost = this.currentFboPriceJetACost.effectiveTo;
+            let priceCost = this.currentFboPriceJetACost.price;
+            let dateRetasil = this.currentFboPriceJetARetail.effectiveTo;
+            let priceRetail = this.currentFboPriceJetARetail.price;
+            this.currentFboPriceJetACost.effectiveTo = dateCost;
+            this.currentFboPriceJetACost.price = priceCost;
+            this.currentFboPriceJetARetail.effectiveTo = dateRetasil;
+            this.currentFboPriceJetARetail.price = priceRetail;
+        }
+        else {
+            for (let price of this.currentPrices) {
+                console.log(price);
+                //console.log(this.currentPricingEffectiveFrom);
+                //console.log(this.currentPricingEffectiveTo);
+                price.effectiveFrom = this.currentPricingEffectiveFrom;
+                price.effectiveTo = this.currentPricingEffectiveTo;
+                
+                price.price = price.product == 'JetA Retail' ? this.currentFboPriceJetARetail.price : price.product == 'JetA Cost' ? this.currentFboPriceJetACost.price : null;
                 this.savePriceChanges(price);
+                this.loadCurrentFboPrices();
             }
+            
+            this.show = true;
+            this.isSaved = true;
+            this.delay(5000).then(any => {
+                this.isSaved = false;
+                this.requiresUpdate = true;
+                this.show = false;
+            });
+            this.loadCurrentFboPrices();
         }
+        this.currentFboPriceJetARetail.price = this.jtRetail;
+        this.currentFboPriceJetACost.price = this.jtCost;
+		if (this.fboPreferences.oid > 0) {
+			this.fboPreferencesService.update(this.fboPreferences).subscribe((data: any) => {});
+		} else {
+			this.fboPreferencesService.add(this.fboPreferences).subscribe((data: any) => {
+				this.fboPreferences.oid = data.oid;
+			});
+        }
+        console.log(this.currentFboPriceJetACost.price);
+        this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
+        this.staticCurrentFboPriceJetARetail = this.currentFboPriceJetARetail.price;
+        this.priceGroup = null;
+        this.buttonTextValue = "Update Live Pricing";
+	}
 
-        for (let stagedPrice of this.stagedPrices) {
-            if (stagedPrice.requiresUpdate) {
-                stagedPrice.effectiveFrom = this.stagedPricingEffectiveFrom;
-                stagedPrice.effectiveTo = this.stagedPricingEffectiveTo;
-                this.savePriceChanges(stagedPrice);
-            }
-        }
-        this.isSaved = true;
-        this.requiresUpdate = false;
+	public fboPreferenceChange() {
+		this.requiresUpdate = true;
+        this.isSaved = false;
+        this.show = false;
     }
 
-    //Private Methods
-    private loadCurrentFboPrices() {
-        this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
+    public checkOkPriceSave(startDate, endDate, retail, cost) {
+        if (startDate && endDate && retail && cost) {
+            this.saveOk = false;
+        }
+        else { this.saveOk = true; }
+    }
+
+	public costJetAToggled() {
+		if (!this.fboPreferences.omitJetACost) {
+			this.fboPreferenceChange();
+			return;
+		}
+		var templatesAffected = 0;
+		for (let template of this.pricingTemplates) {
+			if (template.marginType == 0)
+				templatesAffected += 1;
+		}
+		var customText = 'Disabling JetA Cost will make ' + templatesAffected + ' margin templates invalid.';
+		const dialogRef = this.warningDialog.open(DeleteConfirmationComponent, {
+			data: { item: this.fboPreferences, customText: customText, customTitle: 'Warning' }
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			if (!result) {
+				this.fboPreferences.omitJetACost = false;
+			} else {
+				this.fboPreferences.omitJetACost = true;
+				this.fboPreferenceChange();
+			}
+		});
+	}
+	async delay(ms: number) {
+		await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() => console.log("fired"));
+	}
+	public editTempAd() {
+		const dialogRef = this.tempAddOnMargin.open(TemporaryAddOnMarginComponent, {
+			data: { MarginJet: this.TempValueJet,EffectiveFrom: this.TempDateFrom, EffectiveTo: this.TempDateTo, id: this.TempValueId, MarginAvgas: this.TempValueAvgas, fboId: this.sharedService.currentUser.fboId,update: true  },
+			autoFocus: false,
+			panelClass: 'my-panel'
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			if (!result)
+				return;
+			this.TempDateFrom = moment(moment.utc(result.EffectiveFrom).toDate()).format('MM/DD/YYYY');
+			this.TempDateTo = moment(moment.utc(result.EffectiveTo).toDate()).format('MM/DD/YYYY');
+			this.TempValueAvgas = result.MarginAvgas;
+			this.TempValueJet = result.MarginJet;
+			var now = new Date();
+			now.setHours(0, 0, 0, 0);
+			if (new Date(moment.utc(result.EffectiveTo).toDate()) < new Date(moment.utc(now).toDate())) {
+				this.TempValueId = null;
+				this.TempValueJet = null;
+				this.TempValueAvgas = null;
+			}
+			this.show = true;
+			this.isSaved = true;
+			this.delay(5000).then(any => {
+				this.show = false;
+				this.isSaved = false;
+			});
+
+		});
+	}
+	public deleteMargin(tempaddonmargin) {
+		const dialogRef = this.deleteFBODialog.open(DeleteConfirmationComponent, {
+			data: { item: tempaddonmargin, description: 'temporary add-on margin', customTitle: 'Delete Temporary Margin?' }
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			if (!result)
+				return;
+			this.temporaryAddOnMargin.remove(tempaddonmargin).subscribe((data: any) => {
+				dialogRef.close();
+				this.TempValueJet = null;
+				this.TempValueId = null;
+				this.TempValueAvgas = null;
+				this.TempDateFrom = null;
+				this.TempDateTo = null;
+			});
+		});
+	}
+	public retailJetAToggled() {
+		if (!this.fboPreferences.omitJetARetail) {
+			this.fboPreferenceChange();
+			return;
+		}
+		var templatesAffected = 0;
+		for (let template of this.pricingTemplates) {
+			if (template.marginType == 1)
+				templatesAffected += 1;
+		}
+		var customText = 'Disabling JetA Retail will make ' + templatesAffected + ' margin templates invalid.';
+		const dialogRef = this.warningDialog.open(DeleteConfirmationComponent, {
+			data: { item: this.fboPreferences, customText: customText, customTitle: 'Warning' }
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			if (!result) {
+				this.fboPreferences.omitJetARetail = false;
+			} else {
+				this.fboPreferences.omitJetARetail = true;
+				this.fboPreferenceChange();
+			}
+		});
+	}
+
+	//Private Methods
+	private loadCurrentFboPrices() {
+		this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
-                this.currentPrices = data;
-                this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
-                this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
-                this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
+                console.log(data);
+				this.currentPrices = data;
+				this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
+				this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
+				this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
                 this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
-                if (this.currentFboPrice100LLCost.effectiveFrom != null) {
-                    this.currentPricingEffectiveFrom = this.currentFboPrice100LLCost.effectiveFrom;
+                this.jtCost = this.currentFboPriceJetACost;
+                this.jtRetail = this.currentFboPriceJetARetail;
+				this.TempValueJet = data[0].tempJet;
+				this.TempValueAvgas = data[0].tempAvg;
+				this.TempValueId = data[0].tempId;
+				this.currentFboPriceJetACost.effectiveTo = moment(this.currentFboPriceJetACost.effectiveTo).format("MM/DD/YYYY");
+				this.currentFboPriceJetARetail.effectiveTo = moment(this.currentFboPriceJetARetail.effectiveTo).format("MM/DD/YYYY");
+				this.lcl = moment(data[0].tempDateFrom).utc();
+				this.TempDateFrom = moment(moment.utc(data[0].tempDateFrom).toDate()).format('MM/DD/YYYY');
+				this.TempDateTo = moment(moment.utc(data[0].tempDateTo).toDate()).format('MM/DD/YYYY');
+                //if (this.currentFboPrice100LLCost.effectiveFrom != null) {
+                if (this.currentFboPriceJetACost.effectiveFrom != null) {
+                    this.currentPricingEffectiveFrom = this.currentFboPriceJetACost.effectiveFrom;
+                    //this.currentPricingEffectiveFrom = new Date();
+                    if (this.currentFboPriceJetACost.effectiveFrom <= new Date() && this.currentFboPriceJetACost.effectiveTo > new Date()) {
+						this.activePrice = true;
+					}
+				} else {
+					this.currentPricingEffectiveFrom = new Date();
+				}
+				//if (this.currentFboPrice100LLCost.effectiveTo != null) {
+				//	this.currentPricingEffectiveTo = this.currentFboPrice100LLCost.effectiveTo;
+    //            } else {
+    //                if (this.currentPricingEffectiveFrom) {
+    //                    this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+    //                }
+    //                else {
+    //                    this.currentPricingEffectiveTo = new Date(moment(new Date()).add(6, 'days').format('MM/DD/YYYY'));
+    //                }
+                //            }
+                console.log(this.currentFboPriceJetACost);
+                if (this.currentFboPriceJetACost.effectiveTo != null) {
+
+                    this.currentPricingEffectiveTo = new Date(moment(this.currentFboPriceJetACost.effectiveTo).format('MM/DD/YYYY'));
+                    console.log(this.currentPricingEffectiveTo);
+                    console.log(this.currentFboPriceJetACost.effectiveTo);
                 } else {
-                    this.currentPricingEffectiveFrom = new Date();
+                    if (this.currentPricingEffectiveFrom) {
+                        this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+                    }
+                    else {
+                        this.currentPricingEffectiveTo = new Date(moment(new Date()).add(6, 'days').format('MM/DD/YYYY'));
+                    }
                 }
-                if (this.currentFboPrice100LLCost.effectiveTo != null) {
-                    this.currentPricingEffectiveTo = this.currentFboPrice100LLCost.effectiveTo;
-                } else {
-                    this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+
+				this.loadStagedFboPrices();
+				
+                if (this.currentFboPriceJetARetail) {
+					this.staticCurrentFboPriceJetARetail = this.currentFboPriceJetARetail.price;
+				}
+				if (this.currentFboPriceJetACost) {
+					this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
                 }
-                this.loadStagedFboPrices();
+
+                this.checkOkPriceSave(this.currentPricingEffectiveFrom, this.currentPricingEffectiveTo, this.jtCost, this.jtRetail);
+			});
+	}
+
+	public loadStagedFboPrices() {
+		this.fboPricesService.getFbopricesByFboIdStaged(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+			this.stagedPrices = data;
+			this.stagedFboPriceJetA = this.getStagedPriceByProduct('JetA');
+			this.stagedFboPrice100LL = this.getStagedPriceByProduct('100LL');
+			//this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
+			//this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
+			//this.setAllDateLimits();
+		});
+	}
+
+	private loadFboPreferences() {
+		this.fboPreferencesService.getForFbo(this.sharedService.currentUser.fboId)
+			.subscribe((data: any) => {
+				this.fboPreferences = data;
+				if (!this.fboPreferences)
+					this.fboPreferences = { fboId: this.sharedService.currentUser.fboId };
+				this.isLoadingFboPreferences = false;
+			});
+	}
+
+	public removeStaged(data) {
+        this.fboPricesService.remove(data).subscribe((data: any) => {
+            this.isSaved = true;
+            this.show = true;
+            this.delay(3000).then(any => {
+                this.isSaved = false;
+                this.show = false;
             });
-    }
+            this.loadCurrentFboPrices();
+		});
+	}
 
-    public loadStagedFboPrices() {
-        this.fboPricesService.getFbopricesByFboIdStaged(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.stagedPrices = data;
-            this.stagedFboPrice100LLCost = this.getStagedPriceByProduct('100LL Cost');
-            this.stagedFboPrice100LLRetail = this.getStagedPriceByProduct('100LL Retail');
-            this.stagedFboPriceJetACost = this.getStagedPriceByProduct('JetA Cost');
-            this.stagedFboPriceJetARetail = this.getStagedPriceByProduct('JetA Retail');
-            if (this.stagedFboPrice100LLCost.effectiveFrom != null) {
-                this.stagedPricingEffectiveFrom = this.stagedFboPrice100LLCost.effectiveFrom;
-                this.stagedPricingEffectiveTo = this.stagedFboPrice100LLCost.effectiveTo;
-            } else {
-                this.stagedPricingEffectiveFrom = new Date(moment(this.currentPricingEffectiveTo).add(1, 'days').format('MM/DD/YYYY'));
-                this.stagedPricingEffectiveTo = new Date(moment(this.stagedPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
-            }
-            this.minimumStagedEffectiveFrom = this.currentPricingEffectiveTo;
-            this.maximumCurrentEffectiveTo = this.stagedPricingEffectiveFrom;
-            this.setAllDateLimits();
-        });
-    }
+	private loadFboFees() {
+		this.fboFeesService.getFbofeesForFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+			this.fboFees = data;
+			if (!this.fboFees)
+				this.fboFees = [];
+			this.isLoadingFboFees = false;
+		});
+	}
 
-    private loadFboPreferences() {
-        this.fboPreferencesService.getForFbo(this.sharedService.currentUser.fboId)
-            .subscribe((data: any) => {
-                this.fboPreferences = data;
-                if (!this.fboPreferences)
-                    this.fboPreferences = { fboId: this.sharedService.currentUser.fboId };
-                this.isLoadingFboPreferences = false;
-            });
-    }
+	private loadDistributionLog() {
+		this.distributionService.getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50).subscribe((data:
+				any) => {
+			this.distributionLog = data;
+				if (!this.distributionLog)
+					this.distributionLog = [];
+			}
+		);
+	}
 
-    private loadFboFees() {
-        this.fboFeesService.getFbofeesForFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.fboFees = data;
-            if (!this.fboFees)
-                this.fboFees = [];
-            this.isLoadingFboFees = false;
-        });
-    }
-
-    private loadDistributionLog() {
-        this.distributionService.getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50).subscribe((data:
-                any) => {
-            this.distributionLog = data;
-                if (!this.distributionLog)
-                    this.distributionLog = [];
-            }
-        );
-    }
+	private loadPricingTemplates() {
+		this.pricingTemplateService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+			this.pricingTemplates = data;
+		});
+	}
 
     private savePriceChanges(price) {
-        if (!price.oid || price.oid == null) 
-            this.fboPricesService.add(price).subscribe((data: any) => price.oid = data.oid);
-        else
-            this.fboPricesService.update(price).subscribe((data: any) => {});
+        //if (!price.oid || price.oid == null)
+        if (this.requiresUpdate) {
+            this.fboPricesService.update(price).subscribe((data: any) => { });
+        } 
+		//else
+		//	this.fboPricesService.update(price).subscribe((data: any) => {});
+    }
+    private savePriceChangesAll(price) {
+        this.fboPricesService.checkifExistFrboPrice(this.sharedService.currentUser.fboId, price).subscribe((data: any) => {
+            //alert(JSON.stringify(data));
+            //if (data != null) {
+            //    this.show = true;
+            //    this.greska = true;
+            //    this.delay(5000).then(any => {
+            //        this.show = false;
+            //        this.greska = false;
+            //    });
+            //}
+            //else {
+            //    this.show = true;
+            //    this.isSaved = true;
+            //    this.delay(5000).then(any => {
+            //        this.isSaved = false;
+            //        this.requiresUpdate = true;
+            //        this.show = false;
+            //    });
+            //}
+            this.delay(2000).then(any => {
+                this.show = true;
+                this.isSaved = true;
+            });
+                           
+            this.delay(6000).then(any => {
+                this.isSaved = false;
+                this.requiresUpdate = true;
+                this.show = false;
+            });
+            this.loadCurrentFboPrices();
+        })
     }
 
-    private saveFboPreferences() {
-        if (!this.fboPreferences.oid || this.fboPreferences.oid == 0) {
-            this.fboPreferencesService.add(this.fboPreferences).subscribe((data: any) => this.loadFboPreferences());
-        } else {
-            this.fboPreferencesService.update(this.fboPreferences).subscribe((data: any) => this.loadFboPreferences());
-        }
-    }
+	private saveFboPreferences() {
+		if (!this.fboPreferences.oid || this.fboPreferences.oid == 0) {
+			this.fboPreferencesService.add(this.fboPreferences).subscribe((data: any) => this.loadFboPreferences());
+		} else {
+			this.fboPreferencesService.update(this.fboPreferences).subscribe((data: any) => this.loadFboPreferences());
+		}
+	}
 
-    private getCurrentPriceByProduct(product) {
-        var result = {fboId: this.sharedService.currentUser.fboId, groupId: this.sharedService.currentUser.groupId, oid: 0 };
-        for (let fboPrice of this.currentPrices) {
-            if (fboPrice.product == product)
-                result = fboPrice;
-        }
-        return result;
-    }
+	private getCurrentPriceByProduct(product) {
+		var result = {fboId: this.sharedService.currentUser.fboId, groupId: this.sharedService.currentUser.groupId, oid: 0 };
+		for (let fboPrice of this.currentPrices) {
+			if (fboPrice.product == product)
+				result = fboPrice;
+		}
+		console.log(result);
+		return result;
+	}
 
-    private getStagedPriceByProduct(product) {
-        var result = { fboId: this.sharedService.currentUser.fboId, groupId: this.sharedService.currentUser.groupId, oid: 0 };
-        for (let fboPrice of this.stagedPrices) {
-            if (fboPrice.product == product)
-                result = fboPrice;
-        }
-        return result;
-    }
+	private getStagedPriceByProduct(product) {
+		let result = [];
+		this.stagedPrices.forEach(function (value) {
+			if (((value.product == 'JetA Retail' || value.product == 'JetA Cost') && product == 'JetA') || ((value.product == '100LL Retail' || value.product == '100LL Cost') && product == '100LL')) {
+                //var item = result.find(x => moment(moment.utc(x.effectiveFrom).toDate()).format('MM/DD/YYYY') == moment(moment.utc(value.effectiveFrom).toDate()).format('MM/DD/YYYY') && moment(moment.utc(x.effectiveTo).toDate()).format('MM/DD/YYYY') == moment(moment.utc(value.effectiveTo).toDate()).format('MM/DD/YYYY'));
+                var item = result.find(x => x.groupId == value.groupId);
+                //alert(JSON.stringify(value) + ' product-' + product);
+				//result.find(x => x.oid == value.oid);
+				if (item == undefined) {
+                    var pm = { RetailPrice: 0, CostPrice: 0, oid: 0, fboid: 0, product: '', description: '', effectiveFrom: null, effectiveTo: null, timestamp: null, salesTaxCost: 0, currencyCost: 0, salesTaxRetail: 0, currencyRetail: 0, groupId:null };
+					pm.oid = value.oid;
+					pm.fboid = value.fboid;
+					pm.effectiveFrom = moment(moment.utc(value.effectiveFrom).toDate()).format('MM/DD/YYYY');
+					pm.effectiveTo = moment(moment.utc(value.effectiveTo).toDate()).format('MM/DD/YYYY');
+                    pm.timestamp = value.timestamp;
+                    pm.product = value.product;
+                    pm.description = product;
+                    pm.groupId = value.groupId;
+				}
+				if ((value.product == 'JetA Retail' && product == 'JetA') || (value.product == '100LL Retail' && product == '100LL')) {
+					if (item == undefined) {
+						pm.RetailPrice = value.price;
+						pm.currencyRetail = value.currency;
+					}
+					else {
+						item.RetailPrice = value.price;
+						item.currencyRetail = value.currency;
+					}
+				}
+				if ((value.product == 'JetA Cost' && product == 'JetA') || (value.product == '100LL Cost' && product == '100LL')) {
+					if (item == undefined) {
+						pm.CostPrice = value.price;
+						pm.currencyCost = value.currency;
+					}
+					else {
+						item.CostPrice = value.price;
+						item.currencyCost = value.currency;
+					}
+				}
+				if (item == undefined) {
+					result.push(pm);
+				}
+			}
+		}); 
+		return result;
+	}
 
-    private setAllDateLimits() {
-        this.setEffectiveDateValidation(this.stagedFboPrice100LLCost, this.currentFboPrice100LLCost);
-        this.setEffectiveDateValidation(this.stagedFboPrice100LLRetail, this.currentFboPrice100LLRetail);
-        this.setEffectiveDateValidation(this.stagedFboPriceJetACost, this.currentFboPriceJetACost);
-        this.setEffectiveDateValidation(this.stagedFboPriceJetARetail, this.currentFboPriceJetARetail);
-    }
+   /* private setAllDateLimits() {
+		this.setEffectiveDateValidation(this.stagedFboPrice100LLCost, this.currentFboPrice100LLCost);
+		this.setEffectiveDateValidation(this.stagedFboPrice100LLRetail, this.currentFboPrice100LLRetail);
+		this.setEffectiveDateValidation(this.stagedFboPriceJetACost, this.currentFboPriceJetACost);
+		this.setEffectiveDateValidation(this.stagedFboPriceJetARetail, this.currentFboPriceJetARetail);
+	}*/
 
-    private setEffectiveDateValidation(currentFboPrice, stagedFboPrice) {
-        if (!stagedFboPrice || !currentFboPrice)
-            return;
-        if (stagedFboPrice.effectiveFrom != null) {
-            currentFboPrice.maxDate = new Date(moment(stagedFboPrice.effectiveFrom).format('MM/DD/YYYY'));
-        }
-        if (currentFboPrice.effectiveTo != null) {
-            stagedFboPrice.minDate = new Date(moment(currentFboPrice.effectiveTo).format('MM/DD/YYYY'));
-        }
-    }
+	/*private setEffectiveDateValidation(currentFboPrice, stagedFboPrice) {
+		if (!stagedFboPrice || !currentFboPrice)
+			return;
+		if (stagedFboPrice.effectiveFrom != null) {
+			currentFboPrice.maxDate = new Date(moment(stagedFboPrice.effectiveFrom).format('MM/DD/YYYY'));
+		}
+		if (currentFboPrice.effectiveTo != null) {
+			stagedFboPrice.minDate = new Date(moment(currentFboPrice.effectiveTo).format('MM/DD/YYYY'));
+		}
+	}*/
 }

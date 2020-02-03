@@ -1,4 +1,5 @@
 using System.Text;
+using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Services;
@@ -67,6 +68,9 @@ namespace FBOLinx.Web
             services.AddDbContext<DegaContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DegaContext")));
 
+            services.AddDbContext<FuelerLinxContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("FuelerLinxContext")));
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -83,6 +87,9 @@ namespace FBOLinx.Web
             services.AddScoped<Auth.UserRoleAttribute>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            //Auth services
+            services.AddScoped<IAPIKeyManager, APIKeyManager>();
 
             //Add file provider
             IFileProvider physicalProvider = new PhysicalFileProvider(System.IO.Directory.GetCurrentDirectory());
@@ -135,7 +142,8 @@ namespace FBOLinx.Web
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    //spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
         }

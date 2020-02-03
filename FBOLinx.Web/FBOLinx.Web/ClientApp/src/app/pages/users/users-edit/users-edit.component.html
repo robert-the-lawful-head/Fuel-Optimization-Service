@@ -1,10 +1,10 @@
-<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+
 
 <div *ngIf="!userInfo">
     <mat-spinner></mat-spinner>
 </div>
 
-<ni-card title="{{fboInfo.fbo}}" class="mb-0" *ngIf="fboInfo && fboAirportInfo">
+<ni-card title="{{userInfo.firstName}} {{userInfo.lastName}}" class="mb-0" *ngIf="userInfo">
     <div>
         <mat-tab-group>
 
@@ -27,13 +27,16 @@
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input matInput placeholder="Username" [(ngModel)]="userInfo.username" />
+                                <input matInput placeholder="Email Login" aria-label="Email Login" [(ngModel)]="userInfo.username" [email]="true" #userLoginEmail="ngModel" />
                             </mat-form-field>
+                            <div *ngIf="userLoginEmail.errors?.email" style="color: red;">
+                                Please enter a valid email address.
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field *ngIf="availableroles">
                                 <mat-select placeholder="Role" [(ngModel)]="userInfo.role">
-                                    <mat-option *ngFor="let role of availableRoles" [value]="role.value">
+                                    <mat-option *ngFor="let role of availableroles" [value]="role.value">
                                         {{role.description}}
                                     </mat-option>
                                 </mat-select>
@@ -52,7 +55,7 @@
                     </div>
                     
                     <div class="row">
-                        <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveEdit()" class="mr-1">Save Changes</button>
+                        <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveEdit()" class="mr-1" *ngIf="(!userInfo.confirmPassword || !userInfo.newPassword || userInfo.confirmPassword.length == 0 || userInfo.newPassword.length == 0 || userInfo.newPassword === userInfo.confirmPassword)  && !userLoginEmail.errors?.email">Save Changes</button>
                         <button mat-stroked-button (click)="cancelEdit()">Cancel</button>
                     </div>
                 </div>

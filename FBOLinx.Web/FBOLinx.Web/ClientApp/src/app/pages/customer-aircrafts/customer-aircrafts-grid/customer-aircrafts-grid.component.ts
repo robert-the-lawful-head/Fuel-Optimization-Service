@@ -9,6 +9,7 @@ import { SharedService } from '../../../layouts/shared-service';
 
 //Components
 import { CustomerAircraftsDialogNewAircraftComponent } from '../customer-aircrafts-dialog-new-aircraft/customer-aircrafts-dialog-new-aircraft.component';
+import { CustomerAircraftsEditComponent } from '../customer-aircrafts-edit/customer-aircrafts-edit.component';
 
 @Component({
     selector: 'app-customer-aircrafts-grid',
@@ -26,7 +27,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
     //Public Members
     public customerAircraftssDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['tailNumber', 'aircraftType', 'aircraftSize', 'aircraftPricingTemplate', 'edit', 'delete'];
+    public displayedColumns: string[] = ['tailNumber', 'aircraftType', 'aircraftSize', 'aircraftPricingTemplate', 'delete'];
     public resultsLength: number = 0;
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
@@ -36,7 +37,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
 
     /** customers-grid ctor */
-    constructor(public newCustomerAircraftDialog: MatDialog,
+    constructor(public newCustomerAircraftDialog: MatDialog, public editCustomerAircraftDialog: MatDialog,
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
         private sharedService: SharedService) {
@@ -77,11 +78,32 @@ export class CustomerAircraftsGridComponent implements OnInit {
     }
 
     public editCustomerAircraft(customerAircraft) {
-        const clonedRecord = Object.assign({}, customerAircraft);
-        this.editCustomerAircraftClicked.emit(clonedRecord);
+        console.log(customerAircraft);
+
+        if (customerAircraft) {
+            const dialogRef = this.editCustomerAircraftDialog.open(CustomerAircraftsEditComponent, {
+                width: '450px',
+                data: { oid: customerAircraft.oid }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                console.log('Dialog data: ', result);
+                if (!result)
+                    return;
+                
+                this.editCustomerAircraftClicked.emit(result);
+            });
+        }
+
+        //const clonedRecord = Object.assign({}, customerAircraft);
+        //this.editCustomerAircraftClicked.emit(clonedRecord);
     }
 
     public deleteCustomerAircraft(customerAircraft) {
         //TODO: add delete prompt and logic
+    }
+
+    public applyFilter(filterValue: string) {
+        this.customerAircraftssDataSource.filter = filterValue.trim().toLowerCase();
     }
 }

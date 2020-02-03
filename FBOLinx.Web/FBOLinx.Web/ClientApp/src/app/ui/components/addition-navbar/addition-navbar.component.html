@@ -1,26 +1,64 @@
-<a href="#" class="open-navbar"  (click)="openNavbar($event)">
-  <i class="icon fa fa-object-ungroup"></i>
+<a href="#" class="open-navbar" #nodeInput (click)="openNavbar($event)">
+  <i style="transform: scale(1.5,1.2);" class="icon fa fa-envelope"></i>
 </a>
 
 <div class="navbar-wrap">
-  <div class="navbar-header">
-    {{ title }}
-  </div>
-
-  <div class="navbar-content">
-    <div>
-      <h5 class="mt-0">Frameworks</h5>
-      <p class="mb-1">Angular</p>
-      <mat-progress-bar mode="determinate" color="accent" [value]="98"></mat-progress-bar>
-
-      <p class="mb-1">React</p>
-      <mat-progress-bar mode="determinate" color="accent" [value]="85"></mat-progress-bar>
-
-      <p class="mb-1">Vue.js</p>
-      <mat-progress-bar mode="determinate" color="accent" [value]="40"></mat-progress-bar>
-
-      <p class="mb-1">Backbone.js</p>
-      <mat-progress-bar mode="determinate" color="accent" [value]="38"></mat-progress-bar>
+    <div class="navbar-header">
+        {{ title }}
+        <mat-slide-toggle color="accent" (change)="SelectAllTemplates($event);" [labelPosition]="labelPosition" [checked]="selectAll" style="margin-left:217px;">All</mat-slide-toggle>
     </div>
-  </div>
+
+    <div class="navbar-content">
+        <div>
+            <table mat-table [dataSource]="marginTemplateDataSource" matSort #marginTable>
+                <!--<h5 class="mt-0">Frameworks</h5>-->
+                <ng-container matColumnDef="template">
+                    <td class="mb-1 col-10" mat-cell *matCellDef="let pricingTemplate">
+                        <div class="row">
+                            <div class="col-6">
+                                {{pricingTemplate.name}}
+                            </div>
+                            <div class="col-4" style="padding-left:0px !important">
+                                <button ni-button [view]="'accent'" *ngIf="pricingTemplate.changeText && !pricingTemplate.sent" size="small" (click)="OpenMarginInfo(pricingTemplate.oid)">Preview</button>
+                                <p *ngIf="pricingTemplate.sent">Sent!</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-8" style="font-size:9px;margin-left:0px !important;vertical-align: baseline;line-height:18px;" *ngIf="pricingTemplate.text">
+                                {{pricingTemplate.text}}
+                            </div>
+                           
+                        </div>
+                        <!--*ngIf="!pricingTemplate.changeText && !pricingTemplate.sent"-->
+                        <div class="row col-12">
+                            <mat-progress-bar mode="determinate"  color="#2196F3" [(value)]="pricingTemplate.val"></mat-progress-bar>
+                            </div>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="toggle">
+                    <td class="mb-1 col-2" mat-cell *matCellDef="let pricingTemplate">
+                        <mat-slide-toggle #selectAll [checked]="pricingTemplate.toSend" (ngModel)="pricingTemplate.toSend"  (change)="changeSentOption(pricingTemplate)"></mat-slide-toggle>
+                    </td>
+                </ng-container>
+                <!--<mat-progress-bar mode="determinate" color="accent" [value]="98"></mat-progress-bar>
+                <p class="mb-1">React</p>
+                <mat-progress-bar mode="determinate" color="accent" [value]="85"></mat-progress-bar>
+                <p class="mb-1">Vue.js</p>
+                <mat-progress-bar mode="determinate" color="accent" [value]="40"></mat-progress-bar>
+                <p class="mb-1">Backbone.js</p>
+                <mat-progress-bar mode="determinate" color="accent" [value]="38"></mat-progress-bar>-->
+                <tr mat-header-row></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (mouseenter)="row.changeText=true" (mouseleave)="row.changeText=false"></tr>
+            </table>
+        </div>
+        <div>
+            <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
+        </div>
+        <div style="margin-top:20px; margin-right:10px;">
+            <button ni-button class="float-right" [view]="'success'" (click)="sendMails()">{{buttontext}}</button>
+        </div>
+    </div>
+    <div class="navbar-footer m-md-3">
+        <!--<button ni-button class="float-right" [view]="'success'" (click)="sendMails()">Distribute Pricing</button>-->
+    </div>
 </div>

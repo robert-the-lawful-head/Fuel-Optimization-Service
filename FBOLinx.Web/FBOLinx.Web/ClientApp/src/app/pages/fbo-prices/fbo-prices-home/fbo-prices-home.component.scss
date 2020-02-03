@@ -1,1 +1,25 @@
-﻿
+.btnremoveDisabled {
+    color: #000;
+}
+.disabledData {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.125;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    line-height: 1.32;
+}
+body .mat-form-field-flex .mat-form-field-prefix  {
+    padding-right: 0;
+}
+
+.updateClass .mat-form-field-label-wrapper{
+    left:-10px !important;
+}
+body .disabledInput .mat-form-field-wrapper .mat-form-field-underline {
+    background-image: none !important;
+}
+
+body .disabledInput .mat-form-field-flex .mat-form-field-prefix {
+    color: rgba(0, 0, 0, 0.38);
+}

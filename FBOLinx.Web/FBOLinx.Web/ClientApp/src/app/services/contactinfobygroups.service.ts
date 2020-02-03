@@ -24,10 +24,16 @@ export class ContactinfobygroupsService {
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + '/' + payload.oid, { headers: this.headers });
+        return this.http.delete(this.accessPointUrl + '/' + payload, { headers: this.headers });
     }
 
     public update(payload) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
+        if (payload.oid) {
+            return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
+        }
+        else if (payload.contactInfoByGroupId) {
+            payload.Oid = payload.contactInfoByGroupId;
+            return this.http.put(this.accessPointUrl + '/' + payload.Oid, payload, { headers: this.headers });
+        }
     }
 }

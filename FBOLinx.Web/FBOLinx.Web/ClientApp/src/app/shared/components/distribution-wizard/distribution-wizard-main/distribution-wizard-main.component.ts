@@ -10,9 +10,6 @@ import { EmailcontentService } from '../../../../services/emailcontent.service';
 import { PricingtemplatesService } from '../../../../services/pricingtemplates.service';
 import { SharedService } from '../../../../layouts/shared-service';
 
-//Pipes
-import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html-pipe.pipe';
-
 export interface DistributionDialogData {
     pricingTemplate: any;
     customer: any;
@@ -48,6 +45,8 @@ export class DistributionWizardMainComponent implements OnInit {
     public availableCustomers: any[];
     public distributionPreview: string;
     public validityMessage: string;
+    public isForSingleCustomer: boolean = false;
+    public isForSinglePricingTemplate: boolean = false;
 
 
     //Added services
@@ -61,7 +60,10 @@ export class DistributionWizardMainComponent implements OnInit {
         private emailContentService: EmailcontentService,
         private pricingtemplatesService: PricingtemplatesService,
         private formBuilder: FormBuilder) {
-
+        if (this.data.customer != null)
+            this.isForSingleCustomer = true;
+        else if (this.data.pricingTemplate != null)
+            this.isForSinglePricingTemplate = true;
     }
 
     ngOnInit() {
@@ -92,12 +94,17 @@ export class DistributionWizardMainComponent implements OnInit {
         //Subscribe to necessary changes
         this.firstFormGroup.get('pricingTemplate').valueChanges.subscribe(val => {
             this.data.pricingTemplate = val;
-            this.loadAvailableCustomers();
+            //Only reload customers if they've already been loaded
+            if (this.availableCustomers && this.availableCustomers.length > 0)
+                this.loadAvailableCustomers();
         });
-        this.firstFormGroup.get('customerCompanyType').valueChanges.subscribe(val => {
-            this.data.customerCompanyType = val;
-            this.loadAvailableCustomers();
-        });
+        // ***Removing customer type selection for now***
+        //this.firstFormGroup.get('customerCompanyType').valueChanges.subscribe(val => {
+        //    this.data.customerCompanyType = val;
+        //    //Only reload customers if they've already been loaded
+        //    if (this.availableCustomers && this.availableCustomers.length > 0)
+        //        this.loadAvailableCustomers();
+        //});
     }
 
     public pricingTemplateChanged() {
@@ -157,7 +164,7 @@ export class DistributionWizardMainComponent implements OnInit {
     private loadAvailablePricingTemplates() {
         this.pricingtemplatesService.getByFbo(this.data.fboId).subscribe((data: any) => {
             this.availablePricingTemplates = data;
-            this.availablePricingTemplates.splice(0,0,{ oid: 0, name: '--All Pricing Templates--' });
+            this.availablePricingTemplates.splice(0,0,{ oid: 0, name: '--All Margin Templates--' });
             if (!this.data.pricingTemplate || this.data.pricingTemplate.oid == 0)
                 this.data.pricingTemplate = this.availablePricingTemplates[0];
             else {

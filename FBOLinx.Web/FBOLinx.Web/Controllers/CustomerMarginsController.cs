@@ -70,7 +70,7 @@ namespace FBOLinx.Web.Controllers
                 Min = c.PriceTier.Min,
                 Max = c.PriceTier.Max,
                 MaxEntered = c.PriceTier.MaxEntered
-            }));
+            })).OrderBy(x => x.Min);
 
             return Ok(customerMarginsVM);
         }
@@ -154,6 +154,42 @@ namespace FBOLinx.Web.Controllers
         private IQueryable<CustomerMargins> GetAllCustomerMargins()
         {
             return _context.CustomerMargins.AsQueryable();
+        }
+
+        // POST: api/CustomerMargins
+        [HttpPost("updatecustomermargin")]
+        public async Task<IActionResult> UpdateCustomerMargin(CustomerPricingTemplateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customerMarginObject = _context.PricingTemplate.FirstOrDefault(s => s.Name == model.customerMarginName && s.Fboid == model.fboid);
+
+            if (customerMarginObject != null)
+            {
+                var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == model.id && s.Fboid == model.fboid);
+
+                if(customerMargin != null)
+                {
+                    customerMargin.CustomerType = customerMarginObject.Oid;
+                }
+                else
+                {
+                    CustomCustomerTypes newType = new CustomCustomerTypes();
+                    newType.CustomerType = customerMarginObject.Oid;
+                    newType.Fboid = model.fboid;
+                    newType.CustomerId = model.id;
+                    _context.CustomCustomerTypes.Add(newType);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            
+            return Ok("");
+            // return CreatedAtAction("GetCustomerMargins", new { id = customerMargins.Oid }, customerMargins);
         }
     }
 }

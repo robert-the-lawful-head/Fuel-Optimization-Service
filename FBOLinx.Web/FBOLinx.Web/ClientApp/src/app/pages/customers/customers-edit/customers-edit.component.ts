@@ -19,11 +19,13 @@ import { SharedService } from '../../../layouts/shared-service';
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
 import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
+
 
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/'
+        link: '#/default-layout'
     },
     {
         title: 'Customers',
@@ -61,6 +63,8 @@ export class CustomersEditComponent {
     public isSaving: boolean = false;
     public certificateTypes: any[];
     public customerCompanyTypes: any[];
+    public isLoading: boolean = false;
+    public hasContactForPriceDistribution: boolean = false;
 
     //Input/Output Bindings
     @Output() saveCustomerClicked = new EventEmitter<any>();
@@ -82,7 +86,8 @@ export class CustomersEditComponent {
         private customerCompanyTypesService: CustomerCompanyTypesService,
         private customersViewedByFboService: CustomersviewedbyfboService,
         public deleteCustomerDialog: MatDialog,
-        public dialog: MatDialog    ) {
+        public dialog: MatDialog,
+        public newContactDialog: MatDialog) {
 
         this.sharedService.emitChange(this.pageTitle);
         this.customerInfoByGroupService.getCertificateTypes().subscribe((data: any) => this.certificateTypes = data);
@@ -113,56 +118,184 @@ export class CustomersEditComponent {
     //Public Methods
     public saveCustomerEdit() {
         this.isSaving = true;
-
         //Update customer information
         this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((data: any) => {
             for (let customCustomerType of this.customCustomerTypes) {
                 this.saveCustomCustomerType(customCustomerType);
             }
             //Update other aspects
-            if (this._RequiresRouting)
+            if (this._RequiresRouting) {
+                sessionStorage.setItem('isCustomerEdit', '1');
                 this.router.navigate(['/default-layout/customers/']);
-            else
+            }
+            else {
                 this.saveCustomerClicked.emit();
+            }
+                
+        });
+    }
+
+    public saveDirectCustomerEdit() {
+        this.isSaving = true;
+        this._RequiresRouting = true;
+        //Update customer information
+        this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((data: any) => {
+            for (let customCustomerType of this.customCustomerTypes) {
+                this.saveCustomCustomerType(customCustomerType);
+            }
+            //Update other aspects
+            if (this._RequiresRouting) {
+                sessionStorage.setItem('isCustomerEdit', '1');
+                this.router.navigate(['/default-layout/customers/']);
+            }
+            else {
+                this.saveCustomerClicked.emit();
+            }
+
         });
     }
 
     public cancelCustomerEdit() {
-        if (this._RequiresRouting)
+        if (this._RequiresRouting) {
+            sessionStorage.setItem('isCustomerEdit', '1');
             this.router.navigate(['/default-layout/customers/']);
-        else
+        }
+        else {
             this.cancelCustomerEditclicked.emit();
+        }
     }
 
     public contactDeleted(contact) {
-        this.customerContactsService.remove({ oid: contact.CustomerContactId }).subscribe((data: any) => {
-            this.contactInfoByGroupsService.remove({ oid: contact.ContactInfoByGroupId }).subscribe((data: any) => {
-                delete this.contactsData[contact];
+        this.customerContactsService.remove(contact.customerContactId).subscribe((data: any) => {
+            this.contactInfoByGroupsService.remove(contact.contactInfoByGroupId).subscribe((data: any) => {
+                let index = this.contactsData.findIndex(d => d.customerContactId === contact.customerContactId); //find index in your array
+                this.contactsData.splice(index, 1);//remove element from array
             });
         });
     }
 
     public newContactClicked() {
+
         this.selectedContactRecord = null;
         this.currentContactInfoByGroup = {
             oid: 0,
             contactId: 0,
             groupId: this.sharedService.currentUser.groupId
         };
+
+        console.log(this.currentContactInfoByGroup);
+
+        const dialogRef = this.newContactDialog.open(ContactsDialogNewContactComponent, {
+            data: this.currentContactInfoByGroup
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result != 'cancel') {
+                this._RequiresRouting = false;
+                this.saveCustomerEdit();
+                if (this.currentContactInfoByGroup.contactId == 0) {
+                    this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
+                        this.currentContactInfoByGroup.contactId = data.oid;
+                        this.saveContactInfoByGroup();
+                    });
+                } else {
+                    this.saveCustomerEdit();
+                    this.saveContactInfoByGroup();
+                }
+            }
+            else {
+                this.loadCustomerContacts();
+            }
+        });
+
+
+        //this.selectedContactRecord = null;
+        //this.currentContactInfoByGroup = {
+        //    oid: 0,
+        //    contactId: 0,
+        //    groupId: this.sharedService.currentUser.groupId
+        //};
     }
 
     public editContactClicked(contact) {
-        this.selectedContactRecord = contact;
-        this.contactInfoByGroupsService.get({ oid: contact.contactInfoByGroupId }).subscribe((data: any) => this.currentContactInfoByGroup = data);
+        console.log(contact);
+        const dialogRef = this.newContactDialog.open(ContactsDialogNewContactComponent, {
+            data: contact
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result != 'cancel') {
+                this.selectedContactRecord = contact;
+                this.contactInfoByGroupsService.get({ oid: contact.contactInfoByGroupId }).subscribe((data: any) => {
+                    if (data) {
+                        this.currentContactInfoByGroup = data;
+                        if (this.currentContactInfoByGroup.oid) {
+                            data.email = contact.email;
+                            data.firstName = contact.firstName;
+                            data.lastName = contact.lastName;
+                            data.title = contact.title;
+                            data.phone = contact.phone;
+                            data.extension = contact.extension;
+                            data.mobile = contact.mobile;
+                            data.fax = contact.fax;
+                            data.address = contact.address;
+                            data.city = contact.city;
+                            data.state = contact.state;
+                            data.country = contact.country;
+                            data.primary = contact.primary;
+                            data.copyAlerts = contact.copyAlerts;
+                            this.saveContactInfoByGroup();
+                        }
+
+                    }
+                });
+            }
+            else {
+                this.loadCustomerContacts();
+            }
+            
+            //this.contactInfoByGroupsService.get({ oid: contact.contactInfoByGroupId }).subscribe((data: any) => this.currentContactInfoByGroup = data);
+            
+
+            
+            //this.saveContactInfoByGroup();
+
+            //if (!result.oid) {
+            //    result.oid = result.contactInfoByGroupId;
+            //}
+            //this.contactsService.update(result).subscribe((data: any) => {
+            //    console.log(data);
+            //});
+
+
+            //if (this.currentContactInfoByGroup.contactId == 0) {
+            //    this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
+            //        this.currentContactInfoByGroup.contactId = data.oid;
+            //        this.saveContactInfoByGroup();
+            //    });
+            //} else {
+            //    this.saveCustomerEdit();
+            //    this.saveContactInfoByGroup();
+                
+            //}
+            //this.customersService.add(result).subscribe((data: any) => {
+            //    //result.customerId = data.oid;
+            //});
+        });
+
+        //this.selectedContactRecord = contact;
+        //this.contactInfoByGroupsService.get({ oid: contact.contactInfoByGroupId }).subscribe((data: any) => this.currentContactInfoByGroup = data);
     }
 
     public saveEditContactClicked() {
+        this.saveCustomerEdit();
         if (this.currentContactInfoByGroup.contactId == 0) {
             this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
                 this.currentContactInfoByGroup.contactId = data.oid;
                 this.saveContactInfoByGroup();
             });
         } else {
+            this.saveCustomerEdit();
             this.saveContactInfoByGroup();
         }
     }
@@ -172,13 +305,18 @@ export class CustomersEditComponent {
     }
 
     public newCustomerAircraftAdded() {
+        this.saveCustomerEdit();
         this.loadCustomerAircrafts();
+        
     }
 
     public editCustomerAircraftClicked(customerAircraft) {
+        this.saveCustomerEdit();
+        this.currentCustomerAircraft = null;
+        this.loadCustomerAircrafts();
         this.selectedCustomerAircraftRecord = customerAircraft;
-        this.customerAircraftsService.get({ oid: customerAircraft.oid })
-            .subscribe((data: any) => this.currentCustomerAircraft = data);
+        //this.customerAircraftsService.get({ oid: customerAircraft.oid })
+        //    .subscribe((data: any) => this.currentCustomerAircraft = data);
     }
 
     public saveEditCustomerAircraftClicked() {
@@ -191,18 +329,45 @@ export class CustomersEditComponent {
     }
 
     public distributePricing() {
+        this.isLoading = true;
         var customer = this.customerInfoByGroup;
         var data = {
             customer: customer,
             fboId: this.sharedService.currentUser.fboId,
             groupId: this.sharedService.currentUser.groupId
         };
-        const dialogRef = this.dialog.open(DistributionWizardMainComponent, {
-            data: data
-        });
 
-        dialogRef.afterClosed().subscribe(result => {
+        //Update customer information
+        this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((result: any) => {
+            for (let customCustomerType of this.customCustomerTypes) {
+                customCustomerType.customerId = this.customerInfoByGroup.customerId;
+            }
+            var pricingTemplatesToUpdate = [];
 
+            for (let customCustomerType of this.customCustomerTypes) {
+                if (customCustomerType.requiresUpdate)
+                    pricingTemplatesToUpdate.push(customCustomerType);
+            }
+
+            this.customCustomerTypesService.updateCollection(pricingTemplatesToUpdate).subscribe((result: any) => {
+                this.customCustomerTypesService
+                    .getForFboAndCustomer(this.sharedService.currentUser.fboId, this.customerInfoByGroup.customerId).subscribe(
+                        (result:
+                            any) => {
+                            this.customCustomerTypes = result;
+                            this.isLoading = false;
+
+                            //Show dispatch dialog
+                            const dialogRef = this.dialog.open(DistributionWizardMainComponent, {
+                                data: data,
+                                disableClose: true
+                            });
+
+                            dialogRef.afterClosed().subscribe(result => {
+
+                            });
+                        });
+            });
         });
     }
 
@@ -238,7 +403,7 @@ export class CustomersEditComponent {
 
     public deleteCustomerPricingTemplate(customCustomerType) {
         const dialogRef = this.deleteCustomerDialog.open(DeleteConfirmationComponent, {
-            data: { item: customCustomerType, description: 'customer\'s pricing template' }
+            data: { item: customCustomerType, description: 'customer\'s margin template' }
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -255,14 +420,39 @@ export class CustomersEditComponent {
         });
     }
 
+    public pricingTemplateSelectionChanged(customCustomerType) {
+        customCustomerType.requiresUpdate = true;
+    }
+
     //Private Methods
     private loadCustomerContacts() {
         this.contactInfoByGroupsService.getCustomerContactInfoByGroup(this.sharedService.currentUser.groupId, this.customerInfoByGroup.customerId).subscribe(
             (data:
                 any) => {
                 this.contactsData = data;
+                console.log(data);
                 this.currentContactInfoByGroup = null;
+                this.hasContactForPriceDistribution = false;
+                if (!this.contactsData)
+                    return;
+                for (let contact of this.contactsData) {
+                    if (contact.copyAlerts)
+                        this.hasContactForPriceDistribution = true;
+                }
             });
+    }
+
+    private toggleChange($event) {
+        if ($event.checked) {
+            this.customerInfoByGroup.showJetA = true;
+            this.customerInfoByGroup.show100Ll = true;
+            this.customerInfoByGroup.distribute = true;
+        }
+        else {
+            this.customerInfoByGroup.showJetA = false;
+            this.customerInfoByGroup.show100Ll = false;
+            this.customerInfoByGroup.distribute = false;
+        }
     }
 
     private loadPricingTemplates() {

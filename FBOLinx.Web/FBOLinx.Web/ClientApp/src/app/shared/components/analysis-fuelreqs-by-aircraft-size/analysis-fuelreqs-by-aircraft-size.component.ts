@@ -31,8 +31,16 @@ export class AnalysisFuelreqsByAircraftSizeComponent implements OnInit {
     }
 
     ngOnInit() {
-        let startDate = moment().add(-6, 'M').format('MM/DD/YYYY');
-        let endDate = moment().format('MM/DD/YYYY');
+        this.refreshData();
+    }
+
+    public redirectClicked() {
+        this.router.navigate(['/default-layout/fuelreqs']);
+    }
+
+    public refreshData() {
+        let startDate = this.sharedService.dashboardSettings.filterStartDate;
+        let endDate = this.sharedService.dashboardSettings.filterEndDate;
         this.fuelreqsService.totalOrdersByAircraftSizeForFbo(this.sharedService.currentUser.fboId, { startDateTime: startDate, endDateTime: endDate }).subscribe((data: any) => {
             this.ordersBySizeData = data;
             this.loadChart();

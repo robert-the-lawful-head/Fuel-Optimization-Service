@@ -76,7 +76,9 @@ import { Page500Component }	from './extra-pages/page-500/page-500.component';
 
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
 import { ContactsEditComponent } from './contacts/contacts-edit/contacts-edit.component';
+import { ContactsDialogNewContactComponent } from './contacts/contacts-edit-modal/contacts-edit-modal.component';
 import { ContactsGridComponent } from './contacts/contacts-grid/contacts-grid.component';
+import { ContactsHomeComponent } from './contacts/contacts-home/contacts-home.component';
 import { CustomersEditComponent } from './customers/customers-edit/customers-edit.component';
 import { CustomerAircraftsDialogNewAircraftComponent } from './customer-aircrafts/customer-aircrafts-dialog-new-aircraft/customer-aircrafts-dialog-new-aircraft.component';
 import { CustomerAircraftsEditComponent } from './customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
@@ -88,6 +90,8 @@ import { CustomersGridComponent } from './customers/customers-grid/customers-gri
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
 import { DashboardAdminComponent } from './dashboards/dashboard-admin/dashboard-admin.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
+import { DashboardHomeComponent } from './dashboards/dashboard-home/dashboard-home.component';
+import { FbosContactsComponent } from './fbos/fbos-contacts/fbos-contacts.component';
 import { FbosDialogNewFboComponent } from './fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { FboPricesHomeComponent } from './fbo-prices/fbo-prices-home/fbo-prices-home.component';
 import { FbosHomeComponent } from './fbos/fbos-home/fbos-home.component';
@@ -120,8 +124,14 @@ import { AnalysisFuelreqsTopCustomersFboComponent } from
 import { AnalysisPriceOrdersChartComponent } from '.././shared/components/analysis-price-orders-chart/analysis-price-orders-chart.component';
 import { DeleteConfirmationComponent } from '.././shared/components/delete-confirmation/delete-confirmation.component';
 import { DistributionWizardMainComponent } from '.././shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
+import { DistributionWizardReviewComponent } from '.././shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { EmailContentEditComponent } from '.././shared/components/email-content-edit/email-content-edit.component';
+import { EmailContentSelectionComponent } from '.././shared/components/email-content-selection/email-content-selection.component';
 import { ForgotPasswordDialogComponent } from '.././shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
+import { ManageConfirmationComponent } from '.././shared/components/manage-confirmation/manage-confirmation.component';
+import { NotificationComponent } from '.././shared/components/notification/notification.component';
+import { PricingExpiredNotificationComponent } from '.././shared/components/pricing-expired-notification/pricing-expired-notification.component';
+import { TemporaryAddOnMarginComponent } from '.././shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import { StatisticsOrdersByLocationComponent } from
     '.././shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 import { StatisticsTotalAircraftComponent } from
@@ -133,6 +143,7 @@ import { StatisticsTotalOrdersComponent } from
 
  //Pipes
 import { AppPipesModule } from '../app-pipes.module'
+
 
 
 @NgModule({
@@ -185,7 +196,7 @@ import { AppPipesModule } from '../app-pipes.module'
     }),
     AmChartsModule,
       LeafletModule.forRoot(),
-      AppPipesModule.forRoot()
+      AppPipesModule
   ],
   declarations: [
     PageTypographyComponent,
@@ -215,8 +226,10 @@ import { AppPipesModule } from '../app-pipes.module'
     PageWidgetsComponent,
     PageLayoutsComponent,
       AuthtokenComponent,
-              ContactsEditComponent,
+      ContactsEditComponent,
+      ContactsDialogNewContactComponent,
       ContactsGridComponent,
+      ContactsHomeComponent,
       CustomerAircraftsDialogNewAircraftComponent,
       CustomerAircraftsEditComponent,
       CustomerAircraftsGridComponent,
@@ -227,6 +240,8 @@ import { AppPipesModule } from '../app-pipes.module'
       CustomersHomeComponent,
       DashboardAdminComponent,
       DashboardFboComponent,
+      DashboardHomeComponent,
+      FbosContactsComponent,
       FbosDialogNewFboComponent,
       FboPricesHomeComponent,
               FbosHomeComponent,
@@ -255,9 +270,15 @@ import { AppPipesModule } from '../app-pipes.module'
       AnalysisPriceOrdersChartComponent,
       DeleteConfirmationComponent,
       DistributionWizardMainComponent,
+      DistributionWizardReviewComponent,
       AccountProfileComponent,
       EmailContentEditComponent,
+      EmailContentSelectionComponent,
       ForgotPasswordDialogComponent,
+      ManageConfirmationComponent,
+      NotificationComponent,
+      PricingExpiredNotificationComponent,
+      TemporaryAddOnMarginComponent,
       StatisticsOrdersByLocationComponent,
       StatisticsTotalAircraftComponent,
       StatisticsTotalCustomersComponent,
@@ -266,16 +287,21 @@ import { AppPipesModule } from '../app-pipes.module'
   exports: [],
     entryComponents: [
         DeleteConfirmationComponent,
-        DialogResultComponent,
       CalendarDialogComponent,
         CustomerAircraftsDialogNewAircraftComponent,
         CustomerCompanyTypeDialogComponent,
         CustomersDialogNewCustomerComponent,
+        ContactsDialogNewContactComponent,
         DistributionWizardMainComponent,
+        DistributionWizardReviewComponent,
         AccountProfileComponent,
         ForgotPasswordDialogComponent,
         FbosDialogNewFboComponent,
         GroupsDialogNewGroupComponent,
+        ManageConfirmationComponent,
+        NotificationComponent,
+        PricingExpiredNotificationComponent,
+        TemporaryAddOnMarginComponent,
       PricingTemplatesDialogNewTemplateComponent,
         RampFeesDialogNewFeeComponent,
         UsersDialogNewUserComponent

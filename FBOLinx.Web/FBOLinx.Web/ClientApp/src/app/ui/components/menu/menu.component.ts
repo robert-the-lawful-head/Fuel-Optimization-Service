@@ -29,12 +29,16 @@ export class MenuComponent implements OnInit {
   }
 
   getLiClasses(item: any, isActive: any) {
+      var role = this.sharedService.currentUser.role;
+      if (this.sharedService.currentUser.impersonatedRole)
+          role = this.sharedService.currentUser.impersonatedRole;
+      var hidden = (item.roles && item.roles.indexOf(role) == -1);
       return {
           'has-sub': item.sub,
           'active': item.active || isActive,
           'menu-item-group': item.groupTitle,
           'disabled': item.disabled,
-          'hidden': (item.roles && item.roles.indexOf(this.sharedService.currentUser.role) == -1)
+          'hidden': hidden
       };
   }
   getStyles(item: any) {

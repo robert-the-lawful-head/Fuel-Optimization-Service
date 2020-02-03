@@ -17,6 +17,8 @@ import { Component, OnInit, Input } from '@angular/core';
     '[class.ni-btn-success]': 'view === "success"',
     '[class.ni-btn-warning]': 'view === "warning"',
     '[class.ni-btn-error]': 'view === "error"',
+    '[class.ni-btn-blank]': 'view === "blank"',
+    '[class.ni-btn-customButton]': 'padding === "padding"',
     '[class.ni-btn-outline]': 'outline',
     '[class.ni-btn-gradient]': 'gradient',
     '[class.ni-btn-disabled]': 'disabled',
@@ -33,6 +35,7 @@ export class NiButtonComponent implements OnInit {
   @Input() align: string = 'center';
   @Input() size: string = 'default';
   @Input() view: string = 'default';
+  @Input() padding: string = 'default';
   @Input() shape: number | string;
   @Input() beforeIcon: string;
   @Input() afterIcon: string;

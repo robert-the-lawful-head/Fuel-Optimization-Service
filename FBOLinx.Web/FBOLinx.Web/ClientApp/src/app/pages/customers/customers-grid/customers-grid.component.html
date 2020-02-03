@@ -1,14 +1,51 @@
 <div #customerTableContainer>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-md-5">
+                <mat-form-field>
+                    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Company, Tail, etc.">
+                    <span matPrefix><i class="fa fa-search"></i></span>
+                </mat-form-field>
+            </div>
+            <div class="col col-md-2">
+                <mat-form-field>
+                    <mat-select placeholder="Search Within" [(ngModel)]="customerFilterType" (selectionChange)="customerFilterTypeChanged($event)">
+                        <mat-option [value]="0">
+                            All Customers
+                        </mat-option>
+                        <mat-option [value]="1">
+                            Customers Needing Attention
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- <div class="col col-md-2">
+                <mat-form-field>
+                    <mat-select [dataSource]="customersDataSource" placeholder="Margin" [(ngModel)]="globalMargin" (selectionChange)="customerFilterTypeChanged($event)">
+        <mat-option *ngFor="let pricingTemplate of customer.pricingTemplatesList" [value]="{{pricingTemplate.name}}">
+            {{pricingTemplate.name}}
+        </mat-option>
+    </mat-select>-->
+            <!--<select [dataSource]="customersDataSource" id="pricingtemplatesGeneral" name="ddlPricingTemplate" [(ngModel)]="globalMargin">
+        <option *ngFor="let pricingTemplate of customer.pricingTemplatesList" value="{{pricingTemplate.name}}">{{pricingTemplate.name}}</option>
+    </select>
+                </mat-form-field>
+            </div>-->
+        </div>
+    </div>
+    
 
-    <mat-form-field>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-    </mat-form-field>
-
-    <table mat-table [dataSource]="customersDataSource" class="col-md-12" matSort matSortActive="icao" matSortDirection="asc" #customerTable>
+    <table mat-table [dataSource]="customersDataSource" class="col-md-12" matSort matSortActive="hasBeenViewed" matSortDirection="asc" #customerTable>
+        <ng-container matColumnDef="selectAll">
+            <th mat-header-cell *matHeaderCellDef><input type="checkbox"  style="position:absolute; margin-top:8px;" id="a" class="checkboxHeight" [(ngModel)]="selectAll" (change)="selectAction()"> <label for="a" style="margin-left:25px; margin-top:10px;">Select All</label></th>
+            <td mat-cell *matCellDef="let customer"><input type="checkbox" class="checkboxHeight" [(ngModel)]="customer.selectAll" value="{{customer.selectAll}}" (change)="selectUnique()"></td>
+        </ng-container>
         <ng-container matColumnDef="hasBeenViewed">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Needs Attention</th>
             <td mat-cell *matCellDef="let customer">
-                <ni-badge *ngIf="!customer.hasBeenViewed" [color]="'warning'" [borderRadius]="false" [arrow]="'right'">New!</ni-badge>
+                <div>
+                    <ni-badge *ngIf="!customer.hasBeenViewed" [color]="'warning'" [borderRadius]="false" [arrow]="'right'">Needs Attention</ni-badge>
+                </div>
             </td>
         </ng-container>
         <ng-container matColumnDef="company">
@@ -17,28 +54,48 @@
         </ng-container>
 
         <ng-container matColumnDef="customerCompanyTypeName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Source</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Customer Type</th>
             <td mat-cell *matCellDef="let customer">{{customer.customerCompanyTypeName}}</td>
         </ng-container>
 
+        <!--<ng-container matColumnDef="pricingTemplateId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Margin</th>
+        <td mat-cell *matCellDef="let customer">
+            {{customer.pricingTemplateName}}
+        </td>
+    </ng-container>-->
+
         <ng-container matColumnDef="pricingTemplateId">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Assigned Price Tier</th>
-            <td mat-cell *matCellDef="let customer">{{customer.pricingTemplateName}}</td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Margin</th>
+            <td mat-cell *matCellDef="let customer">
+                <select id="pricingtemplates" name="ddlPricingTemplate" class="dropdownHeight" [(ngModel)]="customer.pricingTemplateName" (ngModelChange)="onMarginChange($event, customer);$event.stopPropagation();">
+                    <option *ngFor="let pricingTemplate of customer.pricingTemplatesList" value="{{pricingTemplate.name}}">{{pricingTemplate.name}}</option>
+                </select>
+            </td>
         </ng-container>
 
         <ng-container matColumnDef="allInPrice">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
-            <td mat-cell *matCellDef="let customer">{{customer.allInPrice | currency:'USD'}}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="edit">
-            <th mat-header-cell *matHeaderCellDef></th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>All-in</th>
             <td mat-cell *matCellDef="let customer">
-                <div class="pull-right">
-                    <button ni-button size="small" beforeIcon="fa fa-edit" (click)="editCustomer(customer)">Edit</button>
-                </div>
+                <span *ngIf="!customer.active" style="color: red; font-weight: bold;">Inactive</span>
+                <span *ngIf="!customer.isPricingExpired && customer.active">{{customer.allInPrice | currency:'USD'}}</span>
+                <span *ngIf="customer.isPricingExpired && customer.active" style="color: red; font-weight: bold;">Expired</span>
             </td>
         </ng-container>
+
+        <ng-container matColumnDef="fleetSize">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fleet Size</th>
+            <td mat-cell *matCellDef="let customer">{{customer.fleetSize}}</td>
+        </ng-container>
+
+        <!--<ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let customer">
+            <div class="pull-right">
+                <button ni-button size="small" beforeIcon="fa fa-edit" (click)="editCustomer(customer)">Edit</button>
+            </div>
+        </td>
+    </ng-container>-->
 
         <ng-container matColumnDef="delete">
             <th mat-header-cell *matHeaderCellDef>
@@ -58,21 +115,21 @@
                 <div class="pull-right mr-1">
                     <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newCustomer()">Add New</button>
                 </div>
-                
+
             </th>
             <td mat-cell *matCellDef="let customer">
                 <div class="pull-right">
-                    <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomer(customer)">Delete</button>
+                    <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteCustomer(customer);$event.stopPropagation();">Delete</button>
                 </div>
             </td>
         </ng-container>
 
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editCustomer(row,$event)"></tr>
     </table>
 </div>
 
 <div>
-    <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
+    <mat-paginator [length]="resultsLength" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" (page)="pageIndex;onPageChanged($event)"></mat-paginator>
 </div>

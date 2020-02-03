@@ -30,6 +30,7 @@ namespace FBOLinx.Web.DTO
         public int? CustomerCompanyType { get; set; }
         public string CustomerCompanyTypeName { get; set; }
         public bool HasBeenViewed { get; set; }
+        public bool IsPricingExpired { get; set; }
 
         public double? AllInPrice
         {
@@ -38,9 +39,9 @@ namespace FBOLinx.Web.DTO
                 if (!MarginType.HasValue)
                     return 0;
                 if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
-                    return (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault())) * (1 + FboFeeAmount) / 100.0;
+                    return (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault())) * (1 + (FboFeeAmount / 100.0));
                 if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
-                    return (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
+                    return (FboPrice.GetValueOrDefault() - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
                 if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
                     return Math.Abs(CustomerMarginAmount.GetValueOrDefault());
                 return 0;

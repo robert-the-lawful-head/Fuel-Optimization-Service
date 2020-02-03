@@ -19,20 +19,23 @@ namespace FBOLinx.Web.Controllers
     public class GroupsController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly FuelerLinxContext _fcontext;
         private readonly IHttpContextAccessor _HttpContextAccessor;
 
-        public GroupsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _fcontext = fcontext;
             _HttpContextAccessor = httpContextAccessor;
         }
 
         // GET: api/Groups
         [HttpGet]
-        [UserRole(Models.User.UserRoles.Conductor)]
         public IEnumerable<Group> GetGroup()
         {
-            return _context.Group.OrderBy((x => x.GroupName));
+            int groupId = UserService.GetClaimedGroupId(_HttpContextAccessor);
+            Models.User.UserRoles role = UserService.GetClaimedRole(_HttpContextAccessor);
+            return _context.Group.Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == Models.User.UserRoles.Conductor)).OrderBy((x => x.GroupName));
         }
 
         // GET: api/Groups/5
@@ -111,8 +114,20 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+
+            //try
+            //{
+                
+            //}
+            //catch(Exception ex)
+            //{
+            //    var sss = ex.Message;
+            //}
+
             _context.Group.Add(@group);
             await _context.SaveChangesAsync();
+
+            _fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + @group.GroupName + "', @GroupID=" + @group.Oid + "");
 
             return CreatedAtAction("GetGroup", new { id = @group.Oid }, @group);
         }
@@ -142,6 +157,11 @@ namespace FBOLinx.Web.Controllers
         private bool GroupExists(int id)
         {
             return _context.Group.Any(e => e.Oid == id);
+        }
+
+        private void InsertNewGroupInfo()
+        {
+
         }
     }
 }

@@ -1,4 +1,3 @@
-
 <div class="font-weight-bold">
     <div>
         <div *ngFor="let fee of rampFeesForCategory">
@@ -37,11 +36,11 @@
                         </mat-form-field>
                     </div>
                     <div class="col-3 text-center">
-                        <mat-form-field *ngIf="fee.categoryType == 1">
+                        <!--<mat-form-field *ngIf="fee.categoryType == 1">
                             <input matInput [(ngModel)]="fee.expirationDate" [matDatepicker]="categoryDatePicker" placeholder="Expiration Date" disabled (change)="rampFeeRequiresUpdate(fee)">
                             <mat-datepicker-toggle matSuffix [for]="categoryDatePicker"></mat-datepicker-toggle>
                             <mat-datepicker #categoryDatePicker disabled="false"></mat-datepicker>
-                        </mat-form-field>
+                        </mat-form-field>-->
                         <div>
                             <button ni-button [view]="'error'" beforeIcon="fa fa-trash" (click)="deleteRampFee()" *ngIf="fee.categoryType != 1">Delete</button>
                         </div>
@@ -72,7 +71,7 @@
                                 </div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input matInput placeholder="Min. Weight" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <input matInput placeholder="Min. Weight" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)" />
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
                                 </div>
@@ -81,7 +80,7 @@
                                 </div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input matInput placeholder="Max. Weight" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <input matInput placeholder="Max. Weight" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)" />
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
                                 </div>
@@ -92,7 +91,7 @@
                                 </div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input matInput placeholder="Min. Wingspan" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <input matInput placeholder="Min. Wingspan" type="number" [(ngModel)]="fee.categoryMinValue" (change)="rampFeeRequiresUpdate(fee)" />
                                         <span matSuffix>Feet</span>
                                     </mat-form-field>
                                 </div>
@@ -101,7 +100,7 @@
                                 </div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input matInput placeholder="Max. Wingspan" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)"/>
+                                        <input matInput placeholder="Max. Wingspan" type="number" [(ngModel)]="fee.categoryMaxValue" (change)="rampFeeRequiresUpdate(fee)" />
                                         <span matSuffix>Feet</span>
                                     </mat-form-field>
                                 </div>

@@ -23,7 +23,7 @@
     <PackageReference Include="IdentityServer4" Version="2.3.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,7 +39,13 @@
     <None Remove="ClientApp\src\app\helpers\index.ts" />
     <None Remove="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
+    <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.spec.ts" />
+    <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <None Remove="ClientApp\src\app\services\index.ts" />
+    <None Remove="ClientApp\src\app\services\paremeters.service.ts" />
+    <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
+    <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.spec.ts" />
+    <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <None Remove="ClientApp\src\app\shared\pipes\safe-html-pipe.pipe.ts" />
   </ItemGroup>
 
@@ -54,7 +60,13 @@
     <TypeScriptCompile Include="ClientApp\src\app\helpers\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\paremeters.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\pipes\safe-html-pipe.pipe.ts" />
   </ItemGroup>
 
@@ -71,8 +83,8 @@
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -- --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build --prod" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
 
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>

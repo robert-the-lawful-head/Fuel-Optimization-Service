@@ -4,6 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+//import { CommonModule } from '@angular/common';
+
 
 //Bootstrap Assist Template Modules
 import { routes, AppRoutingModule } from './app-routing.module';
@@ -76,11 +78,13 @@ import { FbopricesService } from './services/fboprices.service';
 import { FbosService } from './services/fbos.service';
 import { FuelreqsService } from './services/fuelreqs.service';
 import { GroupsService } from './services/groups.service';
+import { Parametri } from './services/paremeters.service';
 import { LandingsiteService } from './services/landingsite.service';
 import { PricetiersService } from './services/pricetiers.service';
 import { PricingtemplatesService } from './services/pricingtemplates.service';
 import { RampfeesService } from './services/rampfees.service';
 import { RampfeesettingsService } from './services/rampfeesettings.service';
+import { TemporaryAddOnMarginService } from './services/temporaryaddonmargin.service';
 import { UserService } from './services/user.service';
 
 //Helpers
@@ -89,7 +93,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
 //Pipes
 import { DecimalPipe } from '@angular/common';
 import { DatePipe } from '@angular/common';
-import {AppPipesModule} from './app-pipes.module'
+//import {AppPipesModule} from './app-pipes.module'
 
 
 @NgModule({
@@ -144,15 +148,14 @@ import {AppPipesModule} from './app-pipes.module'
         MatToolbarModule,
         MatTooltipModule,
         TextMaskModule,
-        RouterModule.forRoot(routes, { useHash: true }),
-        AppPipesModule.forRoot()
+        RouterModule.forRoot(routes, { useHash: true })
     ],
     exports: [],
     entryComponents: [],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-        AcukwikairportsService, AircraftsService, AircraftpricesService, AuthenticationService, ContactinfobygroupsService, ContactsService, CustomcustomertypesService, CustomeraircraftsService, CustomerCompanyTypesService, CustomercontactsService, CustomerinfobygroupService, CustomermarginsService, CustomersService, CustomersviewedbyfboService, DistributionService, EmailcontentService, FboairportsService, FbocontactsService, FbofeesService, FbopreferencesService, FbopricesService, FbosService, FuelreqsService, GroupsService, LandingsiteService, PricetiersService, PricingtemplatesService, RampfeesService, RampfeesettingsService, UserService],
+        AcukwikairportsService, AircraftsService, AircraftpricesService, AuthenticationService, ContactinfobygroupsService, ContactsService, CustomcustomertypesService, CustomeraircraftsService, CustomerCompanyTypesService, CustomercontactsService, CustomerinfobygroupService, CustomermarginsService, CustomersService, CustomersviewedbyfboService, DistributionService, EmailcontentService, FboairportsService, FbocontactsService, FbofeesService, FbopreferencesService, FbopricesService, FbosService, FuelreqsService, GroupsService, LandingsiteService, Parametri, PricetiersService, PricingtemplatesService, RampfeesService, RampfeesettingsService, TemporaryAddOnMarginService, UserService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

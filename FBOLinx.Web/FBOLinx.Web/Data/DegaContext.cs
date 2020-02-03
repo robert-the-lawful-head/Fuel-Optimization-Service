@@ -19,6 +19,7 @@ namespace FBOLinx.Web.Data
         }
 
         public virtual DbSet<AcukwikAirports> AcukwikAirports { get; set; }
+        public virtual DbSet<AcukwikFbohandlerDetail> AcukwikFbohandlerDetail { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -37,6 +38,11 @@ namespace FBOLinx.Web.Data
                     .HasName("INX_ICAO_AirportID_IATA");
 
                 entity.Property(e => e.AirportId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<AcukwikFbohandlerDetail>(entity =>
+            {
+                entity.Property(e => e.HandlerId).ValueGeneratedNever();
             });
         }
     }

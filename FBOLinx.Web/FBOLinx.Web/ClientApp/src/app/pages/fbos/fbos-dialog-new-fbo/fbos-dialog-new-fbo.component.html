@@ -1,11 +1,14 @@
 <h1 mat-dialog-title>New FBO</h1>
 <div mat-dialog-content>
-    <app-airport-autocomplete (valueChange)="airportValueChanged()" [airportContainerModel]="data"></app-airport-autocomplete>
-    <mat-form-field>
-        <input matInput placeholder="FBO Name" aria-label="FBO Name" [(ngModel)]="data.fbo">
+    <app-airport-autocomplete [airportContainerModel]="data" (valueChange)="airportValueChanged($event)"></app-airport-autocomplete>
+    <mat-form-field *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0">
+        <mat-select id="newFbo" name="ddlNewFbo" [(ngModel)]="data.acukwikFbo" (ngModelChange)="fboSelectionChange($event, data);">
+            <mat-option *ngFor="let acukwikFbo of dataSources.acukwikFbos" [value]="acukwikFbo">{{acukwikFbo.handlerLongName}}</mat-option>
+        </mat-select>
+        <!--<input matInput placeholder="FBO Name" aria-label="FBO Name" [(ngModel)]="data.fbo">-->
     </mat-form-field>
 </div>
 <div class="mt-2 text-center">
-    <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1">Add FBO</button>
+    <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="data.acukwikFboHandlerId > 0">Add FBO</button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
 </div>

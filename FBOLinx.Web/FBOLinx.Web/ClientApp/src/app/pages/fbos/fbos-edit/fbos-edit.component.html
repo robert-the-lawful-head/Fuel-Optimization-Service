@@ -4,7 +4,7 @@
     <mat-spinner></mat-spinner>
 </div>
 
-<ni-card title="{{fboInfo.fbo}}" [headerBgColor]="'info'" class="mb-0" *ngIf="fboInfo && fboAirportInfo">
+<ni-card title="FBO: {{fboInfo.fbo}}" [headerBgColor]="'info'" class="mb-0" *ngIf="fboInfo && fboAirportInfo">
     <div>
         <mat-tab-group>
 
@@ -28,11 +28,6 @@
                         <div class="col-md-6">
                             <mat-form-field>
                                 <input matInput placeholder="ICAO" [(ngModel)]="fboAirportInfo.icao" />
-                            </mat-form-field>
-                        </div>
-                        <div class="col-md-6">
-                            <mat-form-field>
-                                <input matInput placeholder="IATA" [(ngModel)]="fboAirportInfo.iata" />
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
@@ -99,6 +94,13 @@
                         <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveEdit()" class="mr-1">Save Changes</button>
                         <button mat-stroked-button (click)="cancelEdit()">Cancel</button>
                     </div>
+                </div>
+            </mat-tab>
+
+            <!--User Tab-->
+            <mat-tab label="Users">
+                <div class="mt-2">
+                    <app-users-home [groupInfo]="groupInfo" [fboInfo]="fboInfo"></app-users-home>
                 </div>
             </mat-tab>
 

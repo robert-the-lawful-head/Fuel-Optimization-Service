@@ -46,7 +46,7 @@ namespace FBOLinx.Web.Controllers
             if (fboId != UserService.GetClaimedFboId(_HttpContextAccessor))
                 return BadRequest(ModelState);
 
-            var distributionLog = (from dl in _context.DistributionLog
+            var distributionLog = await (from dl in _context.DistributionLog
                 join cg in _context.CustomerInfoByGroup on new
                     {
                         CustomerId = dl.CustomerId.GetValueOrDefault(),
@@ -70,6 +70,9 @@ namespace FBOLinx.Web.Controllers
                 {
                     CustomerCompanyType = cct.Oid
                 }
+                into leftJoinCCT
+                from cct in leftJoinCCT.DefaultIfEmpty()
+                                   where dl.Fboid == fboId
                 select new
                 {
                     dl.Oid,
@@ -83,7 +86,7 @@ namespace FBOLinx.Web.Controllers
                     CustomerName = cg != null ? cg.Company : "All",
                     PricingTemplateName = pt != null ? pt.Name : "All",
                     CustomerCompanyTypeName = cct != null ? cct.Name : "All"
-                });
+                }).OrderByDescending(x => x.DateSent).ToListAsync();
             //var distributionLog = _context.DistributionLog.Where((x => x.Fboid == fboId)).OrderByDescending((x => x.DateSent)).Take(resultCount);
 
             return Ok(distributionLog);
@@ -118,11 +121,12 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor))
+            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
                 return BadRequest(ModelState);
 
-            await Services.PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context, request,
-                     _FileProvider, _HttpContextAccessor);
+            await Task.Run(() => Services.PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context,
+                request,
+                _FileProvider, _HttpContextAccessor));
 
             return Ok();
         }
@@ -136,7 +140,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor))
+            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
                 return BadRequest(ModelState);
 
             Services.PriceDistributionService service = new PriceDistributionService(_MailSettings.Value, _context, _FileProvider, _HttpContextAccessor);

@@ -12,10 +12,19 @@ namespace FBOLinx.Web.Models
         public int Fboid { get; set; }
         public bool? CostCalculator { get; set; }
         [Column("OmitJetARetail")]
-        public bool? OmitJetAretail { get; set; }
+        public bool? OmitJetARetail { get; set; }
         [Column("OmitJetACost")]
-        public bool? OmitJetAcost { get; set; }
+        public bool? OmitJetACost { get; set; }
+        [Column("Omit100LLRetail")]
+        public bool? Omit100LLRetail { get; set; }
+        [Column("Omit100LLCost")]
+        public bool? Omit100LLCost { get; set; }
+        [Key]
         [Column("OID")]
         public int Oid { get; set; }
+
+        [InverseProperty("Preferences")]
+        [ForeignKey("Fboid")]
+        public Models.Fbos Fbo { get; set; }
     }
 }

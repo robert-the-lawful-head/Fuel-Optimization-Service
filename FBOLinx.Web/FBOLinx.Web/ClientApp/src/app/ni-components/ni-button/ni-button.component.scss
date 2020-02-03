@@ -53,153 +53,181 @@ $types: (
     color: $error-contrast,
     hover-bg: darken($error-color, 10%),
     hover-color: darken($error-contrast, 10%)
+  ),
+    blank: (
+    bg: $blank-color
   )
 );
 
 :host {
-  align-items: center;
-  border: 0;
-  border-radius: $btn-shape;
-  cursor: pointer;
-  display: inline-flex;
-  font-family: $btn-ff;
-  font-size: $btn-fs;
-  justify-content: center;
-  line-height: $btn-lh;
-  outline: none;
-  padding: $btn-paddings;
-  position: relative;
-  text-align: center;
-  text-transform: $btn-tt;
-  touch-action: manipulation;
-  transition:
-    background .2s $btn-transition,
-    border .2s $btn-transition,
-    color .2s $btn-transition;
-  user-select: none;
-  vertical-align: middle;
-  white-space: nowrap;
-  will-change: background, border, color;
-  -webkit-appearance: none;
-
-  .btn-text {
-    margin: 0 ($module-rem / 2);
-    min-height: #{$btn-fs * $btn-lh};
-
-    &:empty {
-      margin: 0;
-    }
-  }
-  .btn-line {
-    border-width: $btn-border-width;
-    border-style: $btn-border-style;
-    border-color: inherit;
-    border-radius: inherit;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  .btn-icon {
-    margin: 0 ($module-rem / 2);
-  }
-  &.ni-btn-block {
-    display: block;
-    width: 100%;
-  }
-  &.ni-btn-left {
-    justify-content: flex-start;
-    text-align: left;
-  }
-  &.ni-btn-right {
-    justify-content: flex-end;
-    text-align: right;
-  }
-  &.ni-btn-large {
-    font-size: $btn-large-fs;
-    padding: $btn-large-paddings;
+    align-items: center;
+    border: 0;
+    border-radius: $btn-shape;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: $btn-ff;
+    font-size: $btn-fs;
+    justify-content: center;
+    line-height: $btn-lh;
+    outline: none;
+    padding: $btn-paddings;
+    position: relative;
+    text-align: center;
+    text-transform: $btn-tt;
+    touch-action: manipulation;
+    transition: background .2s $btn-transition, border .2s $btn-transition, color .2s $btn-transition;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    will-change: background, border, color;
+    -webkit-appearance: none;
 
     .btn-text {
-      min-height: #{$btn-large-fs * $btn-lh};
+        margin: 0 ($module-rem / 2);
+        min-height: #{$btn-fs * $btn-lh};
+
+        &:empty {
+            margin: 0;
+        }
     }
-  }
-  &.ni-btn-small {
-    font-size: $btn-small-fs;
-    padding: $btn-small-paddings;
 
-    .btn-text {
-      min-height: #{$btn-small-fs * $btn-lh};
+    &.temporary {
+        background: main-color(50) !important;
+        color: $info-contrast !important;
+        hover-bg: darken(main-color(50), 10%);
+        hover-color: darken(main-color(50), 10%)
     }
-  }
 
-  //colors - (default, accent, success, info, warning, error)
-  @each $type, $color in $types {
-    &.ni-btn-#{$type} {
-      background: map-get($color, bg);
-      color: map-get($color, color);
+    &.padding {
+        margin-top: ($module-rem * 2);
+    }
 
-      &:hover,
-      &:focus {
-        background: map-get($color, hover-bg);
-        color: map-get($color, hover-color);
-      }
-      &.ni-btn-outline {
-        border-color: map-get($color, bg);
-        color: map-get($color, bg);
+    .btn-line {
+        border-width: $btn-border-width;
+        border-style: $btn-border-style;
+        border-color: inherit;
+        border-radius: inherit;
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .btn-icon {
+        margin: 0 ($module-rem / 2);
+    }
+
+    &.customButton {
+        bottom: ($module-rem * 2);
+    }
+
+    &.ni-btn-block {
+        display: block;
+        width: 100%;
+    }
+
+    &.ni-btn-left {
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    &.ni-btn-right {
+        justify-content: flex-end;
+        text-align: right;
+    }
+
+    &.ni-btn-large {
+        font-size: $btn-large-fs;
+        padding: $btn-large-paddings;
+
+        .btn-text {
+            min-height: #{$btn-large-fs * $btn-lh};
+        }
+    }
+
+    &.ni-btn-small {
+        font-size: $btn-small-fs;
+        padding: $btn-small-paddings;
+
+        .btn-text {
+            min-height: #{$btn-small-fs * $btn-lh};
+        }
+    }
+    //colors - (default, accent, success, info, warning, error)
+    @each $type, $color in $types {
+        &.ni-btn-#{$type} {
+            background: map-get($color, bg);
+            color: map-get($color, color);
+
+            &:hover,
+            &:focus {
+                background: map-get($color, hover-bg);
+                color: map-get($color, hover-color);
+            }
+
+            &.ni-btn-outline {
+                border-color: map-get($color, bg);
+                color: map-get($color, bg);
+
+                &:hover,
+                &:focus {
+                    background: map-get($color, bg);
+                    color: map-get($color, color);
+                }
+            }
+        }
+    }
+
+    &.ni-btn-outline {
+        background: transparent;
+    }
+
+    &.ni-btn-gradient {
+        background-size: 200% auto;
 
         &:hover,
         &:focus {
-          background: map-get($color, bg);
-          color: map-get($color, color);
+            background-position: right center;
+            background-size: 200% auto;
         }
-      }
     }
-  }
-  
-  &.ni-btn-outline {
-    background: transparent;
-  }
-  &.ni-btn-gradient {
-    background-size: 200% auto;
 
-    &:hover,
-    &:focus {
-      background-position: right center;
-      background-size: 200% auto;
+    &.ni-btn-disabled {
+        cursor: not-allowed;
+        opacity: .6;
+        pointer-events: none;
     }
-  }
-  &.ni-btn-disabled {
-    cursor: not-allowed;
-    opacity: .6;
-    pointer-events: none;
-  }
-  &.ni-btn-icon-animation {
-    .btn-icon {
-      align-items: center;
-      bottom: 0;
-      display: flex;
-      justify-content: center;
-      left: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
-      transition: transform .2s $btn-transition;
-      transform: scale(0);
-      will-change: transform;
+
+    &.ni-btn-icon-animation {
+        .btn-icon {
+            align-items: center;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: transform .2s $btn-transition;
+            transform: scale(0);
+            will-change: transform;
+        }
+
+        .btn-text {
+            transition: opacity .2s $btn-transition;
+            will-change: opacity;
+        }
+
+        &:hover,
+        &:focus {
+            .btn-icon {
+                transform: scale(1);
+            }
+
+            .btn-text {
+                opacity: 0;
+            }
+        }
     }
-    .btn-text {
-      transition: opacity .2s $btn-transition;
-      will-change: opacity;
-    }
-    &:hover,
-    &:focus {
-      .btn-icon {
-        transform: scale(1);
-      }
-      .btn-text {
-        opacity: 0;
-      }
-    }
-  }
 }

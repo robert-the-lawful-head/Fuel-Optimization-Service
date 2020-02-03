@@ -35,6 +35,10 @@
                 background: $info-color;
             }
 
+            &.gray-card-header {
+                background: $gray-color;
+            }
+
             &.warning-card-header {
                 background: $warning-color;
             }
@@ -64,6 +68,15 @@
         &.success-card {
             background: $success-color;
             border-color: $success-color;
+
+            &:not(.outline-card) {
+                color: #fff;
+            }
+        }
+
+        &.gray-card {
+            background: $gray-color;
+            border-color: $gray-color;
 
             &:not(.outline-card) {
                 color: #fff;
@@ -105,6 +118,10 @@
             color: $info-color;
         }
 
+        &.gray-color-card {
+            color: $gray-color;
+        }
+
         &.warning-color-card {
             color: $warning-color;
         }
@@ -133,5 +150,14 @@
                 width: 100%;
             }
         }
+
+        button {
+            //padding-top:0 ;
+            //padding-bottom:0;
+        }
+    }
+
+    .disabledInput.mat-form-field-disabled {
+        background-image: none !important;
     }
 }

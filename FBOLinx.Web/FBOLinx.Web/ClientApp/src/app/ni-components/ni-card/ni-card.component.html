@@ -1,8 +1,8 @@
-<div
-  class="card-wrap"
-  [ngClass]="{
+<div class="card-wrap"
+     [ngClass]="{
     'success-card': bgColor === 'success',
     'info-card': bgColor === 'info',
+     'gray-card': bgColor === 'gray',
     'warning-card': bgColor === 'warning',
     'danger-card': bgColor === 'danger',
     'success-color-card': color === 'success',
@@ -12,21 +12,20 @@
     'bg-image-card': bgImage,
     'outline-card': outline
   }"
-  [ngStyle]="{
+     [ngStyle]="{
    'background-color': customBgColor,
    'background-image': 'url(' + bgImage + ')',
    'border-color': customBgColor,
    'color': customColor
-  }"
->
-  <h3
-    class="card-header h5"
-    *ngIf="title"
-      [ngClass]="{
+  }">
+    <h3 class="card-header h5"
+        *ngIf="title"
+        [ngClass]="{
       'text-right': align === 'right',
       'text-center': align === 'center',
       'success-card-header': headerBgColor === 'success',
     'info-card-header': headerBgColor === 'info',
+        'gray-card-header': headerBgColor === 'gray',
     'warning-card-header': headerBgColor === 'warning',
     'danger-card-header': headerBgColor === 'danger',
     'success-color-card-header': headerColor === 'success',
@@ -34,17 +33,19 @@
     'warning-color-card-header': headerColor === 'warning',
     'danger-color-card-header': headerColor === 'danger',
       'small-header': theme === 'small'
-    }"
-  >{{title}}</h3>
-
-  <div
-    class="card-content"
-    [ngClass]="{
+    }">
+        <div class="row">
+            <div class="col-12">
+                {{title}}&nbsp;<button title="Temporarily increase or decrease your pricing to ALL customers" *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 pull-right" (click)="openAddOnMargin()">Add On Margin</button>
+            </div>
+        </div>
+    </h3>
+    <div class="card-content"
+         [ngClass]="{
       'text-right': align === 'right',
       'text-center': align === 'center'
     }"
-    [ngStyle]="{'padding': indents}"
-  >
-    <ng-content></ng-content>
-  </div>
+         [ngStyle]="{'padding': indents}">
+        <ng-content></ng-content>
+    </div>
 </div>

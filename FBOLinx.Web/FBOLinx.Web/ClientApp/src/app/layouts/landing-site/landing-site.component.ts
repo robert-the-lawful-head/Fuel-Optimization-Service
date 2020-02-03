@@ -91,10 +91,12 @@ export class LandingSiteLayoutComponent implements OnInit {
             .subscribe(
             data => {
                 this.setRememberMeVariables();
-                if (data.role == 3 || data.role == 2)
+                this.authenticationService.postAuth().subscribe(postLoginCheckResult => {
+                    if (data.role == 3 || data.role == 2)
                     this.router.navigate(['/default-layout/fbos/']);
                 else
                     this.router.navigate(['/default-layout/dashboard-fbo/']);
+                });
             },
                 error => {
                     this.error = error;

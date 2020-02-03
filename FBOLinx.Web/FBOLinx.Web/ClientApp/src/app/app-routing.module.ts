@@ -46,6 +46,7 @@ import { CustomersGridComponent } from './pages/customers/customers-grid/custome
 import { CustomersHomeComponent } from './pages/customers/customers-home/customers-home.component';
 import { DashboardAdminComponent } from './pages/dashboards/dashboard-admin/dashboard-admin.component';
 import { DashboardFboComponent } from './pages/dashboards/dashboard-fbo/dashboard-fbo.component';
+import { DashboardHomeComponent } from './pages/dashboards/dashboard-home/dashboard-home.component';
 import { FboPricesHomeComponent } from './pages/fbo-prices/fbo-prices-home/fbo-prices-home.component';
 import { FbosHomeComponent } from './pages/fbos/fbos-home/fbos-home.component';
 import { FbosGridComponent } from './pages/fbos/fbos-grid/fbos-grid.component';
@@ -77,6 +78,7 @@ const defaultRoutes: Routes = [
             expectedRoles: [3]
         }
     },
+    { path: 'dashboard', component: DashboardHomeComponent, canActivate: [AuthGuard] },
     {
         path: 'dashboard-fbo',
         component: DashboardFboComponent,
@@ -136,7 +138,7 @@ const defaultRoutes: Routes = [
             expectedRoles: [1, 2, 3]
         }
     },
-    { path: '**', component: PageNotFoundComponent }
+    { path: '**', component: DashboardHomeComponent, canActivate: [AuthGuard] }
 ];
 
 const boxedRoutes: Routes = [

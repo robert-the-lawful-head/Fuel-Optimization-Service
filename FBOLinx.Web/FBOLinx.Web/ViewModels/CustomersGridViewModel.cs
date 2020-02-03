@@ -30,9 +30,15 @@ namespace FBOLinx.Web.ViewModels
         public int? CustomerCompanyType { get; set; }
         public string CustomerCompanyTypeName { get; set; }
         public bool HasBeenViewed { get; set; }
+        public bool SelectAll { get; set; }
+        public string TailNumbers { get; set; }
 
-        public double? AllInPrice{ get; set; }
-
+        public double? AllInPrice { get; set; }
+        public bool IsPricingExpired { get; set; }
+        public int? FleetSize { get; set; }
+        public List<PricingTemplatesGridViewModel> PricingTemplatesList { get; set; }
+        
+        public bool? Active { get; set; }
         public string DefaultCustomerTypeDescription
         {
             get

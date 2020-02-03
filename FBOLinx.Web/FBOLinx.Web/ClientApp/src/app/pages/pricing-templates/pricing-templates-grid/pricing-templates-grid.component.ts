@@ -1,13 +1,15 @@
 import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatTable } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 //Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { PricetiersService } from '../../../services/pricetiers.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 //Components
 import { PricingTemplatesDialogNewTemplateComponent } from '../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-pricing-templates-grid',
@@ -20,19 +22,21 @@ export class PricingTemplatesGridComponent implements OnInit {
     //Input/Output Bindings
     @Output() editPricingTemplateClicked = new EventEmitter<any>();
     @Output() deletePricingTemplateClicked = new EventEmitter<any>();
+    @Output() newPricingTemplateAdded = new EventEmitter<any>();
     @Input() pricingTemplatesData: Array<any>;
 
     //Public Members
     public pricingTemplatesDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['name', 'margin', 'notes', 'marginTypeDescription', 'edit', 'delete'];
+    public displayedColumns: string[] = ['isInvalid', 'name', 'marginTypeDescription', 'yourMargin', 'intoPlanePrice', 'notes', 'delete'];
     public resultsLength: number = 0;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
     /** pricing-templates-grid ctor */
-    constructor(public newTemplateDialog: MatDialog,
+    constructor(public newTemplateDialog: MatDialog, private router: Router,
         private pricingTemplatesService: PricingtemplatesService,
+        private priceTiersService: PricetiersService,
         private sharedService: SharedService    ) {
 
     }
@@ -47,26 +51,37 @@ export class PricingTemplatesGridComponent implements OnInit {
         this.resultsLength = this.pricingTemplatesData.length;
     }
 
-    public editPricingTemplate(pricingTemplate) {
+    public editPricingTemplate(pricingTemplate, $event) {
+        if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
+            //$event.preventDefault();
+            $event.stopPropagation();
+            return;
+        }
         const clonedRecord = Object.assign({}, pricingTemplate);
         this.editPricingTemplateClicked.emit(clonedRecord);
     }
 
     public addNewPricingTemplate() {
-        const dialogRef = this.newTemplateDialog.open(PricingTemplatesDialogNewTemplateComponent, {
-                data: {}
+        const dialogRef = this.newTemplateDialog.open(PricingTemplatesDialogNewTemplateComponent,
+            {
+                data: {
+                    fboId: this.sharedService.currentUser.fboId,
+                    marginType: 1,
+                    customerMargins: [{min: 1, max: 99999, amount: 0, itp: 0, allin: 0}]
+                }
             });
 
         dialogRef.afterClosed().subscribe(result => {
-            result.fboId = this.sharedService.currentUser.fboId;
-            this.pricingTemplatesService.add(result).subscribe((data: any) => {
-                this.editPricingTemplate(data);
-            });
+            if (!result)
+                return;
+            this.newPricingTemplateAdded.emit();
+            window.location.reload();
         });
     }
 
     public deletePricingTemplate(pricingTemplate) {
         this.deletePricingTemplateClicked.emit(pricingTemplate);
+        window.location.reload();
     }
 
     public applyFilter(filterValue: string) {

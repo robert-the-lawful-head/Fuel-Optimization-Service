@@ -183,7 +183,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/CustomerAircrafts/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerAircrafts([FromRoute] int id, [FromBody] CustomerAircrafts customerAircrafts)
+        public async Task<IActionResult> PutCustomerAircrafts([FromRoute] int id, [FromBody] CustomerAircraftsGridViewModel customerAircrafts)
         {
             if (!ModelState.IsValid)
             {
@@ -195,11 +195,22 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(customerAircrafts).State = EntityState.Modified;
+           // _context.Entry(customerAircrafts).State = EntityState.Modified;
 
             try
             {
+                var custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
+
+                if (custAircraft != null)
+                {
+                    custAircraft.TailNumber = customerAircrafts.TailNumber;
+                    custAircraft.AircraftId = customerAircrafts.AircraftId;
+                    custAircraft.Size = customerAircrafts.Size;
+                    _context.CustomerAircrafts.Update(custAircraft);
+                }
                 await _context.SaveChangesAsync();
+
+                return Ok(custAircraft);
             }
             catch (DbUpdateConcurrencyException)
             {

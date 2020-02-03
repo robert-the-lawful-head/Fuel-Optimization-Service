@@ -1,35 +1,83 @@
 <h1 mat-dialog-title>Account Profile</h1>
 <div mat-dialog-content>
-    <div>
-        <mat-form-field>
-            <input matInput placeholder="First Name" aria-label="First Name" [(ngModel)]="data.firstName">
-        </mat-form-field>
+    <div *ngIf="!availableroles">
+        <mat-spinner></mat-spinner>
     </div>
-    <div>
-        <mat-form-field>
-            <input matInput placeholder="Last Name" aria-label="Last Name" [(ngModel)]="data.lastName">
-        </mat-form-field>
-    </div>
-    <div>
-        <mat-form-field>
-            <input matInput type="email" placeholder="Email Login" aria-label="Email Login" [(ngModel)]="data.username">
-        </mat-form-field>
-    </div>
-    <div>
-        <mat-form-field>
-            <input matInput type="password" placeholder="Password" aria-label="Password" [(ngModel)]="data.newPassword">
-        </mat-form-field>
-    </div>
-    <div>
-        <mat-form-field>
-            <input matInput type="password" placeholder="Confirm Password" aria-label="Confirm Password" [(ngModel)]="data.confirmPassword">
-        </mat-form-field>
-    </div>
-    <div class="text-danger" *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword != data.confirmPassword">
-        Passwords must match
+
+    <!--<div *ngIf="availableroles && contactsData">-->
+    <div *ngIf="availableroles">
+        <mat-tab-group>
+
+            <!--Account Login Info-->
+            <mat-tab label="Login Info">
+                <div class="container-fluid mt-2">
+                    <div class="row">
+                        <div class="col-6">
+                            <mat-form-field>
+                                <input matInput placeholder="First Name" aria-label="First Name" [(ngModel)]="data.firstName">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-6">
+                            <mat-form-field>
+                                <input matInput placeholder="Last Name" aria-label="Last Name" [(ngModel)]="data.lastName">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-6">
+                            <mat-form-field>
+                                <input matInput type="email" placeholder="Email Login" aria-label="Email Login" [(ngModel)]="data.username" [email]="true" #userLoginEmail="ngModel">
+                            </mat-form-field>
+                            <div *ngIf="userLoginEmail.errors?.email" style="color: red;">
+                                Please enter a valid email address.
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <mat-form-field *ngIf="availableroles">
+                                <mat-select placeholder="Role" [(ngModel)]="data.role" disabled>
+                                    <mat-option *ngFor="let role of availableroles" [value]="role.value">
+                                        {{role.description}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-6">
+                            <mat-form-field>
+                                <input matInput type="password" placeholder="Password" aria-label="Password" [(ngModel)]="data.newPassword">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-6">
+                            <mat-form-field>
+                                <input matInput type="password" placeholder="Confirm Password" aria-label="Confirm Password" [(ngModel)]="data.confirmPassword">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="text-danger" *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword != data.confirmPassword">
+                            Passwords must match
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mt-2 text-center">
+                            <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="(!data.confirmPassword || !data.newPassword || data.confirmPassword.length == 0 || data.newPassword.length == 0 || data.newPassword === data.confirmPassword)  && !userLoginEmail.errors?.email">Save</button>
+                            <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <mat-tab label="Contacts" *ngIf="contactsData">
+
+                <!--Contacts Grid-->
+                <div *ngIf="contactsData && !currentContact">
+                    <app-contacts-grid [contactsData]="contactsData" (contactDeleted)="contactDeleted($event)" (newContactClicked)="newContactClicked()" (editContactClicked)="editContactClicked($event)"></app-contacts-grid>
+                </div>
+
+                <!--Contact Information-->
+                <div *ngIf="currentContact">
+                    <app-contacts-edit [contactInfo]="currentContact" (saveEditClicked)="saveEditContactClicked()" (cancelEditClicked)="cancelEditContactClicked()"></app-contacts-edit>
+                </div>
+            </mat-tab>
+
+        </mat-tab-group>
     </div>
 </div>
-<div class="mt-2 text-center">
-    <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="!data.confirmPassword || !data.newPassword || data.confirmPassword.length == 0 || data.newPassword.length == 0 || data.newPassword === data.confirmPassword">Save</button>
-    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
-</div>
+    

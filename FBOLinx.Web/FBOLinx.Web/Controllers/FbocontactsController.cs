@@ -40,6 +40,7 @@ namespace FBOLinx.Web.Controllers
                 ContactId = f.ContactId,
                 FirstName = f.Contact.FirstName,
                 LastName = f.Contact.LastName,
+                Title = f.Contact.Title,
                 Oid = f.Oid,
                 Primary = f.Contact.Primary
             }));

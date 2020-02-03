@@ -144,3 +144,43 @@ button {
     text-align: right;
   }
 }
+
+.wizard {
+    width: 600px;
+
+    .mat-dialog-actions {
+        //padding: 24px 48px;
+        float: right;
+    }
+}
+
+    .my-panel {
+        max-width: 27vw !important;
+    }
+
+    .my-panel .mat-dialog-container {
+        padding: 0 !important;
+
+        .bck {
+            background: #fff;
+        }
+
+        .mat-dialog-content {
+            //padding: 24px 48px;
+            padding: 0;
+            margin: -24px 0;
+            overflow: hidden;
+        }
+
+        footer {
+            padding: 0 24px;
+            padding-bottom: 14px !important;
+            padding-top: 14px !important;
+            line-height: normal;
+        }
+
+        .row {
+            margin: 0 !important;
+        }
+    }
+

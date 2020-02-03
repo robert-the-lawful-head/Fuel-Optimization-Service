@@ -71,6 +71,8 @@ namespace FBOLinx.Web.Models
         [Required]
         public bool? InitialSetupPhase { get; set; }
         public bool DisableCost { get; set; }
+        [Column("AcukwikFBOHandlerID")]
+        public int? AcukwikFBOHandlerId { get; set; }
 
         [ForeignKey("GroupId")]
         [InverseProperty("Fbos")]
@@ -81,5 +83,14 @@ namespace FBOLinx.Web.Models
 
         [InverseProperty("Fbo")]
         public ICollection<FuelReq> FuelReqs { get; set; }
+
+        [InverseProperty("Fbo")]
+        public ICollection<PricingTemplate> PricingTemplates { get; set; }
+
+        [InverseProperty("Fbo")]
+        public Models.Fbopreferences Preferences { get; set; }
+
+        [InverseProperty("Fbo")]
+        public ICollection<Fbocontacts> Contacts { get; set; }
     }
 }

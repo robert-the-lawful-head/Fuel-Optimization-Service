@@ -19,13 +19,22 @@ export class StatisticsTotalCustomersComponent implements OnInit {
     public totalCustomers: number;
 
     /** statisticsTotalCustomers ctor */
-    constructor(private customerinfobygroupService: CustomerinfobygroupService,
+    constructor(private router: Router,
+        private customerinfobygroupService: CustomerinfobygroupService,
         private sharedService: SharedService) {
         if (!this.options)
             this.options = {};
     }
 
     ngOnInit() {
+        this.refreshData();
+    }
+
+    public redirectClicked() {
+        this.router.navigate(['/default-layout/customers']);
+    }
+
+    public refreshData() {
         this.customerinfobygroupService.getCustomerCountByGroupAndFBO(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId).subscribe((data: any) => {
             this.totalCustomers = data;
         });

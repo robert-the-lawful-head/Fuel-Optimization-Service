@@ -24,7 +24,9 @@ export class ContactsService {
     }
 
     public update(payload) {
+
         console.log('Putting to: ' + this.accessPointUrl + '/' + payload.oid);
-        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
+        //return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
+        return this.http.put(this.accessPointUrl + '/' + payload.contactInfoByGroupId, payload, { headers: this.headers });
     }
 }

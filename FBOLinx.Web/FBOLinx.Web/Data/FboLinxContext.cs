@@ -49,7 +49,9 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<CustomerCompanyTypes> CustomerCompanyTypes { get; set; }
         public virtual DbSet<DistributionQueue> DistributionQueue { get; set; }
         public virtual DbSet<DistributionErrors> DistributionErrors { get; set; }
-
+        public virtual DbSet<TempAddOnMargin> TempAddOnMargin { get; set; }
+        public virtual DbSet<MappingPrices> MappingPrices { get; set; }
+        public virtual DbSet<IntegrationPartners> IntegrationPartners { get; set; }
 
         // Unable to generate entity type for table 'dbo.AdminEmails'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.FBOContacts'. Please see the warning messages.
@@ -306,6 +308,25 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.Notes).IsUnicode(false);
             });
 
+            modelBuilder.Entity<TempAddOnMargin>(entity =>
+            {
+                entity.Property(e => e.EffectiveFrom)
+                    .HasColumnName("effectiveFrom")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.EffectiveTo)
+                    .HasColumnName("effectiveTo")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FboId).HasColumnName("fboId");
+
+                entity.Property(e => e.MarginAvgas)
+                    .HasColumnName("marginAvgas");
+
+                entity.Property(e => e.MarginJet)
+                    .HasColumnName("marginJet");
+            });
+
             modelBuilder.Entity<ContactInfoByGroup>(entity =>
             {
                 entity.HasIndex(e => new { e.ContactId, e.Email, e.FirstName, e.LastName, e.Phone, e.Mobile, e.Address, e.City, e.State, e.Country, e.Fax, e.Title, e.Primary, e.CopyAlerts, e.GroupId })
@@ -387,6 +408,11 @@ namespace FBOLinx.Web.Data
             modelBuilder.Entity<DistributionErrors>(entity =>
             {
                 entity.Property(e => e.Error).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<IntegrationPartners>(entity =>
+            {
+                entity.Property(e => e.PartnerName).IsUnicode(false);
             });
         }
     }

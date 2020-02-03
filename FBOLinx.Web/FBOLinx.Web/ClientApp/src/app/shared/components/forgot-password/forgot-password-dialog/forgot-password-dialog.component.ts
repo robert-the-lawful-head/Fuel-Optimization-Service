@@ -6,7 +6,7 @@ import { AuthenticationService } from '../../../../services/authentication.servi
 
 //Interfaces
 export interface ForgotPasswordDialogData {
-    Username: string;
+    username: string;
 }
 
 @Component({

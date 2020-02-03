@@ -8,7 +8,7 @@ import { SharedService } from '../../../layouts/shared-service';
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/'
+        link: '#/default-layout'
     },
     {
         title: 'Fuel Orders',
@@ -32,9 +32,17 @@ export class FuelreqsHomeComponent {
     /** fuelreqs-home ctor */
     constructor(private fuelReqService: FuelreqsService, private sharedService: SharedService) {
         this.sharedService.emitChange(this.pageTitle);
-        fuelReqService.getForFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+        this.loadFuelReqData();
+    }
+
+    public dateFilterChanged(event) {
+        this.loadFuelReqData();
+    }
+
+    private loadFuelReqData() {
+        this.fuelreqsData = null;
+        this.fuelReqService.getForFboAndDateRange(this.sharedService.currentUser.fboId, this.sharedService.dashboardSettings.filterStartDate, this.sharedService.dashboardSettings.filterEndDate).subscribe((data: any) => {
             this.fuelreqsData = data;
-            console.log(data);
         });
     }
 }

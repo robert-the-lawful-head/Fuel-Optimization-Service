@@ -11,71 +11,69 @@
   <h1 class="page-title">{{ title }}</h1>
 
   <div class="nav-items">
-    <div class="nav-item" [ngClass]="{ 'opened' : false }" style="display: none;">
-      <a href="#" (click)="open($event)" class="nav-link">
-        <span class="icon sli-bell"></span>
-        <span class="marker"></span>
-      </a>
+      <div class="nav-item" [ngClass]="{ 'opened' : needsAttentionMenu.isOpened }">
+          <!--<a (click)="needsAttentionMenu.isOpened = !needsAttentionMenu.isOpened" class="nav-link">-->
+          <a (click)="openUpdate()" class="nav-link">
+              <span class="icon sli-bell"></span>
+              <span [ngClass]="{ 'marker' : (customersWithoutMargins && customersWithoutMargins.length > 0) || (hasLoadedJetACost && (!currrentJetACostPricing)) || (hasLoadedJetARetail && (!currrentJetARetailPricing))}"></span>
+          </a>
 
-      <div class="dropdown-menu">
-        <h4 class="menu-title">Notifications</h4>
+          <div class="dropdown-menu">
+              <h4 class="menu-title" *ngIf="(hasLoadedJetACost && (!currrentJetACostPricing)) || (hasLoadedJetARetail && (!currrentJetARetailPricing)) || (customersWithoutMargins && customersWithoutMargins.length > 0)">Notifications</h4>
 
-        <ul>
-          <li>
-            <a href="#">
-              <span class="icon sli-puzzle"></span>
-              <div class="content">
-                <span class="desc">This is a new message for my dear friend <strong>Rob</strong>.</span>
-                <span class="date">10 minutes ago</span>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <span class="icon sli-playlist"></span>
-              <div class="content">
-                <span class="desc">Your site visits have increased <strong>15.5%</strong> more since the last week.</span>
-                <span class="date">23 minutes ago</span>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <span class="icon sli-globe"></span>
-              <div class="content">
-                <span class="desc">Server loaded by 98% please recover soon</span>
-                <span class="date">25 minutes ago</span>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <span class="icon sli-feed"></span>
-              <div class="content">
-                <span class="desc">We're looking to hire two more protypers to our team.</span>
-                <span class="date">32 minutes ago</span>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <span class="icon sli-cup"></span>
-              <div class="content">
-                <span class="desc">This is a new message for my dear friend <strong>Rob</strong>.</span>
-                <span class="date">58 minutes ago</span>
-              </div>
-            </a>
-          </li>
-        </ul>
+              <ul>
+                  <!--JetA Cost Notification-->
+                  <li *ngIf="hasLoadedJetACost && (!currrentJetACostPricing)">
+                      <a>
+                          <span class="icon sli-feed"></span>
+                          <div class="content">
+                              <span class="desc">Your cost pricing has expired!</span>
+                              <span class="date"></span>
+                              <div class="text-right">
+                                  <button ni-button [view]="'accent'" size="small" (click)="updatePricingClicked($event)" class="mr-1">Update Pricing</button>
+                              </div>
+                          </div>
+                      </a>
+                  </li>
 
-        <div class="menu-footer">
-          <a href="#">View all notifications</a>
-        </div>
+                  <!--JetA Retail Notification-->
+                  <li *ngIf="hasLoadedJetARetail && (!currrentJetARetailPricing)">
+                      <a>
+                          <span class="icon sli-feed"></span>
+                          <div class="content">
+                              <span class="desc">Your retail pricing has expired!</span>
+                              <span class="date"></span>
+                              <div class="text-right">
+                                  <button ni-button [view]="'accent'" size="small" (click)="updatePricingClicked($event)" class="mr-1">Update Pricing</button>
+                              </div>
+                          </div>
+                      </a>
+                  </li>
+
+                  <!--Customers without margins-->
+                  <li *ngFor="let customer of customersWithoutMargins">
+                      <a>
+                          <span class="icon sli-exclamation"></span>
+                          <div class="content">
+                              <span class="desc">Assigned margin is missing for <strong>{{customer.company}}</strong>.</span>
+                              <span class="date"></span>
+                              <div class="text-right">
+                                  <button ni-button [view]="'success'" size="small" (click)="addMarginForCustomerClicked(customer, $event)" class="mr-1">Assign Margin</button>
+                              </div>
+                          </div>
+                      </a>
+                  </li>
+
+              </ul>
+
+              <div class="menu-footer">
+                  <a (click)="viewAllNotificationsClicked()">View all notifications</a>
+              </div>
+          </div>
       </div>
-    </div>
 
     <div class="nav-item" [ngClass]="{ 'opened' : false }" style="display: none;">
-      <a href="#" (click)="open($event)" class="nav-link">
+      <a (click)="toggle($event)" class="nav-link">
         <span class="icon sli-event"></span>
       </a>
 
@@ -119,7 +117,7 @@
     </div>
 
     <div class="nav-item" [ngClass]="{ 'opened' : false }" style="display: none;">
-      <a href="#" (click)="open($event)" class="nav-link">
+      <a (click)="toggle($event)" class="nav-link">
         <span class="icon sli-bubbles"></span>
       </a>
 
@@ -168,8 +166,8 @@
       </div>
     </div>
 
-    <div class="nav-item" [ngClass]="{ 'opened' : false }">
-      <a href="#" (click)="open($event)" class="nav-link">
+    <div class="nav-item" [ngClass]="{ 'opened' : accountProfileMenu.isOpened }">
+      <a (click)="accountProfileMenu.isOpened = !accountProfileMenu.isOpened" class="nav-link">
         <!--<div class="avatar"><img src="assets/content/avatar-2.jpg" width="40" height="40" alt=""></div>-->
         <div class="name" *ngIf="userFullName">{{userFullName}}</div>
       </a>
@@ -185,11 +183,14 @@
           <li>
             <a href="#" routerLink="/default-layout/calendar"><span class="icon sli-calendar"></span> Calendar</a>
           </li>-->
+            <li>
+                <a style="cursor: pointer;" (click)="accountProfileClicked($event)"><span class="icon sli-settings"></span> Account Profile</a>
+            </li>
+            <li *ngIf="currentUser && currentUser.impersonatedRole > 0">
+                <a style="cursor: pointer;" (click)="stopManagingClicked($event)"><span class="icon sli-settings"></span> Stop Managing FBO</a>
+            </li>
           <li>
-            <a (click)="accountProfileClicked($event)"><span class="icon sli-settings"></span> Account Profile</a>
-          </li>
-          <li>
-            <a (click)="logout()"><span class="icon sli-logout"></span> Log Out</a>
+            <a style="cursor: pointer;" (click)="logout()"><span class="icon sli-logout"></span> Log Out</a>
           </li>
         </ul>
       </div>

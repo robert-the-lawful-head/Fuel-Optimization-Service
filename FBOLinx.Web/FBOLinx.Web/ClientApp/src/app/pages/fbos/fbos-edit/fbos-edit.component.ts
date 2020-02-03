@@ -13,7 +13,7 @@ import { SharedService } from '../../../layouts/shared-service';
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/'
+        link: '#/default-layout'
     },
     {
         title: 'FBOs',

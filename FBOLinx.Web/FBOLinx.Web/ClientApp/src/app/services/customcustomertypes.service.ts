@@ -30,4 +30,8 @@ export class CustomcustomertypesService {
     public update(payload) {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
     }
+
+    public updateCollection(payload) {
+        return this.http.post(this.accessPointUrl + '/collection', payload, { headers: this.headers });
+    }
 }

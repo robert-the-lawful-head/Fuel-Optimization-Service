@@ -312,3 +312,36 @@ GO
 ALTER TABLE CustomerInfoByGroup
     ADD CertificateType smallint
 GO
+
+ALTER TABLE PricingTemplate
+	ALTER COLUMN MarginType smallint
+GO
+
+CREATE TABLE [dbo].[TempAddOnMargin](
+	[id] [int] NOT NULL IDENTITY (1, 1),
+	[fboId] [int] NOT NULL,
+	[effectiveFrom] [datetime] NOT NULL,
+	[effectiveTo] [datetime] NOT NULL,
+	[marginJet] [float] NULL,
+	[marginAvgas] [float] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+alter table PricingTemplate add Email varchar(max) null
+GO
+
+alter table PricingTemplate add Subject varchar(max) null
+GO
+
+  create table  [dbo].[MappingPrices](
+oid int not null IDENTITY (1, 1),
+groupId int not null,
+fboPriceId int not null,
+PRIMARY KEY (oid),
+    FOREIGN KEY (fboPriceId) REFERENCES fboprices(OID)
+)
+GO

@@ -19,12 +19,20 @@ export class FbopricesService {
         return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/current', { headers: this.headers });
     }
 
+    public checkFboExpiredPricing(fboId) {
+        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/ispricingexpired', { headers: this.headers });
+    }
+
     public getFbopricesByFboIdStaged(fboId) {
         return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/staged', { headers: this.headers });
     }
 
     public getFbopricesByFboIdAndProductCurrent(fboId, product) {
-        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/product/' + product + '/current', { headers: this.headers });
+        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/product/' + encodeURIComponent(product) + '/current', { headers: this.headers });
+    }
+
+    public checkifExistFrboPrice(fboId, payload) {
+        return this.http.post(this.accessPointUrl + '/fbo/' + fboId + '/check/', payload, { headers: this.headers });
     }
 
     public getPricesByMonthForFbo(fboId, payload) {

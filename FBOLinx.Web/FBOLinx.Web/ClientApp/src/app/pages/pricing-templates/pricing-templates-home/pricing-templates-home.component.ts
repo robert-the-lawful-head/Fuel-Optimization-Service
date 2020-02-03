@@ -7,13 +7,16 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { CustomermarginsService } from '../../../services/customermargins.service';
 import { SharedService } from '../../../layouts/shared-service';
 
+//Components
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/'
+        link: '#/default-layout'
     },
     {
-        title: 'Pricing Templates',
+        title: 'Margin Templates',
         link: '#/default-layout/pricing-templates'
     }
 ];
@@ -27,7 +30,7 @@ const BREADCRUMBS: any[] = [
 export class PricingTemplatesHomeComponent {
 
     //Public Members
-    public pageTitle: string = 'Pricing Templates';
+    public pageTitle: string = 'Margin Templates';
     public breadcrumb: any[] = BREADCRUMBS;
     public pricingTemplatesData: Array<any>;
     public currentPricingTemplate: any;
@@ -37,7 +40,8 @@ export class PricingTemplatesHomeComponent {
         private pricingTemplatesService: PricingtemplatesService,
         public newPricingTemplateDialog: MatDialog,
         private customerMarginsService: CustomermarginsService,
-        private sharedService: SharedService    ) {
+        private sharedService: SharedService,
+        public deleteFBODialog: MatDialog    ) {
 
         this.sharedService.emitChange(this.pageTitle);
         pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
@@ -49,7 +53,21 @@ export class PricingTemplatesHomeComponent {
     }
 
     public deletePricingTemplateClicked(pricingTemplate) {
-        
+        const dialogRef = this.deleteFBODialog.open(DeleteConfirmationComponent, {
+            data: { item: pricingTemplate, description: 'margin template' }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result)
+                return;
+            this.pricingTemplatesData = null;
+            this.pricingTemplatesService.remove(pricingTemplate).subscribe((data: any) => {
+                this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+                    this.pricingTemplatesData = data;
+                    this.currentPricingTemplate = null;
+                });
+            });
+        });
     }
 
     public savePricingTemplateClicked() {
@@ -63,5 +81,13 @@ export class PricingTemplatesHomeComponent {
 
     public cancelPricingTemplateEditclicked() {
         this.currentPricingTemplate = null;
+    }
+
+    public newPricingTemplateAdded(event) {
+        this.pricingTemplatesData = null;
+        this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+            this.pricingTemplatesData = data;
+            this.currentPricingTemplate = null;
+        });
     }
 }

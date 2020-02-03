@@ -19,7 +19,7 @@
             <span matSuffix>Gal.</span>
         </mat-form-field>
     </div>
-    <div>
+    <div *ngIf="data.expirationDate==null">
         <mat-form-field>
             <input matInput [(ngModel)]="data.expirationDate" [matDatepicker]="categoryDatePicker" placeholder="Expiration Date" disabled>
             <mat-datepicker-toggle matSuffix [for]="categoryDatePicker"></mat-datepicker-toggle>

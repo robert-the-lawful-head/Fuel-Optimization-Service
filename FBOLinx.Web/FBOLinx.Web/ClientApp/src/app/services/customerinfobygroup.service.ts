@@ -39,6 +39,12 @@ export class CustomerinfobygroupService {
         return this.http.get(this.accessPointUrl + '/CustomerSources', { headers: this.headers });
     }
 
+    public getCustomersWithoutMargins(groupId, fboId, count) {
+        if (!count)
+            count = 0;
+        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId + '/nomargin/' + count.toString(), { headers: this.headers });
+    }
+
     public add(payload) {
         return this.http.post(this.accessPointUrl, payload, { headers: this.headers });
     }

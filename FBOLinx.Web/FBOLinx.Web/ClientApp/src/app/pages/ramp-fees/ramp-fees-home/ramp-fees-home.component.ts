@@ -5,14 +5,16 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 //Services
 import { RampfeesService } from '../../../services/rampfees.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { Parametri } from '../../../services/paremeters.service';
 
 //Components
 import { RampFeesDialogNewFeeComponent } from '../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component';
+import { first } from 'rxjs/operators';
 
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/'
+        link: '#/default-layout'
     },
     {
         title: 'Ramp Fees',
@@ -32,19 +34,25 @@ export class RampFeesHomeComponent implements OnInit {
     public breadcrumb: any[] = BREADCRUMBS;
     public rampFees: any[];
     public requiresUpdate: boolean = false;
+    public expirationDate: any;
+    public subscription: any;
 
     /** ramp-fees-home ctor */
     constructor(private route: ActivatedRoute,
         private router: Router,
         private rampFeesService: RampfeesService,
         private sharedService: SharedService,
-        public newRampFeeDialog: MatDialog) {
+        public newRampFeeDialog: MatDialog,
+        private messageService: Parametri) {
         this.sharedService.emitChange(this.pageTitle);
     }
 
     ngOnInit() {
         this.rampFeesService.getForFbo({ oid: this.sharedService.currentUser.fboId }).subscribe((data: any) => {
             this.rampFees = data;
+            this.expirationDate = data[1].expirationDate;
+            this.messageService.updateMessage(this.expirationDate);
+            this.messageService.getMessage().subscribe((mymessage: any) => this.expirationDate = mymessage);
         });
     }
 
@@ -71,6 +79,17 @@ export class RampFeesHomeComponent implements OnInit {
     public rampFeeDeleted() {
         this.loadRampFees();
     }
+
+    public rampFeeRequiresUpdate() {
+    this.rampFees.forEach(fee => {
+        fee.ExpirationDate = this.expirationDate;
+            this.updateRampFee(fee);
+
+    });
+        this.messageService.updateMessage(this.expirationDate);
+        this.loadRampFees();
+
+}
 
     public saveChanges() {
         this.rampFees.forEach(fee => {

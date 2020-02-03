@@ -13,7 +13,7 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/'
+        link: '#/default-layout'
     },
     {
         title: 'Groups',
@@ -39,7 +39,7 @@ export class GroupsGridComponent implements OnInit  {
     public pageTitle: string = 'Groups';
     public breadcrumb: any[] = BREADCRUMBS;
     public groupsDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['group', 'active', 'edit', 'delete'];
+    public displayedColumns: string[] = ['group', 'active', 'delete'];
     public resultsLength: number = 0;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -81,7 +81,17 @@ export class GroupsGridComponent implements OnInit  {
         });
     }
 
-    public editRecord(record) {
+    public editRecord(record, $event) {
+        if ($event.srcElement) {
+            if ($event.srcElement.nodeName.toLowerCase() == 'button' ||
+                $event.srcElement.nodeName.toLowerCase() == 'select' ||
+                ($event.srcElement.nodeName.toLowerCase() == 'input' &&
+                    $event.srcElement.getAttribute('type') == 'checkbox')) {
+                //$event.preventDefault();
+                $event.stopPropagation();
+                return;
+            }
+        }
         const clonedRecord = Object.assign({}, record);
         this.editGroupClicked.emit(clonedRecord);
     }
@@ -96,7 +106,7 @@ export class GroupsGridComponent implements OnInit  {
             console.log('Dialog data: ', result);
             result.active = true;
             this.groupsService.add(result).subscribe((data: any) => {
-                this.editRecord(data);
+                this.editRecord(data,Event);
             });
         });
         this.newGroupClicked.emit();

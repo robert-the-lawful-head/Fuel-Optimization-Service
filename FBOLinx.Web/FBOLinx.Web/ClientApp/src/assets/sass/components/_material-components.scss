@@ -25,17 +25,19 @@ body {
     .mat-nav-list .mat-subheader {
         font-family: $main-ff !important;
     }
-
     /*.mat-dialog-actions {
         flex-direction: column;
     }*/
-
     [mat-button],
     [mat-fab],
     [mat-icon-button],
     [mat-mini-fab],
     [mat-raised-button] {
         font-weight: inherit;
+    }
+
+    .mat-tooltip {
+        font-size: inherit !important;
     }
 
     .mat-button-toggle-label {
@@ -197,6 +199,12 @@ body {
         overflow: auto;
     }
 
+    .mat-dialog-content {
+        .mat-tab-body.mat-tab-body-active {
+            max-height: 400px;
+        }
+    }
+
     .mat-icon {
         position: relative;
     }
@@ -240,8 +248,28 @@ body {
         }
     }
 
-    .mat-header-row,
     .mat-row {
+        padding: 0 $module-rem;
+
+        &:hover {
+            background-color: #2680EB;
+            cursor: pointer;
+        }
+
+        .mat-cell,
+        .mat-header-cell {
+            padding: 0 $module-rem;
+        }
+    }
+
+    .mat-row-not-hover {
+        &:hover {
+            background-color: transparent !important;
+            cursor:default !important;
+        }
+    }
+
+    .mat-header-row {
         padding: 0 $module-rem;
 
         .mat-cell,
@@ -275,4 +303,7 @@ body {
   .squeezebox .sb-item .sb-item-head a .toggle-icon {
     float: left;
   }
+}
+.cdk-overlay-container {
+    z-index: 99999 !important;
 }
