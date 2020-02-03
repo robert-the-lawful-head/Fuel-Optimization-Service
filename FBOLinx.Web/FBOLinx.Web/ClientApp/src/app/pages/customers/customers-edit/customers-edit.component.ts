@@ -312,9 +312,11 @@ export class CustomersEditComponent {
 
     public editCustomerAircraftClicked(customerAircraft) {
         this.saveCustomerEdit();
+        this.currentCustomerAircraft = null;
+        this.loadCustomerAircrafts();
         this.selectedCustomerAircraftRecord = customerAircraft;
-        this.customerAircraftsService.get({ oid: customerAircraft.oid })
-            .subscribe((data: any) => this.currentCustomerAircraft = data);
+        //this.customerAircraftsService.get({ oid: customerAircraft.oid })
+        //    .subscribe((data: any) => this.currentCustomerAircraft = data);
     }
 
     public saveEditCustomerAircraftClicked() {

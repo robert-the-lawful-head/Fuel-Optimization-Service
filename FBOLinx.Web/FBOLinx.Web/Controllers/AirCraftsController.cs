@@ -45,14 +45,30 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var airCrafts = await _context.Aircrafts.FindAsync(id);
+            var customerAircrafts = await (from ca in _context.CustomerAircrafts
+                                           join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
+                                           from ac in leftJoinAircrafts.DefaultIfEmpty()
+                                           where ca.Oid == id
+                                           select new
+                                           {
+                                               ca.Oid,
+                                               ca.AircraftId,
+                                               ca.TailNumber,
+                                               ca.GroupId,
+                                               ca.CustomerId,
+                                               ac.Make,
+                                               ac.Model,
+                                               ca.Size
+                                           }).FirstOrDefaultAsync();
 
-            if (airCrafts == null)
+           // var airCrafts = await _context.Aircrafts.FindAsync(id);
+
+            if (customerAircrafts == null)
             {
                 return NotFound();
             }
 
-            return Ok(airCrafts);
+            return Ok(customerAircrafts);
         }
 
         // PUT: api/AirCrafts/5
