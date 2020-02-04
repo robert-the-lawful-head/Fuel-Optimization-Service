@@ -23,3 +23,12 @@ body .disabledInput .mat-form-field-wrapper .mat-form-field-underline {
 body .disabledInput .mat-form-field-flex .mat-form-field-prefix {
     color: rgba(0, 0, 0, 0.38);
 }
+
+.fbo-prices-error-msg {
+    position: absolute;
+    right: 0;
+    white-space: nowrap;
+    top: calc(100% + 5px);
+    font-size: 12px;
+    color: red;
+}

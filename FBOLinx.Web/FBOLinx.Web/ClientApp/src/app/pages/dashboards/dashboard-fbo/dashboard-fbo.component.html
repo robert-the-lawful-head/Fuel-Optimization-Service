@@ -1,8 +1,8 @@
-<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4" [livePrice]="updatedPrice"></ni-breadcrumb>
 
 <div class="row">
     <ni-card [outline]="true">
-        <app-fbo-prices-home style="width: 100%;"></app-fbo-prices-home>
+        <app-fbo-prices-home style="width: 100%;" (priceUpdated)="priceLiveUpdated($event)"></app-fbo-prices-home>
     </ni-card>
     
 </div>
