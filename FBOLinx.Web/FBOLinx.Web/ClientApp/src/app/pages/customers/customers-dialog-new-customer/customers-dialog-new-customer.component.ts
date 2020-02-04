@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 
 export interface NewCustomerDialogData {
     oid: number;
@@ -27,8 +28,34 @@ export interface NewCustomerDialogData {
 /** customers-dialog-new-customer component*/
 export class CustomersDialogNewCustomerComponent {
     /** customers-dialog-new-customer ctor */
-    constructor(public dialogRef: MatDialogRef<CustomersDialogNewCustomerComponent>, @Inject(MAT_DIALOG_DATA) public data: NewCustomerDialogData) {
+    constructor(
+        public dialogRef: MatDialogRef<CustomersDialogNewCustomerComponent>,
+        public closeConfirmationDialog: MatDialog,
+        @Inject(MAT_DIALOG_DATA) public data: NewCustomerDialogData
+    ) {
         data.emailSubscription = true;
+        
+        // Prevent modal close on outside click
+        dialogRef.disableClose = true;
+        dialogRef.backdropClick().subscribe(() => {
+            if (!this.data.company) {
+                dialogRef.close();
+            } else {
+                const closeDialogRef = this.closeConfirmationDialog.open(CloseConfirmationComponent, {
+                    data: {
+                        customTitle: 'Discard Change?',
+                        customText: 'You are about to close this modal. Are you sure?',
+                        ok: 'Discard',
+                        cancel: 'Cancel'
+                    }
+                });
+                closeDialogRef.afterClosed().subscribe(result => {
+                    if (result === true) {
+                        dialogRef.close();
+                    }
+                });
+            }
+        })
     }
 
     //Public Methods
