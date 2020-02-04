@@ -44,6 +44,8 @@ export class DashboardFboComponent {
     public dashboardSettings: any;
     public fboid: any;
     public groupid: any;
+    public priceUpdatedEvent: any;
+    public updatedPrice: any;
 
     @ViewChild('statisticsTotalOrders') private statisticsTotalOrders: StatisticsTotalOrdersComponent;
     @ViewChild('statisticsTotalCustomers') private statisticsTotalCustomers: StatisticsTotalCustomersComponent;
@@ -69,5 +71,9 @@ export class DashboardFboComponent {
         this.analysisPriceOrdersChart.refreshData();
         this.analysisFuelreqsTopCustomersFbo.refreshData();
         this.analysisFuelreqsByAircraftSize.refreshData();
+    }
+
+    public priceLiveUpdated(price: any) {
+        this.updatedPrice = price;
     }
 }

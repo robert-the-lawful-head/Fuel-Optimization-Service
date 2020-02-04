@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -47,6 +47,7 @@ export interface temporaryAddOnMargin {
 /** fbo-prices-home component*/
 export class FboPricesHomeComponent implements OnInit {
 
+	@Output() priceUpdated = new EventEmitter<any>();
 	//Public Members
 	public pageTitle: string = 'Pricing';
 	//public breadcrumb: any[] = BREADCRUMBS;
@@ -96,7 +97,8 @@ export class FboPricesHomeComponent implements OnInit {
     public jtCost: any;
     public jtRetail: any;
     public priceGroup: number;
-    public buttonTextValue: any;
+	public buttonTextValue: any;
+	public priceEntryError: string = '';
 
 	//Additional Public Members for direct reference (date filtering/restrictions)
 	public currentFboPriceJetARetail: any;
@@ -197,8 +199,16 @@ export class FboPricesHomeComponent implements OnInit {
                  this.jtCost = price;
                 this.newCost = price;
             }
-        }
-
+		}
+		if (this.jtRetail && this.jtCost) {
+			if (this.jtCost < 0 || this.jtRetail < 0) {
+				this.priceEntryError = 'Cost or Retail values cannot be negative.';
+			} else if (this.jtCost > this.jtRetail) {
+				this.priceEntryError = 'Your cost value is higher than the retail price.';
+			} else {
+				this.priceEntryError = '';
+			}
+		}
         if (vl == 'JetA Retail') {
             this.jtRetail = price;
             this.newRetail = price;
@@ -259,7 +269,6 @@ export class FboPricesHomeComponent implements OnInit {
 	public saveChangesClicked() {
         //for (let price of this.currentPrices) {
         let arr = [];
-        console.log(this.currentFboPriceJetACost.price);
 
         if (this.requiresUpdate == false) {
             //et pom = Object.assign({}, this.currentPrices);
@@ -269,7 +278,6 @@ export class FboPricesHomeComponent implements OnInit {
                 price.effectiveTo = this.currentPricingEffectiveTo;
                 price.price = price.product == 'JetA Retail' ? this.newRetail === undefined ? this.currentFboPriceJetARetail.price : this.newRetail : price.product == 'JetA Cost' ? this.newCost === undefined ? this.currentFboPriceJetACost.price : this.newCost : null;
                 arr.push(price);
-                console.log(this.currentFboPriceJetACost.price);
             }
             this.savePriceChangesAll(arr);
             let dateCost = this.currentFboPriceJetACost.effectiveTo;
@@ -283,9 +291,6 @@ export class FboPricesHomeComponent implements OnInit {
         }
         else {
             for (let price of this.currentPrices) {
-                console.log(price);
-                //console.log(this.currentPricingEffectiveFrom);
-                //console.log(this.currentPricingEffectiveTo);
                 price.effectiveFrom = this.currentPricingEffectiveFrom;
                 price.effectiveTo = this.currentPricingEffectiveTo;
                 
@@ -312,7 +317,6 @@ export class FboPricesHomeComponent implements OnInit {
 				this.fboPreferences.oid = data.oid;
 			});
         }
-        console.log(this.currentFboPriceJetACost.price);
         this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
         this.staticCurrentFboPriceJetARetail = this.currentFboPriceJetARetail.price;
         this.priceGroup = null;
@@ -436,14 +440,13 @@ export class FboPricesHomeComponent implements OnInit {
 	private loadCurrentFboPrices() {
 		this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
-                console.log(data);
 				this.currentPrices = data;
 				this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
 				this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
 				this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
                 this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
-                this.jtCost = this.currentFboPriceJetACost;
-                this.jtRetail = this.currentFboPriceJetARetail;
+                this.jtCost = this.currentFboPriceJetACost.price;
+                this.jtRetail = this.currentFboPriceJetARetail.price;
 				this.TempValueJet = data[0].tempJet;
 				this.TempValueAvgas = data[0].tempAvg;
 				this.TempValueId = data[0].tempId;
@@ -462,22 +465,10 @@ export class FboPricesHomeComponent implements OnInit {
 				} else {
 					this.currentPricingEffectiveFrom = new Date();
 				}
-				//if (this.currentFboPrice100LLCost.effectiveTo != null) {
-				//	this.currentPricingEffectiveTo = this.currentFboPrice100LLCost.effectiveTo;
-    //            } else {
-    //                if (this.currentPricingEffectiveFrom) {
-    //                    this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
-    //                }
-    //                else {
-    //                    this.currentPricingEffectiveTo = new Date(moment(new Date()).add(6, 'days').format('MM/DD/YYYY'));
-    //                }
-                //            }
-                console.log(this.currentFboPriceJetACost);
+
                 if (this.currentFboPriceJetACost.effectiveTo != null) {
 
                     this.currentPricingEffectiveTo = new Date(moment(this.currentFboPriceJetACost.effectiveTo).format('MM/DD/YYYY'));
-                    console.log(this.currentPricingEffectiveTo);
-                    console.log(this.currentFboPriceJetACost.effectiveTo);
                 } else {
                     if (this.currentPricingEffectiveFrom) {
                         this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
@@ -495,7 +486,10 @@ export class FboPricesHomeComponent implements OnInit {
 				if (this.currentFboPriceJetACost) {
 					this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
                 }
-
+				this.priceUpdated.emit({
+					retailPrice: this.currentFboPriceJetARetail.price,
+					costPrice: this.currentFboPriceJetACost.price
+				});
                 this.checkOkPriceSave(this.currentPricingEffectiveFrom, this.currentPricingEffectiveTo, this.jtCost, this.jtRetail);
 			});
 	}
@@ -614,7 +608,6 @@ export class FboPricesHomeComponent implements OnInit {
 			if (fboPrice.product == product)
 				result = fboPrice;
 		}
-		console.log(result);
 		return result;
 	}
 

@@ -180,6 +180,7 @@
                                             <!--<input matInput class="text-left" title="" placeholder="Cost*" autocomplete="off" [ngModel]="currentFboPriceJetACost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Cost')" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />-->
                                             <input matInput type="number" step="0.01"  title="Your Cost values should be inclusive of all taxes/fees" placeholder="Cost*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="currentFboPriceJetACost.price | number:'1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Cost')">
                                             <span matPrefix class="prefixDollar">$</span>
+                                            <span class="fbo-prices-error-msg" *ngIf="priceEntryError.length > 0">{{priceEntryError}}</span>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -188,7 +189,7 @@
                             <div class="col-3">
                                 <!--*ngIf="requiresUpdate"-->
                                 <div class="text-center">
-                                    <button ni-button [view]="'success'" [disabled]="saveOk" class="mr-1" (click)="saveChangesClicked()"><span [innerHtml]="buttonTextValue"></span></button>
+                                    <button ni-button [view]="'success'" [disabled]="saveOk || priceEntryError.length > 0" class="mr-1" (click)="saveChangesClicked()"><span [innerHtml]="buttonTextValue"></span></button>
                                 </div>
                             </div>
                         </div>
