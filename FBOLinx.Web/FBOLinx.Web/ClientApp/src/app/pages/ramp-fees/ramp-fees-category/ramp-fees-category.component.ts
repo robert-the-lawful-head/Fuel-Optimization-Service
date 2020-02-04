@@ -43,11 +43,11 @@ export class RampFeesCategoryComponent implements OnInit {
         this.aircraftsService.getAll().subscribe((data: any) => this.aircraftTypes = data);
         this.rampFees.forEach(fee => {
             if (this.categoryTypes.indexOf(fee.categoryType) > -1) {
-            if (this.supportedValues.length == 0 || this.supportedValues.indexOf(fee.categoryMinValue) > -1)
+                if (this.supportedValues.length == 0 || this.supportedValues.indexOf(fee.categoryMinValue) > -1) {
                     this.rampFeesForCategory.push(fee);
-                    this.tmpArray.push(fee);
+                }
+                this.tmpArray.push(fee);
             }
-                
         });
 
         this.tmpArray.forEach(fee => {
