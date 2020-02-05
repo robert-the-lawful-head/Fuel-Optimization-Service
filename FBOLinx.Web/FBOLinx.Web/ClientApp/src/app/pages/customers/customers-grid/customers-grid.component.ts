@@ -152,6 +152,7 @@ export class CustomersGridComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
+            if (!result) return;
             this.customersService.add(result).subscribe((data: any) => {
                 result.customerId = data.oid;
                

@@ -317,20 +317,20 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                FBOLinx.Web.Services.PriceFetchingService priceFetchingService =
-             new FBOLinx.Web.Services.PriceFetchingService(_context);
-                var customerPricingResults = await priceFetchingService.GetCustomerPricingAsync(fboId, groupId);
-                var customerAircraft = (from aircraftByCustomer in _context.CustomerAircrafts
-                                        where aircraftByCustomer.GroupId == groupId
-                                        group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
-                                        into results
-                                        select new { results.Key.CustomerId, Tails = string.Join(",", results.Select(x => x.TailNumber)) });
+                FBOLinx.Web.Services.PriceFetchingService priceFetchingService = new FBOLinx.Web.Services.PriceFetchingService(_context);
+                List<DTO.CustomerWithPricing> customerPricingResults = await priceFetchingService.GetCustomerPricingAsync(fboId, groupId);
 
-                var customerGridVM = (from results in customerPricingResults
+                var customerAircraft = from aircraftByCustomer in _context.CustomerAircrafts
+                                       where aircraftByCustomer.GroupId == groupId
+                                       group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
+                                       into results
+                                       select new { results.Key.CustomerId, Tails = string.Join(",", results.Select(x => x.TailNumber)) };
+
+                List<CustomerInfoByGroup> allCustomerInfoByGroups = await _context.CustomerInfoByGroup.ToListAsync();
+
+                List<CustomersGridViewModel> customerGridVM = (from results in customerPricingResults
+                                      join ci in allCustomerInfoByGroups on results.CustomerInfoByGroupId equals ci.Oid
                                       join ca in customerAircraft on results.CustomerId equals ca.CustomerId
-                                      //join ca in (from aircraftByCustomer in _context.CustomerAircrafts
-                                      //            where aircraftByCustomer.GroupId == groupId
-                                      //            group aircraftByCustomer by new {} into results select new {results.Key.groupId, }) on new {results.CustomerId, results.GroupId} equals new {ca.CustomerId, ca.GroupId}
                                       into leftJoinCA
                                       from ca in leftJoinCA.DefaultIfEmpty()
                                       group results by new
@@ -350,9 +350,10 @@ namespace FBOLinx.Web.Controllers
                                           results.CustomerCompanyTypeName,
                                           results.HasBeenViewed,
                                           Tails = ca?.Tails,
-                                          results.IsPricingExpired
+                                          results.IsPricingExpired,
+                                          ci.CertificateType
                                       }
-                    into resultsGroup
+                                      into resultsGroup
                                       select new CustomersGridViewModel()
                                       {
                                           CustomerId = resultsGroup.Key.CustomerId,
@@ -373,8 +374,8 @@ namespace FBOLinx.Web.Controllers
                                           SelectAll = false,
                                           AllInPrice = (from customerPricing in resultsGroup select customerPricing.AllInPrice).Max(),
                                           TailNumbers = resultsGroup.Key.Tails,
-                                          IsPricingExpired = resultsGroup.Key.IsPricingExpired
-                                          //FleetSize = resultsGroup.Key.Tails == null ? 0 : resultsGroup.Key.Tails.Length
+                                          IsPricingExpired = resultsGroup.Key.IsPricingExpired,
+                                          CertificateType = resultsGroup.Key.CertificateType
                                       }).ToList();
 
 
@@ -382,10 +383,10 @@ namespace FBOLinx.Web.Controllers
                   .Select(g => g.First())
                   .ToList();
 
-                var jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost")
+                Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost")
                     .FirstOrDefaultAsync();
 
-                var result = await (from p in _context.PricingTemplate
+                List<PricingTemplatesGridViewModel> result = await (from p in _context.PricingTemplate
                                     join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
                                     join cm in (from c in _context.CustomerMargins group c by new { c.TemplateId } into cmResults select new { templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault()) }) on p.Oid equals cm.templateId into leftJoinCustomerMargins
                                     from cm in leftJoinCustomerMargins.DefaultIfEmpty()
@@ -413,7 +414,7 @@ namespace FBOLinx.Web.Controllers
                                         YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
                                     }).ToListAsync();
 
-                foreach (var model in customerGridVM)
+                foreach (CustomersGridViewModel model in customerGridVM)
                 {
                     model.PricingTemplatesList = result;
 
@@ -428,11 +429,10 @@ namespace FBOLinx.Web.Controllers
 
                 return customerGridVM;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return null;
             }
-            return null;
         }
     }
 }
