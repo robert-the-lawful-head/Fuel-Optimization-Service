@@ -3,6 +3,9 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { TemporaryAddOnMarginComponent } from '../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
+import { FbopricesService } from '../../services/fboprices.service';
+import { SharedService } from '../../layouts/shared-service';
+
 
 @Component({
     selector: 'ni-card',
@@ -20,6 +23,8 @@ export class NiCardComponent implements OnInit {
     vEffectiveTo: any;
     vJet: any;
     @Output() jetChanged: EventEmitter<any> = new EventEmitter();
+    @Output() priceDeleted: EventEmitter<any> = new EventEmitter();
+
     @Input() title: string = '';
     @Input() tempId: string = '';
     @Input() visible: string = '';
@@ -35,7 +40,7 @@ export class NiCardComponent implements OnInit {
     @Input() headerColor: string = '';
     @Input() theme: string = '';
 
-    constructor(public tempAddOnMargin: MatDialog, public deleteFBODialog: MatDialog) { }
+    constructor(public tempAddOnMargin: MatDialog, public deleteFBODialog: MatDialog, private fboPricesService: FbopricesService, private sharedService: SharedService) { }
 
     ngOnInit() { }
 
@@ -52,10 +57,14 @@ export class NiCardComponent implements OnInit {
         });
         return dialogRef.afterClosed();
     }
+
     private openAddOnMargin() {
-
         this.openDialog();
+    }
 
-
+    private suspendPricing() {
+        this.fboPricesService.suspendAllPricing(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+            this.priceDeleted.emit('ok');
+        });
     }
 }

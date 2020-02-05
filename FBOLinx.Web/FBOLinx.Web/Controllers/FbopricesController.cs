@@ -162,6 +162,30 @@ namespace FBOLinx.Web.Controllers
             return Ok(activePricing);
         }
 
+        // GET: api/Fboprices/fbo/current/5
+        [HttpPost("fbo/{fboId}/suspendpricing")]
+        public async Task<IActionResult> SuspendPricing([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var activeJetPricing = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId);
+            if(activeJetPricing != null)
+            {
+                _context.Fboprices.Remove(activeJetPricing);
+            }
+            var activeRetailPricing = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Retail" && s.Fboid == fboId);
+            if(activeRetailPricing != null)
+            {
+                _context.Fboprices.Remove(activeRetailPricing);
+            }
+            _context.SaveChanges();
+
+            return Ok(fboId);
+        }
+
         // GET: api/Fboprices/fbo/staged/5
         [HttpGet("fbo/{fboId}/staged")]
         public async Task<IActionResult> GetFbopricesByFboIdStaged([FromRoute] int fboId)
