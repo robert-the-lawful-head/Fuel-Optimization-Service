@@ -35,6 +35,10 @@ export class FbopricesService {
         return this.http.post(this.accessPointUrl + '/fbo/' + fboId + '/check/', payload, { headers: this.headers });
     }
 
+    public suspendAllPricing(fboId) {
+        return this.http.post(this.accessPointUrl + '/fbo/' + fboId + '/suspendpricing', { headers: this.headers });
+    }
+
     public getPricesByMonthForFbo(fboId, payload) {
         return this.http.post(this.accessPointUrl + '/analysis/prices-by-month/fbo/' + fboId,
             payload,
