@@ -161,7 +161,11 @@ export class FboPricesHomeComponent implements OnInit {
 			this.show = false;
 			this.isSaved = false;
 		});
-	}
+    }
+
+    pricesSuspended() {
+        this.loadCurrentFboPrices();
+    }
 
 	public distributePricingClicked() {
 		const dialogRef = this.distributionDialog.open(DistributionWizardMainComponent, {
