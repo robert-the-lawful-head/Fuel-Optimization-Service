@@ -129,7 +129,6 @@ export class AdditionNavbarComponent implements OnInit {
         if (!clickedInside) {
             console.log('outside clicked');
         }*/
-        console.log(targetElement);
         //console.log(targetElement.path.toString());
         let term = 'addition-navbar';
         // targetElement.path.forEach(element => element[1].nodeName);
