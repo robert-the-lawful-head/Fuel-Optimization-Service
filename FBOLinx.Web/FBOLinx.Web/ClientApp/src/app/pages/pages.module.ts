@@ -289,6 +289,7 @@ import { AppPipesModule } from '../app-pipes.module'
         DeleteConfirmationComponent,
       CalendarDialogComponent,
         CustomerAircraftsDialogNewAircraftComponent,
+        CustomerAircraftsEditComponent,
         CustomerCompanyTypeDialogComponent,
         CustomersDialogNewCustomerComponent,
         ContactsDialogNewContactComponent,
