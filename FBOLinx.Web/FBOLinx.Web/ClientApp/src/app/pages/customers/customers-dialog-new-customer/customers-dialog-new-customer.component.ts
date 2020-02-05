@@ -43,8 +43,8 @@ export class CustomersDialogNewCustomerComponent {
             } else {
                 const closeDialogRef = this.closeConfirmationDialog.open(CloseConfirmationComponent, {
                     data: {
-                        customTitle: 'Discard Change?',
-                        customText: 'You are about to close this modal. Are you sure?',
+                        customTitle: 'Discard Changes?',
+                        customText: 'You have unsaved changes. Are you sure?',
                         ok: 'Discard',
                         cancel: 'Cancel'
                     }
