@@ -19,35 +19,25 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-            <!-- <div class="col col-md-2">
-                <mat-form-field>
-                    <mat-select [dataSource]="customersDataSource" placeholder="Margin" [(ngModel)]="globalMargin" (selectionChange)="customerFilterTypeChanged($event)">
-        <mat-option *ngFor="let pricingTemplate of customer.pricingTemplatesList" [value]="{{pricingTemplate.name}}">
-            {{pricingTemplate.name}}
-        </mat-option>
-    </mat-select>-->
-            <!--<select [dataSource]="customersDataSource" id="pricingtemplatesGeneral" name="ddlPricingTemplate" [(ngModel)]="globalMargin">
-        <option *ngFor="let pricingTemplate of customer.pricingTemplatesList" value="{{pricingTemplate.name}}">{{pricingTemplate.name}}</option>
-    </select>
-                </mat-form-field>
-            </div>-->
         </div>
     </div>
     
 
-    <table mat-table [dataSource]="customersDataSource" class="col-md-12" matSort matSortActive="hasBeenViewed" matSortDirection="asc" #customerTable>
+    <table mat-table [dataSource]="customersDataSource" class="col-md-12" matSort matSortActive="needsAttention" matSortDirection="asc" #customerTable>
         <ng-container matColumnDef="selectAll">
             <th mat-header-cell *matHeaderCellDef><input type="checkbox"  style="position:absolute; margin-top:8px;" id="a" class="checkboxHeight" [(ngModel)]="selectAll" (change)="selectAction()"> <label for="a" style="margin-left:25px; margin-top:10px;">Select All</label></th>
             <td mat-cell *matCellDef="let customer"><input type="checkbox" class="checkboxHeight" [(ngModel)]="customer.selectAll" value="{{customer.selectAll}}" (change)="selectUnique()"></td>
         </ng-container>
-        <ng-container matColumnDef="hasBeenViewed">
+
+        <ng-container matColumnDef="needsAttention">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Needs Attention</th>
             <td mat-cell *matCellDef="let customer">
                 <div>
-                    <ni-badge *ngIf="!customer.hasBeenViewed" [color]="'warning'" [borderRadius]="false" [arrow]="'right'">Needs Attention</ni-badge>
+                    <ni-badge *ngIf="customer.needsAttention" [color]="'warning'" [borderRadius]="false" [arrow]="'right'">Needs Attention</ni-badge>
                 </div>
             </td>
         </ng-container>
+
         <ng-container matColumnDef="company">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Company</th>
             <td mat-cell *matCellDef="let customer">{{customer.company}}</td>
@@ -58,17 +48,10 @@
             <td mat-cell *matCellDef="let customer">{{customer.customerCompanyTypeName}}</td>
         </ng-container>
 
-        <!--<ng-container matColumnDef="pricingTemplateId">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Margin</th>
-        <td mat-cell *matCellDef="let customer">
-            {{customer.pricingTemplateName}}
-        </td>
-    </ng-container>-->
-
         <ng-container matColumnDef="pricingTemplateId">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Margin</th>
             <td mat-cell *matCellDef="let customer">
-                <select id="pricingtemplates" name="ddlPricingTemplate" class="dropdownHeight" [(ngModel)]="customer.pricingTemplateName" (ngModelChange)="onMarginChange($event, customer);$event.stopPropagation();">
+                <select id="pricingtemplates" name="ddlPricingTemplate" class="dropdownHeight" [(ngModel)]="customer.pricingTemplateName" (ngModelChange)="onMarginChange($event, customer);">
                     <option *ngFor="let pricingTemplate of customer.pricingTemplatesList" value="{{pricingTemplate.name}}">{{pricingTemplate.name}}</option>
                 </select>
             </td>
@@ -88,15 +71,6 @@
             <td mat-cell *matCellDef="let customer">{{customer.fleetSize}}</td>
         </ng-container>
 
-        <!--<ng-container matColumnDef="edit">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let customer">
-            <div class="pull-right">
-                <button ni-button size="small" beforeIcon="fa fa-edit" (click)="editCustomer(customer)">Edit</button>
-            </div>
-        </td>
-    </ng-container>-->
-
         <ng-container matColumnDef="delete">
             <th mat-header-cell *matHeaderCellDef>
                 <div class="pull-right">
@@ -115,7 +89,6 @@
                 <div class="pull-right mr-1">
                     <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newCustomer()">Add New</button>
                 </div>
-
             </th>
             <td mat-cell *matCellDef="let customer">
                 <div class="pull-right">
@@ -123,7 +96,6 @@
                 </div>
             </td>
         </ng-container>
-
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editCustomer(row,$event)"></tr>

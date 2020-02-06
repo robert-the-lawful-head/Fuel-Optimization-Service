@@ -366,7 +366,6 @@ namespace FBOLinx.Web.Controllers
                                           FuelerLinxId = resultsGroup.Key.FuelerLinxId,
                                           Network = resultsGroup.Key.Network,
                                           GroupId = resultsGroup.Key.GroupId,
-                                          NeedsAttention = resultsGroup.Key.NeedsAttention,
                                           PricingTemplateName = (from customerPricing in resultsGroup where customerPricing.PricingTemplateId > 0 select customerPricing.PricingTemplateName).Distinct().Count() > 1 ? "-Multiple-" : (from customerPricing in resultsGroup select customerPricing.PricingTemplateName).First(),
                                           CustomerCompanyType = resultsGroup.Key.CustomerCompanyType,
                                           CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
@@ -376,17 +375,14 @@ namespace FBOLinx.Web.Controllers
                                           TailNumbers = resultsGroup.Key.Tails,
                                           IsPricingExpired = resultsGroup.Key.IsPricingExpired,
                                           CertificateType = resultsGroup.Key.CertificateType
-                                      }).ToList();
+                                      })
+                                      .GroupBy(p => p.CustomerId)
+                                      .Select(g => g.First())
+                                      .ToList();
 
+                Fboprices jetaACostRecord = _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost").FirstOrDefault();
 
-                customerGridVM = customerGridVM.GroupBy(p => p.CustomerId)
-                  .Select(g => g.First())
-                  .ToList();
-
-                Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost")
-                    .FirstOrDefaultAsync();
-
-                List<PricingTemplatesGridViewModel> result = await (from p in _context.PricingTemplate
+                List<PricingTemplatesGridViewModel> result = (from p in _context.PricingTemplate
                                     join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
                                     join cm in (from c in _context.CustomerMargins group c by new { c.TemplateId } into cmResults select new { templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault()) }) on p.Oid equals cm.templateId into leftJoinCustomerMargins
                                     from cm in leftJoinCustomerMargins.DefaultIfEmpty()
@@ -412,7 +408,10 @@ namespace FBOLinx.Web.Controllers
                                         IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
                                         IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
                                         YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
-                                    }).ToListAsync();
+                                    })
+                                    .GroupBy(p => p.Oid)
+                                    .Select(p => p.FirstOrDefault())
+                                    .ToList();
 
                 foreach (CustomersGridViewModel model in customerGridVM)
                 {
@@ -423,6 +422,7 @@ namespace FBOLinx.Web.Controllers
                                        select ca).Count();
 
                     model.Active = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == model.CustomerId && s.GroupId == model.GroupId).Active;
+                    model.NeedsAttention = model.PricingTemplateName.Equals("Default Template") ? true : false;
                 }
 
                 customerGridVM = customerGridVM.OrderByDescending(s => s.FleetSize).ToList();
