@@ -366,7 +366,11 @@ namespace FBOLinx.Web.Controllers
                                           FuelerLinxId = resultsGroup.Key.FuelerLinxId,
                                           Network = resultsGroup.Key.Network,
                                           GroupId = resultsGroup.Key.GroupId,
-                                          PricingTemplateName = (from customerPricing in resultsGroup where customerPricing.PricingTemplateId > 0 select customerPricing.PricingTemplateName).Distinct().Count() > 1 ? "-Multiple-" : (from customerPricing in resultsGroup select customerPricing.PricingTemplateName).First(),
+                                          PricingTemplateName = (
+                                            from customerPricing in resultsGroup
+                                            where customerPricing.PricingTemplateId > 0
+                                            select customerPricing.PricingTemplateName
+                                          ).Distinct().Count() > 1 ? "-Multiple-" : (from customerPricing in resultsGroup select customerPricing.PricingTemplateName).First(),
                                           CustomerCompanyType = resultsGroup.Key.CustomerCompanyType,
                                           CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
                                           HasBeenViewed = resultsGroup.Key.HasBeenViewed,
