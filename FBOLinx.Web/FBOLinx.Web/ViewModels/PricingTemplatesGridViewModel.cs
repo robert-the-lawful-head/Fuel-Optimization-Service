@@ -28,5 +28,6 @@ namespace FBOLinx.Web.ViewModels
         public bool IsInvalid { get; set; }
         public bool IsPricingExpired { get; set; }
         public double? YourMargin { get; set; }
+        public int? CustomersAssigned { get; set; }
     }
 }
