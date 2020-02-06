@@ -236,6 +236,9 @@ export class CustomersGridComponent implements OnInit {
         if (filteredList.length > 0) {
             let updatedCount = 0;
             filteredList.forEach(selectedItem => {
+                
+                selectedItem.pricingTemplateName = newValue;
+                
                 let vm = {
                     id: selectedItem.customerId,
                     customerMarginName: newValue,
