@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 //Services
 import { AuthenticationService } from '../../../services/authentication.service'
@@ -8,7 +8,6 @@ import { CustomeraircraftsService } from '../../../services/customeraircrafts.se
 import { CustomersService } from '../../../services/customers.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { SharedService } from '../../../layouts/shared-service';
-import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 
 //Components
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
@@ -16,7 +15,6 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 
 import * as XLSX from 'xlsx';
 import { CustomermarginsService } from '../../../services/customermargins.service';
-import { forEach } from '@angular/router/src/utils/collection';
 import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
 
 @Component({
@@ -37,7 +35,7 @@ export class CustomersGridComponent implements OnInit {
     //Public Members
     @ViewChild('customerTableContainer') table: ElementRef;
     public customersDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['selectAll', 'hasBeenViewed', 'company', 'customerCompanyTypeName', 'pricingTemplateId', 'allInPrice', 'fleetSize', 'delete'];
+    public displayedColumns: string[] = ['selectAll', 'needsAttention', 'company', 'customerCompanyTypeName', 'pricingTemplateId', 'allInPrice', 'fleetSize', 'delete'];
     public resultsLength: number = 0;
     public allCustomerAircraft: any[];
     public customerFilterType: number = 0;
@@ -53,7 +51,8 @@ export class CustomersGridComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
 
     /** customers-grid ctor */
-    constructor(public newCustomerDialog: MatDialog,
+    constructor(
+        public newCustomerDialog: MatDialog,
         private AuthenticationService: AuthenticationService,
         private customersService: CustomersService,
         private sharedService: SharedService,
@@ -61,19 +60,14 @@ export class CustomersGridComponent implements OnInit {
         private customersViewedByFboService: CustomersviewedbyfboService,
         public deleteCustomerDialog: MatDialog,
         public customeraircraftsService: CustomeraircraftsService,
-        public customerMarginsService: CustomermarginsService,
-        private pricingTemplatesService: PricingtemplatesService,) {
-
-    }
+        public customerMarginsService: CustomermarginsService
+    ) {}
 
     ngOnInit() {
         this.loadCustomerAircraftFullList();
-        //this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
         this.pricingTemplatesDataSource = new MatTableDataSource(this.pricingTemplatesData);
-        console.log(this.pricingTemplatesData);
         if (!this.customersData)
             return;
-        console.log(this.customersData);
         this.refreshCustomerDataSource();
         this.selectAll = false;
 
@@ -116,7 +110,6 @@ export class CustomersGridComponent implements OnInit {
     public editCustomer(customer, $event) {
         if ($event.srcElement) {
             if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
-                //$event.preventDefault();
                 $event.stopPropagation();
                 return;
             }
@@ -139,10 +132,6 @@ export class CustomersGridComponent implements OnInit {
             this.selectAll = false;
             this.selectedRows = this.selectedRows - 1;
         }
-        //if (this.selectedRows == this.customersData.length + 1) {
-        //    this.selectAll = true;
-        //    this.selectedRows = this.selectedRows + 1;
-        //}
     }
 
     public newCustomer() {
@@ -179,7 +168,6 @@ export class CustomersGridComponent implements OnInit {
         var exportData = this.customersDataSource.filteredData.map(function(item) {
             return {
                 Company: item.company,
-                //Source: item.customerCompanyTypeName,
                 Source: item.customerCompanyTypeName == 'FuelerLinx' ? 'FBOLinx Network' : item.customerCompanyTypeName,
                 'Assigned Price Tier': item.pricingTemplateName,
                 Price: item.allInPrice
@@ -220,20 +208,20 @@ export class CustomersGridComponent implements OnInit {
 
     //Private Methods
     private loadCustomerAircraftFullList() {
-        this.customeraircraftsService.getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId).subscribe(
-            (data:
-                any) => {
-                this.allCustomerAircraft = data;
-                console.log(data);
-            });
+        this.customeraircraftsService.getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId).subscribe((data: any) => {
+            this.allCustomerAircraft = data;
+        });
     }
 
     private refreshCustomerDataSource() {
         this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+        this.customersData.forEach(c => {
+            c.needsAttention = c.pricingTemplateName === 'Default Template' ? true : false;
+        });
         this.customersDataSource = new MatTableDataSource(this.customersData.filter((element: any, index: number, array: any[]) => {
             if (this.customerFilterType == 0)
                 return true;
-            return !element.hasBeenViewed;
+            return !element.needsAttention;
         }));
         this.customersDataSource.sort = this.sort;
         this.customersDataSource.paginator = this.paginator;
@@ -241,38 +229,36 @@ export class CustomersGridComponent implements OnInit {
     }
 
     private onMarginChange(newValue, customer) {
-        var filteredList = this.customersData.filter(function (item) {
+        let filteredList = this.customersData.filter(function (item) {
             return item.selectAll == true
         });
 
         if (filteredList.length > 0) {
+            let updatedCount = 0;
             filteredList.forEach(selectedItem => {
-                var vm = {
+                let vm = {
                     id: selectedItem.customerId,
                     customerMarginName: newValue,
                     fboid: this.sharedService.currentUser.fboId
                 }
-                this.customerMarginsService.updatecustomermargin(vm).subscribe(
-                    (data:
-                        any) => {
-                        selectedItem.pricingTemplateName = newValue;
-                    });
-
-
+                this.customerMarginsService.updatecustomermargin(vm).subscribe((data: any) => {
+                    selectedItem.pricingTemplateName = newValue;
+                    updatedCount++;
+                    if (updatedCount === filteredList.length) {
+                        this.refreshCustomerDataSource();
+                    }
+                });
             });
         }
         else {
-            var vm = {
+            let vm = {
                 id: customer.customerId,
                 customerMarginName: newValue,
                 fboid: this.sharedService.currentUser.fboId
             }
-            this.customerMarginsService.updatecustomermargin(vm).subscribe(
-                (data:
-                    any) => {
-                });
+            this.customerMarginsService.updatecustomermargin(vm).subscribe((data: any) => {
+                this.refreshCustomerDataSource();
+            });
         }
-
-       
     }
 }
