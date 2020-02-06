@@ -54,25 +54,23 @@ export class PricingTemplatesEditComponent {
     public marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
         { text: 'Retail -', value: 1 }
-        //{ text: 'Flat Fee', value: 2 }
     ];
     public isSaving: boolean = false;
     public currentPrice: any;
     public product: any;
 
     /** pricing-templates-edit ctor */
-    constructor(private route: ActivatedRoute,
+    constructor(
+        private route: ActivatedRoute,
         private router: Router,
         private customerMarginsService: CustomermarginsService,
         private priceTiersService: PricetiersService,
         private pricingTemplatesService: PricingtemplatesService,
         private fbopricesService: FbopricesService,
         private sharedService: SharedService,
-        public distributionDialog: MatDialog    ) {
-
+        public distributionDialog: MatDialog
+    ) {
         this.sharedService.emitChange(this.pageTitle);
-        
-        
     }
 
     ngOnInit(): void {
