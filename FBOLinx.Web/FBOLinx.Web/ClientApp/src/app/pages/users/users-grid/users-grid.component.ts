@@ -90,7 +90,6 @@ export class UsersGridComponent {
         dialogRef.afterClosed().subscribe(result => {
             if (!result)
                 return;
-            console.log('Dialog data: ', result);
             this.userService.add(result).subscribe((data: any) => {
                 var savedUser = data;
                 const userArray = this.usersDataSource.data;
