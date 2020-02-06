@@ -350,6 +350,20 @@ namespace FBOLinx.Web.Controllers
             return Ok(user);
         }
 
+        [HttpGet("checkemailexists/{emailAddress}")]
+        public IActionResult CheckEmailExists([FromRoute]string emailAddress)
+        {
+            if (string.IsNullOrEmpty(emailAddress) || string.IsNullOrEmpty(emailAddress))
+                return BadRequest(new { message = "Username or password is invalid/empty" });
+
+            var checkUser = _Context.User.FirstOrDefault(s => s.Username == emailAddress);
+            if (checkUser != null)
+            {
+                return StatusCode(409, "Email exists");
+            }
+            return Ok(new { message = "Clear" });
+        }
+
         private bool UserExists(int id)
         {
             return _Context.Group.Any(e => e.Oid == id);

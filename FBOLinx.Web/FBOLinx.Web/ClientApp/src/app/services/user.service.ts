@@ -50,4 +50,8 @@ export class UserService {
     public updatePassword(payload) {
         return this.http.post(this.accessPointUrl + '/newpassword', payload, { headers: this.headers });
     }
+
+    public checkemailexists(payload) {
+        return this.http.get(this.accessPointUrl + '/checkemailexists/' + payload, { headers: this.headers });
+    }
 }
