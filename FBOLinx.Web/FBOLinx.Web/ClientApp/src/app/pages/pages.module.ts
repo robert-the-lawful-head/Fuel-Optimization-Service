@@ -290,6 +290,7 @@ import { AppPipesModule } from '../app-pipes.module'
       CloseConfirmationComponent,
       CalendarDialogComponent,
       CustomerAircraftsDialogNewAircraftComponent,
+      CustomerAircraftsEditComponent,
       CustomerCompanyTypeDialogComponent,
       CustomersDialogNewCustomerComponent,
       ContactsDialogNewContactComponent,
