@@ -165,7 +165,12 @@ export class CustomersGridComponent implements OnInit {
 
     public exportCustomersToExcel() {
         //Export the filtered results to an excel spreadsheet
-        var exportData = this.customersDataSource.filteredData.map(function(item) {
+        let exportData = [];
+        exportData.push(...this.customersDataSource.filteredData);
+        exportData.sort((itemA, itemB) => {
+            return itemA.company < itemB.company ? -1 : itemA.company > itemB.company ? 1 : 0;
+        });
+        exportData = exportData.map(function(item) {
             return {
                 Company: item.company,
                 Source: item.customerCompanyTypeName == 'FuelerLinx' ? 'FBOLinx Network' : item.customerCompanyTypeName,

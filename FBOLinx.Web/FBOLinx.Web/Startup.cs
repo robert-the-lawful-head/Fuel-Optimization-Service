@@ -118,11 +118,11 @@ namespace FBOLinx.Web
             app.UseSpaStaticFiles();
             //app.UseIdentityServer();
 
-            //// global cors policy
-            //app.UseCors(x => x
-            //    .AllowAnyOrigin()
-            //    .AllowAnyMethod()
-            //    .AllowAnyHeader());
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseAuthentication();
 
