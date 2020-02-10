@@ -40,11 +40,9 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="notes">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Notes</th>
-                <td mat-cell *matCellDef="let pricingTemplate">
-                    <a style="text-underline: blue" *ngIf="pricingTemplate.notes" matTooltip="{{pricingTemplate.notes}}" matTooltipPosition="before">Notes</a>
-                </td>
+            <ng-container matColumnDef="customersAssigned">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Customers Assigned</th>
+                <td mat-cell *matCellDef="let pricingTemplate">{{ pricingTemplate.customersAssigned }}</td>
             </ng-container>
 
             <ng-container matColumnDef="delete">

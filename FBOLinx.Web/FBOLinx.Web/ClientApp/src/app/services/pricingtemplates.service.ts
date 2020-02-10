@@ -11,8 +11,12 @@ export class PricingtemplatesService {
         this.accessPointUrl = baseUrl + 'api/pricingtemplates';
     }
     
-    public getByFbo(fboId) {
-        return this.http.get(this.accessPointUrl + '/fbo/' + fboId, { headers: this.headers });
+    public getByFbo(fboId, groupId?) {
+        let url = this.accessPointUrl;
+        if (groupId) {
+            url += '/group/' + groupId;
+        }
+        return this.http.get(url + '/fbo/' + fboId, { headers: this.headers });
     }
 
     public get(payload) {

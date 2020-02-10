@@ -42,6 +42,7 @@ export class PricingTemplatesHomeComponent {
         public deleteFBODialog: MatDialog
     ) {
         this.sharedService.emitChange(this.pageTitle);
+        pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).subscribe((data: any) => this.pricingTemplatesData = data);
         this.currentPricingTemplate = null;
     }
 
