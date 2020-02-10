@@ -225,30 +225,45 @@ export class CustomersEditComponent {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result != 'cancel') {
-                this.selectedContactRecord = contact;
-                this.contactInfoByGroupsService.get({ oid: contact.contactInfoByGroupId }).subscribe((data: any) => {
-                    if (data) {
-                        this.currentContactInfoByGroup = data;
-                        if (this.currentContactInfoByGroup.oid) {
-                            data.email = contact.email;
-                            data.firstName = contact.firstName;
-                            data.lastName = contact.lastName;
-                            data.title = contact.title;
-                            data.phone = contact.phone;
-                            data.extension = contact.extension;
-                            data.mobile = contact.mobile;
-                            data.fax = contact.fax;
-                            data.address = contact.address;
-                            data.city = contact.city;
-                            data.state = contact.state;
-                            data.country = contact.country;
-                            data.primary = contact.primary;
-                            data.copyAlerts = contact.copyAlerts;
-                            this.saveContactInfoByGroup();
-                        }
+                console.log(result);
+                if (result.toDelete) {
 
-                    }
-                });
+                    this.customerContactsService.remove(result.customerContactId).subscribe((data: any) => {
+                        this.contactInfoByGroupsService.remove(contact.contactInfoByGroupId).subscribe((data: any) => {
+                            //let index = this.contactsData.findIndex(d => d.customerContactId === contact.customerContactId); //find index in your array
+                            //this.contactsData.splice(index, 1);//remove element from array
+                           
+                            this.loadCustomerContacts();
+                        });
+                    });
+                }
+                else {
+                    this.selectedContactRecord = contact;
+                    this.contactInfoByGroupsService.get({ oid: contact.contactInfoByGroupId }).subscribe((data: any) => {
+                        if (data) {
+                            this.currentContactInfoByGroup = data;
+                            if (this.currentContactInfoByGroup.oid) {
+                                data.email = contact.email;
+                                data.firstName = contact.firstName;
+                                data.lastName = contact.lastName;
+                                data.title = contact.title;
+                                data.phone = contact.phone;
+                                data.extension = contact.extension;
+                                data.mobile = contact.mobile;
+                                data.fax = contact.fax;
+                                data.address = contact.address;
+                                data.city = contact.city;
+                                data.state = contact.state;
+                                data.country = contact.country;
+                                data.primary = contact.primary;
+                                data.copyAlerts = contact.copyAlerts;
+                                this.saveContactInfoByGroup();
+                            }
+
+                        }
+                    });
+                }
+                
             }
             else {
                 this.loadCustomerContacts();

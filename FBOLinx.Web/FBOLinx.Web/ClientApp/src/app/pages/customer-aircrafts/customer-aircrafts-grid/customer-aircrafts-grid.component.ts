@@ -90,6 +90,12 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 console.log('Dialog data: ', result);
                 if (!result)
                     return;
+
+                if (result.toDelete) {
+                    this.customerAircraftsService.remove(result).subscribe((data: any) => {
+                        console.log(data);
+                    });
+                }
                 
                 this.editCustomerAircraftClicked.emit(result);
             });

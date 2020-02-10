@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Confirm Contact Removal</h1>
+<div mat-dialog-content *ngIf="data">
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <p>Are you sure you want to delete {{data.firstName}}&nbsp;{{data.lastName}}?</p>
+        </div> 
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button ni-button [view]="'success'" [mat-dialog-close]="data" beforeIcon="fa fa-trash-o" (click)="ConfirmDelete()" class="mr-1">Delete</button>
+    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>&nbsp;
+</div>
