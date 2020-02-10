@@ -9,6 +9,7 @@ import { CustomercontactsService } from '../../../services/customercontacts.serv
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { ContactsDialogNewContactComponent } from '../contacts-edit-modal/contacts-edit-modal.component';
 
 
 @Component({
@@ -23,7 +24,7 @@ export class ContactsGridComponent {
     @Output() newContactClicked = new EventEmitter<any>();
     @Output() editContactClicked = new EventEmitter<any>();
     @Input() contactsData: Array<any>;
-
+    public currentContactInfoByGroup: any;
     contactsDataSource: MatTableDataSource<any> = null;
     displayedColumns: string[] = ['firstName', 'lastName', 'title', 'email', 'phone', 'copyAlerts', 'delete'];
 
@@ -35,7 +36,7 @@ export class ContactsGridComponent {
         private contactsService: ContactsService,
         private contactInfoByGroupsService: ContactinfobygroupsService,
         private sharedService: SharedService,
-        private customerContactsService: CustomercontactsService) {
+        private customerContactsService: CustomercontactsService, public newContactDialog: MatDialog) {
         
     }
 
@@ -79,9 +80,65 @@ export class ContactsGridComponent {
         else {
             const clonedRecord = Object.assign({}, record);
             console.log(clonedRecord);
-            this.editContactClicked.emit(clonedRecord);;
+            this.editContactClicked.emit(clonedRecord);
         }
         
+    }
+
+    public EditContactPopup(record) {
+        console.log('now in edit contact popup');
+        const dialogRef = this.newContactDialog.open(ContactsDialogNewContactComponent, {
+            data: record
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result != 'cancel') {
+                console.log(result);
+                if (result.toDelete) {
+
+                    this.customerContactsService.remove(record.customerContactId).subscribe((data: any) => {
+                        this.contactInfoByGroupsService.remove(record.contactInfoByGroupId).subscribe((data: any) => {
+                            let index = this.contactsData.findIndex(d => d.customerContactId === record.customerContactId); //find index in your array
+                            this.contactsData.splice(index, 1);//remove element from array
+                            this.contactsDataSource = new MatTableDataSource(this.contactsData);
+                            this.contactsDataSource.sort = this.sort;
+                            this.contactsDataSource.paginator = this.paginator;
+                        });
+                    });
+                }
+                else {
+                    if (record.firstName) {
+                        this.contactInfoByGroupsService.get({ oid: record.contactInfoByGroupId }).subscribe((data: any) => {
+                            if (data) {
+                                this.currentContactInfoByGroup = data;
+                                if (this.currentContactInfoByGroup.oid) {
+                                    data.email = record.email;
+                                    data.firstName = record.firstName;
+                                    data.lastName = record.lastName;
+                                    data.title = record.title;
+                                    data.phone = record.phone;
+                                    data.extension = record.extension;
+                                    data.mobile = record.mobile;
+                                    data.fax = record.fax;
+                                    data.address = record.address;
+                                    data.city = record.city;
+                                    data.state = record.state;
+                                    data.country = record.country;
+                                    data.primary = record.primary;
+                                    data.copyAlerts = record.copyAlerts;
+
+                                    this.contactInfoByGroupsService.update(this.currentContactInfoByGroup).subscribe((data: any) => {
+
+                                    });
+
+                                }
+
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
     public newRecord() {
