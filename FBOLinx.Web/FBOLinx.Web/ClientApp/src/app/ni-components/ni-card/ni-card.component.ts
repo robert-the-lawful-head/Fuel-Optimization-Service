@@ -28,6 +28,7 @@ export class NiCardComponent implements OnInit {
     @Input() title: string = '';
     @Input() tempId: string = '';
     @Input() visible: string = '';
+    @Input() visibleSuspend: string = '';
     @Input() bgColor: string = '';
     @Input() customBgColor: string = '';
     @Input() color: string = '';
@@ -43,7 +44,7 @@ export class NiCardComponent implements OnInit {
 
     public currentPrices: any[];
     //public isPricingSuspended: boolean = true;
-    @Input() isPricingSuspended: boolean = false;
+    //@Input() isPricingSuspended: boolean = false;
     constructor(public tempAddOnMargin: MatDialog, public deleteFBODialog: MatDialog, private fboPricesService: FbopricesService, private sharedService: SharedService) { }
 
     ngOnInit() {
@@ -80,10 +81,12 @@ export class NiCardComponent implements OnInit {
                 var jetAprice = this.getCurrentPriceByProduct('JetA Retail');
 
                 if (jetACost.oid != 0 || jetAprice.oid !=0) {
-                    this.isPricingSuspended = false;
+                    // this.isPricingSuspended = false;
+                    this.visibleSuspend = 'true';
                 }
                 else {
-                    this.isPricingSuspended = true;
+                  //  this.isPricingSuspended = true;
+                    this.visibleSuspend = 'false';
                 }
             });
     }

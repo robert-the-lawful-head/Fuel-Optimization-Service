@@ -296,8 +296,8 @@ export class FboPricesHomeComponent implements OnInit {
 		this.buttonTextValue = 'Update Live Pricing';
 		this.jtRetail = this.jtCost = '';
         this.saveOk = true;
-        //this.niCard.checkPricing();
-        this.niCard.isPricingSuspended = false;
+        this.niCard.checkPricing();
+        this.niCard.visibleSuspend = 'true';
 	}
 
 	public fboPreferenceChange() {
