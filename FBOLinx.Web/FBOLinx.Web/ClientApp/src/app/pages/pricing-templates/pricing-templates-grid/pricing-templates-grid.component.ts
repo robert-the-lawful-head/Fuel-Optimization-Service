@@ -33,7 +33,7 @@ export class PricingTemplatesGridComponent implements OnInit {
 
     /** pricing-templates-grid ctor */
     constructor(public newTemplateDialog: MatDialog, private router: Router,
-        private sharedService: SharedService    ) {
+        private sharedService: SharedService) {
 
     }
 
