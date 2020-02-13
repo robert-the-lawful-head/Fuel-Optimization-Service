@@ -38,4 +38,8 @@ export class CustomermarginsService {
     public updatecustomermargin(payload) {
         return this.http.post(this.accessPointUrl + '/updatecustomermargin', payload, { headers: this.headers });
     }
+
+    public updatemultiplecustomermargin(payload) {
+        return this.http.post(this.accessPointUrl + '/updatemultiplecustomermargin', payload, { headers: this.headers });
+    }
 }

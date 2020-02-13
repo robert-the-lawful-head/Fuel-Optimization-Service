@@ -64,8 +64,8 @@ namespace FBOLinx.Web.Controllers
             var result = (from p in products
                           join f in (from f in _context.Fboprices
                                          //where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
-                                     where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
-                                     && f.Fboid == fboId
+                                     where Convert.ToDateTime(f.EffectiveFrom).Date <= DateTime.Now.Date && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                                     && f.Fboid == fboId && f.Price != null
                                      select f) on new { Product = p.Description, FboId = fboId } equals new
                                      {
                                          f.Product,
@@ -162,6 +162,30 @@ namespace FBOLinx.Web.Controllers
             return Ok(activePricing);
         }
 
+        // GET: api/Fboprices/fbo/current/5
+        [HttpPost("fbo/{fboId}/suspendpricing")]
+        public async Task<IActionResult> SuspendPricing([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var activeJetPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId);
+            if(activeJetPricing != null)
+            {
+                _context.Fboprices.Remove(activeJetPricing);
+            }
+            var activeRetailPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Retail" && s.Fboid == fboId);
+            if(activeRetailPricing != null)
+            {
+                _context.Fboprices.Remove(activeRetailPricing);
+            }
+            _context.SaveChanges();
+
+            return Ok(fboId);
+        }
+
         // GET: api/Fboprices/fbo/staged/5
         [HttpGet("fbo/{fboId}/staged")]
         public async Task<IActionResult> GetFbopricesByFboIdStaged([FromRoute] int fboId)
@@ -175,7 +199,8 @@ namespace FBOLinx.Web.Controllers
 
             var result = (from p in products
                           join f in (from f in _context.Fboprices
-                                     where f.EffectiveFrom > DateTime.Now
+                                         //where f.EffectiveFrom > DateTime.Now
+                                     where Convert.ToDateTime(f.EffectiveFrom).Date > DateTime.Now.Date
                                      select f) on new { Product = p.Description, FboId = fboId } equals new
                                      {
                                          f.Product,

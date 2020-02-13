@@ -38,4 +38,8 @@ export class CustomeraircraftsService {
     public update(payload) {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
     }
+
+    public updateTemplate(fboid, payload) {
+        return this.http.put(this.accessPointUrl + '/fbo/' + fboid, payload, { headers: this.headers });
+    }
 }

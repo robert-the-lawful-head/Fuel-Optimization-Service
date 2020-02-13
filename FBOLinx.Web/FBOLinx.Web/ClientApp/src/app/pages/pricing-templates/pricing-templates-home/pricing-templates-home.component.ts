@@ -1,10 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
 
 //Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { CustomermarginsService } from '../../../services/customermargins.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 //Components
@@ -35,16 +34,15 @@ export class PricingTemplatesHomeComponent {
     public pricingTemplatesData: Array<any>;
     public currentPricingTemplate: any;
 
-    constructor(private route: ActivatedRoute,
+    constructor(
         private router: Router,
         private pricingTemplatesService: PricingtemplatesService,
         public newPricingTemplateDialog: MatDialog,
-        private customerMarginsService: CustomermarginsService,
         private sharedService: SharedService,
-        public deleteFBODialog: MatDialog    ) {
-
+        public deleteFBODialog: MatDialog
+    ) {
         this.sharedService.emitChange(this.pageTitle);
-        pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
+        pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).subscribe((data: any) => this.pricingTemplatesData = data);
         this.currentPricingTemplate = null;
     }
 
@@ -58,8 +56,7 @@ export class PricingTemplatesHomeComponent {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            if (!result)
-                return;
+            if (!result) return;
             this.pricingTemplatesData = null;
             this.pricingTemplatesService.remove(pricingTemplate).subscribe((data: any) => {
                 this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {

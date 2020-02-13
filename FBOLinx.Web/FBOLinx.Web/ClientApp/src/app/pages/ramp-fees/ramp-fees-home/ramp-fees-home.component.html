@@ -5,7 +5,6 @@
 </div>
 
 <ni-card title="" class="mb-0" *ngIf="rampFees">
-
     <div class="mb-3">
         <div class="">
             <div class="row">
@@ -15,11 +14,18 @@
                     </div>
                     <div class="pull-left mr-1" *ngIf="rampFees[1].categoryType == 1">
                         <mat-form-field>
-                            <input matInput [(ngModel)]="expirationDate" [matDatepicker]="categoryDatePicker" placeholder="Expiration Date" disabled (ngModelChange)="rampFeeRequiresUpdate()">
+                            <input
+                                matInput
+                                [(ngModel)]="expirationDate"
+                                [matDatepicker]="categoryDatePicker"
+                                placeholder="Expiration Date"
+                                disabled
+                                (ngModelChange)="rampFeeRequiresUpdate()"
+                            />
                             <mat-datepicker-toggle matSuffix [for]="categoryDatePicker"></mat-datepicker-toggle>
                             <mat-datepicker #categoryDatePicker disabled="false"></mat-datepicker>
                         </mat-form-field>
-                </div>
+                    </div>
                     <div class="pull-right mr-1">
                         <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addNewRampFeeClicked()">Add New</button>
                     </div>
@@ -27,66 +33,65 @@
             </div>
         </div>
     </div>
-    
-
     <mat-accordion>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Business Jets
-                </mat-panel-title>
-                <mat-panel-description>
-                    
-                </mat-panel-description>
+                <mat-panel-title>Business Jets</mat-panel-title>
+                <mat-panel-description></mat-panel-description>
             </mat-expansion-panel-header>
-
-            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Business Jets'" [categoryTypes]="[1]" [supportedValues]="[0,1,2,3,5,7,16]" [sortedValues]="[7,1,2,3,16,5]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
-
-
+            <app-ramp-fees-category
+                [rampFees]="rampFees"
+                [categoryTitle]="'Business Jets'"
+                [categoryTypes]="[1]"
+                [supportedValues]="[0,1,2,3,5,7,16]"
+                [sortedValues]="[7,1,2,3,16,5]"
+                (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                (rampFeeDeleted)="rampFeeDeleted()"
+            ></app-ramp-fees-category>
         </mat-expansion-panel>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Turboprops
-                </mat-panel-title>
-                <mat-panel-description>
-                    
-                </mat-panel-description>
+                <mat-panel-title>Pistons and Turboprops</mat-panel-title>
+                <mat-panel-description></mat-panel-description>
             </mat-expansion-panel-header>
-
-            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Turboprops'" [categoryTypes]="[1]" [supportedValues]="[6,8,11,12,13,14,15]" [sortedValues]="[6,8,11,12,13,14,15]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
-
-
+            <app-ramp-fees-category
+                [rampFees]="rampFees"
+                [categoryTitle]="'Turboprops'"
+                [categoryTypes]="[1]"
+                [supportedValues]="[6,8,11,12,13,14,15]"
+                [sortedValues]="[8,11,12,13,6,14,15]"
+                (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                (rampFeeDeleted)="rampFeeDeleted()"
+            ></app-ramp-fees-category>
         </mat-expansion-panel>
-
         <mat-expansion-panel>
             <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Helicopters
-                </mat-panel-title>
-                <mat-panel-description>
-                    
-                </mat-panel-description>
+                <mat-panel-title>Helicopters</mat-panel-title>
+                <mat-panel-description></mat-panel-description>
             </mat-expansion-panel-header>
-
-            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Helicopters'" [categoryTypes]="[1]" [supportedValues]="[4,9,10]"  [sortedValues]="[4,9,10]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
-
-
+            <app-ramp-fees-category
+                [rampFees]="rampFees"
+                [categoryTitle]="'Helicopters'"
+                [categoryTypes]="[1]"
+                [supportedValues]="[4,9,10]"
+                [sortedValues]="[4,9,10]"
+                (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                (rampFeeDeleted)="rampFeeDeleted()"
+            ></app-ramp-fees-category>
         </mat-expansion-panel>
-
         <mat-expansion-panel>
             <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Custom
-                </mat-panel-title>
-                <mat-panel-description>
-                    By type, wingspan, weight, or tail
-                </mat-panel-description>
+                <mat-panel-title>Custom</mat-panel-title>
+                <mat-panel-description>By type, wingspan, weight, or tail</mat-panel-description>
             </mat-expansion-panel-header>
-
-            <app-ramp-fees-category [rampFees]="rampFees" [categoryTitle]="'Turboprops'" [categoryTypes]="[2,3,4,5]" [supportedValues]="[]" (rampFeeFieldChanged)="rampFeeFieldChanged()" (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
-
-
+            <app-ramp-fees-category
+                [rampFees]="rampFees"
+                [categoryTitle]="'Turboprops'"
+                [categoryTypes]="[2,3,4,5]"
+                [supportedValues]="[]"
+                (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                (rampFeeDeleted)="rampFeeDeleted()"
+            ></app-ramp-fees-category>
         </mat-expansion-panel>
     </mat-accordion>
 </ni-card>

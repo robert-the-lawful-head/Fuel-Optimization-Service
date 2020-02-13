@@ -102,7 +102,8 @@
                     </div>
                     <!--Contacts Grid-->
                     <div *ngIf="contactsData && !currentContactInfoByGroup">
-                        <app-contacts-grid [contactsData]="contactsData" (contactDeleted)="contactDeleted($event)" (newContactClicked)="newContactClicked()" (editContactClicked)="editContactClicked($event)"></app-contacts-grid>
+                        <!--<app-contacts-grid [contactsData]="contactsData" (contactDeleted)="contactDeleted($event)" (newContactClicked)="newContactClicked()" (editContactClicked)="editContactClicked($event)"></app-contacts-grid>-->
+                        <app-contacts-grid [contactsData]="contactsData" (contactDeleted)="contactDeleted($event)" (newContactClicked)="newContactClicked()"></app-contacts-grid>
                     </div>
 
                     <!--Contact Information-->
@@ -168,7 +169,7 @@
             <mat-tab label="Aircraft">
                 <!--Customer Aircraft Grid-->
                 <div *ngIf="customerAircraftsData && customerInfoByGroup && !currentCustomerAircraft">
-                    <app-customer-aircrafts-grid [customerAircraftsData]="customerAircraftsData" [customer]="customerInfoByGroup" (editCustomerAircraftClicked)="editCustomerAircraftClicked($event)" (newCustomerAircraftAdded)="newCustomerAircraftAdded($event)"></app-customer-aircrafts-grid>
+                    <app-customer-aircrafts-grid [pricingTemplatesData]="pricingTemplatesData" [customerAircraftsData]="customerAircraftsData" [customer]="customerInfoByGroup" (editCustomerAircraftClicked)="editCustomerAircraftClicked($event)" (newCustomerAircraftAdded)="newCustomerAircraftAdded($event)"></app-customer-aircrafts-grid>
                 </div>
 
                 <!--Customer Aircraft Information/Edit-->

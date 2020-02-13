@@ -5,7 +5,9 @@ import { AircraftsService } from '../../../services/aircrafts.service';
 import { AircraftpricesService } from '../../../services/aircraftprices.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
+import { DialogConfirmAircraftDeleteComponent } from '../customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component';
+
 
 @Component({
     selector: 'app-customer-aircrafts-edit',
@@ -29,7 +31,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
         private aircraftPricesService: AircraftpricesService,
         private customerAircraftsService: CustomeraircraftsService,
         private pricingTemplateService: PricingtemplatesService, @Inject(MAT_DIALOG_DATA) public data: any,
-        public dialogRef: MatDialogRef<CustomerAircraftsEditComponent>) {
+        public dialogRef: MatDialogRef<CustomerAircraftsEditComponent>, public dialogAircraftDeleteRef: MatDialog) {
 
     }
 
@@ -86,5 +88,21 @@ export class CustomerAircraftsEditComponent implements OnInit {
     public cancelEdit() {
         this.data = null;
         this.dialogRef.close();
+    }
+
+    public ConfirmDelete(data) {
+        const dialogRef = this.dialogAircraftDeleteRef.open(DialogConfirmAircraftDeleteComponent, {
+            data: data
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result == 'cancel') {
+              
+            }
+            else if (result.oid) {
+                result.toDelete = true;
+                this.dialogRef.close(result);
+            }
+        });
     }
 }

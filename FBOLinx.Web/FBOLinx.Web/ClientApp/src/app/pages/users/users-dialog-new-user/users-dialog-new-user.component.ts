@@ -27,7 +27,7 @@ export class UsersDialogNewUserComponent {
 
     //Public Members
     public availableroles: any[];
-
+    private emailExists: boolean = false;
     /** users-dialog-new-user ctor */
     constructor(public dialogRef: MatDialogRef<UsersDialogNewUserComponent>, @Inject(MAT_DIALOG_DATA) public data: NewUserDialogData,
         private userService: UserService) {
@@ -38,6 +38,19 @@ export class UsersDialogNewUserComponent {
     //Public Methods
     public onCancelClick(): void {
         this.dialogRef.close();
+    }
+
+    public onSaveClick(): void {
+        this.emailExists = false;
+        this.userService.checkemailexists(this.data.username).subscribe((data: any) => {
+            console.log(data);
+            this.dialogRef.close(this.data);
+        },(err: any) => {
+            console.log(err);
+                if (err == 'Conflict') {
+                    this.emailExists = true;
+            }
+        });
     }
 
     //Private Methods

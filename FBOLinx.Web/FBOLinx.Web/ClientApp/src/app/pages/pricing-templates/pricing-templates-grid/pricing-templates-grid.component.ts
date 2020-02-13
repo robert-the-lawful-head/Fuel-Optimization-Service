@@ -3,8 +3,6 @@ import { MatPaginator, MatSort, MatTableDataSource, MatTable } from '@angular/ma
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 //Services
-import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { PricetiersService } from '../../../services/pricetiers.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 //Components
@@ -27,7 +25,7 @@ export class PricingTemplatesGridComponent implements OnInit {
 
     //Public Members
     public pricingTemplatesDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['isInvalid', 'name', 'marginTypeDescription', 'yourMargin', 'intoPlanePrice', 'notes', 'delete'];
+    public displayedColumns: string[] = ['isInvalid', 'name', 'marginTypeDescription', 'yourMargin', 'intoPlanePrice', 'customersAssigned', 'delete'];
     public resultsLength: number = 0;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -35,9 +33,7 @@ export class PricingTemplatesGridComponent implements OnInit {
 
     /** pricing-templates-grid ctor */
     constructor(public newTemplateDialog: MatDialog, private router: Router,
-        private pricingTemplatesService: PricingtemplatesService,
-        private priceTiersService: PricetiersService,
-        private sharedService: SharedService    ) {
+        private sharedService: SharedService) {
 
     }
 
@@ -53,7 +49,6 @@ export class PricingTemplatesGridComponent implements OnInit {
 
     public editPricingTemplate(pricingTemplate, $event) {
         if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
-            //$event.preventDefault();
             $event.stopPropagation();
             return;
         }

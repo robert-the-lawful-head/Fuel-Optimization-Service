@@ -191,5 +191,42 @@ namespace FBOLinx.Web.Controllers
             return Ok("");
             // return CreatedAtAction("GetCustomerMargins", new { id = customerMargins.Oid }, customerMargins);
         }
+
+        // POST: api/CustomerMargins
+        [HttpPost("updatemultiplecustomermargin")]
+        public async Task<IActionResult> UpdateMultipleCustomerMargins(List<CustomerPricingTemplateViewModel> model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            foreach(var m in model)
+            {
+                var customerMarginObject = _context.PricingTemplate.FirstOrDefault(s => s.Name == m.customerMarginName && s.Fboid == m.fboid);
+
+                if (customerMarginObject != null)
+                {
+                    var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == m.id && s.Fboid == m.fboid);
+
+                    if (customerMargin != null)
+                    {
+                        customerMargin.CustomerType = customerMarginObject.Oid;
+                    }
+                    else
+                    {
+                        CustomCustomerTypes newType = new CustomCustomerTypes();
+                        newType.CustomerType = customerMarginObject.Oid;
+                        newType.Fboid = m.fboid;
+                        newType.CustomerId = m.id;
+                        _context.CustomCustomerTypes.Add(newType);
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            return Ok("");
+        }
     }
 }
