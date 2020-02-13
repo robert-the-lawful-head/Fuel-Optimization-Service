@@ -137,6 +137,18 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
                 if (result.toDelete) {
                     this.customerAircraftsService.remove(result).subscribe((data: any) => {
+
+                        this.customerAircraftsService
+                            .getCustomerAircraftsByGroupAndCustomerId(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId,
+                                result.customerId).subscribe((data:
+                                    any) => {
+                                    this.customerAircraftsData = data;
+                                    this.customerAircraftsDataSource = new MatTableDataSource(this.customerAircraftsData);
+                                    this.customerAircraftsDataSource.sort = this.sort;
+                                    this.customerAircraftsDataSource.paginator = this.paginator;
+                                });
+
+
                     });
                 }
 
@@ -171,6 +183,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
                             }
                         }
                     });
+
+                this.editCustomerAircraftClicked.emit(result);
             });
         }
     }
