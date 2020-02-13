@@ -6,7 +6,7 @@
             <span matPrefix><i class="fa fa-search"></i></span>
         </mat-form-field>
 
-        <table mat-table [dataSource]="customerAircraftssDataSource" class="col-md-12" matSort matSortActive="tailNumber" matSortDirection="asc">
+        <table mat-table [dataSource]="customerAircraftsDataSource" class="col-md-12" matSort matSortActive="tailNumber" matSortDirection="asc">
             <ng-container matColumnDef="tailNumber">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Tail</th>
                 <td (click)="editCustomerAircraft(customerAircraft)" mat-cell *matCellDef="let customerAircraft">{{customerAircraft.tailNumber}}</td>
@@ -28,20 +28,12 @@
 
             <ng-container matColumnDef="aircraftPricingTemplate">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Pricing</th>
-                <td mat-cell *matCellDef="let customerAircraft" (click)="editCustomerAircraft(customerAircraft)">
-                    {{customerAircraft.pricingTemplateName}}
+                <td mat-cell *matCellDef="let customerAircraft">
+                    <select id="pricingtemplates" name="ddlPricingTemplate" class="dropdownHeight" [(ngModel)]="customerAircraft.pricingTemplateName" (ngModelChange)="onMarginChange($event, customerAircraft);">
+                        <option *ngFor="let pricingTemplate of pricingTemplatesData" value="{{pricingTemplate.name}}">{{pricingTemplate.name}}</option>
+                    </select>
                 </td>
             </ng-container>
-
-            <!--<ng-container matColumnDef="edit">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let customerAircraft">
-                    <div class="pull-right">
-                        <button ni-button size="small" beforeIcon="fa fa-edit" (click)="editCustomerAircraft(customerAircraft)">Edit</button>
-                    </div>
-                </td>
-            </ng-container>-->
-
 
             <ng-container matColumnDef="delete">
                 <th mat-header-cell *matHeaderCellDef>

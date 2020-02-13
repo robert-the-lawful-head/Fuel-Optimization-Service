@@ -169,7 +169,7 @@
             <mat-tab label="Aircraft">
                 <!--Customer Aircraft Grid-->
                 <div *ngIf="customerAircraftsData && customerInfoByGroup && !currentCustomerAircraft">
-                    <app-customer-aircrafts-grid [customerAircraftsData]="customerAircraftsData" [customer]="customerInfoByGroup" (editCustomerAircraftClicked)="editCustomerAircraftClicked($event)" (newCustomerAircraftAdded)="newCustomerAircraftAdded($event)"></app-customer-aircrafts-grid>
+                    <app-customer-aircrafts-grid [pricingTemplatesData]="pricingTemplatesData" [customerAircraftsData]="customerAircraftsData" [customer]="customerInfoByGroup" (editCustomerAircraftClicked)="editCustomerAircraftClicked($event)" (newCustomerAircraftAdded)="newCustomerAircraftAdded($event)"></app-customer-aircrafts-grid>
                 </div>
 
                 <!--Customer Aircraft Information/Edit-->

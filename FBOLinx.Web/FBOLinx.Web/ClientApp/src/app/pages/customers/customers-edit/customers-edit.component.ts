@@ -183,8 +183,6 @@ export class CustomersEditComponent {
             groupId: this.sharedService.currentUser.groupId
         };
 
-        console.log(this.currentContactInfoByGroup);
-
         const dialogRef = this.newContactDialog.open(ContactsDialogNewContactComponent, {
             data: this.currentContactInfoByGroup
         });
@@ -218,14 +216,12 @@ export class CustomersEditComponent {
     }
 
     public editContactClicked(contact) {
-        console.log(contact);
         const dialogRef = this.newContactDialog.open(ContactsDialogNewContactComponent, {
             data: contact
         });
 
         dialogRef.afterClosed().subscribe(result => {
             if (result != 'cancel') {
-                console.log(result);
                 if (result.toDelete) {
 
                     this.customerContactsService.remove(result.customerContactId).subscribe((data: any) => {
@@ -447,7 +443,6 @@ export class CustomersEditComponent {
             (data:
                 any) => {
                 this.contactsData = data;
-                console.log(data);
                 this.currentContactInfoByGroup = null;
                 this.hasContactForPriceDistribution = false;
                 if (!this.contactsData)
