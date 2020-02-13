@@ -225,6 +225,58 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        // PUT: api/CustomerAircrafts/5
+        [HttpPut("fbo/{fboid}")]
+        public async Task<IActionResult> PutCustomerAircraftsTemplate([FromRoute] int fboid, [FromBody] CustomerAircraftsGridViewModel customerAircrafts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Name == customerAircrafts.PricingTemplateName && s.Fboid == fboid);
+                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
+                AircraftPrices aircraftPrice = _context.AircraftPrices.FirstOrDefault(a => a.CustomerAircraftId.Equals(customerAircrafts.Oid));
+                CustomCustomerTypes customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == customerAircrafts.CustomerId && s.Fboid == fboid);
+                if (aircraftPrice != null)
+                {
+                    aircraftPrice.PriceTemplateId = pricingTemplate.Oid;
+                    _context.AircraftPrices.Update(aircraftPrice);
+                }
+
+                if (custAircraft != null)
+                {
+                    custAircraft.TailNumber = customerAircrafts.TailNumber;
+                    custAircraft.AircraftId = customerAircrafts.AircraftId;
+                    custAircraft.Size = customerAircrafts.Size;
+                    _context.CustomerAircrafts.Update(custAircraft);
+                }
+
+                // Tail-specific margin template overrides customer level templates.
+                if (customerMargin != null)
+                {
+                    customerMargin.CustomerType = pricingTemplate.Oid;
+                }
+
+
+                await _context.SaveChangesAsync();
+                return Ok(custAircraft);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CustomerAircraftsExists(customerAircrafts.Oid))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
         // POST: api/CustomerAircrafts
         [HttpPost]
         public async Task<IActionResult> PostCustomerAircrafts([FromBody] CustomerAircrafts customerAircrafts)

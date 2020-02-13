@@ -27,7 +27,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     @Input() pricingTemplatesData: Array<any>;
 
     //Public Members
-    public customerAircraftssDataSource: MatTableDataSource<any> = null;
+    public customerAircraftsDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = ['tailNumber', 'aircraftType', 'aircraftSize', 'aircraftPricingTemplate', 'delete'];
     public resultsLength: number = 0;
     public aircraftSizes: Array<any>;
@@ -54,10 +54,57 @@ export class CustomerAircraftsGridComponent implements OnInit {
         if (!this.customerAircraftsData)
             return;
         this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-        this.customerAircraftssDataSource = new MatTableDataSource(this.customerAircraftsData);
-        this.customerAircraftssDataSource.sort = this.sort;
-        this.customerAircraftssDataSource.paginator = this.paginator;
+        this.customerAircraftsDataSource = new MatTableDataSource(this.customerAircraftsData);
+        this.customerAircraftsDataSource.sort = this.sort;
+        this.customerAircraftsDataSource.paginator = this.paginator;
         this.resultsLength = this.customerAircraftsData.length;
+        this.customerAircraftsDataSource.sortingDataAccessor = (item, property) => {            
+            switch(property) {
+                case 'aircraftType':
+                    return item.make + ' ' + item.model;
+                case 'aircraftSize':
+                    switch(item.size) {
+                        case 8: //Single Engine Piston
+                            return 1;
+                        case 11: //Light Twin
+                            return 2;
+                        case 12: //Heavy Twin
+                            return 3;
+                        case 4: //Light Helicopter
+                            return 4;
+                        case 9: //Medium Helicopter
+                            return 5;
+                        case 10: //Heavy Helicopter
+                            return 6;
+                        case 13: //Light Turboprop
+                            return 7;
+                        case 6: //Single Turboprop
+                            return 8;
+                        case 14: //Medium Turboprop
+                            return 9;
+                        case 15: //Heavy Turboprop
+                            return 10;
+                        case 7: //Very Light Jet
+                            return 11;
+                        case 1: //Light Jet
+                            return 12;
+                        case 2: //Medium Jet
+                            return 13;
+                        case 3: //Heavy Jet
+                            return 14;
+                        case 16: //Super Heavy Jet
+                            return 15;
+                        case 5: //Wide Body
+                            return 16;
+                        default:
+                            return 17;
+                    }
+                case 'aircraftPricingTemplate':
+                    return item.pricingTemplateName;
+                default:
+                    return item[property];
+            }
+        };
     }
 
     public newCustomerAircraft() {
@@ -85,17 +132,15 @@ export class CustomerAircraftsGridComponent implements OnInit {
             });
 
             dialogRef.afterClosed().subscribe(result => {
-                console.log('Dialog data: ', result);
                 if (!result)
                     return;
 
                 if (result.toDelete) {
                     this.customerAircraftsService.remove(result).subscribe((data: any) => {
-                        console.log(data);
                     });
                 }
 
-                var aircraftSizes = [];
+                let aircraftSizes = [];
                 this.aircraftsService.getAircraftSizes().subscribe((data: any) => {
                     if (data) {
 
@@ -108,7 +153,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                     .subscribe((data: any) => {
                         if (data) {
 
-                            var selectedAircraft = this.customerAircraftsData.find(x => x.oid == result.oid);
+                            let selectedAircraft = this.customerAircraftsData.find(x => x.oid == result.oid);
 
                             if (selectedAircraft) {
                                 selectedAircraft.tailNumber = data.tailNumber;
@@ -117,7 +162,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                 selectedAircraft.size = data.size;
 
                                 if (data.size) {
-                                    var sizeText = aircraftSizes.find(x => x.value == data.size);
+                                    let sizeText = aircraftSizes.find(x => x.value == data.size);
 
                                     if (sizeText) {
                                         selectedAircraft.aircraftSizeDescription = sizeText.description;
@@ -126,11 +171,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
                             }
                         }
                     });
-
-                
-
-                //return false;
-               // this.editCustomerAircraftClicked.emit(result);
             });
         }
     }
@@ -140,11 +180,21 @@ export class CustomerAircraftsGridComponent implements OnInit {
     }
 
     public applyFilter(filterValue: string) {
-        this.customerAircraftssDataSource.filter = filterValue.trim().toLowerCase();
+        this.customerAircraftsDataSource.filter = filterValue.trim().toLowerCase();
     }
 
     private onMarginChange(newValue, customerAircraft) {
-
-        console.log(customerAircraft);
+        const { oid, aircraftId, tailNumber, groupId, customerId, make, model, size, pricingTemplateName } = customerAircraft;
+        this.customerAircraftsService.updateTemplate(this.sharedService.currentUser.fboId, {
+            oid,
+            aircraftId,
+            tailNumber,
+            groupId,
+            customerId,
+            make,
+            model,
+            size,
+            pricingTemplateName
+        }).subscribe((data: any) => {});
     }
 }
