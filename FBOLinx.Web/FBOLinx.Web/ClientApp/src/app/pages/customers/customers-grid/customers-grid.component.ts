@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { MatDialog } from '@angular/material';
+import * as _ from 'lodash';
 
 //Services
 import { AuthenticationService } from '../../../services/authentication.service'
@@ -165,12 +166,8 @@ export class CustomersGridComponent implements OnInit {
 
     public exportCustomersToExcel() {
         //Export the filtered results to an excel spreadsheet
-        let exportData = [];
-        exportData.push(...this.customersDataSource.filteredData);
-        exportData.sort((itemA, itemB) => {
-            return itemA.company < itemB.company ? -1 : itemA.company > itemB.company ? 1 : 0;
-        });
-        exportData = exportData.map(function(item) {
+        let exportData = _.clone(this.customersDataSource.filteredData);
+        exportData = _.map(exportData, item => {
             return {
                 Company: item.company,
                 Source: item.customerCompanyTypeName == 'FuelerLinx' ? 'FBOLinx Network' : item.customerCompanyTypeName,
@@ -178,6 +175,11 @@ export class CustomersGridComponent implements OnInit {
                 Price: item.allInPrice
             }
         });
+        exportData = _.sortBy(exportData, [
+            item => {
+                return item.Company.toLowerCase();
+            }
+        ]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);//converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Customers');
@@ -189,15 +191,25 @@ export class CustomersGridComponent implements OnInit {
 
     public exportCustomerAircraftToExcel() {
         //Export the filtered results to an excel spreadsheet
-        var exportData = this.allCustomerAircraft.map(function (item) {
+        let exportData = _.clone(this.allCustomerAircraft);
+        exportData = _.map(exportData, item => {
             return {
                 Company: item.company,
                 Tail: item.tailNumber,
                 Make: item.make,
                 Model: item.model,
-                Size: item.aircraftSizeDescription
-            }
+                Size: item.aircraftSizeDescription,
+                'Margin Template': item.pricingTemplateName
+            };
         });
+        exportData = _.sortBy(exportData, [
+            item => {
+                return item.Company.toLowerCase();
+            },
+            item => {
+                return item.Tail.toLowerCase();
+            }
+        ]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);//converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Aircraft');

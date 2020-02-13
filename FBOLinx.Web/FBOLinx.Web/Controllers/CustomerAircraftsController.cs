@@ -121,12 +121,12 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
 
             var customerAircraft = await (from ca in _context.CustomerAircrafts
-                                            join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
-                                            //join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId into leftJoinAircraftPrices
-                                            //from a in leftJoinAircraftPrices.DefaultIfEmpty()
-                                            //join p in _context.PricingTemplate on a.PriceTemplateId equals p.Oid into leftJoinPricingTemplate
-                                            //from p in leftJoinPricingTemplate.DefaultIfEmpty()
-                                            join cg in _context.CustomerInfoByGroup on new {groupId, ca.CustomerId} equals new {groupId = cg.GroupId, cg.CustomerId}
+                                        join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+                                          join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId into leftJoinAircraftPrices
+                                          from a in leftJoinAircraftPrices.DefaultIfEmpty()
+                                          join p in _context.PricingTemplate on a.PriceTemplateId equals p.Oid into leftJoinPricingTemplate
+                                          from p in leftJoinPricingTemplate.DefaultIfEmpty()
+                                          join cg in _context.CustomerInfoByGroup on new {groupId, ca.CustomerId} equals new {groupId = cg.GroupId, cg.CustomerId}
                                             where ca.GroupId.GetValueOrDefault() == groupId
                                             select new CustomerAircraftsGridViewModel
                                             {
@@ -142,8 +142,8 @@ namespace FBOLinx.Web.Controllers
                                                 BasedPaglocation = ca.BasedPaglocation,
                                                 NetworkCode = ca.NetworkCode,
                                                 AddedFrom = ca.AddedFrom.GetValueOrDefault(),
-                                                //PricingTemplateId = a == null ? 0 : a.PriceTemplateId.GetValueOrDefault(),
-                                                //PricingTemplateName = p == null ? "Customer Default" : p.Name,
+                                                PricingTemplateId = a == null ? 0 : a.PriceTemplateId.GetValueOrDefault(),
+                                                PricingTemplateName = p == null ? "Customer Default" : p.Name,
                                                 Make = ac.Make,
                                                 Model = ac.Model
                                             }).OrderBy((x => x.TailNumber)).ToListAsync();
@@ -153,7 +153,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/CustomerAircrafts/group/5/fbo/6/count
         [HttpGet("group/{groupId}/count")]
-        public async Task<IActionResult> GetCustomerAircraftsCountByGroupId([FromRoute] int groupId)
+        public IActionResult GetCustomerAircraftsCountByGroupId([FromRoute] int groupId)
         {
             if (!ModelState.IsValid)
             {
@@ -161,22 +161,22 @@ namespace FBOLinx.Web.Controllers
             }
 
             var customerAircraftCount = (from ca in _context.CustomerAircrafts
-                join cg in _context.CustomerInfoByGroup on new
-                    {
-                        ca.CustomerId,
-                        GroupId = ca.GroupId.GetValueOrDefault()
-                    }
-                    equals new
-                    {
-                        cg.CustomerId,
-                        cg.GroupId
-                    }
-                where ca.GroupId == groupId
+                                         join cg in _context.CustomerInfoByGroup on new
+                                         {
+                                             ca.CustomerId,
+                                             GroupId = ca.GroupId.GetValueOrDefault()
+                                         }
+                                             equals new
+                                             {
+                                                 cg.CustomerId,
+                                                 cg.GroupId
+                                             }
+                                         where ca.GroupId == groupId
 
-                select new
-                {
-                    Oid = ca.Oid
-                }).Count();
+                                         select new
+                                         {
+                                             Oid = ca.Oid
+                                         }).Count();
 
             return Ok(customerAircraftCount);
         }
