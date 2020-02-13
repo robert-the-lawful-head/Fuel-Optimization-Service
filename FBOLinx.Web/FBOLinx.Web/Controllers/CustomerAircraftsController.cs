@@ -44,23 +44,25 @@ namespace FBOLinx.Web.Controllers
             }
 
             var customerAircrafts = await (from ca in _context.CustomerAircrafts
-                join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
-                from ac in leftJoinAircrafts.DefaultIfEmpty()
-                where ca.Oid == id
-                select new
-                {
-                    ca.CustomerId,
-                    ca.AircraftId,
-                    ca.Oid,
-                    Size = (ca.Size.HasValue && ca.Size.Value != Models.AirCrafts.AircraftSizes.NotSet) || ac == null
-                        ? ca.Size
-                        : (AirCrafts.AircraftSizes) ac.Size.GetValueOrDefault(),
-                    ca.AddedFrom,
-                    ca.NetworkCode,
-                    ca.BasedPaglocation,
-                    ca.TailNumber,
-                    ca.GroupId
-                }).FirstOrDefaultAsync();
+                                           join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
+                                           from ac in leftJoinAircrafts.DefaultIfEmpty()
+                                           where ca.Oid == id
+                                           select new
+                                           {
+                                               ca.CustomerId,
+                                               ca.AircraftId,
+                                               ca.Oid,
+                                               Size = (ca.Size.HasValue && ca.Size.Value != Models.AirCrafts.AircraftSizes.NotSet) || ac == null
+                                                   ? ca.Size
+                                                   : (AirCrafts.AircraftSizes)ac.Size.GetValueOrDefault(),
+                                               ca.AddedFrom,
+                                               ca.NetworkCode,
+                                               ca.BasedPaglocation,
+                                               ca.TailNumber,
+                                               ca.GroupId,
+                                               ac.Make,
+                                               ac.Model
+                                           }).FirstOrDefaultAsync();
 
             if (customerAircrafts == null)
             {
