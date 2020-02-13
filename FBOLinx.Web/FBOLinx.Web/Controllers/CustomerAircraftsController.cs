@@ -99,7 +99,6 @@ namespace FBOLinx.Web.Controllers
                     BasedPaglocation = ca.BasedPaglocation,
                     NetworkCode = ca.NetworkCode,
                     AddedFrom = ca.AddedFrom.GetValueOrDefault(),
-                    PricingTemplateId = a == null ? 0 : a.PriceTemplateId.GetValueOrDefault(),
                     PricingTemplateName = p == null ? "Customer Default" : p.Name,
                     Make = ac.Make,
                     Model = ac.Model
@@ -195,7 +194,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-           // _context.Entry(customerAircrafts).State = EntityState.Modified;
 
             try
             {
@@ -223,8 +221,6 @@ namespace FBOLinx.Web.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
         }
 
         // POST: api/CustomerAircrafts

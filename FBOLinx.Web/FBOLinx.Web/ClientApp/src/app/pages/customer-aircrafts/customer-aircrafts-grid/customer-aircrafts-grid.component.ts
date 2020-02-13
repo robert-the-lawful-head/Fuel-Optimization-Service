@@ -24,6 +24,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     @Output() newCustomerAircraftAdded = new EventEmitter<any>();
     @Input() customer: any;
     @Input() customerAircraftsData: Array<any>;
+    @Input() pricingTemplatesData: Array<any>;
 
     //Public Members
     public customerAircraftssDataSource: MatTableDataSource<any> = null;
@@ -66,7 +67,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            console.log('Dialog data: ', result);
             if (!result)
                 return;
             result.groupId = this.sharedService.currentUser.groupId;
@@ -78,8 +78,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
     }
 
     public editCustomerAircraft(customerAircraft) {
-        console.log(customerAircraft);
-
         if (customerAircraft) {
             const dialogRef = this.editCustomerAircraftDialog.open(CustomerAircraftsEditComponent, {
                 width: '450px',
@@ -100,9 +98,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 this.editCustomerAircraftClicked.emit(result);
             });
         }
-
-        //const clonedRecord = Object.assign({}, customerAircraft);
-        //this.editCustomerAircraftClicked.emit(clonedRecord);
     }
 
     public deleteCustomerAircraft(customerAircraft) {
@@ -111,5 +106,10 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
     public applyFilter(filterValue: string) {
         this.customerAircraftssDataSource.filter = filterValue.trim().toLowerCase();
+    }
+
+    private onMarginChange(newValue, customerAircraft) {
+
+        console.log(customerAircraft);
     }
 }

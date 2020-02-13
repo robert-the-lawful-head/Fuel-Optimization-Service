@@ -183,8 +183,6 @@ export class CustomersEditComponent {
             groupId: this.sharedService.currentUser.groupId
         };
 
-        console.log(this.currentContactInfoByGroup);
-
         const dialogRef = this.newContactDialog.open(ContactsDialogNewContactComponent, {
             data: this.currentContactInfoByGroup
         });
