@@ -77,6 +77,8 @@ import { Page500Component }	from './extra-pages/page-500/page-500.component';
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
 import { ContactsEditComponent } from './contacts/contacts-edit/contacts-edit.component';
 import { ContactsDialogNewContactComponent } from './contacts/contacts-edit-modal/contacts-edit-modal.component';
+import { ContactsDialogConfirmContactDeleteComponent } from './contacts/contact-confirm-delete-modal/contact-confirm-delete-modal.component';
+import { DialogConfirmAircraftDeleteComponent } from './customer-aircrafts/customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component';
 import { ContactsGridComponent } from './contacts/contacts-grid/contacts-grid.component';
 import { ContactsHomeComponent } from './contacts/contacts-home/contacts-home.component';
 import { CustomersEditComponent } from './customers/customers-edit/customers-edit.component';
@@ -144,6 +146,8 @@ import { StatisticsTotalOrdersComponent } from
 
  //Pipes
 import { AppPipesModule } from '../app-pipes.module'
+
+
 
 
 
@@ -227,6 +231,8 @@ import { AppPipesModule } from '../app-pipes.module'
     AuthtokenComponent,
     ContactsEditComponent,
     ContactsDialogNewContactComponent,
+      ContactsDialogConfirmContactDeleteComponent,
+      DialogConfirmAircraftDeleteComponent,
     ContactsGridComponent,
     ContactsHomeComponent,
     CustomerAircraftsDialogNewAircraftComponent,
@@ -289,11 +295,13 @@ import { AppPipesModule } from '../app-pipes.module'
       DeleteConfirmationComponent,
       CloseConfirmationComponent,
       CalendarDialogComponent,
-      CustomerAircraftsDialogNewAircraftComponent,
+CustomerAircraftsDialogNewAircraftComponent,
       CustomerAircraftsEditComponent,
       CustomerCompanyTypeDialogComponent,
       CustomersDialogNewCustomerComponent,
-      ContactsDialogNewContactComponent,
+        ContactsDialogNewContactComponent,
+        ContactsDialogConfirmContactDeleteComponent,
+        DialogConfirmAircraftDeleteComponent,
       DistributionWizardMainComponent,
       DistributionWizardReviewComponent,
       AccountProfileComponent,

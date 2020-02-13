@@ -20,6 +20,7 @@ import { TemporaryAddOnMarginComponent } from '../../../shared/components/tempor
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
 import { getDate } from 'date-fns';
+import { NiCardComponent } from '../../../ni-components/ni-card/ni-card.component';
 
 export interface temporaryAddOnMargin {
 	id: any;
@@ -36,7 +37,7 @@ export interface temporaryAddOnMargin {
 })
 /** fbo-prices-home component*/
 export class FboPricesHomeComponent implements OnInit {
-
+    @ViewChild(NiCardComponent) niCard: NiCardComponent;
 	@Output() priceUpdated = new EventEmitter<any>();
 	//Public Members
 	public pageTitle: string = 'Pricing';
@@ -121,8 +122,9 @@ export class FboPricesHomeComponent implements OnInit {
 		this.loadFboFees();
 		this.loadDistributionLog();
         this.loadPricingTemplates();
+        
+    }
 
-	}
 
 	//Public Methods
 	jetChangedHandler(event: temporaryAddOnMargin) {
@@ -234,16 +236,18 @@ export class FboPricesHomeComponent implements OnInit {
         this.checkOkPriceSave(this.currentPricingEffectiveFrom, this.currentPricingEffectiveTo, this.currentFboPriceJetARetail.price, this.currentFboPriceJetACost.price);
 	}
 
-	public saveChangesClicked() {
+    public saveChangesClicked() {
         let arr = [];
-
+        
         if (this.requiresUpdate == false) {
             for (let price of this.currentPrices) {
                 price.oid = 0;
                 price.effectiveFrom = this.currentPricingEffectiveFrom;
                 price.effectiveTo = this.currentPricingEffectiveTo;
                 price.price = price.product == 'JetA Retail' ? this.newRetail === undefined ? this.currentFboPriceJetARetail.price : this.newRetail : price.product == 'JetA Cost' ? this.newCost === undefined ? this.currentFboPriceJetACost.price : this.newCost : null;
-                arr.push(price);
+                if (price.price) {
+                    arr.push(price);
+                }
             }
             this.savePriceChangesAll(arr);
             let dateCost = this.currentFboPriceJetACost.effectiveTo;
@@ -257,12 +261,15 @@ export class FboPricesHomeComponent implements OnInit {
         }
         else {
             for (let price of this.currentPrices) {
-                price.effectiveFrom = this.currentPricingEffectiveFrom;
-                price.effectiveTo = this.currentPricingEffectiveTo;
+                if (price.price) {
+                    price.effectiveFrom = this.currentPricingEffectiveFrom;
+                    price.effectiveTo = this.currentPricingEffectiveTo;
+
+                    price.price = price.product == 'JetA Retail' ? this.currentFboPriceJetARetail.price : price.product == 'JetA Cost' ? this.currentFboPriceJetACost.price : null;
+                    this.savePriceChanges(price);
+                }
                 
-                price.price = price.product == 'JetA Retail' ? this.currentFboPriceJetARetail.price : price.product == 'JetA Cost' ? this.currentFboPriceJetACost.price : null;
-                this.savePriceChanges(price);
-                this.loadCurrentFboPrices();
+              //  this.loadCurrentFboPrices();
             }
             
             this.show = true;
@@ -288,7 +295,9 @@ export class FboPricesHomeComponent implements OnInit {
         this.priceGroup = null;
 		this.buttonTextValue = 'Update Live Pricing';
 		this.jtRetail = this.jtCost = '';
-		this.saveOk = true;
+        this.saveOk = true;
+        this.niCard.checkPricing();
+        this.niCard.visibleSuspend = 'true';
 	}
 
 	public fboPreferenceChange() {
@@ -415,6 +424,18 @@ export class FboPricesHomeComponent implements OnInit {
 				this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
 				this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
                 this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
+                if (this.currentFboPriceJetARetail.price) {
+                    this.jtRetail = this.currentFboPriceJetARetail.price;
+                }
+                else {
+                    this.jtRetail = null;
+                }
+                if (this.currentFboPriceJetACost.price) {
+                    this.jtCost = this.currentFboPriceJetACost.price;
+                } else {
+                    this.jtCost = null;
+                }
+                
 				this.staticCurrentFboPriceJetARetail = this.currentFboPriceJetARetail.price;
 				this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
 				this.TempValueJet = data[0].tempJet;

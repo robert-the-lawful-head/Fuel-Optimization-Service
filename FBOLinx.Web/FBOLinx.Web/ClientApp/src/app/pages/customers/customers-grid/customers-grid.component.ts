@@ -251,6 +251,9 @@ export class CustomersGridComponent implements OnInit {
         });
 
         if (filteredList.length > 0) {
+
+            var listCustomers= [];
+
             let updatedCount = 0;
             filteredList.forEach(selectedItem => {
                 
@@ -261,14 +264,24 @@ export class CustomersGridComponent implements OnInit {
                     customerMarginName: newValue,
                     fboid: this.sharedService.currentUser.fboId
                 }
-                this.customerMarginsService.updatecustomermargin(vm).subscribe((data: any) => {
-                    selectedItem.pricingTemplateName = newValue;
-                    updatedCount++;
-                    if (updatedCount === filteredList.length) {
-                        this.refreshCustomerDataSource();
-                    }
-                });
+
+                listCustomers.push(vm);
+                
+
+                //this.customerMarginsService.updatecustomermargin(vm).subscribe((data: any) => {
+                //    selectedItem.pricingTemplateName = newValue;
+                //    updatedCount++;
+                //    if (updatedCount === filteredList.length) {
+                //        this.refreshCustomerDataSource();
+                //    }
+                //});
             });
+
+            if (listCustomers.length > 0) {
+                this.customerMarginsService.updatemultiplecustomermargin(listCustomers).subscribe((data: any) => {
+
+                });
+            }
         }
         else {
             let vm = {
