@@ -33,6 +33,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
     public isLoadingAircraftTypes: boolean = false;
+    public pageIndex: number = 0;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -57,6 +58,16 @@ export class CustomerAircraftsGridComponent implements OnInit {
         this.customerAircraftsDataSource = new MatTableDataSource(this.customerAircraftsData);
         this.customerAircraftsDataSource.sort = this.sort;
         this.customerAircraftsDataSource.paginator = this.paginator;
+
+        if (sessionStorage.getItem('pageIndex')) {
+            this.paginator.pageIndex = sessionStorage.getItem('pageIndex') as any;
+            sessionStorage.removeItem('pageIndex');
+            sessionStorage.removeItem('isCustomerEdit');
+        }
+        else {
+            this.paginator.pageIndex = 0;
+        }
+
         this.resultsLength = this.customerAircraftsData.length;
         this.customerAircraftsDataSource.sortingDataAccessor = (item, property) => {            
             switch(property) {
@@ -181,6 +192,10 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
     public applyFilter(filterValue: string) {
         this.customerAircraftsDataSource.filter = filterValue.trim().toLowerCase();
+    }
+
+    onPageChanged(e) {
+        sessionStorage.setItem('pageIndex', e.pageIndex);
     }
 
     private onMarginChange(newValue, customerAircraft) {
