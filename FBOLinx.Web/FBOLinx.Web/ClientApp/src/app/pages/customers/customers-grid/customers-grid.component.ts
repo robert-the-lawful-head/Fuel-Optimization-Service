@@ -246,6 +246,9 @@ export class CustomersGridComponent implements OnInit {
     }
 
     private onMarginChange(newValue, customer) {
+        const changedPricingTemplate = _.find(customer.pricingTemplatesList, p => {
+            return customer.pricingTemplateName && customer.pricingTemplateName == p.name;
+        });
         let filteredList = this.customersData.filter(function (item) {
             return item.selectAll == true
         });
@@ -254,10 +257,10 @@ export class CustomersGridComponent implements OnInit {
 
             var listCustomers= [];
 
-            let updatedCount = 0;
             filteredList.forEach(selectedItem => {
                 
                 selectedItem.pricingTemplateName = newValue;
+                selectedItem.allInPrice = changedPricingTemplate ? changedPricingTemplate.intoPlanePrice : null;
                 
                 let vm = {
                     id: selectedItem.customerId,
@@ -266,24 +269,16 @@ export class CustomersGridComponent implements OnInit {
                 }
 
                 listCustomers.push(vm);
-                
-
-                //this.customerMarginsService.updatecustomermargin(vm).subscribe((data: any) => {
-                //    selectedItem.pricingTemplateName = newValue;
-                //    updatedCount++;
-                //    if (updatedCount === filteredList.length) {
-                //        this.refreshCustomerDataSource();
-                //    }
-                //});
             });
 
             if (listCustomers.length > 0) {
                 this.customerMarginsService.updatemultiplecustomermargin(listCustomers).subscribe((data: any) => {
-
+                    this.refreshCustomerDataSource();
                 });
             }
         }
         else {
+            customer.allInPrice = changedPricingTemplate ? changedPricingTemplate.intoPlanePrice : null;
             let vm = {
                 id: customer.customerId,
                 customerMarginName: newValue,
