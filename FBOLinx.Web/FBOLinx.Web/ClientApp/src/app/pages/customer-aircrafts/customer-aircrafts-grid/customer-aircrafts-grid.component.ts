@@ -186,7 +186,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
         }
     }
 
-    public deleteCustomerAircraft(customerAircraft) {
+    public deleteCustomerAircraft(customerAircraft: any) {
         //TODO: add delete prompt and logic
     }
 
@@ -194,11 +194,11 @@ export class CustomerAircraftsGridComponent implements OnInit {
         this.customerAircraftsDataSource.filter = filterValue.trim().toLowerCase();
     }
 
-    onPageChanged(e) {
+    onPageChanged(e: any) {
         sessionStorage.setItem('pageIndex', e.pageIndex);
     }
 
-    private onMarginChange(newValue, customerAircraft) {
+    private onMarginChange(newValue: any, customerAircraft: any) {
         const { oid, aircraftId, tailNumber, groupId, customerId, make, model, size, pricingTemplateName } = customerAircraft;
         this.customerAircraftsService.updateTemplate(this.sharedService.currentUser.fboId, {
             oid,

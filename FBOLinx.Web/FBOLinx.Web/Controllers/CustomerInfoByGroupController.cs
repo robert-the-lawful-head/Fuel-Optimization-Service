@@ -119,57 +119,57 @@ namespace FBOLinx.Web.Controllers
             return Ok(new {fileLocation = fileName });
         }
 
-        
+
 
         // GET: api/CustomerInfoByGroup/group/5/fbo/6/pricingtemplate/7
         [HttpGet("group/{groupId}/fbo/{fboId}/pricingtemplate/{pricingTemplateId}")]
-        public async Task<IActionResult> GetCustomersByFBOAndPricing([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int pricingTemplateId)
+        public IActionResult GetCustomersByFBOAndPricing([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int pricingTemplateId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            
+
             var customers = (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
-                join c in _context.Customers on cg.CustomerId equals c.Oid
-                join cc in _context.CustomCustomerTypes.Where((x => x.Fboid == fboId)) on cg.CustomerId equals cc.CustomerId
-                where cg.Active.GetValueOrDefault()
-                    && cg.Active.GetValueOrDefault()
-                      && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
-                select new
-                {
-                    Oid = cg.Oid,
-                    cg.Company,
-                    CustomerId = cg.CustomerId,
-                    CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
-                    cg.Address,
-                    cg.CertificateType,
-                    cg.City,
-                    cg.Country,
-                    cg.CustomerType,
-                    cg.DefaultTemplate,
-                    cg.Distribute,
-                    cg.EmailSubscription,
-                    cg.GroupId,
-                    cg.Joined,
-                    cg.MainPhone,
-                    cg.Network,
-                    cg.Suspended,
-                    cg.Sfid,
-                    cg.Show100Ll,
-                    cg.ShowJetA,
-                    cg.State,
-                    cg.Username,
-                    cg.Website,
-                    cg.ZipCode
-                }).OrderBy((x => x.Company)).Distinct();
+                             join c in _context.Customers on cg.CustomerId equals c.Oid
+                             join cc in _context.CustomCustomerTypes.Where((x => x.Fboid == fboId)) on cg.CustomerId equals cc.CustomerId
+                             where cg.Active.GetValueOrDefault()
+                                 && cg.Active.GetValueOrDefault()
+                                   && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
+                             select new
+                             {
+                                 cg.Oid,
+                                 cg.Company,
+                                 cg.CustomerId,
+                                 CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
+                                 cg.Address,
+                                 cg.CertificateType,
+                                 cg.City,
+                                 cg.Country,
+                                 cg.CustomerType,
+                                 cg.DefaultTemplate,
+                                 cg.Distribute,
+                                 cg.EmailSubscription,
+                                 cg.GroupId,
+                                 cg.Joined,
+                                 cg.MainPhone,
+                                 cg.Network,
+                                 cg.Suspended,
+                                 cg.Sfid,
+                                 cg.Show100Ll,
+                                 cg.ShowJetA,
+                                 cg.State,
+                                 cg.Username,
+                                 cg.Website,
+                                 cg.ZipCode
+                             }).OrderBy((x => x.Company)).Distinct();
 
             return Ok(customers);
         }
 
         // GET: api/CustomerInfoByGroup/group/5/fbo/6/count
         [HttpGet("group/{groupId}/fbo/{fboId}/count")]
-        public async Task<IActionResult> GetCustomerCountByGroupAndFBO([FromRoute] int groupId, [FromRoute] int fboId)
+        public IActionResult GetCustomerCountByGroupAndFBO([FromRoute] int groupId, [FromRoute] int fboId)
         {
             if (!ModelState.IsValid)
             {
@@ -180,13 +180,13 @@ namespace FBOLinx.Web.Controllers
 
             //View model for customers grid
             var customerCount = (from cg in _context.CustomerInfoByGroup
-                                  join c in _context.Customers on cg.CustomerId equals c.Oid
-                                  where cg.GroupId == groupId
-                                  && cg.Active.GetValueOrDefault()
-                                  select new
-                                  {
-                                      Oid = cg.Oid
-                                  }).Count();
+                                 join c in _context.Customers on cg.CustomerId equals c.Oid
+                                 where cg.GroupId == groupId
+                                 && cg.Active.GetValueOrDefault()
+                                 select new
+                                 {
+                                     cg.Oid
+                                 }).Count();
 
             return Ok(customerCount);
         }
@@ -285,7 +285,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customersWithoutMargins = await (from cg in _context.CustomerInfoByGroup
+            List<CustomerInfoByGroup> customersWithoutMargins = await (from cg in _context.CustomerInfoByGroup
                                                  join c in _context.Customers on cg.CustomerId equals c.Oid
                                                  join cct in _context.CustomCustomerTypes on new { customerId = cg.CustomerId, fboId = fboId } equals
                                                      new
@@ -320,7 +320,7 @@ namespace FBOLinx.Web.Controllers
                 FBOLinx.Web.Services.PriceFetchingService priceFetchingService = new FBOLinx.Web.Services.PriceFetchingService(_context);
                 List<DTO.CustomerWithPricing> customerPricingResults = await priceFetchingService.GetCustomerPricingAsync(fboId, groupId);
 
-                var customerAircraft = 
+                var customerAircraft =
                     from aircraftByCustomer in _context.CustomerAircrafts
                     where aircraftByCustomer.GroupId == groupId
                     group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
