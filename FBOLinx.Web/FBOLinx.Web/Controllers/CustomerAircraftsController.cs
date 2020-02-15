@@ -101,7 +101,7 @@ namespace FBOLinx.Web.Controllers
                     BasedPaglocation = ca.BasedPaglocation,
                     NetworkCode = ca.NetworkCode,
                     AddedFrom = ca.AddedFrom.GetValueOrDefault(),
-                    PricingTemplateName = p == null ? "Customer Default" : p.Name,
+                    PricingTemplateName = p == null ? "" : p.Name,
                     Make = ac.Make,
                     Model = ac.Model
                 }).OrderBy((x => x.TailNumber)).ToListAsync();
@@ -237,12 +237,12 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Name == customerAircrafts.PricingTemplateName && s.Fboid == fboid);
-                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
-                AircraftPrices aircraftPrice = _context.AircraftPrices.FirstOrDefault(a => a.CustomerAircraftId.Equals(customerAircrafts.Oid));
+                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.GroupId == customerAircrafts.GroupId && s.CustomerId == customerAircrafts.CustomerId);
+                AircraftPrices aircraftPrice = _context.AircraftPrices.FirstOrDefault(a => a.CustomerAircraftId.Equals(custAircraft.Oid));
                 CustomCustomerTypes customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == customerAircrafts.CustomerId && s.Fboid == fboid);
                 if (aircraftPrice != null)
                 {
-                    aircraftPrice.PriceTemplateId = pricingTemplate.Oid;
+                    aircraftPrice.PriceTemplateId = pricingTemplate?.Oid;
                     _context.AircraftPrices.Update(aircraftPrice);
                 }
 
@@ -255,7 +255,7 @@ namespace FBOLinx.Web.Controllers
                 }
 
                 // Tail-specific margin template overrides customer level templates.
-                if (customerMargin != null)
+                if (customerMargin != null && pricingTemplate != null)
                 {
                     customerMargin.CustomerType = pricingTemplate.Oid;
                 }

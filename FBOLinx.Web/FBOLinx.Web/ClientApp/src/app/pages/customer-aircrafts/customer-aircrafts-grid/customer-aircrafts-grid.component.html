@@ -29,9 +29,13 @@
             <ng-container matColumnDef="aircraftPricingTemplate">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Pricing</th>
                 <td mat-cell *matCellDef="let customerAircraft">
-                    <select id="pricingtemplates" name="ddlPricingTemplate" class="dropdownHeight" [(ngModel)]="customerAircraft.pricingTemplateName" (ngModelChange)="onMarginChange($event, customerAircraft);">
-                        <option *ngFor="let pricingTemplate of pricingTemplatesData" value="{{pricingTemplate.name}}">{{pricingTemplate.name}}</option>
-                    </select>
+                    <mat-form-field floatLabel="never">
+                        <mat-label>Company Pricing</mat-label>
+                        <mat-select [(ngModel)]="customerAircraft.pricingTemplateName" (ngModelChange)="onMarginChange($event, customerAircraft);">
+                          <mat-option>None</mat-option>
+                          <mat-option *ngFor="let pricingTemplate of pricingTemplatesData" [value]="pricingTemplate.name">{{pricingTemplate.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </td>
             </ng-container>
 
