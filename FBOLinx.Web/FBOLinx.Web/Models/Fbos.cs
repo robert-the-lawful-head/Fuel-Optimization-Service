@@ -52,6 +52,7 @@ namespace FBOLinx.Web.Models
         [Column("GroupMargin100LLType")]
         public short? GroupMargin100Lltype { get; set; }
         public string FuelDeskEmail { get; set; }
+        public string Website { get; set; }
         [StringLength(50)]
         public string MainPhone { get; set; }
         [StringLength(50)]
