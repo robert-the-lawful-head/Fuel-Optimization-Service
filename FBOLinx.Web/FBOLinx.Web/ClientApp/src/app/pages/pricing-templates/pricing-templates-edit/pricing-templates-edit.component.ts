@@ -135,6 +135,7 @@ export class PricingTemplatesEditComponent {
         //Update the margin template first
         this.pricingTemplatesService.update(this.pricingTemplate).subscribe((data: any) => {
             this.saveCustomerMargins();
+            this.sharedService.NotifyPricingTemplateComponent("updatecomponent");
         });
     }
     

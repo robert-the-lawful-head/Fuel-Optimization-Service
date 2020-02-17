@@ -64,6 +64,9 @@ export class PricingTemplatesHomeComponent {
                     this.currentPricingTemplate = null;
                 });
             });
+
+            this.sharedService.NotifyPricingTemplateComponent("updatecomponent");
+
         });
     }
 
