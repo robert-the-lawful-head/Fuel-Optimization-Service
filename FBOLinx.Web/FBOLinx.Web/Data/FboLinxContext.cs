@@ -187,6 +187,7 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.Fbo).IsUnicode(false);
 
                 entity.Property(e => e.FuelDeskEmail).IsUnicode(false);
+                entity.Property(e => e.Website).IsUnicode(false);
 
                 entity.Property(e => e.InitialSetupPhase).HasDefaultValueSql("((1))");
 
