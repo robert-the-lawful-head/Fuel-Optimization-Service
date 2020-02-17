@@ -148,7 +148,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
                 if (result.toDelete) {
                     this.customerAircraftsService.remove(result).subscribe((data: any) => {
-
                         this.customerAircraftsService
                             .getCustomerAircraftsByGroupAndCustomerId(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId,
                                 result.customerId).subscribe((data:
@@ -158,8 +157,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                     this.customerAircraftsDataSource.sort = this.sort;
                                     this.customerAircraftsDataSource.paginator = this.paginator;
                                 });
-
-
                     });
                 }
 
