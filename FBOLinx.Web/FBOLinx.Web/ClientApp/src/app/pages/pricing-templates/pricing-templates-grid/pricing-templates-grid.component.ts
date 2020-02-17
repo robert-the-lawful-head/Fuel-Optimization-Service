@@ -38,6 +38,7 @@ export class PricingTemplatesGridComponent implements OnInit {
     }
 
     ngOnInit() {
+        
         if (!this.pricingTemplatesData)
             return;
         this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
@@ -70,13 +71,12 @@ export class PricingTemplatesGridComponent implements OnInit {
             if (!result)
                 return;
             this.newPricingTemplateAdded.emit();
-            window.location.reload();
+            this.sharedService.NotifyPricingTemplateComponent("updatecomponent");
         });
     }
 
     public deletePricingTemplate(pricingTemplate) {
         this.deletePricingTemplateClicked.emit(pricingTemplate);
-        window.location.reload();
     }
 
     public applyFilter(filterValue: string) {

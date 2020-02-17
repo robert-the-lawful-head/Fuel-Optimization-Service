@@ -38,6 +38,9 @@ export class AdditionNavbarComponent implements OnInit {
     @ViewChild('nodeInput') fileInput: ElementRef;
     @ViewChild("insideElement") insideElement;
     @Input() templatelst: any[];
+
+    message: string;
+
     constructor(private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
         public templateDialog: MatDialog,
@@ -74,6 +77,7 @@ export class AdditionNavbarComponent implements OnInit {
             }
         }
         );
+
         this.pricingTemplatesData = this.templatelst.filter((element: any, index: number, array: any[]) => {
             //return true;
             return array.indexOf(array.find(t => t.oid === element.oid && t.text === element.text && t.name === element.name)) === index;
@@ -90,6 +94,23 @@ export class AdditionNavbarComponent implements OnInit {
         //this.resultsLength = 0;//this.pricingTemplatesData.length;
         //this.marginTemplateDataSource.paginator = this.paginator;
         //this.pricingTemplatesData.length;
+
+        this.sharedService.currentMessage.subscribe(message => {
+            this.message = message
+            console.log(this.message);
+            
+            this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).subscribe((data: any) => {
+                this.pricingTemplatesData = data;
+                this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData.filter((element: any, index: number, array: any[]) => {
+                    return true;
+                }));
+                this.marginTemplateDataSource.sort = this.sort;
+                this.marginTemplateDataSource.paginator = this.paginator;
+                this.resultsLength = this.pricingTemplatesData.length;
+
+            });
+        });
+
     }
 
 

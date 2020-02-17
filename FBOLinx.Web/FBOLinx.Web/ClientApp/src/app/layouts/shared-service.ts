@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 
 import { AuthenticationService } from '../services/authentication.service'
 import { User } from '../models/User';
+
+
 
 //Components
 import * as moment from 'moment';
@@ -24,6 +26,9 @@ export class SharedService {
     currentUser: User;
     dashboardSettings: DashboardSettings = new DashboardSettings();
 
+    private priceTemplateMessageSource = new BehaviorSubject('Update Pricing Template');
+    currentMessage = this.priceTemplateMessageSource.asObservable();
+
   // Observable string sources
   private emitChangeSource = new Subject();
 
@@ -37,6 +42,10 @@ export class SharedService {
             this.dashboardSettings = JSON.parse(storedDashboardSettings);
         }
     }
+
+    NotifyPricingTemplateComponent(message: string) {
+        this.priceTemplateMessageSource.next(message);
+    };
 
   // Observable string streams
   changeEmitted$ = this.emitChangeSource.asObservable();
