@@ -7,6 +7,7 @@ import { AuthenticationService } from '../../../services/authentication.service'
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { CustomersService } from '../../../services/customers.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 
 const BREADCRUMBS: any[] = [
     {
@@ -31,17 +32,18 @@ export class CustomersHomeComponent {
     public pageTitle: string = 'Customers';
     public breadcrumb: any[] = BREADCRUMBS;
     public customersData: Array<any>;
+    public pricingTemplatesData: any[];
 
     /** customers-home ctor */
     constructor(private route: ActivatedRoute,
         private router: Router,
-        private authenticationService: AuthenticationService,
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private customersService: CustomersService,
+        private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService) {
 
         this.sharedService.emitChange(this.pageTitle);
         this.loadCustomers();
+        this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
     }
 
     public editCustomerClicked(record) {

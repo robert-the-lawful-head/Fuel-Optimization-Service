@@ -2,7 +2,12 @@
 
 <div>
     <div *ngIf="customersData">
-        <app-customers-grid [customersData]="customersData" (editCustomerClicked)="editCustomerClicked($event)" (customerDeleted)="customerDeleted($event)"></app-customers-grid>
+        <app-customers-grid
+            [customersData]="customersData"
+            [pricingTemplatesData]="pricingTemplatesData"
+            (editCustomerClicked)="editCustomerClicked($event)"
+            (customerDeleted)="customerDeleted($event)"
+        ></app-customers-grid>
     </div>
     <div *ngIf="!customersData">
         <mat-spinner></mat-spinner>

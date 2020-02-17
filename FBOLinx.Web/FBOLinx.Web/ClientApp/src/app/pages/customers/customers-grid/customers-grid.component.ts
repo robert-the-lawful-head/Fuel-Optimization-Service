@@ -44,9 +44,7 @@ export class CustomersGridComponent implements OnInit {
     public selectAll: boolean = false;
     public selectedRows: number;
     public globalMargin: any;
-    public pageIndex: number = 0;
-    public pricingTemplatesDataSource: MatTableDataSource<any> = null;
-    
+    public pageIndex: number = 0;    
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -66,7 +64,6 @@ export class CustomersGridComponent implements OnInit {
 
     ngOnInit() {
         this.loadCustomerAircraftFullList();
-        this.pricingTemplatesDataSource = new MatTableDataSource(this.pricingTemplatesData);
         if (!this.customersData)
             return;
         this.refreshCustomerDataSource();
@@ -191,15 +188,18 @@ export class CustomersGridComponent implements OnInit {
 
     public exportCustomerAircraftToExcel() {
         //Export the filtered results to an excel spreadsheet
-        let exportData = _.clone(this.allCustomerAircraft);
-        exportData = _.map(exportData, item => {
+        let exportData = _.map(this.allCustomerAircraft, item => {
+            let matchingPricingTemplate = _.find(this.pricingTemplatesData, pricing => {
+                return item.pricingTemplateName == pricing.name;
+            });
             return {
                 Company: item.company,
                 Tail: item.tailNumber,
                 Make: item.make,
                 Model: item.model,
                 Size: item.aircraftSizeDescription,
-                'Margin Template': item.pricingTemplateName
+                'Margin Template': item.pricingTemplateName,
+                Pricing: matchingPricingTemplate ? matchingPricingTemplate.intoPlanePrice : ''
             };
         });
         exportData = _.sortBy(exportData, [
