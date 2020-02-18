@@ -30,7 +30,6 @@ export class ContactsGridComponent {
     displayedColumns: string[] = ['firstName', 'lastName', 'title', 'email', 'phone', 'copyAlerts', 'delete'];
     public copyAll: boolean = false;
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
     /** contacts-grid ctor */
@@ -49,10 +48,9 @@ export class ContactsGridComponent {
             return !contact.copyAlerts;
         });
         this.copyAll = foundedIndex >= 0 ? false : true;
-        this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+        this.sort.sortChange.subscribe(() => {});
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
-        this.contactsDataSource.paginator = this.paginator;
     }
 
     //Public Methods
@@ -63,7 +61,6 @@ export class ContactsGridComponent {
                 this.contactsData.splice(index, 1);//remove element from array
                 this.contactsDataSource = new MatTableDataSource(this.contactsData);
                 this.contactsDataSource.sort = this.sort;
-                this.contactsDataSource.paginator = this.paginator;
             });
         });
     }
@@ -101,7 +98,6 @@ export class ContactsGridComponent {
                             this.contactsData.splice(index, 1);//remove element from array
                             this.contactsDataSource = new MatTableDataSource(this.contactsData);
                             this.contactsDataSource.sort = this.sort;
-                            this.contactsDataSource.paginator = this.paginator;
                         });
                     });
                 }
