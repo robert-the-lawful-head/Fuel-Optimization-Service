@@ -29,6 +29,9 @@ export class SharedService {
     private priceTemplateMessageSource = new BehaviorSubject('Update Pricing Template');
     currentMessage = this.priceTemplateMessageSource.asObservable();
 
+    private priceUpdateMessage = new BehaviorSubject('Enable button');
+    priceMessage = this.priceUpdateMessage.asObservable();
+
   // Observable string sources
   private emitChangeSource = new Subject();
 
@@ -46,6 +49,10 @@ export class SharedService {
     NotifyPricingTemplateComponent(message: string) {
         this.priceTemplateMessageSource.next(message);
     };
+
+    NotifyPricingSavedComponent(message: string) {
+        this.priceUpdateMessage.next(message);
+    }
 
   // Observable string streams
   changeEmitted$ = this.emitChangeSource.asObservable();
