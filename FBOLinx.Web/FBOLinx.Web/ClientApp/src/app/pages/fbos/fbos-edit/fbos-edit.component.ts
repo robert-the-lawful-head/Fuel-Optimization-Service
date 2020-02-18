@@ -82,7 +82,7 @@ export class FbosEditComponent implements OnInit {
         this.fboAirportInfo.fboId = this.fboInfo.oid;
         this.fboService.update(this.fboInfo).subscribe(() => {
             this.fboAirportsService.update(this.fboAirportInfo).subscribe(() => {
-                this.fboAirportInfo = null;
+                //this.fboAirportInfo = null;
             });
         });
         this.saveClicked.emit(this.fboInfo);
