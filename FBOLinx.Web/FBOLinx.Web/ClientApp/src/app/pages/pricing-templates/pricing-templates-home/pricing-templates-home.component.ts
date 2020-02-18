@@ -42,7 +42,8 @@ export class PricingTemplatesHomeComponent {
         public deleteFBODialog: MatDialog
     ) {
         this.sharedService.emitChange(this.pageTitle);
-        pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).subscribe((data: any) => this.pricingTemplatesData = data);
+        pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+            .subscribe((data: any) => this.pricingTemplatesData = data);
         this.currentPricingTemplate = null;
     }
 
@@ -85,9 +86,10 @@ export class PricingTemplatesHomeComponent {
 
     public newPricingTemplateAdded(event) {
         this.pricingTemplatesData = null;
-        this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.pricingTemplatesData = data;
-            this.currentPricingTemplate = null;
-        });
+        this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+            .subscribe((data: any) => {
+                this.pricingTemplatesData = data;
+                this.currentPricingTemplate = null;
+            });
     }
 }
