@@ -72,7 +72,7 @@ namespace FBOLinx.Web.Controllers
                 }
                 into leftJoinCCT
                 from cct in leftJoinCCT.DefaultIfEmpty()
-                                   where dl.Fboid == fboId
+                where dl.Fboid == fboId
                 select new
                 {
                     dl.Oid,

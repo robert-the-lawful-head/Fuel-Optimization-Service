@@ -14,40 +14,6 @@
             <ni-badge [size]="'medium'" [color]="'danger'">Your changes have not been saved.</ni-badge>
         </div>
     </div>
-    <!--<div class="row mb-2" *ngIf="requiresUpdate">
-        <div class=" text-center col-12">
-            <button ni-button [view]="'success'" class="mr-1" beforeIcon="fa fa-usd" (click)="saveChangesClicked()">Save Changes</button>
-        </div>
-    </div>-->
-    <!--<div class="row mb-2" *ngIf="!requiresUpdate">
-        <div class=" text-center col-12">
-            <button ni-button [view]="'warning'" beforeIcon="fa fa-usd" (click)="distributePricingClicked()">Distribute Pricing</button>
-        </div>
-    </div>-->
-    <!--<div class="row">
-        <div class="col">
-            <ni-card title="Preferences" class="mb-0">
-                <div>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-6 col-md-3">
-                                <mat-slide-toggle color="accent" (change)="retailJetAToggled()" [(ngModel)]="fboPreferences.omitJetARetail">Hide JetA Retail</mat-slide-toggle>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <mat-slide-toggle color="accent" (change)="costJetAToggled()" [(ngModel)]="fboPreferences.omitJetACost">Hide JetA Cost</mat-slide-toggle>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <mat-slide-toggle color="accent" (change)="fboPreferenceChange()" [(ngModel)]="fboPreferences.omit100LLRetail">Hide 100LL Retail</mat-slide-toggle>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <mat-slide-toggle color="accent" (change)="fboPreferenceChange()" [(ngModel)]="fboPreferences.omit100LLCost">Hide 100LL Cost</mat-slide-toggle>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ni-card>
-        </div>
-    </div>-->
     <div class="row">
         <div class="col-md-3 mt-3">
             <ni-card [bgColor]="'success'" [outline]="true" [color]="'success'" *ngIf="(currentFboPriceJetARetail && currentFboPriceJetARetail.price > 0) || activePrice;else notValid">
