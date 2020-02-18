@@ -37,12 +37,15 @@ export class DefaultLayoutComponent implements OnInit {
         this.menuStyle = 'style-3';
         this.rtl = false;
 
-        this.pricingTemplatesService.getByFbo(this._sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
-        _sharedService.changeEmitted$.subscribe(
-            title => {
-                this.pageTitle = title;
-            }
-        );
+        if (this._sharedService.currentUser.fboId) {
+            this.pricingTemplatesService.getByFbo(this._sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
+            _sharedService.changeEmitted$.subscribe(
+                title => {
+                    this.pageTitle = title;
+                }
+            );
+        }
+        
     }
 
     ngOnInit() {
