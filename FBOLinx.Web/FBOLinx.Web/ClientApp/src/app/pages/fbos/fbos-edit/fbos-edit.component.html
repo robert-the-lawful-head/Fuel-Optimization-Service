@@ -108,20 +108,6 @@
                     <app-users-home [groupInfo]="groupInfo" [fboInfo]="fboInfo"></app-users-home>
                 </div>
             </mat-tab>
-
-            <!--Contacts Tab-->
-            <mat-tab label="Contacts">
-
-                <!--Contacts Grid-->
-                <div *ngIf="contactsData && !currentContact">
-                    <app-contacts-grid [contactsData]="contactsData" (contactDeleted)="contactDeleted($event)" (newContactClicked)="newContactClicked()" (editContactClicked)="editContactClicked($event)"></app-contacts-grid>
-                </div>
-
-                <!--Contact Information-->
-                <div *ngIf="currentContact">
-                    <app-contacts-edit [contactInfo]="currentContact" (saveEditClicked)="saveEditContactClicked()" (cancelEditClicked)="cancelEditContactClicked()"></app-contacts-edit>
-                </div>
-            </mat-tab>
         </mat-tab-group>
     </div>
 </ni-card>

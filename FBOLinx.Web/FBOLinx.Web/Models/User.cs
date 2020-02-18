@@ -32,6 +32,7 @@ namespace FBOLinx.Web.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public string Token { get; set; }
+        public bool? CopyAlerts { get; set; }
         public UserRoles Role { get; set; }
         [Column("FBOID")]
         public int FboId { get; set; }
