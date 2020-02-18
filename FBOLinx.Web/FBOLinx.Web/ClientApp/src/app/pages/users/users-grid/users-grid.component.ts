@@ -23,7 +23,7 @@ export class UsersGridComponent {
     @Input() groupInfo: any;
 
     public usersDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['firstName', 'lastName', 'username', 'roleDescription','delete'];
+    public displayedColumns: string[] = ['firstName', 'lastName', 'username', 'roleDescription', 'copyAlerts', 'delete'];
     public resultsLength: number = 0;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -67,10 +67,43 @@ export class UsersGridComponent {
         });
     }
 
-    public editRecord(record) {
-        const clonedRecord = Object.assign({}, record);
-        console.log(clonedRecord);
-        this.editUserClicked.emit(clonedRecord);
+    public UpdateCopyAlertsValue(value) {
+       
+        if (value.copyAlerts) {
+            value.copyAlerts = !value.copyAlerts;
+        }
+        else {
+            value.copyAlerts = true;
+        }
+
+        value.GroupId = this.fboInfo.groupId;
+        this.userService.update(value).subscribe((data: any) => {
+            
+        });
+    }
+
+    public editRecord(record, $event) {
+        if ($event.target) {
+            if ($event.target.className.indexOf('mat-slide-toggle') > -1) {
+                $event.stopPropagation();
+                return false;
+            }
+            else {
+                const clonedRecord = Object.assign({}, record);
+                console.log(clonedRecord);
+                this.editUserClicked.emit(clonedRecord);
+            }
+        }
+        else {
+            const clonedRecord = Object.assign({}, record);
+            console.log(clonedRecord);
+            this.editUserClicked.emit(clonedRecord);
+        }
+
+
+        //const clonedRecord = Object.assign({}, record);
+        //console.log(clonedRecord);
+        //this.editUserClicked.emit(clonedRecord);
     }
 
     public newRecord() {

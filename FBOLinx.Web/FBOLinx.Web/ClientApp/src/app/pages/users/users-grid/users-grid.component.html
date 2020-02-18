@@ -26,14 +26,21 @@
             <td mat-cell *matCellDef="let user">{{user.roleDescription}}</td>
         </ng-container>
 
-        <!--<ng-container matColumnDef="edit">
-            <th mat-header-cell *matHeaderCellDef></th>
+        <ng-container matColumnDef="copyAlerts">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Copy On Distribution?</th>
             <td mat-cell *matCellDef="let user">
-                <div class="pull-right">
-                    <button ni-button size="small" beforeIcon="fa fa-edit" (click)="editRecord(user)">Edit</button>
-                </div>
+                <mat-slide-toggle color="accent" (click)="UpdateCopyAlertsValue(user);" [checked]="user.copyAlerts" [(ngModel)]="user.copyAlerts"></mat-slide-toggle>
             </td>
-        </ng-container>-->
+        </ng-container>
+
+        <!--<ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let user">
+            <div class="pull-right">
+                <button ni-button size="small" beforeIcon="fa fa-edit" (click)="editRecord(user)">Edit</button>
+            </div>
+        </td>
+    </ng-container>-->
 
 
         <ng-container matColumnDef="delete">
@@ -51,7 +58,7 @@
 
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editRecord(row)"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editRecord(row,$event)"></tr>
     </table>
 </div>
 
