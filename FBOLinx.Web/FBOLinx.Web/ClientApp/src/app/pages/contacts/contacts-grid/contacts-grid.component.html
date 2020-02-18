@@ -26,7 +26,10 @@
         </ng-container>
 
         <ng-container matColumnDef="copyAlerts">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Copy On Distribution?</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Copy All
+                <mat-slide-toggle color="accent" (change)="UpdateAllCopyAlertsValues();" [checked]="copyAll"></mat-slide-toggle>
+            </th>
             <td mat-cell *matCellDef="let contact">
                 <mat-slide-toggle color="accent" (click)="UpdateCopyAlertsValue(contact);" [checked]="contact.copyAlerts" [(ngModel)]="contact.copyAlerts"></mat-slide-toggle>
             </td>

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnInit, ViewChild} from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import * as _ from 'lodash';
 
 //Services
 import { ContactsService } from '../../../services/contacts.service';
@@ -27,8 +28,8 @@ export class ContactsGridComponent {
     public currentContactInfoByGroup: any;
     contactsDataSource: MatTableDataSource<any> = null;
     displayedColumns: string[] = ['firstName', 'lastName', 'title', 'email', 'phone', 'copyAlerts', 'delete'];
+    public copyAll: boolean = false;
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
     /** contacts-grid ctor */
@@ -41,28 +42,27 @@ export class ContactsGridComponent {
     }
 
     ngOnInit() {
-        if (!this.contactsData)
-            return;
-        this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+        if (!this.contactsData) return;
+
+        let foundedIndex = _.findIndex(this.contactsData, contact => {
+            return !contact.copyAlerts;
+        });
+        this.copyAll = foundedIndex >= 0 ? false : true;
+        this.sort.sortChange.subscribe(() => {});
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
-        this.contactsDataSource.paginator = this.paginator;
     }
 
     //Public Methods
     public deleteRecord(record) {
         this.customerContactsService.remove(record.customerContactId).subscribe((data: any) => {
             this.contactInfoByGroupsService.remove(record.contactInfoByGroupId).subscribe((data: any) => {
-                //delete this.contactsData[contact];
-                //this.contactsData = this.cont.splice(contact.contactInfoByGroupId, 1);
                 let index = this.contactsData.findIndex(d => d.customerContactId === record.customerContactId); //find index in your array
                 this.contactsData.splice(index, 1);//remove element from array
                 this.contactsDataSource = new MatTableDataSource(this.contactsData);
                 this.contactsDataSource.sort = this.sort;
-                this.contactsDataSource.paginator = this.paginator;
             });
         });
-        //this.contactDeleted.emit(record);
     }
 
     public editRecord(record, $event) {
@@ -73,27 +73,23 @@ export class ContactsGridComponent {
             }
             else {
                 const clonedRecord = Object.assign({}, record);
-                console.log(clonedRecord);
                 this.editContactClicked.emit(clonedRecord);;
             }
         }
         else {
             const clonedRecord = Object.assign({}, record);
-            console.log(clonedRecord);
             this.editContactClicked.emit(clonedRecord);
         }
         
     }
 
     public EditContactPopup(record) {
-        console.log('now in edit contact popup');
         const dialogRef = this.newContactDialog.open(ContactsDialogNewContactComponent, {
             data: record
         });
 
         dialogRef.afterClosed().subscribe(result => {
             if (result != 'cancel') {
-                console.log(result);
                 if (result.toDelete) {
 
                     this.customerContactsService.remove(record.customerContactId).subscribe((data: any) => {
@@ -102,7 +98,6 @@ export class ContactsGridComponent {
                             this.contactsData.splice(index, 1);//remove element from array
                             this.contactsDataSource = new MatTableDataSource(this.contactsData);
                             this.contactsDataSource.sort = this.sort;
-                            this.contactsDataSource.paginator = this.paginator;
                         });
                     });
                 }
@@ -153,9 +148,23 @@ export class ContactsGridComponent {
         else {
             value.copyAlerts = true;
         }
+        let unselectedIndex = _.findIndex(this.contactsData, contact => {
+            return !contact.copyAlerts;
+        });
+        this.copyAll = unselectedIndex >= 0 ? false : true;
         
         value.GroupId = this.sharedService.currentUser.groupId;
         this.contactInfoByGroupsService.update(value).subscribe((data: any) => {
+        });
+    }
+
+    public UpdateAllCopyAlertsValues() {
+        this.copyAll = !this.copyAll;
+        _.forEach(this.contactsData, contact => {
+            contact.copyAlerts = this.copyAll;
+            contact.GroupId = this.sharedService.currentUser.groupId;
+            this.contactInfoByGroupsService.update(contact).subscribe((data: any) => {
+            }); 
         });
     }
 }
