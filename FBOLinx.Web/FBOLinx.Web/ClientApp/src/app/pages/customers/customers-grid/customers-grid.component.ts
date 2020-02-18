@@ -189,8 +189,17 @@ export class CustomersGridComponent implements OnInit {
     public exportCustomerAircraftToExcel() {
         //Export the filtered results to an excel spreadsheet
         let exportData = _.map(this.allCustomerAircraft, item => {
+            let pricingTemplateName = item.pricingTemplateName;
+            if (!pricingTemplateName) {
+                const customer = _.find(this.customersData, customer => {
+                    return customer.customerId == item.customerId;
+                });
+                if (customer) {
+                    pricingTemplateName = customer.pricingTemplateName;
+                }
+            }
             let matchingPricingTemplate = _.find(this.pricingTemplatesData, pricing => {
-                return item.pricingTemplateName == pricing.name;
+                return pricing.name == pricingTemplateName;
             });
             return {
                 Company: item.company,
@@ -198,7 +207,7 @@ export class CustomersGridComponent implements OnInit {
                 Make: item.make,
                 Model: item.model,
                 Size: item.aircraftSizeDescription,
-                'Margin Template': item.pricingTemplateName,
+                'Margin Template': pricingTemplateName,
                 Pricing: matchingPricingTemplate ? matchingPricingTemplate.intoPlanePrice : ''
             };
         });

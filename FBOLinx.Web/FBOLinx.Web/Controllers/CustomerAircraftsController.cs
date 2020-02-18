@@ -144,7 +144,7 @@ namespace FBOLinx.Web.Controllers
                                                 NetworkCode = ca.NetworkCode,
                                                 AddedFrom = ca.AddedFrom.GetValueOrDefault(),
                                                 PricingTemplateId = a == null ? 0 : a.PriceTemplateId.GetValueOrDefault(),
-                                                PricingTemplateName = p == null ? "Customer Default" : p.Name,
+                                                PricingTemplateName = p == null ? "" : p.Name,
                                                 Make = ac.Make,
                                                 Model = ac.Model
                                             }).OrderBy((x => x.TailNumber)).ToListAsync();
