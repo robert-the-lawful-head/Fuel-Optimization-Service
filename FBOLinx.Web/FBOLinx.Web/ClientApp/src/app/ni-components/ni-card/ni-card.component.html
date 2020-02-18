@@ -36,7 +36,7 @@
     }">
         <div class="row">
             <div class="col-12">
-                {{title}}&nbsp;<button title="Temporarily increase or decrease your pricing to ALL customers" *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 pull-right" (click)="openAddOnMargin()">Add On Margin</button>&nbsp;<button title="Suspend pricing for all customers" *ngIf="visibleSuspend=='true' && !tempId && visible=='true'" ni-button [view]="'info'" style="background-color:red; color:white;" class="mr-4 pull-right" (click)="suspendPricing()">Cancel Pricing</button>
+                {{title}}&nbsp;<button title="Temporarily increase or decrease your pricing to ALL customers" *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 pull-right" (click)="openAddOnMargin()">Add On Margin</button>&nbsp;<button title="Suspend pricing for all customers" *ngIf="!tempId && visible=='true' && visibleSuspend=='true'" ni-button [view]="'info'" style="background-color:red; color:white;" class="mr-4 pull-right" (click)="suspendPricing()">Cancel Pricing</button>
             </div>
         </div>
     </h3>

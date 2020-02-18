@@ -41,7 +41,7 @@ export class NiCardComponent implements OnInit {
     @Input() headerColor: string = '';
     @Input() theme: string = '';
 
-
+    message: string;
     public currentPrices: any[];
     //public isPricingSuspended: boolean = true;
     //@Input() isPricingSuspended: boolean = false;
@@ -49,6 +49,12 @@ export class NiCardComponent implements OnInit {
 
     ngOnInit() {
         this.checkPrices();
+
+        this.sharedService.priceMessage.subscribe(message => {
+            if (message) {
+                this.visibleSuspend = 'true';
+            }
+        });
     }
 
     openDialog(): Observable<any> {

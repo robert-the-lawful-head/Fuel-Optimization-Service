@@ -122,6 +122,7 @@ export class FboPricesHomeComponent implements OnInit {
 		this.loadFboFees();
 		this.loadDistributionLog();
         this.loadPricingTemplates();
+
         
     }
 
@@ -258,6 +259,7 @@ export class FboPricesHomeComponent implements OnInit {
             this.currentFboPriceJetACost.price = priceCost;
             this.currentFboPriceJetARetail.effectiveTo = dateRetasil;
             this.currentFboPriceJetARetail.price = priceRetail;
+            this.sharedService.NotifyPricingSavedComponent("update");
         }
         else {
             for (let price of this.currentPrices) {
@@ -278,6 +280,7 @@ export class FboPricesHomeComponent implements OnInit {
                 this.isSaved = false;
                 this.requiresUpdate = true;
                 this.show = false;
+                this.sharedService.NotifyPricingSavedComponent("update");
             });
             this.loadCurrentFboPrices();
         }
@@ -297,7 +300,7 @@ export class FboPricesHomeComponent implements OnInit {
 		this.jtRetail = this.jtCost = '';
         this.saveOk = true;
         this.niCard.checkPricing();
-        this.niCard.visibleSuspend = 'true';
+      
 	}
 
 	public fboPreferenceChange() {
