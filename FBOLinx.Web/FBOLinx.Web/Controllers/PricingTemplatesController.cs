@@ -99,14 +99,13 @@ namespace FBOLinx.Web.Controllers
 
             double? jetACost = resultPrices.FirstOrDefault(s => s.Product == "JetA Cost").Price;
             double? jetARetail = resultPrices.FirstOrDefault(s => s.Product == "JetA Retail").Price;
-            TempAddOnMargin marginPrice = _context.TempAddOnMargin.FirstOrDefault(s => s.FboId == fboId && s.EffectiveTo > DateTime.Now);
 
             List<PricingTemplatesGridViewModel> result = (
                 from p in _context.PricingTemplate
                 join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
                 join cm in (
                     from c in _context.CustomerMargins
-                    join tm in (_context.PriceTiers)
+                    join tm in _context.PriceTiers
                     on c.PriceTierId equals tm.Oid
                     group c by new {c.TemplateId} 
                     into cmResults
@@ -139,9 +138,14 @@ namespace FBOLinx.Web.Controllers
                     Subject = p.Subject,
                     Email = p.Email,
                     IntoPlanePrice = (jetaACostRecord == null ? 0 : jetaACostRecord.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice.Value),
-                    IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
+                    IsInvalid = (f != null && f.Preferences != null &&
+                        ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus)
+                        || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)
+                    ) ? true : false,
                     IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
-                    YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
+                    YourMargin = jetaACostRecord == null ||
+                        (jetaACostRecord != null && jetaACostRecord.Price.GetValueOrDefault() <= 0)
+                        ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord != null ? jetaACostRecord.Price.GetValueOrDefault() : 0)
                 }).ToList();
 
             foreach (PricingTemplatesGridViewModel res in result)

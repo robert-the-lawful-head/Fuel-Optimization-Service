@@ -494,6 +494,9 @@ export class FboPricesHomeComponent implements OnInit {
 				if (!this.fboPreferences)
 					this.fboPreferences = { fboId: this.sharedService.currentUser.fboId };
 				this.isLoadingFboPreferences = false;
+			}, (error: any) => {
+				this.fboPreferences = { fboId: this.sharedService.currentUser.fboId };
+				this.isLoadingFboPreferences = false;
 			});
 	}
 
@@ -510,28 +513,36 @@ export class FboPricesHomeComponent implements OnInit {
 	}
 
 	private loadFboFees() {
-		this.fboFeesService.getFbofeesForFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-			this.fboFees = data;
-			if (!this.fboFees)
+		this.fboFeesService.getFbofeesForFbo(this.sharedService.currentUser.fboId)
+			.subscribe((data: any) => {
+				this.fboFees = data;
+				if (!this.fboFees)
+					this.fboFees = [];
+				this.isLoadingFboFees = false;
+			}, (error: any) => {
 				this.fboFees = [];
-			this.isLoadingFboFees = false;
-		});
+				this.isLoadingFboFees = false;
+			});
 	}
 
 	private loadDistributionLog() {
-		this.distributionService.getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50).subscribe((data:
-				any) => {
-			this.distributionLog = data;
+		this.distributionService.getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50)
+			.subscribe((data:any) => {
+				this.distributionLog = data;
 				if (!this.distributionLog)
 					this.distributionLog = [];
-			}
-		);
+			}, (error: any) => {
+				this.distributionLog = [];
+			});
 	}
 
 	private loadPricingTemplates() {
-		this.pricingTemplateService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-			this.pricingTemplates = data;
-		});
+		this.pricingTemplateService.getByFbo(this.sharedService.currentUser.fboId)
+			.subscribe((data: any) => {
+				this.pricingTemplates = data;
+			}, (error: any) => {
+				this.pricingTemplates = [];
+			});
 	}
 
     private savePriceChanges(price) {

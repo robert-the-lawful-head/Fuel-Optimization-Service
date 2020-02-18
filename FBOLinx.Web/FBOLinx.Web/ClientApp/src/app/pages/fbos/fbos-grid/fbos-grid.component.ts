@@ -102,7 +102,6 @@ export class FbosGridComponent implements OnInit {
 
     public editRecord(record,$event) {
         if ($event != null && ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox'))) {
-            //$event.preventDefault();
             $event.stopPropagation();
             return;
         }
@@ -110,9 +109,6 @@ export class FbosGridComponent implements OnInit {
         this.editFboClicked.emit(clonedRecord);
     }
 
-    //public contactAdded(data) {
-    //    alert("ace");
-    //}
 
     public newRecord() {
         let airportData = this.airportData;
@@ -122,7 +118,6 @@ export class FbosGridComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            console.log('Dialog data: ', result);
             result.groupId = this.groupInfo.oid;
             this.fboService.add(result).subscribe((data: any) => {
                 if (!result.airport)

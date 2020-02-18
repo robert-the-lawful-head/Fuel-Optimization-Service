@@ -64,7 +64,6 @@ export class NiCardComponent implements OnInit {
             panelClass: 'my-panel'
         });
         dialogRef.componentInstance.idChanged1.subscribe((result) => {
-            console.log(result);
             this.jetChanged.emit(result);
 
         });
