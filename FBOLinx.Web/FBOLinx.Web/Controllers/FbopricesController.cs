@@ -99,11 +99,6 @@ namespace FBOLinx.Web.Controllers
                               tempDateTo = s?.EffectiveTo
                           });
 
-            foreach(var item in result)
-            {
-                var tt = item;
-            }
-            
             return Ok(result);
         }
 
