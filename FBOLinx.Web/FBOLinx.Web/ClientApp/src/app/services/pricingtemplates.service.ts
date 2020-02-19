@@ -34,4 +34,8 @@ export class PricingtemplatesService {
     public update(payload) {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
     }
+
+    public getcostpluspricingtemplates(payload) {
+        return this.http.get(this.accessPointUrl + '/getcostpluspricingtemplate/' + payload, { headers: this.headers });
+    }
 }

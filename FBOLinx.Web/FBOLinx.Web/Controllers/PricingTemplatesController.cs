@@ -367,6 +367,74 @@ namespace FBOLinx.Web.Controllers
             return Ok(result);
         }
 
+        [HttpGet("getcostpluspricingtemplate/{fboId}")]
+        public async Task<IActionResult> GetCostPlusPricingTemplates([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            var templateCustomersCount = (
+                from tc in
+                (
+                    from cig in _context.CustomerInfoByGroup
+                    join cct in _context.CustomCustomerTypes on cig.CustomerId equals cct.CustomerId
+                    join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
+                    //where cig.GroupId == groupId && pt.Fboid == fboId && !string.IsNullOrEmpty(cct.CustomerType.ToString())
+                    where pt.Fboid == fboId && !string.IsNullOrEmpty(cct.CustomerType.ToString())
+                    select new
+                    {
+                        pt.Oid,
+                        cct.CustomerId
+                    }
+                )
+                group tc by tc.Oid into resultsGroup
+                select new
+                {
+                    Oid = resultsGroup.Key,
+                    Count = resultsGroup.Count()
+                }).ToList();
+
+
+
+            List<PricingTemplatesGridViewModel> result = (
+                from p in _context.PricingTemplate
+                join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
+                join cm in (
+                    from c in _context.CustomerMargins
+                    join tm in (_context.PriceTiers)
+                    on c.PriceTierId equals tm.Oid
+                    group c by new { c.TemplateId }
+                    into cmResults
+                    select new
+                    {
+                        templateId = cmResults.Key.TemplateId,
+                        maxPrice = cmResults.FirstOrDefault().Amount
+                    }
+                ) on p.Oid equals cm.templateId
+                into leftJoinCustomerMargins
+                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
+                join fp in (
+                    from f in _context.Fboprices
+                    where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId
+                    select f
+                ) on p.MarginTypeProduct equals fp.Product
+                into leftJoinFboPrices
+                from fp in leftJoinFboPrices.DefaultIfEmpty()
+                join tcc in templateCustomersCount on p.Oid equals tcc.Oid
+                into leftJoinTemplateCustomersCount
+                from tcc in leftJoinTemplateCustomersCount.DefaultIfEmpty()
+                where p.Fboid == fboId && p.MarginType == 0
+                select new PricingTemplatesGridViewModel
+                {
+                    CustomersAssigned = tcc == null ? 0 : tcc.Count
+                }).ToList();
+
+            return Ok(result);
+        }
+
 
         // GET: api/PricingTemplates/fbo/5/default
         [HttpGet("fbo/{fboId}/default")]
