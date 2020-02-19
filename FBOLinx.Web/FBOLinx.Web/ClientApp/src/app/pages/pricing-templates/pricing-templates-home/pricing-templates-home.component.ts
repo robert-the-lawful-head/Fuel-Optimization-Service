@@ -60,10 +60,11 @@ export class PricingTemplatesHomeComponent {
             if (!result) return;
             this.pricingTemplatesData = null;
             this.pricingTemplatesService.remove(pricingTemplate).subscribe((data: any) => {
-                this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-                    this.pricingTemplatesData = data;
-                    this.currentPricingTemplate = null;
-                });
+                this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+                    .subscribe((data: any) => {
+                        this.pricingTemplatesData = data;
+                        this.currentPricingTemplate = null;
+                    });
             });
 
             this.sharedService.NotifyPricingTemplateComponent("updatecomponent");
@@ -73,10 +74,11 @@ export class PricingTemplatesHomeComponent {
 
     public savePricingTemplateClicked() {
         this.pricingTemplatesService.update(this.currentPricingTemplate).subscribe((data: any) => {
-            this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-                this.pricingTemplatesData = data;
-                this.currentPricingTemplate = null;
-            });
+            this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+                .subscribe((data: any) => {
+                    this.pricingTemplatesData = data;
+                    this.currentPricingTemplate = null;
+                });
         });
     }
 
