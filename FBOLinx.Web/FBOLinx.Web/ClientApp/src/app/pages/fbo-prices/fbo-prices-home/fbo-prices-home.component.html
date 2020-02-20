@@ -62,11 +62,12 @@
                         </div>
 
                         <!--<mat-form-field>
-                            <input matInput class="btnremoveDisabled" [(ngModel)]="currentFboPriceJetACost.effectiveTo" disabled placeholder="Effective To">
-                        </mat-form-field>-->
+                <input matInput class="btnremoveDisabled" [(ngModel)]="currentFboPriceJetACost.effectiveTo" disabled placeholder="Effective To">
+            </mat-form-field>-->
                     </div>
                 </div>
-                <small>Cost pricing is confidential and not publicly displayed.  It is only used to calculate Cost+ Pricing</small>
+                
+                <small>{{costPlusText}}</small>
             </ni-card>
             <ng-template #notValidJet>
                 <ni-card [bgColor]="'info'" [outline]="true" [color]="'info'">
@@ -75,6 +76,7 @@
                         EXPIRED
                     </h4>
                     <small>Cost pricing is confidential and not publicly displayed.  It is only used to calculate Cost+ Pricing</small>
+                 
                 </ni-card>
             </ng-template>
             <ni-card id="{{TempValueId}}" [fboPrices]="currentPrices" [bgColor]="'danger'" [outline]="true" [color]="'danger'" *ngIf="(TempValueJet && TempValueJet > 0)">

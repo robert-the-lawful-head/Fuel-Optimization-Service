@@ -86,7 +86,8 @@ export class FboPricesHomeComponent implements OnInit {
     public jtCost: any;
     public jtRetail: any;
     public priceGroup: number;
-	public buttonTextValue: any;
+    public buttonTextValue: any;
+    public costPlusText: string = '';
 	public priceEntryError: string = '';
 
 	//Additional Public Members for direct reference (date filtering/restrictions)
@@ -115,14 +116,15 @@ export class FboPricesHomeComponent implements OnInit {
 		public notificationDialog: MatDialog) {
 	}
 
-    ngOnInit(): void {
+  ngOnInit(): void {
 		this.buttonTextValue = 'Update Live Pricing';
 		this.loadCurrentFboPrices();
 		this.loadFboPreferences();
 		this.loadFboFees();
 		this.loadDistributionLog();
-        this.loadPricingTemplates();
-    }
+    this.loadPricingTemplates();
+    this.checkCostPlusMargins();
+  }
 
 
 	//Public Methods
@@ -294,7 +296,8 @@ export class FboPricesHomeComponent implements OnInit {
         this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
         this.staticCurrentFboPriceJetARetail = this.currentFboPriceJetARetail.price;
         this.priceGroup = null;
-		this.buttonTextValue = 'Update Live Pricing';
+        this.buttonTextValue = 'Update Live Pricing';
+
 		this.jtRetail = this.jtCost = '';
         this.saveOk = true;
         this.niCard.checkPricing();
@@ -543,7 +546,23 @@ export class FboPricesHomeComponent implements OnInit {
 			}, (error: any) => {
 				this.pricingTemplates = [];
 			});
-	}
+    }
+
+    private checkCostPlusMargins() {
+        this.pricingTemplateService.getcostpluspricingtemplates(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+            if (data) {
+                if (data.length > 0) {
+                    this.costPlusText = 'Your cost value is confidential and not publicly displayed.  It is used for Cost+ margin templates.';
+                }
+                else {
+                    this.costPlusText = 'Cost value is not currently required (no customers are assigned to Cost+ pricing templates)';
+                }
+            }
+            else {
+                this.costPlusText = 'Cost value is not currently required (no customers are assigned to Cost+ pricing templates)';
+            }
+        });
+    }
 
     private savePriceChanges(price) {
         if (this.requiresUpdate) {
