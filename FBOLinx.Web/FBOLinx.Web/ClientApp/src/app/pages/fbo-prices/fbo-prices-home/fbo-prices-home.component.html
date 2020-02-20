@@ -16,7 +16,7 @@
     </div>
     <div class="row">
         <div class="col-md-3 mt-3">
-            <ni-card [bgColor]="'success'" [outline]="true" [color]="'success'" *ngIf="(currentFboPriceJetARetail && currentFboPriceJetARetail.price > 0) || activePrice;else notValid">
+            <ni-card [fboPrices]="currentPrices" [bgColor]="'success'" [outline]="true" [color]="'success'" *ngIf="(currentFboPriceJetARetail && currentFboPriceJetARetail.price > 0) || activePrice;else notValid">
                 <h6 class="mt-0 title">CURRENT POSTED RETAIL (JET A)</h6>
                 <div class="row">
                     <div class="col-9">
@@ -43,7 +43,7 @@
                     </h4>
                 </ni-card>
             </ng-template>
-            <ni-card [bgColor]="'info'" [outline]="true" [color]="'info'" *ngIf="(currentFboPriceJetACost && currentFboPriceJetACost.price > 0) || activePrice;else notValidJet">
+            <ni-card [fboPrices]="currentPrices" [bgColor]="'info'" [outline]="true" [color]="'info'" *ngIf="(currentFboPriceJetACost && currentFboPriceJetACost.price > 0) || activePrice;else notValidJet">
                 <h6 class="mt-0 title">CURRENT COST (JET A)</h6>
                 <div class="row">
                     <div class="col-9">
@@ -77,7 +77,7 @@
                     <small>Cost pricing is confidential and not publicly displayed.  It is only used to calculate Cost+ Pricing</small>
                 </ni-card>
             </ng-template>
-            <ni-card id="{{TempValueId}}" [bgColor]="'danger'" [outline]="true" [color]="'danger'" *ngIf="(TempValueJet && TempValueJet > 0)">
+            <ni-card id="{{TempValueId}}" [fboPrices]="currentPrices" [bgColor]="'danger'" [outline]="true" [color]="'danger'" *ngIf="(TempValueJet && TempValueJet > 0)">
                 <h6 class="mt-0">TEMPORARY ADD-ON MARGIN (ALL)</h6>
                 <div class="row">
                     <div class="col-6">
@@ -108,7 +108,7 @@
             </ni-card>
         </div>
         <div class="col-md-8 mt-3">
-            <ni-card #niCard title="Update your pricing here" [headerBgColor]="'success'"  (priceDeleted)="pricesSuspended($event)" (jetChanged)="jetChangedHandler($event)" [visible]="'true'" [tempId]="TempValueId" class="mb-0">
+            <ni-card #niCard title="Update your pricing here" [fboPrices]="currentPrices" [headerBgColor]="'success'"  (priceDeleted)="pricesSuspended($event)" (jetChanged)="jetChangedHandler($event)" [visible]="'true'" [tempId]="TempValueId" class="mb-0">
                 <div title="">
                     <div class="container-fluid">
                         <div class="row">
@@ -158,80 +158,10 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!--<div class="row mt-1">
-                            <div class="col-12">
-                                <div class="float-right" *ngIf="requiresUpdate">
-                                    <button ni-button [view]="'success'" class="mr-1" (click)="saveChangesClicked()">Post Live Pricing</button>
-                                </div>
-                            </div>
-                        </div>-->
-                        <!--<div class="row" *ngIf="currentFboPrice100LLCost && currentFboPrice100LLRetail && (!fboPreferences.omit100LLCost || !fboPreferences.omit100LLRetail)">
-                            <div class="col-3">
-                                <div style="position: absolute; bottom: 40%;">
-                                    100LL
-                                </div>
-                            </div>
-                            <div class="col-3" *ngIf="!fboPreferences.omit100LLCost">
-                                <mat-form-field>
-                                    <input matInput placeholder="Cost" [(ngModel)]="currentFboPrice100LLCost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(currentFboPrice100LLCost)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}"/>
-                                    <span matPrefix>$</span>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-3" *ngIf="!fboPreferences.omit100LLRetail">
-                                <mat-form-field>
-                                    <input matInput placeholder="Retail" [(ngModel)]="currentFboPrice100LLRetail.price" type="text" (ngModelChange)="fboPriceRequiresUpdate(currentFboPrice100LLRetail)" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.'}"/>
-                                    <span matPrefix>$</span>
-                                </mat-form-field>
-                            </div>
-                        </div>-->
-                        <!--<div class="row font-weight-bold small">
-                            <div class="col-3">
-                                Fuel Type
-                            </div>
-                            <div class="col-3">
-                                Price
-                            </div>
-                            <div class="col-3">
-                                Starting
-                            </div>
-                            <div class="col-3">
-                                End
-                            </div>
-                        </div>
-                        <hr/>
-                        <div class="row font-weight-bold small mt-0" *ngFor="let fboPrice of currentPrices;  let j = index;">
-                            <div class="col-3">
-                                <div style="position: absolute; bottom: 40%;">
-                                    {{fboPrice.product}}
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <mat-form-field>
-                                    <input matInput placeholder="Price" [(ngModel)]="fboPrice.price" type="number" (change)="fboPriceRequiresUpdate(fboPrice)"/>
-                                    <span matPrefix>$</span>
-                                </mat-form-field>
-                            </div>
-
-                            <div class="col-3">
-                                <mat-form-field>
-                                    <input matInput [(ngModel)]="fboPrice.effectiveFrom" [matDatepicker]="effectiveFromDatePicker_j" placeholder="Effective From" disabled (dateChange)="fboPriceRequiresUpdate(fboPrice)">
-                                    <mat-datepicker-toggle matSuffix [for]="effectiveFromDatePicker_j"></mat-datepicker-toggle>
-                                    <mat-datepicker #effectiveFromDatePicker_j></mat-datepicker>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-3">
-                                <mat-form-field>
-                                    <input matInput [max]="fboPrice.maxDate" [min]="minimumAllowedDate" [(ngModel)]="fboPrice.effectiveTo" [matDatepicker]="effectiveToDatePicker_j" placeholder="Effective To" disabled (dateChange)="fboPriceDateChange(fboPrice)">
-                                    <mat-datepicker-toggle matSuffix [for]="effectiveToDatePicker_j"></mat-datepicker-toggle>
-                                    <mat-datepicker #effectiveToDatePicker_j disabled="false"></mat-datepicker>
-                                </mat-form-field>
-                            </div>
-                        </div>-->
                     </div>
                 </div>
             </ni-card>
-            <ni-card title="Staged Prices" [headerBgColor]="'gray'" class="mb-0 mt-3">
+            <ni-card title="Staged Prices" [fboPrices]="currentPrices" [headerBgColor]="'gray'" class="mb-0 mt-3">
                 <div title="">
                     <div class="container-fluid">
                         <div *ngFor="let pom of stagedFboPriceJetA">

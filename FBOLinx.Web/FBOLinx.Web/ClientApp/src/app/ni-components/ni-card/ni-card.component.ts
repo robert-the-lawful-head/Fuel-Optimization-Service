@@ -40,12 +40,17 @@ export class NiCardComponent implements OnInit {
     @Input() headerBgColor: string = '';
     @Input() headerColor: string = '';
     @Input() theme: string = '';
+    @Input() fboPrices: Array<any>;
 
     message: string;
-    public currentPrices: any[];
     //public isPricingSuspended: boolean = true;
     //@Input() isPricingSuspended: boolean = false;
-    constructor(public tempAddOnMargin: MatDialog, public deleteFBODialog: MatDialog, private fboPricesService: FbopricesService, private sharedService: SharedService) { }
+    constructor(
+        public tempAddOnMargin: MatDialog,
+        public deleteFBODialog: MatDialog,
+        private fboPricesService: FbopricesService,
+        private sharedService: SharedService
+    ) { }
 
     ngOnInit() {
         this.checkPrices();
@@ -79,21 +84,17 @@ export class NiCardComponent implements OnInit {
     }
 
     private checkPrices() {
-        this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
-            .subscribe((data: any) => {
-                this.currentPrices = data;
-                var jetACost = this.getCurrentPriceByProduct('JetA Cost');
-                var jetAprice = this.getCurrentPriceByProduct('JetA Retail');
+        var jetACost = this.getCurrentPriceByProduct('JetA Cost');
+        var jetAprice = this.getCurrentPriceByProduct('JetA Retail');
 
-                if (jetACost.oid != 0 || jetAprice.oid !=0) {
-                    // this.isPricingSuspended = false;
-                    this.visibleSuspend = 'true';
-                }
-                else {
-                  //  this.isPricingSuspended = true;
-                    this.visibleSuspend = 'false';
-                }
-            });
+        if (jetACost.oid != 0 || jetAprice.oid !=0) {
+            // this.isPricingSuspended = false;
+            this.visibleSuspend = 'true';
+        }
+        else {
+            //  this.isPricingSuspended = true;
+            this.visibleSuspend = 'false';
+        }
     }
 
     private suspendPricing() {
@@ -105,9 +106,11 @@ export class NiCardComponent implements OnInit {
 
     private getCurrentPriceByProduct(product) {
         var result = { fboId: this.sharedService.currentUser.fboId, groupId: this.sharedService.currentUser.groupId, oid: 0 };
-        for (let fboPrice of this.currentPrices) {
-            if (fboPrice.product == product)
-                result = fboPrice;
+        if (this.fboPrices && this.fboPrices.length > 0) {
+            for (let fboPrice of this.fboPrices) {
+                if (fboPrice.product == product)
+                    result = fboPrice;
+            }
         }
         return result;
     }
