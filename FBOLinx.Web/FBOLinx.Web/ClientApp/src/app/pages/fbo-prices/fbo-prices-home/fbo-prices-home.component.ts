@@ -45,7 +45,7 @@ export class FboPricesHomeComponent implements OnInit {
 	public pricingJetACost: any;
 	public pricing100LLRetail: any;
 	public pricing100LLCost: any;
-    public currentPrices: any[];
+	public currentPrices: any[];
     public currentPircesAll: any[];
     public pom: any[];
 	public dateFrom: any;
@@ -116,16 +116,15 @@ export class FboPricesHomeComponent implements OnInit {
 		public notificationDialog: MatDialog) {
 	}
 
-    ngOnInit(): void {
-        this.buttonTextValue = 'Update Live Pricing';
+  ngOnInit(): void {
+		this.buttonTextValue = 'Update Live Pricing';
 		this.loadCurrentFboPrices();
 		this.loadFboPreferences();
 		this.loadFboFees();
 		this.loadDistributionLog();
-        this.loadPricingTemplates();
-        this.checkCostPlusMargins();
-        
-    }
+    this.loadPricingTemplates();
+    this.checkCostPlusMargins();
+  }
 
 
 	//Public Methods
@@ -428,49 +427,51 @@ export class FboPricesHomeComponent implements OnInit {
 				this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
 				this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
 				this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
-                this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
-                if (this.currentFboPriceJetARetail.price) {
-                    this.jtRetail = this.currentFboPriceJetARetail.price;
-                }
-                else {
-                    this.jtRetail = null;
-                }
-                if (this.currentFboPriceJetACost.price) {
-                    this.jtCost = this.currentFboPriceJetACost.price;
-                } else {
-                    this.jtCost = null;
-                }
-                
+				this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
+				if (this.currentFboPriceJetARetail.price) {
+					this.jtRetail = this.currentFboPriceJetARetail.price;
+				}
+				else {
+					this.jtRetail = null;
+				}
+				if (this.currentFboPriceJetACost.price) {
+					this.jtCost = this.currentFboPriceJetACost.price;
+				} else {
+					this.jtCost = null;
+				}
+				
 				this.staticCurrentFboPriceJetARetail = this.currentFboPriceJetARetail.price;
 				this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
-				this.TempValueJet = data[0].tempJet;
-				this.TempValueAvgas = data[0].tempAvg;
-				this.TempValueId = data[0].tempId;
 				this.currentFboPriceJetACost.effectiveTo = moment(this.currentFboPriceJetACost.effectiveTo).format('MM/DD/YYYY');
 				this.currentFboPriceJetARetail.effectiveTo = moment(this.currentFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
-				this.lcl = moment(data[0].tempDateFrom).utc();
-				this.TempDateFrom = moment(moment.utc(data[0].tempDateFrom).toDate()).format('MM/DD/YYYY');
-				this.TempDateTo = moment(moment.utc(data[0].tempDateTo).toDate()).format('MM/DD/YYYY');
-                if (this.currentFboPriceJetACost.effectiveFrom != null) {
-                    this.currentPricingEffectiveFrom = this.currentFboPriceJetACost.effectiveFrom;
-                    if (this.currentFboPriceJetACost.effectiveFrom <= new Date() && this.currentFboPriceJetACost.effectiveTo > new Date()) {
+				if (data.length > 0) {
+					this.TempValueJet = data[0].tempJet;
+					this.TempValueAvgas = data[0].tempAvg;
+					this.TempValueId = data[0].tempId;
+					this.lcl = moment(data[0].tempDateFrom).utc();
+					this.TempDateFrom = moment(moment.utc(data[0].tempDateFrom).toDate()).format('MM/DD/YYYY');
+					this.TempDateTo = moment(moment.utc(data[0].tempDateTo).toDate()).format('MM/DD/YYYY');
+				}
+				if (this.currentFboPriceJetACost.effectiveFrom != null) {
+					this.currentPricingEffectiveFrom = this.currentFboPriceJetACost.effectiveFrom;
+					if (this.currentFboPriceJetACost.effectiveFrom <= new Date() && this.currentFboPriceJetACost.effectiveTo > new Date()) {
 						this.activePrice = true;
 					}
 				} else {
 					this.currentPricingEffectiveFrom = new Date();
 				}
 
-                if (this.currentFboPriceJetACost.effectiveTo != null) {
+				if (this.currentFboPriceJetACost.effectiveTo != null) {
 
-                    this.currentPricingEffectiveTo = new Date(moment(this.currentFboPriceJetACost.effectiveTo).format('MM/DD/YYYY'));
-                } else {
-                    if (this.currentPricingEffectiveFrom) {
-                        this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
-                    }
-                    else {
-                        this.currentPricingEffectiveTo = new Date(moment(new Date()).add(6, 'days').format('MM/DD/YYYY'));
-                    }
-                }
+					this.currentPricingEffectiveTo = new Date(moment(this.currentFboPriceJetACost.effectiveTo).format('MM/DD/YYYY'));
+				} else {
+					if (this.currentPricingEffectiveFrom) {
+						this.currentPricingEffectiveTo = new Date(moment(this.currentPricingEffectiveFrom).add(6, 'days').format('MM/DD/YYYY'));
+					}
+					else {
+						this.currentPricingEffectiveTo = new Date(moment(new Date()).add(6, 'days').format('MM/DD/YYYY'));
+					}
+				}
 
 				this.loadStagedFboPrices();
 				
