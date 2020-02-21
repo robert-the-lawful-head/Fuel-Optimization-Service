@@ -90,7 +90,10 @@
             </div>
 
             <div class="row mt-2">
-                <h5>Subject</h5>
+                <div class="sub-title">
+                    <h5 class="mb-0 mt-0">Subject</h5>
+                    <span class="flavor-label">Subject for pricing emails to customers assigned to this template</span>
+                </div>
             </div>
             <div class="row">
                 <mat-form-field>
@@ -102,7 +105,10 @@
             </div>
 
             <div class="row mt-2">
-                <h5>Notes</h5>
+                <div class="sub-title">
+                    <h5 class="mb-0 mt-0">Notes</h5>
+                    <span class="flavor-label">These notes are automatically sent to FuelerLinx customers</span>
+                </div>
             </div>
             <div class="row">
                 <ejs-richtexteditor #typeRTE id='rteNotes' (focusout)="enableToolbarNote()" (focus)="disableToolbarNote()"  [(ngModel)]='pricingTemplate.notes'></ejs-richtexteditor>
@@ -112,7 +118,10 @@
             </div>
 
             <div class="row mt-2">
-                <h5>Distribution Emails</h5>
+                <div class="sub-title">
+                    <h5 class="mb-0 mt-0">Distribution Emails</h5>
+                    <span class="flavor-label">The message to accompany pricing emails you send to customers assigned to this template</span>
+                </div>
             </div>
             <div class="row">
                 <ejs-richtexteditor #typeEmail id='rteEmail' (focusout)="enableToolbarEmail()" (focus)="disableToolbarEmail()" [(ngModel)]='pricingTemplate.email'></ejs-richtexteditor>
