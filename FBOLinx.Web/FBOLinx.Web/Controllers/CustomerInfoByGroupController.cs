@@ -391,7 +391,7 @@ namespace FBOLinx.Web.Controllers
                                                         ContactInfoByGroupId = cibg.Oid,
                                                         CustomerContactId = cc.Oid,
                                                         ContactId = c.Oid,
-                                                        CopyAlerts = cibg.CopyAlerts,
+                                                        CopyAlerts = cibg.CopyAlerts.HasValue ? cibg.CopyAlerts.HasValue : false,
                                                         CustomerId = cc.CustomerId
                                                     });
 
@@ -568,7 +568,7 @@ namespace FBOLinx.Web.Controllers
                                      select ca).Count(),
                         Active = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == model.CustomerId && s.GroupId == model.GroupId).Active,
                         NeedsAttention = model.PricingTemplateName.Equals("Default Template") ? true : false,
-                        ContactExists = customerContactInfoByGroupVM.Where(s => s.CustomerId == model.CustomerId).Select(s => s.CopyAlerts == true).FirstOrDefault() ? true : false
+                        ContactExists = customerContactInfoByGroupVM.Where(s => s.CustomerId == model.CustomerId).Select(s => s.CopyAlerts).FirstOrDefault()
                     })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.First())
@@ -577,8 +577,9 @@ namespace FBOLinx.Web.Controllers
 
                 return customerGridVM;
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                string sss = ex.Message;
                 return null;
             }
         }
