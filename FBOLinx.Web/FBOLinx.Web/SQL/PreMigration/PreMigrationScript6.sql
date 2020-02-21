@@ -1,2 +1,5 @@
-  ALTER TABLE [User] 
-  ADD CopyAlerts bit null
+ALTER TABLE
+	[User]
+ADD
+	CopyAlerts bit null,
+	LoginCount bigint null
