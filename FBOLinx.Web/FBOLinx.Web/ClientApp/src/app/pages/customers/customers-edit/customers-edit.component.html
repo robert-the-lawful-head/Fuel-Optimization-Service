@@ -116,10 +116,11 @@
 
                     <div class="row mb-2">
                         <div class="col-md-3">
-                            <mat-slide-toggle color="accent" [(ngModel)]="customerInfoByGroup.distribute">{{customerInfoByGroup.customerType == 1 ? 'Push pricing into FuelerLinx' : 'Distribute fuel pricing email'}}</mat-slide-toggle>
-                            <a *ngIf="!hasContactForPriceDistribution && customerInfoByGroup.distribute && customerInfoByGroup.customerType != 1" matTooltip="This customer does not have any contacts setup to receive price distribution." matTooltipPosition="after">
+                            <mat-slide-toggle color="accent" *ngIf="hasContactForPriceDistribution" [(ngModel)]="customerInfoByGroup.distribute">{{customerInfoByGroup.customerType == 1 ? 'Push pricing into FuelerLinx' : 'Distribute fuel pricing email'}}</mat-slide-toggle>
+
+                            <!--<a *ngIf="!hasContactForPriceDistribution && customerInfoByGroup.distribute && customerInfoByGroup.customerType != 1" matTooltip="This customer does not have any contacts setup to receive price distribution." matTooltipPosition="after">
                                 <i class="fa fa-warning" style="color: red;"></i>
-                            </a>
+                            </a>-->
                         </div>
                         <div class="col-md-3">
                             <mat-slide-toggle color="accent" [(ngModel)]="customerInfoByGroup.showJetA">Show JetA Pricing</mat-slide-toggle>

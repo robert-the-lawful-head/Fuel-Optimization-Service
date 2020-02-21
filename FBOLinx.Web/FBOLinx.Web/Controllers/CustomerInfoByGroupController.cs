@@ -382,6 +382,19 @@ namespace FBOLinx.Web.Controllers
                         Tails = string.Join(",", results.Select(x => x.TailNumber))
                     };
 
+                var customerContactInfoByGroupVM = (from cc in _context.CustomerContacts
+                                                    join c in _context.Contacts on cc.ContactId equals c.Oid
+                                                    join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
+                                                    where cibg.GroupId == groupId
+                                                    select new
+                                                    {
+                                                        ContactInfoByGroupId = cibg.Oid,
+                                                        CustomerContactId = cc.Oid,
+                                                        ContactId = c.Oid,
+                                                        CopyAlerts = cibg.CopyAlerts,
+                                                        CustomerId = cc.CustomerId
+                                                    });
+
                 Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost").FirstOrDefaultAsync();
                 var resultPrices =
                           from p in Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes))
@@ -554,7 +567,8 @@ namespace FBOLinx.Web.Controllers
                                      where ca.GroupId.GetValueOrDefault() == groupId && ca.CustomerId == model.CustomerId
                                      select ca).Count(),
                         Active = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == model.CustomerId && s.GroupId == model.GroupId).Active,
-                        NeedsAttention = model.PricingTemplateName.Equals("Default Template") ? true : false
+                        NeedsAttention = model.PricingTemplateName.Equals("Default Template") ? true : false,
+                        ContactExists = customerContactInfoByGroupVM.Where(s => s.CustomerId == model.CustomerId).Select(s => s.CopyAlerts == true).FirstOrDefault() ? true : false
                     })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.First())
