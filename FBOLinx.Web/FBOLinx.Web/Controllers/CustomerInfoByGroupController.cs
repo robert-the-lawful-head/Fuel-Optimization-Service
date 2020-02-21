@@ -395,6 +395,7 @@ namespace FBOLinx.Web.Controllers
                                                         CustomerId = cc.CustomerId
                                                     });
 
+
                 Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost").FirstOrDefaultAsync();
                 var resultPrices =
                           from p in Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes))
@@ -574,6 +575,8 @@ namespace FBOLinx.Web.Controllers
                     .Select(g => g.First())
                     .OrderByDescending(s => s.FleetSize)
                     .ToList();
+
+             //   var firstCheck = customerGridVM.FirstOrDefault(s => s.CustomerId == 765);
 
                 return customerGridVM;
             }

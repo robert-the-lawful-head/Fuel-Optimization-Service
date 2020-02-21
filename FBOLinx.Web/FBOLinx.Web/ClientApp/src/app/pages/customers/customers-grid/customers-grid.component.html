@@ -35,7 +35,7 @@
                 <div>
                     <ni-badge *ngIf="customer.needsAttention" [color]="'warning'" [borderRadius]="false" [arrow]="'right'">Needs Attention</ni-badge>
                     <!--<a *ngIf="!hasContactForPriceDistribution && customerInfoByGroup.distribute && customerInfoByGroup.customerType != 1" matTooltip="This customer does not have any contacts setup to receive price distribution." matTooltipPosition="after">-->
-                    <a *ngIf="!customer.ContactExists" matTooltip="This customer does not have any contacts setup to receive price distribution." matTooltipPosition="after">
+                    <a *ngIf="!customer.contactExists" matTooltip="This customer does not have any contacts setup to receive price distribution." matTooltipPosition="after">
                         <i class="fa fa-warning" style="color: red;"></i>
                     </a>
                 </div>
