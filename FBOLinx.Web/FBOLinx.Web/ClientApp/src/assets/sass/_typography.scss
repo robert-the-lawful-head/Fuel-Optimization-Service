@@ -111,6 +111,16 @@ button {
     outline: none;
   }
 }
+.sub-title {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 1.375rem;
+  margin-bottom: 1.375rem;
+}
+.flavor-label {
+  margin-left: 0.7rem;
+  font-style: italic;
+}
 .form-group {
   align-items: center;
 }
