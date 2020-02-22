@@ -20,6 +20,7 @@
             "bg": "#ea8080",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers",
         "routing": "/default-layout/dashboard-fbo",
         "roles": [ 1, 4 ]
     },
@@ -60,6 +61,7 @@
             "bg": "#C5CAE9",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Create and manage margin templates for your customer",
         "routing": "/default-layout/pricing-templates",
         "roles": [ 1, 4 ]
     },
@@ -70,6 +72,7 @@
             "bg": "#FFCCBC",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Create, manage, and assign each customer or aircraft to a Margin template",
         "routing": "/default-layout/customers",
         "roles": [ 1, 4 ]
     },
@@ -80,6 +83,7 @@
             "bg": "#B3E5FC",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "See your incoming fuel orders",
         "routing": "/default-layout/fuelreqs",
         "roles": [ 1, 4 ]
     },
@@ -90,6 +94,7 @@
             "bg": "rgb(255, 224, 130)",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Enter and manage your fees",
         "routing": "/default-layout/rampfees",
         "roles": [ 1, 4 ]
     }

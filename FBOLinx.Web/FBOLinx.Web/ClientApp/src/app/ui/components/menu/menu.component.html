@@ -22,7 +22,10 @@
 
         <ng-template #simple>
           <a href="#" class="item-link" routerLink="{{ item.routing }}" (click)="toggle($event, item, this)">
-            <span class="text">{{ item.title }}</span>
+            <span
+              *ngIf="isHidden(item) != true"
+              class="text"
+            >{{ item.title }}</span>
 
             <span
               class="item-badge"
@@ -34,6 +37,12 @@
               <i class="icon-wrap {{ item.icon.class }}" *ngIf="item.icon && item.icon.class" [ngStyle]="getStyles(item.icon)"></i>
             </span>
           </a>
+          <button
+            #tooltip
+            *ngIf="isHidden(item) != true"
+            class="tooltip-button"
+            (click)="showPopover({ event: $event, tooltipData: { title: item.title, content: item.tooltip } })"
+          ></button>
         </ng-template>
 
         <ng-template #sub>

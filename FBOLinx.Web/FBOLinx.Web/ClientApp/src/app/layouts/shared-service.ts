@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 
-import { AuthenticationService } from '../services/authentication.service'
+import { AuthenticationService } from '../services/authentication.service';
 import { User } from '../models/User';
-
-
 
 //Components
 import * as moment from 'moment';
@@ -22,25 +20,36 @@ export class DashboardSettings {
 
 @Injectable()
 export class SharedService {
-  //Public Members
+    //Public Members
     currentUser: User;
     dashboardSettings: DashboardSettings = new DashboardSettings();
 
-    private priceTemplateMessageSource = new BehaviorSubject('Update Pricing Template');
+    private priceTemplateMessageSource = new BehaviorSubject(
+        'Update Pricing Template'
+    );
     currentMessage = this.priceTemplateMessageSource.asObservable();
 
     private priceUpdateMessage = new BehaviorSubject('Enable button');
     priceMessage = this.priceUpdateMessage.asObservable();
 
-  // Observable string sources
-  private emitChangeSource = new Subject();
+    // Observable string sources
+    private emitChangeSource = new Subject();
+    private emitLoadedSource = new Subject();
 
     constructor(private authenticationService: AuthenticationService) {
-        this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+        this.authenticationService.currentUser.subscribe(
+            x => (this.currentUser = x)
+        );
         var storedDashboardSettings = localStorage.getItem('dashboardSetings');
         if (!storedDashboardSettings) {
-            this.dashboardSettings.filterStartDate = new Date(moment().add(-6, 'M').format('MM/DD/YYYY'));
-            this.dashboardSettings.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+            this.dashboardSettings.filterStartDate = new Date(
+                moment()
+                    .add(-6, 'M')
+                    .format('MM/DD/YYYY')
+            );
+            this.dashboardSettings.filterEndDate = new Date(
+                moment().format('MM/DD/YYYY')
+            );
         } else {
             this.dashboardSettings = JSON.parse(storedDashboardSettings);
         }
@@ -48,17 +57,25 @@ export class SharedService {
 
     NotifyPricingTemplateComponent(message: string) {
         this.priceTemplateMessageSource.next(message);
-    };
+    }
 
     NotifyPricingSavedComponent(message: string) {
         this.priceUpdateMessage.next(message);
     }
 
-  // Observable string streams
-  changeEmitted$ = this.emitChangeSource.asObservable();
+    // Observable string streams
+    changeEmitted$ = this.emitChangeSource.asObservable();
 
-  // Service message commands
-  emitChange(change: string) {
-    this.emitChangeSource.next(change);
-  }
+    // Service message commands
+    emitChange(change: string) {
+        this.emitChangeSource.next(change);
+    }
+
+    // Observable string streams
+    loadedEmitted$ = this.emitLoadedSource.asObservable();
+
+    // Service message commands
+    loadedChange(change: string) {
+        this.emitLoadedSource.next(change);
+    }
 }
