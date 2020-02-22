@@ -38,7 +38,6 @@ export class UserService {
     }
 
     public update(payload) {
-        console.log(payload);
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers
         });
