@@ -127,7 +127,7 @@ export class MenuComponent implements OnInit {
                 }, 1000);
                 user.loginCount = !this.user.loginCount
                     ? 2
-                    : this.user.loginCount++;
+                    : this.user.loginCount + 1;
                 this.userService.update(user).subscribe(() => {});
             }
         });
