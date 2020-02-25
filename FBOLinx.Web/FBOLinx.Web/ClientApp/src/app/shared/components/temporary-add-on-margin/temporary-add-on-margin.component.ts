@@ -1,13 +1,16 @@
-import { Component, Inject, EventEmitter, Output, Optional, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import {
+    Component,
+    Inject,
+    EventEmitter,
+    Output,
+    Optional,
+    ViewChild,
+    ElementRef
+} from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
 import { SharedService } from '../../../layouts/shared-service';
-
-//Components
-import * as moment from 'moment';
-import { Validators } from '@angular/forms';
 
 export interface temporaryAddOnMargin {
     id: any;
@@ -16,13 +19,13 @@ export interface temporaryAddOnMargin {
     effectiveTo: any;
     marginJet: any;
 }
+
 @Component({
     selector: 'app-temporary-add-on-margin',
     templateUrl: './temporary-add-on-margin.component.html',
     styleUrls: ['./temporary-add-on-margin.component.scss'],
     providers: [SharedService]
 })
-
 export class TemporaryAddOnMarginComponent {
     public id: any;
     public jet: any;
@@ -36,15 +39,23 @@ export class TemporaryAddOnMarginComponent {
     public brojac: number = 0;
     @Output() idChanged1: EventEmitter<any> = new EventEmitter();
     @Output() jetChanged: EventEmitter<any> = new EventEmitter();
-    @ViewChild("prm") btn: ElementRef;
+    @ViewChild('prm') btn: ElementRef;
 
-    constructor(private router: Router,
-        public dialogRef: MatDialogRef<TemporaryAddOnMarginComponent>, @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+    constructor(
+        public dialogRef: MatDialogRef<TemporaryAddOnMarginComponent>,
+        @Optional()
+        @Inject(MAT_DIALOG_DATA)
+        public data: any,
         private temporaryAddOnMargin: TemporaryAddOnMarginService,
-        private sharedService: SharedService) {
-        this.stringButton = this.data.update ? 'Add Margin' : 'Add Margin';
-        this.data.EffectiveFrom = new Date(this.data.EffectiveFrom);
-        this.data.EffectiveTo = new Date(this.data.EffectiveTo);
+        private sharedService: SharedService
+    ) {
+        this.stringButton = this.data.update ? 'Update Margin' : 'Add Margin';
+        if (this.data.EffectiveFrom) {
+            this.data.EffectiveFrom = new Date(this.data.EffectiveFrom);
+        }
+        if (this.data.EffectiveTo) {
+            this.data.EffectiveTo = new Date(this.data.EffectiveTo);
+        }
     }
 
     public onType(data, event) {
@@ -53,8 +64,7 @@ export class TemporaryAddOnMarginComponent {
             this.counter = 0;
         }
         if (this.helpOne) {
-            //data.MarginJet = (data.MarginJet * 100 - event.key * 0.01);
-            data.MarginJet = (data.MarginJet * 10000 - event.key)/ 100000 + event.key*0.0001;
+            data.MarginJet = (data.MarginJet * 10000 - event.key) / 100000 + event.key * 0.0001;
             this.helpOne = false;
         }
         if (this.help) {
@@ -62,10 +72,6 @@ export class TemporaryAddOnMarginComponent {
             this.help = false;
             this.helpOne = true;
         }
-        //if (event.key === '.' && this.counter === 0 && this.brojac<3) {
-        //    this.help = true;
-        //    this.counter += 1;
-        //}
     }
 
     public setSelectionRange(input, selectionStart, selectionEnd) {
@@ -83,23 +89,25 @@ export class TemporaryAddOnMarginComponent {
 
     public add() {
         if (this.data.update) {
-
-            //this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DDT00:00:00.000") + "Z";
-            /*this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DD");
-            this.data.EffectiveTo = moment(this.data.EffectiveTo).format("YYYY-MM-DD");*/
-            this.temporaryAddOnMargin.update(this.data).subscribe((savedTemplate: temporaryAddOnMargin) => {
-                this.jetChanged.emit(savedTemplate);
-                this.dialogRef.close();
-            });
-        }
-        else {
-            /*this.data.EffectiveFrom = moment(this.data.EffectiveFrom).format("YYYY-MM-DD");
-            this.data.EffectiveTo = moment(this.data.EffectiveTo).format("YYYY-MM-DD");*/
+            this.temporaryAddOnMargin
+                .update(this.data)
+                .subscribe((savedTemplate: temporaryAddOnMargin) => {
+                    this.jetChanged.emit(savedTemplate);
+                    this.dialogRef.close();
+                });
+        } else {
             this.data.fboId = this.sharedService.currentUser.fboId;
-            this.temporaryAddOnMargin.add(this.data).subscribe((savedTemplate: temporaryAddOnMargin) => {
-                this.idChanged1.emit({ id: savedTemplate.id, EffectiveFrom: savedTemplate.effectiveFrom, EffectiveTo: savedTemplate.effectiveTo, MarginJet: savedTemplate.marginJet });
-                this.dialogRef.close();
-            });
+            this.temporaryAddOnMargin
+                .add(this.data)
+                .subscribe((savedTemplate: temporaryAddOnMargin) => {
+                    this.idChanged1.emit({
+                        id: savedTemplate.id,
+                        EffectiveFrom: savedTemplate.effectiveFrom,
+                        EffectiveTo: savedTemplate.effectiveTo,
+                        MarginJet: savedTemplate.marginJet
+                    });
+                    this.dialogRef.close();
+                });
         }
     }
 

@@ -60,10 +60,6 @@
                                 {{currentFboPriceJetACost.effectiveTo | date }}
                             </span>
                         </div>
-
-                        <!--<mat-form-field>
-                <input matInput class="btnremoveDisabled" [(ngModel)]="currentFboPriceJetACost.effectiveTo" disabled placeholder="Effective To">
-            </mat-form-field>-->
                     </div>
                 </div>
                 
@@ -79,7 +75,7 @@
                  
                 </ni-card>
             </ng-template>
-            <ni-card id="{{TempValueId}}" [fboPrices]="currentPrices" [bgColor]="'danger'" [outline]="true" [color]="'danger'" *ngIf="(TempValueJet && TempValueJet > 0)">
+            <ni-card id="{{TempValueId}}" [fboPrices]="currentPrices" [bgColor]="'danger'" [outline]="true" [color]="'danger'" *ngIf="(TempValueJet > 0 || TempValueJet < 0)">
                 <h6 class="mt-0">TEMPORARY ADD-ON MARGIN (ALL)</h6>
                 <div class="row">
                     <div class="col-6">
@@ -110,7 +106,7 @@
             </ni-card>
         </div>
         <div class="col-md-8 mt-3">
-            <ni-card #niCard title="Update your pricing here" [fboPrices]="currentPrices" [headerBgColor]="'success'"  (priceDeleted)="pricesSuspended($event)" (jetChanged)="jetChangedHandler($event)" [visible]="'true'" [tempId]="TempValueId" class="mb-0">
+            <ni-card #niCard title="Update your pricing here" [fboPrices]="currentPrices" [headerBgColor]="'success'"  (priceDeleted)="pricesSuspended($event)" (jetChanged)="jetChangedHandler($event)" [visible]="'true'" [tempId]="TempValueId" class="mb-0" [addOnMargin]="true">
                 <div title="">
                     <div class="container-fluid">
                         <div class="row">

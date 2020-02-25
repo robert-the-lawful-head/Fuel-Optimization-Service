@@ -64,7 +64,6 @@ export class Popover {
         this.overlayEventService.emitChangeEvent({
             type: 'Hide'
         });
-        this.emitClose('closed');
     }
 
     applyPropertieDefaults(defaultProperties, properties) {
@@ -84,6 +83,7 @@ export class Popover {
 
     // Service message commands
     public emitClose(change: string) {
+        console.log(change);
         this.emitChangeSource.next(change);
     }
 }
