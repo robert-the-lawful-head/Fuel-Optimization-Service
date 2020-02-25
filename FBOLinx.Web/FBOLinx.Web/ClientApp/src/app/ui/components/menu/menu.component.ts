@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IMenuItem } from './menu-item';
 import { MenuService } from './menu.service';
@@ -24,6 +24,7 @@ export class MenuComponent implements OnInit {
     menuItems: IMenuItem[];
     user: any;
     tooltipIndex = 0;
+    neverShowTooltip: boolean = false;
 
     constructor(
         private menuService: MenuService,
@@ -33,13 +34,15 @@ export class MenuComponent implements OnInit {
         private overlayEventService: OverlayEventService
     ) {
         overlayEventService.emitter.subscribe(response => {
-            if (response.type == '[Overlay] Hide') {
+            if (!this.neverShowTooltip && response.type == '[Overlay] Hide') {
                 const tooltipsArr = this.priceTooltips.toArray();
                 if (tooltipsArr.length > this.tooltipIndex) {
                     setTimeout(() => {
                         tooltipsArr[this.tooltipIndex].nativeElement.click();
                         this.tooltipIndex++;
                     }, 1000);
+                } else {
+                    this.neverShowTooltip = true;
                 }
             }
         });
@@ -109,26 +112,27 @@ export class MenuComponent implements OnInit {
         return new Observable(observer => {
             if (this.user) {
                 observer.next(this.user);
+            } else {
+                this.userService.getCurrentUser().subscribe(user => {
+                    this.user = user;
+                    observer.next(user);
+                });
             }
-            this.userService.getCurrentUser().subscribe(user => {
-                this.user = user;
-                observer.next(user);
-            });
         });
     }
 
     showTooltipsIfFirstLogin() {
         this.getLoggedInUser().subscribe((user: any) => {
-            if (user && (!user.loginCount || user.loginCount <= 1)) {
+            if (user && !user.goOverTutorial) {
                 setTimeout(() => {
                     const tooltipsArr = this.priceTooltips.toArray();
                     tooltipsArr[this.tooltipIndex].nativeElement.click();
                     this.tooltipIndex++;
                 }, 1000);
-                user.loginCount = !this.user.loginCount
-                    ? 2
-                    : this.user.loginCount + 1;
-                this.userService.update(user).subscribe(() => {});
+                this.user.goOverTutorial = true;
+                this.userService.update(this.user).subscribe(() => {});
+            } else {
+                this.neverShowTooltip = true;
             }
         });
     }
