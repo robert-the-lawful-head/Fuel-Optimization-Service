@@ -476,21 +476,9 @@ namespace FBOLinx.Web.Controllers
                     select new
                     {
                         results.Key.CustomerId,
-                        Tails = string.Join(",", results.Select(x => x.TailNumber))
+                        Tails = string.Join(",", results.Select(x => x.TailNumber)),
+                        Count = results.Count()
                     };
-
-                var fleetSizeResult = from ca in _context.CustomerAircrafts
-                                      where ca.GroupId.GetValueOrDefault() == groupId
-                                      group ca by new
-                                      {
-                                          ca.CustomerId
-                                      }
-                                      into resultsGroup
-                                      select new
-                                      {
-                                          resultsGroup.Key.CustomerId,
-                                          Count = resultsGroup.Count()
-                                      };
 
                 List<CustomersGridViewModel> customerGridVM = await (from cg in _context.CustomerInfoByGroup
                                                     join c in _context.Customers on cg.CustomerId equals c.Oid
@@ -545,9 +533,6 @@ namespace FBOLinx.Web.Controllers
                                                     join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.Oid), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
                                                     into leftJoinCIBG
                                                     from cibg in leftJoinCIBG.DefaultIfEmpty()
-                                                    join fs in fleetSizeResult on cg.CustomerId equals fs.CustomerId
-                                                    into leftJoinFS
-                                                    from fs in leftJoinFS.DefaultIfEmpty()
                                                     join ai in result on new { Name = (string.IsNullOrEmpty(pt.Name) ? "Default Template" : pt.Name) } equals new { ai.Name}
                                                     where cg.GroupId == groupId
                                                     group cg by new
@@ -571,7 +556,7 @@ namespace FBOLinx.Web.Controllers
                                                         HasBeenViewed = (cvf != null && cvf.Oid > 0),
                                                         IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null || pt.MarginType != PricingTemplate.MarginTypes.FlatFee)),
                                                         Active = cg.Active.GetValueOrDefault(),
-                                                        FleetSize = fs == null ? 0 : fs.Count,
+                                                        FleetSize = ca == null ? 0 : ca.Count,
                                                         AllInPrice = ai == null ? 0 : ai.IntoPlanePrice
                                                     }
                                                     into resultsGroup
