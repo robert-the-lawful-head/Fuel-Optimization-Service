@@ -554,7 +554,7 @@ namespace FBOLinx.Web.Controllers
                                                         ContactExists = cibg == null || !cibg.CopyAlerts.HasValue ? false : cibg.CopyAlerts,
                                                         PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? "Default Template" : pt.Name,
                                                         HasBeenViewed = (cvf != null && cvf.Oid > 0),
-                                                        IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null || pt.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                                                        IsPricingExpired = ai == null ? false : ai.IsPricingExpired,
                                                         Active = cg.Active.GetValueOrDefault(),
                                                         FleetSize = ca == null ? 0 : ca.Count,
                                                         AllInPrice = ai == null ? 0 : ai.IntoPlanePrice
