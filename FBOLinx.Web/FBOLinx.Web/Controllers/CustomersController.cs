@@ -152,6 +152,106 @@ namespace FBOLinx.Web.Controllers
             return Ok(customers);
         }
 
+        [HttpPost("importcustomers")]
+        public async Task<IActionResult> ImportCustomers([FromBody] List<CustomerImportVM> customers)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            foreach(var customer in customers)
+            {
+                Customers newC = new Customers();
+                newC.Company = customer.CompanyName;
+
+                if(customer.Activate != null)
+                {
+                    if(customer.Activate.ToLower().Equals("active") || customer.Activate.ToLower().Equals("on"))
+                    {
+                        newC.Active = true;
+                    }
+                }
+
+                _context.Customers.Add(newC);
+                await _context.SaveChangesAsync();
+
+                if(newC.Oid != 0)
+                {
+                    customer.CompanyId = newC.Oid;
+                    CustomerInfoByGroup cibg = new CustomerInfoByGroup();
+                    cibg.CustomerId = newC.Oid;
+                    cibg.GroupId = customer.groupid;
+                    cibg.Company = newC.Company;
+                    if(newC.Active == true)
+                    {
+                        cibg.Active = true;
+                    }
+                    _context.CustomerInfoByGroup.Add(cibg);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            var custWithAircrafts = customers.Where(s => s.AircraftMake != null).ToList();
+
+            if(custWithAircrafts.Count > 0)
+            {
+                foreach(var custPlane in custWithAircrafts)
+                {
+                    AirCrafts ac = new AirCrafts();
+                    ac.Make = custPlane.AircraftMake;
+                    ac.Model = custPlane.AircraftModel;
+
+                    _context.Aircrafts.Add(ac);
+                    await _context.SaveChangesAsync();
+
+                    if(ac.AircraftId != 0)
+                    {
+                        CustomerAircrafts ca = new CustomerAircrafts();
+                        ca.AircraftId = ac.AircraftId;
+                        ca.TailNumber = "1ABB";
+                        ca.GroupId = custPlane.groupid;
+                        ca.CustomerId = custPlane.CompanyId;
+
+                        _context.CustomerAircrafts.Add(ca);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+
+            var custWithContacts = customers.Where(s => s.FirstName != null).ToList();
+
+            if(custWithContacts.Count > 0)
+            {
+                foreach(var custContact in custWithContacts)
+                {
+                    Contacts ct = new Contacts();
+                    ct.FirstName = custContact.FirstName;
+                    ct.LastName = custContact.FirstName;
+                    ct.Mobile = custContact.Mobile;
+                    ct.Email = custContact.Email;
+                    ct.Phone = custContact.Phone;
+                    ct.Title = custContact.Title;
+
+                    _context.Contacts.Add(ct);
+                    await _context.SaveChangesAsync();
+
+                    if(ct.Oid != 0)
+                    {
+                        CustomerContacts cc = new CustomerContacts();
+                        cc.ContactId = ct.Oid;
+                        cc.CustomerId = custContact.CompanyId;
+
+                        _context.CustomerContacts.Add(cc);
+                        await _context.SaveChangesAsync();
+                    }
+
+                }
+            }
+
+            return Ok(customers);
+        }
+
         private bool CustomersExists(int id)
         {
             return _context.Customers.Any(e => e.Oid == id);

@@ -17,6 +17,7 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 import * as XLSX from 'xlsx';
 import { CustomermarginsService } from '../../../services/customermargins.service';
 import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
+import FlatfileImporter from "flatfile-csv-importer";
 
 @Component({
     selector: 'app-customers-grid',
@@ -49,6 +50,15 @@ export class CustomersGridComponent implements OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
+    LICENSE_KEY = "9eef62bd-4c20-452c-98fd-aa781f5ac111";
+
+    /**
+     * Result data from importer
+     */
+    results = "[]";
+
+    private importer: FlatfileImporter;
+
     /** customers-grid ctor */
     constructor(
         public newCustomerDialog: MatDialog,
@@ -68,6 +78,13 @@ export class CustomersGridComponent implements OnInit {
             return;
         this.refreshCustomerDataSource();
         this.selectAll = false;
+
+        FlatfileImporter.setVersion(2);
+        this.initializeImporter();
+        this.importer.setCustomer({
+            userId: "19234",
+            name: "Foo Bar"
+        });
 
         if (sessionStorage.getItem('isCustomerEdit')) {
             if (sessionStorage.getItem('isCustomerEdit') == '1') {
@@ -297,5 +314,137 @@ export class CustomersGridComponent implements OnInit {
                 this.refreshCustomerDataSource();
             });
         }
+    }
+
+    async launchImporter() {
+        if (!this.LICENSE_KEY) {
+            return alert("Set LICENSE_KEY on Line 13 before continuing.");
+        }
+        try {
+            let results = await this.importer.requestDataFromUser();
+            this.importer.displayLoader();
+
+            if (results) {
+                results.data.forEach(result => {
+                    result.groupid = this.sharedService.currentUser.groupId;
+                });
+                console.log(results.data);
+
+                this.customersService.importcustomers(results.data).subscribe((data: any) => {
+                    if (data) {
+                        this.importer.displaySuccess("Success!");
+                        setTimeout(() => {
+                            this.results = JSON.stringify(results.validData, null, 2);
+                            this.refreshCustomerDataSource();
+                        }, 1500);
+                    }
+                });
+            }
+
+             //emulate a server call, replace the timeout with an XHR request
+            //setTimeout(() => {
+            //    this.importer.displaySuccess("Success!");
+            //    this.results = JSON.stringify(results.validData, null, 2);
+            //    this.refreshCustomerDataSource();
+            //}, 2500);
+        } catch (e) {
+            console.info(e || "window close");
+        }
+    }
+
+    initializeImporter() {
+        this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+            fields: [
+                {
+                    label: "Company Id",
+                    alternates: ["Id", "CompanyId"],
+                    key: "CompanyId",
+                    description: "Company Id Value",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required"
+                        }
+                    ]
+                },
+                {
+                    label: "CompanyName",
+                    alternates: ["Company Name", "Name"],
+                    key: "CompanyName",
+                    description: "Company Name Value",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required"
+                        }
+                    ]
+                },
+                {
+                    label: "Activate",
+                    alternates: ["activate"],
+                    key: "Activate",
+                    description: "Activate Flag"
+                },
+                {
+                    label: "Tail",
+                    alternates: ["tail", "plane tail", "N-number", "Nnumber"],
+                    key: "Tail",
+                    description: "Tail"
+                },
+                {
+                    label: "Aircraft Make",
+                    alternates: ["Make", "make", "aircraft make", "aircraft", "Manufacturer", "Aircraft Manufacturer"],
+                    key: "AircraftMake",
+                    description: "Aircraft Make"
+                },
+                {
+                    label: "Model",
+                    alternates: ["Aircraft Model", "aircraft model", "model", "aircraft type", "type"],
+                    key: "AircraftModel",
+                    description: "Aircraft Model"
+                },
+                {
+                    label: "First Name",
+                    alternates: ["first name", "name"],
+                    key: "FirstName",
+                    description: "First Name"
+                },
+                {
+                    label: "Last Name",
+                    alternates: ["last name", "lname"],
+                    key: "LastName",
+                    description: "Last Name"
+                },
+                {
+                    label: "Title",
+                    alternates: ["title"],
+                    key: "Title",
+                    description: "Title"
+                },
+                {
+                    label: "Email",
+                    alternates: ["email address", "email"],
+                    key: "Email",
+                    description: "Email"
+                },
+                {
+                    label: "Mobile",
+                    alternates: ["mobile", "cell", "cell phone"],
+                    key: "Mobile",
+                    description: "Mobile"
+                },
+                {
+                    label: "Phone",
+                    alternates: ["phone"],
+                    key: "Phone",
+                    description: "Phone"
+                }
+            ],
+            type: "Customers",
+            allowInvalidSubmit: true,
+            managed: true,
+            allowCustom: true,
+            disableManualInput: false
+        });
     }
 }
