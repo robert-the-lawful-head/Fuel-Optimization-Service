@@ -10,3 +10,18 @@
     height:20px !important;
     width: 20px !important;
 }
+
+.download {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.download a {
+    color: #1d62b4;
+}
+
+.download a:hover {
+    color: #1d62b4;
+}
