@@ -82,8 +82,8 @@ export class CustomersGridComponent implements OnInit {
         FlatfileImporter.setVersion(2);
         this.initializeImporter();
         this.importer.setCustomer({
-            userId: "19234",
-            name: "Foo Bar"
+            userId: "1",
+            name: "WebsiteImport"
         });
 
         if (sessionStorage.getItem('isCustomerEdit')) {

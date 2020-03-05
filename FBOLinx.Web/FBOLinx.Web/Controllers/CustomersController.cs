@@ -244,6 +244,19 @@ namespace FBOLinx.Web.Controllers
 
                         _context.CustomerContacts.Add(cc);
                         await _context.SaveChangesAsync();
+
+                        ContactInfoByGroup cibg = new ContactInfoByGroup();
+                        cibg.GroupId = custContact.groupid;
+                        cibg.ContactId = ct.Oid;
+                        cibg.FirstName = custContact.FirstName;
+                        cibg.LastName = custContact.LastName;
+                        cibg.Mobile = custContact.Mobile;
+                        cibg.Email = custContact.Email;
+                        cibg.Phone = custContact.Phone;
+                        cibg.Title = custContact.Title;
+
+                        _context.ContactInfoByGroup.Add(cibg);
+                        await _context.SaveChangesAsync();
                     }
 
                 }
