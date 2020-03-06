@@ -432,7 +432,21 @@ namespace FBOLinx.Web.Controllers
                     CustomersAssigned = tcc == null ? 0 : tcc.Count
                 }).ToList();
 
-            return Ok(result);
+            if(result.Count > 0)
+            {
+                var custAssigned = result.FirstOrDefault(s => s.CustomersAssigned > 0);
+
+                if(custAssigned != null)
+                {
+                    return Ok(new { Exist = true });
+                }
+                else
+                {
+                    return Ok(new { Exist = false });
+                }
+            }
+
+            return Ok(new { Exist = false });
         }
 
 

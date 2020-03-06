@@ -714,7 +714,7 @@ export class FboPricesHomeComponent implements OnInit {
             .getcostpluspricingtemplates(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
                 if (data) {
-                    if (data.length > 0) {
+                    if (data.exist) {
                         this.costPlusText =
                             'Your cost value is confidential and not publicly displayed.  It is used for Cost+ margin templates.';
                     } else {
