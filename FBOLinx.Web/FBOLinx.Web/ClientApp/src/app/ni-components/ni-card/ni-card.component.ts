@@ -8,16 +8,17 @@ import {
     OnDestroy,
     AfterViewInit
 } from '@angular/core';
-
-import { TemporaryAddOnMarginComponent } from '../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
+import { EventService as OverlayEventService } from '@ivylab/overlay-angular';
+
+import { TemporaryAddOnMarginComponent } from '../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import { FbopricesService } from '../../services/fboprices.service';
 import { UserService } from '../../services/user.service';
 import { SharedService } from '../../layouts/shared-service';
 import { Popover, PopoverProperties } from '../../shared/components/popover';
 import { TooltipModalComponent } from '../../shared/components/tooltip-modal/tooltip-modal.component';
-import { EventService as OverlayEventService } from '@ivylab/overlay-angular';
+
 
 @Component({
     selector: 'ni-card',
@@ -27,7 +28,7 @@ import { EventService as OverlayEventService } from '@ivylab/overlay-angular';
         '[class.ni-card]': 'true'
     }
 })
-export class NiCardComponent implements OnInit {
+export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
     vId: any;
     vEffectiveFrom: any;
     vEffectiveTo: any;
@@ -56,8 +57,10 @@ export class NiCardComponent implements OnInit {
     @Input() addOnMargin: boolean;
 
     @ViewChild('tooltip') tooltip: any;
+    @ViewChild('cancelTooltip') cancelTooltip: any;
 
     message: string;
+    subscription: any;
 
     constructor(
         public tempAddOnMargin: MatDialog,
@@ -87,6 +90,25 @@ export class NiCardComponent implements OnInit {
                 this.visibleSuspend = 'true';
             }
         });
+    }
+
+    ngAfterViewInit() {
+        this.subscription = this.sharedService.loadedEmitted$.subscribe(message => {
+            if (message == 'price-tooltips-showed') {
+                setTimeout(() => {
+                    if (this.cancelTooltip && this.cancelTooltip.nativeElement) {
+                        this.cancelTooltip.nativeElement.click();
+                        this.subscription.unsubscribe();
+                    }
+                }, 300);
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 
     openDialog(): Observable<any> {
@@ -159,7 +181,7 @@ export class NiCardComponent implements OnInit {
         return result;
     }
 
-    getLoggedInUser() {
+    private getLoggedInUser() {
         return new Observable(observer => {
             if (this.user) {
                 observer.next(this.user);
@@ -170,5 +192,10 @@ export class NiCardComponent implements OnInit {
                 });
             }
         });
+    }
+
+    private showPopover(prop: PopoverProperties) {
+        prop.component = TooltipModalComponent;
+        this.popover.load(prop);
     }
 }

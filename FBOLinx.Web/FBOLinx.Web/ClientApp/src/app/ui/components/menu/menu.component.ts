@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, AfterViewInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IMenuItem } from './menu-item';
 import { MenuService } from './menu.service';
@@ -18,13 +18,14 @@ import { EventService as OverlayEventService } from '@ivylab/overlay-angular';
         class: 'app-menu'
     }
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChildren('tooltip') priceTooltips: QueryList<any>;
 
     menuItems: IMenuItem[];
     user: any;
     tooltipIndex = 0;
     neverShowTooltip: boolean = false;
+    subscription: any;
 
     constructor(
         private menuService: MenuService,
@@ -32,25 +33,39 @@ export class MenuComponent implements OnInit {
         private userService: UserService,
         public popover: Popover,
         private overlayEventService: OverlayEventService
-    ) {
-        overlayEventService.emitter.subscribe(response => {
+    ) {}
+
+    ngOnInit(): void {
+        this.getMenuItems();
+    }
+
+    ngAfterViewInit():void {
+        this.sharedService.loadedEmitted$.subscribe(message => {
+            if (message == 'fbo-prices-loaded') {
+                this.showTooltipsIfFirstLogin();
+            }
+        });
+        this.subscription = this.overlayEventService.emitter.subscribe(response => {
             if (!this.neverShowTooltip && response.type == '[Overlay] Hide') {
                 const tooltipsArr = this.priceTooltips.toArray();
                 if (tooltipsArr.length > this.tooltipIndex) {
                     setTimeout(() => {
                         tooltipsArr[this.tooltipIndex].nativeElement.click();
                         this.tooltipIndex++;
-                    }, 1000);
+                    }, 300);
                 } else {
                     this.neverShowTooltip = true;
+                    this.sharedService.loadedChange('menu-tooltips-showed');
+                    this.subscription.unsubscribe();
                 }
             }
         });
-        sharedService.loadedEmitted$.subscribe(message => {
-            if (message == 'fbo-prices-loaded') {
-                this.showTooltipsIfFirstLogin();
-            }
-        });
+    }
+
+    ngOnDestroy(): void {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 
     getMenuItems(): void {
@@ -89,10 +104,6 @@ export class MenuComponent implements OnInit {
         };
     }
 
-    ngOnInit(): void {
-        this.getMenuItems();
-    }
-
     toggle(event: Event, item: any, el: any) {
         event.preventDefault();
 
@@ -128,7 +139,7 @@ export class MenuComponent implements OnInit {
                     const tooltipsArr = this.priceTooltips.toArray();
                     tooltipsArr[this.tooltipIndex].nativeElement.click();
                     this.tooltipIndex++;
-                }, 1000);
+                }, 300);
                 this.user.goOverTutorial = true;
                 this.userService.update(this.user).subscribe(() => {});
             } else {

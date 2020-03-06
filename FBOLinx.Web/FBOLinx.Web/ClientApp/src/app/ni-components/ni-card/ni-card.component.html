@@ -75,6 +75,19 @@
                 >
                     Cancel Pricing
                 </button>
+                <button
+                    #cancelTooltip
+                    style="right: 350px;"
+                    class="tooltip-button"
+                    (click)="showPopover({
+                        event: $event,
+                        placement: 'left',
+                        tooltipData: {
+                            title: 'Cancel Pricing',
+                            content: 'This will suspend your pricing from the system'
+                        }
+                    })"
+                ></button>
             </div>
         </div>
     </h3>

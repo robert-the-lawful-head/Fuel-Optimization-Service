@@ -1,11 +1,14 @@
 import {
     Component,
     OnInit,
-    Inject,
+    OnDestroy,
+    AfterViewInit,
     ViewChild,
+    ViewChildren,
     ViewEncapsulation,
     Output,
-    EventEmitter
+    EventEmitter,
+    QueryList
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
@@ -17,16 +20,19 @@ import { FbopreferencesService } from '../../../services/fbopreferences.service'
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
+import { EventService as OverlayEventService } from '@ivylab/overlay-angular';
 
 //Components
 import * as moment from 'moment';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
-import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 import { TemporaryAddOnMarginComponent } from '../../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
+
+//Popover
+import { Popover, PopoverProperties } from '../../../shared/components/popover';
+import { TooltipModalComponent } from '../../../shared/components/tooltip-modal/tooltip-modal.component';
 
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
-import { getDate } from 'date-fns';
 import { NiCardComponent } from '../../../ni-components/ni-card/ni-card.component';
 
 export interface temporaryAddOnMargin {
@@ -43,9 +49,10 @@ export interface temporaryAddOnMargin {
     encapsulation: ViewEncapsulation.None
 })
 /** fbo-prices-home component*/
-export class FboPricesHomeComponent implements OnInit {
+export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild(NiCardComponent) niCard: NiCardComponent;
     @Output() priceUpdated = new EventEmitter<any>();
+    @ViewChildren('tooltip') tooltips: QueryList<any>;
     //Public Members
     public pageTitle: string = 'Pricing';
     public pricingJetARetail: any;
@@ -108,15 +115,21 @@ export class FboPricesHomeComponent implements OnInit {
     public staticCurrentFboPriceJetARetail: any;
     public staticCurrentFboPriceJetACost: any;
 
+    public tooltipIndex = 0;
+    public canShowTooltips = false;
+    public subscription: any;
+
     /** fbo-prices-home ctor */
     constructor(
+        private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private distributionService: DistributionService,
         private fboFeesService: FbofeesService,
         private fboPricesService: FbopricesService,
         private fboPreferencesService: FbopreferencesService,
         private pricingTemplateService: PricingtemplatesService,
-        private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private sharedService: SharedService,
+        private overlayEventService: OverlayEventService,
+        private popover: Popover,
         public distributionDialog: MatDialog,
         public warningDialog: MatDialog,
         public tempAddOnMargin: MatDialog,
@@ -133,6 +146,36 @@ export class FboPricesHomeComponent implements OnInit {
         this.loadPricingTemplates();
         this.checkCostPlusMargins();
     }
+
+    ngAfterViewInit(): void {
+        this.sharedService.loadedEmitted$.subscribe(message => {
+            if (message == 'menu-tooltips-showed') {
+                this.canShowTooltips = true;
+                this.showTooltips();
+            }
+        });
+        this.subscription = this.overlayEventService.emitter.subscribe(response => {
+            if (this.canShowTooltips && response.type == '[Overlay] Hide') {
+                const tooltipsArr = this.tooltips.toArray();
+                if (tooltipsArr.length > this.tooltipIndex && this.tooltipIndex >= 0) {
+                    setTimeout(() => {
+                        tooltipsArr[this.tooltipIndex].nativeElement.click();
+                        this.tooltipIndex--;
+                    }, 300);
+                } else {
+                    this.subscription.unsubscribe();
+                    this.sharedService.loadedChange('price-tooltips-showed');
+                }
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+    }
+
 
     //Public Methods
     jetChangedHandler(event: temporaryAddOnMargin) {
@@ -836,5 +879,21 @@ export class FboPricesHomeComponent implements OnInit {
             }
         });
         return result;
+    }
+
+    private showPopover(prop: PopoverProperties) {
+        prop.component = TooltipModalComponent;
+        this.popover.load(prop);
+    }
+
+    private showTooltips() {
+        setTimeout(() => {
+            const tooltipsArr = this.tooltips.toArray();
+            this.tooltipIndex = tooltipsArr.length - 1;
+            if (this.tooltipIndex >= 0) {
+                tooltipsArr[this.tooltipIndex].nativeElement.click();
+                this.tooltipIndex--;
+            }
+        }, 300);
     }
 }
