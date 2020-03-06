@@ -88,9 +88,9 @@ export class CustomersGridComponent implements OnInit {
 
         if (sessionStorage.getItem('isCustomerEdit')) {
             if (sessionStorage.getItem('isCustomerEdit') == '1') {
-                if (sessionStorage.getItem('pageIndex')) {
-                    this.paginator.pageIndex = sessionStorage.getItem('pageIndex') as any;
-                    sessionStorage.removeItem('pageIndex');
+                if (localStorage.getItem('pageIndex')) {
+                    this.paginator.pageIndex = localStorage.getItem('pageIndex') as any;
+                    localStorage.removeItem('pageIndex');
                     sessionStorage.removeItem('isCustomerEdit');
                 }
                 else {
@@ -104,7 +104,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     onPageChanged(e) {
-        sessionStorage.setItem('pageIndex', e.pageIndex);
+        localStorage.setItem('pageIndex', e.pageIndex);
     }
 
     //Public Methods
