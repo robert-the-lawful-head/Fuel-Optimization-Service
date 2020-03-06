@@ -209,7 +209,7 @@ namespace FBOLinx.Web.Controllers
                     {
                         CustomerAircrafts ca = new CustomerAircrafts();
                         ca.AircraftId = ac.AircraftId;
-                        ca.TailNumber = "1ABB";
+                        ca.TailNumber = custPlane.Tail;
                         ca.GroupId = custPlane.groupid;
                         ca.CustomerId = custPlane.CompanyId;
 
