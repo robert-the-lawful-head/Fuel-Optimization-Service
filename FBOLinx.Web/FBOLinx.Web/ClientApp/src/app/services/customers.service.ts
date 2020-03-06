@@ -30,4 +30,8 @@ export class CustomersService {
     public update(payload) {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
     }
+
+    public importcustomers(payload) {
+        return this.http.post(this.accessPointUrl + '/importcustomers', payload, { headers: this.headers });
+    }
 }
