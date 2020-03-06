@@ -90,12 +90,6 @@ import { UserService } from './services/user.service';
 //Helpers
 import { JwtInterceptor, ErrorInterceptor } from './helpers';
 
-//Pipes
-import { DecimalPipe } from '@angular/common';
-import { DatePipe } from '@angular/common';
-//import {AppPipesModule} from './app-pipes.module'
-
-
 @NgModule({
     declarations: [
         AppComponent,

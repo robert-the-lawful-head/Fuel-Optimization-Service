@@ -116,6 +116,20 @@
                                     <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveFromDatePicker"></mat-datepicker-toggle>
                                     <mat-datepicker #currentPricingEffectiveFromDatePicker></mat-datepicker>
                                 </mat-form-field>
+                                <button
+                                    #tooltip
+                                    style="right: 0px; top: 65%"
+                                    class="tooltip-button"
+                                    (click)="showPopover({
+                                        event: $event,
+                                        placement: 'bottom',
+                                        noArrow: true,
+                                        tooltipData: { 
+                                            title: 'Date fields',
+                                            content: 'These dates control when your pricing is valid'
+                                        }
+                                    })"
+                                ></button>
                             </div>
                             <div class="col-2">
                                 <mat-form-field>
@@ -137,6 +151,20 @@
                                             <input matInput type="number" step="0.01" title="Your Retail values should be inclusive of all taxes/fees" placeholder="Retail*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="jtRetail | number:'1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Retail')">
                                             <span matPrefix class="prefixDollar">$</span>
                                         </mat-form-field>
+                                        <button
+                                            #tooltip
+                                            style="right: 0px; top: 65%"
+                                            class="tooltip-button"
+                                            (click)="showPopover({
+                                                event: $event,
+                                                placement: 'bottom',
+                                                noArrow: true,
+                                                tooltipData: {
+                                                    title: 'Price/Cost Entry',
+                                                    content: 'Enter your current pricing here'
+                                                }
+                                            })"
+                                        ></button>
                                     </div>
                                     <div class="col-6">
                                         <mat-form-field>
