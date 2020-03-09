@@ -86,21 +86,30 @@ export class CustomersGridComponent implements OnInit {
             name: "WebsiteImport"
         });
 
-        if (sessionStorage.getItem('isCustomerEdit')) {
-            if (sessionStorage.getItem('isCustomerEdit') == '1') {
-                if (localStorage.getItem('pageIndex')) {
-                    this.paginator.pageIndex = localStorage.getItem('pageIndex') as any;
-                    localStorage.removeItem('pageIndex');
-                    sessionStorage.removeItem('isCustomerEdit');
-                }
-                else {
-                    this.paginator.pageIndex = 0;
-                }
-            }
+        if (localStorage.getItem('pageIndex')) {
+            this.paginator.pageIndex = localStorage.getItem('pageIndex') as any;
+            //localStorage.removeItem('pageIndex');
+            //sessionStorage.removeItem('isCustomerEdit');
         }
         else {
             this.paginator.pageIndex = 0;
         }
+
+        //if (sessionStorage.getItem('isCustomerEdit')) {
+        //    if (sessionStorage.getItem('isCustomerEdit') == '1') {
+        //        if (localStorage.getItem('pageIndex')) {
+        //            this.paginator.pageIndex = localStorage.getItem('pageIndex') as any;
+        //            localStorage.removeItem('pageIndex');
+        //            sessionStorage.removeItem('isCustomerEdit');
+        //        }
+        //        else {
+        //            this.paginator.pageIndex = 0;
+        //        }
+        //    }
+        //}
+        //else {
+        //    this.paginator.pageIndex = 0;
+        //}
     }
 
     onPageChanged(e) {
