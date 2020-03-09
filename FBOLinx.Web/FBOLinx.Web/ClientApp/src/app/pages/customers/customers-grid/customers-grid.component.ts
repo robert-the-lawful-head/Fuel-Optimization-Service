@@ -45,7 +45,8 @@ export class CustomersGridComponent implements OnInit {
     public selectAll: boolean = false;
     public selectedRows: number;
     public globalMargin: any;
-    public pageIndex: number = 0;    
+    public pageIndex: number = 0;
+    public pageSize: number = 10;    
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -95,6 +96,15 @@ export class CustomersGridComponent implements OnInit {
             this.paginator.pageIndex = 0;
         }
 
+        if (sessionStorage.getItem('pageSizeValue')) {
+            this.pageSize = sessionStorage.getItem('pageSizeValue') as any;
+        }
+        else {
+            this.pageSize = 10;
+        }
+
+        console.log(this.paginator);
+
         //if (sessionStorage.getItem('isCustomerEdit')) {
         //    if (sessionStorage.getItem('isCustomerEdit') == '1') {
         //        if (localStorage.getItem('pageIndex')) {
@@ -114,6 +124,7 @@ export class CustomersGridComponent implements OnInit {
 
     onPageChanged(e) {
         localStorage.setItem('pageIndex', e.pageIndex);
+        sessionStorage.setItem('pageSizeValue', this.paginator.pageSize.toString());
     }
 
     //Public Methods
