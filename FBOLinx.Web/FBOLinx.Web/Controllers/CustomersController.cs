@@ -160,7 +160,9 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            foreach(var customer in customers)
+            var distinctCust = customers.GroupBy(s => s.CompanyName).Select(s => s.First()).ToList();
+            int custId = 0;
+            foreach(var customer in distinctCust)
             {
                 Customers newC = new Customers();
                 newC.Company = customer.CompanyName;
@@ -178,6 +180,7 @@ namespace FBOLinx.Web.Controllers
 
                 if(newC.Oid != 0)
                 {
+                    custId = newC.Oid;
                     customer.CompanyId = newC.Oid;
                     CustomerInfoByGroup cibg = new CustomerInfoByGroup();
                     cibg.CustomerId = newC.Oid;
@@ -211,7 +214,7 @@ namespace FBOLinx.Web.Controllers
                         ca.AircraftId = ac.AircraftId;
                         ca.TailNumber = custPlane.Tail;
                         ca.GroupId = custPlane.groupid;
-                        ca.CustomerId = custPlane.CompanyId;
+                        ca.CustomerId = custId;
 
                         _context.CustomerAircrafts.Add(ca);
                         await _context.SaveChangesAsync();
