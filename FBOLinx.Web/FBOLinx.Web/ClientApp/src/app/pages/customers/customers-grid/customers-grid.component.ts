@@ -352,10 +352,9 @@ export class CustomersGridComponent implements OnInit {
 
                 this.customersService.importcustomers(results.data).subscribe((data: any) => {
                     if (data) {
-                        this.importer.displaySuccess("Success!");
+                        this.importer.displaySuccess("Data successfully imported!");
                         setTimeout(() => {
-                            this.results = JSON.stringify(results.validData, null, 2);
-                            this.refreshCustomerDataSource();
+                            this.customerDeleted.emit();
                         }, 1500);
                     }
                 });
@@ -379,13 +378,7 @@ export class CustomersGridComponent implements OnInit {
                     label: "Company Id",
                     alternates: ["Id", "CompanyId"],
                     key: "CompanyId",
-                    description: "Company Id Value",
-                    validators: [
-                        {
-                            validate: "required",
-                            error: "this field is required"
-                        }
-                    ]
+                    description: "Company Id Value"
                 },
                 {
                     label: "CompanyName",
