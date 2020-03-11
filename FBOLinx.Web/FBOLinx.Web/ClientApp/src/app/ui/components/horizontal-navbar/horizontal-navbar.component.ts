@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { MatButton } from '@angular/material';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
+
+import * as _ from 'lodash';
 
 //Services
 import { UserService } from '../../../services/user.service';
@@ -9,6 +10,9 @@ import { AuthenticationService } from '../../../services/authentication.service'
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { FbopricesService } from '../../../services/fboprices.service';
+import { FboairportsService } from '../../../services/fboairports.service';
+import { AcukwikairportsService } from '../../../services/acukwikairports.service';
+import { FbosService } from '../../../services/fbos.service';
 
 //Components
 import { AccountProfileComponent } from '../../../shared/components/account-profile/account-profile.component';
@@ -32,6 +36,7 @@ export class HorizontalNavbarComponent implements OnInit {
     sidebarState = new EventEmitter();
     showOverlay: boolean;
     isOpened: boolean;
+    isLocationsLoaded: boolean;
     public userFullName: string;
     public customersWithoutMargins: any[];
     public accountProfileMenu: any = {isOpened: false};
@@ -41,6 +46,9 @@ export class HorizontalNavbarComponent implements OnInit {
     public hasLoadedJetACost: boolean = false;
     public hasLoadedJetARetail: boolean = false;
     public viewAllNotifications: boolean = false;
+    public locations: any[];
+    public fboAirport: any;
+    public fbo: any;
     private currentUser: any;
 
     constructor(private authenticationService: AuthenticationService,
@@ -49,7 +57,11 @@ export class HorizontalNavbarComponent implements OnInit {
         private router: Router,
         public accountProfileDialog: MatDialog,
         private userService: UserService,
-        private fboPricesService: FbopricesService    ) {
+        private fboPricesService: FbopricesService,
+        private fboAirportsService: FboairportsService,
+        private acukwikAirportsService: AcukwikairportsService,
+        private fbosService: FbosService
+    ) {
         this.openedSidebar = false;
         this.showOverlay = false;
         this.isOpened = false;
@@ -64,6 +76,8 @@ export class HorizontalNavbarComponent implements OnInit {
     ngOnInit() {
         this.loadCustomersWithoutMargins(5);
         this.loadCurrentPrices();
+        this.loadLocations();
+        this.loadFboInfo();
     }
 
     toggle(event) {
@@ -84,9 +98,7 @@ export class HorizontalNavbarComponent implements OnInit {
         }
         clickedComponent.classList.add('opened');
 
-        //Add class 'show-overlay'
         this.isOpened = true;
-        //this.showOverlay = true;
     }
 
     openUpdate() {
@@ -96,20 +108,10 @@ export class HorizontalNavbarComponent implements OnInit {
     }
 
     close(event) {
-        //let clickedComponent = event.target.closest('.nav-item');
-        //let items = clickedComponent.parentElement.children;
-
         event.preventDefault();
         this.accountProfileMenu.isOpened = false;
         this.needsAttentionMenu.isOpened = false;
-
-        //for (let i = 0; i < items.length; i++) {
-        //    items[i].classList.remove('opened');
-        //}
-
-        //Remove class 'show-overlay'
         this.isOpened = false;
-        //this.showOverlay = false;
     }
 
     openSidebar() {
@@ -168,7 +170,6 @@ export class HorizontalNavbarComponent implements OnInit {
     }
 
     public viewAllNotificationsClicked() {
-        //this.loadCustomersWithoutMargins(0);
         this.needsAttentionMenu.isOpened = false;
         this.router.navigate(['/default-layout/customers']);
         this.close(event);
@@ -178,7 +179,6 @@ export class HorizontalNavbarComponent implements OnInit {
         this.viewAllNotifications = false;
     }
 
-    //private loadCustomersWithoutMargins(count) {
     public loadCustomersWithoutMargins(count) {
         if (!count)
             count = 0;
@@ -199,5 +199,44 @@ export class HorizontalNavbarComponent implements OnInit {
             this.currrentJetARetailPricing = data;
             this.hasLoadedJetARetail = true;
         });
+    }
+
+    private loadLocations() {
+        this.acukwikAirportsService.getAllAirports().subscribe((data: any) => {
+            this.isLocationsLoaded = true;
+            if (data && data.length) {
+                this.locations = _.cloneDeep(data);
+            }
+        }, (error: any) => {
+            this.isLocationsLoaded = true;
+            console.log(error);
+        });
+    }
+
+    private loadFboInfo() {
+        this.fboAirportsService.getForFbo({ oid: this.currentUser.fboId }).subscribe((data: any) => {
+            this.fboAirport = _.assign({}, data);
+        }, (error: any) => {
+            console.log(error);
+        });
+        this.fbosService.get({ oid: this.currentUser.fboId }).subscribe((data: any) => {
+            this.fbo = _.assign({}, data);
+        }, (error: any) => {
+            console.log(error);
+        });
+    }
+
+    private changeLocation(location: any) {
+        this.fboAirport.iata = location.iata;
+        this.fboAirport.icao = location.icao;
+        this.fboAirportsService.update(this.fboAirport).subscribe();
+        this.accountProfileMenu.isOpened = false;
+        this.needsAttentionMenu.isOpened = false;
+        this.isOpened = false;
+    }
+
+    private toggleProfileMenu() {
+        if (!this.isLocationsLoaded) return;
+        this.accountProfileMenu.isOpened = !this.accountProfileMenu.isOpened;
     }
 }

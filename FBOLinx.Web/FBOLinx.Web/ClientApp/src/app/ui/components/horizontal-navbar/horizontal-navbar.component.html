@@ -9,7 +9,9 @@
     </div>
 
     <h1 class="page-title">{{ title }}</h1>
-
+    <h2 *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao" class="page-info">
+        {{ fbo.fbo }} / {{ fboAirport.icao }}
+    </h2>
     <div class="nav-items">
         <div class="nav-item" [ngClass]="{ 'opened' : needsAttentionMenu.isOpened }">
             <a (click)="openUpdate()" class="nav-link">
@@ -175,11 +177,12 @@
         </div>
 
         <div class="nav-item" [ngClass]="{ 'opened' : accountProfileMenu.isOpened }">
-            <a (click)="accountProfileMenu.isOpened = !accountProfileMenu.isOpened" class="nav-link">
+            <a (click)="toggleProfileMenu()" class="nav-link">
                 <div class="name" *ngIf="userFullName">{{userFullName}}</div>
             </a>
+            <mat-spinner diameter="30" *ngIf="!isLocationsLoaded"></mat-spinner>
 
-            <div class="dropdown-menu mini-menu">
+            <div class="dropdown-menu mini-menu" *ngIf="isLocationsLoaded && fboAirport">
                 <ul>
                     <li>
                         <a style="cursor: pointer;" (click)="accountProfileClicked($event)">
@@ -187,20 +190,23 @@
                         </a>
                     </li>
                     <li class="nav-sub-item">
-                        <a style="cursor: pointer;" (click)="accountProfileClicked($event)">
+                        <a style="cursor: pointer;">
                             <span class="icon sli-arrow-left"></span> Switch Location
                         </a>
-                        <ul class="nav-sub-item-menu">
-                            <li>
-                                <a>KAPA</a>
-                            </li>
-                            <li>
-                                <a>KAPA</a>
-                            </li>
-                            <li>
-                                <a>KAPA</a>
-                            </li>
-                        </ul>
+                        <mat-list class="nav-sub-item-menu">
+                            <mat-list-item
+                                *ngFor="let location of locations"
+                                (click)="changeLocation(location)"
+                            >
+                                <!-- <mat-radio-button
+                                    [checked]="location.icao == fboAirport.icao"
+                                    [value]="location.icao"
+                                    (change)="changeLocation(location)"
+                                > -->
+                                    {{ location.icao }}
+                                <!-- </mat-radio-button> -->
+                            </mat-list-item>
+                        </mat-list>
                     </li>
                     <li *ngIf="currentUser && currentUser.impersonatedRole > 0">
                         <a style="cursor: pointer;" (click)="stopManagingClicked($event)">

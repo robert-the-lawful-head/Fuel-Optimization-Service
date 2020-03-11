@@ -54,7 +54,7 @@
     "rxjs": "~6.3.3",
     "xlsx": "^0.14.1",
     "zone.js": "~0.8.26",
-	"flatfile-csv-importer": "0.2.9"
+    "flatfile-csv-importer": "0.2.9"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.10.0",
