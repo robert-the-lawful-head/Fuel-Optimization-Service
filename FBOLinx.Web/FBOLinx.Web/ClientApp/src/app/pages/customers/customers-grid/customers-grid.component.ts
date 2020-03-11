@@ -46,7 +46,9 @@ export class CustomersGridComponent implements OnInit {
     public selectedRows: number;
     public globalMargin: any;
     public pageIndex: number = 0;
-    public pageSize: number = 10;    
+    public pageSize: number = 10;
+    public tableSort: string = 'allInPrice';
+    public tableSortOrder: string = 'asc';
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -103,7 +105,14 @@ export class CustomersGridComponent implements OnInit {
             this.pageSize = 10;
         }
 
-        console.log(this.paginator);
+        if (sessionStorage.getItem('tableSortValue')) {
+            this.tableSort = sessionStorage.getItem('tableSortValue') as any;
+        }
+
+        if (sessionStorage.getItem('tableSortValueDirection')) {
+            this.tableSortOrder = sessionStorage.getItem('tableSortValueDirection') as any;
+        }
+       
 
         //if (sessionStorage.getItem('isCustomerEdit')) {
         //    if (sessionStorage.getItem('isCustomerEdit') == '1') {
@@ -223,6 +232,16 @@ export class CustomersGridComponent implements OnInit {
 
     }
 
+    public alertHeader(value) {
+        if (value) {
+            sessionStorage.setItem('tableSortValue', value);
+        }
+
+        if (this.sort.direction) {
+            sessionStorage.setItem('tableSortValueDirection', this.sort.direction);
+        }
+    }
+
     public exportCustomerAircraftToExcel() {
         //Export the filtered results to an excel spreadsheet
         let exportData = _.map(this.allCustomerAircraft, item => {
@@ -286,7 +305,11 @@ export class CustomersGridComponent implements OnInit {
                 return true;
             return !element.needsAttention;
         }));
+        this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
+        
+        console.log(this.sort);
+
         this.customersDataSource.paginator = this.paginator;
         this.resultsLength = this.customersData.length;
     }
