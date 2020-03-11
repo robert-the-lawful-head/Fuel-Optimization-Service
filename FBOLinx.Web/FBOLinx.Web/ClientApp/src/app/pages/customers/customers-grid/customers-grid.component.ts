@@ -45,7 +45,10 @@ export class CustomersGridComponent implements OnInit {
     public selectAll: boolean = false;
     public selectedRows: number;
     public globalMargin: any;
-    public pageIndex: number = 0;    
+    public pageIndex: number = 0;
+    public pageSize: number = 10;
+    public tableSort: string = 'needsAttention';
+    public tableSortOrder: string = 'asc';
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -86,25 +89,51 @@ export class CustomersGridComponent implements OnInit {
             name: "WebsiteImport"
         });
 
-        if (sessionStorage.getItem('isCustomerEdit')) {
-            if (sessionStorage.getItem('isCustomerEdit') == '1') {
-                if (localStorage.getItem('pageIndex')) {
-                    this.paginator.pageIndex = localStorage.getItem('pageIndex') as any;
-                    localStorage.removeItem('pageIndex');
-                    sessionStorage.removeItem('isCustomerEdit');
-                }
-                else {
-                    this.paginator.pageIndex = 0;
-                }
-            }
+        if (localStorage.getItem('pageIndex')) {
+            this.paginator.pageIndex = localStorage.getItem('pageIndex') as any;
+            //localStorage.removeItem('pageIndex');
+            //sessionStorage.removeItem('isCustomerEdit');
         }
         else {
             this.paginator.pageIndex = 0;
         }
+
+        if (sessionStorage.getItem('pageSizeValue')) {
+            this.pageSize = sessionStorage.getItem('pageSizeValue') as any;
+        }
+        else {
+            this.pageSize = 10;
+        }
+
+        if (sessionStorage.getItem('tableSortValue')) {
+            this.tableSort = sessionStorage.getItem('tableSortValue') as any;
+        }
+
+        if (sessionStorage.getItem('tableSortValueDirection')) {
+            this.tableSortOrder = sessionStorage.getItem('tableSortValueDirection') as any;
+        }
+       
+
+        //if (sessionStorage.getItem('isCustomerEdit')) {
+        //    if (sessionStorage.getItem('isCustomerEdit') == '1') {
+        //        if (localStorage.getItem('pageIndex')) {
+        //            this.paginator.pageIndex = localStorage.getItem('pageIndex') as any;
+        //            localStorage.removeItem('pageIndex');
+        //            sessionStorage.removeItem('isCustomerEdit');
+        //        }
+        //        else {
+        //            this.paginator.pageIndex = 0;
+        //        }
+        //    }
+        //}
+        //else {
+        //    this.paginator.pageIndex = 0;
+        //}
     }
 
     onPageChanged(e) {
         localStorage.setItem('pageIndex', e.pageIndex);
+        sessionStorage.setItem('pageSizeValue', this.paginator.pageSize.toString());
     }
 
     //Public Methods
@@ -203,6 +232,16 @@ export class CustomersGridComponent implements OnInit {
 
     }
 
+    public alertHeader(value) {
+        if (value) {
+            sessionStorage.setItem('tableSortValue', value);
+        }
+
+        if (this.sort.direction) {
+            sessionStorage.setItem('tableSortValueDirection', this.sort.direction);
+        }
+    }
+
     public exportCustomerAircraftToExcel() {
         //Export the filtered results to an excel spreadsheet
         let exportData = _.map(this.allCustomerAircraft, item => {
@@ -266,7 +305,11 @@ export class CustomersGridComponent implements OnInit {
                 return true;
             return !element.needsAttention;
         }));
+        this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
+        
+        console.log(this.sort);
+
         this.customersDataSource.paginator = this.paginator;
         this.resultsLength = this.customersData.length;
     }
@@ -332,10 +375,9 @@ export class CustomersGridComponent implements OnInit {
 
                 this.customersService.importcustomers(results.data).subscribe((data: any) => {
                     if (data) {
-                        this.importer.displaySuccess("Success!");
+                        this.importer.displaySuccess("Data successfully imported!");
                         setTimeout(() => {
-                            this.results = JSON.stringify(results.validData, null, 2);
-                            this.refreshCustomerDataSource();
+                            this.customerDeleted.emit();
                         }, 1500);
                     }
                 });
@@ -359,13 +401,7 @@ export class CustomersGridComponent implements OnInit {
                     label: "Company Id",
                     alternates: ["Id", "CompanyId"],
                     key: "CompanyId",
-                    description: "Company Id Value",
-                    validators: [
-                        {
-                            validate: "required",
-                            error: "this field is required"
-                        }
-                    ]
+                    description: "Company Id Value"
                 },
                 {
                     label: "CompanyName",
