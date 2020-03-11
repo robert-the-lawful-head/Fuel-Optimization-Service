@@ -47,7 +47,7 @@ export class CustomersGridComponent implements OnInit {
     public globalMargin: any;
     public pageIndex: number = 0;
     public pageSize: number = 10;
-    public tableSort: string = 'allInPrice';
+    public tableSort: string = 'needsAttention';
     public tableSortOrder: string = 'asc';
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
