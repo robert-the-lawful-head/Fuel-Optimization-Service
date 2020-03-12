@@ -75,6 +75,7 @@ import { Page404Component } from './extra-pages/page-404/page-404.component';
 import { Page500Component } from './extra-pages/page-500/page-500.component';
 
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
+import { AircraftsGridComponent } from './aircrafts/aircrafts-grid/aircrafts-grid.component';
 import { ContactsEditComponent } from './contacts/contacts-edit/contacts-edit.component';
 import { ContactsDialogNewContactComponent } from './contacts/contacts-edit-modal/contacts-edit-modal.component';
 import { ContactsDialogConfirmContactDeleteComponent } from './contacts/contact-confirm-delete-modal/contact-confirm-delete-modal.component';
@@ -282,7 +283,8 @@ import { AppPipesModule } from '../app-pipes.module';
         StatisticsTotalAircraftComponent,
         StatisticsTotalCustomersComponent,
         StatisticsTotalOrdersComponent,
-        TooltipModalComponent
+        TooltipModalComponent,
+        AircraftsGridComponent
     ],
     exports: [],
     entryComponents: [

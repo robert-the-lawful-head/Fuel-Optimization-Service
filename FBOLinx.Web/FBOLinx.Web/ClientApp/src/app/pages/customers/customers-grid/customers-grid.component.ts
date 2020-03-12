@@ -307,8 +307,6 @@ export class CustomersGridComponent implements OnInit {
         }));
         this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
-        
-        console.log(this.sort);
 
         this.customersDataSource.paginator = this.paginator;
         this.resultsLength = this.customersData.length;
