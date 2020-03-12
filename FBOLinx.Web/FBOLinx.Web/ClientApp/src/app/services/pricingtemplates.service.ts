@@ -1,10 +1,13 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { share } from 'rxjs/operators';
 
 @Injectable()
 export class PricingtemplatesService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
+    public pricingTemplatesDataObservable: Observable<any>;
 
     constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         this.headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });
@@ -16,7 +19,12 @@ export class PricingtemplatesService {
         if (groupId) {
             url += '/group/' + groupId;
         }
-        return this.http.get(url + '/fbo/' + fboId, { headers: this.headers });
+        if (this.pricingTemplatesDataObservable) {
+            return this.pricingTemplatesDataObservable;
+        } else {
+            this.pricingTemplatesDataObservable = this.http.get(url + '/fbo/' + fboId, { headers: this.headers }).pipe(share());
+            return this.pricingTemplatesDataObservable;
+        }
     }
 
     public get(payload) {

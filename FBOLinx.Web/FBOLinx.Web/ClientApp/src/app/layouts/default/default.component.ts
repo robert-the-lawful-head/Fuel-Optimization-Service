@@ -82,28 +82,17 @@ export class DefaultLayoutComponent implements OnInit {
         }
         this.fboPricesService.checkFboExpiredPricing(this._sharedService.currentUser.fboId).subscribe(
             (data: any) => {
-                //for (let fboPrice of data) {
-                //    if (fboPrice.price > 0) 
-                //        return;
-                //}
                 if(data){
                     if (data.price > 0) {
                         return;
                     }
                 }
                 
-
                 const dialogRef = this.expiredPricingDialog.open(PricingExpiredNotificationComponent,
                     {
                         data: {}
                     });
-
-                dialogRef.afterClosed().subscribe(result => {
-                    
-                });
-
+                dialogRef.afterClosed().subscribe(result => {});
             });
-
-        
     }
 }

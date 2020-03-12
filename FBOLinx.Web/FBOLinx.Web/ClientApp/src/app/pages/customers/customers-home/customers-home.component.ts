@@ -1,13 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 //Services
-import { AuthenticationService } from '../../../services/authentication.service'
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { CustomersService } from '../../../services/customers.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 
 const BREADCRUMBS: any[] = [
     {
@@ -31,19 +29,23 @@ export class CustomersHomeComponent {
     //Public Members
     public pageTitle: string = 'Customers';
     public breadcrumb: any[] = BREADCRUMBS;
-    public customersData: Array<any>;
+    public customersData: any[];
+    public aircraftsData: any[];
     public pricingTemplatesData: any[];
 
     /** customers-home ctor */
-    constructor(private route: ActivatedRoute,
+    constructor(
         private router: Router,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private pricingTemplatesService: PricingtemplatesService,
-        private sharedService: SharedService) {
+        private sharedService: SharedService,
+        private customerAircraftsService: CustomeraircraftsService
+    ) {
 
         this.sharedService.emitChange(this.pageTitle);
         this.loadCustomers();
-        this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
+        this.loadCustomerAircrafts();
+        this.loadPricingTemplates();
     }
 
     public editCustomerClicked(record) {
@@ -61,6 +63,22 @@ export class CustomersHomeComponent {
             .getByGroupAndFbo(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
                 this.customersData = data;
+            });
+    }
+
+    private loadCustomerAircrafts() {
+        this.customerAircraftsService
+            .getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId)
+            .subscribe((data: any) => {
+                this.aircraftsData = data;
+            });
+    }
+
+    private loadPricingTemplates() {
+        this.pricingTemplatesService
+            .getByFbo(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                this.pricingTemplatesData = data
             });
     }
 }
