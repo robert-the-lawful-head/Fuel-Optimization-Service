@@ -23,7 +23,7 @@ export class AircraftsGridComponent implements OnInit {
 
     //Public Members
     public aircraftsDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['tailNumber', 'aircraftType', 'aircraftSize', 'aircraftPricingTemplate', 'delete'];
+    public displayedColumns: string[] = ['tailNumber', 'aircraftType', 'aircraftSize', 'company', 'aircraftPricingTemplate'];
     public resultsLength: number = 0;
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
