@@ -548,6 +548,84 @@ namespace FBOLinx.Web.Controllers
             return CreatedAtAction("GetPricingTemplate", new { id = pricingTemplate.Oid }, pricingTemplate);
         }
 
+        [HttpPost("copypricingtemplate")]
+        public async Task<IActionResult> CopyPricingTemplate([FromBody] PricingTemplateVM pricingTemplate)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(pricingTemplate.currentPricingTemplateId !=null && pricingTemplate.name != string.Empty)
+            {
+                var existingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Oid == pricingTemplate.currentPricingTemplateId);
+
+                if(existingTemplate != null)
+                {
+                    PricingTemplate pt = new PricingTemplate();
+
+                    pt.Name = pricingTemplate.name;
+                    pt.Fboid = existingTemplate.Fboid;
+                    pt.Default = false;
+                    pt.Notes = "";
+                    pt.MarginType = existingTemplate.MarginType;
+                    pt.Email = existingTemplate.Email;
+                    pt.Subject = existingTemplate.Subject;
+
+                    _context.PricingTemplate.Add(pt);
+                    await _context.SaveChangesAsync();
+
+                    if(pt.Oid != 0)
+                    {
+                        var listMargins = _context.CustomerMargins.Where(s => s.TemplateId == pricingTemplate.currentPricingTemplateId && s.PriceTierId != 0).ToList();
+
+                        if(listMargins.Count > 0)
+                        {
+                            foreach(var margin in listMargins)
+                            {
+                                CustomerMargins cm = new CustomerMargins();
+                                cm.TemplateId = pt.Oid;
+                                cm.Amount = margin.Amount;
+
+                                _context.CustomerMargins.Add(cm);
+                                _context.SaveChanges();
+
+                                var priceTier = _context.PriceTiers.Where(s => s.Oid == margin.PriceTierId).ToList();
+
+                                foreach (var pricet in priceTier)
+                                {
+                                    PriceTiers ptNew = new PriceTiers();
+                                    ptNew.Min = pricet.Min;
+                                    ptNew.Max = pricet.Max;
+
+                                    _context.PriceTiers.Add(ptNew);
+                                    await _context.SaveChangesAsync();
+
+                                    if (ptNew.Oid != 0)
+                                    {
+
+                                        cm.PriceTierId = ptNew.Oid;
+
+                                        _context.CustomerMargins.Update(cm);
+                                        _context.SaveChanges();
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return Ok(pt.Oid);
+                }
+            }
+
+            //Commented out by Angel (Dec 17th) because it creates duplicate null price tiers https://prnt.sc/qbvy3b
+            //var priceTier = new PriceTiers() {Min = 1, Max = 99999, MaxEntered = 0};
+            //_context.PriceTiers.Add(priceTier);
+
+            return null;
+
+        }
+
         // DELETE: api/PricingTemplates/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePricingTemplate([FromRoute] int id)
