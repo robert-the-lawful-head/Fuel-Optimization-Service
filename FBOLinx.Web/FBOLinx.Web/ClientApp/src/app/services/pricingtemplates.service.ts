@@ -38,4 +38,8 @@ export class PricingtemplatesService {
     public getcostpluspricingtemplates(payload) {
         return this.http.get(this.accessPointUrl + '/getcostpluspricingtemplate/' + payload, { headers: this.headers });
     }
+
+    public copy(payload) {
+        return this.http.post(this.accessPointUrl + '/copypricingtemplate/', payload, { headers: this.headers });
+    }
 }

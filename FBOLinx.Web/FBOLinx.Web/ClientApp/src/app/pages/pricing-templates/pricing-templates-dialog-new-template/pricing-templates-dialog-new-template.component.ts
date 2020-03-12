@@ -119,8 +119,6 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.secondFormGroup.patchValue({
             marginType: this.data.marginType
         });
-
-
     }
 
     onKey(event: KeyboardEvent) {

@@ -7,7 +7,9 @@ import { SharedService } from '../../../layouts/shared-service';
 
 //Components
 import { PricingTemplatesDialogNewTemplateComponent } from '../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
+import { PricingTemplatesDialogCopyTemplateComponent } from '../pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component';
 import { Router } from '@angular/router';
+
 
 @Component({
     selector: 'app-pricing-templates-grid',
@@ -20,19 +22,20 @@ export class PricingTemplatesGridComponent implements OnInit {
     //Input/Output Bindings
     @Output() editPricingTemplateClicked = new EventEmitter<any>();
     @Output() deletePricingTemplateClicked = new EventEmitter<any>();
+    @Output() copyPricingTemplateClicked = new EventEmitter<any>();
     @Output() newPricingTemplateAdded = new EventEmitter<any>();
     @Input() pricingTemplatesData: Array<any>;
 
     //Public Members
     public pricingTemplatesDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['isInvalid', 'name', 'marginTypeDescription', 'yourMargin', 'intoPlanePrice', 'customersAssigned', 'delete'];
+    public displayedColumns: string[] = ['isInvalid', 'name', 'marginTypeDescription', 'yourMargin', 'intoPlanePrice', 'customersAssigned', 'copy', 'delete'];
     public resultsLength: number = 0;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
     /** pricing-templates-grid ctor */
-    constructor(public newTemplateDialog: MatDialog, private router: Router,
+    constructor(public newTemplateDialog: MatDialog, private router: Router, public copyTemplateDialog: MatDialog,
         private sharedService: SharedService) {
 
     }
@@ -77,6 +80,18 @@ export class PricingTemplatesGridComponent implements OnInit {
 
     public deletePricingTemplate(pricingTemplate) {
         this.deletePricingTemplateClicked.emit(pricingTemplate);
+    }
+
+    public copyPricingTemplate(pricingTemplate) {
+        if (pricingTemplate) {
+            const dialogRef = this.copyTemplateDialog.open(PricingTemplatesDialogCopyTemplateComponent, {
+                data: { currentPricingTemplateId: pricingTemplate.oid }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+            });
+        }
+       
     }
 
     public applyFilter(filterValue: string) {

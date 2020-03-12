@@ -105,6 +105,7 @@ import { GroupsEditComponent } from './groups/groups-edit/groups-edit.component'
 import { GroupsGridComponent } from './groups/groups-grid/groups-grid.component';
 import { GroupsHomeComponent } from './groups/groups-home/groups-home.component';
 import { PricingTemplatesDialogNewTemplateComponent } from './pricing-templates/pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
+import { PricingTemplatesDialogCopyTemplateComponent } from './pricing-templates/pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component';
 import { PricingTemplatesEditComponent } from './pricing-templates/pricing-templates-edit/pricing-templates-edit.component';
 import { PricingTemplatesGridComponent } from './pricing-templates/pricing-templates-grid/pricing-templates-grid.component';
 import { PricingTemplatesHomeComponent } from './pricing-templates/pricing-templates-home/pricing-templates-home.component';
@@ -142,6 +143,7 @@ import { TooltipModalComponent } from '.././shared/components/tooltip-modal/tool
 
 //Pipes
 import { AppPipesModule } from '../app-pipes.module';
+
 
 @NgModule({
     imports: [
@@ -252,6 +254,7 @@ import { AppPipesModule } from '../app-pipes.module';
         GroupsGridComponent,
         GroupsHomeComponent,
         PricingTemplatesDialogNewTemplateComponent,
+        PricingTemplatesDialogCopyTemplateComponent,
         PricingTemplatesEditComponent,
         PricingTemplatesGridComponent,
         PricingTemplatesHomeComponent,
@@ -307,6 +310,7 @@ import { AppPipesModule } from '../app-pipes.module';
         PricingExpiredNotificationComponent,
         TemporaryAddOnMarginComponent,
         PricingTemplatesDialogNewTemplateComponent,
+        PricingTemplatesDialogCopyTemplateComponent,
         RampFeesDialogNewFeeComponent,
         UsersDialogNewUserComponent,
         TooltipModalComponent

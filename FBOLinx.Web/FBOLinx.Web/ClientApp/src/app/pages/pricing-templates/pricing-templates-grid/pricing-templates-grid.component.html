@@ -45,6 +45,15 @@
                 <td mat-cell *matCellDef="let pricingTemplate">{{ pricingTemplate.customersAssigned }}</td>
             </ng-container>
 
+            <ng-container matColumnDef="copy">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>&nbsp;</th>
+                <td mat-cell *matCellDef="let pricingTemplate">
+                    <div class="pull-right">
+                        <button ni-button size="small" beforeIcon="fa fa-copy" (click)="copyPricingTemplate(pricingTemplate);$event.stopPropagation();">Copy</button>
+                    </div>
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="delete">
                 <th mat-header-cell *matHeaderCellDef>
                     <div class="pull-right">
