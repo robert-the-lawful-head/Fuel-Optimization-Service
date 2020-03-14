@@ -3,12 +3,11 @@
         <ngx-charts-line-chart
             *ngIf="totalOrdersData"
             [scheme]="colorScheme"
-            [legend]="true"
-            [showXAxisLabel]="false"
-            [showYAxisLabel]="false"
+            [autoScale]="true"
+            [legend]="false"
+            [legendPosition]="'below'"
             [xAxis]="true"
             [yAxis]="true"
-            [timeline]="true"
             [results]="totalOrdersData"
         ></ngx-charts-line-chart>
     </div>

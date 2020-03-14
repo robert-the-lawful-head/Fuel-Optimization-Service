@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import * as _ from 'lodash';
 
 //Services
 import { AmChartsService } from '@amcharts/amcharts3-angular';
@@ -16,7 +16,7 @@ import { SharedService } from '../../../layouts/shared-service';
 export class AnalyticsOrdersQuoteChartComponent implements OnInit {
 
     //Public Members
-    public totalOrdersData: Array<any>;
+    public totalOrdersData: any[];
     colorScheme = {
         domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
     };
@@ -37,7 +37,17 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
             .getForFboCountsAndDateRange(this.sharedService.currentUser.fboId, startDate, endDate)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
-                console.log(data);
+                _.each(this.totalOrdersData, order => {
+                    let prevYear;
+                    for (let i = 0; i < order.series.length; i++) {
+                        if (prevYear != order.series[i].year) {
+                            prevYear = order.series[i].year;
+                            order.series[i].name = order.series[i].year + '/' + order.series[i].month;
+                        } else {
+                            order.series[i].name = order.series[i].month.toString();
+                        }
+                    }
+                });
             });
     }
 }
