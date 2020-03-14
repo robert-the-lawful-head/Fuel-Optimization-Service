@@ -409,27 +409,31 @@
                     background: #ffffff;
                     box-shadow: 0 5px 10px 2px rgba(#000,.25);
                     transition: .2s opacity 0s $animation, 0s visibility .2s $animation;
-                    > li {
+
+                    > .mat-list-item {
                       border-bottom: 1px solid rgba(main-color(500),.05);
-                      > a {
-                        display: flex;
-                        cursor: pointer;
-                        padding: 8px 0 8px 25px;
-                        transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+                      cursor: pointer;
+                      padding-left: 28px;
+                      height: 38px;
+
+                      .icon {
+                        position: absolute;
+                        left: -16px;
                       }
+
                       &:hover {
                         @media #{$min992} {
                           background: $navbar-dropdown-bg-hover;
                           color: $navbar-dropdown-color-hover;
       
-                          .icon,
-                          .mat-icon {
-                            background: rgba(accent-contrast(500), .1);
+                          .icon {
+                            background: $navbar-dropdown-bg-hover;
                           }
                         }
                       }
                     }
                   }
+
                   &:hover {
                     .nav-sub-item-menu {
                       visibility: visible;
@@ -488,12 +492,6 @@
     }
   }
   ::ng-deep {
-    .nav-sub-item-menu {
-      .mat-list-item {
-        padding-left: 20px;
-        cursor: pointer;
-      }
-    }
     .mat-spinner {
       margin: 0;
     }

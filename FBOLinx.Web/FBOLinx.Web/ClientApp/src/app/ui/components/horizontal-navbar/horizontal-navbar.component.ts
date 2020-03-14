@@ -202,7 +202,7 @@ export class HorizontalNavbarComponent implements OnInit {
     }
 
     private loadLocations() {
-        this.acukwikAirportsService.getAllAirports().subscribe((data: any) => {
+        this.fbosService.getForGroup(this.currentUser.groupId).subscribe((data: any) => {
             this.isLocationsLoaded = true;
             if (data && data.length) {
                 this.locations = _.cloneDeep(data);
