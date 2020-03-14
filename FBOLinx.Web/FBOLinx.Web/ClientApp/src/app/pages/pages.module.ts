@@ -113,6 +113,7 @@ import { PricingTemplatesHomeComponent } from './pricing-templates/pricing-templ
 import { RampFeesCategoryComponent } from './ramp-fees/ramp-fees-category/ramp-fees-category.component';
 import { RampFeesDialogNewFeeComponent } from './ramp-fees/ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component';
 import { RampFeesHomeComponent } from './ramp-fees/ramp-fees-home/ramp-fees-home.component';
+import { AnalyticsHomeComponent } from './analytics/analytics-home/analytics-home.component';
 import { UsersDialogNewUserComponent } from './users/users-dialog-new-user/users-dialog-new-user.component';
 import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
@@ -141,6 +142,7 @@ import { StatisticsTotalCustomersComponent } from '.././shared/components/statis
 import { StatisticsTotalOrdersComponent } from '.././shared/components/statistics-total-orders/statistics-total-orders.component';
 import { PopoverModule } from '.././shared/components/popover/popover.module';
 import { TooltipModalComponent } from '.././shared/components/tooltip-modal/tooltip-modal.component';
+import { AnalyticsOrdersQuoteChartComponent } from '../shared/components/analytics-orders-quote-chart/analytics-orders-quote-chart.component';
 
 //Pipes
 import { AppPipesModule } from '../app-pipes.module';
@@ -262,6 +264,7 @@ import { AppPipesModule } from '../app-pipes.module';
         RampFeesCategoryComponent,
         RampFeesDialogNewFeeComponent,
         RampFeesHomeComponent,
+        AnalyticsHomeComponent,
         UsersDialogNewUserComponent,
         UsersEditComponent,
         UsersGridComponent,
@@ -270,6 +273,7 @@ import { AppPipesModule } from '../app-pipes.module';
         AnalysisFuelreqsByAircraftSizeComponent,
         AnalysisFuelreqsTopCustomersFboComponent,
         AnalysisPriceOrdersChartComponent,
+        AnalyticsOrdersQuoteChartComponent,
         DeleteConfirmationComponent,
         CloseConfirmationComponent,
         DistributionWizardMainComponent,

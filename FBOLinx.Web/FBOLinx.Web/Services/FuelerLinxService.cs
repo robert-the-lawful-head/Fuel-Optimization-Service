@@ -39,7 +39,7 @@ namespace FBOLinx.Web.Services
 
                     })))
                 {
-                    var upliftsResult = response.Content.ReadAsAsync<Models.Responses.FuelerLinxUpliftsByLocationResponse>();
+                    Task<FuelerLinxUpliftsByLocationResponse> upliftsResult = response.Content.ReadAsAsync<Models.Responses.FuelerLinxUpliftsByLocationResponse>();
                     if (upliftsResult == null || upliftsResult.Result == null || upliftsResult.Result.d == null)
                         return new FuelerLinxUpliftsByLocationResponseContent() {ICAO = request.ICAO};
                     upliftsResult.Result.d.ICAO = request.ICAO;

@@ -1,0 +1,15 @@
+<ni-card title="Quotes & Orders Won" [headerBgColor]="'gray'">
+    <div class="chart-container">
+        <ngx-charts-line-chart
+            *ngIf="totalOrdersData"
+            [scheme]="colorScheme"
+            [legend]="true"
+            [showXAxisLabel]="false"
+            [showYAxisLabel]="false"
+            [xAxis]="true"
+            [yAxis]="true"
+            [timeline]="true"
+            [results]="totalOrdersData"
+        ></ngx-charts-line-chart>
+    </div>
+</ni-card>
