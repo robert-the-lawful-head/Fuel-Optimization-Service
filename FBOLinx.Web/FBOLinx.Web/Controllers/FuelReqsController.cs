@@ -174,7 +174,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("fbo/{fboId}/counts/daterange")]
-        public async Task<IActionResult> GetFuelReqsCountsByFbo([FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request = null)
+        public async Task<IActionResult> GetFuelReqsCountsByFbo([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
         {
             if (!ModelState.IsValid)
             {
@@ -186,11 +186,22 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest("Invalid FBO");
             }
 
+            if (string.IsNullOrEmpty(request.ICAO))
+            {
+                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
+                Fboairports airport = _context.Fboairports.Where(x => x.Fboid == request.FboId).FirstOrDefault();
+
+                if (airport == null)
+                    return NotFound();
+
+                request.ICAO = airport.Icao;
+            }
+
             IEnumerable<int> months = Enumerable.Range(1, 12);
             IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
 
             var fuelReqs = from f in _context.FuelReq
-                            //where f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime
+                               //where f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime
                            where f.Etd <= request.EndDateTime
                            group f by new
                            {
@@ -205,8 +216,7 @@ namespace FBOLinx.Web.Controllers
                                TotalOrders = results.Count()
                            };
 
-            var fuelReqsByMonth = (
-                                  from month in months
+            var fuelReqsByMonth = (from month in months
                                   join year in years on 1 equals 1
                                   join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
                                   into leftJoinFuelReqs
@@ -219,8 +229,13 @@ namespace FBOLinx.Web.Controllers
                                       Year = year,
                                       Name = month + "/" + year,
                                       Value = f?.TotalOrders ?? 0
-                                  }).OrderBy(x => x.Year).ThenBy(x => x.Month).ToList();
+                                  })
+                                  .OrderBy(x => x.Year)
+                                  .ThenBy(x => x.Month)
+                                  .ToList();
 
+            FuelerLinxService service = new FuelerLinxService();
+            var result = await service.GetOrderCountByLocation(request);
 
             var chartData = new List<object>()
                             {
@@ -255,7 +270,7 @@ namespace FBOLinx.Web.Controllers
                                                                         fr.DateCreated.Value <= request.EndDateTime
                                                                     select new
                                                                     {
-                                                                        CustomerId = fr.CustomerId,
+                                                                        fr.CustomerId,
                                                                         CustomerName = c.Company
                                                                     })
                                                     group orders by new { orders.CustomerId, orders.CustomerName }
@@ -274,7 +289,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/FuelReqs/analysis/total-orders-by-month/fbo/5
         [HttpPost("analysis/total-orders-by-month/fbo/{fboId}")]
-        public async Task<IActionResult> GetTotalOrdersByMonthForFbo([FromRoute] int fboId,
+        public IActionResult GetTotalOrdersByMonthForFbo([FromRoute] int fboId,
             [FromBody] FuelReqsTotalOrdersByMonthForFboRequest request)
         {
             if (!ModelState.IsValid)
@@ -312,40 +327,40 @@ namespace FBOLinx.Web.Controllers
 
             //Average cost prices
             var fboCostPricesByMonth = from f in _context.Fboprices
-                                        where f.Product.ToLower() == "JetA Cost"
-                                              && f.Fboid == fboId
-                                              && f.EffectiveFrom >= request.StartDateTime
-                                              && f.EffectiveFrom <= request.EndDateTime
+                                       where f.Product.ToLower() == "JetA Cost"
+                                             && f.Fboid == fboId
+                                             && f.EffectiveFrom >= request.StartDateTime
+                                             && f.EffectiveFrom <= request.EndDateTime
+                                       group f by new
+                                       {
+                                           f.EffectiveFrom.GetValueOrDefault().Month,
+                                           f.EffectiveFrom.Value.Year
+                                       }
+                                        into results
+                                       select new
+                                       {
+                                           results.Key.Month,
+                                           results.Key.Year,
+                                           AveragePrice = results.Average((x => x.Price.GetValueOrDefault()))
+                                       };
+
+            //Total orders by month
+            var fuelReqsOrdersByMonth = from f in _context.FuelReq
+                                        where f.Fboid == fboId
+                                              && f.DateCreated >= request.StartDateTime
+                                              && f.DateCreated <= request.EndDateTime
                                         group f by new
                                         {
-                                            f.EffectiveFrom.GetValueOrDefault().Month,
-                                            f.EffectiveFrom.Value.Year
+                                            f.DateCreated.GetValueOrDefault().Month,
+                                            f.DateCreated.Value.Year
                                         }
-                                        into results
+                                         into results
                                         select new
                                         {
                                             results.Key.Month,
                                             results.Key.Year,
-                                            AveragePrice = results.Average((x => x.Price.GetValueOrDefault()))
+                                            TotalOrders = results.Count()
                                         };
-
-            //Total orders by month
-            var fuelReqsOrdersByMonth = from f in _context.FuelReq
-                                         where f.Fboid == fboId
-                                               && f.DateCreated >= request.StartDateTime
-                                               && f.DateCreated <= request.EndDateTime
-                                         group f by new
-                                         {
-                                             f.DateCreated.GetValueOrDefault().Month,
-                                             f.DateCreated.Value.Year
-                                         }
-                                         into results
-                                         select new
-                                         {
-                                             results.Key.Month,
-                                             results.Key.Year,
-                                             TotalOrders = results.Count()
-                                         };
 
             var fuelReqsTotalOrdersByMonthVM = (from m in months
                                                 join y in years on 1 equals 1

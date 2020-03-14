@@ -33,15 +33,14 @@ namespace FBOLinx.Web.Services
             {
                 client.DefaultRequestHeaders.Add("APIKey", _APIKey);
                 using (HttpResponseMessage response = await client.PostAsync(upliftsByLocationURL,
-                    new FBOLinx.Web.Utilities.JsonContent(new Models.Requests.FuelerLinxUpliftsByLocationRequest()
+                    new Utilities.JsonContent(new FuelerLinxUpliftsByLocationRequest()
                     {
                         request = request
-
                     })))
                 {
-                    Task<FuelerLinxUpliftsByLocationResponse> upliftsResult = response.Content.ReadAsAsync<Models.Responses.FuelerLinxUpliftsByLocationResponse>();
+                    Task<FuelerLinxUpliftsByLocationResponse> upliftsResult = response.Content.ReadAsAsync<FuelerLinxUpliftsByLocationResponse>();
                     if (upliftsResult == null || upliftsResult.Result == null || upliftsResult.Result.d == null)
-                        return new FuelerLinxUpliftsByLocationResponseContent() {ICAO = request.ICAO};
+                        return new FuelerLinxUpliftsByLocationResponseContent() { ICAO = request.ICAO };
                     upliftsResult.Result.d.ICAO = request.ICAO;
                     return upliftsResult.Result.d;
                 }

@@ -30,7 +30,7 @@
     "@ivylab/overlay-angular": "0.0.5",
     "@ng-bootstrap/ng-bootstrap": "^4.0.1",
     "@nguniversal/module-map-ngfactory-loader": "7.0.2",
-    "@swimlane/ngx-charts": "^10.0.0",
+    "@swimlane/ngx-charts": "^10.1.0",
     "@syncfusion/ej2-angular-richtexteditor": "^16.3.34",
     "@types/date-fns": "2.6.0",
     "@types/leaflet": "1.2.14",
