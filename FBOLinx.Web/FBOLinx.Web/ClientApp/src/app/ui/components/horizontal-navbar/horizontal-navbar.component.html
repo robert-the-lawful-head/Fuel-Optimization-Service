@@ -182,14 +182,14 @@
             </a>
             <mat-spinner diameter="30" *ngIf="!isLocationsLoaded"></mat-spinner>
 
-            <div class="dropdown-menu mini-menu" *ngIf="isLocationsLoaded && fboAirport">
+            <div class="dropdown-menu mini-menu" *ngIf="isLocationsLoaded">
                 <ul>
                     <li>
                         <a style="cursor: pointer;" (click)="accountProfileClicked($event)">
                             <span class="icon sli-settings"></span> Account Profile
                         </a>
                     </li>
-                    <li class="nav-sub-item">
+                    <li class="nav-sub-item" *ngIf="fboAirport">
                         <a style="cursor: pointer;">
                             <span class="icon sli-arrow-left"></span> Switch Location
                         </a>
@@ -198,13 +198,8 @@
                                 *ngFor="let location of locations"
                                 (click)="changeLocation(location)"
                             >
-                                <!-- <mat-radio-button
-                                    [checked]="location.icao == fboAirport.icao"
-                                    [value]="location.icao"
-                                    (change)="changeLocation(location)"
-                                > -->
-                                    {{ location.icao }}
-                                <!-- </mat-radio-button> -->
+                                <span *ngIf="location.icao == fboAirport.icao" class="icon sli-flag"></span>&nbsp;
+                                {{ location.icao }}
                             </mat-list-item>
                         </mat-list>
                     </li>
