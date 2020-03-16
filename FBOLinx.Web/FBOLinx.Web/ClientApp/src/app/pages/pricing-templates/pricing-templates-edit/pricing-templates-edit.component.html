@@ -69,7 +69,8 @@
 
                             <td class="mat-cell text-center" *ngIf="pricingTemplate.marginType>0">
                                 <mat-form-field class="col-6">
-                                    <input matInput type="number" step="0.01" [ngModelOptions]="{standalone: true}" (click)="$event.target.select()"  (focus)="onFocus()" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" [(ngModel)]="customerMargin.amount">
+                                    
+                                    <input matInput type="number" step="0.01" [ngModelOptions]="{standalone: true}"  (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" [(ngModel)]="customerMargin.amount">
                                 </mat-form-field>
                             </td>
                             <td class="mat-cell text-center font-weight-bold font-italic text-right">
