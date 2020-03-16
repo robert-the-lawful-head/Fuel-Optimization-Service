@@ -32,7 +32,7 @@ namespace FBOLinx.Web.Services
         public async Task<Models.Responses.FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(Models.Requests.FuelerLinxUpliftsByLocationRequestContent request)
         {
             var authToken = await GetAuthenticationTokenFromService();
-            string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl;
+            string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
             if (string.IsNullOrEmpty(authToken))
                 return null;
 
