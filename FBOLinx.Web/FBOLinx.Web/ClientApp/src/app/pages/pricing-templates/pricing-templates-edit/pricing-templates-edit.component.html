@@ -50,6 +50,7 @@
                     <thead>
                         <tr class="mat-header-row">
                             <th class="text-center">Min. (gal)</th>
+                            <th class="text-center">Max. (gal)</th>
                             <th class="text-center" *ngIf="pricingTemplate.marginType==1">Discount</th>
                             <th class="text-center" *ngIf="pricingTemplate.marginType==0">Your ITP Margin</th>
                             <th class="text-center" *ngIf="pricingTemplate.marginType>0">Your ITP Margin</th>
@@ -66,10 +67,15 @@
                                     <input matInput (keyup.enter)="updateCustomerMargin(customerMargin)" (blur)="updateCustomerMargin(customerMargin)" [(ngModel)]="customerMargin.min" />
                                 </mat-form-field>
                             </td>
+                            <td class="mat-cell text-center">
+                                <mat-form-field class="col-6">
+                                    <input matInput disabled="disabled" value="{{customerMargin.min+249}}" />
+                                </mat-form-field>
+                            </td>
 
                             <td class="mat-cell text-center" *ngIf="pricingTemplate.marginType>0">
                                 <mat-form-field class="col-6">
-                                    <input matInput type="number" step="0.01" [ngModelOptions]="{standalone: true}"  (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" [(ngModel)]="customerMargin.amount">
+                                    <input matInput type="number" step="0.01" [ngModelOptions]="{standalone: true}" (focusout)="outFocus()" (keyup)="onType(customerMargin,$event)" (blur)="customerMarginAmountChanged(customerMargin)" [(ngModel)]="customerMargin.amount">
                                 </mat-form-field>
                             </td>
                             <td class="mat-cell text-center font-weight-bold font-italic text-right">
