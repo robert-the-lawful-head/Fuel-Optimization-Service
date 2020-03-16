@@ -35,8 +35,13 @@ export class StatisticsOrdersByLocationComponent {
     public refreshData() {
         let startDate = this.sharedService.dashboardSettings.filterStartDate;
         let endDate = this.sharedService.dashboardSettings.filterEndDate;
-        this.fuelreqsService.getOrdersByLocation({ StartDateTime: startDate, EndDateTime: endDate, ICAO: '' , FboId: this.sharedService.currentUser.fboId}).subscribe((data: any) => {
-            this.totalOrders = data.totalOrders;
+        this.fuelreqsService.getOrdersByLocation({ StartDateTime: startDate, EndDateTime: endDate, ICAO: '', FboId: this.sharedService.currentUser.fboId }).subscribe((data: any) => {
+            this.totalOrders = 0;
+            if (data.totalOrdersByMonth) {
+                for (let orders of data.totalOrdersByMonth) {
+                    this.totalOrders = orders.count;
+                }
+            }
             this.icao = data.icao;
         });
     }

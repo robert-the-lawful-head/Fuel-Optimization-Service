@@ -23,9 +23,11 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
+        private FuelerLinxService _fuelerLinxService;
 
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor)
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, Services.FuelerLinxService fuelerLinxService)
         {
+            _fuelerLinxService = fuelerLinxService;
             _context = context;
             _HttpContextAccessor = httpContextAccessor;
         }
@@ -396,8 +398,7 @@ namespace FBOLinx.Web.Controllers
                 request.ICAO = airport.Icao;
             }
 
-            Services.FuelerLinxService service = new Services.FuelerLinxService();
-            var result = await service.GetOrderCountByLocation(request);
+            var result = await _fuelerLinxService.GetOrderCountByLocation(request);
 
             return Ok(result);
         }

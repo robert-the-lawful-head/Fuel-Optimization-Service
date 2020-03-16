@@ -83,6 +83,7 @@ namespace FBOLinx.Web
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
 
             // configure DI for application services
+            services.AddScoped<FuelerLinxService, FuelerLinxService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<Auth.UserRoleAttribute>();
 

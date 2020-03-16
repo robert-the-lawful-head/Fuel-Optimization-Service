@@ -5,8 +5,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Json;
+using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses;
+using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Services
 {
@@ -17,14 +19,20 @@ namespace FBOLinx.Web.Services
         private string _ProductionPassword = "HjAQamk^Md!L9V-_";
         private string _ProductionAPIKey = "F83D59B7-AD0D-4B3C-A67B-934CD6AA6F2B";
         private string _APIKey = "F83D59B7-AD0D-4B3C-A67B-934CD6AA6F2B";
+        private IOptions<AppSettings> _appSettings;
+
         #endregion
+
+        public FuelerLinxService(IOptions<AppSettings> appSettings)
+        {
+            _appSettings = appSettings;
+        }
 
         #region Public Methods
         public async Task<Models.Responses.FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(Models.Requests.FuelerLinxUpliftsByLocationRequestContent request)
         {
             var authToken = await GetAuthenticationTokenFromService();
-            string upliftsByLocationURL =
-                "https://www.fuelerlinx.com/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
+            string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl;
             if (string.IsNullOrEmpty(authToken))
                 return null;
 
