@@ -191,7 +191,7 @@ namespace FBOLinx.Web.Controllers
             if (string.IsNullOrEmpty(request.ICAO))
             {
                 User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
-                Fboairports airport = _context.Fboairports.Where(x => x.Fboid == request.FboId).FirstOrDefault();
+                Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
 
                 if (airport == null)
                     return NotFound();
@@ -202,20 +202,28 @@ namespace FBOLinx.Web.Controllers
             IEnumerable<int> months = Enumerable.Range(1, 12);
             IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
 
-            var fuelReqs = from f in _context.FuelReq
-                               //where f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime
-                           where f.Etd <= request.EndDateTime
+            var fuelReqs = from f in (
+                               from f in _context.FuelReq
+                               where f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime
+                               select new
+                               {
+                                   f.Etd,
+                                   Sum = f.ActualVolume.GetValueOrDefault() * f.ActualPpg.GetValueOrDefault() > 0 ? f.ActualVolume * f.ActualPpg : f.QuotedVolume.GetValueOrDefault() * f.QuotedPpg.GetValueOrDefault()
+                               }
+                           )
                            group f by new
                            {
                                f.Etd.GetValueOrDefault().Month,
-                               f.Etd.Value.Year
+                               f.Etd.GetValueOrDefault().Year,
+                               f.Sum
                            }
                            into results
                            select new
                            {
                                results.Key.Month,
                                results.Key.Year,
-                               TotalOrders = results.Count()
+                               TotalOrders = results.Count(),
+                               TotalSum = results.Sum(x => x.Sum)
                            };
 
             var fuelReqsByMonth = (from month in months
@@ -236,7 +244,43 @@ namespace FBOLinx.Web.Controllers
                                   .ThenBy(x => x.Month)
                                   .ToList();
 
-            var result = await _fuelerLinxService.GetOrderCountByLocation(request);
+            var quotes = await _fuelerLinxService.GetOrderCountByLocation(request);
+
+            var quotesByMonth = (from month in months
+                                 join year in years on 1 equals 1
+                                 join q in quotes.TotalOrdersByMonth on new { Month = month, Year = year } equals new { q.Month, q.Year }
+                                 into leftJoinQuotes
+                                 from q in leftJoinQuotes.DefaultIfEmpty()
+                                 where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                 select new
+                                 {
+                                     Month = month,
+                                     Year = year,
+                                     Name = month + "/" + year,
+                                     Value = q?.Count ?? 0
+                                 })
+                                 .OrderBy(x => x.Year)
+                                 .ThenBy(x => x.Month)
+                                 .ToList();
+
+            var dollarVolumeByMonth = (from month in months
+                                       join year in years on 1 equals 1
+                                       join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
+                                       into leftJoinFuelReqs
+                                       from f in leftJoinFuelReqs.DefaultIfEmpty()
+                                       where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                       && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                       select new
+                                       {
+                                           Month = month,
+                                           Year = year,
+                                           Name = month + "/" + year,
+                                           Value = f?.TotalSum ?? 0
+                                       })
+                                       .OrderBy(x => x.Year)
+                                       .ThenBy(x => x.Month)
+                                       .ToList();
 
             var chartData = new List<object>()
                             {
@@ -244,6 +288,16 @@ namespace FBOLinx.Web.Controllers
                                 {
                                     Name = "Orders",
                                     Series = fuelReqsByMonth
+                                },
+                                new
+                                {
+                                    Name = "Quotes",
+                                    Series = quotesByMonth
+                                },
+                                new
+                                {
+                                    Name = "Sum of Dollar Volume",
+                                    Series = dollarVolumeByMonth
                                 }
                             };
 

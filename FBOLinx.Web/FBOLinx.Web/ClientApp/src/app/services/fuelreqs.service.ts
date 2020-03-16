@@ -24,7 +24,7 @@ export class FuelreqsService {
     }
 
     public getForFboCountsAndDateRange(fboId, startDate, endDate) {
-        return this.http.post(this.accessPointUrl + '/fbo/' + fboId + '/counts/daterange', {startDateTime: startDate, endDateTime: endDate}, { headers: this.headers });
+        return this.http.post(this.accessPointUrl + '/fbo/' + fboId + '/counts/daterange', {startDateTime: startDate, endDateTime: endDate, fboId}, { headers: this.headers });
     }
 
     public get(payload) {

@@ -38,15 +38,10 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
                 _.each(this.totalOrdersData, order => {
-                    let prevYear;
-                    for (let i = 0; i < order.series.length; i++) {
-                        if (prevYear != order.series[i].year) {
-                            prevYear = order.series[i].year;
-                            order.series[i].name = order.series[i].year + '/' + order.series[i].month;
-                        } else {
-                            order.series[i].name = order.series[i].month.toString();
-                        }
-                    }
+                    order.series = _.map(order.series, serie => {
+                        serie.name = new Date(serie.year, serie.month);
+                        return serie;
+                    });
                 });
             });
     }
