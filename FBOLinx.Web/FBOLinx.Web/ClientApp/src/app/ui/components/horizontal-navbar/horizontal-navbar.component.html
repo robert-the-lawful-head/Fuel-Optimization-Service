@@ -198,7 +198,7 @@
                                 *ngFor="let location of locations"
                                 (click)="changeLocation(location)"
                             >
-                                <span *ngIf="location.icao == fboAirport.icao" class="icon sli-flag"></span>&nbsp;
+                                <span *ngIf="location.oid == fboAirport.fboid" class="icon sli-flag"></span>&nbsp;
                                 {{ location.icao }}
                             </mat-list-item>
                         </mat-list>
