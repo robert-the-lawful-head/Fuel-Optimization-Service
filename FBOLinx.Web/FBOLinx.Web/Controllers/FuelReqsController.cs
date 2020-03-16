@@ -236,8 +236,7 @@ namespace FBOLinx.Web.Controllers
                                   .ThenBy(x => x.Month)
                                   .ToList();
 
-            FuelerLinxService service = new FuelerLinxService();
-            var result = await service.GetOrderCountByLocation(request);
+            var result = await _fuelerLinxService.GetOrderCountByLocation(request);
 
             var chartData = new List<object>()
                             {
