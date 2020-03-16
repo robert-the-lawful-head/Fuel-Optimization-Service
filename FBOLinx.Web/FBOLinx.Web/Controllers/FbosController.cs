@@ -44,7 +44,7 @@ namespace FBOLinx.Web.Controllers
                 Icao = f.fboAirport.Icao,
                 Iata = f.fboAirport.Iata,
                 Oid = f.Oid
-            }).ToList();
+            }).Distinct().ToList();
             return Ok(fbosVM);
         }
 
