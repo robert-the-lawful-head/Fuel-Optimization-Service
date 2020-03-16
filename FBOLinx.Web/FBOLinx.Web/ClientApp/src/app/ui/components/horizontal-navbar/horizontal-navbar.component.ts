@@ -162,6 +162,9 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     public stopManagingClicked(event) {
         this.sharedService.currentUser.impersonatedRole = null;
         this.sharedService.currentUser.fboId = 0;
+        this.locations = [];
+        this.fboAirport = null;
+        this.fbo = null;
         this.close(event);
         this.router.navigate(['/default-layout/fbos/']);
     }
