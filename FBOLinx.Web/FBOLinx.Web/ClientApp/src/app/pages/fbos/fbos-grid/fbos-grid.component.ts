@@ -147,6 +147,7 @@ export class FbosGridComponent implements OnInit {
                 return;
             this.sharedService.currentUser.impersonatedRole = 1;
             this.sharedService.currentUser.fboId = result.oid;
+            this.sharedService.emitChange('fbo changed');
             this.router.navigate(['/default-layout/dashboard-fbo/']);
         });
     }
