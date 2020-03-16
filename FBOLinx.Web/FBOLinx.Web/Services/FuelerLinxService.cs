@@ -61,8 +61,7 @@ namespace FBOLinx.Web.Services
         {
             try
             {
-                string authURL =
-                    "https://www.fuelerlinx.com/integratedservices/vendors/fbolinx.asmx/GetAuthenticationToken";
+                string authURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetAuthenticationToken";
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("APIKey", _APIKey);
