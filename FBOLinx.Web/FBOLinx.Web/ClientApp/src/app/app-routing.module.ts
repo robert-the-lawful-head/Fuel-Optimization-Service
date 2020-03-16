@@ -9,59 +9,33 @@ import { BoxedCLayoutComponent }        from './layouts/boxed-c/boxed-c.componen
 import { ExtraLayoutComponent } from './layouts/extra/extra.component';
 import { LandingSiteLayoutComponent } from './layouts/landing-site/landing-site.component';
 
-import { PageTypographyComponent }      from './pages/typography/typography.component';
-import { PageNotFoundComponent }        from './pages/not-found/not-found.component';
-
 import { PageSignIn1Component }         from './pages/extra-pages/sign-in-1/sign-in-1.component';
-import { PageSignIn2Component }         from './pages/extra-pages/sign-in-2/sign-in-2.component';
 import { PageSignIn3Component }         from './pages/extra-pages/sign-in-3/sign-in-3.component';
 import { PageSignUp1Component }         from './pages/extra-pages/sign-up-1/sign-up-1.component';
-import { PageSignUp2Component }         from './pages/extra-pages/sign-up-2/sign-up-2.component';
 import { PageForgotComponent }          from './pages/extra-pages/forgot/forgot.component';
 import { PageConfirmComponent }         from './pages/extra-pages/confirm/confirm.component';
 import { Page404Component }             from './pages/extra-pages/page-404/page-404.component';
 import { Page500Component }             from './pages/extra-pages/page-500/page-500.component';
-import { PageAboutUsComponent }         from './pages/pages-service/about-us/about-us.component';
-import { PageFaqComponent }             from './pages/pages-service/faq/faq.component';
-import { PageTimelineComponent }        from './pages/pages-service/timeline/timeline.component';
-import { PageInvoiceComponent }         from './pages/pages-service/invoice/invoice.component';
-import { PageCalendarComponent }        from './pages/calendar/calendar.component';
-import { PageSimpleTableComponent }     from './pages/tables/simple-table/simple-table.component';
-import { PageBootstrapTablesComponent } from './pages/tables/bootstrap-tables/bootstrap-tables.component';
-import { PageSortingTableComponent }    from './pages/tables/sorting-table/sorting-table.component';
-import { PageFilteringTableComponent }  from './pages/tables/filtering-table/filtering-table.component';
-import { PagePaginationTableComponent } from './pages/tables/pagination-table/pagination-table.component';
-import { PageGoogleMapComponent }       from './pages/maps/google-map/google-map.component';
-import { PageLeafletMapComponent }      from './pages/maps/leaflet-map/leaflet-map.component';
-import { PageWidgetsComponent }         from './pages/widgets/widgets.component';
 import { PageLayoutsComponent } from './pages/layouts/layouts.component';
 
 //Page Components
-import { AppComponent } from './app.component';
 import { AuthtokenComponent} from './pages/auth/authtoken/authtoken.component';
-import { ContactsEditComponent } from './pages/contacts/contacts-edit/contacts-edit.component';
-import { ContactsGridComponent } from './pages/contacts/contacts-grid/contacts-grid.component';
 import { CustomersEditComponent } from './pages/customers/customers-edit/customers-edit.component';
-import { CustomersGridComponent } from './pages/customers/customers-grid/customers-grid.component';
 import { CustomersHomeComponent } from './pages/customers/customers-home/customers-home.component';
 import { DashboardAdminComponent } from './pages/dashboards/dashboard-admin/dashboard-admin.component';
 import { DashboardFboComponent } from './pages/dashboards/dashboard-fbo/dashboard-fbo.component';
 import { DashboardHomeComponent } from './pages/dashboards/dashboard-home/dashboard-home.component';
 import { FboPricesHomeComponent } from './pages/fbo-prices/fbo-prices-home/fbo-prices-home.component';
 import { FbosHomeComponent } from './pages/fbos/fbos-home/fbos-home.component';
-import { FbosGridComponent } from './pages/fbos/fbos-grid/fbos-grid.component';
 import { FbosEditComponent } from './pages/fbos/fbos-edit/fbos-edit.component';
-import { FuelreqsGridComponent } from './pages/fuelreqs/fuelreqs-grid/fuelreqs-grid.component';
 import { FuelreqsHomeComponent } from './pages/fuelreqs/fuelreqs-home/fuelreqs-home.component';
 import { GroupsEditComponent } from './pages/groups/groups-edit/groups-edit.component';
-import { GroupsGridComponent } from './pages/groups/groups-grid/groups-grid.component';
 import { GroupsHomeComponent } from './pages/groups/groups-home/groups-home.component';
 import { PricingTemplatesEditComponent } from './pages/pricing-templates/pricing-templates-edit/pricing-templates-edit.component';
-import { PricingTemplatesGridComponent } from './pages/pricing-templates/pricing-templates-grid/pricing-templates-grid.component';
 import { PricingTemplatesHomeComponent } from './pages/pricing-templates/pricing-templates-home/pricing-templates-home.component';
 import { RampFeesHomeComponent } from './pages/ramp-fees/ramp-fees-home/ramp-fees-home.component';
+import { AnalyticsHomeComponent } from './pages/analytics/analytics-home/analytics-home.component';
 import { UsersEditComponent } from './pages/users/users-edit/users-edit.component';
-import { UsersGridComponent } from './pages/users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './pages/users/users-home/users-home.component';
 
 //Guards
@@ -122,6 +96,7 @@ const defaultRoutes: Routes = [
     { path: 'pricing-templates/:id', component: PricingTemplatesEditComponent, canActivate: [AuthGuard] },
     { path: 'fuelreqs', component: FuelreqsHomeComponent, canActivate: [AuthGuard] },
     { path: 'rampfees', component: RampFeesHomeComponent, canActivate: [AuthGuard] },
+    { path: 'analytics', component: AnalyticsHomeComponent, canActivate: [AuthGuard] },
     {
         path: 'users',
         component: UsersHomeComponent,

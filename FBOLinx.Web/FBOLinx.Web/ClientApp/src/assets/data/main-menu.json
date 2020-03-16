@@ -97,5 +97,15 @@
         "tooltip": "Enter and manage your fees",
         "routing": "/default-layout/rampfees",
         "roles": [ 1, 4 ]
+    },
+    {
+        "title": "Analytics",
+        "icon": {
+            "class": "fa fa-line-chart",
+            "bg": "rgb(178, 223, 219)",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/analytics",
+        "roles": [ 1, 4 ]
     }
 ]

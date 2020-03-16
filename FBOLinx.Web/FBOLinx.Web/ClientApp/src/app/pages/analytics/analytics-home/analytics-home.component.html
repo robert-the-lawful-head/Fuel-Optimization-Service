@@ -1,11 +1,4 @@
-<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4" [livePrice]="updatedPrice"></ni-breadcrumb>
-
-<div class="row">
-    <ni-card [outline]="true">
-        <app-fbo-prices-home style="width: 100%;" (priceUpdated)="priceLiveUpdated($event)"></app-fbo-prices-home>
-    </ni-card>
-    
-</div>
+<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
 
 <div class="row" *ngIf="dashboardSettings">
     <div class="col-md-4">
@@ -27,6 +20,7 @@
         </div>
     </div>
 </div>
+
 <div class="row">
     <div class="col-md-6 col-xl-3">
         <app-statistics-total-orders #statisticsTotalOrders [options]="statisticsOptions"></app-statistics-total-orders>
@@ -42,5 +36,11 @@
 
     <div class="col-md-6 col-xl-3">
         <app-statistics-orders-by-location #statisticsOrdersByLocation [options]="statisticsOptions"></app-statistics-orders-by-location>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <app-analytics-orders-quote #analyticsOrdersQuoteChart></app-analytics-orders-quote>
     </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 
@@ -27,7 +27,7 @@ import { AccountProfileComponent } from '../../../shared/components/account-prof
         '[class.show-overlay]': 'showOverlay'
     }
 })
-export class HorizontalNavbarComponent implements OnInit {
+export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     @Input()
     title: string;
     @Input()
@@ -78,6 +78,15 @@ export class HorizontalNavbarComponent implements OnInit {
         this.loadCurrentPrices();
         this.loadLocations();
         this.loadFboInfo();
+    }
+
+    ngAfterViewInit() {
+        this.sharedService.changeEmitted$.subscribe((message) => {
+            if (message === 'fbo changed') {
+                this.loadLocations();
+                this.loadFboInfo();
+            }
+        });
     }
 
     toggle(event) {
@@ -153,6 +162,9 @@ export class HorizontalNavbarComponent implements OnInit {
     public stopManagingClicked(event) {
         this.sharedService.currentUser.impersonatedRole = null;
         this.sharedService.currentUser.fboId = 0;
+        this.locations = [];
+        this.fboAirport = null;
+        this.fbo = null;
         this.close(event);
         this.router.navigate(['/default-layout/fbos/']);
     }
@@ -202,7 +214,10 @@ export class HorizontalNavbarComponent implements OnInit {
     }
 
     private loadLocations() {
-        this.acukwikAirportsService.getAllAirports().subscribe((data: any) => {
+        if (!this.currentUser.groupId) {
+            return;
+        }
+        this.fbosService.getForGroup(this.currentUser.groupId).subscribe((data: any) => {
             this.isLocationsLoaded = true;
             if (data && data.length) {
                 this.locations = _.cloneDeep(data);
@@ -214,6 +229,9 @@ export class HorizontalNavbarComponent implements OnInit {
     }
 
     private loadFboInfo() {
+        if (!this.currentUser.fboId) {
+            return;
+        }
         this.fboAirportsService.getForFbo({ oid: this.currentUser.fboId }).subscribe((data: any) => {
             this.fboAirport = _.assign({}, data);
         }, (error: any) => {

@@ -13,6 +13,7 @@ namespace FBOLinx.Web.ViewModels
         public string Tail { get; set; }
         public string AircraftModel { get; set; }
         public string AircraftMake { get; set; }
+        public string AircraftSize { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Title { get; set; }
