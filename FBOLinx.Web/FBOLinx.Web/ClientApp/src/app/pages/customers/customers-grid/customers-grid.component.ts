@@ -438,6 +438,12 @@ export class CustomersGridComponent implements OnInit {
                     description: "Aircraft Model"
                 },
                 {
+                    label: "Size",
+                    alternates: ["Aircraft Size", "Plane Size"],
+                    key: "AircraftSize",
+                    description: "Aircraft Size"
+                },
+                {
                     label: "First Name",
                     alternates: ["first name", "name"],
                     key: "FirstName",
