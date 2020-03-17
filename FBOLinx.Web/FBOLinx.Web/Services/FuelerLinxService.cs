@@ -32,7 +32,7 @@ namespace FBOLinx.Web.Services
         public async Task<Models.Responses.FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(Models.Requests.FuelerLinxUpliftsByLocationRequestContent request)
         {
             var authToken = await GetAuthenticationTokenFromService();
-            string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl;
+            string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
             if (string.IsNullOrEmpty(authToken))
                 return null;
 
@@ -61,8 +61,7 @@ namespace FBOLinx.Web.Services
         {
             try
             {
-                string authURL =
-                    "https://www.fuelerlinx.com/integratedservices/vendors/fbolinx.asmx/GetAuthenticationToken";
+                string authURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetAuthenticationToken";
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("APIKey", _APIKey);
