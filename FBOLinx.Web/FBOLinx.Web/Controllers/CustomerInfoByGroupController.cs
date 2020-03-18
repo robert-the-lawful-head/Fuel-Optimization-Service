@@ -530,11 +530,12 @@ namespace FBOLinx.Web.Controllers
                                                     join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
                                                     into leftJoinCC
                                                     from cc in leftJoinCC.DefaultIfEmpty()
-                                                        //join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.Oid), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
-                                                                     join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
-                                                                     into leftJoinCIBG
+                                                    join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
+                                                    into leftJoinCIBG
                                                     from cibg in leftJoinCIBG.DefaultIfEmpty()
                                                     join ai in result on new { Name = (string.IsNullOrEmpty(pt.Name) ? "Default Template" : pt.Name) } equals new { ai.Name}
+                                                    into leftJoinAi
+                                                    from ai in leftJoinAi.DefaultIfEmpty()
                                                     where cg.GroupId == groupId
                                                     group cg by new
                                                     {
@@ -547,10 +548,10 @@ namespace FBOLinx.Web.Controllers
                                                         Suspended = cg.Suspended.GetValueOrDefault(),
                                                         FuelerLinxId = c.FuelerlinxId.GetValueOrDefault(),
                                                         Network = cg.Network.GetValueOrDefault(),
-                                                        GroupId = cg.GroupId,
+                                                        cg.GroupId,
                                                         CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
                                                         CustomerCompanyTypeName = ccot.Name,
-                                                        Tails = ca.Tails,
+                                                        ca.Tails,
                                                         CertificateType = cg.CertificateType.GetValueOrDefault(),
                                                         ContactExists = cibg == null || !cibg.CopyAlerts.HasValue ? false : cibg.CopyAlerts,
                                                         PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? "Default Template" : pt.Name,
