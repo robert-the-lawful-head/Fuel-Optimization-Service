@@ -97,8 +97,6 @@ export class AdditionNavbarComponent implements OnInit {
 
         this.sharedService.currentMessage.subscribe(message => {
             this.message = message
-            console.log(this.message);
-            
             this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).subscribe((data: any) => {
                 this.pricingTemplatesData = data;
                 this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData.filter((element: any, index: number, array: any[]) => {
@@ -196,9 +194,7 @@ export class AdditionNavbarComponent implements OnInit {
     }
 
     public SelectAllTemplates(event) {
-        console.log(event);
         this.selectAll = !this.selectAll;
-        console.log(this.pricingTemplatesData);
         this.pricingTemplatesData.forEach(x => {
             x.toSend = this.selectAll;
         })
