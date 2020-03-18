@@ -460,6 +460,8 @@ namespace FBOLinx.Web.Controllers
                             YourMargin = getPrices(p.IntoPlanePrice, p.YourMargin, p.Oid, p.CustomerMargin, p.Margin, p.MarginType, jetARetail, jetACost).Item2
                         }
                     )
+                    .GroupBy(x => x.Oid)
+                    .Select(x => x.FirstOrDefault())
                     .ToList();
 
                 PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
