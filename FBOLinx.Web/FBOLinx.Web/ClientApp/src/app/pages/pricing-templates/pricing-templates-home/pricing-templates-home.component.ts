@@ -59,7 +59,7 @@ export class PricingTemplatesHomeComponent {
         dialogRef.afterClosed().subscribe(result => {
             if (!result) return;
             this.pricingTemplatesData = null;
-            this.pricingTemplatesService.remove(pricingTemplate).subscribe((data: any) => {
+            this.pricingTemplatesService.remove({ fboId: this.sharedService.currentUser.fboId, oid: pricingTemplate.oid }).subscribe((data: any) => {
                 this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
                     .subscribe((data: any) => {
                         this.pricingTemplatesData = data;
