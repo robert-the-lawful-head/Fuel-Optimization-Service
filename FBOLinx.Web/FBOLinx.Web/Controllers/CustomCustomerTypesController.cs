@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
+using FBOLinx.Web.ViewModels;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -142,6 +143,31 @@ namespace FBOLinx.Web.Controllers
         private bool CustomCustomerTypesExists(int id)
         {
             return _context.CustomCustomerTypes.Any(e => e.Oid == id);
+        }
+
+        [HttpPost("updatedefaulttemplate")]
+        public async Task<ActionResult<PricingTemplate>> UpdateCustomCustomerTypeCollection(UpdateTemplateVM updateTemplate)
+        {
+           if(updateTemplate != null)
+            {
+                var currentDefault = _context.PricingTemplate.FirstOrDefault(s => s.Fboid == updateTemplate.fboid && s.Oid == updateTemplate.currenttemplate);
+
+                var newDefault = _context.PricingTemplate.FirstOrDefault(s => s.Fboid == updateTemplate.fboid && s.Oid == updateTemplate.newtemplate);
+
+                if(newDefault != null)
+                {
+                    newDefault.Default = true;
+                }
+
+                _context.PricingTemplate.Remove(currentDefault);
+                _context.PricingTemplate.Update(newDefault);
+
+                _context.SaveChanges();
+
+                return newDefault;
+            }
+
+            return null;
         }
     }
 }

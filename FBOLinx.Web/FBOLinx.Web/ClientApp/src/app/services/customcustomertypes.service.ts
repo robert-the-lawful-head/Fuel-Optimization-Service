@@ -34,4 +34,8 @@ export class CustomcustomertypesService {
     public updateCollection(payload) {
         return this.http.post(this.accessPointUrl + '/collection', payload, { headers: this.headers });
     }
+
+    public updateDefaultTemplate(payload) {
+        return this.http.post(this.accessPointUrl + '/updatedefaulttemplate', payload, { headers: this.headers });
+    }
 }
