@@ -319,7 +319,7 @@ import { AppPipesModule } from '../app-pipes.module';
         PricingExpiredNotificationComponent,
         TemporaryAddOnMarginComponent,
         PricingTemplatesDialogNewTemplateComponent,
-        PricingTemplatesDialogDeleteWarningComponent
+        PricingTemplatesDialogDeleteWarningComponent,
         PricingTemplatesDialogCopyTemplateComponent,
         RampFeesDialogNewFeeComponent,
         UsersDialogNewUserComponent,
