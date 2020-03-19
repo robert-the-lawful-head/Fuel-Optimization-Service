@@ -299,7 +299,7 @@ export class PricingTemplatesEditComponent {
             this.currentPrice = data;
             for (let margin of this.pricingTemplate.customerMargins) {
                 //this.calculateItpForMargin(margin);
-                this.updateCustomerMargin(margin);
+                this.updateCustomerMargin(margin, 0);
             }
         });
     }
