@@ -4,12 +4,20 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 //Services
 import { SharedService } from '../../../layouts/shared-service';
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 
 //Components
 import { PricingTemplatesDialogNewTemplateComponent } from '../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
 import { PricingTemplatesDialogCopyTemplateComponent } from '../pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component';
 import { Router } from '@angular/router';
+import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
 
+
+export interface DefaultTemplateUpdate {
+    currenttemplate: number;
+    newtemplate: number;
+    fboid: number;
+}
 
 @Component({
     selector: 'app-pricing-templates-grid',
@@ -31,12 +39,14 @@ export class PricingTemplatesGridComponent implements OnInit {
     public displayedColumns: string[] = ['isInvalid', 'name', 'marginTypeDescription', 'yourMargin', 'intoPlanePrice', 'customersAssigned', 'copy', 'delete'];
     public resultsLength: number = 0;
 
+    public updateModel: DefaultTemplateUpdate = { currenttemplate: 0, fboid: 0, newtemplate: 0 };
+
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
     /** pricing-templates-grid ctor */
-    constructor(public newTemplateDialog: MatDialog, private router: Router, public copyTemplateDialog: MatDialog,
-        private sharedService: SharedService) {
+    constructor(public newTemplateDialog: MatDialog, private router: Router, public copyTemplateDialog: MatDialog, public deleteTemplateWarningDialog: MatDialog,
+        private sharedService: SharedService, public customCustomerService: CustomcustomertypesService) {
 
     }
 
@@ -49,6 +59,8 @@ export class PricingTemplatesGridComponent implements OnInit {
         this.pricingTemplatesDataSource.sort = this.sort;
         this.pricingTemplatesDataSource.paginator = this.paginator;
         this.resultsLength = this.pricingTemplatesData.length;
+
+        this.updateModel.currenttemplate = 0;
     }
 
     public editPricingTemplate(pricingTemplate, $event) {
@@ -79,7 +91,30 @@ export class PricingTemplatesGridComponent implements OnInit {
     }
 
     public deletePricingTemplate(pricingTemplate) {
-        this.deletePricingTemplateClicked.emit(pricingTemplate);
+       
+        if (pricingTemplate.default) {
+            const dialogRef = this.deleteTemplateWarningDialog.open(PricingTemplatesDialogDeleteWarningComponent, {
+                data: this.pricingTemplatesData
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result != 'cancel') {
+                    this.updateModel.currenttemplate = pricingTemplate.oid;
+                    this.updateModel.fboid = pricingTemplate.fboid;
+                    this.updateModel.newtemplate = result;
+                    
+                    this.customCustomerService.updateDefaultTemplate(this.updateModel).subscribe(result => {
+                        if (result) {
+                            this.newPricingTemplateAdded.emit();
+                        }
+                    });
+                }
+            });
+        }
+        else {
+            this.deletePricingTemplateClicked.emit(pricingTemplate);
+        }
+        
     }
 
     public copyPricingTemplate(pricingTemplate) {

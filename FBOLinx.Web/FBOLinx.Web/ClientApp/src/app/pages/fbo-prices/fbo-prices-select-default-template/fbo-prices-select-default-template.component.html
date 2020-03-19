@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Please select default margin template</h1>
+<div mat-dialog-content class="mt-1 mb-2">
+    <div class="text-center">
+        <mat-form-field>
+            <mat-select placeholder="Margin Template" [(ngModel)]="selectedTemplate" required>
+                <mat-option *ngFor="let pricingTemplate of data" [value]="pricingTemplate.oid">
+                    {{pricingTemplate.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <div class="text-center col-12">
+        <button mat-stroked-button (click)="onSelect()">Select Default Template</button>
+    </div>
+</div>

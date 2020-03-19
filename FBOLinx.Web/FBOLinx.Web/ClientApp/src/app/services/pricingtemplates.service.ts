@@ -36,7 +36,7 @@ export class PricingtemplatesService {
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + '/' + payload.oid, { headers: this.headers });
+        return this.http.delete(this.accessPointUrl + '/' + payload.oid + '/fbo/' + payload.fboId, { headers: this.headers });
     }
 
     public update(payload) {
@@ -49,5 +49,9 @@ export class PricingtemplatesService {
 
     public copy(payload) {
         return this.http.post(this.accessPointUrl + '/copypricingtemplate/', payload, { headers: this.headers });
+    }
+
+    public checkdefaultpricingtemplates(payload) {
+        return this.http.get(this.accessPointUrl + '/checkdefaulttemplate/' + payload, { headers: this.headers });
     }
 }

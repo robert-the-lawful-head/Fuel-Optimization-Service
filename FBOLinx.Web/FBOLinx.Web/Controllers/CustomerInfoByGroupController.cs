@@ -460,9 +460,11 @@ namespace FBOLinx.Web.Controllers
                             YourMargin = getPrices(p.IntoPlanePrice, p.YourMargin, p.Oid, p.CustomerMargin, p.Margin, p.MarginType, jetARetail, jetACost).Item2
                         }
                     )
+                    .GroupBy(x => x.Oid)
+                    .Select(x => x.FirstOrDefault())
                     .ToList();
 
-                var defaultPricingTemplate = await _context.PricingTemplate
+                PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
                     .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
                 int defaultPricingTemplateId = 0;
                 if (defaultPricingTemplate != null)
@@ -480,18 +482,19 @@ namespace FBOLinx.Web.Controllers
                         Count = results.Count()
                     };
 
-                List<CustomersGridViewModel> customerGridVM = await (from cg in _context.CustomerInfoByGroup
+                List<CustomersGridViewModel> customerGridVM = await (
+                                                    from cg in _context.CustomerInfoByGroup
                                                     join c in _context.Customers on cg.CustomerId equals c.Oid
-                                                    join cct in _context.CustomCustomerTypes on new { customerId = cg.CustomerId, fboId = fboId } equals
+                                                    join cct in _context.CustomCustomerTypes on new { customerId = cg.CustomerId, fboId } equals
                                                         new
                                                         {
                                                             customerId = cct.CustomerId,
                                                             fboId = cct.Fboid
                                                         } into leftJoinCCT
                                                     from cct in leftJoinCCT.DefaultIfEmpty()
-                                                    join pt in _context.PricingTemplate on (cct == null || cct.CustomerType == 0 ? defaultPricingTemplateId : cct.CustomerType) equals pt.Oid into leftJoinPT
+                                                    join pt in _context.PricingTemplate on (cct == null || cct.CustomerType == 0 ? InsertAndGetDefaultPricingTemplateId(cg.CustomerId, fboId, defaultPricingTemplateId) : cct.CustomerType) equals pt.Oid into leftJoinPT
                                                     from pt in leftJoinPT.DefaultIfEmpty()
-                                                    join ff in _context.Fbofees on new { fboId = fboId, feeType = 8 } equals new
+                                                    join ff in _context.Fbofees on new { fboId, feeType = 8 } equals new
                                                     {
                                                         fboId = ff.Fboid,
                                                         feeType = ff.FeeType
@@ -530,11 +533,12 @@ namespace FBOLinx.Web.Controllers
                                                     join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
                                                     into leftJoinCC
                                                     from cc in leftJoinCC.DefaultIfEmpty()
-                                                        //join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.Oid), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
-                                                                     join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
-                                                                     into leftJoinCIBG
+                                                    join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
+                                                    into leftJoinCIBG
                                                     from cibg in leftJoinCIBG.DefaultIfEmpty()
-                                                    join ai in result on new { Name = (string.IsNullOrEmpty(pt.Name) ? "Default Template" : pt.Name) } equals new { ai.Name}
+                                                    join ai in result on new { Name = (string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name) } equals new { ai.Name}
+                                                    into leftJoinAi
+                                                    from ai in leftJoinAi.DefaultIfEmpty()
                                                     where cg.GroupId == groupId
                                                     group cg by new
                                                     {
@@ -547,13 +551,13 @@ namespace FBOLinx.Web.Controllers
                                                         Suspended = cg.Suspended.GetValueOrDefault(),
                                                         FuelerLinxId = c.FuelerlinxId.GetValueOrDefault(),
                                                         Network = cg.Network.GetValueOrDefault(),
-                                                        GroupId = cg.GroupId,
+                                                        cg.GroupId,
                                                         CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
                                                         CustomerCompanyTypeName = ccot.Name,
-                                                        Tails = ca.Tails,
+                                                        ca.Tails,
                                                         CertificateType = cg.CertificateType.GetValueOrDefault(),
                                                         ContactExists = cibg == null || !cibg.CopyAlerts.HasValue ? false : cibg.CopyAlerts,
-                                                        PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? "Default Template" : pt.Name,
+                                                        PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name,
                                                         HasBeenViewed = (cvf != null && cvf.Oid > 0),
                                                         IsPricingExpired = ai == null ? false : ai.IsPricingExpired,
                                                         Active = cg.Active.GetValueOrDefault(),
@@ -581,7 +585,7 @@ namespace FBOLinx.Web.Controllers
                                                         IsPricingExpired = resultsGroup.Key.IsPricingExpired,
                                                         PricingTemplateName = resultsGroup.Key.PricingTemplateName,
                                                         Active = resultsGroup.Key.Active,
-                                                        NeedsAttention = resultsGroup.Key.PricingTemplateName.Equals("Default Template") ? true : false,
+                                                        NeedsAttention = resultsGroup.Key.PricingTemplateName.Equals(defaultPricingTemplate.Name) ? true : false,
                                                         ContactExists = resultsGroup.Key.ContactExists,
                                                         FleetSize = resultsGroup.Key.FleetSize,
                                                         AllInPrice = resultsGroup.Key.AllInPrice,
@@ -592,6 +596,7 @@ namespace FBOLinx.Web.Controllers
                                                     .Select(g => g.FirstOrDefault())
                                                     .OrderByDescending(s => s.FleetSize.GetValueOrDefault())
                                                     .ToListAsync();
+                await _context.SaveChangesAsync();
 
                 return customerGridVM;
             }
@@ -600,6 +605,18 @@ namespace FBOLinx.Web.Controllers
                 string sss = ex.Message;
                 return null;
             }
+        }
+
+        private int InsertAndGetDefaultPricingTemplateId(int customerId, int fboId, int pricingTemplateId)
+        {
+            CustomCustomerTypes newCCT = new CustomCustomerTypes
+            {
+                CustomerId = customerId,
+                Fboid = fboId,
+                CustomerType = pricingTemplateId
+            };
+            _context.CustomCustomerTypes.Add(newCCT);
+            return pricingTemplateId;
         }
     }
 }
