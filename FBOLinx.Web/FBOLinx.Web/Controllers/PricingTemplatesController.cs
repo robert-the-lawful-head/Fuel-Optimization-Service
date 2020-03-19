@@ -626,6 +626,24 @@ namespace FBOLinx.Web.Controllers
 
         }
 
+        [HttpGet("checkdefaulttemplate/{fboId}")]
+        public async Task<IActionResult> CheckDefaultTemplate([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = _context.PricingTemplate.FirstOrDefault(s => s.Fboid == fboId && s.Default == true);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return Ok(null);
+        }
+
         // DELETE: api/PricingTemplates/5/fbo/124
         [HttpDelete("{oid}/fbo/{fboId}")]
         public async Task<IActionResult> DeletePricingTemplate([FromRoute] int oid, [FromRoute] int fboId)

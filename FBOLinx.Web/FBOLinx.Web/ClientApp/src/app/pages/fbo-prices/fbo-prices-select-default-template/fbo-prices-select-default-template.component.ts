@@ -1,28 +1,27 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-
 @Component({
-    selector: 'app-pricing-templates-delete-warning-template',
-    templateUrl: './pricing-template-dialog-delete-warning.component.html',
-    styleUrls: ['./pricing-template-dialog-delete-warning.component.scss']
+    selector: 'fbo-prices-select-default-template',
+    templateUrl: './fbo-prices-select-default-template.component.html',
+    styleUrls: ['./fbo-prices-select-default-template.component.scss']
 })
 
-export class PricingTemplatesDialogDeleteWarningComponent implements OnInit {
+export class FboPricesSelectDefaultTemplateComponent implements OnInit {
 
     public selectedTemplate: any;
 
     constructor(
-        public dialogRef: MatDialogRef<PricingTemplatesDialogDeleteWarningComponent>,
+        public dialogRef: MatDialogRef<FboPricesSelectDefaultTemplateComponent>,
         @Inject(MAT_DIALOG_DATA) public data,
         public closeConfirmationDialog: MatDialog,
     ) {
 
-        
+
     }
 
     ngOnInit() {
-        
+
     }
 
     onSelect() {

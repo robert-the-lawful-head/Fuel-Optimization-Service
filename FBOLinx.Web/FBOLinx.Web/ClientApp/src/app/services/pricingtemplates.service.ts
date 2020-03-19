@@ -50,4 +50,8 @@ export class PricingtemplatesService {
     public copy(payload) {
         return this.http.post(this.accessPointUrl + '/copypricingtemplate/', payload, { headers: this.headers });
     }
+
+    public checkdefaultpricingtemplates(payload) {
+        return this.http.get(this.accessPointUrl + '/checkdefaulttemplate/' + payload, { headers: this.headers });
+    }
 }
