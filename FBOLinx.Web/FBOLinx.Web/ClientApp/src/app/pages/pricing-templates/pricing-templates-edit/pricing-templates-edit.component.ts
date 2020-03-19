@@ -209,8 +209,16 @@ export class PricingTemplatesEditComponent {
         }
     }
 
-    public updateCustomerMargin(margin) {
-        
+    public updateCustomerMargin(margin, index) {
+        if (index) {
+            if (index != 0) {
+                var previousPrice = this.pricingTemplate.customerMargins[index -1];
+
+                if (previousPrice) {
+                    previousPrice.max = margin.min - 1;
+                }
+            }
+        }
         var jetACost = this.currentPrice.filter(item => item.product == 'JetA Cost')[0].price;
         var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
 
