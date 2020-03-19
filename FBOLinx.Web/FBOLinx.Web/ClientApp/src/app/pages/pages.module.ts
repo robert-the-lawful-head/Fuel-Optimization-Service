@@ -108,6 +108,7 @@ import { GroupsHomeComponent } from './groups/groups-home/groups-home.component'
 import { PricingTemplatesDialogNewTemplateComponent } from './pricing-templates/pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
 import { PricingTemplatesDialogCopyTemplateComponent } from './pricing-templates/pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component';
 import { PricingTemplatesDialogDeleteWarningComponent } from './pricing-templates/pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
+import { FboPricesSelectDefaultTemplateComponent } from './fbo-prices/fbo-prices-select-default-template/fbo-prices-select-default-template.component';
 import { PricingTemplatesEditComponent } from './pricing-templates/pricing-templates-edit/pricing-templates-edit.component';
 import { PricingTemplatesGridComponent } from './pricing-templates/pricing-templates-grid/pricing-templates-grid.component';
 import { PricingTemplatesHomeComponent } from './pricing-templates/pricing-templates-home/pricing-templates-home.component';
@@ -147,6 +148,7 @@ import { AnalyticsOrdersQuoteChartComponent } from '../shared/components/analyti
 
 //Pipes
 import { AppPipesModule } from '../app-pipes.module';
+
 
 
 
@@ -261,6 +263,7 @@ import { AppPipesModule } from '../app-pipes.module';
         PricingTemplatesDialogNewTemplateComponent,
         PricingTemplatesDialogCopyTemplateComponent,
         PricingTemplatesDialogDeleteWarningComponent,
+        FboPricesSelectDefaultTemplateComponent,
         PricingTemplatesEditComponent,
         PricingTemplatesGridComponent,
         PricingTemplatesHomeComponent,
@@ -321,6 +324,7 @@ import { AppPipesModule } from '../app-pipes.module';
         PricingTemplatesDialogNewTemplateComponent,
         PricingTemplatesDialogDeleteWarningComponent,
         PricingTemplatesDialogCopyTemplateComponent,
+        FboPricesSelectDefaultTemplateComponent,
         RampFeesDialogNewFeeComponent,
         UsersDialogNewUserComponent,
         TooltipModalComponent

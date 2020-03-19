@@ -159,7 +159,11 @@ namespace FBOLinx.Web.Controllers
                     newDefault.Default = true;
                 }
 
-                _context.PricingTemplate.Remove(currentDefault);
+                if(currentDefault != null)
+                {
+                    _context.PricingTemplate.Remove(currentDefault);
+                }
+                
                 _context.PricingTemplate.Update(newDefault);
 
                 _context.SaveChanges();

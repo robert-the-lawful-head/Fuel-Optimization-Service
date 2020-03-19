@@ -21,11 +21,13 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { SharedService } from '../../../layouts/shared-service';
 import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
 import { EventService as OverlayEventService } from '@ivylab/overlay-angular';
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 
 //Components
 import * as moment from 'moment';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { TemporaryAddOnMarginComponent } from '../../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
+import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
 
 //Popover
 import { Popover, PopoverProperties } from '../../../shared/components/popover';
@@ -34,6 +36,13 @@ import { TooltipModalComponent } from '../../../shared/components/tooltip-modal/
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
 import { NiCardComponent } from '../../../ni-components/ni-card/ni-card.component';
+
+
+export interface DefaultTemplateUpdate {
+    currenttemplate: number;
+    newtemplate: number;
+    fboid: number;
+}
 
 export interface temporaryAddOnMargin {
     id: any;
@@ -104,6 +113,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public costPlusText: string = '';
     public priceEntryError: string = '';
 
+    public updateModel: DefaultTemplateUpdate = { currenttemplate: 0, fboid: 0, newtemplate: 0 };
+
     //Additional Public Members for direct reference (date filtering/restrictions)
     public currentFboPriceJetARetail: any;
     public currentFboPriceJetACost: any;
@@ -129,12 +140,14 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         private pricingTemplateService: PricingtemplatesService,
         private sharedService: SharedService,
         private overlayEventService: OverlayEventService,
+        private customCustomerService: CustomcustomertypesService,
         private popover: Popover,
         public distributionDialog: MatDialog,
         public warningDialog: MatDialog,
         public tempAddOnMargin: MatDialog,
         public deleteFBODialog: MatDialog,
-        public notificationDialog: MatDialog
+        public notificationDialog: MatDialog,
+        public fboPricesSelectDefaultTemplateDialog: MatDialog
     ) {}
 
     ngOnInit(): void {
@@ -145,6 +158,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         this.loadDistributionLog();
         this.loadPricingTemplates();
         this.checkCostPlusMargins();
+
+        this.checkDefaultTemplate();
     }
 
     ngAfterViewInit(): void {
@@ -895,5 +910,48 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 this.tooltipIndex--;
             }
         }, 300);
+    }
+
+    private checkDefaultTemplate() {
+        this.pricingTemplateService
+            .checkdefaultpricingtemplates(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                if (data) {
+                    console.log(data);
+                } else {
+                    this.pricingTemplateService
+                        .getByFbo(this.sharedService.currentUser.fboId)
+                        .subscribe(
+                            (data: any) => {
+                                this.pricingTemplates = data;
+                                if (this.pricingTemplates) {
+                                    const dialogRef = this.fboPricesSelectDefaultTemplateDialog.open(FboPricesSelectDefaultTemplateComponent, {
+                                        data: this.pricingTemplates,
+                                        disableClose: true
+                                    });
+
+                                    dialogRef.afterClosed().subscribe(result => {
+                                        if (result != 'cancel') {
+                                            console.log(result);
+
+                                            this.updateModel.currenttemplate = 0;
+                                            this.updateModel.fboid = this.sharedService.currentUser.fboId;
+                                            this.updateModel.newtemplate = result;
+
+                                            this.customCustomerService.updateDefaultTemplate(this.updateModel).subscribe(result => {
+                                                if (result) {
+                                                    
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            },
+                            (error: any) => {
+                                this.pricingTemplates = [];
+                            }
+                        );
+                }
+            });
     }
 }
