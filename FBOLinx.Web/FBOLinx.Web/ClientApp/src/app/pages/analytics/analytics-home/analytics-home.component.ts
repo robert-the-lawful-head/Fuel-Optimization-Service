@@ -13,6 +13,7 @@ import { StatisticsOrdersByLocationComponent } from
     '../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 import { AnalyticsOrdersQuoteChartComponent } from
     '../../../shared/components/analytics-orders-quote-chart/analytics-orders-quote-chart.component';
+import { AnalyticsOrdersOverTimeChartComponent } from '../../../shared/components/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -37,6 +38,7 @@ export class AnalyticsHomeComponent {
     @ViewChild('statisticsTotalAircraft') private statisticsTotalAircraft: StatisticsTotalAircraftComponent;
     @ViewChild('statisticsOrdersByLocation') private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
     @ViewChild('analyticsOrdersQuoteChart') private analyticsOrdersQuoteChart: AnalyticsOrdersQuoteChartComponent;
+    @ViewChild('analyticsOrdersOverTimeChart') private analyticsOrdersOverTimeChart: AnalyticsOrdersOverTimeChartComponent;
 
     public pageTitle: string = 'Analytics';
     public breadcrumb: any[] = BREADCRUMBS;
@@ -58,5 +60,6 @@ export class AnalyticsHomeComponent {
         this.statisticsTotalAircraft.refreshData();
         this.statisticsOrdersByLocation.refreshData();
         this.analyticsOrdersQuoteChart.refreshData();
+        this.analyticsOrdersOverTimeChart.refreshData();
     }
 }

@@ -145,6 +145,7 @@ import { StatisticsTotalOrdersComponent } from '.././shared/components/statistic
 import { PopoverModule } from '.././shared/components/popover/popover.module';
 import { TooltipModalComponent } from '.././shared/components/tooltip-modal/tooltip-modal.component';
 import { AnalyticsOrdersQuoteChartComponent } from '../shared/components/analytics-orders-quote-chart/analytics-orders-quote-chart.component';
+import { AnalyticsOrdersOverTimeChartComponent } from '../shared/components/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component';
 
 //Pipes
 import { AppPipesModule } from '../app-pipes.module';
@@ -280,6 +281,7 @@ import { AppPipesModule } from '../app-pipes.module';
         AnalysisFuelreqsTopCustomersFboComponent,
         AnalysisPriceOrdersChartComponent,
         AnalyticsOrdersQuoteChartComponent,
+        AnalyticsOrdersOverTimeChartComponent,
         DeleteConfirmationComponent,
         CloseConfirmationComponent,
         DistributionWizardMainComponent,
