@@ -175,8 +175,8 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqCount);
         }
 
-        [HttpPost("fbo/{fboId}/counts/daterange")]
-        public async Task<IActionResult> GetFuelReqsCountsByFbo([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
+        [HttpPost("fbo/{fboId}/quotesAndOrders")]
+        public async Task<IActionResult> GetQuotesAndOrdersWonChartData([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
         {
             if (!ModelState.IsValid)
             {
@@ -304,6 +304,74 @@ namespace FBOLinx.Web.Controllers
             return Ok(chartData);
         }
 
+        [HttpPost("fbo/{fboId}/orders")]
+        public IActionResult GetOrdersWonChartData([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            if (string.IsNullOrEmpty(request.ICAO))
+            {
+                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
+                Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
+
+                if (airport == null)
+                    return NotFound();
+
+                request.ICAO = airport.Icao;
+            }
+
+            IEnumerable<int> months = Enumerable.Range(1, 12);
+            IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
+
+            var fuelReqs = from f in (
+                               from f in _context.FuelReq
+                               where f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime
+                               select new
+                               {
+                                   f.Etd
+                               }
+                           )
+                           group f by new
+                           {
+                               f.Etd.GetValueOrDefault().Month,
+                               f.Etd.GetValueOrDefault().Year,
+                           }
+                           into results
+                           select new
+                           {
+                               results.Key.Month,
+                               results.Key.Year,
+                               TotalOrders = results.Count(),
+                           };
+
+            var fuelReqsByMonth = (from month in months
+                                   join year in years on 1 equals 1
+                                   join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
+                                   into leftJoinFuelReqs
+                                   from f in leftJoinFuelReqs.DefaultIfEmpty()
+                                   where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                   select new
+                                   {
+                                       Month = month,
+                                       Year = year,
+                                       Name = month + "/" + year,
+                                       Value = f?.TotalOrders ?? 0
+                                   })
+                                  .OrderBy(x => x.Year)
+                                  .ThenBy(x => x.Month)
+                                  .ToList();
+
+            return Ok(fuelReqsByMonth);
+        }
         // POST: api/FuelReqs/analysis/top-customers/fbo/5
         [HttpPost("analysis/top-customers/fbo/{fboId}")]
         public async Task<IActionResult> GetTopCustomersForFbo([FromRoute] int fboId, [FromBody] FuelReqsTopCustomersByFboRequest request)

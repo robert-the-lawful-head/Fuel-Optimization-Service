@@ -1,0 +1,14 @@
+<ni-card title="Orders won over time" [headerBgColor]="'gray'">
+    <div class="chart-container">
+        <ngx-charts-bar-vertical
+            *ngIf="totalOrdersData"
+            [scheme]="colorScheme"
+            [results]="totalOrdersData"
+            [gradient]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+            [legend]="false"
+        ></ngx-charts-bar-vertical>
+    </div>
+</ni-card>
+

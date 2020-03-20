@@ -6,12 +6,12 @@ import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
-    selector: 'app-analytics-orders-quote',
-    templateUrl: './analytics-orders-quote-chart.component.html',
-    styleUrls: ['./analytics-orders-quote-chart.component.scss']
+    selector: 'app-analytics-orders-over-time',
+    templateUrl: './analytics-orders-over-time-chart.component.html',
+    styleUrls: ['./analytics-orders-over-time-chart.component.scss']
 })
-/** analytics-orders-quote-chart component*/
-export class AnalyticsOrdersQuoteChartComponent implements OnInit {
+/** analytics-orders-over-time-chart component*/
+export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
 
     //Public Members
     public totalOrdersData: any[];
@@ -32,15 +32,9 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
         let startDate = this.sharedService.dashboardSettings.filterStartDate;
         let endDate = this.sharedService.dashboardSettings.filterEndDate;
         this.fuelreqsService
-            .getQuotesAndOrders(this.sharedService.currentUser.fboId, startDate, endDate)
+            .getOrders(this.sharedService.currentUser.fboId, startDate, endDate)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
-                _.each(this.totalOrdersData, order => {
-                    order.series = _.map(order.series, serie => {
-                        serie.name = new Date(serie.year, serie.month);
-                        return serie;
-                    });
-                });
             });
     }
 }
