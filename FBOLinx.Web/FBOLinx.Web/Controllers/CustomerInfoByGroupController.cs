@@ -468,7 +468,10 @@ namespace FBOLinx.Web.Controllers
                     .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
                 int defaultPricingTemplateId = 0;
                 if (defaultPricingTemplate != null)
+                {
                     defaultPricingTemplateId = defaultPricingTemplate.Oid;
+                    await FixCustomCustomerTypes(groupId, fboId, defaultPricingTemplateId);
+                }
 
                 var customerAircraft =
                     from aircraftByCustomer in _context.CustomerAircrafts
@@ -492,7 +495,7 @@ namespace FBOLinx.Web.Controllers
                                                             fboId = cct.Fboid
                                                         } into leftJoinCCT
                                                     from cct in leftJoinCCT.DefaultIfEmpty()
-                                                    join pt in _context.PricingTemplate on (cct == null || cct.CustomerType == 0 ? InsertAndGetDefaultPricingTemplateId(cg.CustomerId, fboId, defaultPricingTemplateId) : cct.CustomerType) equals pt.Oid into leftJoinPT
+                                                    join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid into leftJoinPT
                                                     from pt in leftJoinPT.DefaultIfEmpty()
                                                     join ff in _context.Fbofees on new { fboId, feeType = 8 } equals new
                                                     {
@@ -607,16 +610,53 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        private int InsertAndGetDefaultPricingTemplateId(int customerId, int fboId, int pricingTemplateId)
+        private async Task FixCustomCustomerTypes(int groupId, int fboId, int defaultPricingTemplateId)
         {
-            CustomCustomerTypes newCCT = new CustomCustomerTypes
+            List<int> pricingTemplates = await _context.PricingTemplate.Where(p => p.Fboid.Equals(fboId)).Select(p => p.Oid).ToListAsync();
+            var filteredList = await (
+                from cg in _context.CustomerInfoByGroup
+                join cct in _context.CustomCustomerTypes
+                on new { customerId = cg.CustomerId, fboId }
+                   equals
+                   new
+                   {
+                       customerId = cct.CustomerId,
+                       fboId = cct.Fboid
+                   } into leftJoinCCT
+                from cct in leftJoinCCT.DefaultIfEmpty()
+                where cg.GroupId.Equals(groupId)
+                select new
+                {
+                    cg.CustomerId,
+                    cct
+                })
+                .Distinct()
+                .ToListAsync();
+
+            filteredList.ForEach(c =>
             {
-                CustomerId = customerId,
-                Fboid = fboId,
-                CustomerType = pricingTemplateId
-            };
-            _context.CustomCustomerTypes.Add(newCCT);
-            return pricingTemplateId;
+                if (c.cct == null)
+                {
+                    CustomCustomerTypes newcct = new CustomCustomerTypes
+                    {
+                        CustomerId = c.CustomerId,
+                        CustomerType = defaultPricingTemplateId,
+                        Fboid = fboId
+                    };
+                    _context.CustomCustomerTypes.Add(newcct);
+                }
+                else
+                {
+                    bool customerTypeExits = pricingTemplates.Any(p => p.Equals(c.cct.CustomerType));
+                    if (!customerTypeExits)
+                    {
+                        c.cct.CustomerType = defaultPricingTemplateId;
+                        _context.CustomCustomerTypes.Update(c.cct);
+                    }
+                }
+            });
+
+            await _context.SaveChangesAsync();
         }
     }
 }
