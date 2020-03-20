@@ -30,4 +30,8 @@ export class RampfeesService {
     public update(payload) {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
     }
+
+    public importrampfees(payload) {
+        return this.http.post(this.accessPointUrl + '/importrampfees', payload, { headers: this.headers });
+    }
 }

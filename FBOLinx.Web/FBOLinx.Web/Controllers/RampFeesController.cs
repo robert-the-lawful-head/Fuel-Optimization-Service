@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.Web.ViewModels;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -172,6 +173,25 @@ namespace FBOLinx.Web.Controllers
         private bool RampFeesExists(int id)
         {
             return _context.RampFees.Any(e => e.Oid == id);
+        }
+
+        [HttpPost("importrampfees")]
+        public async Task<IActionResult> ImportRampFees([FromBody] List<RampFeesImportVM> rampfees)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            foreach (var rampfee in rampfees)
+            {
+                Customers newC = new Customers();
+                
+              
+            }
+
+            return Ok(null);
         }
     }
 }

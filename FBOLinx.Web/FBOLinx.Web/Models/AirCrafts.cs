@@ -58,7 +58,7 @@ namespace FBOLinx.Web.Models
         public string Model { get; set; }
         [Column("NORMAL CRUISE TAS")]
         public double? NormalCruiseTas { get; set; }
-        [Column("FUEL CAPACITY (gal)")]
+        [Column("FUEL CAPACITY (gal)")]
         public double? FuelCapacityGal { get; set; }
         [Column("LANDING PERF LENGTH")]
         public double? LandingPerfLength { get; set; }
