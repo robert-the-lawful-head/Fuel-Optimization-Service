@@ -11,6 +11,8 @@ import * as SharedEvents from '../../../models/sharedEvents';
 
 //Components
 import { RampFeesDialogNewFeeComponent } from '../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component';
+import { first } from 'rxjs/operators';
+import FlatfileImporter from "flatfile-csv-importer";
 
 const BREADCRUMBS: any[] = [
     {
@@ -38,6 +40,15 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     public expirationDate: any;
     public locationChangedSubscription: any;
     public aircraftTypes: any[];
+
+    LICENSE_KEY = "9eef62bd-4c20-452c-98fd-aa781f5ac111";
+
+    /**
+    * Result data from importer
+    */
+    results = "[]";
+
+    private importer: FlatfileImporter;
 
     /** ramp-fees-home ctor */
     constructor(
@@ -76,6 +87,13 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.expirationDate = data[1].expirationDate;
             this.messageService.updateMessage(this.expirationDate);
             this.messageService.getMessage().subscribe((mymessage: any) => this.expirationDate = mymessage);
+        });
+
+        FlatfileImporter.setVersion(2);
+        this.initializeImporter();
+        this.importer.setCustomer({
+            userId: "1",
+            name: "WebsiteImport"
         });
     }
 
@@ -139,6 +157,107 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private loadRampFees() {
         this.rampFeesService.getForFbo({ oid: this.sharedService.currentUser.fboId }).subscribe((data: any) => {
             this.rampFees = data;
+        });
+    }
+
+    async launchImporter() {
+        if (!this.LICENSE_KEY) {
+            return alert("Set LICENSE_KEY on Line 13 before continuing.");
+        }
+        try {
+            let results = await this.importer.requestDataFromUser();
+            this.importer.displayLoader();
+
+            if (results) {
+                results.data.forEach(result => {
+                    result.groupid = this.sharedService.currentUser.groupId;
+                });
+                console.log(results.data);
+
+                this.rampFeesService.importrampfees(results.data).subscribe((data: any) => {
+                    if (data) {
+                        this.importer.displaySuccess("Data successfully imported!");
+                        setTimeout(() => {
+                            //this.customerDeleted.emit();
+                        }, 1500);
+                    }
+                });
+            }
+
+        } catch (e) {
+            console.info(e || "window close");
+        }
+    }
+
+    initializeImporter() {
+        this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+            fields: [
+                {
+                    label: "ICAO",
+                    alternates: ["Icao"],
+                    key: "icao",
+                    description: "Icao",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required"
+                        }
+                    ]
+                },
+                {
+                    label: "FBO",
+                    alternates: ["fbo"],
+                    key: "fbo",
+                    description: "FBO",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required"
+                        }
+                    ]
+                },
+                {
+                    label: "Make",
+                    alternates: ["make"],
+                    key: "Make",
+                    description: "Aircraft Make"
+                },
+                {
+                    label: "Model",
+                    alternates: ["model"],
+                    key: "Model",
+                    description: "Tail"
+                },
+                {
+                    label: "Ramp Fee ($)",
+                    alternates: ["Ramp Fee", "ramp fee"],
+                    key: "RampFee",
+                    description: "Ramp Fee"
+                },
+                {
+                    label: "Waived At (gal)",
+                    alternates: ["Waived At", "waived at"],
+                    key: "WaivedAt",
+                    description: "Waived Fees"
+                },
+                {
+                    label: "Landing",
+                    alternates: ["landing"],
+                    key: "Landing",
+                    description: "Landing Fees"
+                },
+                {
+                    label: "Overnight",
+                    alternates: ["overnight", "overnight fees"],
+                    key: "Overnight",
+                    description: "Overnight Fees"
+                }
+            ],
+            type: "RampFees",
+            allowInvalidSubmit: true,
+            managed: true,
+            allowCustom: true,
+            disableManualInput: false
         });
     }
 }
