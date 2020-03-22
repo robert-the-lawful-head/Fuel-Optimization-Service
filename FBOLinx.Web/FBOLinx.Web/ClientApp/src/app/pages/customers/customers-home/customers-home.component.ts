@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+
+import * as _ from 'lodash';
 
 //Services
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+
+import * as SharedEvents from '../../../models/sharedEvents';
 
 const BREADCRUMBS: any[] = [
     {
@@ -24,7 +28,7 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./customers-home.component.scss']
 })
 /** customers-home component*/
-export class CustomersHomeComponent {
+export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
 
     //Public Members
     public pageTitle: string = 'Customers';
@@ -32,6 +36,7 @@ export class CustomersHomeComponent {
     public customersData: any[];
     public aircraftsData: any[];
     public pricingTemplatesData: any[];
+    public locationChangedSubscription: any;
 
     /** customers-home ctor */
     constructor(
@@ -41,11 +46,27 @@ export class CustomersHomeComponent {
         private sharedService: SharedService,
         private customerAircraftsService: CustomeraircraftsService
     ) {
-
         this.sharedService.emitChange(this.pageTitle);
         this.loadCustomers();
-        this.loadCustomerAircrafts();
         this.loadPricingTemplates();
+        this.loadCustomerAircrafts();
+    }
+
+    ngAfterViewInit() {
+        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(message => {
+            if (message === SharedEvents.locationChangedEvent) {
+                this.pricingTemplatesData = null;
+                this.customersData = null;
+                this.loadCustomers();
+                this.loadPricingTemplates();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        if (this.locationChangedSubscription) {
+            this.locationChangedSubscription.unsubscribe();
+        }
     }
 
     public editCustomerClicked(record) {
@@ -66,19 +87,19 @@ export class CustomersHomeComponent {
             });
     }
 
-    private loadCustomerAircrafts() {
-        this.customerAircraftsService
-            .getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId)
-            .subscribe((data: any) => {
-                this.aircraftsData = data;
-            });
-    }
-
     private loadPricingTemplates() {
         this.pricingTemplatesService
             .getByFbo(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
                 this.pricingTemplatesData = data
+            });
+    }
+
+    private loadCustomerAircrafts() {
+        this.customerAircraftsService
+            .getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId)
+            .subscribe((data: any) => {
+                this.aircraftsData = data;
             });
     }
 }

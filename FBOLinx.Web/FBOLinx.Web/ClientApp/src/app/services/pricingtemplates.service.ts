@@ -7,7 +7,6 @@ import { share } from 'rxjs/operators';
 export class PricingtemplatesService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
-    public pricingTemplatesDataObservable: Observable<any>;
 
     constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         this.headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });
@@ -19,12 +18,7 @@ export class PricingtemplatesService {
         if (groupId) {
             url += '/group/' + groupId;
         }
-        if (this.pricingTemplatesDataObservable) {
-            return this.pricingTemplatesDataObservable;
-        } else {
-            this.pricingTemplatesDataObservable = this.http.get(url + '/fbo/' + fboId, { headers: this.headers }).pipe(share());
-            return this.pricingTemplatesDataObservable;
-        }
+        return this.http.get(url + '/fbo/' + fboId, { headers: this.headers });
     }
 
     public get(payload) {

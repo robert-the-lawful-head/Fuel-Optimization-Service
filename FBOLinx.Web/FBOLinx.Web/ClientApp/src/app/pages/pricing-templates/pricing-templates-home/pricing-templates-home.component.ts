@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 
 //Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
+
+import * as SharedEvents from '../../../models/sharedEvents';
 
 //Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
@@ -26,13 +28,13 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./pricing-templates-home.component.scss']
 })
 /** pricing-templates-home component*/
-export class PricingTemplatesHomeComponent {
+export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
 
     //Public Members
     public pageTitle: string = 'Margin Templates';
     public breadcrumb: any[] = BREADCRUMBS;
     public pricingTemplatesData: Array<any>;
-    public currentPricingTemplate: any;
+    public locationChangedSubscription: any;
 
     constructor(
         private router: Router,
@@ -42,9 +44,28 @@ export class PricingTemplatesHomeComponent {
         public deleteFBODialog: MatDialog
     ) {
         this.sharedService.emitChange(this.pageTitle);
-        pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+        this.loadPricingTemplateData();
+    }
+
+    ngAfterViewInit() {
+        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(message => {
+            if (message === SharedEvents.locationChangedEvent) {
+                this.loadPricingTemplateData();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        if (this.locationChangedSubscription) {
+            this.locationChangedSubscription.unsubscribe();
+        }
+    }
+
+    public loadPricingTemplateData() {
+        this.pricingTemplatesData = null;
+        this.pricingTemplatesService
+            .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
             .subscribe((data: any) => this.pricingTemplatesData = data);
-        this.currentPricingTemplate = null;
     }
 
     public editPricingTemplateClicked(pricingTemplate) {
@@ -63,7 +84,6 @@ export class PricingTemplatesHomeComponent {
                 this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
                     .subscribe((data: any) => {
                         this.pricingTemplatesData = data;
-                        this.currentPricingTemplate = null;
                     });
             });
 
@@ -72,26 +92,11 @@ export class PricingTemplatesHomeComponent {
         });
     }
 
-    public savePricingTemplateClicked() {
-        this.pricingTemplatesService.update(this.currentPricingTemplate).subscribe((data: any) => {
-            this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
-                .subscribe((data: any) => {
-                    this.pricingTemplatesData = data;
-                    this.currentPricingTemplate = null;
-                });
-        });
-    }
-
-    public cancelPricingTemplateEditclicked() {
-        this.currentPricingTemplate = null;
-    }
-
     public newPricingTemplateAdded(event) {
         this.pricingTemplatesData = null;
         this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
             .subscribe((data: any) => {
                 this.pricingTemplatesData = data;
-                this.currentPricingTemplate = null;
             });
     }
 }

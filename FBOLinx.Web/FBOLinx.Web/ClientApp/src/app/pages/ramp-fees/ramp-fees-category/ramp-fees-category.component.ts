@@ -19,6 +19,7 @@ export class RampFeesCategoryComponent implements OnInit {
 
     @Output() rampFeeFieldChanged = new EventEmitter<any>();
     @Output() rampFeeDeleted = new EventEmitter<any>();
+    @Input() aircraftTypes: any[];
     @Input() rampFees: any;
     @Input() categoryTitle: string;
     @Input() categoryTypes: Array<number>;
@@ -27,20 +28,17 @@ export class RampFeesCategoryComponent implements OnInit {
     @Input() expirationDate: any;
 
     public aircraftSizes: Array<any>;
-    public aircraftTypes: Array<any>;
     public rampFeesForCategory: Array<any> = [];
     public tmpArray: Array<any> = [];
 
     /** ramp-fees-category ctor */
-    constructor(private aircraftsService: AircraftsService,
+    constructor(
         private rampFeesService: RampfeesService,
         private sharedService: SharedService,
-        public deleteRampFeeDialog: MatDialog    ) {
-
-    }
+        public deleteRampFeeDialog: MatDialog
+    ) {}
 
     ngOnInit() {
-        this.aircraftsService.getAll().subscribe((data: any) => this.aircraftTypes = data);
         this.rampFees.forEach(fee => {
             if (this.categoryTypes.indexOf(fee.categoryType) > -1) {
                 if (this.supportedValues.length == 0 || this.supportedValues.indexOf(fee.categoryMinValue) > -1) {
@@ -60,7 +58,6 @@ export class RampFeesCategoryComponent implements OnInit {
     public rampFeeRequiresUpdate(fee) {
         fee.requiresUpdate = true;
         this.rampFeeFieldChanged.emit();
-
     }
 
     public deleteRampFee(fee) {
