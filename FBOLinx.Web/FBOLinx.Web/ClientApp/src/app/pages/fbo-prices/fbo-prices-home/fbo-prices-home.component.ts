@@ -11,6 +11,8 @@ import {
     QueryList
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import * as moment from 'moment';
+import * as _ from 'lodash';
 
 //Services
 import { DistributionService } from '../../../services/distribution.service';
@@ -24,7 +26,6 @@ import { EventService as OverlayEventService } from '@ivylab/overlay-angular';
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 
 //Components
-import * as moment from 'moment';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { TemporaryAddOnMarginComponent } from '../../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
@@ -33,6 +34,7 @@ import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-de
 import { Popover, PopoverProperties } from '../../../shared/components/popover';
 import { TooltipModalComponent } from '../../../shared/components/tooltip-modal/tooltip-modal.component';
 
+import * as SharedEvents from '../../../models/sharedEvents';
 //Components
 import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
 import { NiCardComponent } from '../../../ni-components/ni-card/ni-card.component';
@@ -60,17 +62,9 @@ export interface temporaryAddOnMargin {
 /** fbo-prices-home component*/
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild(NiCardComponent) niCard: NiCardComponent;
-    @Output() priceUpdated = new EventEmitter<any>();
     @ViewChildren('tooltip') tooltips: QueryList<any>;
     //Public Members
-    public pageTitle: string = 'Pricing';
-    public pricingJetARetail: any;
-    public pricingJetACost: any;
-    public pricing100LLRetail: any;
-    public pricing100LLCost: any;
     public currentPrices: any[];
-    public currentPircesAll: any[];
-    public pom: any[];
     public dateFrom: any;
     public dateTo: any;
     public TempValueJet: any;
@@ -84,24 +78,15 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public price: any;
     public lcl: any;
     public distributionLog: any[];
-    public isLoadingJetARetail: boolean;
-    public isLoadingJetACost: boolean;
-    public isLoading100LLRetail: boolean;
-    public isLoading100LLCost: boolean;
     public isLoadingFboPreferences: boolean;
     public isLoadingFboFees: boolean;
     public requiresUpdate: boolean = true;
     public isSaved: boolean;
     public show: boolean;
-    public greska: boolean = false;
     public saveOk: boolean = true;
     public minimumAllowedDate: Date = new Date();
-    public minimumStagedEffectiveFrom: Date = new Date();
     public currentPricingEffectiveFrom: Date = new Date();
     public currentPricingEffectiveTo: Date = new Date();
-    public stagedPricingEffectiveFrom: Date = new Date();
-    public stagedPricingEffectiveTo: Date = new Date();
-    public todayDate: Date = new Date();
     public pricingTemplates: any[];
     public activePrice: boolean = false;
     public newRetail: any;
@@ -128,7 +113,9 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     public tooltipIndex = 0;
     public canShowTooltips = false;
-    public subscription: any;
+    public tooltipSubscription: any;
+    public locationChangedSubscription: any;
+    public menuTooltipSubscription: any;
 
     /** fbo-prices-home ctor */
     constructor(
@@ -152,43 +139,63 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     ngOnInit(): void {
         this.buttonTextValue = 'Update Live Pricing';
+        this.resetAll();
+    }
+
+    ngAfterViewInit(): void {
+        this.menuTooltipSubscription = this.sharedService.loadedEmitted$.subscribe(message => {
+            if (message == 'menu-tooltips-showed') {
+                this.canShowTooltips = true;
+                this.showTooltips();
+            }
+        });
+        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(message => {
+            if (message === SharedEvents.locationChangedEvent) {
+                console.log(this.sharedService.currentUser.fboId);
+                this.resetAll();
+            }
+        });
+
+        
+        this.tooltipSubscription = this.overlayEventService.emitter.subscribe(response => {
+            if (this.canShowTooltips && response.type == '[Overlay] Hide') {
+                const tooltipsArr = this.tooltips.toArray();
+                if (this.tooltipIndex >= 0 && tooltipsArr.length > this.tooltipIndex) {
+                    setTimeout(() => {
+                        tooltipsArr[this.tooltipIndex].nativeElement.click();
+                        this.tooltipIndex--;
+                    }, 300);
+                } else {
+                    setTimeout(() => {
+                        this.tooltipSubscription.unsubscribe();
+                        this.sharedService.loadedChange('price-tooltips-showed');
+                    }, 300);
+                }
+            }
+        })
+    }
+
+    ngOnDestroy(): void {
+        if (this.tooltipSubscription) {
+            this.tooltipSubscription.unsubscribe();
+        }
+        if (this.menuTooltipSubscription) {
+            this.menuTooltipSubscription.unsubscribe();
+        }
+        if (this.locationChangedSubscription) {
+            this.locationChangedSubscription.unsubscribe();
+        }
+    }
+
+    resetAll() {
+        this.currentPrices = undefined;
         this.loadCurrentFboPrices();
         this.loadFboPreferences();
         this.loadFboFees();
         this.loadDistributionLog();
         this.loadPricingTemplates();
         this.checkCostPlusMargins();
-
         this.checkDefaultTemplate();
-    }
-
-    ngAfterViewInit(): void {
-        this.sharedService.loadedEmitted$.subscribe(message => {
-            if (message == 'menu-tooltips-showed') {
-                this.canShowTooltips = true;
-                this.showTooltips();
-            }
-        });
-        this.subscription = this.overlayEventService.emitter.subscribe(response => {
-            if (this.canShowTooltips && response.type == '[Overlay] Hide') {
-                const tooltipsArr = this.tooltips.toArray();
-                if (tooltipsArr.length > this.tooltipIndex && this.tooltipIndex >= 0) {
-                    setTimeout(() => {
-                        tooltipsArr[this.tooltipIndex].nativeElement.click();
-                        this.tooltipIndex--;
-                    }, 300);
-                } else {
-                    this.subscription.unsubscribe();
-                    this.sharedService.loadedChange('price-tooltips-showed');
-                }
-            }
-        });
-    }
-
-    ngOnDestroy(): void {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
     }
 
 
@@ -395,8 +402,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                             : null;
                     this.savePriceChanges(price);
                 }
-
-                //  this.loadCurrentFboPrices();
             }
 
             this.show = true;
@@ -670,11 +675,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
                 this.loadStagedFboPrices();
 
-                this.priceUpdated.emit({
-                    retailPrice: this.currentFboPriceJetARetail.price,
-                    costPrice: this.currentFboPriceJetACost.price
-				});
-				
 				this.sharedService.loadedChange('fbo-prices-loaded');
             });
     }
@@ -916,9 +916,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         this.pricingTemplateService
             .checkdefaultpricingtemplates(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
-                if (data) {
-                    console.log(data);
-                } else {
+                if (!data) {
                     this.pricingTemplateService
                         .getByFbo(this.sharedService.currentUser.fboId)
                         .subscribe(

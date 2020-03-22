@@ -14,20 +14,21 @@
                     </div>
                     <div class="pull-left mr-1" *ngIf="rampFees[1].categoryType == 1">
                         <mat-form-field>
-                            <input
-                                matInput
-                                [(ngModel)]="expirationDate"
-                                [matDatepicker]="categoryDatePicker"
-                                placeholder="Expiration Date"
-                                disabled
-                                (ngModelChange)="rampFeeRequiresUpdate()"
-                            />
+                            <input matInput
+                                   [(ngModel)]="expirationDate"
+                                   [matDatepicker]="categoryDatePicker"
+                                   placeholder="Expiration Date"
+                                   disabled
+                                   (ngModelChange)="rampFeeRequiresUpdate()" />
                             <mat-datepicker-toggle matSuffix [for]="categoryDatePicker"></mat-datepicker-toggle>
                             <mat-datepicker #categoryDatePicker disabled="false"></mat-datepicker>
                         </mat-form-field>
                     </div>
                     <div class="pull-right mr-1">
                         <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addNewRampFeeClicked()">Add New</button>
+                    </div>
+                    <div class="pull-right mr-1">
+                        <button ni-button [view]="'accent'" beforeIcon="fa fa-upload" id="launch" (click)="launchImporter()" [ngClass]="{disabled:!LICENSE_KEY}">Import</button>
                     </div>
                 </div>
             </div>
@@ -40,6 +41,7 @@
                 <mat-panel-description></mat-panel-description>
             </mat-expansion-panel-header>
             <app-ramp-fees-category
+                [aircraftTypes]="aircraftTypes"
                 [rampFees]="rampFees"
                 [categoryTitle]="'Business Jets'"
                 [categoryTypes]="[1]"
@@ -55,6 +57,7 @@
                 <mat-panel-description></mat-panel-description>
             </mat-expansion-panel-header>
             <app-ramp-fees-category
+                [aircraftTypes]="aircraftTypes"
                 [rampFees]="rampFees"
                 [categoryTitle]="'Turboprops'"
                 [categoryTypes]="[1]"
@@ -70,6 +73,7 @@
                 <mat-panel-description></mat-panel-description>
             </mat-expansion-panel-header>
             <app-ramp-fees-category
+                [aircraftTypes]="aircraftTypes"
                 [rampFees]="rampFees"
                 [categoryTitle]="'Helicopters'"
                 [categoryTypes]="[1]"
@@ -85,6 +89,7 @@
                 <mat-panel-description>By type, wingspan, weight, or tail</mat-panel-description>
             </mat-expansion-panel-header>
             <app-ramp-fees-category
+                [aircraftTypes]="aircraftTypes"
                 [rampFees]="rampFees"
                 [categoryTitle]="'Turboprops'"
                 [categoryTypes]="[2,3,4,5]"

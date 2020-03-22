@@ -14,6 +14,8 @@ import { FboairportsService } from '../../../services/fboairports.service';
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
 import { FbosService } from '../../../services/fbos.service';
 
+import * as SharedEvents from '../../../models/sharedEvents';
+
 //Components
 import { AccountProfileComponent } from '../../../shared/components/account-profile/account-profile.component';
 
@@ -245,12 +247,14 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     }
 
     private changeLocation(location: any) {
+        this.isOpened = false;
         this.fboAirport.iata = location.iata;
         this.fboAirport.icao = location.icao;
-        this.fboAirportsService.update(this.fboAirport).subscribe();
+        this.fboAirport.fboid = location.oid;
         this.accountProfileMenu.isOpened = false;
         this.needsAttentionMenu.isOpened = false;
-        this.isOpened = false;
+        this.sharedService.currentUser.fboId = this.fboAirport.fboid;
+        this.sharedService.emitChange(SharedEvents.locationChangedEvent);
     }
 
     private toggleProfileMenu() {

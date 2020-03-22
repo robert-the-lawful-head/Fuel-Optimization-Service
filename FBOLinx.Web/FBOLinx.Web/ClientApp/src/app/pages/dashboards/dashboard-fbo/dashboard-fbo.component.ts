@@ -1,8 +1,10 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 //Services
 import { SharedService } from '../../../layouts/shared-service';
+
+import * as SharedEvents from '../../../models/sharedEvents';
 
 //Components
 import { StatisticsTotalOrdersComponent } from '../../../shared/components/statistics-total-orders/statistics-total-orders.component';
@@ -36,7 +38,7 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./dashboard-fbo.component.scss']
 })
 /** dashboard-fbo component*/
-export class DashboardFboComponent {
+export class DashboardFboComponent implements AfterViewInit, OnDestroy {
 
     public pageTitle: string = 'Dashboard';
     public breadcrumb: any[] = BREADCRUMBS;
@@ -44,16 +46,13 @@ export class DashboardFboComponent {
     public dashboardSettings: any;
     public fboid: any;
     public groupid: any;
-    public priceUpdatedEvent: any;
     public updatedPrice: any;
+    public locationChangedSubscription: any;
 
     @ViewChild('statisticsTotalOrders') private statisticsTotalOrders: StatisticsTotalOrdersComponent;
     @ViewChild('statisticsTotalCustomers') private statisticsTotalCustomers: StatisticsTotalCustomersComponent;
     @ViewChild('statisticsTotalAircraft') private statisticsTotalAircraft: StatisticsTotalAircraftComponent;
     @ViewChild('statisticsOrdersByLocation') private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
-    @ViewChild('analysisPriceOrdersChart') private analysisPriceOrdersChart: AnalysisPriceOrdersChartComponent;
-    @ViewChild('analysisFuelreqsTopCustomersFbo') private analysisFuelreqsTopCustomersFbo: AnalysisFuelreqsTopCustomersFboComponent;
-    @ViewChild('analysisFuelreqsByAircraftSize') private analysisFuelreqsByAircraftSize: AnalysisFuelreqsByAircraftSizeComponent;
 
     /** dashboard-fbo ctor */
     constructor(private sharedService: SharedService) {
@@ -63,14 +62,25 @@ export class DashboardFboComponent {
         this.sharedService.emitChange(this.pageTitle);
     }
 
+    ngAfterViewInit() {
+        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(message => {
+            if (message === SharedEvents.locationChangedEvent) {
+                this.applyDateFilterChange();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        if (this.locationChangedSubscription) {
+            this.locationChangedSubscription.unsubscribe();
+        }
+    }
+
     public applyDateFilterChange() {
         this.statisticsTotalOrders.refreshData();
         this.statisticsTotalCustomers.refreshData();
         this.statisticsTotalAircraft.refreshData();
         this.statisticsOrdersByLocation.refreshData();
-        this.analysisPriceOrdersChart.refreshData();
-        this.analysisFuelreqsTopCustomersFbo.refreshData();
-        this.analysisFuelreqsByAircraftSize.refreshData();
     }
 
     public priceLiveUpdated(price: any) {

@@ -41,8 +41,8 @@ namespace FBOLinx.Web.Controllers
             {
                 Active = f.Active,
                 Fbo = f.Fbo,
-                Icao = f.fboAirport.Icao,
-                Iata = f.fboAirport.Iata,
+                Icao = f.fboAirport == null ? "" : f.fboAirport.Icao,
+                Iata = f.fboAirport == null ? "" : f.fboAirport.Iata,
                 Oid = f.Oid
             }).Distinct().ToList();
             return Ok(fbosVM);

@@ -1,15 +1,16 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material';
 
 //Services
 import { RampfeesService } from '../../../services/rampfees.service';
+import { AircraftsService } from '../../../services/aircrafts.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { Parametri } from '../../../services/paremeters.service';
 
+import * as SharedEvents from '../../../models/sharedEvents';
+
 //Components
 import { RampFeesDialogNewFeeComponent } from '../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component';
-import { first } from 'rxjs/operators';
 
 const BREADCRUMBS: any[] = [
     {
@@ -28,26 +29,48 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./ramp-fees-home.component.scss']
 })
 /** ramp-fees-home component*/
-export class RampFeesHomeComponent implements OnInit {
+export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public pageTitle: string = 'Ramp Fees';
     public breadcrumb: any[] = BREADCRUMBS;
     public rampFees: any[];
     public requiresUpdate: boolean = false;
     public expirationDate: any;
-    public subscription: any;
+    public locationChangedSubscription: any;
+    public aircraftTypes: any[];
 
     /** ramp-fees-home ctor */
-    constructor(private route: ActivatedRoute,
-        private router: Router,
+    constructor(
         private rampFeesService: RampfeesService,
         private sharedService: SharedService,
+        private aircraftsService: AircraftsService,
         public newRampFeeDialog: MatDialog,
-        private messageService: Parametri) {
+        private messageService: Parametri
+    ) {
         this.sharedService.emitChange(this.pageTitle);
+        this.aircraftsService.getAll().subscribe((data: any) => this.aircraftTypes = data);
     }
 
     ngOnInit() {
+        this.initRampfees();
+    }
+
+    ngAfterViewInit() {
+        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(message => {
+            if (message === SharedEvents.locationChangedEvent) {
+                this.rampFees = null;
+                this.initRampfees();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        if (this.locationChangedSubscription) {
+            this.locationChangedSubscription.unsubscribe();
+        }
+    }
+
+    public initRampfees() {
         this.rampFeesService.getForFbo({ oid: this.sharedService.currentUser.fboId }).subscribe((data: any) => {
             this.rampFees = data;
             this.expirationDate = data[1].expirationDate;
@@ -81,15 +104,14 @@ export class RampFeesHomeComponent implements OnInit {
     }
 
     public rampFeeRequiresUpdate() {
-    this.rampFees.forEach(fee => {
-        fee.ExpirationDate = this.expirationDate;
-            this.updateRampFee(fee);
+        this.rampFees.forEach(fee => {
+            fee.ExpirationDate = this.expirationDate;
+                this.updateRampFee(fee);
 
-    });
+        });
         this.messageService.updateMessage(this.expirationDate);
         this.loadRampFees();
-
-}
+    }
 
     public saveChanges() {
         this.rampFees.forEach(fee => {

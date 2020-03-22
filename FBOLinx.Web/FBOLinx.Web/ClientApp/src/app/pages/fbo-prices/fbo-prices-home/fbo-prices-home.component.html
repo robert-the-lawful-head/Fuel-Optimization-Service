@@ -9,11 +9,6 @@
             <ni-badge [size]="'medium'" [color]="'success'">Your changes have been saved.</ni-badge>
         </div>
     </div>
-    <div class="row mb-2" *ngIf="greska">
-        <div class="text-center col-12">
-            <ni-badge [size]="'medium'" [color]="'danger'">Your changes have not been saved.</ni-badge>
-        </div>
-    </div>
     <div class="row">
         <div class="col-md-3 mt-3">
             <ni-card [fboPrices]="currentPrices" [bgColor]="'success'" [outline]="true" [color]="'success'" *ngIf="(currentFboPriceJetARetail && currentFboPriceJetARetail.price > 0) || activePrice;else notValid">
