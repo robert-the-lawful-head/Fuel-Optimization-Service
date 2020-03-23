@@ -25,7 +25,6 @@
                             "src/assets/sass/bootstrap.scss",
                             "src/assets/sass/loader.scss",
                             "src/assets/sass/custom-material-theme.scss",
-                            "node_modules/angular-calendar/css/angular-calendar.css",
                             "src/assets/sass/style.scss"
                         ],
                         "scripts": [

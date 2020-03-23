@@ -35,15 +35,13 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
-import { CalendarModule } from "angular-calendar";
 import { TextMaskModule } from "angular2-text-mask";
+
 import { NgxCurrencyModule } from "ngx-currency";
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
 
 import { PageTypographyComponent } from "./typography/typography.component";
 import { PageNotFoundComponent } from "./not-found/not-found.component";
-import { PageCalendarComponent } from "./calendar/calendar.component";
-import { CalendarDialogComponent } from "./calendar/calendar.component";
 import { PageLayoutsComponent } from "./layouts/layouts.component";
 import { PageSignIn1Component } from "./extra-pages/sign-in-1/sign-in-1.component";
 import { PageSignIn2Component } from "./extra-pages/sign-in-2/sign-in-2.component";
@@ -130,7 +128,6 @@ import { AppPipesModule } from "../app-pipes.module";
 
 @NgModule({
     imports: [
-        CalendarModule.forRoot(),
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
@@ -185,8 +182,6 @@ import { AppPipesModule } from "../app-pipes.module";
         PageConfirmComponent,
         Page404Component,
         Page500Component,
-        PageCalendarComponent,
-        CalendarDialogComponent,
         PageLayoutsComponent,
         AuthtokenComponent,
         ContactsEditComponent,
@@ -259,7 +254,6 @@ import { AppPipesModule } from "../app-pipes.module";
     entryComponents: [
         DeleteConfirmationComponent,
         CloseConfirmationComponent,
-        CalendarDialogComponent,
         CustomerAircraftsDialogNewAircraftComponent,
         CustomerAircraftsEditComponent,
         CustomerCompanyTypeDialogComponent,

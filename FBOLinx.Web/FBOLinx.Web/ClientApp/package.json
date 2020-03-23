@@ -34,7 +34,6 @@
     "@syncfusion/ej2-angular-richtexteditor": "^17.4.55",
     "@types/date-fns": "2.6.0",
     "amcharts3": "3.21.14",
-    "angular-calendar": "^0.25.2",
     "angular2-text-mask": "^9.0.0",
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^3.4.1",
