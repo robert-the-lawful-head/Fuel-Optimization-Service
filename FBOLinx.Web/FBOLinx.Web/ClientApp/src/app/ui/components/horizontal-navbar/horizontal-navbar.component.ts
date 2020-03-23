@@ -1,35 +1,41 @@
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import {
+    Component,
+    OnInit,
+    AfterViewInit,
+    Input,
+    Output,
+    EventEmitter,
+    HostBinding,
+} from "@angular/core";
+import { Router } from "@angular/router";
+import { MatDialog } from "@angular/material/dialog";
 
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
-//Services
-import { UserService } from '../../../services/user.service';
-import { AuthenticationService } from '../../../services/authentication.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { FbopricesService } from '../../../services/fboprices.service';
-import { FboairportsService } from '../../../services/fboairports.service';
-import { AcukwikairportsService } from '../../../services/acukwikairports.service';
-import { FbosService } from '../../../services/fbos.service';
+// Services
+import { UserService } from "../../../services/user.service";
+import { AuthenticationService } from "../../../services/authentication.service";
+import { SharedService } from "../../../layouts/shared-service";
+import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
+import { FbopricesService } from "../../../services/fboprices.service";
+import { FboairportsService } from "../../../services/fboairports.service";
+import { AcukwikairportsService } from "../../../services/acukwikairports.service";
+import { FbosService } from "../../../services/fbos.service";
 
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from "../../../models/sharedEvents";
 
-//Components
-import { AccountProfileComponent } from '../../../shared/components/account-profile/account-profile.component';
+// Components
+import { AccountProfileComponent } from "../../../shared/components/account-profile/account-profile.component";
 
 @Component({
     moduleId: module.id,
-    selector: 'horizontal-navbar',
-    templateUrl: 'horizontal-navbar.component.html',
-    styleUrls: ['horizontal-navbar.component.scss'],
-    host: {
-        '[class.app-navbar]': 'true',
-        '[class.show-overlay]': 'showOverlay'
-    }
+    selector: "horizontal-navbar",
+    templateUrl: "horizontal-navbar.component.html",
+    styleUrls: ["horizontal-navbar.component.scss"],
 })
 export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
+    @HostBinding("class.app-navbar") appNavbar = "true";
+    @HostBinding("class.show-overlay") showoverlay = "true";
     @Input()
     title: string;
     @Input()
@@ -41,19 +47,20 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     isLocationsLoaded: boolean;
     public userFullName: string;
     public customersWithoutMargins: any[];
-    public accountProfileMenu: any = {isOpened: false};
+    public accountProfileMenu: any = { isOpened: false };
     public needsAttentionMenu: any = { isOpened: false };
     public currrentJetACostPricing: any;
     public currrentJetARetailPricing: any;
-    public hasLoadedJetACost: boolean = false;
-    public hasLoadedJetARetail: boolean = false;
-    public viewAllNotifications: boolean = false;
+    public hasLoadedJetACost = false;
+    public hasLoadedJetARetail = false;
+    public viewAllNotifications = false;
     public locations: any[];
     public fboAirport: any;
     public fbo: any;
-    private currentUser: any;
+    public currentUser: any;
 
-    constructor(private authenticationService: AuthenticationService,
+    constructor(
+        private authenticationService: AuthenticationService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService,
         private router: Router,
@@ -61,18 +68,20 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
         private userService: UserService,
         private fboPricesService: FbopricesService,
         private fboAirportsService: FboairportsService,
-        private acukwikAirportsService: AcukwikairportsService,
         private fbosService: FbosService
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
         this.isOpened = false;
         this.currentUser = this.sharedService.currentUser;
-        if (!this.currentUser)
+        if (!this.currentUser) {
             return;
-        this.userFullName = this.currentUser.firstName + ' ' + this.currentUser.lastName;
-        if (this.userFullName.length < 2)
+        }
+        this.userFullName =
+            this.currentUser.firstName + " " + this.currentUser.lastName;
+        if (this.userFullName.length < 2) {
             this.userFullName = this.currentUser.username;
+        }
     }
 
     ngOnInit() {
@@ -84,7 +93,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === 'fbo changed') {
+            if (message === "fbo changed") {
                 this.loadLocations();
                 this.loadFboInfo();
             }
@@ -92,22 +101,23 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     }
 
     toggle(event) {
-        if (this.isOpened)
+        if (this.isOpened) {
             this.close(event);
-        else
+        } else {
             this.open(event);
+        }
     }
 
     open(event) {
-        let clickedComponent = event.target.closest('.nav-item');
-        let items = clickedComponent.parentElement.children;
+        const clickedComponent = event.target.closest(".nav-item");
+        const items = clickedComponent.parentElement.children;
 
         event.preventDefault();
 
-        for (let i = 0; i < items.length; i++) {
-            items[i].classList.remove('opened');
+        for (const item of items) {
+            item.classList.remove("opened");
         }
-        clickedComponent.classList.add('opened');
+        clickedComponent.classList.add("opened");
 
         this.isOpened = true;
     }
@@ -115,7 +125,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     openUpdate() {
         this.loadCustomersWithoutMargins(5);
         this.needsAttentionMenu.isOpened = !this.needsAttentionMenu.isOpened;
-        
     }
 
     close(event) {
@@ -132,26 +141,32 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
 
     public logout() {
         this.authenticationService.logout();
-        this.router.navigate(['/landing-site-layout']);
+        this.router.navigate(["/landing-site-layout"]);
     }
 
     public accountProfileClicked(event) {
-        this.userService.getCurrentUser().subscribe((data: any) => {
-            const dialogRef = this.accountProfileDialog.open(AccountProfileComponent,
+        this.userService.getCurrentUser().subscribe((response: any) => {
+            const dialogRef = this.accountProfileDialog.open(
+                AccountProfileComponent,
                 {
-                    height: '550px',
-                    width: '650px',
-                    data: data
-                });
-            dialogRef.afterClosed().subscribe(result => {
-                if (!result)
+                    height: "550px",
+                    width: "650px",
+                    data: response,
+                }
+            );
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
                     return;
-                console.log('Dialog data: ', result);
+                }
+                console.log("Dialog data: ", result);
                 this.userService.update(result).subscribe((data: any) => {
-                    if (result.newPassword && result.newPassword != '') {
-                        this.userService.updatePassword({ user: data, newPassword: result.newPassword }).subscribe(
-                            (newPass:
-                                any) => {
+                    if (result.newPassword && result.newPassword !== "") {
+                        this.userService
+                            .updatePassword({
+                                user: data,
+                                newPassword: result.newPassword,
+                            })
+                            .subscribe((newPass: any) => {
                                 result.password = newPass;
                             });
                     }
@@ -168,24 +183,24 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
         this.fboAirport = null;
         this.fbo = null;
         this.close(event);
-        this.router.navigate(['/default-layout/fbos/']);
+        this.router.navigate(["/default-layout/fbos/"]);
     }
 
     public updatePricingClicked(event) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(['/default-layout/fbo-prices']);
+        this.router.navigate(["/default-layout/fbo-prices"]);
         this.close(event);
     }
 
     public addMarginForCustomerClicked(customer, event) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(['/default-layout/customers/' + customer.oid]);
+        this.router.navigate(["/default-layout/customers/" + customer.oid]);
         this.close(event);
     }
 
-    public viewAllNotificationsClicked() {
+    public viewAllNotificationsClicked(event) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(['/default-layout/customers']);
+        this.router.navigate(["/default-layout/customers"]);
         this.close(event);
     }
 
@@ -194,59 +209,85 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     }
 
     public loadCustomersWithoutMargins(count) {
-        if (!count)
+        if (!count) {
             count = 0;
+        }
         this.customerInfoByGroupService
-            .getCustomersWithoutMargins(this.currentUser.groupId, this.currentUser.fboId, count)
+            .getCustomersWithoutMargins(
+                this.currentUser.groupId,
+                this.currentUser.fboId,
+                count
+            )
             .subscribe((data: any) => {
                 this.customersWithoutMargins = data;
             });
     }
 
-    private loadCurrentPrices() {
-        this.fboPricesService.getFbopricesByFboIdAndProductCurrent(this.currentUser.fboId, 'JetA Cost').subscribe((data: any) => {
-            this.currrentJetACostPricing = data;
-            this.hasLoadedJetACost = true;
-        });
+    public loadCurrentPrices() {
+        this.fboPricesService
+            .getFbopricesByFboIdAndProductCurrent(
+                this.currentUser.fboId,
+                "JetA Cost"
+            )
+            .subscribe((data: any) => {
+                this.currrentJetACostPricing = data;
+                this.hasLoadedJetACost = true;
+            });
 
-        this.fboPricesService.getFbopricesByFboIdAndProductCurrent(this.currentUser.fboId, 'JetA Retail').subscribe((data: any) => {
-            this.currrentJetARetailPricing = data;
-            this.hasLoadedJetARetail = true;
-        });
+        this.fboPricesService
+            .getFbopricesByFboIdAndProductCurrent(
+                this.currentUser.fboId,
+                "JetA Retail"
+            )
+            .subscribe((data: any) => {
+                this.currrentJetARetailPricing = data;
+                this.hasLoadedJetARetail = true;
+            });
     }
 
-    private loadLocations() {
+    public loadLocations() {
         if (!this.currentUser.groupId) {
             return;
         }
-        this.fbosService.getForGroup(this.currentUser.groupId).subscribe((data: any) => {
-            this.isLocationsLoaded = true;
-            if (data && data.length) {
-                this.locations = _.cloneDeep(data);
+        this.fbosService.getForGroup(this.currentUser.groupId).subscribe(
+            (data: any) => {
+                this.isLocationsLoaded = true;
+                if (data && data.length) {
+                    this.locations = _.cloneDeep(data);
+                }
+            },
+            (error: any) => {
+                this.isLocationsLoaded = true;
+                console.log(error);
             }
-        }, (error: any) => {
-            this.isLocationsLoaded = true;
-            console.log(error);
-        });
+        );
     }
 
-    private loadFboInfo() {
+    public loadFboInfo() {
         if (!this.currentUser.fboId) {
             return;
         }
-        this.fboAirportsService.getForFbo({ oid: this.currentUser.fboId }).subscribe((data: any) => {
-            this.fboAirport = _.assign({}, data);
-        }, (error: any) => {
-            console.log(error);
-        });
-        this.fbosService.get({ oid: this.currentUser.fboId }).subscribe((data: any) => {
-            this.fbo = _.assign({}, data);
-        }, (error: any) => {
-            console.log(error);
-        });
+        this.fboAirportsService
+            .getForFbo({ oid: this.currentUser.fboId })
+            .subscribe(
+                (data: any) => {
+                    this.fboAirport = _.assign({}, data);
+                },
+                (error: any) => {
+                    console.log(error);
+                }
+            );
+        this.fbosService.get({ oid: this.currentUser.fboId }).subscribe(
+            (data: any) => {
+                this.fbo = _.assign({}, data);
+            },
+            (error: any) => {
+                console.log(error);
+            }
+        );
     }
 
-    private changeLocation(location: any) {
+    public changeLocation(location: any) {
         this.isOpened = false;
         this.fboAirport.iata = location.iata;
         this.fboAirport.icao = location.icao;
@@ -257,8 +298,10 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
         this.sharedService.emitChange(SharedEvents.locationChangedEvent);
     }
 
-    private toggleProfileMenu() {
-        if (!this.isLocationsLoaded) return;
+    public toggleProfileMenu() {
+        if (!this.isLocationsLoaded) {
+            return;
+        }
         this.accountProfileMenu.isOpened = !this.accountProfileMenu.isOpened;
     }
 }

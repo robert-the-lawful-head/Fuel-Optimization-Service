@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/variable';
+@import "../../../../assets/sass/variable";
 
 .chart-container {
     align-items: center;
@@ -49,13 +49,13 @@
     }
 
     .amcharts-graph-column-front {
-        transition: all .3s .3s ease-out;
+        transition: all 0.3s 0.3s ease-out;
     }
 
     .amcharts-graph-column-front:hover {
         fill: #496375;
         stroke: #496375;
-        transition: all .3s ease-out;
+        transition: all 0.3s ease-out;
     }
 
     .amcharts-graph-g3 {

@@ -1,4 +1,8 @@
-<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+<ni-breadcrumb
+    [menu]="breadcrumb"
+    [style]="'custom1'"
+    class="mb-4"
+></ni-breadcrumb>
 
 <div>
     <mat-tab-group>
@@ -8,7 +12,7 @@
                     [customersData]="customersData"
                     [pricingTemplatesData]="pricingTemplatesData"
                     (editCustomerClicked)="editCustomerClicked($event)"
-                    (customerDeleted)="customerDeleted($event)"
+                    (customerDeleted)="customerDeleted()"
                 ></app-customers-grid>
             </div>
             <div *ngIf="!customersData">

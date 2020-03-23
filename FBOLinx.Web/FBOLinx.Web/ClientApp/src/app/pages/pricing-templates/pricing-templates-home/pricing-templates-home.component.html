@@ -1,12 +1,25 @@
-<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+<ni-breadcrumb
+    [menu]="breadcrumb"
+    [style]="'custom1'"
+    class="mb-4"
+></ni-breadcrumb>
 
 <div>
-    <div *ngIf="pricingTemplatesData || currentPricingTemplate">
+    <div *ngIf="pricingTemplatesData">
         <div>
-            <app-pricing-templates-grid [pricingTemplatesData]="pricingTemplatesData" (newPricingTemplateAdded)="newPricingTemplateAdded($event)" (editPricingTemplateClicked)="editPricingTemplateClicked($event)" (deletePricingTemplateClicked)="deletePricingTemplateClicked($event)"></app-pricing-templates-grid>
+            <app-pricing-templates-grid
+                [pricingTemplatesData]="pricingTemplatesData"
+                (newPricingTemplateAdded)="newPricingTemplateAdded($event)"
+                (editPricingTemplateClicked)="
+                    editPricingTemplateClicked($event)
+                "
+                (deletePricingTemplateClicked)="
+                    deletePricingTemplateClicked($event)
+                "
+            ></app-pricing-templates-grid>
         </div>
     </div>
-    <div *ngIf="!(pricingTemplatesData || currentPricingTemplate)">
+    <div *ngIf="!pricingTemplatesData">
         <mat-spinner></mat-spinner>
     </div>
 </div>

@@ -1,129 +1,138 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { SharedService } from '../../../layouts/shared-service';
+import { Component, ViewChild, OnInit } from "@angular/core";
+import { SharedService } from "../../../layouts/shared-service";
 
-import {DataSource} from '@angular/cdk/collections';
-import {MatSort} from '@angular/material';
-import {BehaviorSubject, Observable, merge} from 'rxjs';
+import { DataSource } from "@angular/cdk/collections";
+import { MatSort } from "@angular/material/sort";
+import { BehaviorSubject, Observable, merge } from "rxjs";
 
-import {map} from 'rxjs/operators';
-
-
+import { map } from "rxjs/operators";
 
 const BREADCRUMBS: any[] = [
-  {
-    title: 'UI Elements',
-    link: '#'
-  },
-  {
-    title: 'Tables',
-    link: '#'
-  },
-  {
-    title: 'Sorting table',
-    link: ''
-  }
+    {
+        title: "UI Elements",
+        link: "#",
+    },
+    {
+        title: "Tables",
+        link: "#",
+    },
+    {
+        title: "Sorting table",
+        link: "",
+    },
 ];
 /** Constants used to fill up our data base. */
 const COLORS = [
-  'maroon',
-  'red',
-  'orange',
-  'yellow',
-  'olive',
-  'green',
-  'purple',
-  'fuchsia',
-  'lime',
-  'teal',
-  'aqua',
-  'blue',
-  'navy',
-  'black',
-  'gray'
+    "maroon",
+    "red",
+    "orange",
+    "yellow",
+    "olive",
+    "green",
+    "purple",
+    "fuchsia",
+    "lime",
+    "teal",
+    "aqua",
+    "blue",
+    "navy",
+    "black",
+    "gray",
 ];
 const NAMES = [
-  'Maia',
-  'Asher',
-  'Olivia',
-  'Atticus',
-  'Amelia',
-  'Jack',
-  'Charlotte',
-  'Theodore',
-  'Isla',
-  'Oliver',
-  'Isabella',
-  'Jasper',
-  'Cora',
-  'Levi',
-  'Violet',
-  'Arthur',
-  'Mia',
-  'Thomas',
-  'Elizabeth'
+    "Maia",
+    "Asher",
+    "Olivia",
+    "Atticus",
+    "Amelia",
+    "Jack",
+    "Charlotte",
+    "Theodore",
+    "Isla",
+    "Oliver",
+    "Isabella",
+    "Jasper",
+    "Cora",
+    "Levi",
+    "Violet",
+    "Arthur",
+    "Mia",
+    "Thomas",
+    "Elizabeth",
 ];
 
 @Component({
-  selector: 'page-sorting-table',
-  templateUrl: './sorting-table.component.html',
-  styleUrls: ['./sorting-table.component.scss']
+    selector: "page-sorting-table",
+    templateUrl: "./sorting-table.component.html",
+    styleUrls: ["./sorting-table.component.scss"],
 })
 export class PageSortingTableComponent implements OnInit {
-  pageTitle: string = 'Sorting table';
-  breadcrumb: any[] = BREADCRUMBS;
-  displayedColumns = ['userId', 'userName', 'progress', 'color'];
-  exampleDatabase = new ExampleDatabase();
-  dataSource: ExampleDataSource | null;
+    pageTitle: string = "Sorting table";
+    breadcrumb: any[] = BREADCRUMBS;
+    displayedColumns = ["userId", "userName", "progress", "color"];
+    exampleDatabase = new ExampleDatabase();
+    dataSource: ExampleDataSource | null;
 
-  @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor( private _sharedService: SharedService ) {
-    this._sharedService.emitChange(this.pageTitle);
-  }
+    constructor(private _sharedService: SharedService) {
+        this._sharedService.emitChange(this.pageTitle);
+    }
 
-  ngOnInit() {
-    this.dataSource = new ExampleDataSource(this.exampleDatabase, this.sort);
-  }
+    ngOnInit() {
+        this.dataSource = new ExampleDataSource(
+            this.exampleDatabase,
+            this.sort
+        );
+    }
 }
 
 export interface UserData {
-  id: string;
-  name: string;
-  progress: string;
-  color: string;
+    id: string;
+    name: string;
+    progress: string;
+    color: string;
 }
 
 /** An example database that the data source uses to retrieve data for the table. */
 export class ExampleDatabase {
-  /** Stream that emits whenever the data has been modified. */
-  dataChange: BehaviorSubject<UserData[]> = new BehaviorSubject<UserData[]>([]);
-  get data(): UserData[] { return this.dataChange.value; }
+    /** Stream that emits whenever the data has been modified. */
+    dataChange: BehaviorSubject<UserData[]> = new BehaviorSubject<UserData[]>(
+        []
+    );
+    get data(): UserData[] {
+        return this.dataChange.value;
+    }
 
-  constructor() {
-    // Fill up the database with 100 users.
-    for (let i = 0; i < 100; i++) { this.addUser(); }
-  }
+    constructor() {
+        // Fill up the database with 100 users.
+        for (let i = 0; i < 100; i++) {
+            this.addUser();
+        }
+    }
 
-  /** Adds a new user to the database. */
-  addUser() {
-    const copiedData = this.data.slice();
-    copiedData.push(this.createNewUser());
-    this.dataChange.next(copiedData);
-  }
+    /** Adds a new user to the database. */
+    addUser() {
+        const copiedData = this.data.slice();
+        copiedData.push(this.createNewUser());
+        this.dataChange.next(copiedData);
+    }
 
-  /** Builds and returns a new User. */
-  private createNewUser() {
-    const name =
-      NAMES[Math.round(Math.random() * (NAMES.length - 1))] + ' ' +
-      NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) + '.';
+    /** Builds and returns a new User. */
+    private createNewUser() {
+        const name =
+            NAMES[Math.round(Math.random() * (NAMES.length - 1))] +
+            " " +
+            NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) +
+            ".";
 
-    return {
-      id: (this.data.length + 1).toString(),
-      name: name,
-      progress: Math.round(Math.random() * 100).toString(),
-      color: COLORS[Math.round(Math.random() * (COLORS.length - 1))]
-    };
-  }
+        return {
+            id: (this.data.length + 1).toString(),
+            name: name,
+            progress: Math.round(Math.random() * 100).toString(),
+            color: COLORS[Math.round(Math.random() * (COLORS.length - 1))],
+        };
+    }
 }
 
 /**
@@ -134,44 +143,62 @@ export class ExampleDatabase {
  * should be rendered.
  */
 export class ExampleDataSource extends DataSource<any> {
-  constructor(private _exampleDatabase: ExampleDatabase, private _sort: MatSort) {
-    super();
-  }
+    constructor(
+        private _exampleDatabase: ExampleDatabase,
+        private _sort: MatSort
+    ) {
+        super();
+    }
 
-  /** Connect function called by the table to retrieve one stream containing the data to render. */
-  connect(): Observable<UserData[]> {
-    const displayDataChanges = [
-      this._exampleDatabase.dataChange,
-      this._sort.sortChange,
-    ];
+    /** Connect function called by the table to retrieve one stream containing the data to render. */
+    connect(): Observable<UserData[]> {
+        const displayDataChanges = [
+            this._exampleDatabase.dataChange,
+            this._sort.sortChange,
+        ];
 
-		return merge(...displayDataChanges).pipe(map(() => {
-			return this.getSortedData();
-		}));
-  }
+        return merge(...displayDataChanges).pipe(
+            map(() => {
+                return this.getSortedData();
+            })
+        );
+    }
 
-  disconnect() {}
+    disconnect() {}
 
-  /** Returns a sorted copy of the database data. */
-  getSortedData(): UserData[] {
-    const data = this._exampleDatabase.data.slice();
-    if (!this._sort.active || this._sort.direction === '') { return data; }
+    /** Returns a sorted copy of the database data. */
+    getSortedData(): UserData[] {
+        const data = this._exampleDatabase.data.slice();
+        if (!this._sort.active || this._sort.direction === "") {
+            return data;
+        }
 
-    return data.sort((a, b) => {
-      let propertyA: number|string = '';
-      let propertyB: number|string = '';
+        return data.sort((a, b) => {
+            let propertyA: number | string = "";
+            let propertyB: number | string = "";
 
-      switch (this._sort.active) {
-        case 'userId': [propertyA, propertyB] = [a.id, b.id]; break;
-        case 'userName': [propertyA, propertyB] = [a.name, b.name]; break;
-        case 'progress': [propertyA, propertyB] = [a.progress, b.progress]; break;
-        case 'color': [propertyA, propertyB] = [a.color, b.color]; break;
-      }
+            switch (this._sort.active) {
+                case "userId":
+                    [propertyA, propertyB] = [a.id, b.id];
+                    break;
+                case "userName":
+                    [propertyA, propertyB] = [a.name, b.name];
+                    break;
+                case "progress":
+                    [propertyA, propertyB] = [a.progress, b.progress];
+                    break;
+                case "color":
+                    [propertyA, propertyB] = [a.color, b.color];
+                    break;
+            }
 
-      let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
-      let valueB = isNaN(+propertyB) ? propertyB : +propertyB;
+            let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
+            let valueB = isNaN(+propertyB) ? propertyB : +propertyB;
 
-      return (valueA < valueB ? -1 : 1) * (this._sort.direction == 'asc' ? 1 : -1);
-    });
-  }
+            return (
+                (valueA < valueB ? -1 : 1) *
+                (this._sort.direction == "asc" ? 1 : -1)
+            );
+        });
+    }
 }

@@ -1,17 +1,24 @@
-import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    Output,
+    OnInit,
+    ViewChild,
+} from "@angular/core";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
 
-//Services
-import { SharedService } from '../../../layouts/shared-service';
+// Services
+import { SharedService } from "../../../layouts/shared-service";
 
 @Component({
-    selector: 'app-fuelreqs-grid',
-    templateUrl: './fuelreqs-grid.component.html',
-    styleUrls: ['./fuelreqs-grid.component.scss']
+    selector: "app-fuelreqs-grid",
+    templateUrl: "./fuelreqs-grid.component.html",
+    styleUrls: ["./fuelreqs-grid.component.scss"],
 })
-/** fuelreqs-grid component*/
-export class FuelreqsGridComponent {
-    /** fuelreqs-grid ctor */
+export class FuelreqsGridComponent implements OnInit {
     @Output() fuelreqDeleted = new EventEmitter<any>();
     @Output() newFuelreqClicked = new EventEmitter<any>();
     @Output() editFuelreqClicked = new EventEmitter<any>();
@@ -20,20 +27,30 @@ export class FuelreqsGridComponent {
 
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
-    displayedColumns: string[] = ['oid', 'customer', 'eta', 'icao', 'tailNumber', 'fbo', 'dispatchNotes', 'source'];
+    displayedColumns: string[] = [
+        "oid",
+        "customer",
+        "eta",
+        "icao",
+        "tailNumber",
+        "fbo",
+        "dispatchNotes",
+        "source",
+    ];
     public dashboardSettings: any;
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(private sharedService: SharedService) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
     }
 
     ngOnInit() {
-        if (!this.fuelreqsData)
+        if (!this.fuelreqsData) {
             return;
-        this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+        }
+        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.fuelreqsDataSource = new MatTableDataSource(this.fuelreqsData);
         this.fuelreqsDataSource.sort = this.sort;
         this.fuelreqsDataSource.paginator = this.paginator;

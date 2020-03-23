@@ -1,5 +1,5 @@
 export interface User {
-  name: string;
-  lastSeen: string;
-  avatar?: string;
+    name: string;
+    lastSeen: string;
+    avatar?: string;
 }

@@ -6,37 +6,38 @@ import {
     ComponentFactoryResolver,
     ViewChild,
     HostBinding,
-    Renderer2
-} from '@angular/core';
+    Renderer2,
+    OnInit,
+} from "@angular/core";
 
 import {
     ComponentProperties,
-    OverlayProperties
-} from '@ivylab/overlay-angular';
-import { AdDirective } from './ad.directive';
-import { TooltipModalComponent } from '../tooltip-modal/tooltip-modal.component';
+    OverlayProperties,
+} from "@ivylab/overlay-angular";
+import { AdDirective } from "./ad.directive";
+import { TooltipModalComponent } from "../tooltip-modal/tooltip-modal.component";
 
 @Component({
-    selector: 'popover-container',
-    templateUrl: './popover.component.html',
-    styleUrls: ['./popover.component.scss']
+    selector: "popover-container",
+    templateUrl: "./popover.component.html",
+    styleUrls: ["./popover.component.scss"],
 })
-export class PopoverComponent {
+export class PopoverComponent implements OnInit {
     popoverPosition = {
-        left: '',
-        top: ''
+        left: "",
+        top: "",
     };
-    _properties: OverlayProperties;
-    minTimeout: number = 0;
+    props: OverlayProperties;
+    minTimeout = 0;
 
-    @HostBinding('style.top') hostTop: string;
-    @HostBinding('style.left') hostLeft: string;
-    @HostBinding('style.padding')
+    @HostBinding("style.top") hostTop: string;
+    @HostBinding("style.left") hostLeft: string;
+    @HostBinding("style.padding")
     get hostPadding() {
         return this.properties.metadata.padding;
     }
-    @HostBinding('class.popover-light') hostLight: boolean;
-    @HostBinding('class.popover-noarrow')
+    @HostBinding("class.popover-light") hostLight: boolean;
+    @HostBinding("class.popover-noarrow")
     get hostNoArrow() {
         return this.properties.metadata.noArrow;
     }
@@ -44,11 +45,11 @@ export class PopoverComponent {
     @ViewChild(AdDirective) adHost: AdDirective;
 
     @Input() set overlayProperties(properties: OverlayProperties) {
-        this._properties = properties;
+        this.props = properties;
     }
 
     get properties() {
-        return this._properties;
+        return this.props;
     }
 
     get component() {
@@ -68,7 +69,7 @@ export class PopoverComponent {
     }
 
     get isThemeLight() {
-        return this.properties.metadata['theme'] === 'light';
+        return this.properties.metadata.theme === "light";
     }
 
     get isArrow() {
@@ -96,30 +97,32 @@ export class PopoverComponent {
     }
 
     loadComponent() {
-        let adItem = this.properties;
-        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+        const adItem = this.properties;
+        const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
             adItem.childComponent
         );
-        let viewContainerRef = this.adHost.viewContainerRef;
+        const viewContainerRef = this.adHost.viewContainerRef;
         viewContainerRef.clear();
-        let componentRef = viewContainerRef.createComponent(componentFactory);
-        (<TooltipModalComponent>componentRef.instance).setProperty(adItem.data);
+        const componentRef = viewContainerRef.createComponent(componentFactory);
+        (componentRef.instance as TooltipModalComponent).setProperty(
+            adItem.data
+        );
         setTimeout(() => {
             this.setPosition(this.properties);
         }, 50);
     }
 
     appendElement() {
-        this.element.style.display = '';
+        this.element.style.display = "";
         document
-            .getElementsByTagName('popover-container')[0]
+            .getElementsByTagName("popover-container")[0]
             .appendChild(this.element);
     }
 
     setPlacementClass(): void {
         this.renderer.addClass(
             this.elementRef.nativeElement,
-            'popover-' + this.placement
+            "popover-" + this.placement
         );
     }
 
@@ -142,92 +145,92 @@ export class PopoverComponent {
         const offsetArrowCenter = arrowOffset + arrowWidth / 2;
 
         // Top - bottom
-        if (placement === 'top' || 'top-left' || 'top-right') {
+        if (placement === "top" || "top-left" || "top-right") {
             this.hostTop =
-                elementPosition.top + scrollY - (popoverHeight + offset) + 'px';
+                elementPosition.top + scrollY - (popoverHeight + offset) + "px";
         }
 
-        if (placement === 'top-right' || placement === 'bottom-right') {
+        if (placement === "top-right" || placement === "bottom-right") {
             if (this.isAlignToCenter) {
                 this.hostLeft =
                     elementPosition.left +
                     elementWidth / 2 -
                     offsetArrowCenter +
-                    'px';
+                    "px";
             } else {
-                this.hostLeft = elementPosition.left + 'px';
+                this.hostLeft = elementPosition.left + "px";
             }
         }
 
-        if (placement === 'top-left' || placement === 'bottom-left') {
+        if (placement === "top-left" || placement === "bottom-left") {
             if (this.isAlignToCenter) {
                 this.hostLeft =
                     elementPosition.left -
                     (popoverWidth - elementWidth) -
                     (elementWidth / 2 - offsetArrowCenter) +
-                    'px';
+                    "px";
             } else {
                 this.hostLeft =
-                    elementPosition.left - (popoverWidth - elementWidth) + 'px';
+                    elementPosition.left - (popoverWidth - elementWidth) + "px";
             }
         }
 
         if (
-            placement === 'bottom' ||
-            placement === 'bottom-right' ||
-            placement === 'bottom-left'
+            placement === "bottom" ||
+            placement === "bottom-right" ||
+            placement === "bottom-left"
         ) {
             this.hostTop =
-                elementPosition.top + scrollY + elementHeight + offset + 'px';
+                elementPosition.top + scrollY + elementHeight + offset + "px";
         }
 
-        if (placement === 'top' || placement === 'bottom') {
+        if (placement === "top" || placement === "bottom") {
             this.hostLeft =
                 elementPosition.left +
                 elementWidth / 2 -
                 popoverWidth / 2 +
-                'px';
+                "px";
         }
 
         // Left - right
         if (
-            placement === 'left' ||
-            placement === 'left-bottom' ||
-            placement === 'left-top'
+            placement === "left" ||
+            placement === "left-bottom" ||
+            placement === "left-top"
         ) {
-            this.hostLeft = elementPosition.left - popoverWidth - offset + 'px';
+            this.hostLeft = elementPosition.left - popoverWidth - offset + "px";
         }
 
         if (
-            placement === 'right' ||
-            placement === 'right-bottom' ||
-            placement === 'right-top'
+            placement === "right" ||
+            placement === "right-bottom" ||
+            placement === "right-top"
         ) {
-            this.hostLeft = elementPosition.left + elementWidth + offset + 'px';
+            this.hostLeft = elementPosition.left + elementWidth + offset + "px";
         }
 
-        if (placement === 'left' || placement === 'right') {
+        if (placement === "left" || placement === "right") {
             this.hostTop =
                 elementPosition.top +
                 scrollY +
                 elementHeight / 2 -
                 popoverHeight / 2 +
-                'px';
+                "px";
         }
 
-        if (placement === 'right-bottom' || placement === 'left-bottom') {
+        if (placement === "right-bottom" || placement === "left-bottom") {
             if (this.isAlignToCenter) {
                 this.hostTop =
                     elementPosition.top +
                     scrollY +
                     (elementHeight / 2 - offsetArrowCenter) +
-                    'px';
+                    "px";
             } else {
-                this.hostTop = elementPosition.top + scrollY + 'px';
+                this.hostTop = elementPosition.top + scrollY + "px";
             }
         }
 
-        if (placement === 'right-top' || placement === 'left-top') {
+        if (placement === "right-top" || placement === "left-top") {
             if (this.isAlignToCenter) {
                 this.hostTop =
                     elementPosition.top +
@@ -235,14 +238,14 @@ export class PopoverComponent {
                     elementHeight -
                     popoverHeight -
                     (elementHeight / 2 - offsetArrowCenter) +
-                    'px';
+                    "px";
             } else {
                 this.hostTop =
                     elementPosition.top +
                     scrollY +
                     elementHeight -
                     popoverHeight +
-                    'px';
+                    "px";
             }
         }
     }

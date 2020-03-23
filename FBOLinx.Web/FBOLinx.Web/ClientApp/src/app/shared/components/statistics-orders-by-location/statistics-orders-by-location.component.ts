@@ -1,31 +1,28 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, Input, OnInit } from "@angular/core";
 
-//Services
-import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-
-//Components
-import * as moment from 'moment';
+// Services
+import { FuelreqsService } from "../../../services/fuelreqs.service";
+import { SharedService } from "../../../layouts/shared-service";
 
 @Component({
-    selector: 'app-statistics-orders-by-location',
-    templateUrl: './statistics-orders-by-location.component.html',
-    styleUrls: ['./statistics-orders-by-location.component.scss']
+    selector: "app-statistics-orders-by-location",
+    templateUrl: "./statistics-orders-by-location.component.html",
+    styleUrls: ["./statistics-orders-by-location.component.scss"],
 })
-/** statistics-orders-by-location component*/
-export class StatisticsOrdersByLocationComponent {
+export class StatisticsOrdersByLocationComponent implements OnInit {
     @Input() options: any;
 
-    //Public Members
+    // Public Members
     public totalOrders: number;
     public icao: string;
 
-    /** statistics-total-aircraft ctor */
-    constructor(private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService) {
-        if (!this.options)
+    constructor(
+        private fuelreqsService: FuelreqsService,
+        private sharedService: SharedService
+    ) {
+        if (!this.options) {
             this.options = {};
+        }
     }
 
     ngOnInit() {
@@ -33,16 +30,23 @@ export class StatisticsOrdersByLocationComponent {
     }
 
     public refreshData() {
-        let startDate = this.sharedService.dashboardSettings.filterStartDate;
-        let endDate = this.sharedService.dashboardSettings.filterEndDate;
-        this.fuelreqsService.getOrdersByLocation({ StartDateTime: startDate, EndDateTime: endDate, ICAO: '', FboId: this.sharedService.currentUser.fboId }).subscribe((data: any) => {
-            this.totalOrders = 0;
-            if (data.totalOrdersByMonth) {
-                for (let orders of data.totalOrdersByMonth) {
-                    this.totalOrders = orders.count;
+        const startDate = this.sharedService.dashboardSettings.filterStartDate;
+        const endDate = this.sharedService.dashboardSettings.filterEndDate;
+        this.fuelreqsService
+            .getOrdersByLocation({
+                StartDateTime: startDate,
+                EndDateTime: endDate,
+                ICAO: "",
+                FboId: this.sharedService.currentUser.fboId,
+            })
+            .subscribe((data: any) => {
+                this.totalOrders = 0;
+                if (data.totalOrdersByMonth) {
+                    for (const orders of data.totalOrdersByMonth) {
+                        this.totalOrders = orders.count;
+                    }
                 }
-            }
-            this.icao = data.icao;
-        });
+                this.icao = data.icao;
+            });
     }
 }

@@ -1,27 +1,27 @@
-import { Directive, Input, HostListener } from '@angular/core';
-import { PopoverProperties } from './interfaces';
-import { Popover } from './popover.service';
+import { Directive, Input, HostListener, OnDestroy } from "@angular/core";
+import { PopoverProperties } from "./interfaces";
+import { Popover } from "./popover.service";
 
 @Directive({
-    selector: '[popoverTriggerFor]'
+    selector: "[popoverTriggerFor]",
 })
-export class PopoverTriggerDirective {
+export class PopoverTriggerDirective implements OnDestroy {
     @Input() popoverTriggerFor;
-    @Input() popoverWidth: PopoverProperties['width'];
-    @Input() popoverHeight: PopoverProperties['height'];
-    @Input() placement: PopoverProperties['placement'];
-    @Input() popoverClass: PopoverProperties['popoverClass'];
-    @Input() theme: PopoverProperties['theme'];
-    @Input() offset: PopoverProperties['offset'];
-    @Input() animationDuration: PopoverProperties['animationDuration'];
+    @Input() popoverWidth: PopoverProperties["width"];
+    @Input() popoverHeight: PopoverProperties["height"];
+    @Input() placement: PopoverProperties["placement"];
+    @Input() popoverClass: PopoverProperties["popoverClass"];
+    @Input() theme: PopoverProperties["theme"];
+    @Input() offset: PopoverProperties["offset"];
+    @Input() animationDuration: PopoverProperties["animationDuration"];
     @Input()
-    animationTimingFunction: PopoverProperties['animationTimingFunction'];
-    @Input() animationTranslateY: PopoverProperties['animationTranslateY'];
-    @Input() padding: PopoverProperties['padding'];
-    @Input() zIndex: PopoverProperties['zIndex'];
-    @Input() noArrow: PopoverProperties['noArrow'];
+    animationTimingFunction: PopoverProperties["animationTimingFunction"];
+    @Input() animationTranslateY: PopoverProperties["animationTranslateY"];
+    @Input() padding: PopoverProperties["padding"];
+    @Input() zIndex: PopoverProperties["zIndex"];
+    @Input() noArrow: PopoverProperties["noArrow"];
 
-    @HostListener('click', ['$event'])
+    @HostListener("click", ["$event"])
     onClick(event) {
         this.popover.load({
             event,
@@ -37,7 +37,7 @@ export class PopoverTriggerDirective {
             animationTranslateY: this.animationTranslateY,
             padding: this.padding,
             zIndex: this.zIndex,
-            noArrow: this.noArrow
+            noArrow: this.noArrow,
         });
     }
 

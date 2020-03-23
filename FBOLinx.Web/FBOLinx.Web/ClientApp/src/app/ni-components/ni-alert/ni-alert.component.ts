@@ -1,23 +1,23 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input } from "@angular/core";
 
 @Component({
-  selector: 'ni-alert',
-  templateUrl: './ni-alert.component.html',
-  styleUrls: ['./ni-alert.component.scss']
+    selector: "ni-alert",
+    templateUrl: "./ni-alert.component.html",
+    styleUrls: ["./ni-alert.component.scss"],
 })
 export class NiAlertComponent implements OnInit {
-  @Input() color: string = '';
-  @Input() customColor: string = '';
-  @Input() outline: boolean = false;
-  @Input() close: boolean = false;
+    @Input() color = "";
+    @Input() customColor = "";
+    @Input() outline = false;
+    @Input() close = false;
 
-  constructor() { }
+    constructor() {}
 
-  ngOnInit() { }
+    ngOnInit() {}
 
-  delete(event: any, alert: any) {
-    event.preventDefault();
+    delete(event: any, alert: any) {
+        event.preventDefault();
 
-    alert.remove();
-  }
+        alert.remove();
+    }
 }

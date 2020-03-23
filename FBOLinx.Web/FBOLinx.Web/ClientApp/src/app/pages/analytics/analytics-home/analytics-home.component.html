@@ -1,20 +1,52 @@
-<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+<ni-breadcrumb
+    [menu]="breadcrumb"
+    [style]="'custom1'"
+    class="mb-4"
+></ni-breadcrumb>
 
 <div class="row" *ngIf="dashboardSettings">
     <div class="col-md-4">
         <div class="row">
             <div class="col-md-4">
                 <mat-form-field>
-                    <input matInput [max]="dashboardSettings.filterEndDate" [(ngModel)]="dashboardSettings.filterStartDate" [matDatepicker]="dashboardSettingsStartDateFilter" (focus)="dashboardSettingsStartDateFilter.open()" placeholder="Start Date" (dateChange)="applyDateFilterChange({})">
-                    <mat-datepicker-toggle matSuffix [for]="dashboardSettingsStartDateFilter"></mat-datepicker-toggle>
-                    <mat-datepicker #dashboardSettingsStartDateFilter disabled="false"></mat-datepicker>
+                    <input
+                        matInput
+                        [max]="dashboardSettings.filterEndDate"
+                        [(ngModel)]="dashboardSettings.filterStartDate"
+                        [matDatepicker]="dashboardSettingsStartDateFilter"
+                        (focus)="dashboardSettingsStartDateFilter.open()"
+                        placeholder="Start Date"
+                        (dateChange)="applyDateFilterChange()"
+                    />
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="dashboardSettingsStartDateFilter"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsStartDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
                 </mat-form-field>
             </div>
             <div class="col-md-4">
                 <mat-form-field>
-                    <input matInput [min]="dashboardSettings.filterStartDate" [(ngModel)]="dashboardSettings.filterEndDate" [matDatepicker]="dashboardSettingsEndDateFilter" (focus)="dashboardSettingsEndDateFilter.open()" placeholder="End Date" (dateChange)="applyDateFilterChange({})">
-                    <mat-datepicker-toggle matSuffix [for]="dashboardSettingsEndDateFilter"></mat-datepicker-toggle>
-                    <mat-datepicker #dashboardSettingsEndDateFilter disabled="false"></mat-datepicker>
+                    <input
+                        matInput
+                        [min]="dashboardSettings.filterStartDate"
+                        [(ngModel)]="dashboardSettings.filterEndDate"
+                        [matDatepicker]="dashboardSettingsEndDateFilter"
+                        (focus)="dashboardSettingsEndDateFilter.open()"
+                        placeholder="End Date"
+                        (dateChange)="applyDateFilterChange()"
+                    />
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="dashboardSettingsEndDateFilter"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsEndDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
                 </mat-form-field>
             </div>
         </div>
@@ -23,29 +55,44 @@
 
 <div class="row">
     <div class="col-md-6 col-xl-3">
-        <app-statistics-total-orders #statisticsTotalOrders [options]="statisticsOptions"></app-statistics-total-orders>
+        <app-statistics-total-orders
+            #statisticsTotalOrders
+            [options]="statisticsOptions"
+        ></app-statistics-total-orders>
     </div>
 
     <div class="col-md-6 col-xl-3">
-        <app-statistics-total-customers #statisticsTotalCustomers [options]="statisticsOptions"></app-statistics-total-customers>
+        <app-statistics-total-customers
+            #statisticsTotalCustomers
+            [options]="statisticsOptions"
+        ></app-statistics-total-customers>
     </div>
 
     <div class="col-md-6 col-xl-3">
-        <app-statistics-total-aircraft #statisticsTotalAircraft [options]="statisticsOptions"></app-statistics-total-aircraft>
+        <app-statistics-total-aircraft
+            #statisticsTotalAircraft
+            [options]="statisticsOptions"
+        ></app-statistics-total-aircraft>
     </div>
 
     <div class="col-md-6 col-xl-3">
-        <app-statistics-orders-by-location #statisticsOrdersByLocation [options]="statisticsOptions"></app-statistics-orders-by-location>
+        <app-statistics-orders-by-location
+            #statisticsOrdersByLocation
+            [options]="statisticsOptions"
+        ></app-statistics-orders-by-location>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-6">
-        <app-analytics-orders-quote #analyticsOrdersQuoteChart></app-analytics-orders-quote>
+        <app-analytics-orders-quote
+            #analyticsOrdersQuoteChart
+        ></app-analytics-orders-quote>
     </div>
+    <div class="col-md-6"></div>
     <div class="col-md-6">
-    </div>
-    <div class="col-md-6">
-        <app-analytics-orders-over-time #analyticsOrdersOverTimeChart></app-analytics-orders-over-time>
+        <app-analytics-orders-over-time
+            #analyticsOrdersOverTimeChart
+        ></app-analytics-orders-over-time>
     </div>
 </div>

@@ -1,1 +1,1 @@
-export const locationChangedEvent = 'location changed';
+export const locationChangedEvent = "location changed";

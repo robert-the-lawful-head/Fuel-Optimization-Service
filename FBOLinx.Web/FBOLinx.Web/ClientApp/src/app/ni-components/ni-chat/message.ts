@@ -1,5 +1,5 @@
 export interface Message {
-  date: string;
-  content: any;
-  my: boolean;
+    date: string;
+    content: any;
+    my: boolean;
 }

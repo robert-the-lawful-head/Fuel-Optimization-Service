@@ -12,22 +12,22 @@ export interface PopoverProperties {
     bottom?: string;
     zIndex?: number;
     placement?:
-        | 'top'
-        | 'top-left'
-        | 'top-right'
-        | 'bottom'
-        | 'bottom-left'
-        | 'bottom-right'
-        | 'left'
-        | 'left-top'
-        | 'left-bottom'
-        | 'right'
-        | 'right-top'
-        | 'right-bottom';
+        | "top"
+        | "top-left"
+        | "top-right"
+        | "bottom"
+        | "bottom-left"
+        | "bottom-right"
+        | "left"
+        | "left-top"
+        | "left-bottom"
+        | "right"
+        | "right-top"
+        | "right-bottom";
     alignToCenter?: boolean;
     overlayBackdrop?: boolean;
     offset?: number;
-    theme?: 'dark' | 'light';
+    theme?: "dark" | "light";
     animationDuration?: number;
     animationTimingFunction?: string;
     animationTranslateY?: string;
