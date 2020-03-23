@@ -24,9 +24,11 @@ import { TooltipModalComponent } from "../../shared/components/tooltip-modal/too
     selector: "ni-card",
     templateUrl: "./ni-card.component.html",
     styleUrls: ["./ni-card.component.scss"],
+    host: {
+        "[class.ni-card]": "true"
+    }
 })
 export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
-    @HostBinding("class.ni-card") niCard = "true";
     vId: any;
     vEffectiveFrom: any;
     vEffectiveTo: any;

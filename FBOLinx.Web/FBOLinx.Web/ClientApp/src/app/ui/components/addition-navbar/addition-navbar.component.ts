@@ -21,10 +21,12 @@ import * as moment from "moment";
     selector: "addition-navbar",
     templateUrl: "./addition-navbar.component.html",
     styleUrls: ["./addition-navbar.component.scss"],
+    host: {
+        "[class.addition-navbar]": "true",
+        "[class.open]": "open"
+    }
 })
 export class AdditionNavbarComponent implements OnInit {
-    @HostBinding("class.addition-navbar") additionNavbar = "true";
-    @HostBinding("class.open") aOpen = "open";
     title: string;
     open: boolean;
     // Public Members

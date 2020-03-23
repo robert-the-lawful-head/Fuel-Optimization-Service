@@ -76,7 +76,7 @@
     }
   }
   .compress-vertical-navbar & {
-    @media #{$min992} {
+    @media only screen and (max-width: 992px) {
       .logo {
         opacity: 0;
         transform: translateX(100%);
@@ -94,14 +94,14 @@
     }
   }
   .compress-vertical-navbar.rtl & {
-    @media #{$min992} {
+    @media only screen and (max-width: 992px) {
       .logo {
         transform: translateX(-100%);
       }
     }
   }
   .compress-vertical-navbar .vertical-navbar:hover & {
-    @media #{$min992} {
+    @media only screen and (max-width: 992px) {
       .logo {
         opacity: 1;
         transform: translateX(0);
@@ -119,7 +119,7 @@
     }
   }
   .compress-vertical-navbar.rtl .vertical-navbar:hover & {
-    @media #{$min992} {
+    @media only screen and (max-width: 992px) {
       .logo {
         transform: translateX(0);
       }

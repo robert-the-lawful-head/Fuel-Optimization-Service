@@ -4,29 +4,29 @@ import { Component, OnInit, Input, HostBinding } from "@angular/core";
     selector: "[ni-button]",
     templateUrl: "./ni-button.component.html",
     styleUrls: ["./ni-button.component.scss"],
+    host: {
+        "[class.ni-btn]": "true",
+        "[class.ni-btn-block]": "block",
+        "[class.ni-btn-left]": 'align === "left"',
+        "[class.ni-btn-right]": 'align === "right"',
+        "[class.ni-btn-large]": 'size === "large"',
+        "[class.ni-btn-small]": 'size === "small"',
+        "[class.ni-btn-default]": 'view === "default"',
+        "[class.ni-btn-accent]": 'view === "accent"',
+        "[class.ni-btn-info]": 'view === "info"',
+        "[class.ni-btn-success]": 'view === "success"',
+        "[class.ni-btn-warning]": 'view === "warning"',
+        "[class.ni-btn-error]": 'view === "error"',
+        "[class.ni-btn-blank]": 'view === "blank"',
+        "[class.ni-btn-customButton]": 'padding === "padding"',
+        "[class.ni-btn-outline]": "outline",
+        "[class.ni-btn-gradient]": "gradient",
+        "[class.ni-btn-disabled]": "disabled",
+        "[class.ni-btn-icon-animation]": "iconAnimation",
+        "[style.border-radius]": "shape"
+    }
 })
 export class NiButtonComponent implements OnInit {
-    @HostBinding("class.ni-btn") niBtn = "true";
-    @HostBinding("[class.ni-btn-block]") niBtnBlock = "block";
-    @HostBinding("[class.ni-btn-left]") niBtnLeft = 'align === "left"';
-    @HostBinding("[class.ni-btn-right]") niBtnRight = 'align === "right"';
-    @HostBinding("[class.ni-btn-large]") niBtnLarge = 'size === "large"';
-    @HostBinding("[class.ni-btn-small]") niBtnSmall = 'size === "small"';
-    @HostBinding("[class.ni-btn-default]") niBtnDefault = 'view === "default"';
-    @HostBinding("[class.ni-btn-accent]") niBtnAccent = 'view === "accent"';
-    @HostBinding("[class.ni-btn-info]") niBtnInfo = 'view === "info"';
-    @HostBinding("[class.ni-btn-success]") niBtnSuccess = 'view === "success"';
-    @HostBinding("[class.ni-btn-warning]") niBtnWarning = 'view === "warning"';
-    @HostBinding("[class.ni-btn-error]") niBtnError = 'view === "error"';
-    @HostBinding("[class.ni-btn-blank]") niBtnBlank = 'view === "blank"';
-    @HostBinding("[class.ni-btn-customButton]") niBtnCustomButton =
-        'padding === "padding"';
-    @HostBinding("[class.ni-btn-outline]") niBtnOutline = "outline";
-    @HostBinding("[class.ni-btn-gradient]") niBtnGradient = "gradient";
-    @HostBinding("[class.ni-btn-disabled]") niBtnDisabled = "disabled";
-    @HostBinding("[class.ni-btn-icon-animation]") niBtnIconAnimation =
-        "iconAnimation";
-    @HostBinding("[style.border-radius]") styleBorderRadius = "shape";
     @Input() block = false;
     @Input() gradient = false;
     @Input() disabled = false;

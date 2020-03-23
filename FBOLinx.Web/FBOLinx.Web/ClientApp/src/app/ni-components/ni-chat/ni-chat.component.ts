@@ -13,9 +13,11 @@ import { User } from "./user";
     selector: "ni-chat",
     templateUrl: "./ni-chat.component.html",
     styleUrls: ["./ni-chat.component.scss"],
+    host: {
+        "[class.ni-chat]": "true"
+    }
 })
 export class NiChatComponent implements OnInit {
-    @HostBinding("class.ni-chat") niChat = "true";
     @Input() contacts: any[] = [];
     @Input() activeUser: User;
     @Input() messages: Message[] = [];

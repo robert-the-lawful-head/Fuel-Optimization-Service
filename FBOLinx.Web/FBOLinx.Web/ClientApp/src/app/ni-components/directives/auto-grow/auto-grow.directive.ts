@@ -8,10 +8,12 @@ import {
 
 @Directive({
     selector: "[autoGrow]",
+    host: {
+        "(input)": "setHeight()"
+    }
 })
 export class AutoGrowDirective implements AfterContentChecked {
     @HostListener("input", ["$event.target"])
-    @HostBinding("(input)")
     input = "setHeight()";
     onInput(textArea: HTMLTextAreaElement): void {
         this.adjust();

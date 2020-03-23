@@ -22,9 +22,9 @@ import { EventService as OverlayEventService } from "@ivylab/overlay-angular";
     templateUrl: "./menu.component.html",
     styleUrls: ["./menu.component.scss"],
     providers: [MenuService],
+    host: {class: "app-menu"}
 })
 export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
-    @HostBinding("class") class = "app-menu";
     @ViewChildren("tooltip") priceTooltips: QueryList<any>;
 
     menuItems: IMenuItem[];

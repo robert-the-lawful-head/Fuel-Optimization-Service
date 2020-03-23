@@ -32,10 +32,12 @@ import { AccountProfileComponent } from "../../../shared/components/account-prof
     selector: "horizontal-navbar",
     templateUrl: "horizontal-navbar.component.html",
     styleUrls: ["horizontal-navbar.component.scss"],
+    host: {
+        "[class.app-navbar]": "true",
+        "[class.show-overlay]": "showOverlay"
+    }
 })
 export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
-    @HostBinding("class.app-navbar") appNavbar = "true";
-    @HostBinding("class.show-overlay") showoverlay = "true";
     @Input()
     title: string;
     @Input()

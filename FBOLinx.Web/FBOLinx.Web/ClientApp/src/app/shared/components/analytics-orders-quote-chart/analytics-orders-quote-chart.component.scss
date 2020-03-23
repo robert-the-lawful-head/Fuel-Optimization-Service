@@ -7,7 +7,7 @@
     justify-content: center;
     width: 100%;
 
-    @media #{$max767} {
+    @media only screen and (max-width: 767px) {
         height: 300px;
     }
 
@@ -18,7 +18,7 @@
     }
 }
 
-:host /deep/ {
+:host ::ng-deep {
     .amcharts-graph-g2 .amcharts-graph-stroke {
         stroke-dasharray: 3px 3px;
         stroke-linejoin: round;

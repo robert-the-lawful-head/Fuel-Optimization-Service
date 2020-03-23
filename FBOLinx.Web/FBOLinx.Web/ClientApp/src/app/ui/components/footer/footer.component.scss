@@ -9,7 +9,7 @@
   height: $module-rem * 4;
   justify-content: space-between;
   width: 100%;
-  @media #{$max543} {
+  @media only screen and (max-width: 543px) {
     font-size: .7rem;
   }
 
@@ -18,7 +18,7 @@
     padding: 10px ($module-rem * 2);
   }
   .copyright {
-    @media #{$max543} {
+    @media only screen and (max-width: 543px) {
       padding-right: 0;
 
       .rtl & {

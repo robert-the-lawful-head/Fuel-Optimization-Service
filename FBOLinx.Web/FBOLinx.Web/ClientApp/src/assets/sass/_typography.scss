@@ -41,7 +41,7 @@ h1,
     font-size: 4.2142857rem;
     line-height: 1.13;
     margin-bottom: 3.1428572rem;
-    @media #{$max767} {
+    @media only screen and (max-width: 767px) {
         font-size: 3rem;
     }
 }
@@ -49,7 +49,7 @@ h2,
 .h2 {
     font-size: 3.1428571rem;
     line-height: 1;
-    @media #{$max767} {
+    @media only screen and (max-width: 767px) {
         font-size: 2.6rem;
     }
 }
