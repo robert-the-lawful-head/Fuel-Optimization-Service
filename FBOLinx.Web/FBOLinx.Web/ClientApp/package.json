@@ -64,19 +64,12 @@
     "@types/lodash": "^4.14.149",
     "@types/node": "^12.11.1",
     "codelyzer": "^5.2.1",
-    "husky": "^4.2.3",
     "node-sass": "^4.13.1",
     "prettier": "^2.0.1",
-    "pretty-quick": "^2.0.1",
     "protractor": "~5.4.3",
     "ts-node": "~8.3.0",
     "tslint": "~5.18.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "~3.7.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged && ng lint"
-    }
   }
 }
