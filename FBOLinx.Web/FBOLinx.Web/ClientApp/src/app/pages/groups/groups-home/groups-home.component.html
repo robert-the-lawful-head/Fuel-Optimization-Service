@@ -1,10 +1,17 @@
 <div>
     <div *ngIf="groupsData || currentGroup">
         <div *ngIf="currentGroup">
-            <app-groups-edit [groupInfo]="currentGroup" (saveClicked)="saveGroupEditClicked()" (cancelClicked)="cancelGroupEditClicked()"></app-groups-edit>
+            <app-groups-edit
+                [groupInfo]="currentGroup"
+                (saveClicked)="saveGroupEditClicked()"
+                (cancelClicked)="cancelGroupEditClicked()"
+            ></app-groups-edit>
         </div>
         <div *ngIf="!currentGroup && groupsData">
-            <app-groups-grid [groupsData]="groupsData" (editGroupClicked)="editGroupClicked($event)" (recordDeleted)="deleteGroupClicked($event)"></app-groups-grid>
+            <app-groups-grid
+                [groupsData]="groupsData"
+                (editGroupClicked)="editGroupClicked($event)"
+            ></app-groups-grid>
         </div>
     </div>
     <div *ngIf="!(groupsData || currentGroup)">

@@ -626,16 +626,34 @@ namespace FBOLinx.Web.Controllers
 
         }
 
-        // DELETE: api/PricingTemplates/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePricingTemplate([FromRoute] int id)
+        [HttpGet("checkdefaulttemplate/{fboId}")]
+        public async Task<IActionResult> CheckDefaultTemplate([FromRoute] int fboId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var pricingTemplate = await _context.PricingTemplate.FindAsync(id);
+            var result = _context.PricingTemplate.FirstOrDefault(s => s.Fboid == fboId && s.Default == true);
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return Ok(null);
+        }
+
+        // DELETE: api/PricingTemplates/5/fbo/124
+        [HttpDelete("{oid}/fbo/{fboId}")]
+        public async Task<IActionResult> DeletePricingTemplate([FromRoute] int oid, [FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            PricingTemplate pricingTemplate = await _context.PricingTemplate.FindAsync(oid);
             if (pricingTemplate == null)
             {
                 return NotFound();
@@ -643,6 +661,17 @@ namespace FBOLinx.Web.Controllers
 
             _context.PricingTemplate.Remove(pricingTemplate);
             await _context.SaveChangesAsync();
+
+            PricingTemplate defaultPricingTemplate = _context.PricingTemplate.Where(p => p.Fboid.Equals(fboId) && p.Default.GetValueOrDefault()).FirstOrDefault();
+            if (defaultPricingTemplate != null)
+            {
+                _context.CustomCustomerTypes
+                    .Where(c => c.Fboid.Equals(fboId) && c.CustomerType.Equals(oid))
+                    .ToList()
+                    .ForEach(c => c.CustomerType = defaultPricingTemplate.Oid);
+
+                await _context.SaveChangesAsync();
+            }
 
             return Ok(pricingTemplate);
         }

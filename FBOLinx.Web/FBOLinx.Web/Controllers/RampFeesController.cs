@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.Web.ViewModels;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -34,7 +34,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<RampFees>> GetRampFees(int id)
         {
-            var rampFees = await _context.RampFees.FindAsync(id);
+            RampFees rampFees = await _context.RampFees.FindAsync(id);
 
             if (rampFees == null)
             {
@@ -51,11 +51,12 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
-                var sizes = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.AirCrafts.AircraftSizes));
-                var result = (from s in sizes
+                IEnumerable<Utilities.Enum.EnumDescriptionValue> sizes = Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+                List<ViewModels.RampFeesGridViewModel> result = (
+                    from s in sizes
                     join r in _context.RampFees on new
                         {
-                            size = (int?) ((short?) ((FBOLinx.Web.Models.AirCrafts.AircraftSizes) s.Value)),
+                            size = (int?) ((short?) ((AirCrafts.AircraftSizes) s.Value)),
                             fboId = (int?) fboId
                         }
                         equals new
@@ -65,7 +66,7 @@ namespace FBOLinx.Web.Controllers
                         }
                         into leftJoinRampFees
                     from r in leftJoinRampFees.DefaultIfEmpty()
-                              select new ViewModels.RampFeesGridViewModel()
+                    select new ViewModels.RampFeesGridViewModel()
                     {
                         Oid = r?.Oid ?? 0,
                         Price = r?.Price,
@@ -75,40 +76,38 @@ namespace FBOLinx.Web.Controllers
                         CategoryMinValue = r?.CategoryMinValue,
                         CategoryMaxValue = r?.CategoryMaxValue,
                         ExpirationDate = r?.ExpirationDate,
-                        Size = (FBOLinx.Web.Models.AirCrafts.AircraftSizes)s.Value,
+                        Size = (AirCrafts.AircraftSizes)s.Value,
                         AppliesTo = (from a in _context.Aircrafts
-                                     where a.Size.HasValue && a.Size == (FBOLinx.Web.Models.AirCrafts.AircraftSizes)s.Value
+                                     where a.Size.HasValue && a.Size == (AirCrafts.AircraftSizes)s.Value
                                      select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList()
 
                     }).ToList();
 
-                //Pull additional "custom" ramp fees (weight, tail, wingspan, etc.)
-                var customRampFees = await (from r in _context.RampFees
-                    join a in _context.Aircrafts on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
-                    from a in leftJoinAircrafts.DefaultIfEmpty()
-                                            where r.Fboid == fboId && r.CategoryType.HasValue &&
-                          r.CategoryType.Value != RampFees.RampFeeCategories.AircraftSize
-                    select new ViewModels.RampFeesGridViewModel()
-                    {
-                        Oid = r.Oid,
-                        Price = r.Price,
-                        Waived = r.Waived,
-                        Fboid = r.Fboid,
-                        CategoryType = r.CategoryType,
-                        CategoryMinValue = r.CategoryMinValue,
-                        CategoryMaxValue = r.CategoryMaxValue,
-                        ExpirationDate = r.ExpirationDate,
-                        AircraftMake = a == null ? "" : a.Make,
-                        AircraftModel = a == null ? "" : a.Model
+                // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
+                List<ViewModels.RampFeesGridViewModel> customRampFees = await (from r in _context.RampFees
+                                            join a in _context.Aircrafts on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
+                                            from a in leftJoinAircrafts.DefaultIfEmpty()
+                                            where r.Fboid == fboId && r.CategoryType.HasValue && r.CategoryType.Value != RampFees.RampFeeCategories.AircraftSize
+                                            select new ViewModels.RampFeesGridViewModel()
+                                            {
+                                                Oid = r.Oid,
+                                                Price = r.Price,
+                                                Waived = r.Waived,
+                                                Fboid = r.Fboid,
+                                                CategoryType = r.CategoryType,
+                                                CategoryMinValue = r.CategoryMinValue,
+                                                CategoryMaxValue = r.CategoryMaxValue,
+                                                ExpirationDate = r.ExpirationDate,
+                                                AircraftMake = a == null ? "" : a.Make,
+                                                AircraftModel = a == null ? "" : a.Model
 
-                    }).ToListAsync();
+                                            }).ToListAsync();
 
                 result.AddRange(customRampFees);
                 return Ok(result);
             }
-            catch (System.Exception exception)
+            catch (Exception)
             {
-                var test = exception;
                 return null;
             }
         }
@@ -157,7 +156,7 @@ namespace FBOLinx.Web.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<RampFees>> DeleteRampFees(int id)
         {
-            var rampFees = await _context.RampFees.FindAsync(id);
+            RampFees rampFees = await _context.RampFees.FindAsync(id);
             if (rampFees == null)
             {
                 return NotFound();
@@ -172,6 +171,25 @@ namespace FBOLinx.Web.Controllers
         private bool RampFeesExists(int id)
         {
             return _context.RampFees.Any(e => e.Oid == id);
+        }
+
+        [HttpPost("importrampfees")]
+        public async Task<IActionResult> ImportRampFees([FromBody] List<RampFeesImportVM> rampfees)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            foreach (var rampfee in rampfees)
+            {
+                Customers newC = new Customers();
+                
+              
+            }
+
+            return Ok(null);
         }
     }
 }

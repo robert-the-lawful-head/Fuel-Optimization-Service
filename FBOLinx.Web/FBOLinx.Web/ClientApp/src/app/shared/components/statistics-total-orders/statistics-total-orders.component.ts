@@ -1,33 +1,34 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 
-//Services
-import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
+// Services
+import { FuelreqsService } from "../../../services/fuelreqs.service";
+import { SharedService } from "../../../layouts/shared-service";
 
-//Components
-import * as moment from 'moment';
+// Components
+import * as moment from "moment";
 
 @Component({
-    selector: 'app-statistics-total-orders',
-    templateUrl: './statistics-total-orders.component.html',
-    styleUrls: ['./statistics-total-orders.component.scss']
+    selector: "app-statistics-total-orders",
+    templateUrl: "./statistics-total-orders.component.html",
+    styleUrls: ["./statistics-total-orders.component.scss"],
 })
-/** statistics-total-orders component*/
+// statistics-total-orders component
 export class StatisticsTotalOrdersComponent implements OnInit {
-
     @Input() options: any;
 
-    //Public Members
+    // Public Members
     public totalOrders: number;
     public startDateString: string;
 
-    /** statistics-total-orders ctor */
-    constructor(private router: Router,
+    constructor(
+        private router: Router,
         private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService) {
-        if (!this.options)
+        private sharedService: SharedService
+    ) {
+        if (!this.options) {
             this.options = {};
+        }
     }
 
     ngOnInit() {
@@ -35,15 +36,17 @@ export class StatisticsTotalOrdersComponent implements OnInit {
     }
 
     public redirectClicked() {
-        this.router.navigate(['/default-layout/fuelreqs']);
+        this.router.navigate(["/default-layout/fuelreqs"]);
     }
 
     public refreshData() {
-        let startDate = this.sharedService.dashboardSettings.filterStartDate;
-        let endDate = this.sharedService.dashboardSettings.filterEndDate;
-        this.startDateString = moment(startDate).format('L');
-        this.fuelreqsService.getForFboCount(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.totalOrders = data;
-        });
+        const startDate = this.sharedService.dashboardSettings.filterStartDate;
+        const endDate = this.sharedService.dashboardSettings.filterEndDate;
+        this.startDateString = moment(startDate).format("L");
+        this.fuelreqsService
+            .getForFboCount(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                this.totalOrders = data;
+            });
     }
 }

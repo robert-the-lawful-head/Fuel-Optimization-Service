@@ -17,7 +17,7 @@
         'background-color': customBgColor,
         'background-image': 'url(' + bgImage + ')',
         'border-color': customBgColor,
-        'color': customColor
+        color: customColor
     }"
 >
     <h3
@@ -40,26 +40,29 @@
     >
         <div class="row">
             <div class="col-12">
-                {{title}}
+                {{ title }}
                 &nbsp;
                 <button
                     #tooltip
                     ni-button
                     title="Temporarily increase or decrease your pricing to ALL customers"
-                    *ngIf="!tempId && visible=='true'"
+                    *ngIf="!tempId && visible == 'true'"
                     [view]="'info'"
-                    style="background-color:#fff;"
+                    style="background-color: #fff;"
                     class="mr-1 pull-right"
-                    (click)='openAddOnMargin({
-                        event: $event,
-                        placement: "bottom-left",
-                        tooltipData: {
-                            title: "Add-on Margin: Usability",
-                            content: "This is an additional margin that applies across the board to all customers and all templates (including Cost + and Retail -).  A value of $0.10 will increase all prices and all volume tiers by $0.10.  Simply click \"Clear Margin\" to instantly remove for all customers.",
-                            okText: "Proceed",
-                            proceed: true
-                        }
-                    })'
+                    (click)="
+                        openAddOnMargin({
+                            event: $event,
+                            placement: 'bottom-left',
+                            tooltipData: {
+                                title: 'Add-on Margin: Usability',
+                                content:
+                                    'This is an additional margin that applies across the board to all customers and all templates (including Cost + and Retail -).  A value of $0.10 will increase all prices and all volume tiers by $0.10.  Simply click &quot;Clear Margin&quot; to instantly remove for all customers.',
+                                okText: 'Proceed',
+                                proceed: true
+                            }
+                        })
+                    "
                 >
                     Add On Margin
                 </button>
@@ -67,9 +70,11 @@
                 <button
                     ni-button
                     title="Suspend pricing for all customers"
-                    *ngIf="!tempId && visible=='true' && visibleSuspend=='true'"
+                    *ngIf="
+                        !tempId && visible == 'true' && visibleSuspend == 'true'
+                    "
                     [view]="'info'"
-                    style="background-color:red; color:white;"
+                    style="background-color: red; color: white;"
                     class="mr-4 pull-right"
                     (click)="suspendPricing()"
                 >
@@ -79,14 +84,17 @@
                     #cancelTooltip
                     style="right: 350px;"
                     class="tooltip-button"
-                    (click)="showPopover({
-                        event: $event,
-                        placement: 'left',
-                        tooltipData: {
-                            title: 'Cancel Pricing',
-                            content: 'This will suspend your pricing from the system'
-                        }
-                    })"
+                    (click)="
+                        showPopover({
+                            event: $event,
+                            placement: 'left',
+                            tooltipData: {
+                                title: 'Cancel Pricing',
+                                content:
+                                    'This will suspend your pricing from the system'
+                            }
+                        })
+                    "
                 ></button>
             </div>
         </div>
@@ -97,7 +105,7 @@
             'text-right': align === 'right',
             'text-center': align === 'center'
         }"
-        [ngStyle]="{'padding': indents}"
+        [ngStyle]="{ padding: indents }"
     >
         <ng-content></ng-content>
     </div>

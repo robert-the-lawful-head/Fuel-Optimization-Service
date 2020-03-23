@@ -1,26 +1,18 @@
-import {
-    Injectable,
-    Injector,
-    ComponentFactoryResolver,
-    EmbeddedViewRef,
-    ApplicationRef,
-    ComponentRef,
-    EventEmitter
-} from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { Subject } from "rxjs";
 
-import { PopoverComponent } from './popover.component';
+import { PopoverComponent } from "./popover.component";
 import {
     Overlay,
     OverlayProperties,
-    EventService as OverlayEventService
-} from '@ivylab/overlay-angular';
-import { PopoverProperties } from './interfaces';
-import { defaultProperties } from './default-properties';
+    EventService as OverlayEventService,
+} from "@ivylab/overlay-angular";
+import { PopoverProperties } from "./interfaces";
+import { defaultProperties } from "./default-properties";
 
 @Injectable()
 export class Popover {
-    _defaultProperties: OverlayProperties;
+    popoverDefaultProps: OverlayProperties;
     emitChangeSource = new Subject();
     // Observable string streams
     changeEmitted$ = this.emitChangeSource.asObservable();
@@ -34,7 +26,7 @@ export class Popover {
         properties = this.applyPropertieDefaults(defaultProperties, properties);
 
         this.overlay.load({
-            id: 'popover',
+            id: "popover",
             mainComponent: PopoverComponent,
             childComponent: properties.component,
             width: properties.width,
@@ -55,30 +47,30 @@ export class Popover {
                 theme: properties.theme,
                 popoverClass: properties.popoverClass,
                 padding: properties.padding,
-                noArrow: properties.noArrow
-            }
+                noArrow: properties.noArrow,
+            },
         });
     }
 
     public close() {
         this.overlayEventService.emitChangeEvent({
-            type: 'Hide'
+            type: "Hide",
         });
     }
 
-    applyPropertieDefaults(defaultProperties, properties) {
+    applyPropertieDefaults(dproperties, properties) {
         if (!properties) {
             properties = {};
         }
 
-        for (var propertie in properties) {
+        for (const propertie in properties) {
             if (properties[propertie] === undefined) {
                 delete properties[propertie];
             }
         }
 
-        this._defaultProperties = Object.assign({}, defaultProperties);
-        return Object.assign(this._defaultProperties, properties);
+        this.popoverDefaultProps = Object.assign({}, dproperties);
+        return Object.assign(this.popoverDefaultProps, properties);
     }
 
     // Service message commands

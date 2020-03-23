@@ -7,7 +7,7 @@
       overflow-y: auto;
       padding: $navbar-height 0 0 $vertical-navbar-width;
       transition: padding .2s $animation;
-      @media #{$max991} {
+      @media only screen and (max-width: 991px) {
         padding-left: 0;
       }
 
@@ -19,7 +19,7 @@
       transition:
         left .2s $animation,
         right .2s $animation;
-      @media #{$max991} {
+      @media only screen and (max-width: 991px) {
         width: 100%;
       }
     }
@@ -30,8 +30,8 @@
       .vertical-navbar {
         left: 0;
 
-        /deep/ .sidebar-overlay {
-          @media #{$max991} {
+        ::ng-deep .sidebar-overlay {
+          @media only screen and (max-width: 991px) {
             opacity: 1;
             transition:
               .2s opacity 0s $animation,
@@ -45,7 +45,7 @@
       .main-content {
         padding-left: 0;
         padding-right: $vertical-navbar-width;
-        @media #{$max991} {
+        @media only screen and (max-width: 991px) {
           padding-right: 0;
         }
       }
@@ -70,7 +70,7 @@
 
     //Compress sidebar
     &.compress-vertical-navbar {
-      @media #{$min992} {
+      @media only screen and (max-width: 992px) {
         .app-navbar {
           left: $vertical-navbar-compress-width;
         }
@@ -80,7 +80,7 @@
           width: $vertical-navbar-compress-width;
           z-index: 9997;
 
-          /deep/ .vertical-navbar-wrap {
+          ::ng-deep .vertical-navbar-wrap {
             .app-menu {
               .main-menu {
                 > ul {
@@ -118,7 +118,7 @@
           &.show {
             width: $vertical-navbar-width;
 
-            /deep/ .vertical-navbar-wrap {
+            ::ng-deep .vertical-navbar-wrap {
               .app-logo {
                 &:before {
                   transform: scale(0);
@@ -172,7 +172,7 @@
       }
     }
     &.compress-vertical-navbar.rtl {
-      @media #{$min992} {
+      @media only screen and (max-width: 992px) {
         .app-navbar {
           left: 0;
           right: $vertical-navbar-compress-width;

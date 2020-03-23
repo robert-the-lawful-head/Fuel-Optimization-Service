@@ -12,7 +12,7 @@
         margin: 0;
         padding: 0;
 
-        @media #{$max767} {
+        @media only screen and (max-width: 767px) {
             font-size: 1rem;
         }
 
@@ -39,7 +39,7 @@
         &.custom-1 {
             margin: -2px -7px;
 
-            @media #{$max767} {
+            @media only screen and (max-width: 767px) {
                 margin-left: -2px;
                 margin-right: -2px;
             }
@@ -47,7 +47,7 @@
             li {
                 margin: 2px 7px;
 
-                @media #{$max767} {
+                @media only screen and (max-width: 767px) {
                     margin-left: 2px;
                     margin-right: 2px;
                 }
@@ -64,7 +64,7 @@
                     transition: background .2s $animation, color .2s $animation;
                     vertical-align: top;
 
-                    @media #{$max767} {
+                    @media only screen and (max-width: 767px) {
                         height: auto;
                         padding: 3px $module-rem 1px;
                     }
@@ -81,7 +81,7 @@
                         transition: border-color .2s $animation;
                         width: 0;
 
-                        @media #{$max767} {
+                        @media only screen and (max-width: 767px) {
                             display: none;
 
                             .rtl & {
@@ -160,7 +160,7 @@
         &.custom-2 {
             margin: -2px -7px;
 
-            @media #{$max767} {
+            @media only screen and (max-width: 767px) {
                 margin-left: -2px;
                 margin-right: -2px;
             }
@@ -168,7 +168,7 @@
             li {
                 margin: 2px 7px;
 
-                @media #{$max767} {
+                @media only screen and (max-width: 767px) {
                     margin-left: 2px;
                     margin-right: 2px;
                 }
@@ -185,7 +185,7 @@
                     transition: background .2s $animation, color .2s $animation;
                     vertical-align: top;
 
-                    @media #{$max767} {
+                    @media only screen and (max-width: 767px) {
                         height: auto;
                         padding: 3px $module-rem 1px;
                     }
@@ -202,7 +202,7 @@
                         transition: border-color .2s $animation;
                         width: 0;
 
-                        @media #{$max767} {
+                        @media only screen and (max-width: 767px) {
                             display: none;
                         }
                     }

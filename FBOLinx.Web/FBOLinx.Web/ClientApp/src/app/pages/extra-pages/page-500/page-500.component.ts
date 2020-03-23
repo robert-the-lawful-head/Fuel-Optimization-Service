@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 
 @Component({
-  selector: 'page-500',
-  templateUrl: './page-500.component.html',
-  styleUrls: ['./page-500.component.scss']
+    selector: "page-500",
+    templateUrl: "./page-500.component.html",
+    styleUrls: ["./page-500.component.scss"],
 })
 export class Page500Component implements OnInit {
-  constructor() { }
+    constructor() {}
 
-  ngOnInit() { }
+    ngOnInit() {}
 }

@@ -1,7 +1,11 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject } from "@angular/core";
+import {
+    MatDialog,
+    MatDialogRef,
+    MAT_DIALOG_DATA,
+} from "@angular/material/dialog";
 
-//Interfaces
+// Interfaces
 export interface NewGroupDialogData {
     oid: number;
     groupName: string;
@@ -10,14 +14,15 @@ export interface NewGroupDialogData {
 }
 
 @Component({
-    selector: 'app-groups-dialog-new-group',
-    templateUrl: './groups-dialog-new-group.component.html',
-    styleUrls: ['./groups-dialog-new-group.component.scss']
+    selector: "app-groups-dialog-new-group",
+    templateUrl: "./groups-dialog-new-group.component.html",
+    styleUrls: ["./groups-dialog-new-group.component.scss"],
 })
-/** groups-dialog-new-group component*/
 export class GroupsDialogNewGroupComponent {
-    /** groups-dialog-new-group ctor */
-    constructor(public dialogRef: MatDialogRef<GroupsDialogNewGroupComponent>, @Inject(MAT_DIALOG_DATA) public data: NewGroupDialogData) {
+    constructor(
+        public dialogRef: MatDialogRef<GroupsDialogNewGroupComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: NewGroupDialogData
+    ) {
         data.active = true;
     }
 

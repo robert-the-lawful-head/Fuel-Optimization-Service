@@ -6,26 +6,26 @@ import {
     EventEmitter,
     ViewChild,
     OnDestroy,
-    AfterViewInit
-} from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs';
-import { EventService as OverlayEventService } from '@ivylab/overlay-angular';
+    AfterViewInit,
+    HostBinding,
+} from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
+import { Observable } from "rxjs";
+import { EventService as OverlayEventService } from "@ivylab/overlay-angular";
 
-import { TemporaryAddOnMarginComponent } from '../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
-import { FbopricesService } from '../../services/fboprices.service';
-import { UserService } from '../../services/user.service';
-import { SharedService } from '../../layouts/shared-service';
-import { Popover, PopoverProperties } from '../../shared/components/popover';
-import { TooltipModalComponent } from '../../shared/components/tooltip-modal/tooltip-modal.component';
-
+import { TemporaryAddOnMarginComponent } from "../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component";
+import { FbopricesService } from "../../services/fboprices.service";
+import { UserService } from "../../services/user.service";
+import { SharedService } from "../../layouts/shared-service";
+import { Popover, PopoverProperties } from "../../shared/components/popover";
+import { TooltipModalComponent } from "../../shared/components/tooltip-modal/tooltip-modal.component";
 
 @Component({
-    selector: 'ni-card',
-    templateUrl: './ni-card.component.html',
-    styleUrls: ['./ni-card.component.scss'],
+    selector: "ni-card",
+    templateUrl: "./ni-card.component.html",
+    styleUrls: ["./ni-card.component.scss"],
     host: {
-        '[class.ni-card]': 'true'
+        "[class.ni-card]": "true"
     }
 })
 export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -38,26 +38,26 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() jetChanged: EventEmitter<any> = new EventEmitter();
     @Output() priceDeleted: EventEmitter<any> = new EventEmitter();
 
-    @Input() title: string = '';
-    @Input() tempId: string = '';
-    @Input() visible: string = '';
-    @Input() visibleSuspend: string = '';
-    @Input() bgColor: string = '';
-    @Input() customBgColor: string = '';
-    @Input() color: string = '';
-    @Input() customColor: string = '';
-    @Input() bgImage: string = '';
-    @Input() outline: boolean = false;
-    @Input() indents: any = '';
-    @Input() align: string = 'left';
-    @Input() headerBgColor: string = '';
-    @Input() headerColor: string = '';
-    @Input() theme: string = '';
+    @Input() title = "";
+    @Input() tempId = "";
+    @Input() visible = "";
+    @Input() visibleSuspend = "";
+    @Input() bgColor = "";
+    @Input() customBgColor = "";
+    @Input() color = "";
+    @Input() customColor = "";
+    @Input() bgImage = "";
+    @Input() outline = false;
+    @Input() indents: any = "";
+    @Input() align = "left";
+    @Input() headerBgColor = "";
+    @Input() headerColor = "";
+    @Input() theme = "";
     @Input() fboPrices: Array<any>;
     @Input() addOnMargin: boolean;
 
-    @ViewChild('tooltip') tooltip: any;
-    @ViewChild('cancelTooltip') cancelTooltip: any;
+    @ViewChild("tooltip") tooltip: any;
+    @ViewChild("cancelTooltip") cancelTooltip: any;
 
     message: string;
     subscription: any;
@@ -73,8 +73,8 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
     ngOnInit() {
         if (this.addOnMargin) {
-            this.popover.changeEmitted$.subscribe(message => {
-                if (message == 'proceed') {
+            this.popover.changeEmitted$.subscribe((message) => {
+                if (message === "proceed") {
                     this.openDialog();
                     this.user.addOnMarginTries = !this.user.addOnMarginTries
                         ? 1
@@ -85,24 +85,29 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.checkPrices();
 
-        this.sharedService.priceMessage.subscribe(message => {
+        this.sharedService.priceMessage.subscribe((message) => {
             if (message) {
-                this.visibleSuspend = 'true';
+                this.visibleSuspend = "true";
             }
         });
     }
 
     ngAfterViewInit() {
-        this.subscription = this.sharedService.loadedEmitted$.subscribe(message => {
-            if (message == 'price-tooltips-showed') {
-                setTimeout(() => {
-                    if (this.cancelTooltip && this.cancelTooltip.nativeElement) {
-                        this.cancelTooltip.nativeElement.click();
-                        this.subscription.unsubscribe();
-                    }
-                }, 300);
+        this.subscription = this.sharedService.loadedEmitted$.subscribe(
+            (message) => {
+                if (message === "price-tooltips-showed") {
+                    setTimeout(() => {
+                        if (
+                            this.cancelTooltip &&
+                            this.cancelTooltip.nativeElement
+                        ) {
+                            this.cancelTooltip.nativeElement.click();
+                            this.subscription.unsubscribe();
+                        }
+                    }, 300);
+                }
             }
-        });
+        );
     }
 
     ngOnDestroy(): void {
@@ -120,19 +125,19 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
                     EffectiveTo: this.vEffectiveTo,
                     MarginJet: this.vJet,
                     Id: this.vId,
-                    update: false
+                    update: false,
                 },
                 autoFocus: false,
-                panelClass: 'my-panel'
+                panelClass: "my-panel",
             }
         );
-        dialogRef.componentInstance.idChanged1.subscribe(result => {
+        dialogRef.componentInstance.idChanged1.subscribe((result) => {
             this.jetChanged.emit(result);
         });
         return dialogRef.afterClosed();
     }
 
-    private openAddOnMargin(prop: PopoverProperties) {
+    public openAddOnMargin(prop: PopoverProperties) {
         this.getLoggedInUser().subscribe((user: any) => {
             if (user && (!user.addOnMarginTries || user.addOnMarginTries < 3)) {
                 prop.component = TooltipModalComponent;
@@ -147,46 +152,48 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.checkPrices();
     }
 
-    private checkPrices() {
-        var jetACost = this.getCurrentPriceByProduct('JetA Cost');
-        var jetAprice = this.getCurrentPriceByProduct('JetA Retail');
+    public checkPrices() {
+        const jetACost = this.getCurrentPriceByProduct("JetA Cost");
+        const jetAprice = this.getCurrentPriceByProduct("JetA Retail");
 
-        if (jetACost.oid != 0 || jetAprice.oid != 0) {
-            this.visibleSuspend = 'true';
+        if (jetACost.oid !== 0 || jetAprice.oid !== 0) {
+            this.visibleSuspend = "true";
         } else {
-            this.visibleSuspend = 'false';
+            this.visibleSuspend = "false";
         }
     }
 
-    private suspendPricing() {
+    public suspendPricing() {
         this.fboPricesService
             .suspendAllPricing(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
                 this.checkPrices();
-                this.priceDeleted.emit('ok');
+                this.priceDeleted.emit("ok");
             });
     }
 
-    private getCurrentPriceByProduct(product) {
-        var result = {
+    public getCurrentPriceByProduct(product) {
+        let result = {
             fboId: this.sharedService.currentUser.fboId,
             groupId: this.sharedService.currentUser.groupId,
-            oid: 0
+            oid: 0,
         };
         if (this.fboPrices && this.fboPrices.length > 0) {
-            for (let fboPrice of this.fboPrices) {
-                if (fboPrice.product == product) result = fboPrice;
+            for (const fboPrice of this.fboPrices) {
+                if (fboPrice.product === product) {
+                    result = fboPrice;
+                }
             }
         }
         return result;
     }
 
-    private getLoggedInUser() {
-        return new Observable(observer => {
+    public getLoggedInUser() {
+        return new Observable((observer) => {
             if (this.user) {
                 observer.next(this.user);
             } else {
-                this.userService.getCurrentUser().subscribe(user => {
+                this.userService.getCurrentUser().subscribe((user) => {
                     this.user = user;
                     observer.next(user);
                 });
@@ -194,7 +201,7 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    private showPopover(prop: PopoverProperties) {
+    public showPopover(prop: PopoverProperties) {
         prop.component = TooltipModalComponent;
         this.popover.load(prop);
     }

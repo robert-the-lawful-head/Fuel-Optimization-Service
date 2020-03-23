@@ -5,14 +5,14 @@ import {
     Output,
     Optional,
     ViewChild,
-    ElementRef
-} from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+    ElementRef,
+} from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
-import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
-import { SharedService } from '../../../layouts/shared-service';
+import { TemporaryAddOnMarginService } from "../../../services/temporaryaddonmargin.service";
+import { SharedService } from "../../../layouts/shared-service";
 
-export interface temporaryAddOnMargin {
+export interface TemporaryAddOnMargin {
     id: any;
     fboId: any;
     effectiveFrom: any;
@@ -21,10 +21,10 @@ export interface temporaryAddOnMargin {
 }
 
 @Component({
-    selector: 'app-temporary-add-on-margin',
-    templateUrl: './temporary-add-on-margin.component.html',
-    styleUrls: ['./temporary-add-on-margin.component.scss'],
-    providers: [SharedService]
+    selector: "app-temporary-add-on-margin",
+    templateUrl: "./temporary-add-on-margin.component.html",
+    styleUrls: ["./temporary-add-on-margin.component.scss"],
+    providers: [SharedService],
 })
 export class TemporaryAddOnMarginComponent {
     public id: any;
@@ -35,11 +35,11 @@ export class TemporaryAddOnMarginComponent {
     public help: boolean;
     public helpOne: boolean;
     public pom: any;
-    public counter: number = 0;
-    public brojac: number = 0;
+    public counter = 0;
+    public brojac = 0;
     @Output() idChanged1: EventEmitter<any> = new EventEmitter();
     @Output() jetChanged: EventEmitter<any> = new EventEmitter();
-    @ViewChild('prm') btn: ElementRef;
+    @ViewChild("prm") btn: ElementRef;
 
     constructor(
         public dialogRef: MatDialogRef<TemporaryAddOnMarginComponent>,
@@ -49,7 +49,7 @@ export class TemporaryAddOnMarginComponent {
         private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private sharedService: SharedService
     ) {
-        this.stringButton = this.data.update ? 'Update Margin' : 'Add Margin';
+        this.stringButton = this.data.update ? "Update Margin" : "Add Margin";
         if (this.data.EffectiveFrom) {
             this.data.EffectiveFrom = new Date(this.data.EffectiveFrom);
         }
@@ -64,7 +64,9 @@ export class TemporaryAddOnMarginComponent {
             this.counter = 0;
         }
         if (this.helpOne) {
-            data.MarginJet = (data.MarginJet * 10000 - event.key) / 100000 + event.key * 0.0001;
+            data.MarginJet =
+                (data.MarginJet * 10000 - event.key) / 100000 +
+                event.key * 0.0001;
             this.helpOne = false;
         }
         if (this.help) {
@@ -79,10 +81,10 @@ export class TemporaryAddOnMarginComponent {
             input.focus();
             input.setSelectionRange(selectionStart, selectionEnd);
         } else if (input.createTextRange) {
-            var range = input.createTextRange();
+            const range = input.createTextRange();
             range.collapse(true);
-            range.moveEnd('character', selectionEnd);
-            range.moveStart('character', selectionStart);
+            range.moveEnd("character", selectionEnd);
+            range.moveStart("character", selectionStart);
             range.select();
         }
     }
@@ -91,7 +93,7 @@ export class TemporaryAddOnMarginComponent {
         if (this.data.update) {
             this.temporaryAddOnMargin
                 .update(this.data)
-                .subscribe((savedTemplate: temporaryAddOnMargin) => {
+                .subscribe((savedTemplate: TemporaryAddOnMargin) => {
                     this.jetChanged.emit(savedTemplate);
                     this.dialogRef.close();
                 });
@@ -99,12 +101,12 @@ export class TemporaryAddOnMarginComponent {
             this.data.fboId = this.sharedService.currentUser.fboId;
             this.temporaryAddOnMargin
                 .add(this.data)
-                .subscribe((savedTemplate: temporaryAddOnMargin) => {
+                .subscribe((savedTemplate: TemporaryAddOnMargin) => {
                     this.idChanged1.emit({
                         id: savedTemplate.id,
                         EffectiveFrom: savedTemplate.effectiveFrom,
                         EffectiveTo: savedTemplate.effectiveTo,
-                        MarginJet: savedTemplate.marginJet
+                        MarginJet: savedTemplate.marginJet,
                     });
                     this.dialogRef.close();
                 });

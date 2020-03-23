@@ -72,7 +72,29 @@ namespace FBOLinx.Web.Controllers
                 MaxEntered = c.PriceTier.MaxEntered
             })).OrderBy(x => x.Min);
 
-            return Ok(customerMarginsVM);
+            List<CustomerMarginsGridViewModel> updatedModelWithMax = new List<CustomerMarginsGridViewModel>();
+
+            int lastIndex = customerMarginsVM.Count() - 1;
+
+            for (int i = 0; i < customerMarginsVM.Count(); i++)
+            {
+                var singleMc = customerMarginsVM.ToArray()[i];
+
+                if(i == lastIndex)
+                {
+                    singleMc.Max = 99999;
+                }
+                else
+                {
+                    var nextTemplate = customerMarginsVM.ToArray()[i + 1];
+                    singleMc.Max = nextTemplate.Min - 1;
+                }
+
+                updatedModelWithMax.Add(singleMc);
+            }
+
+            return Ok(updatedModelWithMax);
+            //return Ok(customerMarginsVM);
         }
 
         // PUT: api/CustomerMargins/5
