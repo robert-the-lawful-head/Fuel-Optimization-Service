@@ -15,5 +15,9 @@ namespace FBOLinx.Web.ViewModels
         public string waivedat { get; set; }
         public string landing { get; set; }
         public string overnight { get; set; }
+        public string tailnumber { get; set; }
+        public string aircraftsize { get; set; }
+        public string avoidance { get; set; }
+        public int fboid { get; set; }
     }
 }
