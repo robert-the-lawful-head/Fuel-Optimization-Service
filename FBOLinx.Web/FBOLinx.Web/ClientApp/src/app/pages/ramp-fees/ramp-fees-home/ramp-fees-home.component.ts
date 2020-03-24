@@ -176,7 +176,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
             if (results) {
                 results.data.forEach((result) => {
-                    result.groupid = this.sharedService.currentUser.groupId;
+                    result.fboid = this.sharedService.currentUser.fboId;
                 });
                 console.log(results.data);
 
@@ -188,7 +188,8 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                                 "Data successfully imported!"
                             );
                             setTimeout(() => {
-                                // this.customerDeleted.emit();
+                                this.rampFees = null;
+                                this.loadRampFees();
                             }, 1500);
                         }
                     });
@@ -203,25 +204,13 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     label: "ICAO",
                     alternates: ["Icao"],
                     key: "icao",
-                    description: "Icao",
-                    validators: [
-                        {
-                            validate: "required",
-                            error: "this field is required",
-                        },
-                    ],
+                    description: "Icao"
                 },
                 {
                     label: "FBO",
                     alternates: ["fbo"],
                     key: "fbo",
-                    description: "FBO",
-                    validators: [
-                        {
-                            validate: "required",
-                            error: "this field is required",
-                        },
-                    ],
+                    description: "FBO"
                 },
                 {
                     label: "Make",
@@ -259,6 +248,24 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     key: "Overnight",
                     description: "Overnight Fees",
                 },
+                {
+                    label: "Tail Number",
+                    alternates: ["tail number", "tail-number"],
+                    key: "TailNumber",
+                    description: "Tail Number",
+                },
+                {
+                    label: "Aircraft Size",
+                    alternates: ["aircreft size"],
+                    key: "aircraftsize",
+                    description: "Aircraft Size",
+                },
+                {
+                    label: "Avoidance",
+                    alternates: ["avoidance"],
+                    key: "avoidance",
+                    description: "Avoidance",
+                }
             ],
             type: "RampFees",
             allowInvalidSubmit: true,

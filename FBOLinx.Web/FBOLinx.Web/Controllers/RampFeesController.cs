@@ -8,6 +8,9 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.ViewModels;
+using static FBOLinx.Web.Models.RampFees;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -99,8 +102,8 @@ namespace FBOLinx.Web.Controllers
                                                 CategoryMaxValue = r.CategoryMaxValue,
                                                 ExpirationDate = r.ExpirationDate,
                                                 AircraftMake = a == null ? "" : a.Make,
-                                                AircraftModel = a == null ? "" : a.Model
-
+                                                AircraftModel = a == null ? "" : a.Model,
+                                                CategoryStringValue = r.CategoryStringValue
                                             }).ToListAsync();
 
                 result.AddRange(customRampFees);
@@ -181,15 +184,204 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-
-            foreach (var rampfee in rampfees)
+            try
             {
-                Customers newC = new Customers();
-                
-              
+                foreach (var rampfee in rampfees)
+                {
+                    Double rampFeeValue = 0.0;
+                    if (rampfee.tailnumber != null && rampfee.fboid != 0)
+                    {
+                        RampFees newRampFee = new RampFees();
+                        newRampFee.Fboid = rampfee.fboid;
+                        newRampFee.CategoryType = RampFeeCategories.TailNumber;
+                        newRampFee.CategoryStringValue = rampfee.tailnumber;
+
+                        string waivedFee = Regex.Match(rampfee.waivedat.ToString(), @"\d+").Value;
+                        Double waivedFeeValue = 0.0;
+
+                        Double.TryParse(waivedFee, out waivedFeeValue);
+
+                        newRampFee.Waived = waivedFeeValue;
+
+                        var results = Regex.Matches(rampfee.rampfee, @"[-+]?(?<![0-9]\.)\b[0-9]+(?:[,\s][0-9]+)*\.[0-9]+(?:[eE][-+]?[0-9]+)?\b(?!\.[0-9])")
+                        .Cast<Match>()
+                        .Select(m => m.Value)
+                        .ToList();
+
+                        if (results.Count.Equals(0))
+                        {
+                            string ttrampFeeValue = Regex.Match(rampfee.rampfee, @"\d+").Value;
+                            Double.TryParse(ttrampFeeValue, out rampFeeValue);
+                            newRampFee.Price = rampFeeValue;
+                        }
+                        else
+                        {
+                            newRampFee.Price = Convert.ToDouble(results[0]);
+                        }
+
+                        _context.RampFees.Add(newRampFee);
+                        _context.SaveChanges();
+
+                    }
+                    else if (rampfee.aircraftsize != null && rampfee.fboid != 0)
+                    {
+                        RampFees newRampFee = new RampFees();
+                        newRampFee.Fboid = rampfee.fboid;
+
+                        switch (rampfee.aircraftsize)
+                        {
+                            case "Very Light Jet":
+                                newRampFee.Size = AirCrafts.AircraftSizes.VeryLightJet;
+                                break;
+                            case "VLJ's":
+                                newRampFee.Size = AirCrafts.AircraftSizes.VeryLightJet;
+                                break;
+                            case "VLJ":
+                                newRampFee.Size = AirCrafts.AircraftSizes.VeryLightJet;
+                                break;
+                            case "VeryLightJet":
+                                newRampFee.Size = AirCrafts.AircraftSizes.VeryLightJet;
+                                break;
+                            case "Light Jets":
+                                newRampFee.Size = AirCrafts.AircraftSizes.LightJet;
+                                break;
+                            case "Light Jet":
+                                newRampFee.Size = AirCrafts.AircraftSizes.LightJet;
+                                break;
+                            case "LightJets":
+                                newRampFee.Size = AirCrafts.AircraftSizes.LightJet;
+                                break;
+                            case "LightJet":
+                                newRampFee.Size = AirCrafts.AircraftSizes.LightJet;
+                                break;
+                            case "Mid Jets":
+                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                break;
+                            case "Medium Jets":
+                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                break;
+                            case "MediumJets":
+                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                break;
+                            case "MediumJet":
+                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                break;
+                            case "Medium Jet":
+                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                break;
+                            case "Heavy Jet":
+                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyJet;
+                                break;
+                            case "Heavy Jets":
+                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyJet;
+                                break;
+                            case "HeavyJet":
+                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyJet;
+                                break;
+                            case "HeavyJets":
+                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyJet;
+                                break;
+                            case "Super Heavy Jet":
+                                newRampFee.Size = AirCrafts.AircraftSizes.SuperHeavyJet;
+                                break;
+                            case "Super Heavy Jets":
+                                newRampFee.Size = AirCrafts.AircraftSizes.SuperHeavyJet;
+                                break;
+                            case "SHJ":
+                                newRampFee.Size = AirCrafts.AircraftSizes.SuperHeavyJet;
+                                break;
+                            case "Wide Body":
+                                newRampFee.Size = AirCrafts.AircraftSizes.WideBody;
+                                break;
+                            case "Wide Bodies":
+                                newRampFee.Size = AirCrafts.AircraftSizes.WideBody;
+                                break;
+                            case "Light Helicopter":
+                                newRampFee.Size = AirCrafts.AircraftSizes.LightHelicopter;
+                                break;
+                            case "Medium Helicopter":
+                                newRampFee.Size = AirCrafts.AircraftSizes.MediumHelicopter;
+                                break;
+                            case "Heavy Helicopter":
+                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyHelicopter;
+                                break;
+                            case "Light Twin":
+                                newRampFee.Size = AirCrafts.AircraftSizes.LightTwin;
+                                break;
+                            case "Heavy Turbo Prop":
+                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyTurboprop;
+                                break;
+                            case "Heavy TurboProp":
+                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyTurboprop;
+                                break;
+                            case "Medium TurboProp":
+                                newRampFee.Size = AirCrafts.AircraftSizes.MediumTurboprop;
+                                break;
+                            case "Medium Turbo Prop":
+                                newRampFee.Size = AirCrafts.AircraftSizes.MediumTurboprop;
+                                break;
+                            case "Single Engine Piston":
+                                newRampFee.Size = AirCrafts.AircraftSizes.SingleEnginePiston;
+                                break;
+                            case "SingleEnginePiston":
+                                newRampFee.Size = AirCrafts.AircraftSizes.SingleEnginePiston;
+                                break;
+                            case "SingleTurboProp":
+                                newRampFee.Size = AirCrafts.AircraftSizes.SingleTurboProp;
+                                break;
+                            case "Single Turbo Prop":
+                                newRampFee.Size = AirCrafts.AircraftSizes.SingleTurboProp;
+                                break;
+                            default:
+                                newRampFee.Size = AirCrafts.AircraftSizes.NotSet;
+                                break;
+                        }
+
+
+
+                        var results = Regex.Matches(rampfee.rampfee, @"[-+]?(?<![0-9]\.)\b[0-9]+(?:[,\s][0-9]+)*\.[0-9]+(?:[eE][-+]?[0-9]+)?\b(?!\.[0-9])")
+                        .Cast<Match>()
+                        .Select(m => m.Value)
+                        .ToList();
+
+                        if (results.Count.Equals(0))
+                        {
+                            string ttrampFeeValue = Regex.Match(rampfee.rampfee, @"\d+").Value;
+                            if (ttrampFeeValue != string.Empty)
+                            {
+                                Double.TryParse(ttrampFeeValue, out rampFeeValue);
+                                newRampFee.Price = rampFeeValue;
+                            }
+                            else
+                            {
+                                newRampFee.Price = null;
+                            }
+
+                        }
+                        else
+                        {
+                            newRampFee.Price = Convert.ToDouble(results[0]);
+                        }
+
+                        string waivedFee = Regex.Match(rampfee.avoidance.ToString(), @"\d+").Value;
+                        Double waivedFeeValue = 0.0;
+
+                        Double.TryParse(waivedFee, out waivedFeeValue);
+
+                        newRampFee.Waived = waivedFeeValue;
+
+                        _context.RampFees.Add(newRampFee);
+                        _context.SaveChanges();
+                    }
+                }
+
+                return Ok(rampfees);
+            }
+            catch
+            {
+                return Ok(null);
             }
 
-            return Ok(null);
         }
     }
 }

@@ -46,6 +46,7 @@ namespace FBOLinx.Web.ViewModels
         }
 
         public int? CategoryMaxValue { get; set; }
+        public string CategoryStringValue { get; set; }
         public DateTime? ExpirationDate { get; set; }
 
         public string SizeDescription
