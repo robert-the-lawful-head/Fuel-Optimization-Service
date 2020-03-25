@@ -196,6 +196,9 @@ export class PricingTemplatesEditComponent implements OnInit {
                 this.pricingTemplate.customerMargins[
                     this.pricingTemplate.customerMargins.length - 1
                 ].min + 250;
+            this.pricingTemplate.customerMargins[
+                this.pricingTemplate.customerMargins.length - 1
+            ].max = customerMargin.min - 1;
         }
         this.pricingTemplate.customerMargins.push(customerMargin);
 
