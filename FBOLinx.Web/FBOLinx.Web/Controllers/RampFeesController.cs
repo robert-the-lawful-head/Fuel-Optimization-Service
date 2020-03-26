@@ -203,7 +203,7 @@ namespace FBOLinx.Web.Controllers
                         }
                         else
                         {
-                            string waivedFee = Regex.Match(rampfee.avoidance.ToString(), @"\d+").Value;
+                            string waivedFee = Regex.Match(rampfee.waivedat.ToString(), @"\d+").Value;
 
                             Double.TryParse(waivedFee, out waivedFeeValue);
                             newRampFee.Waived = waivedFeeValue;
