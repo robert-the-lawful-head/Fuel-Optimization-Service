@@ -193,10 +193,11 @@
         </ng-container>
 
         <ng-container matColumnDef="delete">
-            <th mat-header-cell *matHeaderCellDef>
+            <th mat-header-cell *matHeaderCellDef class="actions-header">
                 <div class="pull-right">
                     <button
                         ni-button
+                        class="action-btn"
                         [view]="'warn'"
                         beforeIcon="fa fa-file-excel-o"
                         [matMenuTriggerFor]="menu"
@@ -223,6 +224,7 @@
                 <div class="pull-right mr-1">
                     <button
                         ni-button
+                        class="action-btn"
                         [view]="'accent'"
                         beforeIcon="fa fa-plus"
                         (click)="newCustomer()"
@@ -233,6 +235,7 @@
                 <div class="pull-right mr-1">
                     <button
                         ni-button
+                        class="action-btn"
                         [view]="'accent'"
                         beforeIcon="fa fa-upload"
                         id="launch"
