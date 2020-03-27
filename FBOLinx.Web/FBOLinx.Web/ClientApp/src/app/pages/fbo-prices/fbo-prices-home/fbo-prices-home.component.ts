@@ -787,16 +787,22 @@ export class FboPricesHomeComponent
     }
 
     private loadPricingTemplates() {
-        this.pricingTemplateService
-            .getByFbo(this.sharedService.currentUser.fboId)
-            .subscribe(
-                (data: any) => {
-                    this.pricingTemplates = data;
-                },
-                (error: any) => {
-                    this.pricingTemplates = [];
-                }
-            );
+        
+        if (this.sharedService.currentUser.fboId != 0) {
+            this.pricingTemplateService
+                .getByFbo(this.sharedService.currentUser.fboId)
+                .subscribe(
+                    (data: any) => {
+                        this.pricingTemplates = data;
+                    },
+                    (error: any) => {
+                        this.pricingTemplates = [];
+                    }
+                );
+        }
+        else {
+            this.pricingTemplates = [];
+        }
     }
 
     private checkCostPlusMargins() {
@@ -948,41 +954,57 @@ export class FboPricesHomeComponent
     }
 
     private checkDefaultTemplate() {
+        var currentFboId = 0;
+
+        if (this.sharedService.currentUser.fboId != 0) {
+            currentFboId = this.sharedService.currentUser.fboId;
+        } else {
+            currentFboId = sessionStorage['fboId'];
+        }
+
         this.pricingTemplateService
-            .checkdefaultpricingtemplates(this.sharedService.currentUser.fboId)
+            .checkdefaultpricingtemplates(currentFboId)
             .subscribe((response: any) => {
                 if (!response) {
                     this.pricingTemplateService
-                        .getByFbo(this.sharedService.currentUser.fboId)
+                        .getByFboDefaultTemplate(currentFboId)
                         .subscribe(
                             (data: any) => {
                                 this.pricingTemplates = data;
                                 if (this.pricingTemplates) {
-                                    const dialogRef = this.fboPricesSelectDefaultTemplateDialog.open(
-                                        FboPricesSelectDefaultTemplateComponent,
-                                        {
-                                            data: this.pricingTemplates,
-                                            disableClose: true,
+                                    var skipForDefault = false;
+                                    if (this.pricingTemplates.length == 1) {
+                                        if (this.pricingTemplates[0].default) {
+                                            skipForDefault = true;
                                         }
-                                    );
+                                    }
 
-                                    dialogRef
-                                        .afterClosed()
-                                        .subscribe((result) => {
-                                            if (result !== "cancel") {
-                                                console.log(result);
-
-                                                this.updateModel.currenttemplate = 0;
-                                                this.updateModel.fboid = this.sharedService.currentUser.fboId;
-                                                this.updateModel.newtemplate = result;
-
-                                                this.customCustomerService
-                                                    .updateDefaultTemplate(
-                                                        this.updateModel
-                                                    )
-                                                    .subscribe(() => {});
+                                    if (!skipForDefault) {
+                                        const dialogRef = this.fboPricesSelectDefaultTemplateDialog.open(
+                                            FboPricesSelectDefaultTemplateComponent,
+                                            {
+                                                data: this.pricingTemplates,
+                                                disableClose: true,
                                             }
-                                        });
+                                        );
+
+                                        dialogRef
+                                            .afterClosed()
+                                            .subscribe((result) => {
+                                                if (result !== "cancel") {
+                                                    this.updateModel.currenttemplate = 0;
+                                                    this.updateModel.fboid = currentFboId;
+                                                    this.updateModel.newtemplate = result;
+
+                                                    this.customCustomerService
+                                                        .updateDefaultTemplate(
+                                                            this.updateModel
+                                                        )
+                                                        .subscribe(() => { });
+                                                }
+                                            });
+                                    }
+
                                 }
                             },
                             (error: any) => {

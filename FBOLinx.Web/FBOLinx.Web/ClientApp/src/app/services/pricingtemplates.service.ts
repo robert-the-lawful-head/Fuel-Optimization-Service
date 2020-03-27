@@ -23,6 +23,14 @@ export class PricingtemplatesService {
         return this.http.get(url + "/fbo/" + fboId, { headers: this.headers });
     }
 
+    public getByFboDefaultTemplate(fboId, groupId?) {
+        let url = this.accessPointUrl;
+        if (groupId) {
+            url += "/group/" + groupId;
+        }
+        return this.http.get(url + "/fbodefaultpricingtemplate/" + fboId, { headers: this.headers });
+    }
+
     public get(payload) {
         return this.http.get(this.accessPointUrl + "/" + payload.oid, {
             headers: this.headers,
