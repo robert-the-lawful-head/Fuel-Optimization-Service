@@ -15,8 +15,8 @@
                 <mat-form-field>
                     <input
                         matInput
-                        [max]="dashboardSettings.filterEndDate"
-                        [(ngModel)]="dashboardSettings.filterStartDate"
+                        [max]="filterEndDate"
+                        [(ngModel)]="filterStartDate"
                         [matDatepicker]="dashboardSettingsStartDateFilter"
                         (focus)="dashboardSettingsStartDateFilter.open()"
                         placeholder="Start Date"
@@ -36,8 +36,8 @@
                 <mat-form-field>
                     <input
                         matInput
-                        [min]="dashboardSettings.filterStartDate"
-                        [(ngModel)]="dashboardSettings.filterEndDate"
+                        [min]="filterStartDate"
+                        [(ngModel)]="filterEndDate"
                         [matDatepicker]="dashboardSettingsEndDateFilter"
                         (focus)="dashboardSettingsEndDateFilter.open()"
                         placeholder="End Date"

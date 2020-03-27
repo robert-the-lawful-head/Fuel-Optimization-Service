@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, OnDestroy } from "@angular/core";
 
+import * as moment from "moment";
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
@@ -28,12 +29,20 @@ export class FuelreqsHomeComponent implements AfterViewInit, OnDestroy {
     public breadcrumb: any[] = BREADCRUMBS;
     public fuelreqsData: Array<any>;
     public locationChangedSubscription: any;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
 
     constructor(
         private fuelReqService: FuelreqsService,
         private sharedService: SharedService
     ) {
         this.sharedService.emitChange(this.pageTitle);
+        this.filterStartDate = new Date(
+            moment().format("MM/DD/YYYY")
+        );
+        this.filterEndDate = new Date(
+            moment().add(1, "d").format("MM/DD/YYYY")
+        );
         this.loadFuelReqData();
     }
 
@@ -54,6 +63,8 @@ export class FuelreqsHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     public dateFilterChanged(event) {
+        this.filterStartDate = event.filterStartDate;
+        this.filterEndDate = event.filterEndDate;
         this.loadFuelReqData();
     }
 
@@ -63,8 +74,8 @@ export class FuelreqsHomeComponent implements AfterViewInit, OnDestroy {
             .getForGroupFboAndDateRange(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
-                this.sharedService.dashboardSettings.filterStartDate,
-                this.sharedService.dashboardSettings.filterEndDate
+                this.filterStartDate,
+                this.filterEndDate
             )
             .subscribe((data: any) => {
                 this.fuelreqsData = data;

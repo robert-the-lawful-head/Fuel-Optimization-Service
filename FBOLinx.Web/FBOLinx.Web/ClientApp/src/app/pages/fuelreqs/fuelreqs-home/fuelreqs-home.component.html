@@ -2,7 +2,12 @@
 
 <div>
     <div *ngIf="fuelreqsData">
-        <app-fuelreqs-grid [fuelreqsData]="fuelreqsData" (dateFilterChanged)="dateFilterChanged($event)"></app-fuelreqs-grid>
+        <app-fuelreqs-grid
+            [fuelreqsData]="fuelreqsData"
+            [filterStartDate]="filterStartDate"
+            [filterEndDate]="filterEndDate"
+            (dateFilterChanged)="dateFilterChanged($event)"
+        ></app-fuelreqs-grid>
     </div>
     <div *ngIf="!(fuelreqsData)">
         <mat-spinner></mat-spinner>

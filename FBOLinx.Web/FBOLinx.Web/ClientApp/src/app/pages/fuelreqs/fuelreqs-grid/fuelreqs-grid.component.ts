@@ -24,6 +24,8 @@ export class FuelreqsGridComponent implements OnInit {
     @Output() editFuelreqClicked = new EventEmitter<any>();
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Input() fuelreqsData: Array<any>;
+    @Input() filterStartDate: Date;
+    @Input() filterEndDate: Date;
 
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
@@ -62,6 +64,9 @@ export class FuelreqsGridComponent implements OnInit {
     }
 
     public applyDateFilterChange() {
-        this.dateFilterChanged.emit();
+        this.dateFilterChanged.emit({
+            filterStartDate: this.filterStartDate,
+            filterEndDate: this.filterEndDate
+        });
     }
 }
