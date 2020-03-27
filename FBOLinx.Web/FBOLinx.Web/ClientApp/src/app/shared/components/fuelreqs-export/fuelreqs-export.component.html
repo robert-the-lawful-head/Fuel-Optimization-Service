@@ -1,0 +1,49 @@
+<h1 mat-dialog-title>Fuel Orders Export</h1>
+<div mat-dialog-content class="mt-1 mb-2">
+    <div class="row">
+        <div class="col-6">
+            <mat-form-field>
+                <input
+                    matInput
+                    [max]="data.filterEndDate"
+                    [(ngModel)]="data.filterStartDate"
+                    [matDatepicker]="dashboardSettingsStartDateFilter"
+                    placeholder="Start Date"
+                />
+                <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dashboardSettingsStartDateFilter"
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsStartDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field>
+                <input
+                    matInput
+                    [min]="data.filterStartDate"
+                    [(ngModel)]="data.filterEndDate"
+                    [matDatepicker]="dashboardSettingsEndDateFilter"
+                    placeholder="End Date"
+                />
+                <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dashboardSettingsEndDateFilter"
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsEndDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <div class="text-center col-12">
+        <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1">Export</button>
+        <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+    </div>
+</div>

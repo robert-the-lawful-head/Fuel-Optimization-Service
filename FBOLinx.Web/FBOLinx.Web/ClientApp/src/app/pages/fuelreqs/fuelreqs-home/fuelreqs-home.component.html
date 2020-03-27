@@ -7,6 +7,7 @@
             [filterStartDate]="filterStartDate"
             [filterEndDate]="filterEndDate"
             (dateFilterChanged)="dateFilterChanged($event)"
+            (exportTriggered)="export($event)"
         ></app-fuelreqs-grid>
     </div>
     <div *ngIf="!(fuelreqsData)">

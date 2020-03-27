@@ -1,7 +1,7 @@
 <div>
     <div class="container-fluid">
         <div class="row">
-            <div class="col col-md-6">
+            <div class="col col-md-4">
                 <mat-form-field>
                     <input
                         matInput
@@ -52,6 +52,17 @@
                         disabled="false"
                     ></mat-datepicker>
                 </mat-form-field>
+            </div>
+            <div class="actions" class="col-6 col-md-2">
+                <button
+                    class="export-btn"
+                    ni-button
+                    [view]="'accent'"
+                    beforeIcon="fa fa-file-excel-o"
+                    (click)="export()"
+                >
+                    Export
+                </button>
             </div>
         </div>
     </div>

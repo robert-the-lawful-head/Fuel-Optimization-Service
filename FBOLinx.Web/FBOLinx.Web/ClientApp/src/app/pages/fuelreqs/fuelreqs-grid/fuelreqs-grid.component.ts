@@ -6,6 +6,7 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -13,16 +14,17 @@ import { MatTableDataSource } from "@angular/material/table";
 // Services
 import { SharedService } from "../../../layouts/shared-service";
 
+// Shared components
+import { FuelReqsExportModalComponent } from "../../../shared/components/fuelreqs-export/fuelreqs-export.component";
+
 @Component({
     selector: "app-fuelreqs-grid",
     templateUrl: "./fuelreqs-grid.component.html",
     styleUrls: ["./fuelreqs-grid.component.scss"],
 })
 export class FuelreqsGridComponent implements OnInit {
-    @Output() fuelreqDeleted = new EventEmitter<any>();
-    @Output() newFuelreqClicked = new EventEmitter<any>();
-    @Output() editFuelreqClicked = new EventEmitter<any>();
     @Output() dateFilterChanged = new EventEmitter<any>();
+    @Output() exportTriggered = new EventEmitter<any>();
     @Input() fuelreqsData: Array<any>;
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
@@ -44,7 +46,10 @@ export class FuelreqsGridComponent implements OnInit {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-    constructor(private sharedService: SharedService) {
+    constructor(
+        private sharedService: SharedService,
+        public exportDialog: MatDialog,
+    ) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
     }
 
@@ -67,6 +72,24 @@ export class FuelreqsGridComponent implements OnInit {
         this.dateFilterChanged.emit({
             filterStartDate: this.filterStartDate,
             filterEndDate: this.filterEndDate
+        });
+    }
+
+    public export() {
+        const dialogRef = this.exportDialog.open(
+            FuelReqsExportModalComponent,
+            {
+                data: {
+                    filterStartDate: this.filterStartDate,
+                    filterEndDate: this.filterEndDate
+                },
+            }
+        );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+            this.exportTriggered.emit(result);
         });
     }
 }
