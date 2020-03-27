@@ -51,20 +51,6 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReq);
         }
 
-        // Get: api/FuelReqs/group/5
-        [HttpGet("group/{groupId}")]
-        public async Task<IActionResult> GetFuelReqsByGroup([FromRoute] int groupId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            //var fuelReq = await GetAllFuelRequests().Where((x => x.fbo)).ToListAsync();
-
-            return NotFound();
-        }
-
         // Get: api/FuelReqs/fbo/5
         [HttpGet("fbo/{fboId}")]
         public async Task<IActionResult> GetFuelReqsByFbo([FromRoute] int fboId)
@@ -152,6 +138,80 @@ namespace FBOLinx.Web.Controllers
                 TailNumber = f.CustomerAircraft?.TailNumber,
                 FboName = f.Fbo?.Fbo
             }).OrderByDescending((x => x.Oid));
+
+            return Ok(fuelReqVM);
+        }
+
+        // POST: api/FuelReqs/fbo/5/daterange
+        [HttpPost("group/{groupId}/fbo/{fboId}/daterange")]
+        public async Task<IActionResult> GetFuelReqsByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            List<FuelReqsGridViewModel> fuelReqVM = await
+                (from fr in _context.FuelReq
+                 join c in _context.CustomerInfoByGroup on new { GroupId = groupId, CustomerId = fr.CustomerId.GetValueOrDefault() } equals new { c.GroupId, c.CustomerId }
+                 join ca in _context.CustomerAircrafts on fr.CustomerAircraftId equals ca.Oid
+                 join f in _context.Fbos on fr.Fboid equals f.Oid
+                 where fr.Fboid == fboId && fr.Eta > request.StartDateTime && fr.Eta < request.EndDateTime
+                 group fr by new
+                 {
+                     fr.Oid,
+                     fr.ActualPpg,
+                     fr.ActualVolume,
+                     fr.Archived,
+                     fr.Cancelled,
+                     fr.CustomerId,
+                     fr.DateCreated,
+                     fr.DispatchNotes,
+                     fr.Eta,
+                     fr.Etd,
+                     fr.Icao,
+                     fr.Notes,
+                     fr.QuotedPpg,
+                     fr.QuotedVolume,
+                     fr.Source,
+                     fr.SourceId,
+                     fr.TimeStandard,
+                     CustomerName = c == null ? "" : c.Company,
+                     TailNumber = ca == null ? "" : ca.TailNumber,
+                     FboName = f == null ? "" : f.Fbo
+                 }
+                 into results
+                 select new FuelReqsGridViewModel
+                 {
+                     Oid = results.Key.Oid,
+                     ActualPpg = results.Key.ActualPpg,
+                     ActualVolume = results.Key.ActualVolume,
+                     Archived = results.Key.Archived,
+                     Cancelled = results.Key.Cancelled,
+                     CustomerId = results.Key.CustomerId,
+                     DateCreated = results.Key.DateCreated,
+                     DispatchNotes = results.Key.DispatchNotes,
+                     Eta = results.Key.Eta,
+                     Etd = results.Key.Etd,
+                     Icao = results.Key.Icao,
+                     Notes = results.Key.Notes,
+                     QuotedPpg = results.Key.QuotedPpg,
+                     QuotedVolume = results.Key.QuotedVolume,
+                     Source = results.Key.Source,
+                     SourceId = results.Key.SourceId,
+                     TimeStandard = results.Key.TimeStandard,
+                     CustomerName = results.Key.CustomerName,
+                     TailNumber = results.Key.TailNumber,
+                     FboName = results.Key.FboName
+                 }
+                )
+                .OrderByDescending(f => f.Oid)
+                .ToListAsync();
 
             return Ok(fuelReqVM);
         }

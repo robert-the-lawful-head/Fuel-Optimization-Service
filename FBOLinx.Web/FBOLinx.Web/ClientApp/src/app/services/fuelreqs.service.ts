@@ -13,13 +13,13 @@ export class FuelreqsService {
         this.accessPointUrl = baseUrl + "api/fuelreqs";
     }
 
-    public getForFbo(fboId) {
+    public getForFbo(fboId: number) {
         return this.http.get(this.accessPointUrl + "/fbo/" + fboId, {
             headers: this.headers,
         });
     }
 
-    public getForFboAndDateRange(fboId, startDate, endDate) {
+    public getForFboAndDateRange(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
             this.accessPointUrl + "/fbo/" + fboId + "/daterange",
             {
@@ -32,13 +32,26 @@ export class FuelreqsService {
         );
     }
 
-    public getForFboCount(fboId) {
+    public getForGroupFboAndDateRange(groupId: number, fboId: number, startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + "/group/" + groupId + "/fbo/" + fboId + "/daterange",
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getForFboCount(fboId: number) {
         return this.http.get(this.accessPointUrl + "/fbo/" + fboId + "/count", {
             headers: this.headers,
         });
     }
 
-    public getQuotesAndOrders(fboId, startDate, endDate) {
+    public getQuotesAndOrders(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
             this.accessPointUrl + "/fbo/" + fboId + "/quotesAndOrders",
             {
@@ -52,7 +65,7 @@ export class FuelreqsService {
         );
     }
 
-    public getOrders(fboId, startDate, endDate) {
+    public getOrders(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
             this.accessPointUrl + "/fbo/" + fboId + "/orders",
             {

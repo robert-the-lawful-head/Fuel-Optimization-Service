@@ -60,7 +60,8 @@ export class FuelreqsHomeComponent implements AfterViewInit, OnDestroy {
     private loadFuelReqData() {
         this.fuelreqsData = null;
         this.fuelReqService
-            .getForFboAndDateRange(
+            .getForGroupFboAndDateRange(
+                this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
                 this.sharedService.dashboardSettings.filterStartDate,
                 this.sharedService.dashboardSettings.filterEndDate
