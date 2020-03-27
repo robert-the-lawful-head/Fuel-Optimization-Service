@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
+using System;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -16,18 +17,10 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("version")]
         public IActionResult GetAppVersion()
         {
-            string assemblyVersion1 = GetType().Assembly.GetName().Version.ToString();
-            string assemblyVersion2 = Assembly.GetEntryAssembly().GetName().Version.ToString();
-            string fileVersion = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-            string version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
-            List<string> result = new List<string>
-            {
-                assemblyVersion1,
-                assemblyVersion2,
-                fileVersion,
-                version
-            };
-            return Ok(result);
+            int year = DateTime.Now.Year;
+            int appVersion = 2; // This should be changed manually
+            int buildNumber = GetType().Assembly.GetName().Version.Major;
+            return Ok($"{year}.{appVersion}.{buildNumber}");
         }
     }
 }
