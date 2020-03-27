@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using System;
+using FBOLinx.Web.DTO;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -20,7 +21,11 @@ namespace FBOLinx.Web.Controllers
             int year = DateTime.Now.Year;
             int appVersion = 2; // This should be changed manually
             int buildNumber = GetType().Assembly.GetName().Version.Major;
-            return Ok($"{year}.{appVersion}.{buildNumber}");
+            AppVersion result = new AppVersion
+            {
+                Version = $"{year}.{appVersion}.{buildNumber}"
+            };
+            return Ok(result);
         }
     }
 }
