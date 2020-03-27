@@ -84,6 +84,7 @@ import { RampfeesService } from "./services/rampfees.service";
 import { RampfeesettingsService } from "./services/rampfeesettings.service";
 import { TemporaryAddOnMarginService } from "./services/temporaryaddonmargin.service";
 import { UserService } from "./services/user.service";
+import { AppService } from "./services/app.service";
 
 // Helpers
 import { JwtInterceptor, ErrorInterceptor } from "./helpers";
@@ -186,6 +187,7 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         RampfeesettingsService,
         TemporaryAddOnMarginService,
         UserService,
+        AppService
     ],
     bootstrap: [AppComponent],
 })
