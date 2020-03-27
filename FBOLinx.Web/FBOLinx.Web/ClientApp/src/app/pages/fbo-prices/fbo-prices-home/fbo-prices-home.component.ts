@@ -788,7 +788,7 @@ export class FboPricesHomeComponent
 
     private loadPricingTemplates() {
         
-        if (this.sharedService.currentUser.fboId != 0) {
+        if (this.sharedService.currentUser.fboId !== 0) {
             this.pricingTemplateService
                 .getByFbo(this.sharedService.currentUser.fboId)
                 .subscribe(
@@ -954,12 +954,12 @@ export class FboPricesHomeComponent
     }
 
     private checkDefaultTemplate() {
-        var currentFboId = 0;
+        let currentFboId = 0;
 
-        if (this.sharedService.currentUser.fboId != 0) {
+        if (this.sharedService.currentUser.fboId !== 0) {
             currentFboId = this.sharedService.currentUser.fboId;
         } else {
-            currentFboId = sessionStorage['fboId'];
+            currentFboId = sessionStorage.fboId;
         }
 
         this.pricingTemplateService
@@ -972,8 +972,8 @@ export class FboPricesHomeComponent
                             (data: any) => {
                                 this.pricingTemplates = data;
                                 if (this.pricingTemplates) {
-                                    var skipForDefault = false;
-                                    if (this.pricingTemplates.length == 1) {
+                                    let skipForDefault = false;
+                                    if (this.pricingTemplates.length === 1) {
                                         if (this.pricingTemplates[0].default) {
                                             skipForDefault = true;
                                         }
