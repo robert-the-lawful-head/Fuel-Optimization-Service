@@ -669,6 +669,7 @@ namespace FBOLinx.Web.Controllers
                 result = result.OrderBy(s => s.Name).GroupBy(s => s.Oid).Select(g => g.First()).ToList();
 
                 return Ok(result);
+
             }
             catch(Exception ex)
             {
