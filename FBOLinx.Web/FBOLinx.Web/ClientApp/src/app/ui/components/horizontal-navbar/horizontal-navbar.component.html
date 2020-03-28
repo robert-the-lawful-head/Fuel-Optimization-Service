@@ -301,7 +301,7 @@
                             Profile
                         </a>
                     </li>
-                    <li class="nav-sub-item" *ngIf="fboAirport">
+                    <li class="nav-sub-item" *ngIf="currentUser && currentUser.impersonatedRole > 0 && fboAirport">
                         <a style="cursor: pointer;">
                             <span class="icon sli-arrow-left"></span> Switch
                             Location
