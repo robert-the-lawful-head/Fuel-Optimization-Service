@@ -232,8 +232,7 @@
                             <mat-slide-toggle
                                 color="accent"
                                 [(ngModel)]="customerInfoByGroup.show100Ll"
-                                >Show 100LL Pricing</mat-slide-toggle
-                            >
+                                >Show 100LL Pricing</mat-slide-toggle>
                         </div>
                     </div>
                     <table style="width: 100%;">
@@ -246,11 +245,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr
-                                *ngFor="
-                                    let customCustomerType of customCustomerTypes
-                                "
-                            >
+                            <tr *ngFor="let customCustomerType of customCustomerTypes">
                                 <td>
                                     <mat-form-field>
                                         <mat-select
