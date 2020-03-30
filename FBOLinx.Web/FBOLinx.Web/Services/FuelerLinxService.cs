@@ -5,8 +5,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Json;
+using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses;
+using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Services
 {
@@ -15,9 +17,16 @@ namespace FBOLinx.Web.Services
         #region Private Members
         private string _ProductionUsername = "fbolinx";
         private string _ProductionPassword = "HjAQamk^Md!L9V-_";
-        private string _ProductionAPIKey = "F83D59B7-AD0D-4B3C-A67B-934CD6AA6F2B";
-        private string _APIKey = "F83D59B7-AD0D-4B3C-A67B-934CD6AA6F2B";
+        private string _APIKey = "";
+        private IOptions<AppPartnerSDKSettings.FuelerlinxSDKSettings> _fuelerlinxSdkSettings;
+
         #endregion
+
+        public FuelerLinxService(IOptions<AppPartnerSDKSettings.FuelerlinxSDKSettings> fuelerlinxSDKSettings)
+        {
+            _fuelerlinxSdkSettings = fuelerlinxSDKSettings;
+            _APIKey = _fuelerlinxSdkSettings.Value.APIKey;
+        }
 
         #region Public Methods
         public async Task<Models.Responses.FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(Models.Requests.FuelerLinxUpliftsByLocationRequestContent request)
@@ -82,6 +91,12 @@ namespace FBOLinx.Web.Services
             {
                 return "";
             }
+        }
+
+        private void PrepareAPIClientConfiguration()
+        {
+            if (!IO.Swagger.Client.Configuration.ApiKey.ContainsKey("x-api-key"))
+                IO.Swagger.Client.Configuration.ApiKey.Add("x-api-key", _APIKey);
         }
         #endregion
     }
