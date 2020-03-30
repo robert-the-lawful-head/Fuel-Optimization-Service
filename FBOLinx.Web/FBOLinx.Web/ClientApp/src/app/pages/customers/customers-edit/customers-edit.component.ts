@@ -304,6 +304,8 @@ export class CustomersEditComponent {
 
     public editCustomerAircraftClicked(customerAircraft) {
         this.currentCustomerAircraft = null;
+        this.requiresRouting = false;
+        this.saveCustomerEdit();
         this.loadCustomerAircrafts();
         this.selectedCustomerAircraftRecord = customerAircraft;
     }
