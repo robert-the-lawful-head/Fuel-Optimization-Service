@@ -18,7 +18,7 @@ export class RampFeesImportInformationComponent {
     }
 
     public onOkClick(): void {
-        this.dialogRef.close('ok');
+        this.dialogRef.close("ok");
     }
 
     public onCancelClick(): void {

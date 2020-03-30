@@ -11,7 +11,7 @@ import * as SharedEvents from "../../../models/sharedEvents";
 
 // Components
 import { RampFeesDialogNewFeeComponent } from "../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component";
-import { RampFeesImportInformationComponent } from '../ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component';
+import { RampFeesImportInformationComponent } from "../ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component";
 import { first } from "rxjs/operators";
 import FlatfileImporter from "flatfile-csv-importer";
 

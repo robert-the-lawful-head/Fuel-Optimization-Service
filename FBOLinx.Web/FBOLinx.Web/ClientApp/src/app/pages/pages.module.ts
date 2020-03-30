@@ -93,7 +93,7 @@ import { PricingTemplatesGridComponent } from "./pricing-templates/pricing-templ
 import { PricingTemplatesHomeComponent } from "./pricing-templates/pricing-templates-home/pricing-templates-home.component";
 import { RampFeesCategoryComponent } from "./ramp-fees/ramp-fees-category/ramp-fees-category.component";
 import { RampFeesDialogNewFeeComponent } from "./ramp-fees/ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component";
-import { RampFeesImportInformationComponent } from './ramp-fees/ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component';
+import { RampFeesImportInformationComponent } from "./ramp-fees/ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component";
 import { RampFeesHomeComponent } from "./ramp-fees/ramp-fees-home/ramp-fees-home.component";
 import { AnalyticsHomeComponent } from "./analytics/analytics-home/analytics-home.component";
 import { UsersDialogNewUserComponent } from "./users/users-dialog-new-user/users-dialog-new-user.component";
