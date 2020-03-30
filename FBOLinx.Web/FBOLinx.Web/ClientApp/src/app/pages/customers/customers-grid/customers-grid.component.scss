@@ -3,10 +3,36 @@
 }
 
 .dropdownHeight {
-    height:30px !important;
+    height: 30px !important;
 }
 
 .checkboxHeight {
-    height:20px !important;
+    height: 20px !important;
     width: 20px !important;
+}
+
+.download {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.download a {
+    color: #1d62b4;
+}
+
+.download a:hover {
+    color: #1d62b4;
+}
+
+.action-btn {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.actions-header {
+    @media only screen and (min-width: 992px) {
+        min-width: 370px;
+    }
 }

@@ -19,21 +19,23 @@ namespace FBOLinx.Web.Services
         private string _ProductionPassword = "HjAQamk^Md!L9V-_";
         private string _APIKey = "";
         private IOptions<AppPartnerSDKSettings.FuelerlinxSDKSettings> _fuelerlinxSdkSettings;
+        private IOptions<AppSettings> _appSettings;
 
         #endregion
 
-        public FuelerLinxService(IOptions<AppPartnerSDKSettings.FuelerlinxSDKSettings> fuelerlinxSDKSettings)
+        public FuelerLinxService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings.FuelerlinxSDKSettings> fuelerlinxSDKSettings)
         {
+            _appSettings = appSettings;
             _fuelerlinxSdkSettings = fuelerlinxSDKSettings;
             _APIKey = _fuelerlinxSdkSettings.Value.APIKey;
         }
+
 
         #region Public Methods
         public async Task<Models.Responses.FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(Models.Requests.FuelerLinxUpliftsByLocationRequestContent request)
         {
             var authToken = await GetAuthenticationTokenFromService();
-            string upliftsByLocationURL =
-                "https://www.fuelerlinx.com/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
+            string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
             if (string.IsNullOrEmpty(authToken))
                 return null;
 
@@ -42,15 +44,14 @@ namespace FBOLinx.Web.Services
             {
                 client.DefaultRequestHeaders.Add("APIKey", _APIKey);
                 using (HttpResponseMessage response = await client.PostAsync(upliftsByLocationURL,
-                    new FBOLinx.Web.Utilities.JsonContent(new Models.Requests.FuelerLinxUpliftsByLocationRequest()
+                    new Utilities.JsonContent(new FuelerLinxUpliftsByLocationRequest()
                     {
                         request = request
-
                     })))
                 {
-                    var upliftsResult = response.Content.ReadAsAsync<Models.Responses.FuelerLinxUpliftsByLocationResponse>();
+                    Task<FuelerLinxUpliftsByLocationResponse> upliftsResult = response.Content.ReadAsAsync<FuelerLinxUpliftsByLocationResponse>();
                     if (upliftsResult == null || upliftsResult.Result == null || upliftsResult.Result.d == null)
-                        return new FuelerLinxUpliftsByLocationResponseContent() {ICAO = request.ICAO};
+                        return new FuelerLinxUpliftsByLocationResponseContent() { ICAO = request.ICAO };
                     upliftsResult.Result.d.ICAO = request.ICAO;
                     return upliftsResult.Result.d;
                 }
@@ -63,8 +64,7 @@ namespace FBOLinx.Web.Services
         {
             try
             {
-                string authURL =
-                    "https://www.fuelerlinx.com/integratedservices/vendors/fbolinx.asmx/GetAuthenticationToken";
+                string authURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetAuthenticationToken";
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("APIKey", _APIKey);

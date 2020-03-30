@@ -30,7 +30,7 @@
         background: rgba(0, 0, 0, 0) !important;
     }
 
-    @media #{$max543} {
+    @media only screen and (max-width: 543px) {
         transform: translate(270px, 0);
         width: 270px;
     }
@@ -40,7 +40,7 @@
         right: auto;
         transform: translate(-300px, 0);
 
-        @media #{$max543} {
+        @media only screen and (max-width: 543px) {
             transform: translate(-270px, 0);
         }
     }

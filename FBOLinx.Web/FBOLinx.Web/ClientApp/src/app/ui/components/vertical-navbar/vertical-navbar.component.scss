@@ -15,13 +15,13 @@
   width: $vertical-navbar-width;
   will-change: left, right, width;
   z-index: 9996;
-  @media #{$max991} {
+  @media only screen and (max-width: 991px) {
     left: -($vertical-navbar-width);
   }
   .rtl & {
     left: auto;
     right: 0;
-    @media #{$max991} {
+    @media only screen and (max-width: 991px) {
       left: auto;
       right: -($vertical-navbar-width);
     }
@@ -32,7 +32,7 @@
     flex-direction: column;
     height: 100%;
     width: $vertical-navbar-width;
-    @media #{$max991} {
+    @media only screen and (max-width: 991px) {
       position: relative;
       z-index: 9999;
     }

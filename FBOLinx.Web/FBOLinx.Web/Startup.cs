@@ -84,6 +84,7 @@ namespace FBOLinx.Web
             services.Configure<AppPartnerSDKSettings>(Configuration.GetSection("AppPartnerSDKSettings"));
 
             // configure DI for application services
+            services.AddScoped<FuelerLinxService, FuelerLinxService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<Auth.UserRoleAttribute>();
 

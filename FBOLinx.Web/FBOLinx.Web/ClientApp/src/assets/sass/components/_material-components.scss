@@ -67,7 +67,7 @@ body {
     }
 
     .mat-card-title {
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
     }
 
     .mat-card-subtitle {
@@ -81,7 +81,7 @@ body {
 
         .mat-form-field-prefix,
         .mat-form-field-suffix {
-            padding-top: .84375em;
+            padding-top: 0.84375em;
         }
 
         .mat-form-field-prefix {
@@ -97,7 +97,6 @@ body {
         width: 100%;
 
         .mat-form-field-wrapper {
-
             .mat-input-underline {
                 bottom: 0;
                 margin: 0;
@@ -123,7 +122,12 @@ body {
                     width: 30px;
                 }
 
-                h1, h2, h3, h4, h5, h6 {
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6 {
                     font-size: 1.2rem;
                     font-weight: $headers-fw;
                     line-height: 1.3;
@@ -217,7 +221,7 @@ body {
         .sb-item {
             .sb-item-head {
                 a {
-                    color: rgba(main-contrast(500),.8);
+                    color: rgba(main-contrast(500), 0.8);
 
                     .toggle-icon {
                         height: 22px;
@@ -252,7 +256,7 @@ body {
         padding: 0 $module-rem;
 
         &:hover {
-            background-color: #2680EB;
+            background-color: #2196f3;
             cursor: pointer;
         }
 
@@ -265,7 +269,7 @@ body {
     .mat-row-not-hover {
         &:hover {
             background-color: transparent !important;
-            cursor:default !important;
+            cursor: default !important;
         }
     }
 
@@ -300,14 +304,20 @@ body {
     }
 }
 .rtl {
-  .squeezebox .sb-item .sb-item-head a .toggle-icon {
-    float: left;
-  }
+    .squeezebox .sb-item .sb-item-head a .toggle-icon {
+        float: left;
+    }
 }
 .cdk-overlay-container {
     z-index: 99999 !important;
 }
 
-.e-control, .e-css, .e-toolbar .e-tbar-btn {
-    font-family: 'Lato', sans-serif;
+.e-control,
+.e-css,
+.e-toolbar .e-tbar-btn {
+    font-family: "Lato", sans-serif;
+}
+
+.tooltip-button {
+    display: none;
 }

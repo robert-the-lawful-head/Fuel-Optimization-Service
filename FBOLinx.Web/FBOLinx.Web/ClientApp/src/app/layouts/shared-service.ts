@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { Subject, BehaviorSubject } from "rxjs";
 
-import { AuthenticationService } from '../services/authentication.service'
-import { User } from '../models/User';
+import { AuthenticationService } from "../services/authentication.service";
+import { User } from "../models/User";
 
-//Components
-import * as moment from 'moment';
+// Components
+import * as moment from "moment";
 
 export interface ActiveUser {
     fboId: number;
@@ -20,29 +20,61 @@ export class DashboardSettings {
 
 @Injectable()
 export class SharedService {
-  //Public Members
-    currentUser: User;
-    dashboardSettings: DashboardSettings = new DashboardSettings();
-
-  // Observable string sources
-  private emitChangeSource = new Subject();
-
     constructor(private authenticationService: AuthenticationService) {
-        this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-        var storedDashboardSettings = localStorage.getItem('dashboardSetings');
+        this.authenticationService.currentUser.subscribe(
+            (x) => (this.currentUser = x)
+        );
+        const storedDashboardSettings = localStorage.getItem(
+            "dashboardSetings"
+        );
         if (!storedDashboardSettings) {
-            this.dashboardSettings.filterStartDate = new Date(moment().add(-6, 'M').format('MM/DD/YYYY'));
-            this.dashboardSettings.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+            this.dashboardSettings.filterStartDate = new Date(
+                moment().add(-6, "M").format("MM/DD/YYYY")
+            );
+            this.dashboardSettings.filterEndDate = new Date(
+                moment().format("MM/DD/YYYY")
+            );
         } else {
             this.dashboardSettings = JSON.parse(storedDashboardSettings);
         }
     }
+    // Public Members
+    currentUser: User;
+    dashboardSettings: DashboardSettings = new DashboardSettings();
 
-  // Observable string streams
-  changeEmitted$ = this.emitChangeSource.asObservable();
+    public priceTemplateMessageSource = new BehaviorSubject(
+        "Update Pricing Template"
+    );
+    currentMessage = this.priceTemplateMessageSource.asObservable();
 
-  // Service message commands
-  emitChange(change: string) {
-    this.emitChangeSource.next(change);
-  }
+    public priceUpdateMessage = new BehaviorSubject("Enable button");
+    priceMessage = this.priceUpdateMessage.asObservable();
+
+    // Observable string sources
+    public emitChangeSource = new Subject();
+    public emitLoadedSource = new Subject();
+
+    // Observable string streams
+    changeEmitted$ = this.emitChangeSource.asObservable();
+
+    // Observable string streams
+    loadedEmitted$ = this.emitLoadedSource.asObservable();
+
+    NotifyPricingTemplateComponent(message: string) {
+        this.priceTemplateMessageSource.next(message);
+    }
+
+    NotifyPricingSavedComponent(message: string) {
+        this.priceUpdateMessage.next(message);
+    }
+
+    // Service message commands
+    emitChange(change: string) {
+        this.emitChangeSource.next(change);
+    }
+
+    // Service message commands
+    loadedChange(change: string) {
+        this.emitLoadedSource.next(change);
+    }
 }

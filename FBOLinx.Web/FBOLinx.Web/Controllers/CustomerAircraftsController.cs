@@ -81,11 +81,14 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerAircraftVM = await (from ca in _context.CustomerAircrafts
+            List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
+                from ca in _context.CustomerAircrafts
                 join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
-                join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId into leftJoinAircraftPrices
+                join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId
+                into leftJoinAircraftPrices
                 from a in leftJoinAircraftPrices.DefaultIfEmpty()
-                join p in _context.PricingTemplate on a.PriceTemplateId equals p.Oid into leftJoinPricingTemplate
+                join p in _context.PricingTemplate on a.PriceTemplateId equals p.Oid
+                into leftJoinPricingTemplate
                 from p in leftJoinPricingTemplate.DefaultIfEmpty()
                 where ca.GroupId.GetValueOrDefault() == groupId && ca.CustomerId == customerId
                 select new CustomerAircraftsGridViewModel
@@ -101,7 +104,7 @@ namespace FBOLinx.Web.Controllers
                     BasedPaglocation = ca.BasedPaglocation,
                     NetworkCode = ca.NetworkCode,
                     AddedFrom = ca.AddedFrom.GetValueOrDefault(),
-                    PricingTemplateName = p == null ? "Customer Default" : p.Name,
+                    PricingTemplateName = p == null ? "" : p.Name,
                     Make = ac.Make,
                     Model = ac.Model
                 }).OrderBy((x => x.TailNumber)).ToListAsync();
@@ -121,33 +124,36 @@ namespace FBOLinx.Web.Controllers
             if (groupId != UserService.GetClaimedGroupId(_HttpContextAccessor))
                 return BadRequest(ModelState);
 
-            var customerAircraft = await (from ca in _context.CustomerAircrafts
-                                        join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
-                                          join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId into leftJoinAircraftPrices
-                                          from a in leftJoinAircraftPrices.DefaultIfEmpty()
-                                          join p in _context.PricingTemplate on a.PriceTemplateId equals p.Oid into leftJoinPricingTemplate
-                                          from p in leftJoinPricingTemplate.DefaultIfEmpty()
-                                          join cg in _context.CustomerInfoByGroup on new {groupId, ca.CustomerId} equals new {groupId = cg.GroupId, cg.CustomerId}
-                                            where ca.GroupId.GetValueOrDefault() == groupId
-                                            select new CustomerAircraftsGridViewModel
-                                            {
-                                                Oid = ca.Oid,
-                                                GroupId = ca.GroupId.GetValueOrDefault(),
-                                                CustomerId = ca.CustomerId,
-                                                Company = cg == null ? "" : cg.Company,
-                                                AircraftId = ca.AircraftId,
-                                                TailNumber = ca.TailNumber,
-                                                Size = ca.Size.HasValue && ca.Size != Models.AirCrafts.AircraftSizes.NotSet
-                                                    ? ca.Size
-                                                    : ac.Size.GetValueOrDefault(),
-                                                BasedPaglocation = ca.BasedPaglocation,
-                                                NetworkCode = ca.NetworkCode,
-                                                AddedFrom = ca.AddedFrom.GetValueOrDefault(),
-                                                PricingTemplateId = a == null ? 0 : a.PriceTemplateId.GetValueOrDefault(),
-                                                PricingTemplateName = p == null ? "Customer Default" : p.Name,
-                                                Make = ac.Make,
-                                                Model = ac.Model
-                                            }).OrderBy((x => x.TailNumber)).ToListAsync();
+            List<CustomerAircraftsGridViewModel> customerAircraft = await (
+                from ca in _context.CustomerAircrafts
+                join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+                join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId
+                into leftJoinAircraftPrices
+                from a in leftJoinAircraftPrices.DefaultIfEmpty()
+                join p in _context.PricingTemplate on a.PriceTemplateId equals p.Oid
+                into leftJoinPricingTemplate
+                from p in leftJoinPricingTemplate.DefaultIfEmpty()
+                join cg in _context.CustomerInfoByGroup on new {groupId, ca.CustomerId} equals new {groupId = cg.GroupId, cg.CustomerId}
+                where ca.GroupId.GetValueOrDefault() == groupId
+                select new CustomerAircraftsGridViewModel
+                {
+                    Oid = ca.Oid,
+                    GroupId = ca.GroupId.GetValueOrDefault(),
+                    CustomerId = ca.CustomerId,
+                    Company = cg == null ? "" : cg.Company,
+                    AircraftId = ca.AircraftId,
+                    TailNumber = ca.TailNumber,
+                    Size = ca.Size.HasValue && ca.Size != Models.AirCrafts.AircraftSizes.NotSet
+                        ? ca.Size
+                        : ac.Size.GetValueOrDefault(),
+                    BasedPaglocation = ca.BasedPaglocation,
+                    NetworkCode = ca.NetworkCode,
+                    AddedFrom = ca.AddedFrom.GetValueOrDefault(),
+                    PricingTemplateId = a == null ? 0 : a.PriceTemplateId.GetValueOrDefault(),
+                    PricingTemplateName = p == null ? "" : p.Name,
+                    Make = ac.Make,
+                    Model = ac.Model
+                }).OrderBy((x => x.TailNumber)).ToListAsync();
 
             return Ok(customerAircraft);
         }
@@ -199,7 +205,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                var custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
+                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
 
                 if (custAircraft != null)
                 {
@@ -236,13 +242,13 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Name == customerAircrafts.PricingTemplateName && s.Fboid == fboid);
                 CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
-                AircraftPrices aircraftPrice = _context.AircraftPrices.FirstOrDefault(a => a.CustomerAircraftId.Equals(customerAircrafts.Oid));
+                AircraftPrices aircraftPrice = _context.AircraftPrices.FirstOrDefault(a => a.CustomerAircraftId.Equals(custAircraft.Oid));
                 CustomCustomerTypes customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == customerAircrafts.CustomerId && s.Fboid == fboid);
+                PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Name == customerAircrafts.PricingTemplateName && s.Fboid == fboid);
                 if (aircraftPrice != null)
                 {
-                    aircraftPrice.PriceTemplateId = pricingTemplate.Oid;
+                    aircraftPrice.PriceTemplateId = pricingTemplate?.Oid;
                     _context.AircraftPrices.Update(aircraftPrice);
                 }
 
@@ -255,11 +261,10 @@ namespace FBOLinx.Web.Controllers
                 }
 
                 // Tail-specific margin template overrides customer level templates.
-                if (customerMargin != null)
+                if (customerMargin != null && pricingTemplate != null)
                 {
                     customerMargin.CustomerType = pricingTemplate.Oid;
                 }
-
 
                 await _context.SaveChangesAsync();
                 return Ok(custAircraft);

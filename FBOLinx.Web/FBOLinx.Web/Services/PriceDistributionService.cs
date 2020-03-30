@@ -1,18 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Mail;
-using System.Net.Mime;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web;
-using EFCore.BulkExtensions;
+﻿using EFCore.BulkExtensions;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
@@ -22,10 +8,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
-using SendGrid;
 using SendGrid.Helpers.Mail;
-using Attachment = System.Net.Mail.Attachment;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
 using MailSettings = FBOLinx.Web.Configurations.MailSettings;
 
 namespace FBOLinx.Web.Services
@@ -160,18 +155,34 @@ namespace FBOLinx.Web.Services
                     MarkDistributionRecordAsComplete(distributionQueueRecord);
                     return;
                 }
-               /* if (fboRecipients != null && fboRecipients.Count > 0)
-                {
-                    foreach (var fboRecipient in fboRecipients)
-                    {
-                        if (fboRecipient.Contact == null)
-                            continue;
-                        if (_MailSettings.IsValidEmailRecipient(fboRecipient.Contact.Email))
-                            mailMessage.CC.Add(new MailAddress(fboRecipient.Contact.Email));
-                    }
-                }*/ 
+                /* if (fboRecipients != null && fboRecipients.Count > 0)
+                 {
+                     foreach (var fboRecipient in fboRecipients)
+                     {
+                         if (fboRecipient.Contact == null)
+                             continue;
+                         if (_MailSettings.IsValidEmailRecipient(fboRecipient.Contact.Email))
+                             mailMessage.CC.Add(new MailAddress(fboRecipient.Contact.Email));
+                     }
+                 }*/
 
-                string str = _DistributePricingRequest.PricingTemplate.MarginTypeProduct == "JetA Retail" ? "Retail -" : _DistributePricingRequest.PricingTemplate.MarginTypeProduct == "JetA Retail" ? "Cost +" : "Fleet Fee";
+                string validUntil = "";
+                
+                if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Retail"))
+                {
+                    
+                }
+                else if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Cost"))
+                {
+                    var priceDate = _context.Fboprices.LastOrDefault(s => s.Fboid == _DistributePricingRequest.FboId).EffectiveTo;
+                    if(priceDate != null)
+                    {
+                        DateTime dtEffectiveTo = Convert.ToDateTime(priceDate);
+                        validUntil = "Pricing valid until: " + dtEffectiveTo.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
+                    }
+                }
+
+                    string str = _DistributePricingRequest.PricingTemplate.MarginTypeProduct == "JetA Retail" ? "Retail -" : _DistributePricingRequest.PricingTemplate.MarginTypeProduct == "JetA Retail" ? "Cost +" : "Fleet Fee";
                 string body = await getCustomBody(_DistributePricingRequest.PricingTemplate.Oid,str, _DistributePricingRequest.FboId);//_DistributePricingRequest.PricingTemplate.Email;//await GetMailBody(customer, validPricingTemplates);
 
                     //Add the price breakdown as an image to prevent parsing
@@ -232,7 +243,8 @@ namespace FBOLinx.Web.Services
                     fboCity = fbo.City,
                     fboState = fbo.State,
                     fboZip = fbo.ZipCode,
-                    Subject = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Subject) ?? "Distribution pricing"
+                    Subject = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Subject) ?? "Distribution pricing",
+                    expiration = validUntil
                 };
                 sendGridMessageWithTemplate.SetTemplateData(dynamicTemplateData);
 
@@ -653,6 +665,8 @@ namespace FBOLinx.Web.Services
 
             [JsonProperty("Subject")]
             public string Subject { get; set; }
+            [JsonProperty("expiration")]
+            public string expiration { get; set; }
         }
         
         #endregion

@@ -1,12 +1,16 @@
-import { Component, Inject, EventEmitter, Output } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject, EventEmitter, Output } from "@angular/core";
+import {
+    MatDialog,
+    MatDialogRef,
+    MAT_DIALOG_DATA,
+} from "@angular/material/dialog";
 
-//Services
-import { AcukwikairportsService } from '../../../services/acukwikairports.service';
+// Services
+import { AcukwikairportsService } from "../../../services/acukwikairports.service";
 
-import { AirportAutocompleteComponent } from '../../../shared/components/airport-autocomplete/airport-autocomplete.component';
+import { AirportAutocompleteComponent } from "../../../shared/components/airport-autocomplete/airport-autocomplete.component";
 
-//Interfaces
+// Interfaces
 export interface NewFBODialogData {
     oid: number;
     fbo: string;
@@ -16,41 +20,41 @@ export interface NewFBODialogData {
 }
 
 @Component({
-    selector: 'app-fbos-dialog-new-fbo',
-    templateUrl: './fbos-dialog-new-fbo.component.html',
-    styleUrls: ['./fbos-dialog-new-fbo.component.scss']
+    selector: "app-fbos-dialog-new-fbo",
+    templateUrl: "./fbos-dialog-new-fbo.component.html",
+    styleUrls: ["./fbos-dialog-new-fbo.component.scss"],
 })
-/** fbos-dialog-new-fbo component*/
 export class FbosDialogNewFboComponent {
     @Output() contactAdded = new EventEmitter<any>();
 
-    //Public Members
+    // Public Members
     public dataSources: any = {};
 
-    /** fbos-dialog-new-fbo ctor */
-    constructor(public dialogRef: MatDialogRef<FbosDialogNewFboComponent>, @Inject(MAT_DIALOG_DATA) public data: NewFBODialogData,
-        private acukwikairportsService: AcukwikairportsService) {
-
-        
-    }
+    constructor(
+        public dialogRef: MatDialogRef<FbosDialogNewFboComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: NewFBODialogData,
+        private acukwikairportsService: AcukwikairportsService
+    ) {}
 
     public airportValueChanged(airport) {
         this.data.icao = airport.icao;
-        this.acukwikairportsService.getAcukwikFboHandlerDetailByIcao(this.data.icao).subscribe((result: any) => {
-            this.dataSources.acukwikFbos = [];
-            if (!result) {
-                return;
-            }
+        this.acukwikairportsService
+            .getAcukwikFboHandlerDetailByIcao(this.data.icao)
+            .subscribe((result: any) => {
+                this.dataSources.acukwikFbos = [];
+                if (!result) {
+                    return;
+                }
 
-            result.forEach(fbo => {
-                this.dataSources.acukwikFbos.push(fbo);
+                result.forEach((fbo) => {
+                    this.dataSources.acukwikFbos.push(fbo);
+                });
             });
-        });
     }
 
     public fboSelectionChange() {
         if (!this.data.acukwikFbo) {
-            this.data.fbo = '';
+            this.data.fbo = "";
             this.data.acukwikFboHandlerId = 0;
         } else {
             this.data.fbo = this.data.acukwikFbo.handlerLongName;
@@ -62,7 +66,7 @@ export class FbosDialogNewFboComponent {
         this.dialogRef.close();
     }
 
-    //public addFbo() {
+    // public addFbo() {
     //    this.contactAdded.emit(this.data);
-    //}
+    // }
 }

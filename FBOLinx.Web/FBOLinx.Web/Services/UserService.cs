@@ -49,7 +49,7 @@ namespace FBOLinx.Web.Services
                 if (!resetPassword && !hashUtility.VerifyHashedPassword(user.Password, password))
                     return null;
             }
-
+            UpdateLoginCount(user);
             SetAuthToken(user);
             
             return user;
@@ -150,6 +150,12 @@ namespace FBOLinx.Web.Services
 
             // remove password before returning
             user.Password = null;
+        }
+
+        private void UpdateLoginCount(User user)
+        {
+            user.LoginCount = user.LoginCount.GetValueOrDefault() + 1;
+            _Context.SaveChanges();
         }
 
         private User CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)

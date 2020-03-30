@@ -1,21 +1,20 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { SharedService } from '../shared-service';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, OnInit, Input } from "@angular/core";
+import { SharedService } from "../shared-service";
+import { MatDialog, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
-//Services
-import {FbopricesService} from '../../services/fboprices.service';
-import { PricingtemplatesService } from '../../services/pricingtemplates.service';
-//Components
-import {PricingExpiredNotificationComponent} from
-    '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
-import * as moment from 'moment';
+// Services
+import { FbopricesService } from "../../services/fboprices.service";
+import { PricingtemplatesService } from "../../services/pricingtemplates.service";
+// Components
+import { PricingExpiredNotificationComponent } from "../../shared/components/pricing-expired-notification/pricing-expired-notification.component";
+import * as moment from "moment";
 
 @Component({
     moduleId: module.id,
-    selector: 'default-layout',
-    templateUrl: 'default.component.html',
-    styleUrls: ['../layouts.scss'],
-    providers: [SharedService]
+    selector: "default-layout",
+    templateUrl: "default.component.html",
+    styleUrls: ["../layouts.scss"],
+    providers: [SharedService],
 })
 export class DefaultLayoutComponent implements OnInit {
     pageTitle: any;
@@ -27,38 +26,42 @@ export class DefaultLayoutComponent implements OnInit {
     openedSidebar: boolean;
     public pricingTemplatesData: any[];
 
-    constructor(private _sharedService: SharedService,
+    constructor(
+        private sharedService: SharedService,
         private fboPricesService: FbopricesService,
         private pricingTemplatesService: PricingtemplatesService,
-        public expiredPricingDialog: MatDialog) {
+        public expiredPricingDialog: MatDialog
+    ) {
         this.openedSidebar = false;
         this.boxed = false;
         this.compress = false;
-        this.menuStyle = 'style-3';
+        this.menuStyle = "style-3";
         this.rtl = false;
 
-        this.pricingTemplatesService.getByFbo(this._sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
-        _sharedService.changeEmitted$.subscribe(
-            title => {
+        if (this.sharedService.currentUser.fboId) {
+            this.pricingTemplatesService
+                .getByFbo(this.sharedService.currentUser.fboId)
+                .subscribe((data: any) => (this.pricingTemplatesData = data));
+            sharedService.changeEmitted$.subscribe((title) => {
                 this.pageTitle = title;
-            }
-        );
+            });
+        }
     }
 
     ngOnInit() {
         this.checkCurrentPrices();
-        //this.callTemporaryAddOn();
+        // this.callTemporaryAddOn();
     }
 
     getClasses() {
-        let menu: string = (this.menuStyle);
+        const menu: string = this.menuStyle;
 
         return {
-            ['menu-' + menu]: menu,
-            'boxed': this.boxed,
-            'compress-vertical-navbar': this.compress,
-            'open-sidebar': this.openedSidebar,
-            'rtl': this.rtl
+            ["menu-" + menu]: menu,
+            boxed: this.boxed,
+            "compress-vertical-navbar": this.compress,
+            "open-sidebar": this.openedSidebar,
+            rtl: this.rtl,
         };
     }
 
@@ -66,41 +69,40 @@ export class DefaultLayoutComponent implements OnInit {
         this.openedSidebar = !this.openedSidebar;
     }
 
-    //Private Methods
+    // Private Methods
 
-    private checkCurrentPrices() {
-        var remindMeLaterFlag = localStorage.getItem('pricingExpiredNotification');
-        var noThanksFlag = sessionStorage.getItem('pricingExpiredNotification');
+    public checkCurrentPrices() {
+        const remindMeLaterFlag = localStorage.getItem(
+            "pricingExpiredNotification"
+        );
+        const noThanksFlag = sessionStorage.getItem(
+            "pricingExpiredNotification"
+        );
         if (noThanksFlag) {
             return;
         }
-        if (remindMeLaterFlag && moment(moment().format('L')).isAfter(moment(remindMeLaterFlag))) {
+        if (
+            remindMeLaterFlag &&
+            moment(moment().format("L")).isAfter(moment(remindMeLaterFlag))
+        ) {
             return;
         }
-        this.fboPricesService.checkFboExpiredPricing(this._sharedService.currentUser.fboId).subscribe(
-            (data: any) => {
-                //for (let fboPrice of data) {
-                //    if (fboPrice.price > 0) 
-                //        return;
-                //}
-                if(data){
+        this.fboPricesService
+            .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                if (data) {
                     if (data.price > 0) {
                         return;
                     }
                 }
-                
 
-                const dialogRef = this.expiredPricingDialog.open(PricingExpiredNotificationComponent,
+                const dialogRef = this.expiredPricingDialog.open(
+                    PricingExpiredNotificationComponent,
                     {
-                        data: {}
-                    });
-
-                dialogRef.afterClosed().subscribe(result => {
-                    
-                });
-
+                        data: {},
+                    }
+                );
+                dialogRef.afterClosed().subscribe((result) => {});
             });
-
-        
     }
 }

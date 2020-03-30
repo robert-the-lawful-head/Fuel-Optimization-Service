@@ -9,6 +9,7 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using static FBOLinx.Web.Models.AirCrafts;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -148,6 +149,131 @@ namespace FBOLinx.Web.Controllers
 
             _context.Customers.Remove(customers);
             await _context.SaveChangesAsync();
+
+            return Ok(customers);
+        }
+
+        [HttpPost("importcustomers")]
+        public async Task<IActionResult> ImportCustomers([FromBody] List<CustomerImportVM> customers)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var distinctCust = customers.GroupBy(s => s.CompanyName).Select(s => s.First()).ToList();
+            int custId = 0;
+            foreach(var customer in distinctCust)
+            {
+                Customers newC = new Customers();
+                newC.Company = customer.CompanyName;
+
+                if(customer.Activate != null)
+                {
+                    if(customer.Activate.ToLower().Equals("active") || customer.Activate.ToLower().Equals("on"))
+                    {
+                        newC.Active = true;
+                    }
+                }
+
+                _context.Customers.Add(newC);
+                await _context.SaveChangesAsync();
+
+                if(newC.Oid != 0)
+                {
+                    custId = newC.Oid;
+                    customer.CompanyId = newC.Oid;
+                    CustomerInfoByGroup cibg = new CustomerInfoByGroup();
+                    cibg.CustomerId = newC.Oid;
+                    cibg.GroupId = customer.groupid;
+                    cibg.Company = newC.Company;
+                    if(newC.Active == true)
+                    {
+                        cibg.Active = true;
+                    }
+                    _context.CustomerInfoByGroup.Add(cibg);
+                    await _context.SaveChangesAsync();
+                }
+
+                var custWithAircrafts = customers.Where(s => s.AircraftMake != null && s.CompanyName == customer.CompanyName).ToList();
+
+                if (custWithAircrafts.Count > 0)
+                {
+                    var aircraftSizes = Utilities.Enum.GetDescriptions(typeof(Models.AirCrafts.AircraftSizes));
+
+                    foreach (var custPlane in custWithAircrafts)
+                    {
+                        AirCrafts ac = new AirCrafts();
+                        ac.Make = custPlane.AircraftMake;
+                        ac.Model = custPlane.AircraftModel;
+                        var aircraftSize = aircraftSizes.FirstOrDefault(s => s.Description == custPlane.AircraftSize);
+
+                        if (aircraftSize != null)
+                        {
+                            AircraftSizes acSize = (AircraftSizes)aircraftSize.Value;
+                            ac.Size = acSize;
+                        }
+
+                        _context.Aircrafts.Add(ac);
+                        await _context.SaveChangesAsync();
+
+                        if (ac.AircraftId != 0)
+                        {
+                            CustomerAircrafts ca = new CustomerAircrafts();
+                            ca.AircraftId = ac.AircraftId;
+                            ca.TailNumber = custPlane.Tail;
+                            ca.GroupId = custPlane.groupid;
+                            ca.CustomerId = custId;
+
+                            _context.CustomerAircrafts.Add(ca);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+
+                var custWithContacts = customers.Where(s => s.FirstName != null && s.CompanyName == customer.CompanyName).ToList();
+
+                if (custWithContacts.Count > 0)
+                {
+                    foreach (var custContact in custWithContacts)
+                    {
+                        Contacts ct = new Contacts();
+                        ct.FirstName = custContact.FirstName;
+                        ct.LastName = custContact.FirstName;
+                        ct.Mobile = custContact.Mobile;
+                        ct.Email = custContact.Email;
+                        ct.Phone = custContact.Phone;
+                        ct.Title = custContact.Title;
+
+                        _context.Contacts.Add(ct);
+                        await _context.SaveChangesAsync();
+
+                        if (ct.Oid != 0)
+                        {
+                            CustomerContacts cc = new CustomerContacts();
+                            cc.ContactId = ct.Oid;
+                            cc.CustomerId = custContact.CompanyId;
+
+                            _context.CustomerContacts.Add(cc);
+                            await _context.SaveChangesAsync();
+
+                            ContactInfoByGroup cibg = new ContactInfoByGroup();
+                            cibg.GroupId = custContact.groupid;
+                            cibg.ContactId = ct.Oid;
+                            cibg.FirstName = custContact.FirstName;
+                            cibg.LastName = custContact.LastName;
+                            cibg.Mobile = custContact.Mobile;
+                            cibg.Email = custContact.Email;
+                            cibg.Phone = custContact.Phone;
+                            cibg.Title = custContact.Title;
+
+                            _context.ContactInfoByGroup.Add(cibg);
+                            await _context.SaveChangesAsync();
+                        }
+
+                    }
+                }
+            }
 
             return Ok(customers);
         }

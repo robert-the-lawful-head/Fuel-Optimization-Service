@@ -8,5 +8,6 @@ namespace FBOLinx.Web.Configurations
     public class AppSettings
     {
         public string Secret { get; set; }
+        public string FuelerLinxUrl { get; set; }
     }
 }

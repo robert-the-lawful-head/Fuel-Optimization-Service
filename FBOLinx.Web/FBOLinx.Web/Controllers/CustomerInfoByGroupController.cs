@@ -12,6 +12,7 @@ using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using OfficeOpenXml;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -119,57 +120,57 @@ namespace FBOLinx.Web.Controllers
             return Ok(new {fileLocation = fileName });
         }
 
-        
+
 
         // GET: api/CustomerInfoByGroup/group/5/fbo/6/pricingtemplate/7
         [HttpGet("group/{groupId}/fbo/{fboId}/pricingtemplate/{pricingTemplateId}")]
-        public async Task<IActionResult> GetCustomersByFBOAndPricing([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int pricingTemplateId)
+        public IActionResult GetCustomersByFBOAndPricing([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int pricingTemplateId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            
+
             var customers = (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
-                join c in _context.Customers on cg.CustomerId equals c.Oid
-                join cc in _context.CustomCustomerTypes.Where((x => x.Fboid == fboId)) on cg.CustomerId equals cc.CustomerId
-                where cg.Active.GetValueOrDefault()
-                    && cg.Active.GetValueOrDefault()
-                      && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
-                select new
-                {
-                    Oid = cg.Oid,
-                    cg.Company,
-                    CustomerId = cg.CustomerId,
-                    CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
-                    cg.Address,
-                    cg.CertificateType,
-                    cg.City,
-                    cg.Country,
-                    cg.CustomerType,
-                    cg.DefaultTemplate,
-                    cg.Distribute,
-                    cg.EmailSubscription,
-                    cg.GroupId,
-                    cg.Joined,
-                    cg.MainPhone,
-                    cg.Network,
-                    cg.Suspended,
-                    cg.Sfid,
-                    cg.Show100Ll,
-                    cg.ShowJetA,
-                    cg.State,
-                    cg.Username,
-                    cg.Website,
-                    cg.ZipCode
-                }).OrderBy((x => x.Company)).Distinct();
+                             join c in _context.Customers on cg.CustomerId equals c.Oid
+                             join cc in _context.CustomCustomerTypes.Where((x => x.Fboid == fboId)) on cg.CustomerId equals cc.CustomerId
+                             where cg.Active.GetValueOrDefault()
+                                 && cg.Active.GetValueOrDefault()
+                                   && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
+                             select new
+                             {
+                                 cg.Oid,
+                                 cg.Company,
+                                 cg.CustomerId,
+                                 CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
+                                 cg.Address,
+                                 cg.CertificateType,
+                                 cg.City,
+                                 cg.Country,
+                                 cg.CustomerType,
+                                 cg.DefaultTemplate,
+                                 cg.Distribute,
+                                 cg.EmailSubscription,
+                                 cg.GroupId,
+                                 cg.Joined,
+                                 cg.MainPhone,
+                                 cg.Network,
+                                 cg.Suspended,
+                                 cg.Sfid,
+                                 cg.Show100Ll,
+                                 cg.ShowJetA,
+                                 cg.State,
+                                 cg.Username,
+                                 cg.Website,
+                                 cg.ZipCode
+                             }).OrderBy((x => x.Company)).Distinct();
 
             return Ok(customers);
         }
 
         // GET: api/CustomerInfoByGroup/group/5/fbo/6/count
         [HttpGet("group/{groupId}/fbo/{fboId}/count")]
-        public async Task<IActionResult> GetCustomerCountByGroupAndFBO([FromRoute] int groupId, [FromRoute] int fboId)
+        public IActionResult GetCustomerCountByGroupAndFBO([FromRoute] int groupId, [FromRoute] int fboId)
         {
             if (!ModelState.IsValid)
             {
@@ -180,13 +181,13 @@ namespace FBOLinx.Web.Controllers
 
             //View model for customers grid
             var customerCount = (from cg in _context.CustomerInfoByGroup
-                                  join c in _context.Customers on cg.CustomerId equals c.Oid
-                                  where cg.GroupId == groupId
-                                  && cg.Active.GetValueOrDefault()
-                                  select new
-                                  {
-                                      Oid = cg.Oid
-                                  }).Count();
+                                 join c in _context.Customers on cg.CustomerId equals c.Oid
+                                 where cg.GroupId == groupId
+                                 && cg.Active.GetValueOrDefault()
+                                 select new
+                                 {
+                                     cg.Oid
+                                 }).Count();
 
             return Ok(customerCount);
         }
@@ -285,7 +286,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customersWithoutMargins = await (from cg in _context.CustomerInfoByGroup
+            List<CustomerInfoByGroup> customersWithoutMargins = await (from cg in _context.CustomerInfoByGroup
                                                  join c in _context.Customers on cg.CustomerId equals c.Oid
                                                  join cct in _context.CustomCustomerTypes on new { customerId = cg.CustomerId, fboId = fboId } equals
                                                      new
@@ -313,129 +314,64 @@ namespace FBOLinx.Web.Controllers
             return _context.CustomerInfoByGroup.AsQueryable();
         }
 
+        private Tuple<double, double> getPrices(double prevIntoPlanePrice, double? prevYourMargin, int oid, object margins, double margin, PricingTemplate.MarginTypes? marginType, 
+                                        double? jetARetail, double? jetACost)
+        {
+            double intoPlanePrice = prevIntoPlanePrice;
+            double? yourMargin = prevYourMargin;
+
+            if (oid != 0)
+            {
+                if (margins != null)
+                {
+                    System.Reflection.PropertyInfo pi = margins.GetType().GetProperty("maxPrice");
+                    double amount = (double)(pi.GetValue(margins, null));
+                    string marginTypeDescription = Utilities.Enum.GetDescription(marginType ?? PricingTemplate.MarginTypes.CostPlus);
+                    if (marginTypeDescription == "Retail -")
+                    {
+                        if (jetARetail != null)
+                        {
+                            intoPlanePrice = jetARetail.Value - Convert.ToDouble(amount);
+                        }
+                        else
+                        {
+                            intoPlanePrice = Convert.ToDouble(amount) + 0;
+                        }
+
+                        if (jetACost != null)
+                        {
+                            yourMargin = margin;
+                        }
+                        else
+                        {
+                            yourMargin = intoPlanePrice - 0;
+                        }
+                    }
+                    else if (marginTypeDescription == "Cost +")
+                    {
+                        if (jetACost != null)
+                        {
+                            intoPlanePrice = Convert.ToDouble(amount) + jetACost.Value;
+                            yourMargin = intoPlanePrice - jetACost.Value;
+                        }
+                        else
+                        {
+                            intoPlanePrice = Convert.ToDouble(amount) + 0;
+                            yourMargin = intoPlanePrice - 0;
+                        }
+                    }
+                }
+            }
+            return Tuple.Create(intoPlanePrice, yourMargin.GetValueOrDefault());
+        }
+
         private async Task<List<CustomersGridViewModel>> FetchCustomersViewModelByGroupAndFbo(int groupId, int fboId)
         {
             try
             {
-                FBOLinx.Web.Services.PriceFetchingService priceFetchingService = new FBOLinx.Web.Services.PriceFetchingService(_context);
-                List<DTO.CustomerWithPricing> customerPricingResults = await priceFetchingService.GetCustomerPricingAsync(fboId, groupId);
-
-                var customerAircraft = 
-                    from aircraftByCustomer in _context.CustomerAircrafts
-                    where aircraftByCustomer.GroupId == groupId
-                    group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
-                    into results
-                    select new {
-                        results.Key.CustomerId,
-                        Tails = string.Join(",", results.Select(x => x.TailNumber))
-                    };
-
-                List<CustomerInfoByGroup> allCustomerInfoByGroups = await _context.CustomerInfoByGroup.ToListAsync();
                 Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost").FirstOrDefaultAsync();
-
-                List<CustomersGridViewModel> customerGridVM = (
-                    from results in customerPricingResults
-                    join ci in allCustomerInfoByGroups on results.CustomerInfoByGroupId equals ci.Oid
-                    join ca in customerAircraft on results.CustomerId equals ca.CustomerId
-                    into leftJoinCA
-                    from ca in leftJoinCA.DefaultIfEmpty()
-                    group results by new
-                    {
-                        results.CustomerId,
-                        results.CustomerInfoByGroupId,
-                        results.Company,
-                        results.DefaultCustomerType,
-                        results.FboPrice,
-                        results.FboFeeAmount,
-                        results.Suspended,
-                        results.FuelerLinxId,
-                        results.Network,
-                        results.GroupId,
-                        results.NeedsAttention,
-                        results.CustomerCompanyType,
-                        results.CustomerCompanyTypeName,
-                        results.HasBeenViewed,
-                        Tails = ca?.Tails,
-                        results.IsPricingExpired,
-                        ci.CertificateType
-                    }
-                    into resultsGroup
-                    select new CustomersGridViewModel()
-                    {
-                        CustomerId = resultsGroup.Key.CustomerId,
-                        CustomerInfoByGroupId = resultsGroup.Key.CustomerInfoByGroupId,
-                        Company = resultsGroup.Key.Company,
-                        DefaultCustomerType = resultsGroup.Key.DefaultCustomerType,
-                        FboPrice = resultsGroup.Key.FboPrice,
-                        FboFeeAmount = resultsGroup.Key.FboFeeAmount,
-                        Suspended = resultsGroup.Key.Suspended,
-                        FuelerLinxId = resultsGroup.Key.FuelerLinxId,
-                        Network = resultsGroup.Key.Network,
-                        GroupId = resultsGroup.Key.GroupId,
-                        PricingTemplateName = (
-                        from customerPricing in resultsGroup
-                        where customerPricing.PricingTemplateId > 0
-                        select customerPricing.PricingTemplateName
-                        ).Distinct().Count() > 1 ? "-Multiple-" : (from customerPricing in resultsGroup select customerPricing.PricingTemplateName).First(),
-                        CustomerCompanyType = resultsGroup.Key.CustomerCompanyType,
-                        CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
-                        HasBeenViewed = resultsGroup.Key.HasBeenViewed,
-                        SelectAll = false,
-                        TailNumbers = resultsGroup.Key.Tails,
-                        IsPricingExpired = resultsGroup.Key.IsPricingExpired,
-                        CertificateType = resultsGroup.Key.CertificateType
-                    })
-                    .GroupBy(p => p.CustomerId)
-                    .Select(g => g.First())
-                    .ToList();
-
-                List<PricingTemplatesGridViewModel> result = (
-                    from p in _context.PricingTemplate
-                    join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
-                    join cm in (
-                        from c in _context.CustomerMargins
-                        join tm in (_context.PriceTiers)
-                        on c.PriceTierId equals tm.Oid
-                        group c by new { c.TemplateId }
-                        into cmResults
-                        select new
-                        {
-                            templateId = cmResults.Key.TemplateId,
-                            maxPrice = cmResults.FirstOrDefault().Amount
-                        }
-                    ) on p.Oid equals cm.templateId
-                    into leftJoinCustomerMargins
-                    from cm in leftJoinCustomerMargins.DefaultIfEmpty()
-                    join fp in (
-                        from f in _context.Fboprices
-                        where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId
-                        select f
-                    ) on p.MarginTypeProduct equals fp.Product
-                    into leftJoinFboPrices
-                    from fp in leftJoinFboPrices.DefaultIfEmpty()
-                    where p.Fboid == fboId
-                    select new PricingTemplatesGridViewModel
-                    {
-                        CustomerId = p.CustomerId.GetValueOrDefault(),
-                        Default = p.Default.GetValueOrDefault(),
-                        Fboid = p.Fboid,
-                        Margin = cm == null ? 0 : cm.maxPrice.Value,
-                        MarginType = p.MarginType.GetValueOrDefault(),
-                        Name = p.Name,
-                        Notes = p.Notes,
-                        Oid = p.Oid,
-                        Type = p.Type.GetValueOrDefault(),
-                        Subject = p.Subject,
-                        Email = p.Email,
-                        IntoPlanePrice = (jetaACostRecord == null ? 0 : jetaACostRecord.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice.Value),
-                        IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
-                        IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
-                        YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault())
-                    }).ToList();
-
-                IEnumerable<Utilities.Enum.EnumDescriptionValue> products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
                 var resultPrices =
-                          from p in products
+                          from p in Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes))
                           join f in (
                                      from f in _context.Fboprices
                                      where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId
@@ -447,94 +383,280 @@ namespace FBOLinx.Web.Controllers
                                      where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
                                      select s) on new { FboId = fboId } equals new
                                      {
-                                         FboId = s.FboId
+                                         s.FboId
                                      }
                               into tmpJoin
                           from s in tmpJoin.DefaultIfEmpty()
                           select new
                           {
-                              Oid = f?.Oid ?? 0,
-                              Fboid = fboId,
                               Product = p.Description,
-                              Price = f?.Price,
-                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
-                              EffectiveTo = f?.EffectiveTo,
-                              TimeStamp = f?.Timestamp,
-                              SalesTax = f?.SalesTax,
-                              Currency = f?.Currency,
-                              tempJet = s?.MarginJet,
-                              tempAvg = s?.MarginAvgas,
-                              tempId = s?.Id,
-                              tempDateFrom = s?.EffectiveFrom,
-                              tempDateTo = s?.EffectiveTo
+                              f?.Price
                           };
 
                 double? jetACost = resultPrices.FirstOrDefault(s => s.Product == "JetA Cost").Price;
                 double? jetARetail = resultPrices.FirstOrDefault(s => s.Product == "JetA Retail").Price;
-                foreach (PricingTemplatesGridViewModel res in result)
-                {
-                    if (res.Oid != 0)
-                    {
-                        CustomerMargins margins = _context.CustomerMargins.FirstOrDefault(s => s.TemplateId == res.Oid && s.PriceTierId != 0);
-
-                        if (margins != null)
+                List<PricingTemplatesGridViewModel> result = 
+                    (from p in
+                        (
+                        from p in _context.PricingTemplate
+                        join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
+                        join cm in (
+                            from c in _context.CustomerMargins
+                            join tm in (_context.PriceTiers)
+                            on c.PriceTierId equals tm.Oid
+                            group c by new { c.TemplateId }
+                            into cmResults
+                            select new
+                            {
+                                templateId = cmResults.Key.TemplateId,
+                                maxPrice = cmResults.FirstOrDefault().Amount
+                            }
+                        ) on p.Oid equals cm.templateId
+                        into leftJoinCustomerMargins
+                        from cm in leftJoinCustomerMargins.DefaultIfEmpty()
+                        join fp in (
+                            from f in _context.Fboprices
+                            where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId
+                            select f
+                        ) on p.MarginTypeProduct equals fp.Product
+                        into leftJoinFboPrices
+                        from fp in leftJoinFboPrices.DefaultIfEmpty()
+                        where p.Fboid == fboId
+                        select new
                         {
-                            if (res.MarginTypeDescription == "Retail -")
-                            {
-                                if (jetARetail != null)
-                                {
-                                    res.IntoPlanePrice = jetARetail.Value - Convert.ToDouble(margins.Amount);
-                                }
-                                else
-                                {
-                                    res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                                }
-
-                                if (jetACost != null)
-                                {
-                                    res.YourMargin = res.Margin;
-                                }
-                                else
-                                {
-                                    res.YourMargin = res.IntoPlanePrice - 0;
-                                }
-                            }
-                            else if (res.MarginTypeDescription == "Cost +")
-                            {
-                                if (jetACost != null)
-                                {
-                                    res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetACost.Value;
-                                    res.YourMargin = res.IntoPlanePrice - jetACost.Value;
-                                }
-                                else
-                                {
-                                    res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                                    res.YourMargin = res.IntoPlanePrice - 0;
-                                }
-                            }
+                            CustomerId = p.CustomerId.GetValueOrDefault(),
+                            Default = p.Default.GetValueOrDefault(),
+                            Fboid = p.Fboid,
+                            Margin = cm == null ? 0 : cm.maxPrice.Value,
+                            MarginType = p.MarginType.GetValueOrDefault(),
+                            Name = p.Name,
+                            Notes = p.Notes,
+                            Oid = p.Oid,
+                            Type = p.Type.GetValueOrDefault(),
+                            Subject = p.Subject,
+                            Email = p.Email,
+                            IntoPlanePrice = (jetaACostRecord == null ? 0 : jetaACostRecord.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice.Value),
+                            IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
+                            IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                            YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault()),
+                            CustomerMargin = cm
+                        })
+                        select new PricingTemplatesGridViewModel
+                        {
+                            CustomerId = p.CustomerId,
+                            Default = p.Default,
+                            Fboid = p.Fboid,
+                            Margin = p.Margin,
+                            MarginType = p.MarginType,
+                            Name = p.Name,
+                            Notes = p.Notes,
+                            Oid = p.Oid,
+                            Type = p.Type,
+                            Subject = p.Subject,
+                            Email = p.Email,
+                            IsInvalid = p.IsInvalid,
+                            IsPricingExpired = p.IsPricingExpired,
+                            IntoPlanePrice = getPrices(p.IntoPlanePrice, p.YourMargin, p.Oid, p.CustomerMargin, p.Margin, p.MarginType, jetARetail, jetACost).Item1,
+                            YourMargin = getPrices(p.IntoPlanePrice, p.YourMargin, p.Oid, p.CustomerMargin, p.Margin, p.MarginType, jetARetail, jetACost).Item2
                         }
-                    }
-                }
-                foreach (CustomersGridViewModel model in customerGridVM)
+                    )
+                    .GroupBy(x => x.Oid)
+                    .Select(x => x.FirstOrDefault())
+                    .ToList();
+
+                PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
+                    .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
+                int defaultPricingTemplateId = 0;
+                if (defaultPricingTemplate != null)
                 {
-                    model.PricingTemplatesList = result;
-                    model.AllInPrice = result.Where(pt => pt.Name.Equals(model.PricingTemplateName)).Select(pt => pt.IntoPlanePrice).FirstOrDefault();
-                    model.FleetSize = (from ca in _context.CustomerAircrafts
-                                       where ca.GroupId.GetValueOrDefault() == groupId && ca.CustomerId == model.CustomerId
-                                       select ca).Count();
-
-                    model.Active = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == model.CustomerId && s.GroupId == model.GroupId).Active;
-                    model.NeedsAttention = model.PricingTemplateName.Equals("Default Template") ? true : false;
+                    defaultPricingTemplateId = defaultPricingTemplate.Oid;
+                    await FixCustomCustomerTypes(groupId, fboId, defaultPricingTemplateId);
                 }
 
-                customerGridVM = customerGridVM.OrderByDescending(s => s.FleetSize).ToList();
+                var customerAircraft =
+                    from aircraftByCustomer in _context.CustomerAircrafts
+                    where aircraftByCustomer.GroupId == groupId
+                    group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
+                    into results
+                    select new
+                    {
+                        results.Key.CustomerId,
+                        Tails = string.Join(",", results.Select(x => x.TailNumber)),
+                        Count = results.Count()
+                    };
+
+                List<CustomersGridViewModel> customerGridVM = await (
+                                                    from cg in _context.CustomerInfoByGroup
+                                                    join c in _context.Customers on cg.CustomerId equals c.Oid
+                                                    join cct in _context.CustomCustomerTypes on new { customerId = cg.CustomerId, fboId } equals
+                                                        new
+                                                        {
+                                                            customerId = cct.CustomerId,
+                                                            fboId = cct.Fboid
+                                                        } into leftJoinCCT
+                                                    from cct in leftJoinCCT.DefaultIfEmpty()
+                                                    join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid into leftJoinPT
+                                                    from pt in leftJoinPT.DefaultIfEmpty()
+                                                    join ff in _context.Fbofees on new { fboId, feeType = 8 } equals new
+                                                    {
+                                                        fboId = ff.Fboid,
+                                                        feeType = ff.FeeType
+                                                    } into leftJoinFF
+                                                    from ff in leftJoinFF.DefaultIfEmpty()
+                                                    join fp in _context.Fboprices.Where((x =>
+                                                        x.EffectiveFrom.Value < DateTime.Now &&
+                                                        (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.Now))) on new
+                                                        {
+                                                            fboId = (pt != null ? pt.Fboid : 0),
+                                                            product = (pt != null ? pt.MarginTypeProduct : "")
+                                                        } equals new
+                                                        {
+                                                            fboId = fp.Fboid.GetValueOrDefault(),
+                                                            product = fp.Product
+                                                        } into leftJoinFP
+                                                    from fp in leftJoinFP.DefaultIfEmpty()
+                                                    join cvf in _context.CustomersViewedByFbo on new { cg.CustomerId, Fboid = fboId } equals new
+                                                    {
+                                                        cvf.CustomerId,
+                                                        cvf.Fboid
+                                                    } into letJoinCVF
+                                                    from cvf in letJoinCVF.DefaultIfEmpty()
+                                                    join ccot in _context.CustomerCompanyTypes on new {
+                                                            CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
+                                                            cg.GroupId 
+                                                        } equals new { 
+                                                            CustomerCompanyType = ccot.Oid,
+                                                            GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId
+                                                        }
+                                                    into leftJoinCCOT
+                                                    from ccot in leftJoinCCOT.DefaultIfEmpty()
+                                                    join ca in customerAircraft on cg.CustomerId equals ca.CustomerId
+                                                    into leftJoinCA
+                                                    from ca in leftJoinCA.DefaultIfEmpty()
+                                                    join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
+                                                    into leftJoinCC
+                                                    from cc in leftJoinCC.DefaultIfEmpty()
+                                                    join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
+                                                    into leftJoinCIBG
+                                                    from cibg in leftJoinCIBG.DefaultIfEmpty()
+                                                    join ai in result on new { Name = (string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name) } equals new { ai.Name}
+                                                    into leftJoinAi
+                                                    from ai in leftJoinAi.DefaultIfEmpty()
+                                                    where cg.GroupId == groupId
+                                                    group cg by new
+                                                    {
+                                                        cg.CustomerId,
+                                                        CustomerInfoByGroupId = cg.Oid,
+                                                        cg.Company,
+                                                        DefaultCustomerType = cg.CustomerType.GetValueOrDefault(),
+                                                        FboPrice = fp == null || fp.Price == null ? 0 : fp.Price,
+                                                        FboFeeAmount = ff == null || ff.FeeAmount == null ? 0 : ff.FeeAmount,
+                                                        Suspended = cg.Suspended.GetValueOrDefault(),
+                                                        FuelerLinxId = c.FuelerlinxId.GetValueOrDefault(),
+                                                        Network = cg.Network.GetValueOrDefault(),
+                                                        cg.GroupId,
+                                                        CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
+                                                        CustomerCompanyTypeName = ccot.Name,
+                                                        ca.Tails,
+                                                        CertificateType = cg.CertificateType.GetValueOrDefault(),
+                                                        ContactExists = cibg == null || !cibg.CopyAlerts.HasValue ? false : cibg.CopyAlerts,
+                                                        PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name,
+                                                        HasBeenViewed = (cvf != null && cvf.Oid > 0),
+                                                        IsPricingExpired = ai == null ? false : ai.IsPricingExpired,
+                                                        Active = cg.Active.GetValueOrDefault(),
+                                                        FleetSize = ca == null ? 0 : ca.Count,
+                                                        AllInPrice = ai == null ? 0 : ai.IntoPlanePrice
+                                                    }
+                                                    into resultsGroup
+                                                    select new CustomersGridViewModel()
+                                                    {
+                                                        CustomerId = resultsGroup.Key.CustomerId,
+                                                        CustomerInfoByGroupId = resultsGroup.Key.CustomerInfoByGroupId,
+                                                        Company = resultsGroup.Key.Company,
+                                                        DefaultCustomerType = resultsGroup.Key.DefaultCustomerType,
+                                                        FboPrice = resultsGroup.Key.FboPrice,
+                                                        FboFeeAmount = resultsGroup.Key.FboFeeAmount,
+                                                        Suspended = resultsGroup.Key.Suspended,
+                                                        FuelerLinxId = resultsGroup.Key.FuelerLinxId,
+                                                        Network = resultsGroup.Key.Network,
+                                                        GroupId = resultsGroup.Key.GroupId,
+                                                        CustomerCompanyType = resultsGroup.Key.CustomerCompanyType,
+                                                        CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
+                                                        TailNumbers = resultsGroup.Key.Tails,
+                                                        HasBeenViewed = resultsGroup.Key.HasBeenViewed,
+                                                        CertificateType = resultsGroup.Key.CertificateType,
+                                                        IsPricingExpired = resultsGroup.Key.IsPricingExpired,
+                                                        PricingTemplateName = resultsGroup.Key.PricingTemplateName,
+                                                        Active = resultsGroup.Key.Active,
+                                                        NeedsAttention = resultsGroup.Key.PricingTemplateName.Equals(defaultPricingTemplate.Name) ? true : false,
+                                                        ContactExists = resultsGroup.Key.ContactExists,
+                                                        FleetSize = resultsGroup.Key.FleetSize,
+                                                        AllInPrice = resultsGroup.Key.AllInPrice,
+                                                        PricingTemplatesList = result,
+                                                        SelectAll = false,
+                                                    })
+                                                    .GroupBy(p => p.CustomerId)
+                                                    .Select(g => g.FirstOrDefault())
+                                                    .OrderByDescending(s => s.FleetSize.GetValueOrDefault())
+                                                    .ToListAsync();
+                await _context.SaveChangesAsync();
 
                 return customerGridVM;
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                string sss = ex.Message;
                 return null;
             }
+        }
+
+        private async Task FixCustomCustomerTypes(int groupId, int fboId, int defaultPricingTemplateId)
+        {
+            List<int> pricingTemplates = await _context.PricingTemplate.Where(p => p.Fboid.Equals(fboId)).Select(p => p.Oid).ToListAsync();
+            var filteredList = await (
+                from cg in _context.CustomerInfoByGroup
+                join cct in _context.CustomCustomerTypes
+                on new { customerId = cg.CustomerId, fboId }
+                   equals
+                   new
+                   {
+                       customerId = cct.CustomerId,
+                       fboId = cct.Fboid
+                   } into leftJoinCCT
+                from cct in leftJoinCCT.DefaultIfEmpty()
+                where cg.GroupId.Equals(groupId)
+                select new
+                {
+                    cg.CustomerId,
+                    cct
+                })
+                .Distinct()
+                .ToListAsync();
+
+            filteredList.ForEach(c =>
+            {
+                if (c.cct == null)
+                {
+                    CustomCustomerTypes newcct = new CustomCustomerTypes
+                    {
+                        CustomerId = c.CustomerId,
+                        CustomerType = defaultPricingTemplateId,
+                        Fboid = fboId
+                    };
+                    _context.CustomCustomerTypes.Add(newcct);
+                }
+                else
+                {
+                    bool customerTypeExits = pricingTemplates.Any(p => p.Equals(c.cct.CustomerType));
+                    if (!customerTypeExits)
+                    {
+                        c.cct.CustomerType = defaultPricingTemplateId;
+                        _context.CustomCustomerTypes.Update(c.cct);
+                    }
+                }
+            });
+
+            await _context.SaveChangesAsync();
         }
     }
 }

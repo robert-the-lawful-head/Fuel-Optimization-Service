@@ -9,12 +9,12 @@
     font-family: "Lato", sans-serif;
     line-height: 1.32;
 }
-body .mat-form-field-flex .mat-form-field-prefix  {
+body .mat-form-field-flex .mat-form-field-prefix {
     padding-right: 0;
 }
 
-.updateClass .mat-form-field-label-wrapper{
-    left:-10px !important;
+.updateClass .mat-form-field-label-wrapper {
+    left: -10px !important;
 }
 body .disabledInput .mat-form-field-wrapper .mat-form-field-underline {
     background-image: none !important;
@@ -31,4 +31,13 @@ body .disabledInput .mat-form-field-flex .mat-form-field-prefix {
     top: calc(100% + 5px);
     font-size: 12px;
     color: red;
+}
+
+.tooltip-button {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    visibility: hidden;
 }

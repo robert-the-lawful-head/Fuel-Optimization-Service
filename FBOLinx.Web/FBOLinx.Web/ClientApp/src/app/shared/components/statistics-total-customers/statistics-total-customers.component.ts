@@ -1,29 +1,30 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 
-//Services
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { SharedService } from '../../../layouts/shared-service';
+// Services
+import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
+import { SharedService } from "../../../layouts/shared-service";
 
 @Component({
-    selector: 'app-statistics-total-customers',
-    templateUrl: './statistics-total-customers.component.html',
-    styleUrls: ['./statistics-total-customers.component.scss']
+    selector: "app-statistics-total-customers",
+    templateUrl: "./statistics-total-customers.component.html",
+    styleUrls: ["./statistics-total-customers.component.scss"],
 })
-/** statisticsTotalCustomers component*/
+// statisticsTotalCustomers component
 export class StatisticsTotalCustomersComponent implements OnInit {
-
     @Input() options: any;
 
-    //Public Members
+    // Public Members
     public totalCustomers: number;
 
-    /** statisticsTotalCustomers ctor */
-    constructor(private router: Router,
+    constructor(
+        private router: Router,
         private customerinfobygroupService: CustomerinfobygroupService,
-        private sharedService: SharedService) {
-        if (!this.options)
+        private sharedService: SharedService
+    ) {
+        if (!this.options) {
             this.options = {};
+        }
     }
 
     ngOnInit() {
@@ -31,12 +32,17 @@ export class StatisticsTotalCustomersComponent implements OnInit {
     }
 
     public redirectClicked() {
-        this.router.navigate(['/default-layout/customers']);
+        this.router.navigate(["/default-layout/customers"]);
     }
 
     public refreshData() {
-        this.customerinfobygroupService.getCustomerCountByGroupAndFBO(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.totalCustomers = data;
-        });
+        this.customerinfobygroupService
+            .getCustomerCountByGroupAndFBO(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
+            .subscribe((data: any) => {
+                this.totalCustomers = data;
+            });
     }
 }

@@ -11,7 +11,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/dashboard-admin",
-        "roles": [ 9999 ]
+        "roles": [9999]
     },
     {
         "title": "Dashboard (FBO)",
@@ -20,8 +20,9 @@
             "bg": "#ea8080",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers",
         "routing": "/default-layout/dashboard-fbo",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
     },
     {
         "title": "FBO Group",
@@ -31,7 +32,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/fbos",
-        "roles": [ 2 ]
+        "roles": [2]
     },
     {
         "title": "Groups",
@@ -41,7 +42,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/groups",
-        "roles": [ 3 ]
+        "roles": [3]
     },
     {
         "title": "FBOs",
@@ -51,7 +52,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/fbos",
-        "roles": [ 3 ]
+        "roles": [3]
     },
     {
         "title": "Margin Templates",
@@ -60,8 +61,9 @@
             "bg": "#C5CAE9",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Create and manage margin templates for your customer",
         "routing": "/default-layout/pricing-templates",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
     },
     {
         "title": "Customer Manager",
@@ -70,8 +72,9 @@
             "bg": "#FFCCBC",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Create, manage, and assign each customer or aircraft to a Margin template",
         "routing": "/default-layout/customers",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
     },
     {
         "title": "Fuel Orders",
@@ -80,8 +83,9 @@
             "bg": "#B3E5FC",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "See your incoming fuel orders",
         "routing": "/default-layout/fuelreqs",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
     },
     {
         "title": "Ramp Fees",
@@ -90,7 +94,18 @@
             "bg": "rgb(255, 224, 130)",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Enter and manage your fees",
         "routing": "/default-layout/rampfees",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
+    },
+    {
+        "title": "Analytics",
+        "icon": {
+            "class": "fa fa-line-chart",
+            "bg": "rgb(178, 223, 219)",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/analytics",
+        "roles": [1, 4]
     }
 ]

@@ -1,51 +1,112 @@
-<div class="card-wrap"
-     [ngClass]="{
-    'success-card': bgColor === 'success',
-    'info-card': bgColor === 'info',
-     'gray-card': bgColor === 'gray',
-    'warning-card': bgColor === 'warning',
-    'danger-card': bgColor === 'danger',
-    'success-color-card': color === 'success',
-    'info-color-card': color === 'info',
-    'warning-color-card': color === 'warning',
-    'danger-color-card': color === 'danger',
-    'bg-image-card': bgImage,
-    'outline-card': outline
-  }"
-     [ngStyle]="{
-   'background-color': customBgColor,
-   'background-image': 'url(' + bgImage + ')',
-   'border-color': customBgColor,
-   'color': customColor
-  }">
-    <h3 class="card-header h5"
+<div
+    class="card-wrap"
+    [ngClass]="{
+        'success-card': bgColor === 'success',
+        'info-card': bgColor === 'info',
+        'gray-card': bgColor === 'gray',
+        'warning-card': bgColor === 'warning',
+        'danger-card': bgColor === 'danger',
+        'success-color-card': color === 'success',
+        'info-color-card': color === 'info',
+        'warning-color-card': color === 'warning',
+        'danger-color-card': color === 'danger',
+        'bg-image-card': bgImage,
+        'outline-card': outline
+    }"
+    [ngStyle]="{
+        'background-color': customBgColor,
+        'background-image': 'url(' + bgImage + ')',
+        'border-color': customBgColor,
+        color: customColor
+    }"
+>
+    <h3
+        class="card-header h5"
         *ngIf="title"
         [ngClass]="{
-      'text-right': align === 'right',
-      'text-center': align === 'center',
-      'success-card-header': headerBgColor === 'success',
-    'info-card-header': headerBgColor === 'info',
-        'gray-card-header': headerBgColor === 'gray',
-    'warning-card-header': headerBgColor === 'warning',
-    'danger-card-header': headerBgColor === 'danger',
-    'success-color-card-header': headerColor === 'success',
-    'info-color-card-header': headerColor === 'info',
-    'warning-color-card-header': headerColor === 'warning',
-    'danger-color-card-header': headerColor === 'danger',
-      'small-header': theme === 'small'
-    }">
+            'text-right': align === 'right',
+            'text-center': align === 'center',
+            'success-card-header': headerBgColor === 'success',
+            'info-card-header': headerBgColor === 'info',
+            'gray-card-header': headerBgColor === 'gray',
+            'warning-card-header': headerBgColor === 'warning',
+            'danger-card-header': headerBgColor === 'danger',
+            'success-color-card-header': headerColor === 'success',
+            'info-color-card-header': headerColor === 'info',
+            'warning-color-card-header': headerColor === 'warning',
+            'danger-color-card-header': headerColor === 'danger',
+            'small-header': theme === 'small'
+        }"
+    >
         <div class="row">
             <div class="col-12">
-                {{title}}&nbsp;<button title="Temporarily increase or decrease your pricing to ALL customers" *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 pull-right" (click)="openAddOnMargin()">Add On Margin</button>&nbsp;<button title="Suspend pricing for all customers" *ngIf="visibleSuspend=='true' && !tempId && visible=='true'" ni-button [view]="'info'" style="background-color:red; color:white;" class="mr-4 pull-right" (click)="suspendPricing()">Cancel Pricing</button>
+                {{ title }}
+                &nbsp;
+                <button
+                    #tooltip
+                    ni-button
+                    title="Temporarily increase or decrease your pricing to ALL customers"
+                    *ngIf="!tempId && visible == 'true'"
+                    [view]="'info'"
+                    style="background-color: #fff;"
+                    class="mr-1 pull-right"
+                    (click)="
+                        openAddOnMargin({
+                            event: $event,
+                            placement: 'bottom-left',
+                            tooltipData: {
+                                title: 'Add-on Margin: Usability',
+                                content:
+                                    'This is an additional margin that applies across the board to all customers and all templates (including Cost + and Retail -).  A value of $0.10 will increase all prices and all volume tiers by $0.10.  Simply click &quot;Clear Margin&quot; to instantly remove for all customers.',
+                                okText: 'Proceed',
+                                proceed: true
+                            }
+                        })
+                    "
+                >
+                    Add On Margin
+                </button>
+                &nbsp;
+                <button
+                    ni-button
+                    title="Suspend pricing for all customers"
+                    *ngIf="
+                        !tempId && visible == 'true' && visibleSuspend == 'true'
+                    "
+                    [view]="'info'"
+                    style="background-color: red; color: white;"
+                    class="mr-4 pull-right"
+                    (click)="suspendPricing()"
+                >
+                    Cancel Pricing
+                </button>
+                <button
+                    #cancelTooltip
+                    style="right: 350px;"
+                    class="tooltip-button"
+                    (click)="
+                        showPopover({
+                            event: $event,
+                            placement: 'left',
+                            tooltipData: {
+                                title: 'Cancel Pricing',
+                                content:
+                                    'This will suspend your pricing from the system'
+                            }
+                        })
+                    "
+                ></button>
             </div>
         </div>
     </h3>
-    <div class="card-content"
-         [ngClass]="{
-      'text-right': align === 'right',
-      'text-center': align === 'center'
-    }"
-         [ngStyle]="{'padding': indents}">
+    <div
+        class="card-content"
+        [ngClass]="{
+            'text-right': align === 'right',
+            'text-center': align === 'center'
+        }"
+        [ngStyle]="{ padding: indents }"
+    >
         <ng-content></ng-content>
     </div>
 </div>

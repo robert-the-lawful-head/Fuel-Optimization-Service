@@ -1,66 +1,158 @@
 <div>
     <div>
         <mat-form-field>
-            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Name or Type">
+            <input
+                matInput
+                (keyup)="applyFilter($event.target.value)"
+                placeholder="Search by Name or Type"
+            />
             <span matPrefix><i class="fa fa-search"></i></span>
         </mat-form-field>
 
-        <table mat-table [dataSource]="pricingTemplatesDataSource" class="col-md-12" matSort matSortActive="name" matSortDirection="asc">
-
+        <table
+            mat-table
+            [dataSource]="pricingTemplatesDataSource"
+            class="col-md-12"
+            matSort
+            matSortActive="name"
+            matSortDirection="asc"
+        >
             <ng-container matColumnDef="isInvalid">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
                 <td mat-cell *matCellDef="let pricingTemplate">
-                    <ni-badge *ngIf="pricingTemplate.isInvalid" [color]="'danger'" [borderRadius]="false" [arrow]="'right'" [matTooltipPosition]="'after'" [matTooltip]="'The pricing used by this template has been hidden/disabled in the FBO Prices section.'">Invalid</ni-badge>
+                    <ni-badge
+                        *ngIf="pricingTemplate.isInvalid"
+                        [color]="'danger'"
+                        [borderRadius]="false"
+                        [arrow]="'right'"
+                        [matTooltipPosition]="'after'"
+                        [matTooltip]="
+                            'The pricing used by this template has been hidden/disabled in the FBO Prices section.'
+                        "
+                        >Invalid</ni-badge
+                    >
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
                 <td mat-cell *matCellDef="let pricingTemplate">
-                    {{pricingTemplate.name}}
-                    <sup *ngIf="pricingTemplate.default" style="color: green; font-weight: bold;">Default</sup>
+                    {{ pricingTemplate.name }}
+                    <sup
+                        *ngIf="pricingTemplate.default"
+                        style="color: green; font-weight: bold;"
+                        >Default</sup
+                    >
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="marginTypeDescription">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Pricing Type</th>
-                <td mat-cell *matCellDef="let pricingTemplate">{{pricingTemplate.marginTypeDescription}}</td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Pricing Type
+                </th>
+                <td mat-cell *matCellDef="let pricingTemplate">
+                    {{ pricingTemplate.marginTypeDescription }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="yourMargin">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>ITP Margin (Cost +) or Discount (Retail -)</th>
-                <td mat-cell *matCellDef="let pricingTemplate">{{pricingTemplate.yourMargin | currency:'USD'}}</td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    ITP Margin (Cost +) or Discount (Retail -)
+                </th>
+                <td mat-cell *matCellDef="let pricingTemplate">
+                    {{ pricingTemplate.yourMargin | currency: "USD" }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="intoPlanePrice">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>All-In</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    All-In
+                </th>
                 <td mat-cell *matCellDef="let pricingTemplate">
-                    <span *ngIf="!pricingTemplate.isPricingExpired">{{pricingTemplate.intoPlanePrice | currency:'USD'}}</span>
-                    <span *ngIf="pricingTemplate.isPricingExpired" style="color: red; font-weight: bold;">Expired</span>
+                    <span *ngIf="!pricingTemplate.isPricingExpired">{{
+                        pricingTemplate.intoPlanePrice | currency: "USD"
+                    }}</span>
+                    <span
+                        *ngIf="pricingTemplate.isPricingExpired"
+                        style="color: red; font-weight: bold;"
+                        >Expired</span
+                    >
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="customersAssigned">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Customers Assigned</th>
-                <td mat-cell *matCellDef="let pricingTemplate">{{ pricingTemplate.customersAssigned }}</td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Customers Assigned
+                </th>
+                <td mat-cell *matCellDef="let pricingTemplate">
+                    {{ pricingTemplate.customersAssigned }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="copy">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    &nbsp;
+                </th>
+                <td mat-cell *matCellDef="let pricingTemplate">
+                    <div class="pull-right">
+                        <button
+                            ni-button
+                            size="small"
+                            style="
+                                background-color: white !important;
+                                color: black !important;
+                                border: 1px solid black;
+                                width: 70px !important;
+                            "
+                            beforeIcon="fa fa-copy"
+                            (click)="
+                                copyPricingTemplate(pricingTemplate);
+                                $event.stopPropagation()
+                            "
+                        >
+                            Copy
+                        </button>
+                    </div>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="delete">
                 <th mat-header-cell *matHeaderCellDef>
                     <div class="pull-right">
-                        <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addNewPricingTemplate()">Add New</button>
+                        <button
+                            ni-button
+                            [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            (click)="addNewPricingTemplate()"
+                        >
+                            Add New
+                        </button>
                     </div>
                 </th>
                 <td mat-cell *matCellDef="let pricingTemplate">
                     <div class="pull-right">
-                        <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deletePricingTemplate(pricingTemplate);$event.stopPropagation();">Delete</button>
+                        <button
+                            ni-button
+                            [view]="'error'"
+                            size="small"
+                            beforeIcon="fa fa-trash"
+                            (click)="
+                                deletePricingTemplate(pricingTemplate);
+                                $event.stopPropagation()
+                            "
+                        >
+                            Delete
+                        </button>
                     </div>
                 </td>
             </ng-container>
 
-
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editPricingTemplate(row,$event)"></tr>
+            <tr
+                mat-row
+                *matRowDef="let row; columns: displayedColumns"
+                (click)="editPricingTemplate(row, $event)"
+            ></tr>
         </table>
     </div>
 
