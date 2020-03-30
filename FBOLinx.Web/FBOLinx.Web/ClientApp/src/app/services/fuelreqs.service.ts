@@ -79,6 +79,20 @@ export class FuelreqsService {
         );
     }
 
+    public getVolumesNearbyAirport(fboId: number, startDate: Date, endDate: Date, mile: number) {
+        return this.http.post(
+            this.accessPointUrl + "/fbo/" + fboId + "/volumesNearby",
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+                distanceMile: mile
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public get(payload) {
         return this.http.get(this.accessPointUrl + "/" + payload.oid, {
             headers: this.headers,

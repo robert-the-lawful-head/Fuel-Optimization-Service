@@ -1,0 +1,23 @@
+<ni-card title="Comparison for nearby airports" [headerBgColor]="'gray'">
+    <div class="chart-container">
+        <ngx-charts-pie-chart
+            *ngIf="totalOrdersData"
+            [results]="totalOrdersData"
+            [scheme]="colorScheme"
+            [gradient]="true"
+            [legend]="false"
+            [labels]="true"
+        ></ngx-charts-pie-chart>
+    </div>
+    <div class="distance-selector">
+        <label>Miles: </label>
+        <mat-slider
+            thumbLabel
+            tickInterval="1"
+            min="0"
+            max="200"
+            [value]="mile"
+            (change)="changeMile($event)"
+        ></mat-slider>
+    </div>
+</ni-card>

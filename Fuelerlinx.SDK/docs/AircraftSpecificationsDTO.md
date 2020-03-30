@@ -1,0 +1,45 @@
+# IO.Swagger.Model.AircraftSpecificationsDTO
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**Oid** | **int?** |  | [optional] 
+**AircraftId** | **int?** |  | [optional] 
+**ModelName** | **string** |  | [optional] 
+**FuselageDimensionsLengthFt** | **double?** |  | [optional] 
+**FuselageDimensionsHeightFt** | **double?** |  | [optional] 
+**FuselageDimensionsWingSpanFt** | **double?** |  | [optional] 
+**CabinDimensionsLengthFtInches** | **string** |  | [optional] 
+**CabinDimensionsHeightFtInches** | **string** |  | [optional] 
+**CabinDimensionsWidthFtInches** | **string** |  | [optional] 
+**CrewConfiguration** | **double?** |  | [optional] 
+**PassengerConfiguration** | **double?** |  | [optional] 
+**PressurizationPsi** | **double?** |  | [optional] 
+**FuelCapacityStandardLbs** | **double?** |  | [optional] 
+**FuelCapacityStandardGal** | **double?** |  | [optional] 
+**FuelCapacityOptionalLbs** | **double?** |  | [optional] 
+**FuelCapacityOptionalGal** | **double?** |  | [optional] 
+**MaxRampWeightLbs** | **double?** |  | [optional] 
+**MaxTakeoffWeightLbs** | **double?** |  | [optional] 
+**ZeroFuelWeightLbs** | **double?** |  | [optional] 
+**BasicOperatingWeightLbs** | **double?** |  | [optional] 
+**MaxLandingWeightLbs** | **double?** |  | [optional] 
+**VsCleanSpeedKnots** | **double?** |  | [optional] 
+**VsoLandingSpeedKnots** | **double?** |  | [optional] 
+**NormalCruiseTasSpeedKnots** | **double?** |  | [optional] 
+**VmoMaxOpIasSpeedKnots** | **double?** |  | [optional] 
+**NormalClimbFpm** | **double?** |  | [optional] 
+**EngineOutClimbFpm** | **double?** |  | [optional] 
+**CeilingFt** | **double?** |  | [optional] 
+**LandingPerfFaaFieldLengthFt** | **double?** |  | [optional] 
+**TakeoffPerfSlIsaBfl** | **double?** |  | [optional] 
+**TakeoffPerf500020cBfl** | **double?** |  | [optional] 
+**RangeNm** | **double?** |  | [optional] 
+**NumberOfEngines** | **double?** |  | [optional] 
+**EngineModelS** | **string** |  | [optional] 
+**EngineThrustLbsPerEngine** | **double?** |  | [optional] 
+**EngineShaftHpPerEngine** | **double?** |  | [optional] 
+**EngineCommonTboHours** | **double?** |  | [optional] 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+

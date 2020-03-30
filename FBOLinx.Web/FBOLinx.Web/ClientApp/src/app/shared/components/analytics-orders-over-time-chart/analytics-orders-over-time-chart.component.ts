@@ -15,13 +15,17 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
     public totalOrdersData: any[];
     colorScheme = {
         domain: [
-            "#5AA454",
-            "#E44D25",
-            "#CFC0BB",
-            "#7aa3e5",
-            "#a8385d",
-            "#aae3f5",
-        ],
+            '#a8385d',
+            '#7aa3e5',
+            '#a27ea8',
+            '#aae3f5',
+            '#adcded',
+            '#a95963',
+            '#8796c0',
+            '#7ed3ed',
+            '#50abcc',
+            '#ad6886'
+        ]
     };
 
     constructor(
