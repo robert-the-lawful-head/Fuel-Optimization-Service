@@ -59,15 +59,10 @@ namespace FBOLinx.Web.Services
             }
         }
 
-        public FBOLinxNearbyAirportsResponse GetTransactionsForNearbyAirports(int distanceInMiles, DateTime startDate, DateTime endDate)
+        public FBOLinxNearbyAirportsResponse GetTransactionsForNearbyAirports(FBOLinxNearbyAirportsRequest request)
         {
             var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            var results = api.GetTransactionsCountForNearbyAirports(new FBOLinxNearbyAirportsRequest()
-            {
-                DistanceMile = distanceInMiles,
-                StartDateTime = startDate,
-                EndDateTime = endDate
-            });
+            FBOLinxNearbyAirportsResponse results = api.GetTransactionsCountForNearbyAirports(request);
             return results;
         }
         #endregion
@@ -110,6 +105,9 @@ namespace FBOLinx.Web.Services
         {
             if (!IO.Swagger.Client.Configuration.ApiKey.ContainsKey("x-api-key"))
                 IO.Swagger.Client.Configuration.ApiKey.Add("x-api-key", _APIKey);
+
+            if (!IO.Swagger.Client.Configuration.ApiKey.ContainsKey("Authorization"))
+                IO.Swagger.Client.Configuration.ApiKey.Add("Authorization", "");
         }
         #endregion
     }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import * as _ from "lodash";
+import { MatSliderChange } from '@angular/material/slider';
 
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
@@ -44,7 +45,16 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
         this.fuelreqsService
             .getVolumesNearbyAirport(this.sharedService.currentUser.fboId, startDate, endDate, this.mile)
             .subscribe((data: any) => {
-                console.log(data);
+                this.totalOrdersData = data;
             });
+    }
+
+    public formatLabel(value: number) {
+        return value + 'mi';
+    }
+
+    public changeMile(event: MatSliderChange) {
+        this.mile = event.value;
+        this.refreshData();
     }
 }

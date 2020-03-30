@@ -14,6 +14,7 @@ using FBOLinx.Web.Models.Responses;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using IO.Swagger.Model;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -433,9 +434,9 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(fuelReqsByMonth);
         }
-        
+
         [HttpPost("fbo/{fboId}/volumesNearby")]
-        public async Task<IActionResult> GetCountOfOrderVolumesNearByAirportAsync([FromRoute] int fboId, [FromBody] FuelerLinxVolumesNearByAirportRequestContent request = null)
+        public IActionResult GetCountOfOrderVolumesNearByAirport([FromRoute] int fboId, [FromBody] FBOLinxNearbyAirportsRequest request = null)
         {
             if (!ModelState.IsValid)
             {
@@ -447,11 +448,14 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest("Invalid FBO");
             }
 
-            List<FuelerLinxVolumesNearByAirportResponseContent> volumes = await _fuelerLinxService.GetCountOfOrderVolumesNearByAirport(request);
+            string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+            request.Icao = icao;
+
+            List<FBOLinxNearbyAirportsModel> volumes = _fuelerLinxService.GetTransactionsForNearbyAirports(request).Result;
             var result = volumes.Select(f => new
             {
-                Name = f.ICAO,
-                Value = f.Count
+                Name = f.Icao,
+                Value = f.AirportsCount
             });
             return Ok(result);
         }

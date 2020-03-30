@@ -9,4 +9,15 @@
             [labels]="true"
         ></ngx-charts-pie-chart>
     </div>
+    <div class="distance-selector">
+        <label>Miles: </label>
+        <mat-slider
+            thumbLabel
+            tickInterval="1"
+            min="0"
+            max="200"
+            [value]="mile"
+            (change)="changeMile($event)"
+        ></mat-slider>
+    </div>
 </ni-card>

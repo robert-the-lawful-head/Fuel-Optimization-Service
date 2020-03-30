@@ -75,6 +75,5 @@ BEGIN
 		  , dbo.fn_Calc_Distance_Miles(@OrigLat, @OrigLong, lat, long) AS Distance
 		FROM #GeoTable
 	) DistanceTable
-	WHERE ICAO <> @ICAO
-		AND (@Mile IS NULL OR Distance < @Mile)
+	WHERE @Mile IS NULL OR Distance < @Mile
 END

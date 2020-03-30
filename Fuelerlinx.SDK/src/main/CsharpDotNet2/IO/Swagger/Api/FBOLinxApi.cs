@@ -90,7 +90,7 @@ namespace IO.Swagger.Api
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+            postBody = ApiClient.Serialize(body); // http body (model) parameter
     
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };

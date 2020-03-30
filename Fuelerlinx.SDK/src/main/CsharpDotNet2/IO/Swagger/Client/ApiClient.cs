@@ -263,7 +263,6 @@ namespace IO.Swagger.Client
                         break;
                     case "Bearer":
                         headerParams["Authorization"] = GetApiKeyWithPrefix("Authorization");
-                        
                         break;
                     default:
                         //TODO show warning about security definition not found
