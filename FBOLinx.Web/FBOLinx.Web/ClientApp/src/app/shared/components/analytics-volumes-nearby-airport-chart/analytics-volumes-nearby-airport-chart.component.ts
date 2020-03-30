@@ -6,13 +6,14 @@ import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
 
 @Component({
-    selector: "app-analytics-orders-over-time",
-    templateUrl: "./analytics-orders-over-time-chart.component.html",
-    styleUrls: ["./analytics-orders-over-time-chart.component.scss"],
+    selector: "app-analytics-volumes-nearby-airport",
+    templateUrl: "./analytics-volumes-nearby-airport-chart.component.html",
+    styleUrls: ["./analytics-volumes-nearby-airport-chart.component.scss"],
 })
-export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
+export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
     // Public Members
     public totalOrdersData: any[];
+    public mile = 200;
     colorScheme = {
         domain: [
             '#a8385d',
@@ -41,9 +42,9 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
         const startDate = this.sharedService.dashboardSettings.filterStartDate;
         const endDate = this.sharedService.dashboardSettings.filterEndDate;
         this.fuelreqsService
-            .getOrders(this.sharedService.currentUser.fboId, startDate, endDate)
+            .getVolumesNearbyAirport(this.sharedService.currentUser.fboId, startDate, endDate, this.mile)
             .subscribe((data: any) => {
-                this.totalOrdersData = data;
+                console.log(data);
             });
     }
 }

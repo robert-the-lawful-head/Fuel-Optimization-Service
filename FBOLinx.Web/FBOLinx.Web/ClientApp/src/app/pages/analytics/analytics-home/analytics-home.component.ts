@@ -10,6 +10,7 @@ import { StatisticsTotalAircraftComponent } from "../../../shared/components/sta
 import { StatisticsOrdersByLocationComponent } from "../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component";
 import { AnalyticsOrdersQuoteChartComponent } from "../../../shared/components/analytics-orders-quote-chart/analytics-orders-quote-chart.component";
 import { AnalyticsOrdersOverTimeChartComponent } from "../../../shared/components/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component";
+import { AnalyticsVolumesNearbyAirportChartComponent } from "../../../shared/components/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component";
 
 const BREADCRUMBS: any[] = [
     {
@@ -40,6 +41,8 @@ export class AnalyticsHomeComponent {
     public analyticsOrdersQuoteChart: AnalyticsOrdersQuoteChartComponent;
     @ViewChild("analyticsOrdersOverTimeChart")
     public analyticsOrdersOverTimeChart: AnalyticsOrdersOverTimeChartComponent;
+    @ViewChild("analyticsVolumesNearbyAirportChart")
+    public analyticsVolumesNearbyAirportChart: AnalyticsVolumesNearbyAirportChartComponent;
 
     public pageTitle = "Analytics";
     public breadcrumb: any[] = BREADCRUMBS;
@@ -62,5 +65,6 @@ export class AnalyticsHomeComponent {
         this.statisticsOrdersByLocation.refreshData();
         this.analyticsOrdersQuoteChart.refreshData();
         this.analyticsOrdersOverTimeChart.refreshData();
+        this.analyticsVolumesNearbyAirportChart.refreshData();
     }
 }

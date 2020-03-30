@@ -29,7 +29,7 @@ namespace FBOLinx.Web.Services
         }
 
         #region Public Methods
-        public async Task<Models.Responses.FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(Models.Requests.FuelerLinxUpliftsByLocationRequestContent request)
+        public async Task<FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(FuelerLinxUpliftsByLocationRequestContent request)
         {
             var authToken = await GetAuthenticationTokenFromService();
             string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
@@ -54,6 +54,30 @@ namespace FBOLinx.Web.Services
                 }
             }
         }
+        public async Task<List<FuelerLinxVolumesNearByAirportResponseContent>> GetCountOfOrderVolumesNearByAirport(FuelerLinxVolumesNearByAirportRequestContent request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            string volumesNearbyURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
+            if (string.IsNullOrEmpty(authToken))
+                return null;
+
+            request.UserServiceKey = authToken;
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("APIKey", _APIKey);
+                using (HttpResponseMessage response = await client.PostAsync(volumesNearbyURL,
+                    new Utilities.JsonContent(new FuelerLinxVolumesNearByAirportRequest()
+                    {
+                        request = request
+                    })))
+                {
+                    Task<FuelerLinxVolumesNearByAirportResponse> upliftsResult = response.Content.ReadAsAsync<FuelerLinxVolumesNearByAirportResponse>();
+                    if (upliftsResult == null || upliftsResult.Result == null || upliftsResult.Result.d == null)
+                        return new List<FuelerLinxVolumesNearByAirportResponseContent>() {  };
+                    return upliftsResult.Result.d;
+                }
+            }
+        }
         #endregion
 
         #region Private Methods
@@ -66,7 +90,7 @@ namespace FBOLinx.Web.Services
                 {
                     client.DefaultRequestHeaders.Add("APIKey", _APIKey);
                     using (HttpResponseMessage response = await client.PostAsync(authURL,
-                        new FBOLinx.Web.Utilities.JsonContent(new Models.Requests.FuelerLinxAuthenticationRequest()
+                        new Utilities.JsonContent(new FuelerLinxAuthenticationRequest()
                         {
                             request = new FuelerLinxAuthenticationRequestContent()
                             {
@@ -77,14 +101,14 @@ namespace FBOLinx.Web.Services
                         })))
                     {
                         var authenticationResult =
-                            response.Content.ReadAsAsync<Models.Responses.FuelerLinxAuthenticationResponse>();
+                            response.Content.ReadAsAsync<FuelerLinxAuthenticationResponse>();
                         if (authenticationResult == null || authenticationResult.Result == null || authenticationResult.Result.d == null)
                             return "";
                         return authenticationResult.Result.d.Token;
                     }
                 }
             }
-            catch (System.Exception exception)
+            catch (Exception)
             {
                 return "";
             }

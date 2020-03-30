@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
+using FBOLinx.Web.Models.Responses;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -432,6 +433,29 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(fuelReqsByMonth);
         }
+        
+        [HttpPost("fbo/{fboId}/volumesNearby")]
+        public async Task<IActionResult> GetCountOfOrderVolumesNearByAirportAsync([FromRoute] int fboId, [FromBody] FuelerLinxVolumesNearByAirportRequestContent request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            List<FuelerLinxVolumesNearByAirportResponseContent> volumes = await _fuelerLinxService.GetCountOfOrderVolumesNearByAirport(request);
+            var result = volumes.Select(f => new
+            {
+                Name = f.ICAO,
+                Value = f.Count
+            });
+            return Ok(result);
+        }
+
         // POST: api/FuelReqs/analysis/top-customers/fbo/5
         [HttpPost("analysis/top-customers/fbo/{fboId}")]
         public async Task<IActionResult> GetTopCustomersForFbo([FromRoute] int fboId, [FromBody] FuelReqsTopCustomersByFboRequest request)
@@ -630,7 +654,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(fuelReqsByAircraftSizeVM);
             }
-            catch (System.Exception exception)
+            catch (Exception exception)
             {
                 var test = exception;
                 return null;
@@ -639,7 +663,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/FuelReqs/analysis/fuelerlinx/orders-by-location
         [HttpPost("analysis/fuelerlinx/orders-by-location")]
-        public async Task<IActionResult> GetOrdersByLocation([FromBody] Models.Requests.FuelerLinxUpliftsByLocationRequestContent request)
+        public async Task<IActionResult> GetOrdersByLocation([FromBody] FuelerLinxUpliftsByLocationRequestContent request)
         {
             if (!ModelState.IsValid)
             {
@@ -648,8 +672,8 @@ namespace FBOLinx.Web.Controllers
 
             if (string.IsNullOrEmpty(request.ICAO))
             {
-                Models.User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
-                Models.Fboairports airport =
+                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
+                Fboairports airport =
                     await _context.Fboairports.Where(x => x.Fboid == request.FboId).FirstOrDefaultAsync();
 
                 if (airport == null)
