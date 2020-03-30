@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Json;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses;
+using IO.Swagger.Model;
 using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Services
@@ -18,19 +19,19 @@ namespace FBOLinx.Web.Services
         private string _ProductionUsername = "fbolinx";
         private string _ProductionPassword = "HjAQamk^Md!L9V-_";
         private string _APIKey = "";
-        private IOptions<AppPartnerSDKSettings.FuelerlinxSDKSettings> _fuelerlinxSdkSettings;
+        private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
         private IOptions<AppSettings> _appSettings;
 
         #endregion
 
-        public FuelerLinxService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings.FuelerlinxSDKSettings> fuelerlinxSDKSettings)
+        public FuelerLinxService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings)
         {
             _appSettings = appSettings;
-            _fuelerlinxSdkSettings = fuelerlinxSDKSettings;
-            _APIKey = _fuelerlinxSdkSettings.Value.APIKey;
+            _fuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
+            _APIKey = _fuelerlinxSdkSettings.APIKey;
+            PrepareAPIClientConfiguration();
         }
-
-
+        
         #region Public Methods
         public async Task<Models.Responses.FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(Models.Requests.FuelerLinxUpliftsByLocationRequestContent request)
         {
@@ -56,6 +57,18 @@ namespace FBOLinx.Web.Services
                     return upliftsResult.Result.d;
                 }
             }
+        }
+
+        public Task<object> GetTransactionsForNearbyAirports(int distanceInMiles, DateTime startDate, DateTime endDate)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            api.GetNearByAirports(new FBOLinxNearByAirportsRequest()
+            {
+                DistanceMile = distanceInMiles,
+                StartDateTime = startDate,
+                EndDateTime = endDate
+            });
+            return null;
         }
         #endregion
 
