@@ -59,15 +59,17 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new AccountingApi();
+            var id = 56;  // int? | 
 
             try
             {
-                OracleAccountingExportResponse result = apiInstance.GetPendingAccountingExport();
+                // Deletes supplier-details record based on ID
+                DeleteSupplierDetailsResponse result = apiInstance.DeleteSupplierDetails(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling AccountingApi.GetPendingAccountingExport: " + e.Message );
+                Debug.Print("Exception when calling AccountingApi.DeleteSupplierDetails: " + e.Message );
             }
         }
     }
@@ -81,7 +83,11 @@ All URIs are relative to *https://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*AccountingApi* | [**DeleteSupplierDetails**](docs/AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
 *AccountingApi* | [**GetPendingAccountingExport**](docs/AccountingApi.md#getpendingaccountingexport) | **GET** /api/Accounting/oracle/accounting-export/pending | 
+*AccountingApi* | [**GetSupplierDetailsById**](docs/AccountingApi.md#getsupplierdetailsbyid) | **GET** /api/Accounting/supplier-details/{id} | Fetch supplier-details for a particular FBO or Vendor based on the provided [ID].
+*AccountingApi* | [**PostSupplierDetails**](docs/AccountingApi.md#postsupplierdetails) | **POST** /api/Accounting/supplier-details | Adds a new record for supplier-details of an FBO or Vendor.
+*AccountingApi* | [**UpdateSupplierDetails**](docs/AccountingApi.md#updatesupplierdetails) | **PUT** /api/Accounting/supplier-details | Updates current supplier detail record
 *AircraftApi* | [**AddAircraftForCompany**](docs/AircraftApi.md#addaircraftforcompany) | **POST** /api/Aircraft/company | Add an aircraft to the authorized company.
 *AircraftApi* | [**AddAircraftForUser**](docs/AircraftApi.md#addaircraftforuser) | **POST** /api/Aircraft/user | Add an existing aircraft to the user's account.
 *AircraftApi* | [**AddTail**](docs/AircraftApi.md#addtail) | **POST** /api/Aircraft/tail | Add a new aircraft with a corresponding tail number to be used by a specific company/user.
@@ -139,7 +145,7 @@ Class | Method | HTTP request | Description
 *FBOApi* | [**PostFboDetailsByCompanyNotes**](docs/FBOApi.md#postfbodetailsbycompanynotes) | **POST** /api/FBO/company-specific-details/notes | Add company-specific notes for a particular FBO.  The note must be associated with a company-specific FBO record.
 *FBOApi* | [**UpdateFboDetailsByCompany**](docs/FBOApi.md#updatefbodetailsbycompany) | **PUT** /api/FBO/company-specific-details | Update company-specific details for a particular FBO.
 *FBOApi* | [**UpdateFboDetailsByCompanyNotes**](docs/FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
-*FBOLinxApi* | [**GetNearByAirports**](docs/FBOLinxApi.md#getnearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | 
+*FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | 
 *FeeApi* | [**DeleteServicesAndFeesByCompany**](docs/FeeApi.md#deleteservicesandfeesbycompany) | **DELETE** /api/Fee/company-specific/{feeId} | Delete a company-specific service/fee.
 *FeeApi* | [**GetServicesAndFeesByCompany**](docs/FeeApi.md#getservicesandfeesbycompany) | **GET** /api/Fee/company-specific/{feeId} | Fetch a company-specific service/fee by it's Id.
 *FeeApi* | [**GetServicesAndFeesByCompanyByLocation**](docs/FeeApi.md#getservicesandfeesbycompanybylocation) | **GET** /api/Fee/company-specific/by-location/{icao}/{fboName} | Fetch a company-specific service/fee by the ICAO and FBO.
@@ -369,6 +375,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteSavedTripLegResponse](docs/DeleteSavedTripLegResponse.md)
  - [IO.Swagger.Model.DeleteSavedTripResponse](docs/DeleteSavedTripResponse.md)
  - [IO.Swagger.Model.DeleteServicesAndFeesByCompanyResponse](docs/DeleteServicesAndFeesByCompanyResponse.md)
+ - [IO.Swagger.Model.DeleteSupplierDetailsResponse](docs/DeleteSupplierDetailsResponse.md)
  - [IO.Swagger.Model.DeleteSupportedInvoiceFileTemplateResponse](docs/DeleteSupportedInvoiceFileTemplateResponse.md)
  - [IO.Swagger.Model.DeleteTaxesByCountryResponse](docs/DeleteTaxesByCountryResponse.md)
  - [IO.Swagger.Model.DeleteTransactionAccountingDataResponse](docs/DeleteTransactionAccountingDataResponse.md)
@@ -393,7 +400,9 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ExchangeRefreshTokenResponse](docs/ExchangeRefreshTokenResponse.md)
  - [IO.Swagger.Model.FBOContact](docs/FBOContact.md)
  - [IO.Swagger.Model.FBOLinxFBOResponse](docs/FBOLinxFBOResponse.md)
- - [IO.Swagger.Model.FBOLinxNearByAirportsRequest](docs/FBOLinxNearByAirportsRequest.md)
+ - [IO.Swagger.Model.FBOLinxNearbyAirportsModel](docs/FBOLinxNearbyAirportsModel.md)
+ - [IO.Swagger.Model.FBOLinxNearbyAirportsRequest](docs/FBOLinxNearbyAirportsRequest.md)
+ - [IO.Swagger.Model.FBOLinxNearbyAirportsResponse](docs/FBOLinxNearbyAirportsResponse.md)
  - [IO.Swagger.Model.FBOsByCompanyDTO](docs/FBOsByCompanyDTO.md)
  - [IO.Swagger.Model.FboAirport](docs/FboAirport.md)
  - [IO.Swagger.Model.FboByCompanyNotesDTO](docs/FboByCompanyNotesDTO.md)
@@ -497,6 +506,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostScheduledLegFromIntegrationResponse](docs/PostScheduledLegFromIntegrationResponse.md)
  - [IO.Swagger.Model.PostServicesAndFeesByCompanyRequest](docs/PostServicesAndFeesByCompanyRequest.md)
  - [IO.Swagger.Model.PostServicesAndFeesByCompanyResponse](docs/PostServicesAndFeesByCompanyResponse.md)
+ - [IO.Swagger.Model.PostSupplierDetailsRequest](docs/PostSupplierDetailsRequest.md)
+ - [IO.Swagger.Model.PostSupplierDetailsResponse](docs/PostSupplierDetailsResponse.md)
  - [IO.Swagger.Model.PostSupportedInvoiceFileTemplateRequest](docs/PostSupportedInvoiceFileTemplateRequest.md)
  - [IO.Swagger.Model.PostSupportedInvoiceFileTemplateResponse](docs/PostSupportedInvoiceFileTemplateResponse.md)
  - [IO.Swagger.Model.PostTaxesByCountryRequest](docs/PostTaxesByCountryRequest.md)
@@ -548,6 +559,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.Summary](docs/Summary.md)
  - [IO.Swagger.Model.SummaryCustomizations](docs/SummaryCustomizations.md)
  - [IO.Swagger.Model.SummaryOptions](docs/SummaryOptions.md)
+ - [IO.Swagger.Model.SupplierDetailsDTO](docs/SupplierDetailsDTO.md)
+ - [IO.Swagger.Model.SupplierDetailsResponse](docs/SupplierDetailsResponse.md)
  - [IO.Swagger.Model.SupportedInvoiceFileTemplateDTO](docs/SupportedInvoiceFileTemplateDTO.md)
  - [IO.Swagger.Model.SupportedInvoiceFileTemplateResponse](docs/SupportedInvoiceFileTemplateResponse.md)
  - [IO.Swagger.Model.TaxesByCountryDTO](docs/TaxesByCountryDTO.md)
@@ -623,6 +636,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateSavedTripResponse](docs/UpdateSavedTripResponse.md)
  - [IO.Swagger.Model.UpdateServicesAndFeesByCompanyRequest](docs/UpdateServicesAndFeesByCompanyRequest.md)
  - [IO.Swagger.Model.UpdateServicesAndFeesByCompanyResponse](docs/UpdateServicesAndFeesByCompanyResponse.md)
+ - [IO.Swagger.Model.UpdateSupplierDetailsRequest](docs/UpdateSupplierDetailsRequest.md)
+ - [IO.Swagger.Model.UpdateSupplierDetailsResponse](docs/UpdateSupplierDetailsResponse.md)
  - [IO.Swagger.Model.UpdateSupportedFileTemplateRequest](docs/UpdateSupportedFileTemplateRequest.md)
  - [IO.Swagger.Model.UpdateSupportedInvoiceFileTemplateResponse](docs/UpdateSupportedInvoiceFileTemplateResponse.md)
  - [IO.Swagger.Model.UpdateTaxesByCountryRequest](docs/UpdateTaxesByCountryRequest.md)

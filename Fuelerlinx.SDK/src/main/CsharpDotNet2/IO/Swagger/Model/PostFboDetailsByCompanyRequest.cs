@@ -68,6 +68,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "preferredProduct")]
     public string PreferredProduct { get; set; }
 
+    /// <summary>
+    /// Gets or Sets SupplierID
+    /// </summary>
+    [DataMember(Name="supplierID", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "supplierID")]
+    public int? SupplierID { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -84,6 +91,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Email: ").Append(Email).Append("\n");
       sb.Append("  CopyOnDispatch: ").Append(CopyOnDispatch).Append("\n");
       sb.Append("  PreferredProduct: ").Append(PreferredProduct).Append("\n");
+      sb.Append("  SupplierID: ").Append(SupplierID).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

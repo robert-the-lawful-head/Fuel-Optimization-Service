@@ -4,12 +4,12 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**GetNearByAirports**](FBOLinxApi.md#getnearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | 
+[**GetTransactionsCountForNearbyAirports**](FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | 
 
 
-<a name="getnearbyairports"></a>
-# **GetNearByAirports**
-> void GetNearByAirports (FBOLinxNearByAirportsRequest body)
+<a name="gettransactionscountfornearbyairports"></a>
+# **GetTransactionsCountForNearbyAirports**
+> FBOLinxNearbyAirportsResponse GetTransactionsCountForNearbyAirports (FBOLinxNearbyAirportsRequest body)
 
 
 
@@ -23,7 +23,7 @@ using IO.Swagger.Model;
 
 namespace Example
 {
-    public class GetNearByAirportsExample
+    public class GetTransactionsCountForNearbyAirportsExample
     {
         public void main()
         {
@@ -38,15 +38,16 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new FBOLinxApi();
-            var body = new FBOLinxNearByAirportsRequest(); // FBOLinxNearByAirportsRequest |  (optional) 
+            var body = new FBOLinxNearbyAirportsRequest(); // FBOLinxNearbyAirportsRequest |  (optional) 
 
             try
             {
-                apiInstance.GetNearByAirports(body);
+                FBOLinxNearbyAirportsResponse result = apiInstance.GetTransactionsCountForNearbyAirports(body);
+                Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling FBOLinxApi.GetNearByAirports: " + e.Message );
+                Debug.Print("Exception when calling FBOLinxApi.GetTransactionsCountForNearbyAirports: " + e.Message );
             }
         }
     }
@@ -57,11 +58,11 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**FBOLinxNearByAirportsRequest**](FBOLinxNearByAirportsRequest.md)|  | [optional] 
+ **body** | [**FBOLinxNearbyAirportsRequest**](FBOLinxNearbyAirportsRequest.md)|  | [optional] 
 
 ### Return type
 
-void (empty response body)
+[**FBOLinxNearbyAirportsResponse**](FBOLinxNearbyAirportsResponse.md)
 
 ### Authorization
 
@@ -70,7 +71,7 @@ void (empty response body)
 ### HTTP request headers
 
  - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
- - **Accept**: Not defined
+ - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

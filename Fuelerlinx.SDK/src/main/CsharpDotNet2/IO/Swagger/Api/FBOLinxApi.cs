@@ -15,8 +15,8 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param>
-        /// <returns></returns>
-        void GetNearByAirports (FBOLinxNearByAirportsRequest body);
+        /// <returns>FBOLinxNearbyAirportsResponse</returns>
+        FBOLinxNearbyAirportsResponse GetTransactionsCountForNearbyAirports (FBOLinxNearbyAirportsRequest body);
     }
   
     /// <summary>
@@ -76,8 +76,8 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param> 
-        /// <returns></returns>            
-        public void GetNearByAirports (FBOLinxNearByAirportsRequest body)
+        /// <returns>FBOLinxNearbyAirportsResponse</returns>            
+        public FBOLinxNearbyAirportsResponse GetTransactionsCountForNearbyAirports (FBOLinxNearbyAirportsRequest body)
         {
             
     
@@ -99,11 +99,11 @@ namespace IO.Swagger.Api
             IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
     
             if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetNearByAirports: " + response.Content, response.Content);
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsCountForNearbyAirports: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetNearByAirports: " + response.ErrorMessage, response.ErrorMessage);
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsCountForNearbyAirports: " + response.ErrorMessage, response.ErrorMessage);
     
-            return;
+            return (FBOLinxNearbyAirportsResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxNearbyAirportsResponse), response.Headers);
         }
     
     }

@@ -117,6 +117,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "dispatchEmail")]
     public string DispatchEmail { get; set; }
 
+    /// <summary>
+    /// Gets or Sets SupplierID
+    /// </summary>
+    [DataMember(Name="supplierID", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "supplierID")]
+    public int? SupplierID { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -140,6 +147,7 @@ namespace IO.Swagger.Model {
       sb.Append("  VendorLinxGuid: ").Append(VendorLinxGuid).Append("\n");
       sb.Append("  TailNumbers: ").Append(TailNumbers).Append("\n");
       sb.Append("  DispatchEmail: ").Append(DispatchEmail).Append("\n");
+      sb.Append("  SupplierID: ").Append(SupplierID).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
