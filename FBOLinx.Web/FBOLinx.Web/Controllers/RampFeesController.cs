@@ -196,12 +196,18 @@ namespace FBOLinx.Web.Controllers
                         newRampFee.CategoryType = RampFeeCategories.TailNumber;
                         newRampFee.CategoryStringValue = rampfee.tailnumber;
 
-                        string waivedFee = Regex.Match(rampfee.waivedat.ToString(), @"\d+").Value;
                         Double waivedFeeValue = 0.0;
+                        if (rampfee.waivedat.ToString().Equals(@"N/A"))
+                        {
+                            newRampFee.Waived = null;
+                        }
+                        else
+                        {
+                            string waivedFee = Regex.Match(rampfee.waivedat.ToString(), @"\d+").Value;
 
-                        Double.TryParse(waivedFee, out waivedFeeValue);
-
-                        newRampFee.Waived = waivedFeeValue;
+                            Double.TryParse(waivedFee, out waivedFeeValue);
+                            newRampFee.Waived = waivedFeeValue;
+                        }
 
                         var results = Regex.Matches(rampfee.rampfee, @"[-+]?(?<![0-9]\.)\b[0-9]+(?:[,\s][0-9]+)*\.[0-9]+(?:[eE][-+]?[0-9]+)?\b(?!\.[0-9])")
                         .Cast<Match>()
@@ -219,7 +225,18 @@ namespace FBOLinx.Web.Controllers
                             newRampFee.Price = Convert.ToDouble(results[0]);
                         }
 
-                        _context.RampFees.Add(newRampFee);
+                        var existingTailRampFee = _context.RampFees.FirstOrDefault(s => s.Fboid == newRampFee.Fboid && s.CategoryStringValue == newRampFee.CategoryStringValue);
+
+                        if(existingTailRampFee != null)
+                        {
+                            existingTailRampFee.Price = newRampFee.Price;
+                            existingTailRampFee.Waived = newRampFee.Waived;
+                        }
+                        else
+                        {
+                            _context.RampFees.Add(newRampFee);
+                        }
+
                         _context.SaveChanges();
 
                     }
@@ -363,14 +380,32 @@ namespace FBOLinx.Web.Controllers
                             newRampFee.Price = Convert.ToDouble(results[0]);
                         }
 
-                        string waivedFee = Regex.Match(rampfee.avoidance.ToString(), @"\d+").Value;
                         Double waivedFeeValue = 0.0;
+                        if (rampfee.avoidance.ToString().Equals(@"N/A"))
+                        {
+                            newRampFee.Waived = null;
+                        }
+                        else
+                        {
+                            string waivedFee = Regex.Match(rampfee.avoidance.ToString(), @"\d+").Value;
+                            
+                            Double.TryParse(waivedFee, out waivedFeeValue);
+                            newRampFee.Waived = waivedFeeValue;
+                        }
 
-                        Double.TryParse(waivedFee, out waivedFeeValue);
+                        var checkForExisting = _context.RampFees.FirstOrDefault(s => s.Fboid == newRampFee.Fboid && s.Size == newRampFee.Size);
 
-                        newRampFee.Waived = waivedFeeValue;
+                        if(checkForExisting != null)
+                        {
+                            checkForExisting.Waived = newRampFee.Waived;
+                            checkForExisting.Price = newRampFee.Price;
+                            _context.RampFees.Update(checkForExisting);
+                        }
+                        else
+                        {
+                            _context.RampFees.Add(newRampFee);
+                        }
 
-                        _context.RampFees.Add(newRampFee);
                         _context.SaveChanges();
                     }
                 }

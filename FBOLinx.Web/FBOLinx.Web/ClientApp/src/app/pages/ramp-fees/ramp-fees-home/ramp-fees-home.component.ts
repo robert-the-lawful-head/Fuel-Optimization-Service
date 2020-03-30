@@ -11,8 +11,10 @@ import * as SharedEvents from "../../../models/sharedEvents";
 
 // Components
 import { RampFeesDialogNewFeeComponent } from "../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component";
+import { RampFeesImportInformationComponent } from "../ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component";
 import { first } from "rxjs/operators";
 import FlatfileImporter from "flatfile-csv-importer";
+
 
 const BREADCRUMBS: any[] = [
     {
@@ -50,6 +52,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private sharedService: SharedService,
         private aircraftsService: AircraftsService,
         public newRampFeeDialog: MatDialog,
+        public importFeesInfoDialog: MatDialog,
         private messageService: Parametri
     ) {
         this.sharedService.emitChange(this.pageTitle);
@@ -166,6 +169,24 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             });
     }
 
+    public informForRampFees() {
+        const dialogRef = this.importFeesInfoDialog.open(
+            RampFeesImportInformationComponent,
+            {
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+            else {
+                this.launchImporter();
+            }
+
+        });
+    }
+
     async launchImporter() {
         if (!this.LICENSE_KEY) {
             return alert("Set LICENSE_KEY on Line 13 before continuing.");
@@ -194,7 +215,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     });
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 
     initializeImporter() {
