@@ -81,7 +81,8 @@ namespace FBOLinx.Web
             });
 
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
-            services.Configure<AppPartnerSDKSettings>(Configuration.GetSection("AppPartnerSDKSettings"));
+            var appParnterSDKSettings = Configuration.GetSection("AppPartnerSDKSettings");
+            services.Configure<AppPartnerSDKSettings>(appParnterSDKSettings);
 
             // configure DI for application services
             services.AddScoped<FuelerLinxService, FuelerLinxService>();
