@@ -1,0 +1,27 @@
+import { Component } from "@angular/core";
+import {
+    MatDialogRef,
+    MAT_DIALOG_DATA,
+} from "@angular/material/dialog";
+
+@Component({
+    selector: "app-ramp-fees-import-informatino-dialog",
+    templateUrl: "./ramp-fees-import-information-dialog.component.html",
+    styleUrls: ["./ramp-fees-import-information-dialog.component.scss"],
+})
+export class RampFeesImportInformationComponent {
+    
+    constructor(
+        public dialogRef: MatDialogRef<RampFeesImportInformationComponent>,
+    ) {
+        
+    }
+
+    public onOkClick(): void {
+        this.dialogRef.close("ok");
+    }
+
+    public onCancelClick(): void {
+        this.dialogRef.close();
+    }
+}

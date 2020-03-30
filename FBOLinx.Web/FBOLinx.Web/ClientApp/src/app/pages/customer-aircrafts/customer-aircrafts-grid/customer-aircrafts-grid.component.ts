@@ -206,38 +206,53 @@ export class CustomerAircraftsGridComponent implements OnInit {
                     .subscribe((data: any) => {
                         if (data) {
                             aircraftSizes = data;
-                        }
-                    });
 
-                this.customerAircraftsService
-                    .get({ oid: result.oid })
-                    .subscribe((data: any) => {
-                        if (data) {
-                            const selectedAircraft = this.customerAircraftsData.find(
-                                (x) => x.oid === result.oid
-                            );
-
-                            if (selectedAircraft) {
-                                selectedAircraft.tailNumber = data.tailNumber;
-                                selectedAircraft.make = data.make;
-                                selectedAircraft.model = data.model;
-                                selectedAircraft.size = data.size;
-
-                                if (data.size) {
-                                    const sizeText = aircraftSizes.find(
-                                        (x) => x.value === data.size
+                            this.customerAircraftsService
+                                .getCustomerAircraftsByGroupAndCustomerId(
+                                    this.sharedService.currentUser.groupId,
+                                    this.sharedService.currentUser.fboId,
+                                    result.customerId
+                                )
+                                .subscribe((dataOutput: any) => {
+                                    this.customerAircraftsData = dataOutput;
+                                    this.customerAircraftsDataSource = new MatTableDataSource(
+                                        this.customerAircraftsData
                                     );
+                                    this.customerAircraftsDataSource.sort = this.sort;
+                                    this.customerAircraftsDataSource.paginator = this.paginator;
+                                });
 
-                                    if (sizeText) {
-                                        selectedAircraft.aircraftSizeDescription =
-                                            sizeText.description;
-                                    }
-                                }
-                            }
+                            // this.customerAircraftsService
+                            //    .get({ oid: result.oid })
+                            //    .subscribe((data: any) => {
+                            //        if (data) {
+                            //            const selectedAircraft = this.customerAircraftsData.find(
+                            //                (x) => x.oid === result.oid
+                            //            );
+
+                            //            if (selectedAircraft) {
+                            //                selectedAircraft.tailNumber = data.tailNumber;
+                            //                selectedAircraft.make = data.make;
+                            //                selectedAircraft.model = data.model;
+                            //                selectedAircraft.size = data.size;
+
+                            //                if (data.size) {
+                            //                    const sizeText = aircraftSizes.find(
+                            //                        (x) => x.value === data.size
+                            //                    );
+
+                            //                    if (sizeText) {
+                            //                        selectedAircraft.aircraftSizeDescription =
+                            //                            sizeText.description;
+                            //                    }
+                            //                }
+
+                            //                this.editCustomerAircraftClicked.emit(result);
+                            //            }
+                            //        }
+                            //    });
                         }
                     });
-
-                this.editCustomerAircraftClicked.emit(result);
             });
         }
     }

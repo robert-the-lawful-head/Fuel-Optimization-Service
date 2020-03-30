@@ -15,37 +15,24 @@
             class="col-md-12"
             matSort
             matSortActive="tailNumber"
-            matSortDirection="asc"
-        >
+            matSortDirection="asc">
             <ng-container matColumnDef="tailNumber">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Tail</th>
-                <td
-                    (click)="editCustomerAircraft(customerAircraft)"
-                    mat-cell
-                    *matCellDef="let customerAircraft"
-                >
+                <td (click)="editCustomerAircraft(customerAircraft)" mat-cell *matCellDef="let customerAircraft">
                     {{ customerAircraft.tailNumber }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="aircraftType">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
-                <td
-                    mat-cell
-                    *matCellDef="let customerAircraft"
-                    (click)="editCustomerAircraft(customerAircraft)"
-                >
+                <td mat-cell *matCellDef="let customerAircraft" (click)="editCustomerAircraft(customerAircraft)">
                     {{ customerAircraft.make }} {{ customerAircraft.model }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="aircraftSize">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Size</th>
-                <td
-                    mat-cell
-                    *matCellDef="let customerAircraft"
-                    (click)="editCustomerAircraft(customerAircraft)"
-                >
+                <td mat-cell *matCellDef="let customerAircraft" (click)="editCustomerAircraft(customerAircraft)">
                     {{ customerAircraft.aircraftSizeDescription }}
                 </td>
             </ng-container>
@@ -95,11 +82,7 @@
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr
-                mat-row
-                *matRowDef="let row; columns: displayedColumns"
-                (click)="editCustomerAircraft(row)"
-            ></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
     </div>
 
