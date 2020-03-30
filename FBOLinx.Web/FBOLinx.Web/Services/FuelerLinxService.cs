@@ -59,16 +59,16 @@ namespace FBOLinx.Web.Services
             }
         }
 
-        public Task<object> GetTransactionsForNearbyAirports(int distanceInMiles, DateTime startDate, DateTime endDate)
+        public FBOLinxNearbyAirportsResponse GetTransactionsForNearbyAirports(int distanceInMiles, DateTime startDate, DateTime endDate)
         {
             var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            api.GetNearByAirports(new FBOLinxNearByAirportsRequest()
+            var results = api.GetTransactionsCountForNearbyAirports(new FBOLinxNearbyAirportsRequest()
             {
                 DistanceMile = distanceInMiles,
                 StartDateTime = startDate,
                 EndDateTime = endDate
             });
-            return null;
+            return results;
         }
         #endregion
 
