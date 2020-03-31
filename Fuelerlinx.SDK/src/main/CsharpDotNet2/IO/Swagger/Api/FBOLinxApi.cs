@@ -15,8 +15,20 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param>
+        /// <returns>FBOLinxOrdersResponse</returns>
+        FBOLinxOrdersResponse GetTransactionsCount (FBOLinxOrdersRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
         /// <returns>FBOLinxNearbyAirportsResponse</returns>
         FBOLinxNearbyAirportsResponse GetTransactionsCountForNearbyAirports (FBOLinxNearbyAirportsRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>FBOLinxOrdersResponse</returns>
+        FBOLinxOrdersResponse GetTransactionsDirectOrdersCount (FBOLinxOrdersRequest body);
     }
   
     /// <summary>
@@ -76,6 +88,40 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param> 
+        /// <returns>FBOLinxOrdersResponse</returns>            
+        public FBOLinxOrdersResponse GetTransactionsCount (FBOLinxOrdersRequest body)
+        {
+            
+    
+            var path = "/api/FBOLinx/get-orders-count-at-airport";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsCount: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsCount: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FBOLinxOrdersResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxOrdersResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
         /// <returns>FBOLinxNearbyAirportsResponse</returns>            
         public FBOLinxNearbyAirportsResponse GetTransactionsCountForNearbyAirports (FBOLinxNearbyAirportsRequest body)
         {
@@ -104,6 +150,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsCountForNearbyAirports: " + response.ErrorMessage, response.ErrorMessage);
     
             return (FBOLinxNearbyAirportsResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxNearbyAirportsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>FBOLinxOrdersResponse</returns>            
+        public FBOLinxOrdersResponse GetTransactionsDirectOrdersCount (FBOLinxOrdersRequest body)
+        {
+            
+    
+            var path = "/api/FBOLinx/get-direct-orders-count";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsDirectOrdersCount: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsDirectOrdersCount: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FBOLinxOrdersResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxOrdersResponse), response.Headers);
         }
     
     }
