@@ -1,20 +1,19 @@
 import { Component, OnInit } from "@angular/core";
 import * as _ from "lodash";
-import { MatSliderChange } from "@angular/material/slider";
+import * as moment from "moment";
 
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
 
 @Component({
-    selector: "app-analytics-volumes-nearby-airport",
-    templateUrl: "./analytics-volumes-nearby-airport-chart.component.html",
-    styleUrls: ["./analytics-volumes-nearby-airport-chart.component.scss"],
+    selector: "app-analytics-market-share-airport",
+    templateUrl: "./analytics-market-share-airport-chart.component.html",
+    styleUrls: ["./analytics-market-share-airport-chart.component.scss"],
 })
-export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
+export class AnalyticsMarketShareAirportChartComponent implements OnInit {
     // Public Members
     public totalOrdersData: any[];
-    public mile = 200;
     public colorScheme = {
         domain: [
             "#a8385d",
@@ -40,21 +39,16 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
     }
 
     public refreshData() {
-        const startDate = this.sharedService.dashboardSettings.filterStartDate;
-        const endDate = this.sharedService.dashboardSettings.filterEndDate;
+        const startDate = new Date(
+            moment().add(-7, "days").format("MM/DD/YYYY")
+        );
+        const endDate = new Date(
+            moment().format("MM/DD/YYYY")
+        );
         this.fuelreqsService
-            .getVolumesNearbyAirport(this.sharedService.currentUser.fboId, startDate, endDate, this.mile)
+            .getMarketShareAirport(this.sharedService.currentUser.fboId, startDate, endDate)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
             });
-    }
-
-    public formatLabel(value: number) {
-        return value + "mi";
-    }
-
-    public changeMile(event: MatSliderChange) {
-        this.mile = event.value;
-        this.refreshData();
     }
 }
