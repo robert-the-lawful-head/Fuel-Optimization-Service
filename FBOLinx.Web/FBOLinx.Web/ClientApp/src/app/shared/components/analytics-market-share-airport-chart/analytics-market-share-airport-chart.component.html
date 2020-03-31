@@ -1,0 +1,12 @@
+<ni-card title="Market share over past 7 days at airport" [headerBgColor]="'gray'">
+    <div class="chart-container">
+        <ngx-charts-pie-chart
+            *ngIf="totalOrdersData"
+            [results]="totalOrdersData"
+            [scheme]="colorScheme"
+            [gradient]="false"
+            [labels]="true"
+            [trimLabels]="false"
+        ></ngx-charts-pie-chart>
+    </div>
+</ni-card>

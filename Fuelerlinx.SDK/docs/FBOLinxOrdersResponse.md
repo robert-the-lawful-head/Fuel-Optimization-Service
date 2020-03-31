@@ -1,12 +1,11 @@
-# IO.Swagger.Model.FBOLinxNearbyAirportsRequest
+# IO.Swagger.Model.FBOLinxOrdersResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**StartDateTime** | **DateTime?** |  | 
-**EndDateTime** | **DateTime?** |  | 
-**DistanceMile** | **int?** |  | [optional] 
-**Icao** | **string** |  | 
+**Result** | **int?** |  | [optional] 
+**Success** | **bool?** |  | [optional] 
+**Message** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

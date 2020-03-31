@@ -145,7 +145,9 @@ Class | Method | HTTP request | Description
 *FBOApi* | [**PostFboDetailsByCompanyNotes**](docs/FBOApi.md#postfbodetailsbycompanynotes) | **POST** /api/FBO/company-specific-details/notes | Add company-specific notes for a particular FBO.  The note must be associated with a company-specific FBO record.
 *FBOApi* | [**UpdateFboDetailsByCompany**](docs/FBOApi.md#updatefbodetailsbycompany) | **PUT** /api/FBO/company-specific-details | Update company-specific details for a particular FBO.
 *FBOApi* | [**UpdateFboDetailsByCompanyNotes**](docs/FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
+*FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
 *FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | 
+*FBOLinxApi* | [**GetTransactionsDirectOrdersCount**](docs/FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
 *FeeApi* | [**DeleteServicesAndFeesByCompany**](docs/FeeApi.md#deleteservicesandfeesbycompany) | **DELETE** /api/Fee/company-specific/{feeId} | Delete a company-specific service/fee.
 *FeeApi* | [**GetServicesAndFeesByCompany**](docs/FeeApi.md#getservicesandfeesbycompany) | **GET** /api/Fee/company-specific/{feeId} | Fetch a company-specific service/fee by it's Id.
 *FeeApi* | [**GetServicesAndFeesByCompanyByLocation**](docs/FeeApi.md#getservicesandfeesbycompanybylocation) | **GET** /api/Fee/company-specific/by-location/{icao}/{fboName} | Fetch a company-specific service/fee by the ICAO and FBO.
@@ -403,6 +405,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FBOLinxNearbyAirportsModel](docs/FBOLinxNearbyAirportsModel.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsRequest](docs/FBOLinxNearbyAirportsRequest.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsResponse](docs/FBOLinxNearbyAirportsResponse.md)
+ - [IO.Swagger.Model.FBOLinxOrdersRequest](docs/FBOLinxOrdersRequest.md)
+ - [IO.Swagger.Model.FBOLinxOrdersResponse](docs/FBOLinxOrdersResponse.md)
  - [IO.Swagger.Model.FBOsByCompanyDTO](docs/FBOsByCompanyDTO.md)
  - [IO.Swagger.Model.FboAirport](docs/FboAirport.md)
  - [IO.Swagger.Model.FboByCompanyNotesDTO](docs/FboByCompanyNotesDTO.md)

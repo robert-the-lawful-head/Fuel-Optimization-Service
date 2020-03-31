@@ -118,11 +118,11 @@ namespace IO.Swagger.Model {
     public string DispatchEmail { get; set; }
 
     /// <summary>
-    /// Gets or Sets SupplierID
+    /// Gets or Sets SupplierId
     /// </summary>
-    [DataMember(Name="supplierID", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "supplierID")]
-    public int? SupplierID { get; set; }
+    [DataMember(Name="supplierId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "supplierId")]
+    public int? SupplierId { get; set; }
 
 
     /// <summary>
@@ -147,7 +147,7 @@ namespace IO.Swagger.Model {
       sb.Append("  VendorLinxGuid: ").Append(VendorLinxGuid).Append("\n");
       sb.Append("  TailNumbers: ").Append(TailNumbers).Append("\n");
       sb.Append("  DispatchEmail: ").Append(DispatchEmail).Append("\n");
-      sb.Append("  SupplierID: ").Append(SupplierID).Append("\n");
+      sb.Append("  SupplierId: ").Append(SupplierId).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

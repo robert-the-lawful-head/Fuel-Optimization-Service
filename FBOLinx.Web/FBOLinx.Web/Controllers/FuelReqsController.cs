@@ -15,6 +15,7 @@ using FBOLinx.Web.Services;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using IO.Swagger.Model;
+using FBOLinx.Web.DTO;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -237,230 +238,79 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqCount);
         }
 
-        [HttpPost("fbo/{fboId}/quotesAndOrders")]
-        public async Task<IActionResult> GetQuotesAndOrdersWonChartData([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
+        // PUT: api/FuelReqs/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutFuelReq([FromRoute] int id, [FromBody] FuelReq fuelReq)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (id != fuelReq.Oid)
             {
-                return BadRequest("Invalid FBO");
+                return BadRequest();
             }
 
-            if (string.IsNullOrEmpty(request.ICAO))
-            {
-                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
-                Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
+            _context.Entry(fuelReq).State = EntityState.Modified;
 
-                if (airport == null)
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FuelReqExists(id))
+                {
                     return NotFound();
-
-                request.ICAO = airport.Icao;
+                }
+                else
+                {
+                    throw;
+                }
             }
 
-            IEnumerable<int> months = Enumerable.Range(1, 12);
-            IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
-
-            var fuelReqs = from f in (
-                               from f in _context.FuelReq
-                               where f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime
-                               select new
-                               {
-                                   f.Etd,
-                                   Sum = f.ActualVolume.GetValueOrDefault() * f.ActualPpg.GetValueOrDefault() > 0 ? f.ActualVolume * f.ActualPpg : f.QuotedVolume.GetValueOrDefault() * f.QuotedPpg.GetValueOrDefault()
-                               }
-                           )
-                           group f by new
-                           {
-                               f.Etd.GetValueOrDefault().Month,
-                               f.Etd.GetValueOrDefault().Year,
-                               f.Sum
-                           }
-                           into results
-                           select new
-                           {
-                               results.Key.Month,
-                               results.Key.Year,
-                               TotalOrders = results.Count(),
-                               TotalSum = results.Sum(x => x.Sum)
-                           };
-
-            var fuelReqsByMonth = (from month in months
-                                  join year in years on 1 equals 1
-                                  join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
-                                  into leftJoinFuelReqs
-                                  from f in leftJoinFuelReqs.DefaultIfEmpty()
-                                  where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
-                                  && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                  select new
-                                  {
-                                      Month = month,
-                                      Year = year,
-                                      Name = month + "/" + year,
-                                      Value = f?.TotalOrders ?? 0
-                                  })
-                                  .OrderBy(x => x.Year)
-                                  .ThenBy(x => x.Month)
-                                  .ToList();
-
-            var quotes = await _fuelerLinxService.GetOrderCountByLocation(request);
-
-            var quotesByMonth = (from month in months
-                                 join year in years on 1 equals 1
-                                 join q in quotes.TotalOrdersByMonth on new { Month = month, Year = year } equals new { q.Month, q.Year }
-                                 into leftJoinQuotes
-                                 from q in leftJoinQuotes.DefaultIfEmpty()
-                                 where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
-                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                 select new
-                                 {
-                                     Month = month,
-                                     Year = year,
-                                     Name = month + "/" + year,
-                                     Value = q?.Count ?? 0
-                                 })
-                                 .OrderBy(x => x.Year)
-                                 .ThenBy(x => x.Month)
-                                 .ToList();
-
-            var dollarVolumeByMonth = (from month in months
-                                       join year in years on 1 equals 1
-                                       join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
-                                       into leftJoinFuelReqs
-                                       from f in leftJoinFuelReqs.DefaultIfEmpty()
-                                       where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
-                                       && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                       select new
-                                       {
-                                           Month = month,
-                                           Year = year,
-                                           Name = month + "/" + year,
-                                           Value = f?.TotalSum ?? 0
-                                       })
-                                       .OrderBy(x => x.Year)
-                                       .ThenBy(x => x.Month)
-                                       .ToList();
-
-            var chartData = new List<object>()
-                            {
-                                new
-                                {
-                                    Name = "Orders",
-                                    Series = fuelReqsByMonth
-                                },
-                                new
-                                {
-                                    Name = "Quotes",
-                                    Series = quotesByMonth
-                                },
-                                new
-                                {
-                                    Name = "Sum of Dollar Volume",
-                                    Series = dollarVolumeByMonth
-                                }
-                            };
-
-            return Ok(chartData);
+            return NoContent();
         }
 
-        [HttpPost("fbo/{fboId}/orders")]
-        public IActionResult GetOrdersWonChartData([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
+        // POST: api/FuelReqs
+        [HttpPost]
+        public async Task<IActionResult> PostFuelReq([FromBody] FuelReq fuelReq)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
-            }
+            _context.FuelReq.Add(fuelReq);
+            await _context.SaveChangesAsync();
 
-            if (string.IsNullOrEmpty(request.ICAO))
-            {
-                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
-                Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
-
-                if (airport == null)
-                    return NotFound();
-
-                request.ICAO = airport.Icao;
-            }
-
-            IEnumerable<int> months = Enumerable.Range(1, 12);
-            IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
-
-            var fuelReqs = from f in (
-                               from f in _context.FuelReq
-                               where f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime
-                               select new
-                               {
-                                   f.Etd
-                               }
-                           )
-                           group f by new
-                           {
-                               f.Etd.GetValueOrDefault().Month,
-                               f.Etd.GetValueOrDefault().Year,
-                           }
-                           into results
-                           select new
-                           {
-                               results.Key.Month,
-                               results.Key.Year,
-                               TotalOrders = results.Count(),
-                           };
-
-            var fuelReqsByMonth = (from month in months
-                                   join year in years on 1 equals 1
-                                   join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
-                                   into leftJoinFuelReqs
-                                   from f in leftJoinFuelReqs.DefaultIfEmpty()
-                                   where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
-                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                   select new
-                                   {
-                                       Month = month,
-                                       Year = year,
-                                       Name = month + "/" + year,
-                                       Value = f?.TotalOrders ?? 0
-                                   })
-                                  .OrderBy(x => x.Year)
-                                  .ThenBy(x => x.Month)
-                                  .ToList();
-
-            return Ok(fuelReqsByMonth);
+            return CreatedAtAction("GetFuelReq", new { id = fuelReq.Oid }, fuelReq);
         }
 
-        [HttpPost("fbo/{fboId}/volumesNearby")]
-        public IActionResult GetCountOfOrderVolumesNearByAirport([FromRoute] int fboId, [FromBody] FBOLinxNearbyAirportsRequest request = null)
+        // DELETE: api/FuelReqs/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteFuelReq([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            var fuelReq = await _context.FuelReq.FindAsync(id);
+            if (fuelReq == null)
             {
-                return BadRequest("Invalid FBO");
+                return NotFound();
             }
 
-            string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
-            request.Icao = icao;
+            _context.FuelReq.Remove(fuelReq);
+            await _context.SaveChangesAsync();
 
-            List<FBOLinxNearbyAirportsModel> volumes = _fuelerLinxService.GetTransactionsForNearbyAirports(request).Result;
-            var result = volumes.Select(f => new
-            {
-                Name = f.Icao,
-                Value = f.AirportsCount
-            });
-            return Ok(result);
+            return Ok(fuelReq);
         }
 
-        // POST: api/FuelReqs/analysis/top-customers/fbo/5
+        #region Analysis
+
         [HttpPost("analysis/top-customers/fbo/{fboId}")]
         public async Task<IActionResult> GetTopCustomersForFbo([FromRoute] int fboId, [FromBody] FuelReqsTopCustomersByFboRequest request)
         {
@@ -498,10 +348,8 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerFuelReqsByCustomer);
         }
 
-        // POST: api/FuelReqs/analysis/total-orders-by-month/fbo/5
         [HttpPost("analysis/total-orders-by-month/fbo/{fboId}")]
-        public IActionResult GetTotalOrdersByMonthForFbo([FromRoute] int fboId,
-            [FromBody] FuelReqsTotalOrdersByMonthForFboRequest request)
+        public IActionResult GetTotalOrdersByMonthForFbo([FromRoute] int fboId, [FromBody] FuelReqsTotalOrdersByMonthForFboRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -614,7 +462,6 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqsTotalOrdersByMonthVM);
         }
 
-        // POST: api/FuelReqs/analysis/total-orders-by-aircraft-size/fbo/5
         [HttpPost("analysis/total-orders-by-aircraft-size/fbo/{fboId}")]
         public async Task<IActionResult> GetTotalOrdersByAircraftSizeForFbo([FromRoute] int fboId, [FromBody] FuelReqsTotalOrdersByMonthForFboRequest request)
         {
@@ -665,7 +512,6 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        // POST: api/FuelReqs/analysis/fuelerlinx/orders-by-location
         [HttpPost("analysis/fuelerlinx/orders-by-location")]
         public async Task<IActionResult> GetOrdersByLocation([FromBody] FuelerLinxUpliftsByLocationRequestContent request)
         {
@@ -691,76 +537,238 @@ namespace FBOLinx.Web.Controllers
             return Ok(result);
         }
 
-        // PUT: api/FuelReqs/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFuelReq([FromRoute] int id, [FromBody] FuelReq fuelReq)
+        [HttpPost("analysis/quotes-orders-over-time/fbo/{fboId}")]
+        public async Task<IActionResult> GetQuotesAndOrdersWonChartData([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != fuelReq.Oid)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
             {
-                return BadRequest();
+                return BadRequest("Invalid FBO");
             }
 
-            _context.Entry(fuelReq).State = EntityState.Modified;
+            if (string.IsNullOrEmpty(request.ICAO))
+            {
+                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
+                Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FuelReqExists(id))
-                {
+                if (airport == null)
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+
+                request.ICAO = airport.Icao;
             }
 
-            return NoContent();
+            IEnumerable<int> months = Enumerable.Range(1, 12);
+            IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
+
+            List<FuelReqForChart> fuelReqs = await GetFuelRequestsByMonthDateRange(fboId, request.StartDateTime, request.EndDateTime);
+
+            var fuelReqsByMonth = (from month in months
+                                   join year in years on 1 equals 1
+                                   join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
+                                   into leftJoinFuelReqs
+                                   from f in leftJoinFuelReqs.DefaultIfEmpty()
+                                   where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                   select new
+                                   {
+                                       Month = month,
+                                       Year = year,
+                                       Name = month + "/" + year,
+                                       Value = f?.TotalOrders ?? 0
+                                   })
+                                  .OrderBy(x => x.Year)
+                                  .ThenBy(x => x.Month)
+                                  .ToList();
+
+            var quotes = await _fuelerLinxService.GetOrderCountByLocation(request);
+
+            var quotesByMonth = (from month in months
+                                 join year in years on 1 equals 1
+                                 join q in quotes.TotalOrdersByMonth on new { Month = month, Year = year } equals new { q.Month, q.Year }
+                                 into leftJoinQuotes
+                                 from q in leftJoinQuotes.DefaultIfEmpty()
+                                 where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                 select new
+                                 {
+                                     Month = month,
+                                     Year = year,
+                                     Name = month + "/" + year,
+                                     Value = q?.Count ?? 0
+                                 })
+                                 .OrderBy(x => x.Year)
+                                 .ThenBy(x => x.Month)
+                                 .ToList();
+
+            var dollarVolumeByMonth = (from month in months
+                                       join year in years on 1 equals 1
+                                       join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
+                                       into leftJoinFuelReqs
+                                       from f in leftJoinFuelReqs.DefaultIfEmpty()
+                                       where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                       && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                       select new
+                                       {
+                                           Month = month,
+                                           Year = year,
+                                           Name = month + "/" + year,
+                                           Value = f?.TotalSum ?? 0
+                                       })
+                                       .OrderBy(x => x.Year)
+                                       .ThenBy(x => x.Month)
+                                       .ToList();
+
+            var chartData = new List<object>()
+                            {
+                                new
+                                {
+                                    Name = "Orders",
+                                    Series = fuelReqsByMonth
+                                },
+                                new
+                                {
+                                    Name = "Quotes",
+                                    Series = quotesByMonth
+                                },
+                                new
+                                {
+                                    Name = "Sum of Dollar Volume",
+                                    Series = dollarVolumeByMonth
+                                }
+                            };
+
+            return Ok(chartData);
         }
 
-        // POST: api/FuelReqs
-        [HttpPost]
-        public async Task<IActionResult> PostFuelReq([FromBody] FuelReq fuelReq)
+        [HttpPost("analysis/orders-won-over-time/fbo/{fboId}")]
+        public async Task<IActionResult> GetOrdersWonChartDataAsync([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.FuelReq.Add(fuelReq);
-            await _context.SaveChangesAsync();
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
 
-            return CreatedAtAction("GetFuelReq", new { id = fuelReq.Oid }, fuelReq);
+            if (string.IsNullOrEmpty(request.ICAO))
+            {
+                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
+                Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
+
+                if (airport == null)
+                    return NotFound();
+
+                request.ICAO = airport.Icao;
+            }
+
+            IEnumerable<int> months = Enumerable.Range(1, 12);
+            IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
+
+            List<FuelReqForChart> fuelReqs = await GetFuelRequestsByMonthDateRange(fboId, request.StartDateTime, request.EndDateTime);
+
+            var fuelReqsByMonth = (from month in months
+                                   join year in years on 1 equals 1
+                                   join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
+                                   into leftJoinFuelReqs
+                                   from f in leftJoinFuelReqs.DefaultIfEmpty()
+                                   where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                   select new
+                                   {
+                                       Month = month,
+                                       Year = year,
+                                       Name = month + "/" + year,
+                                       Value = f?.TotalOrders ?? 0
+                                   })
+                                  .OrderBy(x => x.Year)
+                                  .ThenBy(x => x.Month)
+                                  .ToList();
+
+            return Ok(fuelReqsByMonth);
         }
 
-        // DELETE: api/FuelReqs/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFuelReq([FromRoute] int id)
+        [HttpPost("analysis/volumes-nearby-airport/fbo/{fboId}")]
+        public IActionResult GetCountOfOrderVolumesNearByAirport([FromRoute] int fboId, [FromBody] FBOLinxNearbyAirportsRequest request = null)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var fuelReq = await _context.FuelReq.FindAsync(id);
-            if (fuelReq == null)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
             {
-                return NotFound();
+                return BadRequest("Invalid FBO");
             }
 
-            _context.FuelReq.Remove(fuelReq);
-            await _context.SaveChangesAsync();
+            string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+            request.Icao = icao;
 
-            return Ok(fuelReq);
+            List<FBOLinxNearbyAirportsModel> volumes = _fuelerLinxService.GetTransactionsForNearbyAirports(request).Result;
+            var result = volumes.Select(f => new
+            {
+                Name = f.Icao,
+                Value = f.AirportsCount
+            });
+            return Ok(result);
         }
+
+        [HttpPost("analysis/market-share-airport/fbo/{fboId}")]
+        public IActionResult GetMarketShareAtAirport([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+            List<int> otherFbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid).ToList();
+
+            request.Icao = icao;
+
+            int airportOrdersCount = _context.FuelReq
+                                        .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime)
+                                        .Count();
+
+            int totalOrdersCount = _fuelerLinxService.GetTransactionsDirectOrdersCount(request).Result.GetValueOrDefault();
+
+            int fuelerlinxOrdersCount = _fuelerLinxService.GetTransactionsCountForAirport(request).Result.GetValueOrDefault();
+
+            var chartData = new List<object>()
+                            {
+                                new
+                                {
+                                    Name = "My FBO's total count of orders",
+                                    Value = airportOrdersCount
+                                },
+                                new
+                                {
+                                    Name = "Other FBOs' orders count",
+                                    Value = totalOrdersCount
+                                },
+                                new
+                                {
+                                    Name = "Contract/Reseller orders",
+                                    Value = fuelerlinxOrdersCount
+                                }
+                            };
+            return Ok(chartData);
+        }
+
+        #endregion
+
+        #region Common methods
 
         private bool FuelReqExists(int id)
         {
@@ -771,5 +779,37 @@ namespace FBOLinx.Web.Controllers
         {
             return _context.FuelReq.AsQueryable();
         }
+
+        private async Task<List<FuelReqForChart>> GetFuelRequestsByMonthDateRange(int fboId, DateTime startDateTime, DateTime endDateTime)
+        {
+            List<FuelReqForChart> fuelReqs = await 
+                           (from f in (
+                               from f in _context.FuelReq
+                               where f.Fboid.Equals(fboId) && f.Etd >= startDateTime && f.Etd <= endDateTime
+                               select new
+                               {
+                                   f.Etd,
+                                   Sum = f.ActualVolume.GetValueOrDefault() * f.ActualPpg.GetValueOrDefault() > 0 ? f.ActualVolume * f.ActualPpg : f.QuotedVolume.GetValueOrDefault() * f.QuotedPpg.GetValueOrDefault()
+                               }
+                           )
+                           group f by new
+                           {
+                               f.Etd.GetValueOrDefault().Month,
+                               f.Etd.GetValueOrDefault().Year,
+                               f.Sum
+                           }
+                           into results
+                           select new FuelReqForChart
+                           {
+                               Month = results.Key.Month,
+                               Year = results.Key.Year,
+                               TotalOrders = results.Count(),
+                               TotalSum = results.Sum(x => x.Sum)
+                           }).ToListAsync();
+
+            return fuelReqs;
+        }
+
+        #endregion
     }
 }

@@ -65,6 +65,20 @@ namespace FBOLinx.Web.Services
             FBOLinxNearbyAirportsResponse results = api.GetTransactionsCountForNearbyAirports(request);
             return results;
         }
+
+        public FBOLinxOrdersResponse GetTransactionsCountForAirport(FBOLinxOrdersRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FBOLinxOrdersResponse results = api.GetTransactionsCount(request);
+            return results;
+        }
+
+        public FBOLinxOrdersResponse GetTransactionsDirectOrdersCount(FBOLinxOrdersRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FBOLinxOrdersResponse results = api.GetTransactionsDirectOrdersCount(request);
+            return results;
+        }
         #endregion
 
         #region Private Methods
