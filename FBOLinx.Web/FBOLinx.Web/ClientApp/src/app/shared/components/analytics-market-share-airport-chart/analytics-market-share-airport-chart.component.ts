@@ -1,19 +1,22 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, AfterViewInit, OnDestroy } from "@angular/core";
 import * as _ from "lodash";
 import * as moment from "moment";
 
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
+import * as SharedEvent from "../../../models/sharedEvents";
 
 @Component({
     selector: "app-analytics-market-share-airport",
     templateUrl: "./analytics-market-share-airport-chart.component.html",
     styleUrls: ["./analytics-market-share-airport-chart.component.scss"],
 })
-export class AnalyticsMarketShareAirportChartComponent implements OnInit {
+export class AnalyticsMarketShareAirportChartComponent implements OnInit, AfterViewInit, OnDestroy {
     // Public Members
     public totalOrdersData: any[];
+    public icao: string;
+    public icaoChangedSubscription: any;
     public colorScheme = {
         domain: [
             "#a8385d",
@@ -32,10 +35,28 @@ export class AnalyticsMarketShareAirportChartComponent implements OnInit {
     constructor(
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService
-    ) {}
+    ) {
+        this.icao = this.sharedService.currentUser.icao;
+    }
 
     ngOnInit() {
         this.refreshData();
+    }
+
+    ngAfterViewInit() {
+        this.icaoChangedSubscription = this.sharedService.changeEmitted$.subscribe(
+            (message) => {
+                if (message === SharedEvent.icaoChangedEvent) {
+                    this.icao = this.sharedService.currentUser.icao;
+                }
+            }
+        );
+    }
+
+    ngOnDestroy() {
+        if (this.icaoChangedSubscription) {
+            this.icaoChangedSubscription.unsubscribe();
+        }
     }
 
     public refreshData() {

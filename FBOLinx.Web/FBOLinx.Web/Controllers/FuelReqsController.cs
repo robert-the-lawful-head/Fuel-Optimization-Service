@@ -749,20 +749,62 @@ namespace FBOLinx.Web.Controllers
                             {
                                 new
                                 {
-                                    Name = "My FBO's total count of orders",
+                                    Name = "My Total Orders",
                                     Value = airportOrdersCount
                                 },
                                 new
                                 {
-                                    Name = "Other FBOs' orders count",
+                                    Name = "Other FBO's Orders",
                                     Value = totalOrdersCount
                                 },
                                 new
                                 {
-                                    Name = "Contract/Reseller orders",
+                                    Name = "Contract/Reseller Orders",
                                     Value = fuelerlinxOrdersCount
                                 }
                             };
+            return Ok(chartData);
+        }
+
+        [HttpPost("analysis/customers-breakdown/fbo/{fboId}")]
+        public async Task<IActionResult> GetCustomersBreakdown([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            var chartData = await (from fr in (
+                                 from fr in _context.FuelReq
+                                 where fr.Fboid.Equals(fboId) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
+                                 group fr by new
+                                 {
+                                     CustomerID = fr.CustomerId
+                                 }
+                                        into groupedFuelReqs
+                                 select new
+                                 {
+                                     groupedFuelReqs.Key.CustomerID,
+                                     Volume = groupedFuelReqs.Sum(fr => fr.ActualVolume.GetValueOrDefault() * fr.ActualPpg.GetValueOrDefault() > 0 ?
+                                             fr.ActualVolume * fr.ActualPpg :
+                                             fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()),
+                                     Orders = groupedFuelReqs.Count()
+                                 }
+                            )
+                            join c in _context.CustomerInfoByGroup on fr.CustomerID.GetValueOrDefault() equals c.CustomerId
+                            select new
+                            {
+                                Name = c.Company,
+                                fr.Volume,
+                                fr.Orders
+                            })
+                            .Distinct()
+                            .ToListAsync();
             return Ok(chartData);
         }
 

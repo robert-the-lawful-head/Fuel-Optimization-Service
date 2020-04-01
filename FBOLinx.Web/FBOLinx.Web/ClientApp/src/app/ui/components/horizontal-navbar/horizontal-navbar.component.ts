@@ -274,6 +274,8 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
             .subscribe(
                 (data: any) => {
                     this.fboAirport = _.assign({}, data);
+                    this.sharedService.currentUser.icao = this.fboAirport.icao;
+                    this.sharedService.emitChange(SharedEvents.icaoChangedEvent);
                 },
                 (error: any) => {
                     console.log(error);
