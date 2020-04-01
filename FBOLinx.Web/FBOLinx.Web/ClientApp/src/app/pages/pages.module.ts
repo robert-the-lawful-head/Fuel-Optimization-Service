@@ -124,6 +124,9 @@ import { PopoverModule } from ".././shared/components/popover/popover.module";
 import { TooltipModalComponent } from ".././shared/components/tooltip-modal/tooltip-modal.component";
 import { AnalyticsOrdersQuoteChartComponent } from "../shared/components/analytics-orders-quote-chart/analytics-orders-quote-chart.component";
 import { AnalyticsOrdersOverTimeChartComponent } from "../shared/components/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component";
+import { AnalyticsVolumesNearbyAirportChartComponent } from "../shared/components/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component";
+import { AnalyticsMarketShareAirportChartComponent } from "../shared/components/analytics-market-share-airport-chart/analytics-market-share-airport-chart.component";
+import { AnalyticsCustomerBreakdownChartComponent } from "../shared/components/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component";
 import { FuelReqsExportModalComponent } from "../shared/components/fuelreqs-export/fuelreqs-export.component";
 
 // Pipes
@@ -238,6 +241,9 @@ import { AppPipesModule } from "../app-pipes.module";
         AirportAutocompleteComponent,
         AnalyticsOrdersQuoteChartComponent,
         AnalyticsOrdersOverTimeChartComponent,
+        AnalyticsVolumesNearbyAirportChartComponent,
+        AnalyticsMarketShareAirportChartComponent,
+        AnalyticsCustomerBreakdownChartComponent,
         DeleteConfirmationComponent,
         CloseConfirmationComponent,
         DistributionWizardMainComponent,

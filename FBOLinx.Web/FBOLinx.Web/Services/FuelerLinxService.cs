@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Json;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses;
+using IO.Swagger.Model;
 using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Services
@@ -17,19 +18,22 @@ namespace FBOLinx.Web.Services
         #region Private Members
         private string _ProductionUsername = "fbolinx";
         private string _ProductionPassword = "HjAQamk^Md!L9V-_";
-        private string _ProductionAPIKey = "F83D59B7-AD0D-4B3C-A67B-934CD6AA6F2B";
-        private string _APIKey = "F83D59B7-AD0D-4B3C-A67B-934CD6AA6F2B";
+        private string _APIKey = "";
+        private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
         private IOptions<AppSettings> _appSettings;
 
         #endregion
 
-        public FuelerLinxService(IOptions<AppSettings> appSettings)
+        public FuelerLinxService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings)
         {
             _appSettings = appSettings;
+            _fuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
+            _APIKey = _fuelerlinxSdkSettings.APIKey;
+            PrepareAPIClientConfiguration();
         }
-
+        
         #region Public Methods
-        public async Task<Models.Responses.FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(Models.Requests.FuelerLinxUpliftsByLocationRequestContent request)
+        public async Task<FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(FuelerLinxUpliftsByLocationRequestContent request)
         {
             var authToken = await GetAuthenticationTokenFromService();
             string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
@@ -54,6 +58,27 @@ namespace FBOLinx.Web.Services
                 }
             }
         }
+
+        public FBOLinxNearbyAirportsResponse GetTransactionsForNearbyAirports(FBOLinxNearbyAirportsRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FBOLinxNearbyAirportsResponse results = api.GetTransactionsCountForNearbyAirports(request);
+            return results;
+        }
+
+        public FBOLinxOrdersResponse GetTransactionsCountForAirport(FBOLinxOrdersRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FBOLinxOrdersResponse results = api.GetTransactionsCount(request);
+            return results;
+        }
+
+        public FBOLinxOrdersResponse GetTransactionsDirectOrdersCount(FBOLinxOrdersRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FBOLinxOrdersResponse results = api.GetTransactionsDirectOrdersCount(request);
+            return results;
+        }
         #endregion
 
         #region Private Methods
@@ -66,7 +91,7 @@ namespace FBOLinx.Web.Services
                 {
                     client.DefaultRequestHeaders.Add("APIKey", _APIKey);
                     using (HttpResponseMessage response = await client.PostAsync(authURL,
-                        new FBOLinx.Web.Utilities.JsonContent(new Models.Requests.FuelerLinxAuthenticationRequest()
+                        new Utilities.JsonContent(new FuelerLinxAuthenticationRequest()
                         {
                             request = new FuelerLinxAuthenticationRequestContent()
                             {
@@ -77,17 +102,26 @@ namespace FBOLinx.Web.Services
                         })))
                     {
                         var authenticationResult =
-                            response.Content.ReadAsAsync<Models.Responses.FuelerLinxAuthenticationResponse>();
+                            response.Content.ReadAsAsync<FuelerLinxAuthenticationResponse>();
                         if (authenticationResult == null || authenticationResult.Result == null || authenticationResult.Result.d == null)
                             return "";
                         return authenticationResult.Result.d.Token;
                     }
                 }
             }
-            catch (System.Exception exception)
+            catch (Exception)
             {
                 return "";
             }
+        }
+
+        private void PrepareAPIClientConfiguration()
+        {
+            if (!IO.Swagger.Client.Configuration.ApiKey.ContainsKey("x-api-key"))
+                IO.Swagger.Client.Configuration.ApiKey.Add("x-api-key", _APIKey);
+
+            if (!IO.Swagger.Client.Configuration.ApiKey.ContainsKey("Authorization"))
+                IO.Swagger.Client.Configuration.ApiKey.Add("Authorization", "");
         }
         #endregion
     }

@@ -1,0 +1,12 @@
+<ni-card title="Market Share: Past 7 Days at {{icao}}" [headerBgColor]="'gray'">
+    <div class="chart-container">
+        <ngx-charts-pie-chart
+            *ngIf="totalOrdersData"
+            [results]="totalOrdersData"
+            [scheme]="colorScheme"
+            [gradient]="false"
+            [labels]="true"
+            [trimLabels]="false"
+        ></ngx-charts-pie-chart>
+    </div>
+</ni-card>

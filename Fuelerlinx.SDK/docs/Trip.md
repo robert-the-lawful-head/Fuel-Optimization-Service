@@ -1,0 +1,12 @@
+# IO.Swagger.Model.Trip
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**Legs** | [**List&lt;Leg&gt;**](Leg.md) |  | 
+**TailNumber** | **string** |  | [optional] 
+**StartingFuel** | [**Weight**](Weight.md) |  | [optional] 
+**MaxFuelCapacity** | [**Weight**](Weight.md) |  | [optional] 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+

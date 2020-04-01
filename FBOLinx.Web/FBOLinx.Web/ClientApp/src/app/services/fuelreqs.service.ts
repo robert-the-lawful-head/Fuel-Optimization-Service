@@ -51,34 +51,6 @@ export class FuelreqsService {
         });
     }
 
-    public getQuotesAndOrders(fboId: number, startDate: Date, endDate: Date) {
-        return this.http.post(
-            this.accessPointUrl + "/fbo/" + fboId + "/quotesAndOrders",
-            {
-                startDateTime: startDate,
-                endDateTime: endDate,
-                fboId,
-            },
-            {
-                headers: this.headers,
-            }
-        );
-    }
-
-    public getOrders(fboId: number, startDate: Date, endDate: Date) {
-        return this.http.post(
-            this.accessPointUrl + "/fbo/" + fboId + "/orders",
-            {
-                startDateTime: startDate,
-                endDateTime: endDate,
-                fboId,
-            },
-            {
-                headers: this.headers,
-            }
-        );
-    }
-
     public get(payload) {
         return this.http.get(this.accessPointUrl + "/" + payload.oid, {
             headers: this.headers,
@@ -102,6 +74,8 @@ export class FuelreqsService {
             headers: this.headers,
         });
     }
+    
+    // Analysis Services
 
     public topCustomersForFbo(fboId, payload) {
         return this.http.post(
@@ -141,6 +115,76 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + "/analysis/fuelerlinx/orders-by-location",
             payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getQuotesAndOrders(fboId: number, startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + "/analysis/quotes-orders-over-time/fbo/" + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+                fboId,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getOrders(fboId: number, startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + "/analysis/orders-won-over-time/fbo/" + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+                fboId,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getVolumesNearbyAirport(fboId: number, startDate: Date, endDate: Date, mile: number) {
+        return this.http.post(
+            this.accessPointUrl + "/analysis/volumes-nearby-airport/fbo/" + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+                distanceMile: mile
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getMarketShareAirport(fboId: number, startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + "/analysis/market-share-airport/fbo/" + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getFBOCustomersBreakdown(fboId: number, startDate: Date, endDate: Date, chartType: string) {
+        console.log(chartType);
+        return this.http.post(
+            this.accessPointUrl + "/analysis/customers-breakdown/fbo/" + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+                chartType: chartType
+            },
             {
                 headers: this.headers,
             }
