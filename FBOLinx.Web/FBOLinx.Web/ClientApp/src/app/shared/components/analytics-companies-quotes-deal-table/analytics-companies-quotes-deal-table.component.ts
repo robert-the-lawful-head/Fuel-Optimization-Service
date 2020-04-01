@@ -61,8 +61,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit {
                 this.currentCustomer.customerId
             )
             .subscribe((data: any) => {
-                const info = _.assign({}, data, { lastPullDate: (new Date(data.lastPullDate)).toString() });
-                this.dataSource.push(info);
+                this.dataSource.push(data);
             });
     }
 

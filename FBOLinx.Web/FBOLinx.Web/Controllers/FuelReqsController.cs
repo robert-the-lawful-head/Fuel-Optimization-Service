@@ -838,13 +838,18 @@ namespace FBOLinx.Web.Controllers
                                              fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()).GetValueOrDefault()
                             });
             var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(request.Company)).FirstOrDefault();
+            var companyPricingLog = _context.CompanyPricingLog
+                                        .Include("Customer")
+                                        .Where(c => c.Customer.Oid.Equals(request.Company))
+                                        .OrderByDescending(c => c.CreatedDate)
+                                        .FirstOrDefault();
 
             var tableData = new
             {
                 FBOOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
                 FBOVolume = selectedCompanyFuelReqs == null ? 0 : Math.Round(selectedCompanyFuelReqs.TotalVolume, 2),
                 AirportOrders = fuelReqs.Sum(f => f.TotalOrders),
-                LastPullDate = DateTime.Now
+                LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString()
             };
             return Ok(tableData);
         }

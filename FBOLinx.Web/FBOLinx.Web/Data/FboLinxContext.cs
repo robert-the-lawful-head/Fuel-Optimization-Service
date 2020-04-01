@@ -20,7 +20,7 @@ namespace FBOLinx.Web.Data
 
         public virtual DbSet<AirCrafts> Aircrafts { get; set; }
         public virtual DbSet<Contacts> Contacts { get; set; }
-        public virtual DbSet<CompanyPricingLog> CompanyPricingLogs { get; set; }
+        public virtual DbSet<CompanyPricingLog> CompanyPricingLog { get; set; }
         public virtual DbSet<CustomerAircrafts> CustomerAircrafts { get; set; }
         public virtual DbSet<Customers> Customers { get; set; }
         public virtual DbSet<Fboairports> Fboairports { get; set; }
