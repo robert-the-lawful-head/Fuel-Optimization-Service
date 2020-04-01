@@ -177,13 +177,26 @@ export class FuelreqsService {
     }
 
     public getFBOCustomersBreakdown(fboId: number, startDate: Date, endDate: Date, chartType: string) {
-        console.log(chartType);
         return this.http.post(
             this.accessPointUrl + "/analysis/customers-breakdown/fbo/" + fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
-                chartType: chartType
+                chartType
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getCompaniesQuotingDealStatistics(fboId: number, startDate: Date, endDate: Date, company: number) {
+        return this.http.post(
+            this.accessPointUrl + "/analysis/company-quoting-deal-statistics/fbo/" + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+                company
             },
             {
                 headers: this.headers,

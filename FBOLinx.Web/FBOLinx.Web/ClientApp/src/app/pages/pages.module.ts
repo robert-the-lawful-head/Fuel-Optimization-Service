@@ -127,6 +127,7 @@ import { AnalyticsOrdersOverTimeChartComponent } from "../shared/components/anal
 import { AnalyticsVolumesNearbyAirportChartComponent } from "../shared/components/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component";
 import { AnalyticsMarketShareAirportChartComponent } from "../shared/components/analytics-market-share-airport-chart/analytics-market-share-airport-chart.component";
 import { AnalyticsCustomerBreakdownChartComponent } from "../shared/components/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component";
+import { AnalyticsCompaniesQuotesDealTableComponent } from "../shared/components/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component";
 import { FuelReqsExportModalComponent } from "../shared/components/fuelreqs-export/fuelreqs-export.component";
 
 // Pipes
@@ -244,6 +245,7 @@ import { AppPipesModule } from "../app-pipes.module";
         AnalyticsVolumesNearbyAirportChartComponent,
         AnalyticsMarketShareAirportChartComponent,
         AnalyticsCustomerBreakdownChartComponent,
+        AnalyticsCompaniesQuotesDealTableComponent,
         DeleteConfirmationComponent,
         CloseConfirmationComponent,
         DistributionWizardMainComponent,

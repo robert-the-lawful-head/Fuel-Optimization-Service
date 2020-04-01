@@ -786,7 +786,7 @@ namespace FBOLinx.Web.Controllers
                                  {
                                      CustomerID = fr.CustomerId
                                  }
-                                        into groupedFuelReqs
+                                 into groupedFuelReqs
                                  select new
                                  {
                                      groupedFuelReqs.Key.CustomerID,
@@ -806,6 +806,52 @@ namespace FBOLinx.Web.Controllers
                             .Distinct()
                             .ToListAsync();
             return Ok(chartData);
+        }
+
+        [HttpPost("analysis/company-quoting-deal-statistics/fbo/{fboId}")]
+        public IActionResult GetCompanyStatistics([FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+            IQueryable<int> airportfbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid);
+
+            var fuelReqs = (from fr in _context.FuelReq
+                            join afboid in airportfbos on fr.Fboid equals afboid
+                            where fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
+                            group fr by fr.CustomerId
+                            into groupedFuelReqs
+                            select new
+                            {
+                                CustomerId = groupedFuelReqs.Key,
+                                TotalOrders = groupedFuelReqs.Count(),
+                                TotalVolume = groupedFuelReqs.Sum(fr => fr.ActualVolume.GetValueOrDefault() * fr.ActualPpg.GetValueOrDefault() > 0 ?
+                                             fr.ActualVolume * fr.ActualPpg :
+                                             fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()).GetValueOrDefault()
+                            });
+            var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(request.Company)).FirstOrDefault();
+            var companyPricingLog = _context.CompanyPricingLog
+                                        .Include("Customer")
+                                        .Where(c => c.Customer.Oid.Equals(request.Company))
+                                        .OrderByDescending(c => c.CreatedDate)
+                                        .FirstOrDefault();
+
+            var tableData = new
+            {
+                FBOOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
+                FBOVolume = selectedCompanyFuelReqs == null ? 0 : Math.Round(selectedCompanyFuelReqs.TotalVolume, 2),
+                AirportOrders = fuelReqs.Sum(f => f.TotalOrders),
+                LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString()
+            };
+            return Ok(tableData);
         }
 
         #endregion

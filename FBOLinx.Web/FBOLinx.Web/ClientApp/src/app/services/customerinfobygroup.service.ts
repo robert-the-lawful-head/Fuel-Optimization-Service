@@ -42,6 +42,15 @@ export class CustomerinfobygroupService {
         );
     }
 
+    public getCustomerNamesByGroupAndFBO(groupId, fboId) {
+        return this.http.get(
+            this.accessPointUrl + "/customers/group/" + groupId + "/fbo/" + fboId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public getCustomersByGroupAndFBOAndPricing(
         groupId,
         fboId,
