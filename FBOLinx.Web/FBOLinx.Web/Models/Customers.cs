@@ -85,5 +85,8 @@ namespace FBOLinx.Web.Models
 
         [InverseProperty("Customer")]
         public ICollection<CustomerContacts> CustomerContacts { get; set; }
+
+        [InverseProperty("Customer")]
+        public ICollection<CompanyPricingLog> CompanyPricingLogs { get; set; }
     }
 }

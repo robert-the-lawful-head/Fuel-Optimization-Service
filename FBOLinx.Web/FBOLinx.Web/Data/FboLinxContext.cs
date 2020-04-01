@@ -20,6 +20,7 @@ namespace FBOLinx.Web.Data
 
         public virtual DbSet<AirCrafts> Aircrafts { get; set; }
         public virtual DbSet<Contacts> Contacts { get; set; }
+        public virtual DbSet<CompanyPricingLog> CompanyPricingLogs { get; set; }
         public virtual DbSet<CustomerAircrafts> CustomerAircrafts { get; set; }
         public virtual DbSet<Customers> Customers { get; set; }
         public virtual DbSet<Fboairports> Fboairports { get; set; }
@@ -101,6 +102,11 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.State).IsUnicode(false);
 
                 entity.Property(e => e.Title).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<CompanyPricingLog>(entity =>
+            {
+                entity.Property(e => e.ICAO).IsUnicode(false);
             });
 
             modelBuilder.Entity<CustomerAircrafts>(entity =>
