@@ -10,7 +10,7 @@ GO
 -- Create date: 3/30/2020
 -- Description:	Get airports within mile distance
 -- =============================================
-ALTER PROCEDURE [dbo].[up_Airports_In_Distance] 
+CREATE PROCEDURE [dbo].[up_Airports_In_Distance] 
 	@ICAO varchar(10),
 	@Mile int = null
 AS
