@@ -133,6 +133,7 @@ import { FuelReqsExportModalComponent } from "../shared/components/fuelreqs-expo
 // Pipes
 import { AppPipesModule } from "../app-pipes.module";
 
+import { ClickStopPropagationDirective } from "../shared/directives/click-stop-propagation.directive";
 
 
 @NgModule({
@@ -264,9 +265,12 @@ import { AppPipesModule } from "../app-pipes.module";
         StatisticsTotalOrdersComponent,
         TooltipModalComponent,
         AircraftsGridComponent,
-        FuelReqsExportModalComponent
+        FuelReqsExportModalComponent,
+        ClickStopPropagationDirective
     ],
-    exports: [],
+    exports: [
+        ClickStopPropagationDirective
+    ],
     entryComponents: [
         DeleteConfirmationComponent,
         CloseConfirmationComponent,
