@@ -66,14 +66,16 @@
             <ng-container matColumnDef="delete">
                 <th mat-header-cell *matHeaderCellDef>
                     <div class="pull-right">
-                        <button
-                            ni-button
-                            [view]="'accent'"
-                            beforeIcon="fa fa-plus"
-                            (click)="newCustomerAircraft()"
-                        >
-                            Add New
-                        </button>
+                        <button ni-button
+                                class="action-btn"
+                                [view]="'accent'"
+                                beforeIcon="fa fa-upload"
+                                id="launch"
+                                (click)="launchImporter()"
+                                [ngClass]="{ disabled: !LICENSE_KEY }">
+                            Import
+                        </button>&nbsp;&nbsp;
+                        <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newCustomerAircraft()">Add New</button>
                     </div>
                 </th>
                 <td mat-cell *matCellDef="let customerAircraft">
