@@ -1,0 +1,21 @@
+<ni-card title="FBO's customer breakdown" [headerBgColor]="'gray'">
+    <div class="chart-container">
+        <ngx-charts-pie-chart
+            *ngIf="totalOrdersData"
+            [results]="totalOrdersData"
+            [scheme]="colorScheme"
+            [gradient]="false"
+            [labels]="true"
+            [trimLabels]="false"
+        ></ngx-charts-pie-chart>
+    </div>
+    <mat-button-toggle-group
+        class="chart-type-toggle"
+        appearance="legacy"
+        value="order"
+        (change)="changeType($event)"
+    >
+        <mat-button-toggle value="order">Orders</mat-button-toggle>
+        <mat-button-toggle value="volume">Sum of $ volume</mat-button-toggle>
+    </mat-button-toggle-group>
+</ni-card>

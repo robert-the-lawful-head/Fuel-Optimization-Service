@@ -168,7 +168,23 @@ export class FuelreqsService {
             this.accessPointUrl + "/analysis/market-share-airport/fbo/" + fboId,
             {
                 startDateTime: startDate,
-                endDateTime: endDate            },
+                endDateTime: endDate
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getFBOCustomersBreakdown(fboId: number, startDate: Date, endDate: Date, chartType: string) {
+        console.log(chartType);
+        return this.http.post(
+            this.accessPointUrl + "/analysis/customers-breakdown/fbo/" + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+                chartType: chartType
+            },
             {
                 headers: this.headers,
             }
