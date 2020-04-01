@@ -63,7 +63,7 @@ export class CustomersGridComponent implements OnInit {
     public selectedRows: number;
     public globalMargin: any;
     public pageIndex = 0;
-    public pageSize = 10;
+    public pageSize = 100;
     public tableSort = "needsAttention";
     public tableSortOrder = "asc";
 
@@ -111,7 +111,7 @@ export class CustomersGridComponent implements OnInit {
         if (sessionStorage.getItem("pageSizeValue")) {
             this.pageSize = sessionStorage.getItem("pageSizeValue") as any;
         } else {
-            this.pageSize = 10;
+            this.pageSize = 100;
         }
 
         if (sessionStorage.getItem("tableSortValue")) {
@@ -228,7 +228,15 @@ export class CustomersGridComponent implements OnInit {
 
     public exportCustomersToExcel() {
         // Export the filtered results to an excel spreadsheet
-        let exportData = _.clone(this.customersDataSource.filteredData);
+        const filteredList = this.customersDataSource.filteredData.filter((item) => {
+            return item.selectAll === true;
+        });
+        let exportData = [];
+        if (filteredList.length > 0) {
+            exportData = filteredList;
+        } else {
+            exportData = this.customersDataSource.filteredData;
+        }
         exportData = _.map(exportData, (item) => {
             return {
                 Company: item.company,

@@ -32,7 +32,32 @@
 }
 
 .actions-header {
+    position: relative;
+
     @media only screen and (min-width: 992px) {
         min-width: 370px;
     }
 }
+
+.actions-menu {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+
+::ng-deep .switch-nested-menu-left-arrows {
+    button[mat-menu-item] {
+        padding-left: 32px;
+        padding-right: 16px;
+        
+        &.mat-menu-item-submenu-trigger::after {
+            border-width: 5px 5px 5px 0;
+            border-color: transparent currentColor transparent transparent;
+            right: 0;
+            left: 16px;
+        }
+    }
+}
+
