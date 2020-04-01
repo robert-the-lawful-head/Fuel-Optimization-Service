@@ -13,5 +13,9 @@ namespace FBOLinx.Web.ViewModels
         public string TailNumber { get; set; }
         public string Model { get; set; }
         public string AircraftMake { get; set; }
+        public int? Size { get; set; }
+        public bool? IsImported { get; set; }
+        public List<string> OtherOptions { get; set; }
+        public string selectedModel { get; set; }
     }
 }

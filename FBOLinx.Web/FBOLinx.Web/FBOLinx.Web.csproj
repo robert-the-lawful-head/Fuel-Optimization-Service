@@ -42,6 +42,7 @@
     <None Remove="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-confirm-delete-modal\customer-aircrafts-confirm-delete-modal.component.ts" />
+    <None Remove="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-select-model-dialog\customer-aircrafts-select-model-dialog.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
@@ -71,6 +72,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-confirm-delete-modal\customer-aircrafts-confirm-delete-modal.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-select-model-dialog\customer-aircrafts-select-model-dialog.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />

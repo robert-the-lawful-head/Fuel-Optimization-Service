@@ -65,6 +65,7 @@ import { CustomersEditComponent } from "./customers/customers-edit/customers-edi
 import { CustomerAircraftsDialogNewAircraftComponent } from "./customer-aircrafts/customer-aircrafts-dialog-new-aircraft/customer-aircrafts-dialog-new-aircraft.component";
 import { CustomerAircraftsEditComponent } from "./customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component";
 import { CustomerAircraftsGridComponent } from "./customer-aircrafts/customer-aircrafts-grid/customer-aircrafts-grid.component";
+import { CustomerAircraftSelectModelComponent } from "./customer-aircrafts/customer-aircrafts-select-model-dialog/customer-aircrafts-select-model-dialog.component";
 import { CustomerCompanyTypeDialogComponent } from "./customers/customer-company-type-dialog/customer-company-type-dialog.component";
 import { CustomersDialogNewCustomerComponent } from "./customers/customers-dialog-new-customer/customers-dialog-new-customer.component";
 import { CustomersGridComponent } from "./customers/customers-grid/customers-grid.component";
@@ -133,6 +134,7 @@ import { FuelReqsExportModalComponent } from "../shared/components/fuelreqs-expo
 import { AppPipesModule } from "../app-pipes.module";
 
 
+
 @NgModule({
     imports: [
         CommonModule,
@@ -198,6 +200,7 @@ import { AppPipesModule } from "../app-pipes.module";
         ContactsGridComponent,
         ContactsHomeComponent,
         CustomerAircraftsDialogNewAircraftComponent,
+        CustomerAircraftSelectModelComponent,
         CustomerAircraftsEditComponent,
         CustomerAircraftsGridComponent,
         CustomerCompanyTypeDialogComponent,
@@ -268,6 +271,7 @@ import { AppPipesModule } from "../app-pipes.module";
         DeleteConfirmationComponent,
         CloseConfirmationComponent,
         CustomerAircraftsDialogNewAircraftComponent,
+        CustomerAircraftSelectModelComponent,
         CustomerAircraftsEditComponent,
         CustomerCompanyTypeDialogComponent,
         CustomersDialogNewCustomerComponent,
