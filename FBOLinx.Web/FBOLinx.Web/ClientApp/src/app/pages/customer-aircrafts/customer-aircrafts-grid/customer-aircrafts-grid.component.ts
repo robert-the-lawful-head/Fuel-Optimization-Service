@@ -327,9 +327,9 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 let aircraftSizes = [];
                 this.aircraftsService
                     .getAircraftSizes()
-                    .subscribe((data: any) => {
-                        if (data) {
-                            aircraftSizes = data;
+                    .subscribe((asizes: any) => {
+                        if (asizes) {
+                            aircraftSizes = asizes;
                             results.data.forEach((result) => {
                                 result.groupid = this.sharedService.currentUser.groupId;
                                 result.customerId = this.customer.customerId;
@@ -344,12 +344,11 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                             sizeText.value;
                                     }
                                 }
-                                console.log(result);
                             });
 
-                            this.customerAircraftsService.import(results.data).subscribe((data: any) => {
+                            this.customerAircraftsService.import(results.data).subscribe((cadata: any) => {
                                 let allGood = true;
-                                data.forEach((result) => {
+                                cadata.forEach((result) => {
                                     if (!result.isImported) {
                                         allGood = false;
                                     }
@@ -363,7 +362,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                             .getCustomerAircraftsByGroupAndCustomerId(
                                                 this.sharedService.currentUser.groupId,
                                                 this.sharedService.currentUser.fboId,
-                                                data[0].customerId
+                                                cadata[0].customerId
                                             )
                                             .subscribe((data: any) => {
                                                 this.customerAircraftsData = data;
@@ -381,7 +380,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                     const dialogRef = this.selectModalAircraftDialog.open(
                                         CustomerAircraftSelectModelComponent,
                                         {
-                                            data: { aircrafts: data }
+                                            data: { aircrafts: cadata }
                                         }
                                     );
 
@@ -391,7 +390,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                                 .getCustomerAircraftsByGroupAndCustomerId(
                                                     this.sharedService.currentUser.groupId,
                                                     this.sharedService.currentUser.fboId,
-                                                    data[0].customerId
+                                                    cadata[0].customerId
                                                 )
                                                 .subscribe((data: any) => {
                                                     this.customerAircraftsData = data;
