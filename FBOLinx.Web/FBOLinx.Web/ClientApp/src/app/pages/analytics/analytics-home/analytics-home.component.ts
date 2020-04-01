@@ -13,6 +13,7 @@ import { AnalyticsOrdersOverTimeChartComponent } from "../../../shared/component
 import { AnalyticsVolumesNearbyAirportChartComponent } from "../../../shared/components/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component";
 import { AnalyticsMarketShareAirportChartComponent } from "../../../shared/components/analytics-market-share-airport-chart/analytics-market-share-airport-chart.component";
 import { AnalyticsCustomerBreakdownChartComponent } from "../../../shared/components/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component";
+import { AnalyticsCompaniesQuotesDealTableComponent } from "../../../shared/components/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component";
 
 const BREADCRUMBS: any[] = [
     {
@@ -49,6 +50,8 @@ export class AnalyticsHomeComponent {
     public analyticsMarketShareAirportChart: AnalyticsMarketShareAirportChartComponent;
     @ViewChild("analyticsCustomerBreakdownChart")
     public analyticsCustomerBreakdownChart: AnalyticsCustomerBreakdownChartComponent;
+    @ViewChild("analyticsCompaniesQuotesDealTable")
+    public analyticsCompaniesQuotesDealTable: AnalyticsCompaniesQuotesDealTableComponent;
 
     public pageTitle = "Analytics";
     public breadcrumb: any[] = BREADCRUMBS;
@@ -74,5 +77,6 @@ export class AnalyticsHomeComponent {
         this.analyticsVolumesNearbyAirportChart.refreshData();
         this.analyticsMarketShareAirportChart.refreshData();
         this.analyticsCustomerBreakdownChart.refreshData();
+        this.analyticsCompaniesQuotesDealTable.refreshData();
     }
 }
