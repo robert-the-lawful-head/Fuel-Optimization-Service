@@ -23,6 +23,9 @@ import { SharedService } from "../../../layouts/shared-service";
 // Components
 import { CustomerAircraftsDialogNewAircraftComponent } from "../customer-aircrafts-dialog-new-aircraft/customer-aircrafts-dialog-new-aircraft.component";
 import { CustomerAircraftsEditComponent } from "../customer-aircrafts-edit/customer-aircrafts-edit.component";
+import { CustomerAircraftSelectModelComponent } from "../customer-aircrafts-select-model-dialog/customer-aircrafts-select-model-dialog.component";
+import FlatfileImporter from "flatfile-csv-importer";
+
 
 @Component({
     selector: "app-customer-aircrafts-grid",
@@ -55,9 +58,16 @@ export class CustomerAircraftsGridComponent implements OnInit {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
+    LICENSE_KEY = "9eef62bd-4c20-452c-98fd-aa781f5ac111";
+
+    results = "[]";
+
+    private importer: FlatfileImporter;
+
     constructor(
         public newCustomerAircraftDialog: MatDialog,
         public editCustomerAircraftDialog: MatDialog,
+        public selectModalAircraftDialog: MatDialog,
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
         private sharedService: SharedService
@@ -141,6 +151,13 @@ export class CustomerAircraftsGridComponent implements OnInit {
                     return item[property];
             }
         };
+
+        FlatfileImporter.setVersion(2);
+        this.initializeImporter();
+        this.importer.setCustomer({
+            userId: "1",
+            name: "WebsiteImport",
+        });
     }
 
     public newCustomerAircraft() {
@@ -296,5 +313,164 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 pricingTemplateName,
             })
             .subscribe((data: any) => {});
+    }
+
+    async launchImporter() {
+        if (!this.LICENSE_KEY) {
+            return alert("Set LICENSE_KEY on Line 13 before continuing.");
+        }
+        try {
+            const results = await this.importer.requestDataFromUser();
+            this.importer.displayLoader();
+
+            if (results) {
+                let aircraftSizes = [];
+                this.aircraftsService
+                    .getAircraftSizes()
+                    .subscribe((data: any) => {
+                        if (data) {
+                            aircraftSizes = data;
+                            results.data.forEach((result) => {
+                                result.groupid = this.sharedService.currentUser.groupId;
+                                result.customerId = this.customer.customerId;
+
+                                if (result.Size) {
+                                    const sizeText = aircraftSizes.find(
+                                        (x) => x.description === result.Size
+                                    );
+
+                                    if (sizeText) {
+                                        result.Size =
+                                            sizeText.value;
+                                    }
+                                }
+                                console.log(result);
+                            });
+
+                            this.customerAircraftsService.import(results.data).subscribe((data: any) => {
+                                let allGood = true;
+                                data.forEach((result) => {
+                                    if (!result.isImported) {
+                                        allGood = false;
+                                    }
+                                });
+                                if (allGood) {
+                                    this.importer.displaySuccess(
+                                        "Data successfully imported!"
+                                    );
+                                    setTimeout(() => {
+                                        this.customerAircraftsService
+                                            .getCustomerAircraftsByGroupAndCustomerId(
+                                                this.sharedService.currentUser.groupId,
+                                                this.sharedService.currentUser.fboId,
+                                                data[0].customerId
+                                            )
+                                            .subscribe((data: any) => {
+                                                this.customerAircraftsData = data;
+                                                this.customerAircraftsDataSource = new MatTableDataSource(
+                                                    this.customerAircraftsData
+                                                );
+                                                this.customerAircraftsDataSource.sort = this.sort;
+                                                this.customerAircraftsDataSource.paginator = this.paginator;
+                                            });
+                                    }, 1500);
+                                } else {
+                                    this.importer.displaySuccess(
+                                        "Import is finished, please click ok to see the results."
+                                    );
+                                    const dialogRef = this.selectModalAircraftDialog.open(
+                                        CustomerAircraftSelectModelComponent,
+                                        {
+                                            data: { aircrafts: data }
+                                        }
+                                    );
+
+                                    dialogRef.afterClosed().subscribe((result) => {
+                                        if (!result) {
+                                            this.customerAircraftsService
+                                                .getCustomerAircraftsByGroupAndCustomerId(
+                                                    this.sharedService.currentUser.groupId,
+                                                    this.sharedService.currentUser.fboId,
+                                                    data[0].customerId
+                                                )
+                                                .subscribe((data: any) => {
+                                                    this.customerAircraftsData = data;
+                                                    this.customerAircraftsDataSource = new MatTableDataSource(
+                                                        this.customerAircraftsData
+                                                    );
+                                                    this.customerAircraftsDataSource.sort = this.sort;
+                                                    this.customerAircraftsDataSource.paginator = this.paginator;
+                                                });
+                                        }
+                                     
+                                    });
+                                }
+                                
+                            });
+                        }
+                    });
+               
+            }
+        } catch (e) { }
+    }
+
+    initializeImporter() {
+        this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+            fields: [
+                {
+                    label: "Tail",
+                    alternates: ["tail", "plane tail", "N-number", "Nnumber", "Tail Number"],
+                    key: "TailNumber",
+                    description: "Tail",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required",
+                        },
+                    ],
+                },
+                {
+                    label: "Make",
+                    alternates: ["make", "manufacturer"],
+                    key: "AircraftMake",
+                    description: "Aircraft Make",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required",
+                        },
+                    ],
+                },
+                {
+                    label: "Model",
+                    alternates: ["model", "plane model"],
+                    key: "Model",
+                    description: "Aircraft Model",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required",
+                        },
+                    ],
+                },
+                {
+                    label: "Size",
+                    alternates: ["size", "plane size"],
+                    key: "Size",
+                    description: "Plane Size",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required",
+                        },
+                    ],
+                }
+            ],
+            type: "Aircrafts",
+            allowInvalidSubmit: true,
+            managed: true,
+            allowCustom: true,
+            disableManualInput: false,
+        });
     }
 }

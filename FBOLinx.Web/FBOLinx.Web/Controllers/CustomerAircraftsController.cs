@@ -10,6 +10,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using static FBOLinx.Web.Models.AirCrafts;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -295,6 +296,67 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
+        }
+
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportCustomerAircrafts([FromBody] List<AircraftImportVM> customerAircrafts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            foreach(var singleAircraft in customerAircrafts)
+            {
+                var aircraft = _context.Aircrafts.FirstOrDefault(s => s.Make == singleAircraft.AircraftMake && s.Model == singleAircraft.Model);
+
+                if (aircraft != null)
+                {
+                    CustomerAircrafts newCa = new CustomerAircrafts();
+                    newCa.GroupId = singleAircraft.GroupId;
+                    newCa.CustomerId = singleAircraft.CustomerId;
+                    newCa.AircraftId = aircraft.AircraftId;
+                    newCa.TailNumber = singleAircraft.TailNumber;
+                    if (singleAircraft.Size != null)
+                    {
+                        AircraftSizes acSize = (AircraftSizes)singleAircraft.Size;
+                        newCa.Size = acSize;
+                    }
+                    singleAircraft.IsImported = true;
+                    _context.CustomerAircrafts.Add(newCa);
+                    _context.SaveChanges();
+
+                    
+                }
+                else
+                {
+                    singleAircraft.IsImported = false;
+                    var otherOptions = _context.Aircrafts.Where(s => s.Make == singleAircraft.AircraftMake).Select(s => s.Model);
+
+                    if(otherOptions != null)
+                    {
+                        List<string> listOfModels = new List<string>();
+                        foreach(var model in otherOptions)
+                        {
+                            listOfModels.Add(model);    
+                        }
+                        listOfModels = listOfModels.OrderByDescending(s => s).ToList();
+                        singleAircraft.OtherOptions = listOfModels;
+                        singleAircraft.selectedModel = "";
+                    }
+
+                    
+                }
+            }
+
+            var checkForErrors = customerAircrafts.FirstOrDefault(s => s.IsImported == false);
+
+            if (checkForErrors !=null)
+            {
+                return Ok(customerAircrafts.Where(s => s.IsImported == false).ToList());
+            }
+
+            return Ok(customerAircrafts);
         }
 
         // DELETE: api/CustomerAircrafts/5

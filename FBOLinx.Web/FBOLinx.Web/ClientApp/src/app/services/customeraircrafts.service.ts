@@ -59,6 +59,12 @@ export class CustomeraircraftsService {
         });
     }
 
+    public import(payload) {
+        return this.http.post(this.accessPointUrl + "/import", payload, {
+            headers: this.headers,
+        });
+    }
+
     public remove(payload) {
         return this.http.delete(this.accessPointUrl + "/" + payload.oid, {
             headers: this.headers,
