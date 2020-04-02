@@ -159,6 +159,79 @@ namespace FBOLinx.Web.Controllers
             return Ok(contactInfoByGroup);
         }
 
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportCustomerContacts([FromBody] List<CustomerContactsByGroupGridViewModel> customerContacts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            List<ContactInfoByGroup> importedContacts = new List<ContactInfoByGroup>();
+            foreach (var singleContact in customerContacts)
+            {
+                Contacts newContact = new Contacts();
+                newContact.Email = singleContact.Email;
+
+                _context.Contacts.Add(newContact);
+                await _context.SaveChangesAsync();
+
+                if(newContact.Oid != 0)
+                {
+                    CustomerContacts cc = new CustomerContacts();
+                    int customerId = 0;
+
+                    if(singleContact.CustomerId != 0)
+                    {
+                        customerId = _context.CustomerInfoByGroup.FirstOrDefault(s => s.Oid == singleContact.CustomerId).CustomerId;
+
+                        if(customerId != 0)
+                        {
+                            cc.CustomerId = customerId;
+                            cc.ContactId = newContact.Oid;
+
+                            _context.CustomerContacts.Add(cc);
+                            _context.SaveChanges();
+                        }
+                    }
+
+                    
+                    ContactInfoByGroup cibg = new ContactInfoByGroup();
+                    cibg.FirstName = singleContact.FirstName;
+                    cibg.LastName = singleContact.LastName;
+                    cibg.Email = singleContact.Email;
+                    cibg.Title = singleContact.Title;
+                    cibg.Phone = singleContact.Phone;
+                    cibg.Extension = singleContact.Extension;
+                    cibg.Mobile = singleContact.Mobile;
+                    cibg.Fax = singleContact.Fax;
+                    cibg.Address = singleContact.Address;
+                    cibg.City = singleContact.City;
+                    cibg.State = singleContact.State;
+                    cibg.Country = singleContact.Country;
+                    cibg.GroupId = Convert.ToInt32(singleContact.GroupId);
+                    if(singleContact.PrimaryContact != string.Empty)
+                    {
+                        cibg.Primary = singleContact.PrimaryContact.ToLower() == "yes" ? true : false;
+                    }
+
+                    if(singleContact.CopyAlertsContact != string.Empty)
+                    {
+                        cibg.CopyAlerts = singleContact.CopyAlertsContact.ToLower() == "yes" ? true : false;
+                    }
+
+                    cibg.ContactId = newContact.Oid;
+
+                    _context.ContactInfoByGroup.Add(cibg);
+                    _context.SaveChanges();
+
+                    importedContacts.Add(cibg);
+                }
+
+            }
+            return Ok(importedContacts);
+            //return Ok(customerContacts);
+        }
+
         private bool ContactInfoByGroupExists(int id)
         {
             return _context.ContactInfoByGroup.Any(e => e.Oid == id);

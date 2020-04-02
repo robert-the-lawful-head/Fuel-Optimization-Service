@@ -24,6 +24,8 @@ import { CustomerinfobygroupService } from "../../../services/customerinfobygrou
 import { ContactinfobygroupsService } from "../../../services/contactinfobygroups.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { ContactsDialogNewContactComponent } from "../contacts-edit-modal/contacts-edit-modal.component";
+import FlatfileImporter from "flatfile-csv-importer";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
     selector: "app-contacts-grid",
@@ -50,13 +52,20 @@ export class ContactsGridComponent implements OnInit {
 
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
+    LICENSE_KEY = "9eef62bd-4c20-452c-98fd-aa781f5ac111";
+
+    results = "[]";
+
+    private importer: FlatfileImporter;
+
     constructor(
         public deleteUserDialog: MatDialog,
         private contactsService: ContactsService,
         private contactInfoByGroupsService: ContactinfobygroupsService,
         private sharedService: SharedService,
         private customerContactsService: CustomercontactsService,
-        public newContactDialog: MatDialog
+        public newContactDialog: MatDialog,
+        private route: ActivatedRoute
     ) {}
 
     ngOnInit() {
@@ -71,6 +80,13 @@ export class ContactsGridComponent implements OnInit {
         this.sort.sortChange.subscribe(() => {});
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
+
+        FlatfileImporter.setVersion(2);
+        this.initializeImporter();
+        this.importer.setCustomer({
+            userId: "1",
+            name: "WebsiteImport",
+        });
     }
 
     // Public Methods
@@ -204,6 +220,149 @@ export class ContactsGridComponent implements OnInit {
             this.contactInfoByGroupsService
                 .update(contact)
                 .subscribe((data: any) => {});
+        });
+    }
+
+    async launchImporter() {
+        if (!this.LICENSE_KEY) {
+            return alert("Set LICENSE_KEY on Line 13 before continuing.");
+        }
+        try {
+            const results = await this.importer.requestDataFromUser();
+            this.importer.displayLoader();
+            const customerId = this.route.snapshot.paramMap.get("id");
+            if (results) {
+                results.data.forEach((result) => {
+                    result.groupid = this.sharedService.currentUser.groupId;
+                    result.customerId = customerId;
+                });
+                this.contactInfoByGroupsService
+                    .import(results.data)
+                    .subscribe((data: any) => {
+                        if (data) {
+                            data.forEach((result) => {
+                                this.contactsData.push(result);
+                            });
+
+                            this.contactsDataSource = new MatTableDataSource(
+                                this.contactsData
+                            );
+                            this.contactsDataSource.sort = this.sort;
+
+                            this.importer.displaySuccess(
+                                "Data successfully imported!"
+                            );
+                        }
+                    });
+            }
+        } catch (e) { }
+    }
+
+    initializeImporter() {
+        this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+            fields: [
+                {
+                    label: "First Name",
+                    alternates: ["first name"],
+                    key: "FirstName",
+                    description: "Contact First Name",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required",
+                        },
+                    ],
+                },
+                {
+                    label: "Last Name",
+                    alternates: ["last name"],
+                    key: "LastName",
+                    description: "Contact Last Name",
+                    validators: [
+                        {
+                            validate: "required",
+                            error: "this field is required",
+                        },
+                    ],
+                },
+                {
+                    label: "Title",
+                    alternates: ["title"],
+                    key: "Title",
+                    description: "Contact Title"
+                },
+                {
+                    label: "Email",
+                    alternates: ["email", "email address"],
+                    key: "Email",
+                    description: "Email Address"
+                },
+                {
+                    label: "Phone Number",
+                    alternates: ["phone", "phone number"],
+                    key: "PhoneNumber",
+                    description: "Phone Number"
+                },
+                {
+                    label: "Extension",
+                    alternates: ["extension"],
+                    key: "Extension",
+                    description: "Phone Extension"
+                },
+                {
+                    label: "Mobile",
+                    alternates: ["mobile", "cell", "mobile phone", "cell phone"],
+                    key: "MobilePhone",
+                    description: "Mobile Phone"
+                },
+                {
+                    label: "Fax",
+                    alternates: ["fax"],
+                    key: "Fax",
+                    description: "Fax"
+                },
+                {
+                    label: "Address",
+                    alternates: ["address", "street address"],
+                    key: "Address",
+                    description: "Street Address"
+                },
+                {
+                    label: "City",
+                    alternates: ["city", "town"],
+                    key: "City",
+                    description: "City"
+                },
+                {
+                    label: "State",
+                    alternates: ["state"],
+                    key: "State",
+                    description: "State"
+                },
+                {
+                    label: "Country",
+                    alternates: ["country"],
+                    key: "Country",
+                    description: "Country"
+                },
+                {
+                    label: "Primary",
+                    alternates: ["primary"],
+                    key: "PrimaryContact",
+                    description: "Primary"
+                },
+                {
+                    label: "Copy on Distribution",
+                    alternates: ["copy on distribution"],
+                    key: "CopyAlertsContact",
+                    description: "Copy Contact on Distribution"
+                }
+            ],
+            type: "Contacts",
+            allowInvalidSubmit: true,
+            managed: true,
+            allowCustom: true,
+            disableManualInput: false,
         });
     }
 }
