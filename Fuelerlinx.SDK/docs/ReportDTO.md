@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **IsFavorite** | **bool?** |  | [optional] 
 **CompanyId** | **int?** |  | [optional] 
 **ChartOptionsJson** | **string** |  | [optional] 
-**DataOptionsJson** | **string** |  | [optional] 
+**DataOptions** | [**ReportDataOptions**](ReportDataOptions.md) |  | [optional] 
 **CreationDateUtc** | **DateTime?** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

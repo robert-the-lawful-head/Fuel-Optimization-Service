@@ -42,6 +42,12 @@ namespace IO.Swagger.Api
         /// <returns>IndustryAveragePriceByTransactionResponse</returns>
         IndustryAveragePriceByTransactionResponse GetIndustryAveragePriceByTransaction (int? transactionId);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>ReportDataResponse</returns>
+        ReportDataResponse GetReportData (ReportDataJsonRequest body);
+        /// <summary>
         /// Fetch a list of reports for the authenticated company. 
         /// </summary>
         /// <returns>ReportListResponse</returns>
@@ -309,6 +315,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetIndustryAveragePriceByTransaction: " + response.ErrorMessage, response.ErrorMessage);
     
             return (IndustryAveragePriceByTransactionResponse) ApiClient.Deserialize(response.Content, typeof(IndustryAveragePriceByTransactionResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>ReportDataResponse</returns>            
+        public ReportDataResponse GetReportData (ReportDataJsonRequest body)
+        {
+            
+    
+            var path = "/api/Analysis/custom-reports/data";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (ReportDataResponse) ApiClient.Deserialize(response.Content, typeof(ReportDataResponse), response.Headers);
         }
     
         /// <summary>

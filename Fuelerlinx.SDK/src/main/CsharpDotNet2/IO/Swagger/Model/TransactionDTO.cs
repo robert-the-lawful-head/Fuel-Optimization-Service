@@ -387,6 +387,20 @@ namespace IO.Swagger.Model {
     public int? LegNumber { get; set; }
 
     /// <summary>
+    /// Gets or Sets NonFuelServicesTotal
+    /// </summary>
+    [DataMember(Name="nonFuelServicesTotal", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "nonFuelServicesTotal")]
+    public double? NonFuelServicesTotal { get; set; }
+
+    /// <summary>
+    /// Gets or Sets NonFuelServiceNames
+    /// </summary>
+    [DataMember(Name="nonFuelServiceNames", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "nonFuelServiceNames")]
+    public string NonFuelServiceNames { get; set; }
+
+    /// <summary>
     /// Gets or Sets TransactionNotes
     /// </summary>
     [DataMember(Name="transactionNotes", EmitDefaultValue=false)]
@@ -524,6 +538,8 @@ namespace IO.Swagger.Model {
       sb.Append("  ServiceDateYearFirstFormat: ").Append(ServiceDateYearFirstFormat).Append("\n");
       sb.Append("  ScheduledTripID: ").Append(ScheduledTripID).Append("\n");
       sb.Append("  LegNumber: ").Append(LegNumber).Append("\n");
+      sb.Append("  NonFuelServicesTotal: ").Append(NonFuelServicesTotal).Append("\n");
+      sb.Append("  NonFuelServiceNames: ").Append(NonFuelServiceNames).Append("\n");
       sb.Append("  TransactionNotes: ").Append(TransactionNotes).Append("\n");
       sb.Append("  TransactionFuelTaxes: ").Append(TransactionFuelTaxes).Append("\n");
       sb.Append("  TransactionServiceFees: ").Append(TransactionServiceFees).Append("\n");

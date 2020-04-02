@@ -55,11 +55,11 @@ namespace IO.Swagger.Model {
     public string ChartOptionsJson { get; set; }
 
     /// <summary>
-    /// Gets or Sets DataOptionsJson
+    /// Gets or Sets DataOptions
     /// </summary>
-    [DataMember(Name="dataOptionsJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dataOptionsJson")]
-    public string DataOptionsJson { get; set; }
+    [DataMember(Name="dataOptions", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "dataOptions")]
+    public ReportDataOptions DataOptions { get; set; }
 
     /// <summary>
     /// Gets or Sets CreationDateUtc
@@ -82,7 +82,7 @@ namespace IO.Swagger.Model {
       sb.Append("  IsFavorite: ").Append(IsFavorite).Append("\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  ChartOptionsJson: ").Append(ChartOptionsJson).Append("\n");
-      sb.Append("  DataOptionsJson: ").Append(DataOptionsJson).Append("\n");
+      sb.Append("  DataOptions: ").Append(DataOptions).Append("\n");
       sb.Append("  CreationDateUtc: ").Append(CreationDateUtc).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

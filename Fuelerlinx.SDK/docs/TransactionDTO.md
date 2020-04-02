@@ -56,6 +56,8 @@ Name | Type | Description | Notes
 **ServiceDateYearFirstFormat** | **string** |  | [optional] 
 **ScheduledTripID** | **string** |  | [optional] 
 **LegNumber** | **int?** |  | [optional] 
+**NonFuelServicesTotal** | **double?** |  | [optional] 
+**NonFuelServiceNames** | **string** |  | [optional] 
 **TransactionNotes** | [**List&lt;TransactionNoteDTO&gt;**](TransactionNoteDTO.md) |  | [optional] 
 **TransactionFuelTaxes** | [**List&lt;TransactionFuelTaxDTO&gt;**](TransactionFuelTaxDTO.md) |  | [optional] 
 **TransactionServiceFees** | [**List&lt;TransactionServiceFeeDTO&gt;**](TransactionServiceFeeDTO.md) |  | [optional] 

@@ -1,14 +1,14 @@
-# IO.Swagger.Model.PostReportRequest
+# IO.Swagger.Model.ReportColumnDTO
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Name** | **string** |  | 
+**Heading** | **string** |  | [optional] 
+**Width** | **int?** |  | [optional] 
+**ColumnFormat** | **int?** |  | [optional] 
+**IsHidden** | **bool?** |  | [optional] 
 **Description** | **string** |  | [optional] 
-**IsFavorite** | **bool?** |  | [optional] 
-**CompanyId** | **int?** |  | [optional] 
-**ChartOptionsJson** | **string** |  | [optional] 
-**DataOptions** | [**ReportDataOptions**](ReportDataOptions.md) |  | [optional] 
+**PropertyName** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

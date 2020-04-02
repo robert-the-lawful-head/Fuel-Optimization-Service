@@ -121,6 +121,7 @@ Class | Method | HTTP request | Description
 *AnalysisApi* | [**GetCustomReportById**](docs/AnalysisApi.md#getcustomreportbyid) | **GET** /api/Analysis/custom-reports/{id} | Fetch a custom report by it's {id}.
 *AnalysisApi* | [**GetEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#getemailaddressesformonthlyanalysis) | **GET** /api/Analysis/email-blast/{emailBlastId}/email-addresses | Internal use only - Fetch all subscribers for a particular email blast.
 *AnalysisApi* | [**GetIndustryAveragePriceByTransaction**](docs/AnalysisApi.md#getindustryaveragepricebytransaction) | **GET** /api/Analysis/industry-average/by-transaction/{transactionId} | 
+*AnalysisApi* | [**GetReportData**](docs/AnalysisApi.md#getreportdata) | **POST** /api/Analysis/custom-reports/data | 
 *AnalysisApi* | [**GetReportListByCompanyId**](docs/AnalysisApi.md#getreportlistbycompanyid) | **GET** /api/Analysis/custom-reports/list | Fetch a list of reports for the authenticated company.
 *AnalysisApi* | [**PostCustomReport**](docs/AnalysisApi.md#postcustomreport) | **POST** /api/Analysis/custom-reports | Add a new custom report for the authenticated company.
 *AnalysisApi* | [**PostEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#postemailaddressesformonthlyanalysis) | **POST** /api/Analysis/email-blast/email-addresses | Internal use only - Add a new subscriber-set record to an email blast.
@@ -336,6 +337,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CalculationResult](docs/CalculationResult.md)
  - [IO.Swagger.Model.CancelFuelOrderRequest](docs/CancelFuelOrderRequest.md)
  - [IO.Swagger.Model.CancelFuelOrdersResponse](docs/CancelFuelOrdersResponse.md)
+ - [IO.Swagger.Model.ChartDataDTO](docs/ChartDataDTO.md)
  - [IO.Swagger.Model.CompanyDTO](docs/CompanyDTO.md)
  - [IO.Swagger.Model.CompanyFuelerDTO](docs/CompanyFuelerDTO.md)
  - [IO.Swagger.Model.CompanyFuelerListResponse](docs/CompanyFuelerListResponse.md)
@@ -537,7 +539,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.RampFeeByCompanyNotesResponse](docs/RampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.RampFeeByCompanyResponse](docs/RampFeeByCompanyResponse.md)
  - [IO.Swagger.Model.RecommendationSummary](docs/RecommendationSummary.md)
+ - [IO.Swagger.Model.ReportColumnDTO](docs/ReportColumnDTO.md)
  - [IO.Swagger.Model.ReportDTO](docs/ReportDTO.md)
+ - [IO.Swagger.Model.ReportDataDTO](docs/ReportDataDTO.md)
+ - [IO.Swagger.Model.ReportDataJsonRequest](docs/ReportDataJsonRequest.md)
+ - [IO.Swagger.Model.ReportDataOptions](docs/ReportDataOptions.md)
+ - [IO.Swagger.Model.ReportDataResponse](docs/ReportDataResponse.md)
+ - [IO.Swagger.Model.ReportFilter](docs/ReportFilter.md)
  - [IO.Swagger.Model.ReportListResponse](docs/ReportListResponse.md)
  - [IO.Swagger.Model.ReportResponse](docs/ReportResponse.md)
  - [IO.Swagger.Model.ResultItem](docs/ResultItem.md)
