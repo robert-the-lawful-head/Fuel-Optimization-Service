@@ -64,4 +64,10 @@ export class ContactinfobygroupsService {
             );
         }
     }
+
+    public import(payload) {
+        return this.http.post(this.accessPointUrl + "/import", payload, {
+            headers: this.headers,
+        });
+    }
 }
