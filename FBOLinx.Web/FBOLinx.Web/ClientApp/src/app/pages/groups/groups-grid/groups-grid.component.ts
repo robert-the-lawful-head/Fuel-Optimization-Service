@@ -64,7 +64,7 @@ export class GroupsGridComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
         if (!this.groupsData) {
             return;
         }

@@ -74,7 +74,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         private sharedService: SharedService,
         public distributionDialog: MatDialog
     ) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
     }
 
     ngOnInit(): void {

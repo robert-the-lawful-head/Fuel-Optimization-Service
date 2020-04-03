@@ -10,7 +10,7 @@ export class PageNotFoundComponent implements OnInit {
     pageTitle = "Not found!";
 
     constructor(private sharedService: SharedService) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
     }
 
     ngOnInit() {}

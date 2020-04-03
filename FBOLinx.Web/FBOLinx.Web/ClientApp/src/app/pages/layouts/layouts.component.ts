@@ -10,7 +10,7 @@ export class PageLayoutsComponent implements OnInit {
     pageTitle = "Layouts";
 
     constructor(private sharedService: SharedService) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
     }
 
     ngOnInit() {}

@@ -1,5 +1,7 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
+
+import FlatfileImporter from "flatfile-csv-importer";
 
 // Services
 import { RampfeesService } from "../../../services/rampfees.service";
@@ -12,9 +14,7 @@ import * as SharedEvents from "../../../models/sharedEvents";
 // Components
 import { RampFeesDialogNewFeeComponent } from "../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component";
 import { RampFeesImportInformationComponent } from "../ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component";
-import { first } from "rxjs/operators";
-import FlatfileImporter from "flatfile-csv-importer";
-
+import { RampFeesCategoryComponent } from "../ramp-fees-category/ramp-fees-category.component";
 
 const BREADCRUMBS: any[] = [
     {
@@ -33,6 +33,9 @@ const BREADCRUMBS: any[] = [
     styleUrls: ["./ramp-fees-home.component.scss"],
 })
 export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild("customRampFeeCat")
+    public customRampFeeCat: RampFeesCategoryComponent;
+
     public pageTitle = "Ramp Fees";
     public breadcrumb: any[] = BREADCRUMBS;
     public rampFees: any[];
@@ -55,7 +58,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         public importFeesInfoDialog: MatDialog,
         private messageService: Parametri
     ) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
         this.aircraftsService
             .getAll()
             .subscribe((data: any) => (this.aircraftTypes = data));
@@ -118,7 +121,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             result.fboId = this.sharedService.currentUser.fboId;
             this.rampFeesService.add(result).subscribe((data: any) => {
-                this.rampFees = null;
                 this.loadRampFees();
             });
         });
@@ -162,18 +164,21 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadRampFees() {
+        this.rampFees = undefined;
         this.rampFeesService
             .getForFbo({ oid: this.sharedService.currentUser.fboId })
             .subscribe((data: any) => {
                 this.rampFees = data;
+                if (this.customRampFeeCat) {
+                    this.customRampFeeCat.refreshData();
+                }
             });
     }
 
     public informForRampFees() {
         const dialogRef = this.importFeesInfoDialog.open(
             RampFeesImportInformationComponent,
-            {
-            }
+            {}
         );
 
         dialogRef.afterClosed().subscribe((result) => {
@@ -209,7 +214,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                                 "Data successfully imported!"
                             );
                             setTimeout(() => {
-                                this.rampFees = null;
                                 this.loadRampFees();
                             }, 1500);
                         }

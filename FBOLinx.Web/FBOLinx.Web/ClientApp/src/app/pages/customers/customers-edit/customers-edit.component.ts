@@ -95,7 +95,7 @@ export class CustomersEditComponent {
         public dialog: MatDialog,
         public newContactDialog: MatDialog
     ) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
         this.customerInfoByGroupService
             .getCertificateTypes()
             .subscribe((data: any) => (this.certificateTypes = data));
