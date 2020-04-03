@@ -225,13 +225,13 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     label: "ICAO",
                     alternates: ["Icao"],
                     key: "icao",
-                    description: "Icao"
+                    description: "Icao",
                 },
                 {
                     label: "FBO",
                     alternates: ["fbo"],
                     key: "fbo",
-                    description: "FBO"
+                    description: "FBO",
                 },
                 {
                     label: "Make",
@@ -286,7 +286,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     alternates: ["avoidance"],
                     key: "avoidance",
                     description: "Avoidance",
-                }
+                },
             ],
             type: "RampFees",
             allowInvalidSubmit: true,

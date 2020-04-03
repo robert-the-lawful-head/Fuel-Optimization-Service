@@ -12,7 +12,7 @@ import {
 export class RampFeesImportInformationComponent {
     
     constructor(
-        public dialogRef: MatDialogRef<RampFeesImportInformationComponent>,
+        public dialogRef: MatDialogRef<RampFeesImportInformationComponent>
     ) {
         
     }

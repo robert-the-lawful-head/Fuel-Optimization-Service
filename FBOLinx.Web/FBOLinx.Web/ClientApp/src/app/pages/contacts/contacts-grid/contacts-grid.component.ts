@@ -289,74 +289,74 @@ export class ContactsGridComponent implements OnInit {
                     label: "Title",
                     alternates: ["title"],
                     key: "Title",
-                    description: "Contact Title"
+                    description: "Contact Title",
                 },
                 {
                     label: "Email",
                     alternates: ["email", "email address"],
                     key: "Email",
-                    description: "Email Address"
+                    description: "Email Address",
                 },
                 {
                     label: "Phone Number",
                     alternates: ["phone", "phone number"],
                     key: "PhoneNumber",
-                    description: "Phone Number"
+                    description: "Phone Number",
                 },
                 {
                     label: "Extension",
                     alternates: ["extension"],
                     key: "Extension",
-                    description: "Phone Extension"
+                    description: "Phone Extension",
                 },
                 {
                     label: "Mobile",
                     alternates: ["mobile", "cell", "mobile phone", "cell phone"],
                     key: "MobilePhone",
-                    description: "Mobile Phone"
+                    description: "Mobile Phone",
                 },
                 {
                     label: "Fax",
                     alternates: ["fax"],
                     key: "Fax",
-                    description: "Fax"
+                    description: "Fax",
                 },
                 {
                     label: "Address",
                     alternates: ["address", "street address"],
                     key: "Address",
-                    description: "Street Address"
+                    description: "Street Address",
                 },
                 {
                     label: "City",
                     alternates: ["city", "town"],
                     key: "City",
-                    description: "City"
+                    description: "City",
                 },
                 {
                     label: "State",
                     alternates: ["state"],
                     key: "State",
-                    description: "State"
+                    description: "State",
                 },
                 {
                     label: "Country",
                     alternates: ["country"],
                     key: "Country",
-                    description: "Country"
+                    description: "Country",
                 },
                 {
                     label: "Primary",
                     alternates: ["primary"],
                     key: "PrimaryContact",
-                    description: "Primary"
+                    description: "Primary",
                 },
                 {
                     label: "Copy on Distribution",
                     alternates: ["copy on distribution"],
                     key: "CopyAlertsContact",
-                    description: "Copy Contact on Distribution"
-                }
+                    description: "Copy Contact on Distribution",
+                },
             ],
             type: "Contacts",
             allowInvalidSubmit: true,

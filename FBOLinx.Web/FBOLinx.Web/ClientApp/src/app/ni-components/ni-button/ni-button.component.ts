@@ -23,8 +23,8 @@ import { Component, OnInit, Input, HostBinding } from "@angular/core";
         "[class.ni-btn-gradient]": "gradient",
         "[class.ni-btn-disabled]": "disabled",
         "[class.ni-btn-icon-animation]": "iconAnimation",
-        "[style.border-radius]": "shape"
-    }
+        "[style.border-radius]": "shape",
+    },
 })
 export class NiButtonComponent implements OnInit {
     @Input() block = false;

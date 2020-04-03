@@ -24,8 +24,8 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
             "#8796c0",
             "#7ed3ed",
             "#50abcc",
-            "#ad6886"
-        ]
+            "#ad6886",
+        ],
     };
 
     constructor(

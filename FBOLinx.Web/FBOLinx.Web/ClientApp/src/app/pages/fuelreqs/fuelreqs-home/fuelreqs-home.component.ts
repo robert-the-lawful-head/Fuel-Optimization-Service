@@ -89,7 +89,7 @@ export class FuelreqsHomeComponent implements AfterViewInit, OnDestroy {
                         "Tail #": item.tailNumber,
                         FBO: item.fboName,
                         Notes: item.notes,
-                        Source: item.source
+                        Source: item.source,
                     };
                 });
                 const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet

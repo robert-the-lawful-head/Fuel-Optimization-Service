@@ -187,7 +187,7 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         RampfeesettingsService,
         TemporaryAddOnMarginService,
         UserService,
-        AppService
+        AppService,
     ],
     bootstrap: [AppComponent],
 })

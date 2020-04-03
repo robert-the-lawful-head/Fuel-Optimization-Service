@@ -34,8 +34,8 @@ import { AccountProfileComponent } from "../../../shared/components/account-prof
     styleUrls: ["horizontal-navbar.component.scss"],
     host: {
         "[class.app-navbar]": "true",
-        "[class.show-overlay]": "showOverlay"
-    }
+        "[class.show-overlay]": "showOverlay",
+    },
 })
 export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     @Input()
