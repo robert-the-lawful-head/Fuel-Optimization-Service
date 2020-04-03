@@ -1,7 +1,22 @@
 <div #customerTableContainer>
     <div class="container-fluid">
         <div class="row">
-            <div class="col col-md-5">
+            <div *ngIf="anySelected()" class="col col-md-2">
+                <mat-form-field>
+                    <mat-select
+                        placeholder="Bulk Update Margin Template"
+                        (selectionChange)="bulkMarginTemplateUpdate($event)"
+                    >
+                        <mat-option
+                            *ngFor="let pricingTemplate of pricingTemplatesData"
+                            [value]="pricingTemplate"
+                        >
+                        {{ pricingTemplate.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col col-md-4">
                 <mat-form-field>
                     <input
                         matInput
@@ -26,6 +41,15 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+            </div>
+            <div *ngIf="anySelected()" class="col col-md-2 bulk-action-btn">
+                <button
+                    ni-button
+                    [view]="'accent'"
+                    (click)="exportCustomersToExcel()"
+                >
+                    Export Selected
+                </button>
             </div>
         </div>
     </div>

@@ -28,6 +28,7 @@ import * as XLSX from "xlsx";
 import { CustomermarginsService } from "../../../services/customermargins.service";
 import { CustomersviewedbyfboService } from "../../../services/customersviewedbyfbo.service";
 import FlatfileImporter from "flatfile-csv-importer";
+import { MatSelectChange } from "@angular/material/select";
 
 @Component({
     selector: "app-customers-grid",
@@ -388,13 +389,11 @@ export class CustomersGridComponent implements OnInit {
                 listCustomers.push(vm);
             });
 
-            if (listCustomers.length > 0) {
-                this.customerMarginsService
-                    .updatemultiplecustomermargin(listCustomers)
-                    .subscribe((data: any) => {
-                        this.refreshCustomerDataSource();
-                    });
-            }
+            this.customerMarginsService
+                .updatemultiplecustomermargin(listCustomers)
+                .subscribe((data: any) => {
+                    this.refreshCustomerDataSource();
+                });
         } else {
             customer.allInPrice = changedPricingTemplate
                 ? changedPricingTemplate.intoPlanePrice
@@ -549,5 +548,39 @@ export class CustomersGridComponent implements OnInit {
             allowCustom: true,
             disableManualInput: false,
         });
+    }
+
+    public bulkMarginTemplateUpdate(event: MatSelectChange) {
+        const filteredList = this.customersData.filter((item) => {
+            return item.selectAll === true;
+        });
+
+        const listCustomers = [];
+
+        filteredList.forEach((selectedItem) => {
+            selectedItem.pricingTemplateName = event.value.name;
+            selectedItem.allInPrice = event.value.intoPlanePrice;
+
+            const vm = {
+                id: selectedItem.customerId,
+                customerMarginName: event.value.name,
+                fboid: this.sharedService.currentUser.fboId,
+            };
+
+            listCustomers.push(vm);
+        });
+
+        this.customerMarginsService
+            .updatemultiplecustomermargin(listCustomers)
+            .subscribe(() => {
+                this.refreshCustomerDataSource();
+            });
+    }
+
+    public anySelected() {
+        const filteredList = this.customersData.filter((item) => {
+            return item.selectAll === true;
+        });
+        return filteredList.length > 0;
     }
 }
