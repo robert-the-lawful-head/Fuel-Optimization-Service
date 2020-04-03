@@ -367,48 +367,20 @@ export class CustomersGridComponent implements OnInit {
                 );
             }
         );
-        const filteredList = this.customersData.filter((item) => {
-            return item.selectAll === true;
-        });
 
-        if (filteredList.length > 0) {
-            const listCustomers = [];
-
-            filteredList.forEach((selectedItem) => {
-                selectedItem.pricingTemplateName = newValue;
-                selectedItem.allInPrice = changedPricingTemplate
-                    ? changedPricingTemplate.intoPlanePrice
-                    : null;
-
-                const vm = {
-                    id: selectedItem.customerId,
-                    customerMarginName: newValue,
-                    fboid: this.sharedService.currentUser.fboId,
-                };
-
-                listCustomers.push(vm);
+        customer.allInPrice = changedPricingTemplate
+            ? changedPricingTemplate.intoPlanePrice
+            : null;
+        const vm = {
+            id: customer.customerId,
+            customerMarginName: newValue,
+            fboid: this.sharedService.currentUser.fboId,
+        };
+        this.customerMarginsService
+            .updatecustomermargin(vm)
+            .subscribe((data: any) => {
+                this.refreshCustomerDataSource();
             });
-
-            this.customerMarginsService
-                .updatemultiplecustomermargin(listCustomers)
-                .subscribe((data: any) => {
-                    this.refreshCustomerDataSource();
-                });
-        } else {
-            customer.allInPrice = changedPricingTemplate
-                ? changedPricingTemplate.intoPlanePrice
-                : null;
-            const vm = {
-                id: customer.customerId,
-                customerMarginName: newValue,
-                fboid: this.sharedService.currentUser.fboId,
-            };
-            this.customerMarginsService
-                .updatecustomermargin(vm)
-                .subscribe((data: any) => {
-                    this.refreshCustomerDataSource();
-                });
-        }
     }
 
     async launchImporter() {
