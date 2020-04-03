@@ -155,7 +155,7 @@ export class FuelreqsService {
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
-                distanceMile: mile
+                distanceMile: mile,
             },
             {
                 headers: this.headers,
@@ -168,7 +168,7 @@ export class FuelreqsService {
             this.accessPointUrl + "/analysis/market-share-airport/fbo/" + fboId,
             {
                 startDateTime: startDate,
-                endDateTime: endDate
+                endDateTime: endDate,
             },
             {
                 headers: this.headers,
@@ -182,7 +182,7 @@ export class FuelreqsService {
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
-                chartType
+                chartType,
             },
             {
                 headers: this.headers,
@@ -196,7 +196,7 @@ export class FuelreqsService {
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
-                company
+                company,
             },
             {
                 headers: this.headers,

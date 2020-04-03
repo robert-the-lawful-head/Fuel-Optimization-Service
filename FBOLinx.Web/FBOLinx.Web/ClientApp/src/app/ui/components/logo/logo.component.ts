@@ -5,7 +5,7 @@ import { Component, OnInit, HostBinding } from "@angular/core";
     selector: "logo",
     templateUrl: "logo.component.html",
     styleUrls: ["logo.component.scss"],
-    host: {class: "app-logo"}
+    host: {class: "app-logo"},
 })
 export class LogoComponent implements OnInit {
     constructor() {}

@@ -5,7 +5,7 @@ import { AppService } from "../../../services/app.service";
     selector: "app-footer",
     templateUrl: "./footer.component.html",
     styleUrls: ["./footer.component.scss"],
-    host: {class: "app-footer"}
+    host: {class: "app-footer"},
 })
 export class FooterComponent implements OnInit {
     public version: string;

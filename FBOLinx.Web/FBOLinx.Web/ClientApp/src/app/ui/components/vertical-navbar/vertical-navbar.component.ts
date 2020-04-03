@@ -5,7 +5,7 @@ import { Component, OnInit, HostBinding } from "@angular/core";
     selector: "vertical-navbar",
     templateUrl: "vertical-navbar.component.html",
     styleUrls: ["vertical-navbar.component.scss"],
-    host: {class: "vertical-navbar"}
+    host: {class: "vertical-navbar"},
 })
 export class VerticalNavbarComponent implements OnInit {
     constructor() {}

@@ -48,7 +48,7 @@ export class FuelreqsGridComponent implements OnInit {
 
     constructor(
         private sharedService: SharedService,
-        public exportDialog: MatDialog,
+        public exportDialog: MatDialog
     ) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
     }
@@ -71,7 +71,7 @@ export class FuelreqsGridComponent implements OnInit {
     public applyDateFilterChange() {
         this.dateFilterChanged.emit({
             filterStartDate: this.filterStartDate,
-            filterEndDate: this.filterEndDate
+            filterEndDate: this.filterEndDate,
         });
     }
 
@@ -81,7 +81,7 @@ export class FuelreqsGridComponent implements OnInit {
             {
                 data: {
                     filterStartDate: this.filterStartDate,
-                    filterEndDate: this.filterEndDate
+                    filterEndDate: this.filterEndDate,
                 },
             }
         );

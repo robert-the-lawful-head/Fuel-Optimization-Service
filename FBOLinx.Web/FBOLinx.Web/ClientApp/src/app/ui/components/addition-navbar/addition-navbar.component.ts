@@ -23,8 +23,8 @@ import * as moment from "moment";
     styleUrls: ["./addition-navbar.component.scss"],
     host: {
         "[class.addition-navbar]": "true",
-        "[class.open]": "open"
-    }
+        "[class.open]": "open",
+    },
 })
 export class AdditionNavbarComponent implements OnInit {
     title: string;

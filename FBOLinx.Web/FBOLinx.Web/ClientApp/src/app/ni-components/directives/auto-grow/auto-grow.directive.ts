@@ -9,8 +9,8 @@ import {
 @Directive({
     selector: "[autoGrow]",
     host: {
-        "(input)": "setHeight()"
-    }
+        "(input)": "setHeight()",
+    },
 })
 export class AutoGrowDirective implements AfterContentChecked {
     @HostListener("input", ["$event.target"])

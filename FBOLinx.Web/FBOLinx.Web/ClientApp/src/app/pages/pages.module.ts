@@ -266,10 +266,10 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         TooltipModalComponent,
         AircraftsGridComponent,
         FuelReqsExportModalComponent,
-        ClickStopPropagationDirective
+        ClickStopPropagationDirective,
     ],
     exports: [
-        ClickStopPropagationDirective
+        ClickStopPropagationDirective,
     ],
     entryComponents: [
         DeleteConfirmationComponent,
@@ -300,7 +300,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         RampFeesImportInformationComponent,
         UsersDialogNewUserComponent,
         TooltipModalComponent,
-        FuelReqsExportModalComponent
+        FuelReqsExportModalComponent,
     ],
 })
 export class PagesModule {}

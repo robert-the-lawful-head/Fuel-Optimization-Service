@@ -380,7 +380,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                     const dialogRef = this.selectModalAircraftDialog.open(
                                         CustomerAircraftSelectModelComponent,
                                         {
-                                            data: { aircrafts: cadata }
+                                            data: { aircrafts: cadata },
                                         }
                                     );
 
@@ -463,7 +463,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                             error: "this field is required",
                         },
                     ],
-                }
+                },
             ],
             type: "Aircrafts",
             allowInvalidSubmit: true,

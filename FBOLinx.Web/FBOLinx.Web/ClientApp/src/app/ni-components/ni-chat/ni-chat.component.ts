@@ -14,8 +14,8 @@ import { User } from "./user";
     templateUrl: "./ni-chat.component.html",
     styleUrls: ["./ni-chat.component.scss"],
     host: {
-        "[class.ni-chat]": "true"
-    }
+        "[class.ni-chat]": "true",
+    },
 })
 export class NiChatComponent implements OnInit {
     @Input() contacts: any[] = [];
