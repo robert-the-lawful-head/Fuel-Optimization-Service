@@ -9,9 +9,8 @@ import {
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import {
-    MatDialog,
-} from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from "@angular/router";
 
 // Services
@@ -56,20 +55,22 @@ export class FbosGridComponent implements OnInit {
     public airportData: Array<any>;
     public resultsLength = 0;
     public canManageFbo = false;
+    public isDeleting: Boolean;
 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(
-        public newFboDialog: MatDialog,
+        private newFboDialog: MatDialog,
         private fboService: FbosService,
         private fboAirportsService: FboairportsService,
         private sharedService: SharedService,
-        public deleteFboDialog: MatDialog,
-        public manageFboDialog: MatDialog,
+        private deleteFboDialog: MatDialog,
+        private manageFboDialog: MatDialog,
+        private snackBar: MatSnackBar,
         private router: Router
     ) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
         this.canManageFbo = this.sharedService.currentUser.role === 2;
         if (this.canManageFbo) {
             this.displayedColumns = [
@@ -105,15 +106,23 @@ export class FbosGridComponent implements OnInit {
             if (!result) {
                 return;
             }
+            this.isDeleting = true;
             this.fboService.remove(record).subscribe(() => {
                 this.fbosData.splice(this.fbosData.indexOf(record), 1);
-                this.sort.sortChange.subscribe(
-                    () => (this.paginator.pageIndex = 0)
-                );
+                this.sort.sortChange.subscribe(() => {
+                    this.paginator.pageIndex = 0;
+                });
                 this.fbosDataSource = new MatTableDataSource(this.fbosData);
                 this.fbosDataSource.sort = this.sort;
                 this.fbosDataSource.paginator = this.paginator;
                 this.resultsLength = this.fbosData.length;
+                this.isDeleting = false;
+                this.snackBar.open(record.fbo + " is deleted", "", {
+                    duration: 2000,
+                    panelClass: ['blue-snackbar']
+                });
+            }, () => {
+                this.isDeleting = false;
             });
             this.recordDeleted.emit(record);
         });
@@ -135,7 +144,6 @@ export class FbosGridComponent implements OnInit {
     }
 
     public newRecord() {
-        const airportData = this.airportData;
         const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
             width: "450px",
             data: { oid: 0, initialSetupPhase: true },
@@ -153,7 +161,7 @@ export class FbosGridComponent implements OnInit {
                         icao: result.airport.icao,
                         iata: result.airport.iata,
                     })
-                    .subscribe((fboAirportData: any) => {
+                    .subscribe(() => {
                         this.editRecord(data, null);
                     });
             });
@@ -173,7 +181,6 @@ export class FbosGridComponent implements OnInit {
                 data: fbo,
             }
         );
-
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {

@@ -4,18 +4,12 @@ import {
     Input,
     Output,
     OnInit,
-    Inject,
 } from "@angular/core";
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
-import { AircraftsService } from "../../../services/aircrafts.service";
 import { RampfeesService } from "../../../services/rampfees.service";
-import { SharedService } from "../../../layouts/shared-service";
 
 // Components
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
@@ -42,11 +36,16 @@ export class RampFeesCategoryComponent implements OnInit {
 
     constructor(
         private rampFeesService: RampfeesService,
-        private sharedService: SharedService,
-        public deleteRampFeeDialog: MatDialog
+        private deleteRampFeeDialog: MatDialog,
+        private snackBar: MatSnackBar,
     ) {}
 
     ngOnInit() {
+        this.refreshData();
+    }
+
+    public refreshData() {
+        this.rampFeesForCategory = [];
         this.rampFees.forEach((fee) => {
             if (this.categoryTypes.indexOf(fee.categoryType) > -1) {
                 if (
@@ -90,8 +89,12 @@ export class RampFeesCategoryComponent implements OnInit {
             if (!result) {
                 return;
             }
-            this.rampFeesService.remove(result.item).subscribe((data: any) => {
+            this.rampFeesService.remove(result.item).subscribe(() => {
                 this.rampFeeDeleted.emit();
+                this.snackBar.open(`${result.item.aircraftMake} ${result.item.aircraftModel} is deleted`, "", {
+                    duration: 2000,
+                    panelClass: ['blue-snackbar']
+                });
             });
         });
     }

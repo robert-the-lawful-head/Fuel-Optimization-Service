@@ -11,7 +11,7 @@ export class PageSignIn2Component {
     pageTitle = "Sign In";
 
     constructor(private router: Router, private sharedService: SharedService) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
     }
 
     onSubmit() {

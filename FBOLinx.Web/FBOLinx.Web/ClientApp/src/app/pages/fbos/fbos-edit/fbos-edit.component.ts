@@ -57,7 +57,7 @@ export class FbosEditComponent implements OnInit {
         private groupsService: GroupsService,
         private sharedService: SharedService
     ) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
     }
 
     ngOnInit() {

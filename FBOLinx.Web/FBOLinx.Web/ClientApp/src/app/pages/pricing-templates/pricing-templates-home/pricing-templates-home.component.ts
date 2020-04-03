@@ -41,7 +41,7 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
         private sharedService: SharedService,
         public deleteFBODialog: MatDialog
     ) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
         this.loadPricingTemplateData();
     }
 

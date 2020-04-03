@@ -39,7 +39,7 @@ export class FuelreqsHomeComponent implements AfterViewInit, OnDestroy {
         private fuelReqService: FuelreqsService,
         private sharedService: SharedService
     ) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
         this.filterStartDate = new Date(
             moment().format("MM/DD/YYYY")
         );

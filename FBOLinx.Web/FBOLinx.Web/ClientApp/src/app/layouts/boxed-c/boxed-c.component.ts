@@ -23,7 +23,7 @@ export class BoxedCLayoutComponent implements OnInit {
         this.menuStyle = "style-3";
         this.rtl = false;
 
-        sharedService.changeEmitted$.subscribe((title) => {
+        sharedService.titleChanged$.subscribe((title) => {
             this.pageTitle = title;
         });
     }

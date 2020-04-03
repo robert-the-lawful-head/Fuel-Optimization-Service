@@ -51,13 +51,13 @@ export class SharedService {
     priceMessage = this.priceUpdateMessage.asObservable();
 
     // Observable string sources
+    public titleChangeSource = new Subject();
     public emitChangeSource = new Subject();
     public emitLoadedSource = new Subject();
 
     // Observable string streams
+    titleChanged$ = this.titleChangeSource.asObservable();
     changeEmitted$ = this.emitChangeSource.asObservable();
-
-    // Observable string streams
     loadedEmitted$ = this.emitLoadedSource.asObservable();
 
     NotifyPricingTemplateComponent(message: string) {
@@ -66,6 +66,10 @@ export class SharedService {
 
     NotifyPricingSavedComponent(message: string) {
         this.priceUpdateMessage.next(message);
+    }
+
+    titleChange(title: string) {
+        this.titleChangeSource.next(title);
     }
 
     // Service message commands

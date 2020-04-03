@@ -43,7 +43,7 @@ export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
         private sharedService: SharedService,
         private customerAircraftsService: CustomeraircraftsService
     ) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
         this.loadCustomers();
         this.loadPricingTemplates();
         this.loadCustomerAircrafts();
