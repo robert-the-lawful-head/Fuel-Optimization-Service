@@ -43,26 +43,18 @@
                 {{ title }}
                 &nbsp;
                 <button
-                    #tooltip
                     ni-button
                     title="Temporarily increase or decrease your pricing to ALL customers"
                     *ngIf="!tempId && visible == 'true'"
                     [view]="'info'"
                     style="background-color: #fff;"
                     class="mr-1 pull-right"
-                    (click)="
-                        openAddOnMargin({
-                            event: $event,
-                            placement: 'bottom-left',
-                            tooltipData: {
-                                title: 'Add-on Margin: Usability',
-                                content:
-                                    'This is an additional margin that applies across the board to all customers and all templates (including Cost + and Retail -).  A value of $0.10 will increase all prices and all volume tiers by $0.10.  Simply click &quot;Clear Margin&quot; to instantly remove for all customers.',
-                                okText: 'Proceed',
-                                proceed: true
-                            }
-                        })
-                    "
+                    popoverTitle="Add-on Margin: Usability"
+                    [ngbPopover]="addOnMarginPopoverContent"
+                    #addOnMargin="ngbPopover"
+                    triggers="manual"
+                    [autoClose]="'outside'"
+                    (click)="openAddOnMargin()"
                 >
                     Add On Margin
                 </button>
@@ -76,26 +68,28 @@
                     [view]="'info'"
                     style="background-color: red; color: white;"
                     class="mr-4 pull-right"
+                    popoverTitle="Cancel Pricing"
+                    [ngbPopover]="cancelPricingPopoverContent"
+                    placement="left"
+                    #cancelPricing="ngbPopover"
+                    triggers="manual"
+                    [autoClose]="'outside'"
                     (click)="suspendPricing()"
                 >
                     Cancel Pricing
                 </button>
-                <button
-                    #cancelTooltip
-                    style="right: 350px;"
-                    class="tooltip-button"
-                    (click)="
-                        showPopover({
-                            event: $event,
-                            placement: 'left',
-                            tooltipData: {
-                                title: 'Cancel Pricing',
-                                content:
-                                    'This will suspend your pricing from the system'
-                            }
-                        })
-                    "
-                ></button>
+                <ng-template #addOnMarginPopoverContent>
+                    This is an additional margin that applies across the board to all customers and all templates (including Cost + and Retail -).  A value of $0.10 will increase all prices and all volume tiers by $0.10.  Simply click &quot;Clear Margin&quot; to instantly remove for all customers.
+                    <div class="popover-actions">
+                        <button (click)="openDialog()">Got it</button>
+                    </div>
+                </ng-template>
+                <ng-template #cancelPricingPopoverContent>
+                    This will suspend your pricing from the system
+                    <div class="popover-actions">
+                        <button (click)="openDialog()">Got it</button>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </h3>

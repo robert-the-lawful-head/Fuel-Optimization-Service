@@ -205,22 +205,22 @@
                                     ></mat-datepicker>
                                 </mat-form-field>
                                 <button
-                                    #tooltip
+                                    #tooltip="ngbPopover"
                                     style="right: 0px; top: 65%;"
+                                    popoverClass="noArrowPopover"
                                     class="tooltip-button"
-                                    (click)="
-                                        showPopover({
-                                            event: $event,
-                                            placement: 'bottom',
-                                            noArrow: true,
-                                            tooltipData: {
-                                                title: 'Date fields',
-                                                content:
-                                                    'These dates control when your pricing is valid'
-                                            }
-                                        })
-                                    "
+                                    popoverTitle="Date fields"
+                                    [ngbPopover]="dateTooltipContent"
+                                    triggers="manual"
+                                    placement="bottom"
+                                    (hidden)="tooltipHidden()"
                                 ></button>
+                                <ng-template #dateTooltipContent>
+                                    These dates control when your pricing is valid
+                                    <div class="popover-actions">
+                                        <button>Got it</button>
+                                    </div>
+                                </ng-template>
                             </div>
                             <div class="col-2">
                                 <mat-form-field>
@@ -299,27 +299,25 @@
                                             >
                                         </mat-form-field>
                                         <button
-                                            #tooltip
+                                            #tooltip="ngbPopover"
+                                            popoverClass="noArrowPopover"
                                             style="right: 0px; top: 65%;"
                                             class="tooltip-button"
-                                            (click)="
-                                                showPopover({
-                                                    event: $event,
-                                                    placement: 'bottom',
-                                                    noArrow: true,
-                                                    tooltipData: {
-                                                        title:
-                                                            'Price/Cost Entry',
-                                                        content:
-                                                            'Enter your current pricing here'
-                                                    }
-                                                })
-                                            "
+                                            popoverTitle="Price/Cost Entry"
+                                            [ngbPopover]="pricingTooltipContent"
+                                            triggers="manual"
+                                            placement="bottom"
+                                            (hidden)="tooltipHidden()"
                                         ></button>
+                                        <ng-template #pricingTooltipContent>
+                                            Enter your current pricing here
+                                            <div class="popover-actions">
+                                                <button>Got it</button>
+                                            </div>
+                                        </ng-template>
                                     </div>
                                     <div class="col-6">
                                         <mat-form-field>
-                                            <!--<input matInput class="text-left" title="" placeholder="Cost*" autocomplete="off" [ngModel]="currentFboPriceJetACost.price" type="text" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Cost')" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />-->
                                             <input
                                                 matInput
                                                 type="number"

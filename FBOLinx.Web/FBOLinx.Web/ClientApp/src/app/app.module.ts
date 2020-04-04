@@ -5,22 +5,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
-// Bootstrap Assist Template Modules
-import { routes, AppRoutingModule } from "./app-routing.module";
-import { AppComponent } from "./app.component";
-import { UIModule } from "./ui/ui.module";
-import { NiComponentsModule } from "./ni-components/ni-components.module";
-import { PagesModule } from "./pages/pages.module";
-
 // NgBootstrap
-import { NgbCarouselModule } from "@ng-bootstrap/ng-bootstrap";
-
-import { DefaultLayoutComponent } from "./layouts/default/default.component";
-import { BoxedLayoutComponent } from "./layouts/boxed/boxed.component";
-import { DefaultCLayoutComponent } from "./layouts/default-c/default-c.component";
-import { BoxedCLayoutComponent } from "./layouts/boxed-c/boxed-c.component";
-import { ExtraLayoutComponent } from "./layouts/extra/extra.component";
-import { LandingSiteLayoutComponent } from "./layouts/landing-site/landing-site.component";
+import { NgbCarouselModule, NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 
 // 3rd Party Modules
 import { NgxCurrencyModule } from "ngx-currency";
@@ -50,6 +36,21 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { TextMaskModule } from "angular2-text-mask";
+
+
+// Bootstrap Assist Template Modules
+import { routes, AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { UIModule } from "./ui/ui.module";
+import { NiComponentsModule } from "./ni-components/ni-components.module";
+import { PagesModule } from "./pages/pages.module";
+
+import { DefaultLayoutComponent } from "./layouts/default/default.component";
+import { BoxedLayoutComponent } from "./layouts/boxed/boxed.component";
+import { DefaultCLayoutComponent } from "./layouts/default-c/default-c.component";
+import { BoxedCLayoutComponent } from "./layouts/boxed-c/boxed-c.component";
+import { ExtraLayoutComponent } from "./layouts/extra/extra.component";
+import { LandingSiteLayoutComponent } from "./layouts/landing-site/landing-site.component";
 
 // Services
 import { AcukwikairportsService } from "./services/acukwikairports.service";
@@ -117,6 +118,7 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
 
         // NgBoostrap Modules
         NgbCarouselModule,
+        NgbPopoverModule,
         MatAutocompleteModule,
         MatButtonModule,
         MatCardModule,

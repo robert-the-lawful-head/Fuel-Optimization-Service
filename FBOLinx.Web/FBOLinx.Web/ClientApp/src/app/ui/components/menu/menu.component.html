@@ -47,19 +47,21 @@
                         </span>
                     </a>
                     <button
-                        #tooltip
                         *ngIf="isHidden(item) != true"
                         class="tooltip-button"
-                        (click)="
-                            showPopover({
-                                event: $event,
-                                tooltipData: {
-                                    title: item.title,
-                                    content: item.tooltip
-                                }
-                            })
-                        "
+                        #tooltip="ngbPopover"
+                        [popoverTitle]="item.title"
+                        [ngbPopover]="tooltipContent"
+                        triggers="manual"
+                        placement="right"
+                        (hidden)="tooltipHidden()"
                     ></button>
+                    <ng-template #tooltipContent>
+                        {{ item.tooltip }}
+                        <div class="popover-actions">
+                            <button>Got it</button>
+                        </div>
+                    </ng-template>
                 </ng-template>
 
                 <ng-template #sub>

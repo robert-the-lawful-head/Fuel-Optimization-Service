@@ -32,6 +32,8 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
+import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
+
 import { NiComponentsModule } from "../ni-components/ni-components.module";
 
 import { HorizontalNavbarComponent } from "./components/horizontal-navbar/horizontal-navbar.component";
@@ -93,6 +95,7 @@ import { FooterComponent } from "./components/footer/footer.component";
         MatTabsModule,
         MatToolbarModule,
         MatTooltipModule,
+        NgbPopoverModule,
     ],
 })
 export class UIModule {}

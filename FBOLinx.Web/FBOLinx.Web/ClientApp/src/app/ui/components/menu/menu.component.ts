@@ -4,17 +4,12 @@ import {
     ViewChildren,
     QueryList,
     AfterViewInit,
-    OnDestroy,
-    HostBinding,
 } from "@angular/core";
 import { Observable } from "rxjs";
 import { IMenuItem } from "./menu-item";
 import { MenuService } from "./menu.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { UserService } from "../../../services/user.service";
-import { Popover, PopoverProperties } from "../../../shared/components/popover";
-import { TooltipModalComponent } from "../../../shared/components/tooltip-modal/tooltip-modal.component";
-import { EventService as OverlayEventService } from "@ivylab/overlay-angular";
 
 @Component({
     moduleId: module.id,
@@ -24,21 +19,17 @@ import { EventService as OverlayEventService } from "@ivylab/overlay-angular";
     providers: [MenuService],
     host: {class: "app-menu"},
 })
-export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
+export class MenuComponent implements OnInit, AfterViewInit {
     @ViewChildren("tooltip") priceTooltips: QueryList<any>;
 
     menuItems: IMenuItem[];
     user: any;
     tooltipIndex = 0;
-    neverShowTooltip = false;
-    subscription: any;
 
     constructor(
         private menuService: MenuService,
         private sharedService: SharedService,
-        private userService: UserService,
-        public popover: Popover,
-        private overlayEventService: OverlayEventService
+        private userService: UserService
     ) {}
 
     ngOnInit(): void {
@@ -51,34 +42,6 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.showTooltipsIfFirstLogin();
             }
         });
-        this.subscription = this.overlayEventService.emitter.subscribe(
-            (response) => {
-                if (
-                    !this.neverShowTooltip &&
-                    response.type === "[Overlay] Hide"
-                ) {
-                    const tooltipsArr = this.priceTooltips.toArray();
-                    if (tooltipsArr.length > this.tooltipIndex) {
-                        setTimeout(() => {
-                            tooltipsArr[
-                                this.tooltipIndex
-                            ].nativeElement.click();
-                            this.tooltipIndex++;
-                        }, 300);
-                    } else {
-                        this.neverShowTooltip = true;
-                        this.sharedService.loadedChange("menu-tooltips-showed");
-                        this.subscription.unsubscribe();
-                    }
-                }
-            }
-        );
-    }
-
-    ngOnDestroy(): void {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
     }
 
     getMenuItems(): void {
@@ -152,23 +115,24 @@ export class MenuComponent implements OnInit, OnDestroy, AfterViewInit {
             if (user && !user.goOverTutorial) {
                 setTimeout(() => {
                     const tooltipsArr = this.priceTooltips.toArray();
-                    tooltipsArr[this.tooltipIndex].nativeElement.click();
+                    tooltipsArr[this.tooltipIndex].open();
                     this.tooltipIndex++;
-                }, 300);
-                this.user.goOverTutorial = true;
-                this.userService.update(this.user).subscribe(() => {});
-            } else {
-                this.neverShowTooltip = true;
+                }, 400);
             }
         });
     }
 
-    showPopover(prop: PopoverProperties) {
-        prop.component = TooltipModalComponent;
-        this.popover.load(prop);
-    }
-
-    closePopover() {
-        this.popover.close();
+    tooltipHidden() {
+        const tooltipsArr = this.priceTooltips.toArray();
+        if (tooltipsArr.length > this.tooltipIndex) {
+            setTimeout(() => {
+                tooltipsArr[this.tooltipIndex].open();
+                this.tooltipIndex++;
+            }, 400);
+        } else {
+            this.user.goOverTutorial = true;
+            this.userService.update(this.user).subscribe(() => {});
+            this.sharedService.loadedChange("menu-tooltips-showed");
+        }
     }
 }

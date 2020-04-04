@@ -2986,6 +2986,8 @@ input[type="submit"].btn.btn-mini {
     *z-index: 2;
     margin-bottom: 18px;
     overflow: visible;
+    display: block;
+    padding: 0;
 }
 
 .navbar-inner {
@@ -3010,6 +3012,7 @@ input[type="submit"].btn.btn-mini {
 }
 
 .navbar .container {
+    display: block;
     width: auto;
 }
 
@@ -4955,6 +4958,10 @@ a.badge:hover {
     .navbar-fixed-top .container,
     .navbar-fixed-bottom .container {
         width: 1170px;
+    }
+
+    .container {
+        max-width: 100%;
     }
 
     .span12 {
