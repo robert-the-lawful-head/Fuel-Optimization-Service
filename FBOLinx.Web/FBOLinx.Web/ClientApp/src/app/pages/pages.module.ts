@@ -36,6 +36,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { TextMaskModule } from "angular2-text-mask";
+import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap"
 
 import { NgxCurrencyModule } from "ngx-currency";
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
@@ -120,8 +121,6 @@ import { StatisticsOrdersByLocationComponent } from ".././shared/components/stat
 import { StatisticsTotalAircraftComponent } from ".././shared/components/statistics-total-aircraft/statistics-total-aircraft.component";
 import { StatisticsTotalCustomersComponent } from ".././shared/components/statistics-total-customers/statistics-total-customers.component";
 import { StatisticsTotalOrdersComponent } from ".././shared/components/statistics-total-orders/statistics-total-orders.component";
-import { PopoverModule } from ".././shared/components/popover/popover.module";
-import { TooltipModalComponent } from ".././shared/components/tooltip-modal/tooltip-modal.component";
 import { AnalyticsOrdersQuoteChartComponent } from "../shared/components/analytics-orders-quote-chart/analytics-orders-quote-chart.component";
 import { AnalyticsOrdersOverTimeChartComponent } from "../shared/components/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component";
 import { AnalyticsVolumesNearbyAirportChartComponent } from "../shared/components/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component";
@@ -178,7 +177,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         NgxCurrencyModule,
         RichTextEditorAllModule,
         AppPipesModule,
-        PopoverModule,
+        NgbPopoverModule,
     ],
     declarations: [
         PageTypographyComponent,
@@ -263,7 +262,6 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         StatisticsTotalAircraftComponent,
         StatisticsTotalCustomersComponent,
         StatisticsTotalOrdersComponent,
-        TooltipModalComponent,
         AircraftsGridComponent,
         FuelReqsExportModalComponent,
         ClickStopPropagationDirective,
@@ -299,7 +297,6 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         RampFeesDialogNewFeeComponent,
         RampFeesImportInformationComponent,
         UsersDialogNewUserComponent,
-        TooltipModalComponent,
         FuelReqsExportModalComponent,
     ],
 })

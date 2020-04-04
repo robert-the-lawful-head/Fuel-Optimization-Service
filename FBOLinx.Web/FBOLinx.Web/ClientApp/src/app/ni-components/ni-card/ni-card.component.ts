@@ -7,18 +7,15 @@ import {
     ViewChild,
     OnDestroy,
     AfterViewInit,
-    HostBinding,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Observable } from "rxjs";
-import { EventService as OverlayEventService } from "@ivylab/overlay-angular";
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 import { TemporaryAddOnMarginComponent } from "../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component";
 import { FbopricesService } from "../../services/fboprices.service";
 import { UserService } from "../../services/user.service";
 import { SharedService } from "../../layouts/shared-service";
-import { Popover, PopoverProperties } from "../../shared/components/popover";
-import { TooltipModalComponent } from "../../shared/components/tooltip-modal/tooltip-modal.component";
 
 @Component({
     selector: "ni-card",
@@ -56,8 +53,9 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() fboPrices: Array<any>;
     @Input() addOnMargin: boolean;
 
-    @ViewChild("tooltip") tooltip: any;
     @ViewChild("cancelTooltip") cancelTooltip: any;
+    @ViewChild("addOnMargin") addOnMarginPopover: NgbPopover;
+    @ViewChild("cancelPricing") cancelPricingPopover: NgbPopover;
 
     message: string;
     subscription: any;
@@ -67,22 +65,10 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
         public deleteFBODialog: MatDialog,
         private fboPricesService: FbopricesService,
         private userService: UserService,
-        private sharedService: SharedService,
-        private popover: Popover
+        private sharedService: SharedService
     ) {}
 
     ngOnInit() {
-        if (this.addOnMargin) {
-            this.popover.changeEmitted$.subscribe((message) => {
-                if (message === "proceed") {
-                    this.openDialog();
-                    this.user.addOnMarginTries = !this.user.addOnMarginTries
-                        ? 1
-                        : this.user.addOnMarginTries + 1;
-                    this.userService.update(this.user).subscribe(() => {});
-                }
-            });
-        }
         this.checkPrices();
 
         this.sharedService.priceMessage.subscribe((message) => {
@@ -95,16 +81,10 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
     ngAfterViewInit() {
         this.subscription = this.sharedService.loadedEmitted$.subscribe(
             (message) => {
-                if (message === "price-tooltips-showed") {
+                if (message === "price-tooltips-showed" && this.cancelPricingPopover) {
                     setTimeout(() => {
-                        if (
-                            this.cancelTooltip &&
-                            this.cancelTooltip.nativeElement
-                        ) {
-                            this.cancelTooltip.nativeElement.click();
-                            this.subscription.unsubscribe();
-                        }
-                    }, 300);
+                        this.cancelPricingPopover.open();
+                    }, 400);
                 }
             }
         );
@@ -117,6 +97,10 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     openDialog(): Observable<any> {
+        this.updateUserAddOnMarginTries();
+
+        this.addOnMarginPopover.close();
+
         const dialogRef = this.tempAddOnMargin.open(
             TemporaryAddOnMarginComponent,
             {
@@ -137,11 +121,19 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
         return dialogRef.afterClosed();
     }
 
-    public openAddOnMargin(prop: PopoverProperties) {
+    public updateUserAddOnMarginTries() {
+        if (this.user.addOnMarginTries < 3) {
+            this.user.addOnMarginTries = !this.user.addOnMarginTries
+                            ? 1
+                            : this.user.addOnMarginTries + 1;
+            this.userService.update(this.user).subscribe(() => {});
+        }
+    }
+
+    public openAddOnMargin() {
         this.getLoggedInUser().subscribe((user: any) => {
             if (user && (!user.addOnMarginTries || user.addOnMarginTries < 3)) {
-                prop.component = TooltipModalComponent;
-                this.popover.load(prop);
+                this.addOnMarginPopover.open();
             } else {
                 this.openDialog();
             }
@@ -199,10 +191,5 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
                 });
             }
         });
-    }
-
-    public showPopover(prop: PopoverProperties) {
-        prop.component = TooltipModalComponent;
-        this.popover.load(prop);
     }
 }

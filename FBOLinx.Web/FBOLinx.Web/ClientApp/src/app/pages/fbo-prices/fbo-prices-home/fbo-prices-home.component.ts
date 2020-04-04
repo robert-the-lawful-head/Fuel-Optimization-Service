@@ -6,8 +6,6 @@ import {
     ViewChild,
     ViewChildren,
     ViewEncapsulation,
-    Output,
-    EventEmitter,
     QueryList,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
@@ -22,17 +20,12 @@ import { FbopreferencesService } from "../../../services/fbopreferences.service"
 import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { TemporaryAddOnMarginService } from "../../../services/temporaryaddonmargin.service";
-import { EventService as OverlayEventService } from "@ivylab/overlay-angular";
 import { CustomcustomertypesService } from "../../../services/customcustomertypes.service";
 
 // Components
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { TemporaryAddOnMarginComponent } from "../../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component";
 import { FboPricesSelectDefaultTemplateComponent } from "../fbo-prices-select-default-template/fbo-prices-select-default-template.component";
-
-// Popover
-import { Popover, PopoverProperties } from "../../../shared/components/popover";
-import { TooltipModalComponent } from "../../../shared/components/tooltip-modal/tooltip-modal.component";
 
 import * as SharedEvents from "../../../models/sharedEvents";
 // Components
@@ -116,10 +109,8 @@ export class FboPricesHomeComponent
     public staticCurrentFboPriceJetACost: any;
 
     public tooltipIndex = 0;
-    public canShowTooltips = false;
-    public tooltipSubscription: any;
-    public locationChangedSubscription: any;
     public menuTooltipSubscription: any;
+    public locationChangedSubscription: any;
 
     constructor(
         private temporaryAddOnMargin: TemporaryAddOnMarginService,
@@ -129,15 +120,12 @@ export class FboPricesHomeComponent
         private fboPreferencesService: FbopreferencesService,
         private pricingTemplateService: PricingtemplatesService,
         private sharedService: SharedService,
-        private overlayEventService: OverlayEventService,
         private customCustomerService: CustomcustomertypesService,
-        private popover: Popover,
-        public distributionDialog: MatDialog,
-        public warningDialog: MatDialog,
-        public tempAddOnMargin: MatDialog,
-        public deleteFBODialog: MatDialog,
-        public notificationDialog: MatDialog,
-        public fboPricesSelectDefaultTemplateDialog: MatDialog
+        private distributionDialog: MatDialog,
+        private warningDialog: MatDialog,
+        private tempAddOnMargin: MatDialog,
+        private deleteFBODialog: MatDialog,
+        private fboPricesSelectDefaultTemplateDialog: MatDialog
     ) {}
 
     ngOnInit(): void {
@@ -149,7 +137,6 @@ export class FboPricesHomeComponent
         this.menuTooltipSubscription = this.sharedService.loadedEmitted$.subscribe(
             (message) => {
                 if (message === "menu-tooltips-showed") {
-                    this.canShowTooltips = true;
                     this.showTooltips();
                 }
             }
@@ -157,46 +144,13 @@ export class FboPricesHomeComponent
         this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
                 if (message === SharedEvents.locationChangedEvent) {
-                    console.log(this.sharedService.currentUser.fboId);
                     this.resetAll();
-                }
-            }
-        );
-
-        this.tooltipSubscription = this.overlayEventService.emitter.subscribe(
-            (response) => {
-                if (
-                    this.canShowTooltips &&
-                    response.type === "[Overlay] Hide"
-                ) {
-                    const tooltipsArr = this.tooltips.toArray();
-                    if (
-                        this.tooltipIndex >= 0 &&
-                        tooltipsArr.length > this.tooltipIndex
-                    ) {
-                        setTimeout(() => {
-                            tooltipsArr[
-                                this.tooltipIndex
-                            ].nativeElement.click();
-                            this.tooltipIndex--;
-                        }, 300);
-                    } else {
-                        setTimeout(() => {
-                            this.tooltipSubscription.unsubscribe();
-                            this.sharedService.loadedChange(
-                                "price-tooltips-showed"
-                            );
-                        }, 300);
-                    }
                 }
             }
         );
     }
 
     ngOnDestroy(): void {
-        if (this.tooltipSubscription) {
-            this.tooltipSubscription.unsubscribe();
-        }
         if (this.menuTooltipSubscription) {
             this.menuTooltipSubscription.unsubscribe();
         }
@@ -937,22 +891,6 @@ export class FboPricesHomeComponent
         return result;
     }
 
-    public showPopover(prop: PopoverProperties) {
-        prop.component = TooltipModalComponent;
-        this.popover.load(prop);
-    }
-
-    private showTooltips() {
-        setTimeout(() => {
-            const tooltipsArr = this.tooltips.toArray();
-            this.tooltipIndex = tooltipsArr.length - 1;
-            if (this.tooltipIndex >= 0) {
-                tooltipsArr[this.tooltipIndex].nativeElement.click();
-                this.tooltipIndex--;
-            }
-        }, 300);
-    }
-
     private checkDefaultTemplate() {
         let currentFboId = 0;
 
@@ -1013,5 +951,28 @@ export class FboPricesHomeComponent
                         );
                 }
             });
+    }
+
+    private showTooltips() {
+        setTimeout(() => {
+            const tooltipsArr = this.tooltips.toArray();
+            this.tooltipIndex = tooltipsArr.length - 1;
+            if (this.tooltipIndex >= 0) {
+                tooltipsArr[this.tooltipIndex].open();
+                this.tooltipIndex--;
+            }
+        }, 400);
+    }
+
+    public tooltipHidden() {
+        const tooltipsArr = this.tooltips.toArray();
+        if (this.tooltipIndex >= 0 && tooltipsArr.length > this.tooltipIndex) {
+            setTimeout(() => {
+                tooltipsArr[this.tooltipIndex].open();
+                this.tooltipIndex--;
+            }, 400);
+        } else {
+            this.sharedService.loadedChange("price-tooltips-showed");
+        }
     }
 }

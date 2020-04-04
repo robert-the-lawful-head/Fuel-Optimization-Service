@@ -22,7 +22,7 @@
                         "styles": [
                             "src/assets/css/font-awesome.min.css",
                             "src/assets/sass/simple-line-icons.scss",
-                            "src/assets/sass/bootstrap.scss",
+                            "node_modules/bootstrap/scss/bootstrap.scss",
                             "src/assets/sass/loader.scss",
                             "src/assets/sass/custom-material-theme.scss",
                             "src/assets/sass/style.scss"

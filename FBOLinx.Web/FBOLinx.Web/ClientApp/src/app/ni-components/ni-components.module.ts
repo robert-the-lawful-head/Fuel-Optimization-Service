@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { NiAlertComponent } from "./ni-alert/ni-alert.component";
 import { NiBadgeComponent } from "./ni-badge/ni-badge.component";
@@ -16,7 +17,11 @@ import { GradientDirective } from "./directives/gradient/gradient.directive";
 import { AutoGrowDirective } from "./directives/auto-grow/auto-grow.directive";
 
 @NgModule({
-    imports: [CommonModule, FormsModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        NgbPopoverModule,
+    ],
     declarations: [
         NiAlertComponent,
         NiBadgeComponent,
