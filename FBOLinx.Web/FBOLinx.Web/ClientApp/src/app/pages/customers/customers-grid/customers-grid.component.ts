@@ -126,12 +126,16 @@ export class CustomersGridComponent implements OnInit {
         }
     }
 
-    onPageChanged(e) {
-        localStorage.setItem("pageIndex", e.pageIndex);
+    onPageChanged(event: any) {
+        localStorage.setItem("pageIndex", event.pageIndex);
         sessionStorage.setItem(
             "pageSizeValue",
             this.paginator.pageSize.toString()
         );
+        this.selectAll = false;
+        _.forEach(this.customersData, (customer) => {
+            customer.selectAll = false;
+        });
     }
 
     // Public Methods
@@ -173,10 +177,11 @@ export class CustomersGridComponent implements OnInit {
     }
 
     public selectAction() {
-        this.customersData.forEach((fee) => {
-            fee.selectAll = this.selectAll ? true : false;
+        const pageCustomersData = this.customersDataSource.connect().value;
+        _.forEach(pageCustomersData, (customer) => {
+            customer.selectAll = this.selectAll ? true : false;
         });
-        this.selectedRows = this.selectAll ? this.customersData.length : 0;
+        this.selectedRows = this.selectAll ? pageCustomersData.length : 0;
     }
 
     public selectUnique() {
