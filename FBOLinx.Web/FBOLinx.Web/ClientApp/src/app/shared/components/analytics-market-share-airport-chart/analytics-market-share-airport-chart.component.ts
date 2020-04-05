@@ -61,7 +61,7 @@ export class AnalyticsMarketShareAirportChartComponent implements OnInit, AfterV
 
     public refreshData() {
         const startDate = new Date(
-            moment().add(-7, "days").format("MM/DD/YYYY")
+            moment().add(-30, "days").format("MM/DD/YYYY")
         );
         const endDate = new Date(
             moment().format("MM/DD/YYYY")
@@ -70,6 +70,7 @@ export class AnalyticsMarketShareAirportChartComponent implements OnInit, AfterV
             .getMarketShareAirport(this.sharedService.currentUser.fboId, startDate, endDate)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
+            }, (error: any) => {
             });
     }
 }

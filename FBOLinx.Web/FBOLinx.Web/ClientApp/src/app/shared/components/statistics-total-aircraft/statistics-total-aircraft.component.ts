@@ -13,7 +13,11 @@ import { SharedService } from "../../../layouts/shared-service";
 
 // statistics-total-aircraft component
 export class StatisticsTotalAircraftComponent implements OnInit {
-    @Input() options: any;
+    @Input() options: any = {
+        useCard: true
+    };
+    @Input() startDate: any;
+    @Input() endDate: any;
 
     // Public Members
     public totalAircraft: number;
@@ -22,11 +26,7 @@ export class StatisticsTotalAircraftComponent implements OnInit {
         private router: Router,
         private customeraircraftService: CustomeraircraftsService,
         private sharedService: SharedService
-    ) {
-        if (!this.options) {
-            this.options = {};
-        }
-    }
+    ) {}
 
     ngOnInit() {
         this.refreshData();
@@ -43,6 +43,7 @@ export class StatisticsTotalAircraftComponent implements OnInit {
             )
             .subscribe((data: any) => {
                 this.totalAircraft = data;
+            }, (error: any) => {
             });
     }
 }

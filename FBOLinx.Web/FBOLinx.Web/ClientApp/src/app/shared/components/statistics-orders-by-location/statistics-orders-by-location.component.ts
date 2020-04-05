@@ -10,7 +10,11 @@ import { SharedService } from "../../../layouts/shared-service";
     styleUrls: ["./statistics-orders-by-location.component.scss"],
 })
 export class StatisticsOrdersByLocationComponent implements OnInit {
-    @Input() options: any;
+    @Input() options: any = {
+        useCard: true
+    };
+    @Input() startDate: any;
+    @Input() endDate: any;
 
     // Public Members
     public totalOrders: number;
@@ -19,23 +23,17 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
     constructor(
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService
-    ) {
-        if (!this.options) {
-            this.options = {};
-        }
-    }
+    ) {}
 
     ngOnInit() {
         this.refreshData();
     }
 
     public refreshData() {
-        const startDate = this.sharedService.dashboardSettings.filterStartDate;
-        const endDate = this.sharedService.dashboardSettings.filterEndDate;
         this.fuelreqsService
             .getOrdersByLocation({
-                StartDateTime: startDate,
-                EndDateTime: endDate,
+                StartDateTime: this.startDate,
+                EndDateTime: this.endDate,
                 ICAO: "",
                 FboId: this.sharedService.currentUser.fboId,
             })
@@ -47,6 +45,7 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
                     }
                 }
                 this.icao = data.icao;
+            }, (error: any) => {
             });
     }
 }

@@ -15,7 +15,11 @@ import * as moment from "moment";
 })
 // statistics-total-orders component
 export class StatisticsTotalOrdersComponent implements OnInit {
-    @Input() options: any;
+    @Input() options: any = {
+        useCard: true
+    };
+    @Input() startDate: any;
+    @Input() endDate: any;
 
     // Public Members
     public totalOrders: number;
@@ -40,13 +44,12 @@ export class StatisticsTotalOrdersComponent implements OnInit {
     }
 
     public refreshData() {
-        const startDate = this.sharedService.dashboardSettings.filterStartDate;
-        const endDate = this.sharedService.dashboardSettings.filterEndDate;
-        this.startDateString = moment(startDate).format("L");
+        this.startDateString = moment(this.startDate).format("L");
         this.fuelreqsService
             .getForFboCount(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
                 this.totalOrders = data;
+            }, (error: any) => {
             });
     }
 }

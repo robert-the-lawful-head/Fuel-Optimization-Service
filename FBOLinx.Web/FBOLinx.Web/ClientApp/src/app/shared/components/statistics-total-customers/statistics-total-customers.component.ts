@@ -12,7 +12,11 @@ import { SharedService } from "../../../layouts/shared-service";
 })
 // statisticsTotalCustomers component
 export class StatisticsTotalCustomersComponent implements OnInit {
-    @Input() options: any;
+    @Input() options: any = {
+        useCard: true
+    };
+    @Input() startDate: any;
+    @Input() endDate: any;
 
     // Public Members
     public totalCustomers: number;
@@ -21,11 +25,7 @@ export class StatisticsTotalCustomersComponent implements OnInit {
         private router: Router,
         private customerinfobygroupService: CustomerinfobygroupService,
         private sharedService: SharedService
-    ) {
-        if (!this.options) {
-            this.options = {};
-        }
-    }
+    ) {}
 
     ngOnInit() {
         this.refreshData();
@@ -43,6 +43,7 @@ export class StatisticsTotalCustomersComponent implements OnInit {
             )
             .subscribe((data: any) => {
                 this.totalCustomers = data;
+            }, (error: any) => {
             });
     }
 }

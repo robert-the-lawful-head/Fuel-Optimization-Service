@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, ViewChild, OnDestroy } from "@angular/core";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+
+import * as moment from "moment";
 
 // Services
 import { SharedService } from "../../../layouts/shared-service";
@@ -31,12 +32,12 @@ const BREADCRUMBS: any[] = [
 export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     public pageTitle = "Dashboard";
     public breadcrumb: any[] = BREADCRUMBS;
-    public statisticsOptions: any = { useCard: true };
-    public dashboardSettings: any;
     public fboid: any;
     public groupid: any;
     public updatedPrice: any;
     public locationChangedSubscription: any;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
 
     @ViewChild("statisticsTotalOrders")
     private statisticsTotalOrders: StatisticsTotalOrdersComponent;
@@ -48,7 +49,8 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
 
     constructor(private sharedService: SharedService) {
-        this.dashboardSettings = this.sharedService.dashboardSettings;
+        this.filterStartDate = new Date(moment().add(-12, "M").format("MM/DD/YYYY"));
+        this.filterEndDate = new Date(moment().format("MM/DD/YYYY"));
         this.fboid = this.sharedService.currentUser.fboId;
         this.groupid = this.sharedService.currentUser.groupId;
         this.sharedService.titleChange(this.pageTitle);
