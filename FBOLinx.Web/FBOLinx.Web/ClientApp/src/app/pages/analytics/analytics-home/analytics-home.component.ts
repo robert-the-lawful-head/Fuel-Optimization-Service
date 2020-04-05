@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 
+import * as moment from "moment";
 // Services
 import { SharedService } from "../../../layouts/shared-service";
 
@@ -55,28 +56,12 @@ export class AnalyticsHomeComponent {
 
     public pageTitle = "Analytics";
     public breadcrumb: any[] = BREADCRUMBS;
-    public statisticsOptions: any = { useCard: true };
-    public dashboardSettings: any;
-    public fboid: any;
-    public groupid: any;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
 
     constructor(private sharedService: SharedService) {
-        this.dashboardSettings = this.sharedService.dashboardSettings;
-        this.fboid = this.sharedService.currentUser.fboId;
-        this.groupid = this.sharedService.currentUser.groupId;
+        this.filterStartDate = new Date(moment().add(-12, "M").format("MM/DD/YYYY"));
+        this.filterEndDate = new Date(moment().format("MM/DD/YYYY"));
         this.sharedService.titleChange(this.pageTitle);
-    }
-
-    public applyDateFilterChange() {
-        this.statisticsTotalOrders.refreshData();
-        this.statisticsTotalCustomers.refreshData();
-        this.statisticsTotalAircraft.refreshData();
-        this.statisticsOrdersByLocation.refreshData();
-        this.analyticsOrdersQuoteChart.refreshData();
-        this.analyticsOrdersOverTimeChart.refreshData();
-        this.analyticsVolumesNearbyAirportChart.refreshData();
-        this.analyticsMarketShareAirportChart.refreshData();
-        this.analyticsCustomerBreakdownChart.refreshData();
-        this.analyticsCompaniesQuotesDealTable.refreshData();
     }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input, SimpleChanges, OnChanges } from "@angular/core";
 import * as _ from "lodash";
 import { MatSliderChange } from "@angular/material/slider";
 
@@ -11,7 +11,10 @@ import { SharedService } from "../../../layouts/shared-service";
     templateUrl: "./analytics-volumes-nearby-airport-chart.component.html",
     styleUrls: ["./analytics-volumes-nearby-airport-chart.component.scss"],
 })
-export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
+export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit, OnChanges {
+    @Input() startDate: Date;
+    @Input() endDate: Date;
+
     // Public Members
     public totalOrdersData: any[];
     public mile = 200;
@@ -39,13 +42,16 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
         this.refreshData();
     }
 
+    ngOnChanges(changes: SimpleChanges) {
+        this.refreshData();
+    }
+
     public refreshData() {
-        const startDate = this.sharedService.dashboardSettings.filterStartDate;
-        const endDate = this.sharedService.dashboardSettings.filterEndDate;
         this.fuelreqsService
-            .getVolumesNearbyAirport(this.sharedService.currentUser.fboId, startDate, endDate, this.mile)
+            .getVolumesNearbyAirport(this.sharedService.currentUser.fboId, this.startDate, this.endDate, this.mile)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
+            }, (error: any) => {
             });
     }
 

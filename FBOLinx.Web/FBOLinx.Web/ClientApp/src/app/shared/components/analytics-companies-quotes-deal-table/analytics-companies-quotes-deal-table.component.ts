@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input, SimpleChanges, OnChanges } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import * as _ from "lodash";
 
@@ -15,7 +15,10 @@ import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
     templateUrl: "./analytics-companies-quotes-deal-table.component.html",
     styleUrls: ["./analytics-companies-quotes-deal-table.component.scss"],
 })
-export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit {
+export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, OnChanges {
+    @Input() startDate: Date;
+    @Input() endDate: Date;
+
     // Public Members
     public currentCustomer: any;
     public customers: any[];
@@ -49,19 +52,24 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit {
             );
     }
 
+    ngOnChanges(changes: SimpleChanges) {
+        if (this.currentCustomer) {
+            this.refreshData();
+        }
+    }
+
     public refreshData() {
-        const startDate = this.sharedService.dashboardSettings.filterStartDate;
-        const endDate = this.sharedService.dashboardSettings.filterEndDate;
         this.dataSource = [];
         this.fuelreqsService
             .getCompaniesQuotingDealStatistics(
                 this.sharedService.currentUser.fboId, 
-                startDate, 
-                endDate, 
+                this.startDate,
+                this.endDate,
                 this.currentCustomer.customerId
             )
             .subscribe((data: any) => {
                 this.dataSource.push(data);
+            }, (error: any) => {
             });
     }
 

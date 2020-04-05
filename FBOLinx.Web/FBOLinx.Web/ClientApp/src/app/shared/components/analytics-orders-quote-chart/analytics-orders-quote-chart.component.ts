@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from "@angular/core";
 import * as _ from "lodash";
 
 // Services
@@ -10,7 +10,9 @@ import { SharedService } from "../../../layouts/shared-service";
     templateUrl: "./analytics-orders-quote-chart.component.html",
     styleUrls: ["./analytics-orders-quote-chart.component.scss"],
 })
-export class AnalyticsOrdersQuoteChartComponent implements OnInit {
+export class AnalyticsOrdersQuoteChartComponent implements OnInit, OnChanges {
+    @Input() startDate: Date;
+    @Input() endDate: Date;
     // Public Members
     public totalOrdersData: any[];
     public colorScheme = {
@@ -37,14 +39,16 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
         this.refreshData();
     }
 
+    ngOnChanges(changes: SimpleChanges) {
+        this.refreshData();
+    }
+
     public refreshData() {
-        const startDate = this.sharedService.dashboardSettings.filterStartDate;
-        const endDate = this.sharedService.dashboardSettings.filterEndDate;
         this.fuelreqsService
             .getQuotesAndOrders(
                 this.sharedService.currentUser.fboId,
-                startDate,
-                endDate
+                this.startDate,
+                this.endDate
             )
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
@@ -54,6 +58,7 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
                         return serie;
                     });
                 });
+            }, (error: any) => {
             });
     }
 }
