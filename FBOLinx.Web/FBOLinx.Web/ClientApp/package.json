@@ -46,7 +46,7 @@
     "moment": "^2.24.0",
     "ng2-validation": "4.2.0",
     "ngx-currency": "^1.5.2",
-    "rxjs": "~6.5.4",
+    "rxjs": "~6.5.5",
     "tslib": "^1.10.0",
     "xlsx": "^0.14.5",
     "zone.js": "~0.10.2"
