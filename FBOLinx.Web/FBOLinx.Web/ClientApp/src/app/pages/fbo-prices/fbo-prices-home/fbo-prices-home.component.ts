@@ -317,11 +317,11 @@ export class FboPricesHomeComponent
         }
 
         if (event !== "hide") {
-            this.currentPricingEffectiveTo = new Date(
-                moment(this.currentPricingEffectiveFrom)
-                    .add(6, "days")
-                    .format("MM/DD/YYYY")
-            );
+            //this.currentPricingEffectiveTo = new Date(
+            //    moment(this.currentPricingEffectiveFrom)
+            //        .add(6, "days")
+            //        .format("MM/DD/YYYY")
+            //);
             this.minimumAllowedDate = this.currentPricingEffectiveFrom;
             for (const price of this.currentPrices) {
                 price.effectiveFrom = moment(

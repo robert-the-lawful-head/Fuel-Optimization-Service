@@ -157,6 +157,9 @@
     </div>
 
     <div>
-        <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
+        <mat-paginator [length]="resultsLength"
+                       [pageSize]="pageSizeTemplate"
+                       [pageSizeOptions]="[10, 25, 50, 100]"
+                       (page)="(pageIndexTemplate); onPageChanged($event)"></mat-paginator>
     </div>
 </div>

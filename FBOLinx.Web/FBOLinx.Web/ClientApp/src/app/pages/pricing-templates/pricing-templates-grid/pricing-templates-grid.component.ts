@@ -58,6 +58,9 @@ export class PricingTemplatesGridComponent implements OnInit {
     ];
     public resultsLength = 0;
 
+    public pageIndexTemplate = 0;
+    public pageSizeTemplate = 50;
+
     public updateModel: DefaultTemplateUpdate = {
         currenttemplate: 0,
         fboid: 0,
@@ -79,6 +82,19 @@ export class PricingTemplatesGridComponent implements OnInit {
         if (!this.pricingTemplatesData) {
             return;
         }
+
+        if (localStorage.getItem("pageIndexTemplate")) {
+            this.paginator.pageIndex = localStorage.getItem("pageIndexTemplate") as any;
+        } else {
+            this.paginator.pageIndex = 0;
+        }
+
+        if (sessionStorage.getItem("pageSizeValueTemplate")) {
+            this.pageSizeTemplate = sessionStorage.getItem("pageSizeValueTemplate") as any;
+        } else {
+            this.pageSizeTemplate = 50;
+        }
+
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.pricingTemplatesDataSource = new MatTableDataSource(
             this.pricingTemplatesData
@@ -175,5 +191,13 @@ export class PricingTemplatesGridComponent implements OnInit {
         this.pricingTemplatesDataSource.filter = filterValue
             .trim()
             .toLowerCase();
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem("pageIndexTemplate", event.pageIndex);
+        sessionStorage.setItem(
+            "pageSizeValueTemplate",
+            this.paginator.pageSize.toString()
+        );
     }
 }
