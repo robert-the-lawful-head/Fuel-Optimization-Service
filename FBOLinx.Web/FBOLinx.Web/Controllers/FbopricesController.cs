@@ -165,15 +165,28 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             var activeJetPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId);
-            if(activeJetPricing != null)
+            if (activeJetPricing != null)
             {
+                var checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == activeJetPricing.Oid).ToList();
+                if (checkForMappingPrices != null)
+                {
+                    _context.MappingPrices.RemoveRange(checkForMappingPrices);
+                    _context.SaveChanges();
+                }
+
                 _context.Fboprices.Remove(activeJetPricing);
             }
             var activeRetailPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Retail" && s.Fboid == fboId);
-            if(activeRetailPricing != null)
+            if (activeRetailPricing != null)
             {
+                var checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == activeRetailPricing.Oid).ToList();
+                if (checkForMappingPrices != null)
+                {
+                    _context.MappingPrices.RemoveRange(checkForMappingPrices);
+                    _context.SaveChanges();
+                }
+
                 _context.Fboprices.Remove(activeRetailPricing);
             }
             _context.SaveChanges();

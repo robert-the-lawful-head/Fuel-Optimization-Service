@@ -39,9 +39,7 @@
                             <span>Effective To</span>
                             <div class="float-none"></div>
                             <span style="display: block;">
-                                {{
-                                    currentFboPriceJetARetail.effectiveTo | date
-                                }}
+                                {{ staticCurrentFboPriceJetAEffectiveTo | date }}
                             </span>
                         </div>
                     </div>
@@ -86,7 +84,7 @@
                             <span>Effective To</span>
                             <div class="float-none"></div>
                             <span style="display: block;">
-                                {{ currentFboPriceJetACost.effectiveTo | date }}
+                                {{ staticCurrentFboPriceJetAEffectiveTo | date }}
                             </span>
                         </div>
                     </div>
@@ -224,32 +222,9 @@
                             </div>
                             <div class="col-2">
                                 <mat-form-field>
-                                    <input
-                                        matInput
-                                        id="idTo"
-                                        [min]="minimumAllowedDate"
-                                        [(ngModel)]="currentPricingEffectiveTo"
-                                        [matDatepicker]="
-                                            currentPricingEffectiveToDatePicker
-                                        "
-                                        (focus)="
-                                            currentPricingEffectiveToDatePicker.open()
-                                        "
-                                        placeholder="Effective To"
-                                        (dateChange)="
-                                            fboCurrentPriceDateChange('hide')
-                                        "
-                                    />
-                                    <mat-datepicker-toggle
-                                        matSuffix
-                                        [for]="
-                                            currentPricingEffectiveToDatePicker
-                                        "
-                                    ></mat-datepicker-toggle>
-                                    <mat-datepicker
-                                        #currentPricingEffectiveToDatePicker
-                                        disabled="false"
-                                    ></mat-datepicker>
+                                    <input matInput id="idTo" [min]="minimumAllowedDate" [(ngModel)]="currentPricingEffectiveTo" [matDatepicker]="currentPricingEffectiveToDatePicker" (focus)="currentPricingEffectiveToDatePicker.open()" placeholder="Effective To" (dateChange)="fboCurrentPriceDateChange('hide')" />
+                                    <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveToDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #currentPricingEffectiveToDatePicker disabled="false"></mat-datepicker>
                                 </mat-form-field>
                             </div>
                             <div class="col-1">
@@ -273,30 +248,8 @@
                                 <div class="row">
                                     <div class="col-6 text-left">
                                         <mat-form-field>
-                                            <!--<input class="text-left" matInput title="" placeholder="Retail*" autocomplete="off" [ngModel]="currentFboPriceJetARetail.price" type="text" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Retail')" currencyMask [options]="{prefix: '', thousands: ',', decimal: '.', precision: 4}" />-->
-                                            <input
-                                                matInput
-                                                type="number"
-                                                step="0.01"
-                                                title="Your Retail values should be inclusive of all taxes/fees"
-                                                placeholder="Retail*"
-                                                [ngModelOptions]="{
-                                                    updateOn: 'blur'
-                                                }"
-                                                (click)="$event.target.select()"
-                                                [ngModel]="
-                                                    jtRetail | number: '1.4-4'
-                                                "
-                                                (ngModelChange)="
-                                                    fboPriceRequiresUpdate(
-                                                        $event,
-                                                        'JetA Retail'
-                                                    )
-                                                "
-                                            />
-                                            <span matPrefix class="prefixDollar"
-                                                >$</span
-                                            >
+                                            <input matInput type="number" step="0.01" title="Your Retail values should be inclusive of all taxes/fees" placeholder="Retail*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="jtRetail | number: '1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Retail')" />
+                                            <span matPrefix class="prefixDollar">$</span>
                                         </mat-form-field>
                                         <button
                                             #tooltip="ngbPopover"
@@ -318,36 +271,11 @@
                                     </div>
                                     <div class="col-6">
                                         <mat-form-field>
-                                            <input
-                                                matInput
-                                                type="number"
-                                                step="0.01"
-                                                title="Your Cost values should be inclusive of all taxes/fees"
-                                                placeholder="Cost*"
-                                                [ngModelOptions]="{
-                                                    updateOn: 'blur'
-                                                }"
-                                                (click)="$event.target.select()"
-                                                [ngModel]="
-                                                    jtCost | number: '1.4-4'
-                                                "
-                                                (ngModelChange)="
-                                                    fboPriceRequiresUpdate(
-                                                        $event,
-                                                        'JetA Cost'
-                                                    )
-                                                "
-                                            />
-                                            <span matPrefix class="prefixDollar"
-                                                >$</span
-                                            >
+                                            <input matInput type="number" step="0.01" title="Your Cost values should be inclusive of all taxes/fees" placeholder="Cost*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="jtCost | number: '1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Cost')" />
+                                            <span matPrefix class="prefixDollar">$</span>
                                             <span
                                                 class="fbo-prices-error-msg"
-                                                *ngIf="
-                                                    priceEntryError.length > 0
-                                                "
-                                                >{{ priceEntryError }}</span
-                                            >
+                                                *ngIf="priceEntryError.length > 0">{{ priceEntryError }}</span>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -355,18 +283,7 @@
                             <div class="col-3">
                                 <!--*ngIf="requiresUpdate"-->
                                 <div class="text-center">
-                                    <button
-                                        ni-button
-                                        [view]="'success'"
-                                        [disabled]="
-                                            saveOk || priceEntryError.length > 0
-                                        "
-                                        class="mr-1"
-                                        (click)="saveChangesClicked()"
-                                    >
-                                        <span
-                                            [innerHtml]="buttonTextValue"
-                                        ></span>
+                                    <button ni-button [view]="'success'" [disabled]="saveOk || priceEntryError.length > 0" class="mr-1" (click)="saveChangesClicked()"><span [innerHtml]="buttonTextValue"></span>
                                     </button>
                                 </div>
                             </div>
