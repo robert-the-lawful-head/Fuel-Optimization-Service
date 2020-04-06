@@ -157,6 +157,55 @@ namespace FBOLinx.Web.Controllers
             return Ok(activePricing);
         }
 
+        [HttpPost("fbo/{fboId}/suspendpricing/jet")]
+        public async Task<IActionResult> SuspendJetPricing([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var activeJetPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId);
+            if (activeJetPricing != null)
+            {
+                var checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == activeJetPricing.Oid).ToList();
+                if (checkForMappingPrices != null)
+                {
+                    _context.MappingPrices.RemoveRange(checkForMappingPrices);
+                    await _context.SaveChangesAsync();
+                }
+
+                _context.Fboprices.Remove(activeJetPricing);
+            }
+            await _context.SaveChangesAsync();
+
+            return Ok(fboId);
+        }
+
+        [HttpPost("fbo/{fboId}/suspendpricing/retail")]
+        public async Task<IActionResult> SuspendRetailPricing([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var activeRetailPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Retail" && s.Fboid == fboId);
+            if (activeRetailPricing != null)
+            {
+                var checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == activeRetailPricing.Oid).ToList();
+                if (checkForMappingPrices != null)
+                {
+                    _context.MappingPrices.RemoveRange(checkForMappingPrices);
+                    await _context.SaveChangesAsync();
+                }
+
+                _context.Fboprices.Remove(activeRetailPricing);
+            }
+            await _context.SaveChangesAsync();
+
+            return Ok(fboId);
+        }
+
+
         // GET: api/Fboprices/fbo/current/5
         [HttpPost("fbo/{fboId}/suspendpricing")]
         public async Task<IActionResult> SuspendPricing([FromRoute] int fboId)
@@ -172,7 +221,7 @@ namespace FBOLinx.Web.Controllers
                 if (checkForMappingPrices != null)
                 {
                     _context.MappingPrices.RemoveRange(checkForMappingPrices);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
 
                 _context.Fboprices.Remove(activeJetPricing);
@@ -184,12 +233,12 @@ namespace FBOLinx.Web.Controllers
                 if (checkForMappingPrices != null)
                 {
                     _context.MappingPrices.RemoveRange(checkForMappingPrices);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
 
                 _context.Fboprices.Remove(activeRetailPricing);
             }
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(fboId);
         }
