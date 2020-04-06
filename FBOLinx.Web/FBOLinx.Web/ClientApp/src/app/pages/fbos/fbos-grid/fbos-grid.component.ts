@@ -10,7 +10,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 
 // Services
@@ -55,7 +55,7 @@ export class FbosGridComponent implements OnInit {
     public airportData: Array<any>;
     public resultsLength = 0;
     public canManageFbo = false;
-    public isDeleting: Boolean;
+    public isDeleting: boolean;
 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -119,7 +119,7 @@ export class FbosGridComponent implements OnInit {
                 this.isDeleting = false;
                 this.snackBar.open(record.fbo + " is deleted", "", {
                     duration: 2000,
-                    panelClass: ['blue-snackbar']
+                    panelClass: ["blue-snackbar"],
                 });
             }, () => {
                 this.isDeleting = false;

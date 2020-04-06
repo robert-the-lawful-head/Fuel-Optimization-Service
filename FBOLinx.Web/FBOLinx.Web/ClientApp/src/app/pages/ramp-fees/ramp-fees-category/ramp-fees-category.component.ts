@@ -6,7 +6,7 @@ import {
     OnInit,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 // Services
 import { RampfeesService } from "../../../services/rampfees.service";
@@ -37,7 +37,7 @@ export class RampFeesCategoryComponent implements OnInit {
     constructor(
         private rampFeesService: RampfeesService,
         private deleteRampFeeDialog: MatDialog,
-        private snackBar: MatSnackBar,
+        private snackBar: MatSnackBar
     ) {}
 
     ngOnInit() {
@@ -93,7 +93,7 @@ export class RampFeesCategoryComponent implements OnInit {
                 this.rampFeeDeleted.emit();
                 this.snackBar.open(`${result.item.aircraftMake} ${result.item.aircraftModel} is deleted`, "", {
                     duration: 2000,
-                    panelClass: ['blue-snackbar']
+                    panelClass: ["blue-snackbar"],
                 });
             });
         });

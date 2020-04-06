@@ -169,6 +169,13 @@
                 [tempId]="TempValueId"
                 class="mb-0"
                 [addOnMargin]="true"
+                [noActivePricing]="!activePrice && 
+                            (
+                                !currentFboPriceJetARetail || 
+                                currentFboPriceJetARetail.price <= 0 ||
+                                !currentFboPriceJetACost ||
+                                currentFboPriceJetACost.price <= 0
+                            )"
             >
                 <div title="">
                     <div class="container-fluid">

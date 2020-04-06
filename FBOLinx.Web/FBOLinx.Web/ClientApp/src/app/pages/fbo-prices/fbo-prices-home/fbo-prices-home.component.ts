@@ -222,7 +222,6 @@ export class FboPricesHomeComponent
         if (!(price === 0 || price === null) && this.requiresUpdate) {
             this.isSaved = false;
             if (vl === "JetA Retail") {
-               // this.jtRetail = price;
                 this.jtRetail = price;
                 this.currentFboPriceJetARetail.price = price;
             }
@@ -252,7 +251,6 @@ export class FboPricesHomeComponent
             }
         }
         if (vl === "JetA Retail") {
-            //this.jtRetail = price;
             this.newRetail = price;
             this.checkOkPriceSave(
                 this.currentPricingEffectiveFrom,
@@ -362,7 +360,6 @@ export class FboPricesHomeComponent
             this.currentFboPriceJetACost.price = priceCost;
             this.currentFboPriceJetARetail.effectiveTo = dateRetasil;
             this.currentFboPriceJetARetail.price = priceRetail;
-            //this.jtRetail = this.jtCost = "";
             this.sharedService.NotifyPricingSavedComponent("update");
         } else {
             for (const price of this.currentPrices) {
@@ -408,8 +405,8 @@ export class FboPricesHomeComponent
         this.priceGroup = null;
         this.buttonTextValue = "Update Live Pricing";
 
-        this.jtRetail = '';
-        this.jtCost = '';
+        this.jtRetail = "";
+        this.jtCost = "";
         this.currentPricingEffectiveFrom = null;
         this.currentPricingEffectiveTo = null;
         this.saveOk = true;

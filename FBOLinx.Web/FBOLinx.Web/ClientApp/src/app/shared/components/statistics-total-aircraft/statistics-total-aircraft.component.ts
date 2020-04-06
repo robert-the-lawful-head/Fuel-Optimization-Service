@@ -14,7 +14,7 @@ import { SharedService } from "../../../layouts/shared-service";
 // statistics-total-aircraft component
 export class StatisticsTotalAircraftComponent implements OnInit {
     @Input() options: any = {
-        useCard: true
+        useCard: true,
     };
     @Input() startDate: any;
     @Input() endDate: any;
