@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Observable } from "rxjs";
-import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopover } from "@ng-bootstrap/ng-bootstrap";
 
 import { TemporaryAddOnMarginComponent } from "../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component";
 import { FbopricesService } from "../../services/fboprices.service";
@@ -52,6 +52,7 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() theme = "";
     @Input() fboPrices: Array<any>;
     @Input() addOnMargin: boolean;
+    @Input() noActivePricing = false;
 
     @ViewChild("cancelTooltip") cancelTooltip: any;
     @ViewChild("addOnMargin") addOnMarginPopover: NgbPopover;

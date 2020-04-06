@@ -16,7 +16,7 @@ import * as moment from "moment";
 // statistics-total-orders component
 export class StatisticsTotalOrdersComponent implements OnInit {
     @Input() options: any = {
-        useCard: true
+        useCard: true,
     };
     @Input() startDate: any;
     @Input() endDate: any;

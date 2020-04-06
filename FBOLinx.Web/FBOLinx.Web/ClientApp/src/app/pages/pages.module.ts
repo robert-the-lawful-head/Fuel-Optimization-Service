@@ -36,7 +36,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { TextMaskModule } from "angular2-text-mask";
-import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap"
+import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { NgxCurrencyModule } from "ngx-currency";
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";

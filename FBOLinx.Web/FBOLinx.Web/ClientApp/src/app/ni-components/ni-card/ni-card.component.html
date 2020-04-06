@@ -44,6 +44,7 @@
                 &nbsp;
                 <button
                     ni-button
+                    [disabled]="noActivePricing"
                     title="Temporarily increase or decrease your pricing to ALL customers"
                     *ngIf="!tempId && visible == 'true'"
                     [view]="'info'"
@@ -61,6 +62,7 @@
                 &nbsp;
                 <button
                     ni-button
+                    [disabled]="noActivePricing"
                     title="Suspend pricing for all customers"
                     *ngIf="
                         !tempId && visible == 'true' && visibleSuspend == 'true'

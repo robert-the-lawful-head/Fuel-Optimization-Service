@@ -11,7 +11,7 @@ import { SharedService } from "../../../layouts/shared-service";
 })
 export class StatisticsOrdersByLocationComponent implements OnInit {
     @Input() options: any = {
-        useCard: true
+        useCard: true,
     };
     @Input() startDate: any;
     @Input() endDate: any;
