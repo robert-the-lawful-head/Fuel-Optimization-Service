@@ -197,8 +197,20 @@ export class FboPricesHomeComponent
         });
     }
 
-    pricesSuspended() {
-        this.loadCurrentFboPrices();
+    public suspendJetPricing() {
+        this.fboPricesService
+            .suspendJetPricing(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                this.loadCurrentFboPrices();
+            });
+    }
+
+    public suspendRetailPricing() {
+        this.fboPricesService
+            .suspendRetailPricing(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                this.loadCurrentFboPrices();
+            });
     }
 
     public distributePricingClicked() {

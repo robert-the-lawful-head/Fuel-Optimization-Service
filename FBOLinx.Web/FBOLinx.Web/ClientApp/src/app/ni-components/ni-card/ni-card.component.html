@@ -60,34 +60,8 @@
                     Add On Margin
                 </button>
                 &nbsp;
-                <button
-                    ni-button
-                    [disabled]="noActivePricing"
-                    title="Suspend pricing for all customers"
-                    *ngIf="
-                        !tempId && visible == 'true' && visibleSuspend == 'true'
-                    "
-                    [view]="'info'"
-                    style="background-color: red; color: white;"
-                    class="mr-4 pull-right"
-                    popoverTitle="Cancel Pricing"
-                    [ngbPopover]="cancelPricingPopoverContent"
-                    placement="left"
-                    #cancelPricing="ngbPopover"
-                    triggers="manual"
-                    [autoClose]="'outside'"
-                    (click)="suspendPricing()"
-                >
-                    Cancel Pricing
-                </button>
                 <ng-template #addOnMarginPopoverContent>
                     This is an additional margin that applies across the board to all customers and all templates (including Cost + and Retail -).  A value of $0.10 will increase all prices and all volume tiers by $0.10.  Simply click &quot;Clear Margin&quot; to instantly remove for all customers.
-                    <div class="popover-actions">
-                        <button (click)="openDialog()">Got it</button>
-                    </div>
-                </ng-template>
-                <ng-template #cancelPricingPopoverContent>
-                    This will suspend your pricing from the system
                     <div class="popover-actions">
                         <button (click)="openDialog()">Got it</button>
                     </div>

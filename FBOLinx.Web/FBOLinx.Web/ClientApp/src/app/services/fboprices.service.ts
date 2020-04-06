@@ -79,6 +79,24 @@ export class FbopricesService {
         );
     }
 
+    public suspendJetPricing(fboId) {
+        return this.http.post(
+            this.accessPointUrl + "/fbo/" + fboId + "/suspendpricing/jet",
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public suspendRetailPricing(fboId) {
+        return this.http.post(
+            this.accessPointUrl + "/fbo/" + fboId + "/suspendpricing/retail",
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public getPricesByMonthForFbo(fboId, payload) {
         return this.http.post(
             this.accessPointUrl + "/analysis/prices-by-month/fbo/" + fboId,

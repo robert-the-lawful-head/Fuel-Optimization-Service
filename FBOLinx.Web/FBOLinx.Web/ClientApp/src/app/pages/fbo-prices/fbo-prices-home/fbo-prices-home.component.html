@@ -27,11 +27,8 @@
                 <h6 class="mt-0 title">CURRENT POSTED RETAIL (JET A)</h6>
                 <div class="row">
                     <div class="col-9">
-                        <h4 class="mt-0">
-                            ${{
-                                staticCurrentFboPriceJetARetail
-                                    | number: "1.4-4"
-                            }}
+                        <h4 class="mt-0 mb-1">
+                            ${{ staticCurrentFboPriceJetARetail | number: "1.4-4" }}
                         </h4>
                     </div>
                     <div class="col-3">
@@ -42,6 +39,20 @@
                                 {{ staticCurrentFboPriceJetAEffectiveTo | date }}
                             </span>
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button
+                            ni-button
+                            class="pull-right"
+                            style="background-color: red; color: white;"
+                            [view]="'info'"
+                            [size]="'small'"
+                            (click)="suspendRetailPricing()"
+                        >
+                            Clear Pricing
+                        </button>
                     </div>
                 </div>
             </ni-card>
@@ -72,11 +83,8 @@
                 <h6 class="mt-0 title">CURRENT COST (JET A)</h6>
                 <div class="row">
                     <div class="col-9">
-                        <h4 class="mt-0">
-                            <!--${{currentFboPriceJetACost.price | number:'1.4-4'}}-->
-                            ${{
-                                staticCurrentFboPriceJetACost | number: "1.4-4"
-                            }}
+                        <h4 class="mt-0 mb-1">
+                            ${{ staticCurrentFboPriceJetACost | number: "1.4-4" }}
                         </h4>
                     </div>
                     <div class="col-3">
@@ -87,6 +95,20 @@
                                 {{ staticCurrentFboPriceJetAEffectiveTo | date }}
                             </span>
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button
+                            ni-button
+                            class="pull-right mb-2"
+                            style="background-color: red; color: white;"
+                            [view]="'info'"
+                            [size]="'small'"
+                            (click)="suspendJetPricing()"
+                        >
+                            Clear Pricing
+                        </button>
                     </div>
                 </div>
 
@@ -163,7 +185,6 @@
                 title="Update your pricing here"
                 [fboPrices]="currentPrices"
                 [headerBgColor]="'success'"
-                (priceDeleted)="pricesSuspended()"
                 (jetChanged)="jetChangedHandler($event)"
                 [visible]="'true'"
                 [tempId]="TempValueId"
