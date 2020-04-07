@@ -5,7 +5,6 @@ import {
     Input,
     Output,
     EventEmitter,
-    HostBinding,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
@@ -19,7 +18,6 @@ import { SharedService } from "../../../layouts/shared-service";
 import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
 import { FbopricesService } from "../../../services/fboprices.service";
 import { FboairportsService } from "../../../services/fboairports.service";
-import { AcukwikairportsService } from "../../../services/acukwikairports.service";
 import { FbosService } from "../../../services/fbos.service";
 
 import * as SharedEvents from "../../../models/sharedEvents";
@@ -48,7 +46,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     isOpened: boolean;
     isLocationsLoaded: boolean;
     public userFullName: string;
-    public customersWithoutMargins: any[];
     public accountProfileMenu: any = { isOpened: false };
     public needsAttentionMenu: any = { isOpened: false };
     public currrentJetACostPricing: any;
@@ -60,13 +57,14 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     public fboAirport: any;
     public fbo: any;
     public currentUser: any;
+    public needsAttentionCustomersData: any[];
 
     constructor(
         private authenticationService: AuthenticationService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService,
         private router: Router,
-        public accountProfileDialog: MatDialog,
+        private accountProfileDialog: MatDialog,
         private userService: UserService,
         private fboPricesService: FbopricesService,
         private fboAirportsService: FboairportsService,
@@ -87,10 +85,10 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.loadCustomersWithoutMargins(5);
         this.loadCurrentPrices();
         this.loadLocations();
         this.loadFboInfo();
+        this.loadNeedsAttentionCustomers();
     }
 
     ngAfterViewInit() {
@@ -125,7 +123,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     }
 
     openUpdate() {
-        this.loadCustomersWithoutMargins(5);
         this.needsAttentionMenu.isOpened = !this.needsAttentionMenu.isOpened;
     }
 
@@ -160,7 +157,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
                 if (!result) {
                     return;
                 }
-                console.log("Dialog data: ", result);
                 this.userService.update(result).subscribe((data: any) => {
                     if (result.newPassword && result.newPassword !== "") {
                         this.userService
@@ -194,7 +190,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
         this.close(event);
     }
 
-    public addMarginForCustomerClicked(customer, event) {
+    public gotoCustomer(customer: any, event: any) {
         this.needsAttentionMenu.isOpened = false;
         this.router.navigate(["/default-layout/customers/" + customer.oid]);
         this.close(event);
@@ -208,21 +204,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
 
     public showLessClicked() {
         this.viewAllNotifications = false;
-    }
-
-    public loadCustomersWithoutMargins(count) {
-        if (!count) {
-            count = 0;
-        }
-        this.customerInfoByGroupService
-            .getCustomersWithoutMargins(
-                this.currentUser.groupId,
-                this.currentUser.fboId,
-                count
-            )
-            .subscribe((data: any) => {
-                this.customersWithoutMargins = data;
-            });
     }
 
     public loadCurrentPrices() {
@@ -307,5 +288,13 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
             return;
         }
         this.accountProfileMenu.isOpened = !this.accountProfileMenu.isOpened;
+    }
+
+    public loadNeedsAttentionCustomers() {
+        this.customerInfoByGroupService
+            .getNeedsAttentionByGroupAndFbo(this.currentUser.groupId, this.currentUser.fboId)
+            .subscribe((data: any) => {
+                this.needsAttentionCustomersData = data;
+            });
     }
 }

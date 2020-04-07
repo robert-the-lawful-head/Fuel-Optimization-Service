@@ -29,8 +29,8 @@
                 <span
                     [ngClass]="{
                         marker:
-                            (customersWithoutMargins &&
-                                customersWithoutMargins.length > 0) ||
+                            (needsAttentionCustomersData &&
+                            needsAttentionCustomersData.length > 0) ||
                             (hasLoadedJetACost && !currrentJetACostPricing) ||
                             (hasLoadedJetARetail && !currrentJetARetailPricing)
                     }"
@@ -43,14 +43,14 @@
                     *ngIf="
                         (hasLoadedJetACost && !currrentJetACostPricing) ||
                         (hasLoadedJetARetail && !currrentJetARetailPricing) ||
-                        (customersWithoutMargins &&
-                            customersWithoutMargins.length > 0)
+                        (needsAttentionCustomersData &&
+                            needsAttentionCustomersData.length > 0)
                     "
                 >
                     Notifications
                 </h4>
 
-                <ul>
+                <ul class="notifications-list">
                     <!--JetA Cost Notification-->
                     <li *ngIf="hasLoadedJetACost && !currrentJetACostPricing">
                         <a>
@@ -104,30 +104,24 @@
                     </li>
 
                     <!--Customers without margins-->
-                    <li *ngFor="let customer of customersWithoutMargins">
+                    <li *ngFor="let customer of needsAttentionCustomersData">
                         <a>
                             <span class="icon sli-exclamation"></span>
                             <div class="content">
-                                <span class="desc"
-                                    >Assigned margin is missing for
-                                    <strong>{{ customer.company }}</strong
-                                    >.</span
-                                >
+                                <span class="desc">
+                                    Needs Attention for
+                                    <strong>{{ customer.company }}</strong>.
+                                </span>
                                 <span class="date"></span>
                                 <div class="text-right">
                                     <button
                                         ni-button
                                         [view]="'success'"
                                         size="small"
-                                        (click)="
-                                            addMarginForCustomerClicked(
-                                                customer,
-                                                $event
-                                            )
-                                        "
+                                        (click)="gotoCustomer(customer, $event)"
                                         class="mr-1"
                                     >
-                                        Assign Margin
+                                        See customer
                                     </button>
                                 </div>
                             </div>

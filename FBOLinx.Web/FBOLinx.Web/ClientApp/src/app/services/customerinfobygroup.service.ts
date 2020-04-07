@@ -28,6 +28,15 @@ export class CustomerinfobygroupService {
         );
     }
 
+    public getNeedsAttentionByGroupAndFbo(groupId: number, fboId: number) {
+        return this.http.get(
+            `${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/needs-attention`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public getCustomerCountByGroupAndFBO(groupId, fboId) {
         return this.http.get(
             this.accessPointUrl +

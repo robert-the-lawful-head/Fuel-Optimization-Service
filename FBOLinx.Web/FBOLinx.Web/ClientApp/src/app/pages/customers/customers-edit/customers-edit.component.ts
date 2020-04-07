@@ -3,15 +3,9 @@ import {
     EventEmitter,
     Input,
     Output,
-    OnInit,
-    ViewChild,
 } from "@angular/core";
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { MatDialog } from "@angular/material/dialog";
+import { Router, ActivatedRoute } from "@angular/router";
 
 // Services
 import { CustomcustomertypesService } from "../../../services/customcustomertypes.service";
@@ -95,6 +89,7 @@ export class CustomersEditComponent {
         public dialog: MatDialog,
         public newContactDialog: MatDialog
     ) {
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
         this.customerInfoByGroupService
             .getCertificateTypes()

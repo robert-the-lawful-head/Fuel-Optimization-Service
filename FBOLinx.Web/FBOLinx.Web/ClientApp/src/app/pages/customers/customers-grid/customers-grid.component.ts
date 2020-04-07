@@ -332,14 +332,27 @@ export class CustomersGridComponent implements OnInit {
                     if (this.customerFilterType === 0) {
                         return true;
                     }
-                    return !element.needsAttention;
+                    return element.needsAttention;
                 }
             )
         );
         this.sort.active = "allInPrice";
         this.customersDataSource.sort = this.sort;
-
         this.customersDataSource.paginator = this.paginator;
+        this.customersDataSource.filterPredicate = (data: any, filter: string) => {
+            if (filter === "needs attention") {
+                return data.needsAttention === true;
+            } else {
+                let found = false;
+                _.forOwn(data, (value) => {
+                    if (value && value.toString().toLowerCase().includes(filter)) {
+                        found = true;
+                        return false;
+                    }
+                });
+                return found;
+            }
+        };
     }
 
     public onMarginChange(newValue: any, customer: any) {

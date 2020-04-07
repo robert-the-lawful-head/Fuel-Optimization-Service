@@ -72,6 +72,72 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerGridVM);
         }
 
+        [HttpGet("group/{groupId}/fbo/{fboId}/needs-attention")]
+        public async Task<IActionResult> GetNeedsAttentionCustomerInfoByGroupAndFBO([FromRoute] int groupId, [FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
+                    .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
+            var needsAttentionCustomers = await (from cg in _context.CustomerInfoByGroup
+                                        join cct in _context.CustomCustomerTypes on new { customerId = cg.CustomerId, fboId } equals
+                                            new
+                                            {
+                                                customerId = cct.CustomerId,
+                                                fboId = cct.Fboid
+                                            } into leftJoinCCT
+                                        from cct in leftJoinCCT.DefaultIfEmpty()
+                                        join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid into leftJoinPT
+                                        from pt in leftJoinPT.DefaultIfEmpty()
+                                        join ccot in _context.CustomerCompanyTypes on new
+                                        {
+                                            CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
+                                            cg.GroupId
+                                        } equals new
+                                        {
+                                            CustomerCompanyType = ccot.Oid,
+                                            GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId
+                                        }
+                                        into leftJoinCCOT
+                                        from ccot in leftJoinCCOT.DefaultIfEmpty()
+                                        join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
+                                        into leftJoinCC
+                                        from cc in leftJoinCC.DefaultIfEmpty()
+                                        join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
+                                        into leftJoinCIBG
+                                        from cibg in leftJoinCIBG.DefaultIfEmpty()
+                                        where cg.GroupId == groupId
+                                        group cg by new
+                                        {
+                                            cg.Oid,
+                                            cg.CustomerId,
+                                            cg.Company,
+                                            CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
+                                            CustomerCompanyTypeName = ccot.Name,
+                                            ContactExists = cibg == null || !cibg.CopyAlerts.HasValue ? false : cibg.CopyAlerts.GetValueOrDefault(),
+                                            PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name,
+                                        }
+                                        into resultsGroup
+                                        select new
+                                        {
+                                            resultsGroup.Key.Oid,
+                                            resultsGroup.Key.CustomerId,
+                                            resultsGroup.Key.Company,
+                                            NeedsAttention = resultsGroup.Key.PricingTemplateName.Equals(defaultPricingTemplate.Name) ? true :
+                                                resultsGroup.Key.CustomerCompanyTypeName != "FuelerLinx" &&
+                                                resultsGroup.Key.ContactExists == false ? true : false
+                                        })
+                                        .GroupBy(p => p.CustomerId)
+                                        .Select(p => p.FirstOrDefault())
+                                        .Where(p => p.NeedsAttention.Equals(true))
+                                        .ToListAsync();
+
+            return Ok(needsAttentionCustomers);
+        }
+
         [HttpGet("customers/group/{groupId}/fbo/{fboId}")]
         public async Task<IActionResult> GetCustomerNamesByGroupAndFBO([FromRoute] int groupId, [FromRoute] int fboId)
         {
