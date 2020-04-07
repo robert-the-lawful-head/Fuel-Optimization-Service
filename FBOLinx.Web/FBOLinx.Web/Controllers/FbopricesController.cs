@@ -63,7 +63,6 @@ namespace FBOLinx.Web.Controllers
 
             var result = (from p in products
                           join f in (from f in _context.Fboprices
-                                         //where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
                                      where Convert.ToDateTime(f.EffectiveFrom).Date <= DateTime.Now.Date && f.EffectiveTo > DateTime.Now.AddDays(-1)
                                      && f.Fboid == fboId && f.Price != null
                                      select f) on new { Product = p.Description, FboId = fboId } equals new
@@ -80,7 +79,7 @@ namespace FBOLinx.Web.Controllers
                                          FboId = s.FboId
                                      }
                               into tmpJoin
-                          from s in tmpJoin.DefaultIfEmpty()
+                          from s in tmpJoin.DefaultIfEmpty()    
                           select new
                           {
                               Oid = f?.Oid ?? 0,
@@ -88,7 +87,7 @@ namespace FBOLinx.Web.Controllers
                               Product = p.Description,
                               Price = f?.Price,
                               EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
-                              EffectiveTo = f?.EffectiveTo,
+                              EffectiveTo = f?.EffectiveTo ?? null,
                               TimeStamp = f?.Timestamp,
                               SalesTax = f?.SalesTax,
                               Currency = f?.Currency,
