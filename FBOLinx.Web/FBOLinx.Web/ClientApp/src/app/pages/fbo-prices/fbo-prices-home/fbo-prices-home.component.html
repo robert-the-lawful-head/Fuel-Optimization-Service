@@ -31,12 +31,12 @@
                             ${{ staticCurrentFboPriceJetARetail | number: "1.4-4" }}
                         </h4>
                     </div>
-                    <div class="col-3">
+                    <div class="col-3"  *ngIf="staticCurrentFboPriceJetAEffectiveToRetail">
                         <div class="table disabledData">
                             <span>Effective To</span>
                             <div class="float-none"></div>
                             <span style="display: block;">
-                                {{ staticCurrentFboPriceJetAEffectiveTo | date }}
+                                {{ staticCurrentFboPriceJetAEffectiveToRetail | date }}
                             </span>
                         </div>
                     </div>
