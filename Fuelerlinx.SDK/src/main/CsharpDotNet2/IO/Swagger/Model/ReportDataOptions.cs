@@ -21,6 +21,14 @@ namespace IO.Swagger.Model {
     public int? ReportType { get; set; }
 
     /// <summary>
+    /// 0 = ReportTable             1 = Chart             2 = Map    * `ReportTable` - Report Table  * `Chart` - Chart  * `Map` - Map  
+    /// </summary>
+    /// <value>0 = ReportTable             1 = Chart             2 = Map    * `ReportTable` - Report Table  * `Chart` - Chart  * `Map` - Map  </value>
+    [DataMember(Name="defaultViewType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "defaultViewType")]
+    public int? DefaultViewType { get; set; }
+
+    /// <summary>
     /// Gets or Sets Columns
     /// </summary>
     [DataMember(Name="columns", EmitDefaultValue=false)]
@@ -36,6 +44,7 @@ namespace IO.Swagger.Model {
       var sb = new StringBuilder();
       sb.Append("class ReportDataOptions {\n");
       sb.Append("  ReportType: ").Append(ReportType).Append("\n");
+      sb.Append("  DefaultViewType: ").Append(DefaultViewType).Append("\n");
       sb.Append("  Columns: ").Append(Columns).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
