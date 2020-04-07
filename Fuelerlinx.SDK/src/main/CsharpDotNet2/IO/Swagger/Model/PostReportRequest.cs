@@ -41,11 +41,11 @@ namespace IO.Swagger.Model {
     public int? CompanyId { get; set; }
 
     /// <summary>
-    /// Gets or Sets ChartOptionsJson
+    /// Gets or Sets ChartOptions
     /// </summary>
-    [DataMember(Name="chartOptionsJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "chartOptionsJson")]
-    public string ChartOptionsJson { get; set; }
+    [DataMember(Name="chartOptions", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "chartOptions")]
+    public ChartOptions ChartOptions { get; set; }
 
     /// <summary>
     /// Gets or Sets DataOptions
@@ -66,7 +66,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Description: ").Append(Description).Append("\n");
       sb.Append("  IsFavorite: ").Append(IsFavorite).Append("\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
-      sb.Append("  ChartOptionsJson: ").Append(ChartOptionsJson).Append("\n");
+      sb.Append("  ChartOptions: ").Append(ChartOptions).Append("\n");
       sb.Append("  DataOptions: ").Append(DataOptions).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

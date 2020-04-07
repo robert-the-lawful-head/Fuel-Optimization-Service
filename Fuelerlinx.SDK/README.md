@@ -122,7 +122,7 @@ Class | Method | HTTP request | Description
 *AnalysisApi* | [**GetEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#getemailaddressesformonthlyanalysis) | **GET** /api/Analysis/email-blast/{emailBlastId}/email-addresses | Internal use only - Fetch all subscribers for a particular email blast.
 *AnalysisApi* | [**GetIndustryAveragePriceByTransaction**](docs/AnalysisApi.md#getindustryaveragepricebytransaction) | **GET** /api/Analysis/industry-average/by-transaction/{transactionId} | 
 *AnalysisApi* | [**GetReportData**](docs/AnalysisApi.md#getreportdata) | **POST** /api/Analysis/custom-reports/data | 
-*AnalysisApi* | [**GetReportListByCompanyId**](docs/AnalysisApi.md#getreportlistbycompanyid) | **GET** /api/Analysis/custom-reports/list | Fetch a list of reports for the authenticated company.
+*AnalysisApi* | [**GetReportList**](docs/AnalysisApi.md#getreportlist) | **GET** /api/Analysis/custom-reports/list | Fetch a list of reports for the authenticated company.
 *AnalysisApi* | [**PostCustomReport**](docs/AnalysisApi.md#postcustomreport) | **POST** /api/Analysis/custom-reports | Add a new custom report for the authenticated company.
 *AnalysisApi* | [**PostEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#postemailaddressesformonthlyanalysis) | **POST** /api/Analysis/email-blast/email-addresses | Internal use only - Add a new subscriber-set record to an email blast.
 *AnalysisApi* | [**UpdateCustomReport**](docs/AnalysisApi.md#updatecustomreport) | **PUT** /api/Analysis/custom-reports | Update a custom report.
@@ -337,7 +337,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CalculationResult](docs/CalculationResult.md)
  - [IO.Swagger.Model.CancelFuelOrderRequest](docs/CancelFuelOrderRequest.md)
  - [IO.Swagger.Model.CancelFuelOrdersResponse](docs/CancelFuelOrdersResponse.md)
- - [IO.Swagger.Model.ChartDataDTO](docs/ChartDataDTO.md)
+ - [IO.Swagger.Model.Chart](docs/Chart.md)
+ - [IO.Swagger.Model.ChartOptions](docs/ChartOptions.md)
  - [IO.Swagger.Model.CompanyDTO](docs/CompanyDTO.md)
  - [IO.Swagger.Model.CompanyFuelerDTO](docs/CompanyFuelerDTO.md)
  - [IO.Swagger.Model.CompanyFuelerListResponse](docs/CompanyFuelerListResponse.md)
@@ -350,12 +351,14 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CompanyProfile](docs/CompanyProfile.md)
  - [IO.Swagger.Model.CompanyResponse](docs/CompanyResponse.md)
  - [IO.Swagger.Model.CompanySettingsDTO](docs/CompanySettingsDTO.md)
+ - [IO.Swagger.Model.Credits](docs/Credits.md)
  - [IO.Swagger.Model.CrowdSourcedRampFeeResponse](docs/CrowdSourcedRampFeeResponse.md)
  - [IO.Swagger.Model.CurrencyConversionDTO](docs/CurrencyConversionDTO.md)
  - [IO.Swagger.Model.CurrencyListResponse](docs/CurrencyListResponse.md)
  - [IO.Swagger.Model.CurrentPlannedFlightsResponse](docs/CurrentPlannedFlightsResponse.md)
  - [IO.Swagger.Model.CurrentPricingResponse](docs/CurrentPricingResponse.md)
  - [IO.Swagger.Model.CurrentScheduledTripsResponse](docs/CurrentScheduledTripsResponse.md)
+ - [IO.Swagger.Model.DataLabels](docs/DataLabels.md)
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyNoteResponse](docs/DeleteAirportDetailsByCompanyNoteResponse.md)
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyResponse](docs/DeleteAirportDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconProcessResponse](docs/DeleteAutoReconProcessResponse.md)
@@ -435,6 +438,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FuelVendorDTO](docs/FuelVendorDTO.md)
  - [IO.Swagger.Model.FuelerTaxByTierDTO](docs/FuelerTaxByTierDTO.md)
  - [IO.Swagger.Model.GeneralAirportInformation](docs/GeneralAirportInformation.md)
+ - [IO.Swagger.Model.HighChartsChart](docs/HighChartsChart.md)
  - [IO.Swagger.Model.IFLightPlannerModelResponse](docs/IFLightPlannerModelResponse.md)
  - [IO.Swagger.Model.IFLightPlannerRouteRequestServiceLogListResponse](docs/IFLightPlannerRouteRequestServiceLogListResponse.md)
  - [IO.Swagger.Model.IFlightPlannerAircraftIdResponse](docs/IFlightPlannerAircraftIdResponse.md)
@@ -461,12 +465,15 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.Leg](docs/Leg.md)
  - [IO.Swagger.Model.LegFlightPlanningRequest](docs/LegFlightPlanningRequest.md)
  - [IO.Swagger.Model.LegTankeringOptions](docs/LegTankeringOptions.md)
+ - [IO.Swagger.Model.Legend](docs/Legend.md)
+ - [IO.Swagger.Model.Line](docs/Line.md)
  - [IO.Swagger.Model.MailBoxJobDTO](docs/MailBoxJobDTO.md)
  - [IO.Swagger.Model.MostCommonReportedRampFeeResultDTO](docs/MostCommonReportedRampFeeResultDTO.md)
  - [IO.Swagger.Model.MultiLegOption](docs/MultiLegOption.md)
  - [IO.Swagger.Model.NavigationLog](docs/NavigationLog.md)
  - [IO.Swagger.Model.OracleAccountingExportResponse](docs/OracleAccountingExportResponse.md)
  - [IO.Swagger.Model.OracleAccountingExportResultDTO](docs/OracleAccountingExportResultDTO.md)
+ - [IO.Swagger.Model.PlotOptions](docs/PlotOptions.md)
  - [IO.Swagger.Model.PostAirportDetailsByCompanyNotesRequest](docs/PostAirportDetailsByCompanyNotesRequest.md)
  - [IO.Swagger.Model.PostAirportDetailsByCompanyNotesResponse](docs/PostAirportDetailsByCompanyNotesResponse.md)
  - [IO.Swagger.Model.PostAirportDetailsByCompanyRequest](docs/PostAirportDetailsByCompanyRequest.md)
@@ -564,6 +571,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ScheduledTripDeleteResponse](docs/ScheduledTripDeleteResponse.md)
  - [IO.Swagger.Model.Segment](docs/Segment.md)
  - [IO.Swagger.Model.SegmentItem](docs/SegmentItem.md)
+ - [IO.Swagger.Model.Series](docs/Series.md)
  - [IO.Swagger.Model.ServicesAndFeesByCompanyDTO](docs/ServicesAndFeesByCompanyDTO.md)
  - [IO.Swagger.Model.ServicesAndFeesByCompanyListResponse](docs/ServicesAndFeesByCompanyListResponse.md)
  - [IO.Swagger.Model.ServicesAndFeesByCompanyResponse](docs/ServicesAndFeesByCompanyResponse.md)
@@ -579,6 +587,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.TaxesByCountryListResponse](docs/TaxesByCountryListResponse.md)
  - [IO.Swagger.Model.TaxesByCountryResponse](docs/TaxesByCountryResponse.md)
  - [IO.Swagger.Model.Time](docs/Time.md)
+ - [IO.Swagger.Model.Title](docs/Title.md)
  - [IO.Swagger.Model.TransactionAccountingDataDTO](docs/TransactionAccountingDataDTO.md)
  - [IO.Swagger.Model.TransactionAccountingDataResponse](docs/TransactionAccountingDataResponse.md)
  - [IO.Swagger.Model.TransactionAccountingTransferDTO](docs/TransactionAccountingTransferDTO.md)
@@ -677,6 +686,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.WeeklyPricingListResponse](docs/WeeklyPricingListResponse.md)
  - [IO.Swagger.Model.Weight](docs/Weight.md)
  - [IO.Swagger.Model.WeightAndBalanceOptions](docs/WeightAndBalanceOptions.md)
+ - [IO.Swagger.Model.XAxis](docs/XAxis.md)
 
 
 <a name="documentation-for-authorization"></a>

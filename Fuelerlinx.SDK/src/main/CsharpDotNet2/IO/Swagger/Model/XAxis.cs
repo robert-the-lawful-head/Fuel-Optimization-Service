@@ -11,21 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class ReportDataDTO {
-    /// <summary>
-    /// Gets or Sets HighChartsChart
-    /// </summary>
-    [DataMember(Name="highChartsChart", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "highChartsChart")]
-    public HighChartsChart HighChartsChart { get; set; }
-
-    /// <summary>
-    /// Gets or Sets DataJson
-    /// </summary>
-    [DataMember(Name="dataJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dataJson")]
-    public string DataJson { get; set; }
-
+  public class XAxis {
 
     /// <summary>
     /// Get the string presentation of the object
@@ -33,9 +19,7 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class ReportDataDTO {\n");
-      sb.Append("  HighChartsChart: ").Append(HighChartsChart).Append("\n");
-      sb.Append("  DataJson: ").Append(DataJson).Append("\n");
+      sb.Append("class XAxis {\n");
       sb.Append("}\n");
       return sb.ToString();
     }

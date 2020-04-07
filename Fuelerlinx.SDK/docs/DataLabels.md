@@ -1,10 +1,10 @@
-# IO.Swagger.Model.ReportDataDTO
+# IO.Swagger.Model.DataLabels
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**HighChartsChart** | [**HighChartsChart**](HighChartsChart.md) |  | [optional] 
-**DataJson** | **string** |  | [optional] 
+**Enabled** | **bool?** |  | [optional] 
+**Formatter** | [**XAxis**](XAxis.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

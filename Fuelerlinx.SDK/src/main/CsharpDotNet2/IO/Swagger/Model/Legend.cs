@@ -11,20 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class ReportDataDTO {
+  public class Legend {
     /// <summary>
-    /// Gets or Sets HighChartsChart
+    /// Gets or Sets VerticalAlign
     /// </summary>
-    [DataMember(Name="highChartsChart", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "highChartsChart")]
-    public HighChartsChart HighChartsChart { get; set; }
+    [DataMember(Name="verticalAlign", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "verticalAlign")]
+    public string VerticalAlign { get; set; }
 
     /// <summary>
-    /// Gets or Sets DataJson
+    /// Gets or Sets ItemMarginTop
     /// </summary>
-    [DataMember(Name="dataJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dataJson")]
-    public string DataJson { get; set; }
+    [DataMember(Name="itemMarginTop", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "itemMarginTop")]
+    public int? ItemMarginTop { get; set; }
 
 
     /// <summary>
@@ -33,9 +33,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class ReportDataDTO {\n");
-      sb.Append("  HighChartsChart: ").Append(HighChartsChart).Append("\n");
-      sb.Append("  DataJson: ").Append(DataJson).Append("\n");
+      sb.Append("class Legend {\n");
+      sb.Append("  VerticalAlign: ").Append(VerticalAlign).Append("\n");
+      sb.Append("  ItemMarginTop: ").Append(ItemMarginTop).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

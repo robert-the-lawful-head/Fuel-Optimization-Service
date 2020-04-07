@@ -11,20 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class ReportDataDTO {
+  public class Line {
     /// <summary>
-    /// Gets or Sets HighChartsChart
+    /// Gets or Sets DataLabels
     /// </summary>
-    [DataMember(Name="highChartsChart", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "highChartsChart")]
-    public HighChartsChart HighChartsChart { get; set; }
+    [DataMember(Name="dataLabels", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "dataLabels")]
+    public DataLabels DataLabels { get; set; }
 
     /// <summary>
-    /// Gets or Sets DataJson
+    /// Gets or Sets EnableMouseTracking
     /// </summary>
-    [DataMember(Name="dataJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dataJson")]
-    public string DataJson { get; set; }
+    [DataMember(Name="enableMouseTracking", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "enableMouseTracking")]
+    public bool? EnableMouseTracking { get; set; }
 
 
     /// <summary>
@@ -33,9 +33,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class ReportDataDTO {\n");
-      sb.Append("  HighChartsChart: ").Append(HighChartsChart).Append("\n");
-      sb.Append("  DataJson: ").Append(DataJson).Append("\n");
+      sb.Append("class Line {\n");
+      sb.Append("  DataLabels: ").Append(DataLabels).Append("\n");
+      sb.Append("  EnableMouseTracking: ").Append(EnableMouseTracking).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

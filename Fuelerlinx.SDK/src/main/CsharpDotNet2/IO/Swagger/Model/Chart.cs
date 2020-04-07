@@ -11,20 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class ReportDataDTO {
+  public class Chart {
     /// <summary>
-    /// Gets or Sets HighChartsChart
+    /// Gets or Sets Height
     /// </summary>
-    [DataMember(Name="highChartsChart", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "highChartsChart")]
-    public HighChartsChart HighChartsChart { get; set; }
+    [DataMember(Name="height", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "height")]
+    public int? Height { get; set; }
 
     /// <summary>
-    /// Gets or Sets DataJson
+    /// Gets or Sets Type
     /// </summary>
-    [DataMember(Name="dataJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dataJson")]
-    public string DataJson { get; set; }
+    [DataMember(Name="type", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "type")]
+    public string Type { get; set; }
 
 
     /// <summary>
@@ -33,9 +33,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class ReportDataDTO {\n");
-      sb.Append("  HighChartsChart: ").Append(HighChartsChart).Append("\n");
-      sb.Append("  DataJson: ").Append(DataJson).Append("\n");
+      sb.Append("class Chart {\n");
+      sb.Append("  Height: ").Append(Height).Append("\n");
+      sb.Append("  Type: ").Append(Type).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

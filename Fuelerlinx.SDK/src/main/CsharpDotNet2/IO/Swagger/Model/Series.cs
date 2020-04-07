@@ -11,13 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class ReportDataDTO {
+  public class Series {
     /// <summary>
-    /// Gets or Sets HighChartsChart
+    /// Gets or Sets Data
     /// </summary>
-    [DataMember(Name="highChartsChart", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "highChartsChart")]
-    public HighChartsChart HighChartsChart { get; set; }
+    [DataMember(Name="data", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "data")]
+    public List<Object> Data { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Name
+    /// </summary>
+    [DataMember(Name="name", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "name")]
+    public string Name { get; set; }
 
     /// <summary>
     /// Gets or Sets DataJson
@@ -33,8 +40,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class ReportDataDTO {\n");
-      sb.Append("  HighChartsChart: ").Append(HighChartsChart).Append("\n");
+      sb.Append("class Series {\n");
+      sb.Append("  Data: ").Append(Data).Append("\n");
+      sb.Append("  Name: ").Append(Name).Append("\n");
       sb.Append("  DataJson: ").Append(DataJson).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
