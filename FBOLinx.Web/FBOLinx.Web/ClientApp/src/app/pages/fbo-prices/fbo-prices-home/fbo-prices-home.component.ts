@@ -108,8 +108,11 @@ export class FboPricesHomeComponent
     public staticCurrentFboPriceJetARetail: any;
     public staticCurrentFboPriceJetACost: any;
 
-    public staticCurrentFboPriceJetAEffectiveFrom: any;
-    public staticCurrentFboPriceJetAEffectiveTo: any;
+    public staticCurrentFboPriceJetAEffectiveFromRetail: any;
+    public staticCurrentFboPriceJetAEffectiveToRetail: any;
+
+    public staticCurrentFboPriceJetAEffectiveFromCost: any;
+    public staticCurrentFboPriceJetAEffectiveToCost: any;
 
     public tooltipIndex = 0;
     public menuTooltipSubscription: any;
@@ -197,8 +200,20 @@ export class FboPricesHomeComponent
         });
     }
 
-    pricesSuspended() {
-        this.loadCurrentFboPrices();
+    public suspendJetPricing() {
+        this.fboPricesService
+            .suspendJetPricing(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                this.loadCurrentFboPrices();
+            });
+    }
+
+    public suspendRetailPricing() {
+        this.fboPricesService
+            .suspendRetailPricing(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                this.loadCurrentFboPrices();
+            });
     }
 
     public distributePricingClicked() {
@@ -305,11 +320,11 @@ export class FboPricesHomeComponent
         }
 
         if (event !== "hide") {
-            //this.currentPricingEffectiveTo = new Date(
+            // this.currentPricingEffectiveTo = new Date(
             //    moment(this.currentPricingEffectiveFrom)
             //        .add(6, "days")
             //        .format("MM/DD/YYYY")
-            //);
+            // );
             this.minimumAllowedDate = this.currentPricingEffectiveFrom;
             for (const price of this.currentPrices) {
                 price.effectiveFrom = moment(
@@ -387,8 +402,8 @@ export class FboPricesHomeComponent
             });
             this.loadCurrentFboPrices();
         }
-        this.currentFboPriceJetARetail.price = this.jtRetail;
-        this.currentFboPriceJetACost.price = this.jtCost;
+        // this.currentFboPriceJetARetail.price = this.jtRetail;
+        // this.currentFboPriceJetACost.price = this.jtCost;
         if (this.fboPreferences.oid > 0) {
             this.fboPreferencesService
                 .update(this.fboPreferences)
@@ -420,7 +435,7 @@ export class FboPricesHomeComponent
     }
 
     public checkOkPriceSave(startDate, endDate, cost, retail) {
-        if (startDate && endDate && retail && cost) {
+        if (startDate && endDate && (retail || cost)) {
             this.saveOk = false;
         } else {
             this.saveOk = true;
@@ -596,12 +611,29 @@ export class FboPricesHomeComponent
 
                 this.staticCurrentFboPriceJetARetail = this.currentFboPriceJetARetail.price;
                 this.staticCurrentFboPriceJetACost = this.currentFboPriceJetACost.price;
-                this.staticCurrentFboPriceJetAEffectiveFrom = this.currentFboPriceJetACost.effectiveFrom = moment(
-                    this.currentFboPriceJetACost.effectiveFrom
-                ).format("MM/DD/YYYY");
-                this.currentFboPriceJetACost.effectiveTo = moment(
-                    this.currentFboPriceJetACost.effectiveTo
-                ).format("MM/DD/YYYY");
+                if (this.currentFboPriceJetARetail.effectiveFrom) {
+                    this.staticCurrentFboPriceJetAEffectiveFromRetail = this.currentFboPriceJetARetail.effectiveFrom = moment(
+                        this.currentFboPriceJetARetail.effectiveFrom
+                    ).format("MM/DD/YYYY");
+                }
+                if (this.currentFboPriceJetARetail.effectiveTo) {
+                    this.staticCurrentFboPriceJetAEffectiveToRetail = this.currentFboPriceJetARetail.effectiveTo = moment(
+                        this.currentFboPriceJetARetail.effectiveTo
+                    ).format("MM/DD/YYYY");
+                }
+                
+                if (this.currentFboPriceJetACost.effectiveFrom) {
+                    this.staticCurrentFboPriceJetAEffectiveFromCost = moment(
+                        this.currentFboPriceJetACost.effectiveFrom
+                    ).format("MM/DD/YYYY");
+                }
+
+                if (this.currentFboPriceJetACost.effectiveTo) {
+                    this.staticCurrentFboPriceJetAEffectiveToCost = moment(
+                        this.currentFboPriceJetACost.effectiveTo
+                    ).format("MM/DD/YYYY");
+                }
+                
                 this.currentFboPriceJetARetail.effectiveTo = moment(
                     this.currentFboPriceJetARetail.effectiveTo
                 ).format("MM/DD/YYYY");
@@ -618,7 +650,7 @@ export class FboPricesHomeComponent
                     ).format("MM/DD/YYYY");
                 }
                 if (this.currentFboPriceJetACost.effectiveFrom !== null) {
-                    this.staticCurrentFboPriceJetAEffectiveFrom = this.currentFboPriceJetACost.effectiveFrom;
+                    this.staticCurrentFboPriceJetAEffectiveFromCost = this.currentFboPriceJetACost.effectiveFrom;
                     if (
                         this.currentFboPriceJetACost.effectiveFrom <=
                             new Date() &&
@@ -627,11 +659,11 @@ export class FboPricesHomeComponent
                         this.activePrice = true;
                     }
                 } else {
-                    this.staticCurrentFboPriceJetAEffectiveFrom = null;
+                    this.staticCurrentFboPriceJetAEffectiveFromCost = null;
                 }
 
                 if (this.currentFboPriceJetACost.effectiveTo !== null) {
-                    this.staticCurrentFboPriceJetAEffectiveTo = new Date(moment(this.currentFboPriceJetACost.effectiveTo).format(
+                    this.staticCurrentFboPriceJetAEffectiveToCost = new Date(moment(this.currentFboPriceJetACost.effectiveTo).format(
                         "MM/DD/YYYY"
                     ));
                 } 

@@ -5,8 +5,6 @@ import {
     Output,
     EventEmitter,
     ViewChild,
-    OnDestroy,
-    AfterViewInit,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Observable } from "rxjs";
@@ -25,7 +23,7 @@ import { SharedService } from "../../layouts/shared-service";
         "[class.ni-card]": "true",
     },
 })
-export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
+export class NiCardComponent implements OnInit {
     vId: any;
     vEffectiveFrom: any;
     vEffectiveTo: any;
@@ -54,9 +52,7 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() addOnMargin: boolean;
     @Input() noActivePricing = false;
 
-    @ViewChild("cancelTooltip") cancelTooltip: any;
     @ViewChild("addOnMargin") addOnMarginPopover: NgbPopover;
-    @ViewChild("cancelPricing") cancelPricingPopover: NgbPopover;
 
     message: string;
     subscription: any;
@@ -77,24 +73,6 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.visibleSuspend = "true";
             }
         });
-    }
-
-    ngAfterViewInit() {
-        this.subscription = this.sharedService.loadedEmitted$.subscribe(
-            (message) => {
-                if (message === "price-tooltips-showed" && this.cancelPricingPopover) {
-                    setTimeout(() => {
-                        this.cancelPricingPopover.open();
-                    }, 400);
-                }
-            }
-        );
-    }
-
-    ngOnDestroy(): void {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
     }
 
     openDialog(): Observable<any> {
@@ -154,15 +132,6 @@ export class NiCardComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
             this.visibleSuspend = "false";
         }
-    }
-
-    public suspendPricing() {
-        this.fboPricesService
-            .suspendAllPricing(this.sharedService.currentUser.fboId)
-            .subscribe((data: any) => {
-                this.checkPrices();
-                this.priceDeleted.emit("ok");
-            });
     }
 
     public getCurrentPriceByProduct(product) {
