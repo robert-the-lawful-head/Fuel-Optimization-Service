@@ -14,7 +14,6 @@ import { MatDialog } from "@angular/material/dialog";
 import * as _ from "lodash";
 
 // Services
-import { AuthenticationService } from "../../../services/authentication.service";
 import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
 import { CustomersService } from "../../../services/customers.service";
 import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
@@ -39,9 +38,10 @@ export class CustomersGridComponent implements OnInit {
     // Input/Output Bindings
     @Output() editCustomerClicked = new EventEmitter<any>();
     @Output() customerDeleted = new EventEmitter<any>();
-    @Input() customersData: Array<any>;
 
-    @Input() pricingTemplatesData: Array<any>;
+    @Input() customersData: any[];
+    @Input() pricingTemplatesData: any[];
+    @Input() aircraftsData: any[];
 
     // Public Members
     @ViewChild("customerTableContainer") table: ElementRef;
@@ -56,8 +56,7 @@ export class CustomersGridComponent implements OnInit {
         "fleetSize",
         "delete",
     ];
-    public resultsLength = 0;
-    public allCustomerAircraft: any[];
+
     public customerFilterType = 0;
 
     public selectAll = false;
@@ -89,12 +88,7 @@ export class CustomersGridComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.loadCustomerAircraftFullList();
-        if (!this.customersData) {
-            return;
-        }
         this.refreshCustomerDataSource();
-        this.selectAll = false;
 
         FlatfileImporter.setVersion(2);
         this.initializeImporter();
@@ -282,7 +276,7 @@ export class CustomersGridComponent implements OnInit {
 
     public exportCustomerAircraftToExcel() {
         // Export the filtered results to an excel spreadsheet
-        let exportData = _.map(this.allCustomerAircraft, (item) => {
+        let exportData = _.map(this.aircraftsData, (item) => {
             let pricingTemplateName = item.pricingTemplateName;
             if (!pricingTemplateName) {
                 const customer = _.find(this.customersData, (c) => {
@@ -331,23 +325,10 @@ export class CustomersGridComponent implements OnInit {
     }
 
     // Private Methods
-    private loadCustomerAircraftFullList() {
-        this.customeraircraftsService
-            .getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId)
-            .subscribe((data: any) => {
-                this.allCustomerAircraft = data;
-            });
-    }
-
     private refreshCustomerDataSource() {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.customersData.forEach((c) => {
-            c.needsAttention =
-                c.pricingTemplateName === "Default Template" ? true : false;
-        });
         this.customersDataSource = new MatTableDataSource(
-            this.customersData.filter(
-                (element: any, index: number, array: any[]) => {
+            this.customersData.filter((element: any) => {
                     if (this.customerFilterType === 0) {
                         return true;
                     }
@@ -359,23 +340,15 @@ export class CustomersGridComponent implements OnInit {
         this.customersDataSource.sort = this.sort;
 
         this.customersDataSource.paginator = this.paginator;
-        this.resultsLength = this.customersData.length;
     }
 
-    public onMarginChange(newValue, customer) {
-        const changedPricingTemplate = _.find(
-            customer.pricingTemplatesList,
-            (p) => {
-                return (
-                    customer.pricingTemplateName &&
-                    customer.pricingTemplateName === p.name
-                );
-            }
-        );
+    public onMarginChange(newValue: any, customer: any) {
+        const changedPricingTemplate = _.find(this.pricingTemplatesData, (p) => {
+            return customer.pricingTemplateName === p.name;
+        });
 
-        customer.allInPrice = changedPricingTemplate
-            ? changedPricingTemplate.intoPlanePrice
-            : null;
+        customer.needsAttention = changedPricingTemplate.default;
+        customer.allInPrice = changedPricingTemplate.intoPlanePrice;
         const vm = {
             id: customer.customerId,
             customerMarginName: newValue,
@@ -383,12 +356,42 @@ export class CustomersGridComponent implements OnInit {
         };
         this.customerMarginsService
             .updatecustomermargin(vm)
-            .subscribe((data: any) => {
-                this.refreshCustomerDataSource();
+            .subscribe(() => {
+                // this.refreshCustomerDataSource();
             });
     }
 
-    async launchImporter() {
+    public bulkMarginTemplateUpdate(event: MatSelectChange) {
+        const listCustomers = [];
+
+        _.forEach(this.customersData, (customer) => {
+            if (customer.selectAll === true) {
+                customer.needsAttention = event.value.default;
+                customer.pricingTemplateName = event.value.name;
+                customer.allInPrice = event.value.intoPlanePrice;
+                listCustomers.push({
+                    id: customer.customerId,
+                    customerMarginName: event.value.name,
+                    fboid: this.sharedService.currentUser.fboId,
+                });
+            }
+        });
+
+        this.customerMarginsService
+            .updatemultiplecustomermargin(listCustomers)
+            .subscribe(() => {
+                // this.refreshCustomerDataSource();
+            });
+    }
+
+    public anySelected() {
+        const filteredList = this.customersData.filter((item) => {
+            return item.selectAll === true;
+        });
+        return filteredList.length > 0;
+    }
+
+    public async launchImporter() {
         if (!this.LICENSE_KEY) {
             return alert("Set LICENSE_KEY on Line 13 before continuing.");
         }
@@ -400,7 +403,6 @@ export class CustomersGridComponent implements OnInit {
                 results.data.forEach((result) => {
                     result.groupid = this.sharedService.currentUser.groupId;
                 });
-                console.log(results.data);
 
                 this.customersService
                     .importcustomers(results.data)
@@ -418,7 +420,7 @@ export class CustomersGridComponent implements OnInit {
         } catch (e) {}
     }
 
-    initializeImporter() {
+    public initializeImporter() {
         this.importer = new FlatfileImporter(this.LICENSE_KEY, {
             fields: [
                 {
@@ -525,39 +527,5 @@ export class CustomersGridComponent implements OnInit {
             allowCustom: true,
             disableManualInput: false,
         });
-    }
-
-    public bulkMarginTemplateUpdate(event: MatSelectChange) {
-        const filteredList = this.customersData.filter((item) => {
-            return item.selectAll === true;
-        });
-
-        const listCustomers = [];
-
-        filteredList.forEach((selectedItem) => {
-            selectedItem.pricingTemplateName = event.value.name;
-            selectedItem.allInPrice = event.value.intoPlanePrice;
-
-            const vm = {
-                id: selectedItem.customerId,
-                customerMarginName: event.value.name,
-                fboid: this.sharedService.currentUser.fboId,
-            };
-
-            listCustomers.push(vm);
-        });
-
-        this.customerMarginsService
-            .updatemultiplecustomermargin(listCustomers)
-            .subscribe(() => {
-                this.refreshCustomerDataSource();
-            });
-    }
-
-    public anySelected() {
-        const filteredList = this.customersData.filter((item) => {
-            return item.selectAll === true;
-        });
-        return filteredList.length > 0;
     }
 }

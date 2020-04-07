@@ -53,8 +53,6 @@ export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
         this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
                 if (message === SharedEvents.locationChangedEvent) {
-                    this.pricingTemplatesData = null;
-                    this.customersData = null;
                     this.loadCustomers();
                     this.loadPricingTemplates();
                 }
@@ -92,6 +90,7 @@ export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     private loadPricingTemplates() {
+        this.pricingTemplatesData = null;
         this.pricingTemplatesService
             .getByFbo(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
@@ -100,6 +99,7 @@ export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     private loadCustomerAircrafts() {
+        this.aircraftsData = null;
         this.customerAircraftsService
             .getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId)
             .subscribe((data: any) => {
