@@ -104,9 +104,9 @@
                         [color]="'warning'"
                         [borderRadius]="false"
                         [arrow]="'right'"
-                        >Needs Attention</ni-badge
                     >
-                    <!--<a *ngIf="!hasContactForPriceDistribution && customerInfoByGroup.distribute && customerInfoByGroup.customerType != 1" matTooltip="This customer does not have any contacts setup to receive price distribution." matTooltipPosition="after">-->
+                        Needs Attention
+                    </ni-badge>
                     <a
                         *ngIf="
                             customer.customerCompanyTypeName != 'FuelerLinx' &&
@@ -166,9 +166,7 @@
                     (ngModelChange)="onMarginChange($event, customer)"
                 >
                     <option
-                        *ngFor="
-                            let pricingTemplate of customer.pricingTemplatesList
-                        "
+                        *ngFor="let pricingTemplate of pricingTemplatesData"
                         value="{{ pricingTemplate.name }}"
                         >{{ pricingTemplate.name }}</option
                     >
@@ -271,7 +269,7 @@
 
 <div>
     <mat-paginator
-        [length]="resultsLength"
+        [length]="customersData.length"
         [pageSize]="pageSize"
         [pageSizeOptions]="[10, 25, 50, 100]"
         (page)="(pageIndex); onPageChanged($event)"

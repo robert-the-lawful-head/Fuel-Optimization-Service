@@ -8,15 +8,16 @@
     <mat-tab-group>
         <mat-tab label="Customers">
             <div class="table-container">
-                <div *ngIf="customersData">
+                <div *ngIf="customersData && pricingTemplatesData && aircraftsData">
                     <app-customers-grid
                         [customersData]="customersData"
                         [pricingTemplatesData]="pricingTemplatesData"
+                        [aircraftsData]="aircraftsData"
                         (editCustomerClicked)="editCustomerClicked($event)"
                         (customerDeleted)="customerDeleted()"
                     ></app-customers-grid>
                 </div>
-                <div *ngIf="!customersData">
+                <div *ngIf="!customersData || !pricingTemplatesData || !aircraftsData">
                     <mat-spinner></mat-spinner>
                 </div>
             </div>
