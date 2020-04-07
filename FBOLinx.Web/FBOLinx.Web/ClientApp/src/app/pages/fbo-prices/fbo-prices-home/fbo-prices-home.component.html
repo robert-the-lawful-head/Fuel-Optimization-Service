@@ -5,9 +5,7 @@
 <div class="container-fluid" *ngIf="(currentPrices && distributionLog) || show">
     <div class="row mb-2" *ngIf="isSaved">
         <div class="text-center col-12">
-            <ni-badge [size]="'medium'" [color]="'success'"
-                >Your changes have been saved.</ni-badge
-            >
+            <ni-badge [size]="'medium'" [color]="'success'">Your changes have been saved.</ni-badge>
         </div>
     </div>
     <div class="row">
@@ -39,7 +37,6 @@
                     <div class="col-12">
                         <button
                             ni-button
-                            class="pull-right"
                             style="background-color: red; color: white;"
                             [view]="'info'"
                             [size]="'small'"
@@ -89,7 +86,7 @@
                     <div class="col-12">
                         <button
                             ni-button
-                            class="pull-right mb-2"
+                            class="mb-2"
                             style="background-color: red; color: white;"
                             [view]="'info'"
                             [size]="'small'"
@@ -121,8 +118,7 @@
                 [bgColor]="'danger'"
                 [outline]="true"
                 [color]="'danger'"
-                *ngIf="TempValueJet > 0 || TempValueJet < 0"
-            >
+                *ngIf="TempValueJet > 0 || TempValueJet < 0">
                 <h6 class="mt-0">TEMPORARY ADD-ON MARGIN (ALL)</h6>
                 <div class="row">
                     <div class="col-6">
