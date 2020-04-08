@@ -190,6 +190,7 @@
                                     <input
                                         matInput
                                         [min]="todayDate"
+                                            [max]="todayDate"
                                         [(ngModel)]="
                                             currentPricingEffectiveFrom
                                         "
@@ -303,7 +304,7 @@
                     </div>
                 </div>
             </ni-card>
-            <ni-card
+            <!--<ni-card
                 title="Staged Prices"
                 [fboPrices]="currentPrices"
                 [headerBgColor]="'gray'"
@@ -424,7 +425,7 @@
                         </div>
                     </div>
                 </div>
-            </ni-card>
+            </ni-card>-->
         </div>
     </div>
 </div>
