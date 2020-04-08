@@ -59,6 +59,7 @@ export class FuelreqsGridComponent implements OnInit {
         }
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.fuelreqsDataSource = new MatTableDataSource(this.fuelreqsData);
+        this.sort.active = 'eta';
         this.fuelreqsDataSource.sort = this.sort;
         this.fuelreqsDataSource.paginator = this.paginator;
         this.resultsLength = this.fuelreqsData.length;
