@@ -17,7 +17,7 @@ const BREADCRUMBS: any[] = [
         link: "#/default-layout",
     },
     {
-        title: "Margin Templates",
+        title: "ITP Margin Templates",
         link: "#/default-layout/pricing-templates",
     },
 ];
@@ -29,7 +29,7 @@ const BREADCRUMBS: any[] = [
 })
 export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     // Public Members
-    public pageTitle = "Margin Templates";
+    public pageTitle = "ITP Margin Templates";
     public breadcrumb: any[] = BREADCRUMBS;
     public pricingTemplatesData: Array<any>;
     public locationChangedSubscription: any;
