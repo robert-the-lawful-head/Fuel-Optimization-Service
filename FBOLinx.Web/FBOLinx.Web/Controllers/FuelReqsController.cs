@@ -139,7 +139,9 @@ namespace FBOLinx.Web.Controllers
                 TimeStandard = f.TimeStandard,
                 CustomerName = f.Customer?.Company,
                 TailNumber = f.CustomerAircraft?.TailNumber,
-                FboName = f.Fbo?.Fbo
+                FboName = f.Fbo?.Fbo,
+                FboEmail =f.Fbo?.FuelDeskEmail,
+                FboPhoneNumber = f.Fbo?.MainPhone
             }).OrderByDescending((x => x.Oid));
 
             return Ok(fuelReqVM);
@@ -186,7 +188,9 @@ namespace FBOLinx.Web.Controllers
                      fr.TimeStandard,
                      CustomerName = c == null ? "" : c.Company,
                      TailNumber = ca == null ? "" : ca.TailNumber,
-                     FboName = f == null ? "" : f.Fbo
+                     FboName = f == null ? "" : f.Fbo,
+                     FuelDeskEmail = f == null ? "" : f.FuelDeskEmail,
+                     MainPhone = f == null ? "" : f.MainPhone
                  }
                  into results
                  select new FuelReqsGridViewModel
@@ -210,7 +214,9 @@ namespace FBOLinx.Web.Controllers
                      TimeStandard = results.Key.TimeStandard,
                      CustomerName = results.Key.CustomerName,
                      TailNumber = results.Key.TailNumber,
-                     FboName = results.Key.FboName
+                     FboName = results.Key.FboName,
+                     FboEmail = results.Key.FuelDeskEmail,
+                     FboPhoneNumber = results.Key.MainPhone
                  }
                 )
                 .OrderByDescending(f => f.Oid)
