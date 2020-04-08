@@ -26,7 +26,7 @@ const BREADCRUMBS: any[] = [
         link: "#/default-layout",
     },
     {
-        title: "Margin Templates",
+        title: "ITP Margin Templates",
         link: "#/default-layout/pricing-templates",
     },
     {

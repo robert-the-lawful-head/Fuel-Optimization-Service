@@ -14,7 +14,7 @@
         "roles": [9999]
     },
     {
-        "title": "Dashboard (FBO)",
+        "title": "Dashboard",
         "icon": {
             "class": "fa fa-home",
             "bg": "#ea8080",
