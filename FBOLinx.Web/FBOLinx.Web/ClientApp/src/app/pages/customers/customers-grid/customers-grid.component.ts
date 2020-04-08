@@ -51,7 +51,7 @@ export class CustomersGridComponent implements OnInit {
         "needsAttention",
         "company",
         "customerCompanyTypeName",
-        "pricingTemplateId",
+        "pricingTemplateName",
         "allInPrice",
         "fleetSize",
         "delete",
