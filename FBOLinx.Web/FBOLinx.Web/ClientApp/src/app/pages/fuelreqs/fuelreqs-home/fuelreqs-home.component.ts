@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 
 import * as _ from "lodash";
 import * as moment from "moment";
@@ -7,8 +7,6 @@ import * as XLSX from "xlsx";
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
-
-import * as SharedEvents from "../../../models/sharedEvents";
 
 const BREADCRUMBS: any[] = [
     {
@@ -26,14 +24,14 @@ const BREADCRUMBS: any[] = [
     templateUrl: "./fuelreqs-home.component.html",
     styleUrls: ["./fuelreqs-home.component.scss"],
 })
-export class FuelreqsHomeComponent implements AfterViewInit, OnDestroy {
+export class FuelreqsHomeComponent implements OnDestroy {
     // Public Members
     public pageTitle = "Fuel Orders";
     public breadcrumb: any[] = BREADCRUMBS;
     public fuelreqsData: Array<any>;
-    public locationChangedSubscription: any;
     public filterStartDate: Date;
     public filterEndDate: Date;
+    public timer: any;
 
     constructor(
         private fuelReqService: FuelreqsService,
@@ -46,29 +44,44 @@ export class FuelreqsHomeComponent implements AfterViewInit, OnDestroy {
         this.filterEndDate = new Date(
             moment().add(1, "d").format("MM/DD/YYYY")
         );
-        this.loadFuelReqData();
-    }
-
-    ngAfterViewInit() {
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
-                if (message === SharedEvents.locationChangedEvent) {
-                    this.loadFuelReqData();
-                }
-            }
-        );
+        this.startFuelReqDataServe(fuelReqService);
     }
 
     ngOnDestroy() {
-        if (this.locationChangedSubscription) {
-            this.locationChangedSubscription.unsubscribe();
+        this.stopFuelReqDataServe();
+    }
+
+    public startFuelReqDataServe(fuelReqService: FuelreqsService) {
+        fuelReqService
+            .getForGroupFboAndDateRange(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId,
+                this.filterStartDate,
+                this.filterEndDate
+            )
+            .subscribe((data: any) => {
+                this.fuelreqsData = data;
+                this.timer = setTimeout(() => {
+                    this.startFuelReqDataServe(fuelReqService);
+                }, 5000);
+            });
+    }
+
+    public restartFuelReqDataServe() {
+        this.stopFuelReqDataServe();
+        this.startFuelReqDataServe(this.fuelReqService);
+    }
+
+    public stopFuelReqDataServe() {
+        if (this.timer) {
+            clearTimeout(this.timer);
         }
     }
 
     public dateFilterChanged(event) {
         this.filterStartDate = event.filterStartDate;
         this.filterEndDate = event.filterEndDate;
-        this.loadFuelReqData();
+        this.restartFuelReqDataServe();
     }
 
     public export (event) {
@@ -98,20 +111,6 @@ export class FuelreqsHomeComponent implements AfterViewInit, OnDestroy {
 
                 /* save to file */
                 XLSX.writeFile(wb, "FuelOrders.xlsx");
-            });
-    }
-
-    private loadFuelReqData() {
-        this.fuelreqsData = null;
-        this.fuelReqService
-            .getForGroupFboAndDateRange(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                this.filterStartDate,
-                this.filterEndDate
-            )
-            .subscribe((data: any) => {
-                this.fuelreqsData = data;
             });
     }
 }
