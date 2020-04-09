@@ -90,25 +90,25 @@
         <ng-container matColumnDef="eta">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>ETA</th>
             <td mat-cell *matCellDef="let fuelreq">
-                {{ fuelreq.eta | date: "medium" }}
+                {{ fuelreq.eta | date: "MMM d, yyyy, HH:mm" }}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="etd">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>ETD</th>
             <td mat-cell *matCellDef="let fuelreq">
-                {{ fuelreq.etd | date: "medium" }}
+                {{ fuelreq.etd | date: "MMM d, yyyy, HH:mm" }}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="quotedVolume">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Volume</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Volume (gal.)</th>
             <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.quotedVolume }}</td>
         </ng-container>
 
         <ng-container matColumnDef="quotedPpg">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Price per Gallon</th>
-            <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.quotedPpg }}</td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>PPG</th>
+            <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.quotedPpg | currency:'USD':'symbol':'1.4-4' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="tailNumber">
@@ -124,16 +124,6 @@
         <ng-container matColumnDef="fboPhoneNumber">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>FBO Phone #</th>
             <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.fboPhoneNumber }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="dispatchNotes">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Notes</th>
-            <td mat-cell *matCellDef="let fuelreq">
-                <a style="text-underline: blue;"
-                   *ngIf="fuelreq.notes && fuelreq.notes.length > 0"
-                   matTooltip="{{ fuelreq.notes }}"
-                   matTooltipPosition="before">Notes</a>
-            </td>
         </ng-container>
 
         <ng-container matColumnDef="source">

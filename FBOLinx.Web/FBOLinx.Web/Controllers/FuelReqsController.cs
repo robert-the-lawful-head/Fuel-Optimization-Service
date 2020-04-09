@@ -189,8 +189,8 @@ namespace FBOLinx.Web.Controllers
                      CustomerName = c == null ? "" : c.Company,
                      TailNumber = ca == null ? "" : ca.TailNumber,
                      FboName = f == null ? "" : f.Fbo,
-                     FuelDeskEmail = f == null ? "" : f.FuelDeskEmail,
-                     MainPhone = f == null ? "" : f.MainPhone
+                     FuelDeskEmail = c == null ? "" : c.Username,
+                     MainPhone = c == null ? "" : c.MainPhone
                  }
                  into results
                  select new FuelReqsGridViewModel
