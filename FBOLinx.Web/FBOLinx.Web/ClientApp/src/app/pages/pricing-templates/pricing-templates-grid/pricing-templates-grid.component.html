@@ -99,11 +99,10 @@
                             ni-button
                             size="small"
                             style="
-                                background-color: white !important;
-                                color: black !important;
                                 border: 1px solid black;
                                 width: 70px !important;
                             "
+                            [view]="'blank'"
                             beforeIcon="fa fa-copy"
                             (click)="
                                 copyPricingTemplate(pricingTemplate);
