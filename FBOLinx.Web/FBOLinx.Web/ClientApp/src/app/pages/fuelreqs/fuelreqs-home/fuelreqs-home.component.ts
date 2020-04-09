@@ -7,6 +7,7 @@ import * as XLSX from "xlsx";
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
+import { interval, Subscription } from 'rxjs';
 
 const BREADCRUMBS: any[] = [
     {
@@ -28,10 +29,10 @@ export class FuelreqsHomeComponent implements OnDestroy {
     // Public Members
     public pageTitle = "Fuel Orders";
     public breadcrumb: any[] = BREADCRUMBS;
-    public fuelreqsData: Array<any>;
+    public fuelreqsData: any[];
     public filterStartDate: Date;
     public filterEndDate: Date;
-    public timer: any;
+    public timer: Subscription;
 
     constructor(
         private fuelReqService: FuelreqsService,
@@ -44,15 +45,16 @@ export class FuelreqsHomeComponent implements OnDestroy {
         this.filterEndDate = new Date(
             moment().add(1, "d").format("MM/DD/YYYY")
         );
-        this.startFuelReqDataServe(fuelReqService);
+        this.startFuelReqDataServe();
     }
 
     ngOnDestroy() {
         this.stopFuelReqDataServe();
     }
 
-    public startFuelReqDataServe(fuelReqService: FuelreqsService) {
-        fuelReqService
+    public startFuelReqDataServe() {
+        this.timer = interval(3000).subscribe(() => {
+            this.fuelReqService
             .getForGroupFboAndDateRange(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
@@ -61,20 +63,18 @@ export class FuelreqsHomeComponent implements OnDestroy {
             )
             .subscribe((data: any) => {
                 this.fuelreqsData = data;
-                this.timer = setTimeout(() => {
-                    this.startFuelReqDataServe(fuelReqService);
-                }, 5000);
             });
+        });
     }
 
     public restartFuelReqDataServe() {
         this.stopFuelReqDataServe();
-        this.startFuelReqDataServe(this.fuelReqService);
+        this.startFuelReqDataServe();
     }
 
     public stopFuelReqDataServe() {
         if (this.timer) {
-            clearTimeout(this.timer);
+            this.timer.unsubscribe();
         }
     }
 

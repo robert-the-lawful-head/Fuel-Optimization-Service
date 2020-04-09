@@ -5,6 +5,8 @@ import {
     Output,
     OnInit,
     ViewChild,
+    OnChanges,
+    ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatPaginator } from "@angular/material/paginator";
@@ -21,11 +23,12 @@ import { FuelReqsExportModalComponent } from "../../../shared/components/fuelreq
     selector: "app-fuelreqs-grid",
     templateUrl: "./fuelreqs-grid.component.html",
     styleUrls: ["./fuelreqs-grid.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FuelreqsGridComponent implements OnInit {
+export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Output() exportTriggered = new EventEmitter<any>();
-    @Input() fuelreqsData: Array<any>;
+    @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
 
@@ -56,12 +59,16 @@ export class FuelreqsGridComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (!this.fuelreqsData) {
-            return;
-        }
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.fuelreqsDataSource = new MatTableDataSource(this.fuelreqsData);
         this.sort.active = "eta";
+    }
+
+    ngOnChanges() {
+        this.refreshTable();
+    }
+
+    public refreshTable() {
+        this.fuelreqsDataSource = new MatTableDataSource(this.fuelreqsData);
         this.fuelreqsDataSource.sort = this.sort;
         this.fuelreqsDataSource.paginator = this.paginator;
         this.resultsLength = this.fuelreqsData.length;
