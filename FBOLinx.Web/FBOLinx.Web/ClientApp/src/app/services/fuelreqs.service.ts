@@ -190,13 +190,12 @@ export class FuelreqsService {
         );
     }
 
-    public getCompaniesQuotingDealStatistics(fboId: number, startDate: Date, endDate: Date, company: number) {
+    public getCompaniesQuotingDealStatistics(groupId: number, fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/company-quoting-deal-statistics/fbo/" + fboId,
+            this.accessPointUrl + "/analysis/company-quoting-deal-statistics/group/" + groupId + "/fbo/" + fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
-                company,
             },
             {
                 headers: this.headers,

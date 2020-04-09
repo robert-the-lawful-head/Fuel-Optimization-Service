@@ -40,7 +40,6 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit, OnChang
 
     ngOnInit() {
         this.chartType = "order";
-        this.refreshData();
     }
 
     ngOnChanges(changes: SimpleChanges) {

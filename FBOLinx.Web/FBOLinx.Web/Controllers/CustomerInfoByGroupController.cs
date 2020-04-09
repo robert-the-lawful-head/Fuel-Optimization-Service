@@ -138,27 +138,6 @@ namespace FBOLinx.Web.Controllers
             return Ok(needsAttentionCustomers);
         }
 
-        [HttpGet("customers/group/{groupId}/fbo/{fboId}")]
-        public async Task<IActionResult> GetCustomerNamesByGroupAndFBO([FromRoute] int groupId, [FromRoute] int fboId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var customers = await _context.CustomerInfoByGroup
-                                    .Where(c => c.GroupId.Equals(groupId))
-                                    .Select(c => new
-                                    {
-                                        c.CustomerId,
-                                        Company = c.Company.Trim()
-                                    })
-                                    .Distinct()
-                                    .ToListAsync();
-
-            return Ok(customers);
-        }
-
         // GET: api/CustomerInfoByGroup/group/5/fbo/6
         [HttpGet("group/{groupId}/fbo/{fboId}/export")]
         public async Task<IActionResult> GetCustomerInfoByGroupAndFBOExport([FromRoute] int groupId, [FromRoute] int fboId)

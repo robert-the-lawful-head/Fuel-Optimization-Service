@@ -39,7 +39,6 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit, OnCh
     ) {}
 
     ngOnInit() {
-        this.refreshData();
     }
 
     ngOnChanges(changes: SimpleChanges) {

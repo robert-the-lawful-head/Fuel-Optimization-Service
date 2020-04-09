@@ -814,8 +814,8 @@ namespace FBOLinx.Web.Controllers
             return Ok(chartData);
         }
 
-        [HttpPost("analysis/company-quoting-deal-statistics/fbo/{fboId}")]
-        public IActionResult GetCompanyStatistics([FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null)
+        [HttpPost("analysis/company-quoting-deal-statistics/group/{groupId}/fbo/{fboId}")]
+        public IActionResult GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null)
         {
             if (!ModelState.IsValid)
             {
@@ -842,21 +842,38 @@ namespace FBOLinx.Web.Controllers
                                 TotalVolume = groupedFuelReqs.Sum(fr => fr.ActualVolume.GetValueOrDefault() * fr.ActualPpg.GetValueOrDefault() > 0 ?
                                              fr.ActualVolume * fr.ActualPpg :
                                              fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()).GetValueOrDefault()
-                            });
-            var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(request.Company)).FirstOrDefault();
-            var companyPricingLog = _context.CompanyPricingLog
-                                        .Include("Customer")
-                                        .Where(c => c.Customer.Oid.Equals(request.Company))
-                                        .OrderByDescending(c => c.CreatedDate)
-                                        .FirstOrDefault();
+                            }).ToList();
 
-            var tableData = new
+            var pricingLogs = _context.CompanyPricingLog
+                                        .Include("Customer")
+                                        .OrderByDescending(c => c.CreatedDate)
+                                        .GroupBy(c => c.Customer.Oid)
+                                        .Select(c => c.First())
+                                        .ToList();
+
+            var customers = _context.CustomerInfoByGroup
+                                    .Where(c => c.GroupId.Equals(groupId))
+                                    .Select(c => new
+                                    {
+                                        c.CustomerId,
+                                        Company = c.Company.Trim()
+                                    })
+                                    .Distinct();
+            List<object> tableData = new List<object>();
+            foreach(var customer in customers)
             {
-                FBOOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
-                FBOVolume = selectedCompanyFuelReqs == null ? 0 : Math.Round(selectedCompanyFuelReqs.TotalVolume, 2),
-                AirportOrders = fuelReqs.Sum(f => f.TotalOrders),
-                LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString()
-            };
+                var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
+                var companyPricingLog = pricingLogs.Where(c => c.Customer.Oid.Equals(customer.CustomerId)).FirstOrDefault();
+                tableData.Add(new
+                {
+                    customer.Company,
+                    FBOOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
+                    FBOVolume = selectedCompanyFuelReqs == null ? 0 : Math.Round(selectedCompanyFuelReqs.TotalVolume, 2),
+                    AirportOrders = fuelReqs.Sum(f => f.TotalOrders),
+                    LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString()
+                });
+            }
+
             return Ok(tableData);
         }
 
