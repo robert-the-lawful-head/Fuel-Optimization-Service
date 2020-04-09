@@ -40,10 +40,10 @@ export class FuelreqsHomeComponent implements OnDestroy {
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.filterStartDate = new Date(
-            moment().format("MM/DD/YYYY")
+            moment().add(-30, "d").format("MM/DD/YYYY")
         );
         this.filterEndDate = new Date(
-            moment().add(1, "d").format("MM/DD/YYYY")
+            moment().add(30, "d").format("MM/DD/YYYY")
         );
         this.startFuelReqDataServe();
     }
