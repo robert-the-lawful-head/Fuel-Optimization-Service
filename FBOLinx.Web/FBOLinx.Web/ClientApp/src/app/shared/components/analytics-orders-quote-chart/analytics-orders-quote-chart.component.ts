@@ -36,7 +36,6 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit, OnChanges {
     ) {}
 
     ngOnInit() {
-        this.refreshData();
     }
 
     ngOnChanges(changes: SimpleChanges) {

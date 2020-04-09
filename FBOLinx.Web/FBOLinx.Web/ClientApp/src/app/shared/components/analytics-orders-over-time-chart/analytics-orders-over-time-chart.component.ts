@@ -36,7 +36,6 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit, OnChanges 
     ) {}
 
     ngOnInit() {
-        this.refreshData();
     }
 
     ngOnChanges(changes: SimpleChanges) {
