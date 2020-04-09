@@ -538,7 +538,7 @@ namespace FBOLinx.Web.Controllers
                 request.ICAO = airport.Icao;
             }
 
-            var result = await _fuelerLinxService.GetOrderCountByLocation(request);
+            FuelerLinxUpliftsByLocationResponseContent result = await _fuelerLinxService.GetOrderCountByLocation(request);
 
             return Ok(result);
         }
@@ -572,14 +572,14 @@ namespace FBOLinx.Web.Controllers
 
             List<FuelReqForChart> fuelReqs = await GetFuelRequestsByMonthDateRange(fboId, request.StartDateTime, request.EndDateTime);
 
-            var fuelReqsByMonth = (from month in months
+            List<NgxChartItemType> fuelReqsByMonth = (from month in months
                                    join year in years on 1 equals 1
                                    join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
                                    into leftJoinFuelReqs
                                    from f in leftJoinFuelReqs.DefaultIfEmpty()
                                    where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                    && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                   select new
+                                   select new NgxChartItemType
                                    {
                                        Month = month,
                                        Year = year,
@@ -590,16 +590,16 @@ namespace FBOLinx.Web.Controllers
                                   .ThenBy(x => x.Month)
                                   .ToList();
 
-            var quotes = await _fuelerLinxService.GetOrderCountByLocation(request);
+            FuelerLinxUpliftsByLocationResponseContent quotes = await _fuelerLinxService.GetOrderCountByLocation(request);
 
-            var quotesByMonth = (from month in months
+            List<NgxChartItemType> quotesByMonth = (from month in months
                                  join year in years on 1 equals 1
                                  join q in quotes.TotalOrdersByMonth on new { Month = month, Year = year } equals new { q.Month, q.Year }
                                  into leftJoinQuotes
                                  from q in leftJoinQuotes.DefaultIfEmpty()
                                  where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                    && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                 select new
+                                 select new NgxChartItemType
                                  {
                                      Month = month,
                                      Year = year,
@@ -610,14 +610,14 @@ namespace FBOLinx.Web.Controllers
                                  .ThenBy(x => x.Month)
                                  .ToList();
 
-            var dollarVolumeByMonth = (from month in months
+            List<NgxChartItemType> dollarVolumeByMonth = (from month in months
                                        join year in years on 1 equals 1
                                        join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
                                        into leftJoinFuelReqs
                                        from f in leftJoinFuelReqs.DefaultIfEmpty()
                                        where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                        && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                       select new
+                                       select new NgxChartItemType
                                        {
                                            Month = month,
                                            Year = year,
@@ -628,22 +628,26 @@ namespace FBOLinx.Web.Controllers
                                        .ThenBy(x => x.Month)
                                        .ToList();
 
-            var chartData = new List<object>()
+            List<List<NgxChartDataType>> chartData = new List<List<NgxChartDataType>>()
                             {
-                                new
-                                {
-                                    Name = "Orders",
-                                    Series = fuelReqsByMonth
+                                new List<NgxChartDataType>(){
+                                    new NgxChartDataType
+                                    {
+                                        Name = "Orders",
+                                        Series = fuelReqsByMonth
+                                    },
+                                    new NgxChartDataType
+                                    {
+                                        Name = "Quotes",
+                                        Series = quotesByMonth
+                                    }
                                 },
-                                new
-                                {
-                                    Name = "Quotes",
-                                    Series = quotesByMonth
-                                },
-                                new
-                                {
-                                    Name = "Sum of Dollar Volume",
-                                    Series = dollarVolumeByMonth
+                                new List<NgxChartDataType>(){
+                                    new NgxChartDataType
+                                    {
+                                        Name = "Sum of Dollar Volume",
+                                        Series = dollarVolumeByMonth
+                                    }
                                 }
                             };
 
@@ -679,14 +683,14 @@ namespace FBOLinx.Web.Controllers
 
             List<FuelReqForChart> fuelReqs = await GetFuelRequestsByMonthDateRange(fboId, request.StartDateTime, request.EndDateTime);
 
-            var fuelReqsByMonth = (from month in months
+            List<NgxChartItemType> fuelReqsByMonth = (from month in months
                                    join year in years on 1 equals 1
                                    join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
                                    into leftJoinFuelReqs
                                    from f in leftJoinFuelReqs.DefaultIfEmpty()
                                    where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                    && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                   select new
+                                   select new NgxChartItemType
                                    {
                                        Month = month,
                                        Year = year,
@@ -717,10 +721,10 @@ namespace FBOLinx.Web.Controllers
             request.Icao = icao;
 
             List<FBOLinxNearbyAirportsModel> volumes = _fuelerLinxService.GetTransactionsForNearbyAirports(request).Result;
-            var result = volumes.Select(f => new
+            IEnumerable<NgxChartBarChartItemType> result = volumes.Select(f => new NgxChartBarChartItemType
             {
                 Name = f.Icao,
-                Value = f.AirportsCount
+                Value = f.AirportsCount.GetValueOrDefault()
             });
             return Ok(result);
         }
@@ -751,19 +755,19 @@ namespace FBOLinx.Web.Controllers
 
             int fuelerlinxOrdersCount = _fuelerLinxService.GetTransactionsCountForAirport(request).Result.GetValueOrDefault();
 
-            var chartData = new List<object>()
+            List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>()
                             {
-                                new
+                                new NgxChartBarChartItemType
                                 {
                                     Name = "My Total Orders",
                                     Value = airportOrdersCount
                                 },
-                                new
+                                new NgxChartBarChartItemType
                                 {
                                     Name = "Other FBO's Orders",
                                     Value = totalOrdersCount
                                 },
-                                new
+                                new NgxChartBarChartItemType
                                 {
                                     Name = "Contract/Reseller Orders",
                                     Value = fuelerlinxOrdersCount
