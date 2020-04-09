@@ -55,6 +55,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "dateInterval")]
     public int? DateInterval { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Currency
+    /// </summary>
+    [DataMember(Name="currency", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "currency")]
+    public string Currency { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -69,6 +76,7 @@ namespace IO.Swagger.Model {
       sb.Append("  AllowedInvoiceStatusesList: ").Append(AllowedInvoiceStatusesList).Append("\n");
       sb.Append("  AirportIcao: ").Append(AirportIcao).Append("\n");
       sb.Append("  DateInterval: ").Append(DateInterval).Append("\n");
+      sb.Append("  Currency: ").Append(Currency).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

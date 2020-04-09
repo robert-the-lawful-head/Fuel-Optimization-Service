@@ -45,7 +45,7 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="chartOptions", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "chartOptions")]
-    public ChartOptions ChartOptions { get; set; }
+    public ChartSettings ChartOptions { get; set; }
 
     /// <summary>
     /// Gets or Sets DataOptions

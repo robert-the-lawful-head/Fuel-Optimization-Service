@@ -13,26 +13,124 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class ChartOptions {
     /// <summary>
-    /// 0 = NumericValues             1 = ArrayOfNumericXY             2 = ArrayOfDateTimeXY             3 = ArrayOfPointNames    * `NumericValues` - Numerical values  * `ArrayOfNumericXY` - Arrays of numeric x and y  * `ArrayOfDateTimeXY` - Arrays of datetime x and y  * `ArrayOfPointNames` - Arrays of point.name and y  
+    /// Gets or Sets ClientId
     /// </summary>
-    /// <value>0 = NumericValues             1 = ArrayOfNumericXY             2 = ArrayOfDateTimeXY             3 = ArrayOfPointNames    * `NumericValues` - Numerical values  * `ArrayOfNumericXY` - Arrays of numeric x and y  * `ArrayOfDateTimeXY` - Arrays of datetime x and y  * `ArrayOfPointNames` - Arrays of point.name and y  </value>
-    [DataMember(Name="seriesType", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "seriesType")]
-    public int? SeriesType { get; set; }
+    [DataMember(Name="clientId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "clientId")]
+    public string ClientId { get; set; }
 
     /// <summary>
-    /// Gets or Sets ChartType
+    /// Gets or Sets Lang
     /// </summary>
-    [DataMember(Name="chartType", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "chartType")]
-    public string ChartType { get; set; }
+    [DataMember(Name="lang", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "lang")]
+    public Localization Lang { get; set; }
 
     /// <summary>
-    /// Gets or Sets HighChartsChart
+    /// Gets or Sets Appearance
     /// </summary>
-    [DataMember(Name="highChartsChart", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "highChartsChart")]
-    public HighChartsChart HighChartsChart { get; set; }
+    [DataMember(Name="appearance", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "appearance")]
+    public Appearance Appearance { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Colors
+    /// </summary>
+    [DataMember(Name="colors", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "colors")]
+    public ColorSet Colors { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    [DataMember(Name="renderType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "renderType")]
+    public int? RenderType { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Legend
+    /// </summary>
+    [DataMember(Name="legend", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "legend")]
+    public Legend Legend { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Exporting
+    /// </summary>
+    [DataMember(Name="exporting", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "exporting")]
+    public Exporting Exporting { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ShowCredits
+    /// </summary>
+    [DataMember(Name="showCredits", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "showCredits")]
+    public bool? ShowCredits { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Title
+    /// </summary>
+    [DataMember(Name="title", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "title")]
+    public Title Title { get; set; }
+
+    /// <summary>
+    /// Gets or Sets SubTitle
+    /// </summary>
+    [DataMember(Name="subTitle", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "subTitle")]
+    public SubTitle SubTitle { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Tooltip
+    /// </summary>
+    [DataMember(Name="tooltip", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "tooltip")]
+    public ToolTip Tooltip { get; set; }
+
+    /// <summary>
+    /// Gets or Sets YAxis
+    /// </summary>
+    [DataMember(Name="yAxis", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "yAxis")]
+    public List<YAxisItem> YAxis { get; set; }
+
+    /// <summary>
+    /// Gets or Sets XAxis
+    /// </summary>
+    [DataMember(Name="xAxis", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "xAxis")]
+    public List<XAxisItem> XAxis { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Series
+    /// </summary>
+    [DataMember(Name="series", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "series")]
+    public List<Series> Series { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Theme
+    /// </summary>
+    [DataMember(Name="theme", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "theme")]
+    public string Theme { get; set; }
+
+    /// <summary>
+    /// Gets or Sets AjaxDataSource
+    /// </summary>
+    [DataMember(Name="ajaxDataSource", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "ajaxDataSource")]
+    public AJAXSource AjaxDataSource { get; set; }
+
+    /// <summary>
+    /// Gets or Sets PlotOptions
+    /// </summary>
+    [DataMember(Name="plotOptions", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "plotOptions")]
+    public PlotOptionsSeries PlotOptions { get; set; }
 
 
     /// <summary>
@@ -42,9 +140,23 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class ChartOptions {\n");
-      sb.Append("  SeriesType: ").Append(SeriesType).Append("\n");
-      sb.Append("  ChartType: ").Append(ChartType).Append("\n");
-      sb.Append("  HighChartsChart: ").Append(HighChartsChart).Append("\n");
+      sb.Append("  ClientId: ").Append(ClientId).Append("\n");
+      sb.Append("  Lang: ").Append(Lang).Append("\n");
+      sb.Append("  Appearance: ").Append(Appearance).Append("\n");
+      sb.Append("  Colors: ").Append(Colors).Append("\n");
+      sb.Append("  RenderType: ").Append(RenderType).Append("\n");
+      sb.Append("  Legend: ").Append(Legend).Append("\n");
+      sb.Append("  Exporting: ").Append(Exporting).Append("\n");
+      sb.Append("  ShowCredits: ").Append(ShowCredits).Append("\n");
+      sb.Append("  Title: ").Append(Title).Append("\n");
+      sb.Append("  SubTitle: ").Append(SubTitle).Append("\n");
+      sb.Append("  Tooltip: ").Append(Tooltip).Append("\n");
+      sb.Append("  YAxis: ").Append(YAxis).Append("\n");
+      sb.Append("  XAxis: ").Append(XAxis).Append("\n");
+      sb.Append("  Series: ").Append(Series).Append("\n");
+      sb.Append("  Theme: ").Append(Theme).Append("\n");
+      sb.Append("  AjaxDataSource: ").Append(AjaxDataSource).Append("\n");
+      sb.Append("  PlotOptions: ").Append(PlotOptions).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

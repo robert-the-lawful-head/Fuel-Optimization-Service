@@ -3,9 +3,23 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**SeriesType** | **int?** | 0 &#x3D; NumericValues             1 &#x3D; ArrayOfNumericXY             2 &#x3D; ArrayOfDateTimeXY             3 &#x3D; ArrayOfPointNames    * &#x60;NumericValues&#x60; - Numerical values  * &#x60;ArrayOfNumericXY&#x60; - Arrays of numeric x and y  * &#x60;ArrayOfDateTimeXY&#x60; - Arrays of datetime x and y  * &#x60;ArrayOfPointNames&#x60; - Arrays of point.name and y   | [optional] 
-**ChartType** | **string** |  | [optional] 
-**HighChartsChart** | [**HighChartsChart**](HighChartsChart.md) |  | [optional] 
+**ClientId** | **string** |  | [optional] 
+**Lang** | [**Localization**](Localization.md) |  | [optional] 
+**Appearance** | [**Appearance**](Appearance.md) |  | [optional] 
+**Colors** | [**ColorSet**](ColorSet.md) |  | [optional] 
+**RenderType** | **int?** |  | [optional] 
+**Legend** | [**Legend**](Legend.md) |  | [optional] 
+**Exporting** | [**Exporting**](Exporting.md) |  | [optional] 
+**ShowCredits** | **bool?** |  | [optional] 
+**Title** | [**Title**](Title.md) |  | [optional] 
+**SubTitle** | [**SubTitle**](SubTitle.md) |  | [optional] 
+**Tooltip** | [**ToolTip**](ToolTip.md) |  | [optional] 
+**YAxis** | [**List&lt;YAxisItem&gt;**](YAxisItem.md) |  | [optional] 
+**XAxis** | [**List&lt;XAxisItem&gt;**](XAxisItem.md) |  | [optional] 
+**Series** | [**List&lt;Series&gt;**](Series.md) |  | [optional] 
+**Theme** | **string** |  | [optional] 
+**AjaxDataSource** | [**AJAXSource**](AJAXSource.md) |  | [optional] 
+**PlotOptions** | [**PlotOptionsSeries**](PlotOptionsSeries.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

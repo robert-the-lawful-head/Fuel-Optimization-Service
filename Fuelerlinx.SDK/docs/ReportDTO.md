@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 **CompanyId** | **int?** |  | [optional] 
 **DataOptions** | [**ReportDataOptions**](ReportDataOptions.md) |  | [optional] 
 **CreationDateUtc** | **DateTime?** |  | [optional] 
-**ChartOptions** | [**ChartOptions**](ChartOptions.md) |  | [optional] 
+**ChartSettings** | [**ChartSettings**](ChartSettings.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

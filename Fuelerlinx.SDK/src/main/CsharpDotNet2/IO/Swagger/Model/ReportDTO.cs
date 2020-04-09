@@ -62,11 +62,11 @@ namespace IO.Swagger.Model {
     public DateTime? CreationDateUtc { get; set; }
 
     /// <summary>
-    /// Gets or Sets ChartOptions
+    /// Gets or Sets ChartSettings
     /// </summary>
-    [DataMember(Name="chartOptions", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "chartOptions")]
-    public ChartOptions ChartOptions { get; set; }
+    [DataMember(Name="chartSettings", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "chartSettings")]
+    public ChartSettings ChartSettings { get; set; }
 
 
     /// <summary>
@@ -83,7 +83,7 @@ namespace IO.Swagger.Model {
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  DataOptions: ").Append(DataOptions).Append("\n");
       sb.Append("  CreationDateUtc: ").Append(CreationDateUtc).Append("\n");
-      sb.Append("  ChartOptions: ").Append(ChartOptions).Append("\n");
+      sb.Append("  ChartSettings: ").Append(ChartSettings).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
