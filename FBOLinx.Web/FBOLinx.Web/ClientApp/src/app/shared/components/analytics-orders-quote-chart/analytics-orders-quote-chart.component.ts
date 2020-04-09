@@ -14,7 +14,8 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit, OnChanges {
     @Input() startDate: Date;
     @Input() endDate: Date;
     // Public Members
-    public totalOrdersData: any[];
+    public ordersQuoteData: any[];
+    public dollarSumData: any[];
     public colorScheme = {
         domain: [
             "#a8385d",
@@ -50,13 +51,20 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit, OnChanges {
                 this.endDate
             )
             .subscribe((data: any) => {
-                this.totalOrdersData = data;
-                _.each(this.totalOrdersData, (order) => {
-                    order.series = _.map(order.series, (serie) => {
-                        serie.name = new Date(serie.year, serie.month);
-                        return serie;
-                    });
-                });
+                this.ordersQuoteData = data[0];
+                this.dollarSumData = data[1];
+                // _.each(this.ordersQuoteData, (order) => {
+                //     order.series = _.map(order.series, (serie) => {
+                //         serie.name = new Date(serie.year, serie.month);
+                //         return serie;
+                //     });
+                // });
+                // _.each(this.dollarSumData, (order) => {
+                //     order.series = _.map(order.series, (serie) => {
+                //         serie.name = new Date(serie.year, serie.month);
+                //         return serie;
+                //     });
+                // })
             }, (error: any) => {
             });
     }
