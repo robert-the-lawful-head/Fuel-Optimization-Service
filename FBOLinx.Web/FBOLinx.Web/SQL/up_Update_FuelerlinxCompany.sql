@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [dbo].[up_Update_FuelerlinxCompany]    Script Date: 4/8/2020 7:17:54 AM ******/
+/****** Object:  StoredProcedure [dbo].[up_Update_FuelerlinxCompany]    Script Date: 4/11/2020 3:22:08 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -54,14 +54,19 @@ BEGIN
 						ON C.FuelerlinxID = @Local_FuelerlinxCompanyID
 						and C.OID = CG.CustomerID
 						
-						INSERT INTO CustomerInfoByGroup (GroupID, CustomerID, Company, Active, Distribute, Network, ShowJetA, Show100LL, Suspended, CustomerType, CustomerCompanyType)
-						SELECT G.OID, @Local_FBOLinxCompanyID, @Local_Company, 1, 1, 0, 1, 0, 0, 1, 4
+						INSERT INTO CustomerInfoByGroup (GroupID, CustomerID, Company, Active, Distribute, Network, ShowJetA, Show100LL, Suspended, CustomerType)
+						SELECT G.OID, @Local_FBOLinxCompanyID, @Local_Company, 1, 1, 0, 1, 0, 0, 1
 						FROM [Group] G
 						LEFT JOIN 
 							(select CIBG.* from CustomerInfoByGroup CIBG
 							 inner join Customers C on C.OID = CIBG.CustomerID and C.FuelerlinxID = @Local_FuelerlinxCompanyID) CC ON G.OID = CC.GroupID
 						WHERE CC.CustomerID IS NULL
-						
+
+						UPDATE CG
+						SET CustomerCompanyType = 4
+						FROM CustomerInfoByGroup CG
+						WHERE CG.CustomerID = @Local_FBOLinxCompanyID AND CG.Company = @Local_Company
+
 						INSERT INTO CustomerAircrafts (TailNumber, CustomerID, AircraftID, Size, GroupID, AddedFrom)
 						SELECT AC.tailNo, C.OID, AC.AircraftID, AC.Size, CG.GroupID, 1
 						FROM Customers C
