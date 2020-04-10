@@ -54,8 +54,8 @@ BEGIN
 						ON C.FuelerlinxID = @Local_FuelerlinxCompanyID
 						and C.OID = CG.CustomerID
 						
-						INSERT INTO CustomerInfoByGroup (GroupID, CustomerID, Company, Active, Distribute, Network, ShowJetA, Show100LL, Suspended, CustomerType)
-						SELECT G.OID, @Local_FBOLinxCompanyID, @Local_Company, 1, 1, 0, 1, 0, 0, 1
+						INSERT INTO CustomerInfoByGroup (GroupID, CustomerID, Company, Active, Distribute, Network, ShowJetA, Show100LL, Suspended, CustomerType, CustomerCompanyType)
+						SELECT G.OID, @Local_FBOLinxCompanyID, @Local_Company, 1, 1, 0, 1, 0, 0, 1, 4
 						FROM [Group] G
 						LEFT JOIN 
 							(select CIBG.* from CustomerInfoByGroup CIBG
