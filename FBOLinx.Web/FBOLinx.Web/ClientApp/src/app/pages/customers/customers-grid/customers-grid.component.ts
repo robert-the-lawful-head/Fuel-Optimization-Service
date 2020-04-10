@@ -324,7 +324,6 @@ export class CustomersGridComponent implements OnInit {
         this.refreshCustomerDataSource();
     }
 
-    // Private Methods
     private refreshCustomerDataSource() {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.customersDataSource = new MatTableDataSource(
@@ -360,7 +359,8 @@ export class CustomersGridComponent implements OnInit {
             return customer.pricingTemplateName === p.name;
         });
 
-        customer.needsAttention = changedPricingTemplate.default;
+        customer.needsAttention = changedPricingTemplate.default || 
+            (customer.customerCompanyTypeName != 'FuelerLinx' && !customer.contactExists);
         customer.allInPrice = changedPricingTemplate.intoPlanePrice;
         const vm = {
             id: customer.customerId,
@@ -369,9 +369,7 @@ export class CustomersGridComponent implements OnInit {
         };
         this.customerMarginsService
             .updatecustomermargin(vm)
-            .subscribe(() => {
-                // this.refreshCustomerDataSource();
-            });
+            .subscribe();
     }
 
     public bulkMarginTemplateUpdate(event: MatSelectChange) {
@@ -379,7 +377,8 @@ export class CustomersGridComponent implements OnInit {
 
         _.forEach(this.customersData, (customer) => {
             if (customer.selectAll === true) {
-                customer.needsAttention = event.value.default;
+                customer.needsAttention = event.value.default ||
+                    (customer.customerCompanyTypeName != 'FuelerLinx' && !customer.contactExists);;
                 customer.pricingTemplateName = event.value.name;
                 customer.allInPrice = event.value.intoPlanePrice;
                 listCustomers.push({
@@ -392,9 +391,7 @@ export class CustomersGridComponent implements OnInit {
 
         this.customerMarginsService
             .updatemultiplecustomermargin(listCustomers)
-            .subscribe(() => {
-                // this.refreshCustomerDataSource();
-            });
+            .subscribe();
     }
 
     public anySelected() {

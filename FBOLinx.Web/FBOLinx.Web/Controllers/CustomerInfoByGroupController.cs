@@ -106,10 +106,14 @@ namespace FBOLinx.Web.Controllers
                                         join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
                                         into leftJoinCC
                                         from cc in leftJoinCC.DefaultIfEmpty()
-                                        join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
+                                        join cibg in _context.ContactInfoByGroup on 
+                                            new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId, CopyAlerts = true } 
+                                            equals 
+                                            new { cibg.ContactId, cibg.GroupId, CopyAlerts = cibg.CopyAlerts.GetValueOrDefault() }
                                         into leftJoinCIBG
                                         from cibg in leftJoinCIBG.DefaultIfEmpty()
                                         where cg.GroupId == groupId
+                                        orderby cibg.CopyAlerts descending
                                         group cg by new
                                         {
                                             cg.Oid,
@@ -117,7 +121,7 @@ namespace FBOLinx.Web.Controllers
                                             cg.Company,
                                             CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
                                             CustomerCompanyTypeName = ccot.Name,
-                                            ContactExists = cibg == null || !cibg.CopyAlerts.HasValue ? false : cibg.CopyAlerts.GetValueOrDefault(),
+                                            ContactExists = cibg == null ? false : cibg.CopyAlerts.GetValueOrDefault(),
                                             PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name,
                                         }
                                         into resultsGroup
@@ -602,13 +606,17 @@ namespace FBOLinx.Web.Controllers
                                                     join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
                                                     into leftJoinCC
                                                     from cc in leftJoinCC.DefaultIfEmpty()
-                                                    join cibg in _context.ContactInfoByGroup on new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId } equals new { cibg.ContactId, cibg.GroupId }
+                                                    join cibg in _context.ContactInfoByGroup on
+                                                            new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId, CopyAlerts = true }
+                                                            equals
+                                                            new { cibg.ContactId, cibg.GroupId, CopyAlerts = cibg.CopyAlerts.GetValueOrDefault() }
                                                     into leftJoinCIBG
                                                     from cibg in leftJoinCIBG.DefaultIfEmpty()
                                                     join ai in result on new { Name = (string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name) } equals new { ai.Name}
                                                     into leftJoinAi
                                                     from ai in leftJoinAi.DefaultIfEmpty()
                                                     where cg.GroupId == groupId
+                                                    orderby cibg.CopyAlerts descending
                                                     group cg by new
                                                     {
                                                         cg.CustomerId,
@@ -625,7 +633,7 @@ namespace FBOLinx.Web.Controllers
                                                         CustomerCompanyTypeName = ccot.Name,
                                                         ca.Tails,
                                                         CertificateType = cg.CertificateType.GetValueOrDefault(),
-                                                        ContactExists = cibg == null || !cibg.CopyAlerts.HasValue ? false : cibg.CopyAlerts.GetValueOrDefault(),
+                                                        ContactExists = cibg == null ? false : cibg.CopyAlerts.GetValueOrDefault(),
                                                         PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name,
                                                         HasBeenViewed = (cvf != null && cvf.Oid > 0),
                                                         IsPricingExpired = ai == null ? false : ai.IsPricingExpired,
@@ -660,7 +668,7 @@ namespace FBOLinx.Web.Controllers
                                                         ContactExists = resultsGroup.Key.ContactExists,
                                                         FleetSize = resultsGroup.Key.FleetSize,
                                                         AllInPrice = resultsGroup.Key.AllInPrice,
-                                                        SelectAll = false,
+                                                        SelectAll = false
                                                     })
                                                     .GroupBy(p => p.CustomerId)
                                                     .Select(g => g.FirstOrDefault())
