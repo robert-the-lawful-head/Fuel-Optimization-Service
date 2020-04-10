@@ -6,6 +6,7 @@ import * as moment from "moment";
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
 import * as SharedEvent from "../../../models/sharedEvents";
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: "app-analytics-market-share-airport",
@@ -14,6 +15,7 @@ import * as SharedEvent from "../../../models/sharedEvents";
 })
 export class AnalyticsMarketShareAirportChartComponent implements OnInit, AfterViewInit, OnDestroy {
     // Public Members
+    public chartName = "market-share-airport-chart";
     public totalOrdersData: any[];
     public icao: string;
     public icaoChangedSubscription: any;
@@ -34,7 +36,8 @@ export class AnalyticsMarketShareAirportChartComponent implements OnInit, AfterV
 
     constructor(
         private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private ngxLoader: NgxUiLoaderService
     ) {
         this.icao = this.sharedService.currentUser.icao;
     }
@@ -66,11 +69,14 @@ export class AnalyticsMarketShareAirportChartComponent implements OnInit, AfterV
         const endDate = new Date(
             moment().format("MM/DD/YYYY")
         );
+        this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
             .getMarketShareAirport(this.sharedService.currentUser.fboId, startDate, endDate)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
-            }, (error: any) => {
+            }, () => {
+            }, () => {
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 }

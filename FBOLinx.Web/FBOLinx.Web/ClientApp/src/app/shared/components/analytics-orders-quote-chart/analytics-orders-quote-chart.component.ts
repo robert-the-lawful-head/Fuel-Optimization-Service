@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import * as _ from "lodash";
 
 // Services
@@ -14,6 +15,7 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit, OnChanges {
     @Input() startDate: Date;
     @Input() endDate: Date;
     // Public Members
+    public chartName = "orders-quote-chart";
     public ordersQuoteData: any[];
     public dollarSumData: any[];
     public colorScheme = {
@@ -33,17 +35,19 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit, OnChanges {
 
     constructor(
         private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private ngxLoader: NgxUiLoaderService
     ) {}
 
     ngOnInit() {
     }
 
-    ngOnChanges(changes: SimpleChanges) {
+    ngOnChanges() {
         this.refreshData();
     }
 
     public refreshData() {
+        this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
             .getQuotesAndOrders(
                 this.sharedService.currentUser.fboId,
@@ -53,19 +57,9 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit, OnChanges {
             .subscribe((data: any) => {
                 this.ordersQuoteData = data[0];
                 this.dollarSumData = data[1];
-                // _.each(this.ordersQuoteData, (order) => {
-                //     order.series = _.map(order.series, (serie) => {
-                //         serie.name = new Date(serie.year, serie.month);
-                //         return serie;
-                //     });
-                // });
-                // _.each(this.dollarSumData, (order) => {
-                //     order.series = _.map(order.series, (serie) => {
-                //         serie.name = new Date(serie.year, serie.month);
-                //         return serie;
-                //     });
-                // })
-            }, (error: any) => {
+            }, () => {
+            }, () => {
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 }

@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
 import * as moment from "moment";
 // Services
 import { SharedService } from "../../../layouts/shared-service";
@@ -32,7 +34,7 @@ const BREADCRUMBS: any[] = [
     templateUrl: "./analytics-home.component.html",
     styleUrls: ["./analytics-home.component.scss"],
 })
-export class AnalyticsHomeComponent {
+export class AnalyticsHomeComponent implements OnInit {
     @ViewChild("statisticsTotalOrders")
     public statisticsTotalOrders: StatisticsTotalOrdersComponent;
     @ViewChild("statisticsTotalCustomers")
@@ -59,9 +61,16 @@ export class AnalyticsHomeComponent {
     public filterStartDate: Date;
     public filterEndDate: Date;
 
-    constructor(private sharedService: SharedService) {
+    constructor(
+        private sharedService: SharedService,
+        private ngxLoader: NgxUiLoaderService
+    ) {
         this.filterStartDate = new Date(moment().add(-12, "M").format("MM/DD/YYYY"));
         this.filterEndDate = new Date(moment().format("MM/DD/YYYY"));
         this.sharedService.titleChange(this.pageTitle);
+    }
+
+    ngOnInit() {
+        this.ngxLoader.startLoader('loader-01');
     }
 }

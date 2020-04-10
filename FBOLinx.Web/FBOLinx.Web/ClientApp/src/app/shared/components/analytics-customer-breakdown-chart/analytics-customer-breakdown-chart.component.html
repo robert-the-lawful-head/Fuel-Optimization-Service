@@ -18,4 +18,11 @@
         <mat-button-toggle value="order">Orders</mat-button-toggle>
         <mat-button-toggle value="volume">Sum of $ volume</mat-button-toggle>
     </mat-button-toggle-group>
+    <ngx-ui-loader
+        [loaderId]="chartName"
+        bgsPosition="center-center"
+        bgsType="ball-spin"
+        bgsColor="rgb(100, 181, 246)"
+        overlayColor="rgba(0, 0, 0, 0.1)"
+    ></ngx-ui-loader>
 </ni-card>

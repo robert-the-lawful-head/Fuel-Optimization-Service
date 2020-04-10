@@ -4,6 +4,7 @@ import * as _ from "lodash";
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: "app-analytics-orders-over-time",
@@ -14,6 +15,7 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit, OnChanges 
     @Input() startDate: Date;
     @Input() endDate: Date;
     // Public Members
+    public chartName = "orders-over-time-chart";
     public totalOrdersData: any[];
     public colorScheme = {
         domain: [
@@ -32,7 +34,8 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit, OnChanges 
 
     constructor(
         private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private ngxLoader: NgxUiLoaderService
     ) {}
 
     ngOnInit() {
@@ -43,11 +46,14 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit, OnChanges 
     }
 
     public refreshData() {
+        this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
             .getOrders(this.sharedService.currentUser.fboId, this.startDate, this.endDate)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
-            }, (error: any) => {
+            }, () => {
+            }, () => {
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 }

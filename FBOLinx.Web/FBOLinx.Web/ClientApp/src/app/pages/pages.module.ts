@@ -38,6 +38,8 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { TextMaskModule } from "angular2-text-mask";
 import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 
+import { NgxUiLoaderModule } from "ngx-ui-loader";
+
 import { NgxCurrencyModule } from "ngx-currency";
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
 
@@ -178,6 +180,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         RichTextEditorAllModule,
         AppPipesModule,
         NgbPopoverModule,
+        NgxUiLoaderModule,
     ],
     declarations: [
         PageTypographyComponent,

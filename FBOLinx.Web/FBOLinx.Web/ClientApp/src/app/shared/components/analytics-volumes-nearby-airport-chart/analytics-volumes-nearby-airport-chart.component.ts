@@ -5,6 +5,7 @@ import { MatSliderChange } from "@angular/material/slider";
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: "app-analytics-volumes-nearby-airport",
@@ -16,6 +17,7 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit, OnCh
     @Input() endDate: Date;
 
     // Public Members
+    public chartName: "volumes-nearby-airport-chart";
     public totalOrdersData: any[];
     public mile = 200;
     public colorScheme = {
@@ -35,7 +37,8 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit, OnCh
 
     constructor(
         private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private ngxLoader: NgxUiLoaderService
     ) {}
 
     ngOnInit() {
@@ -46,11 +49,14 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit, OnCh
     }
 
     public refreshData() {
+        this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
             .getVolumesNearbyAirport(this.sharedService.currentUser.fboId, this.startDate, this.endDate, this.mile)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
-            }, (error: any) => {
+            }, () => {
+            }, () => {
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 
