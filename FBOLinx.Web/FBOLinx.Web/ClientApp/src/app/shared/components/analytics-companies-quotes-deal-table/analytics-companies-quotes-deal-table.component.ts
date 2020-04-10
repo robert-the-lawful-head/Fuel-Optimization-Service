@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { MatTableDataSource } from "@angular/material/table";
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: "app-analytics-companies-quotes-deal",
@@ -16,12 +17,14 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, OnCha
     @Input() endDate: Date;
 
     // Public Members
+    public chartName = "companies-quotes-deal-table";
     public displayedColumns: string[] = ["company", "fboOrders", "fboVolume", "airportOrders", "lastPullDate"];
     public dataSource: any;
 
     constructor(
         private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private ngxLoader: NgxUiLoaderService
     ) {}
 
     ngOnInit() {
@@ -32,6 +35,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, OnCha
     }
 
     public refreshData() {
+        this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
             .getCompaniesQuotingDealStatistics(
                 this.sharedService.currentUser.groupId,
@@ -41,7 +45,9 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, OnCha
             )
             .subscribe((data: any) => {
                 this.dataSource = new MatTableDataSource(data);
-            }, (error: any) => {
+            }, () => {
+            }, () => {
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 

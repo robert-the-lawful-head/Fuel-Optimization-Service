@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { MatButtonToggleChange } from "@angular/material/button-toggle";
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: "app-analytics-customer-breakdown",
@@ -16,6 +17,7 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit, OnChang
     @Input() endDate: Date;
 
     // Public Members
+    public chartName = "customer-breakdown-chart";
     public totalOrdersData: any[];
     public chartType: string;
     public colorScheme = {
@@ -35,7 +37,8 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit, OnChang
 
     constructor(
         private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private ngxLoader: NgxUiLoaderService
     ) {}
 
     ngOnInit() {
@@ -47,11 +50,14 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit, OnChang
     }
 
     public refreshData() {
+        this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
             .getFBOCustomersBreakdown(this.sharedService.currentUser.fboId, this.startDate, this.endDate, this.chartType)
             .subscribe((data: any) => {
                 this.totalOrdersData = this.switchDataType(data);
-            }, (error: any) => {
+            }, () => {
+            }, () => {
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 
