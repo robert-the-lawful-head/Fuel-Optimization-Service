@@ -6,7 +6,6 @@ Name | Type | Description | Notes
 **Name** | **string** |  | 
 **Description** | **string** |  | [optional] 
 **IsFavorite** | **bool?** |  | [optional] 
-**CompanyId** | **int?** |  | [optional] 
 **ChartOptions** | [**ChartSettings**](ChartSettings.md) |  | [optional] 
 **DataOptions** | [**ReportDataOptions**](ReportDataOptions.md) |  | [optional] 
 

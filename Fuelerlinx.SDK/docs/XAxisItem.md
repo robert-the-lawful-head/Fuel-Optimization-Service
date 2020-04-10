@@ -3,7 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Categories** | **List&lt;Object&gt;** |  | [optional] 
+**Categories** | **List&lt;string&gt;** |  | [optional] 
 **TickWidth** | **int?** |  | [optional] 
 **AllowDecimals** | **bool?** |  | [optional] 
 **AlternateGridColor** | **string** |  | [optional] 

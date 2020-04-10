@@ -556,6 +556,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostTripInfoRequest](docs/PostTripInfoRequest.md)
  - [IO.Swagger.Model.PostTripInfoResponse](docs/PostTripInfoResponse.md)
  - [IO.Swagger.Model.PreferencesDTO](docs/PreferencesDTO.md)
+ - [IO.Swagger.Model.PriceSyncTransactionDTO](docs/PriceSyncTransactionDTO.md)
  - [IO.Swagger.Model.PricingData](docs/PricingData.md)
  - [IO.Swagger.Model.PricingTier](docs/PricingTier.md)
  - [IO.Swagger.Model.RampFeeByCompanyDTO](docs/RampFeeByCompanyDTO.md)

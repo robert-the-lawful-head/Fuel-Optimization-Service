@@ -34,13 +34,6 @@ namespace IO.Swagger.Model {
     public bool? IsFavorite { get; set; }
 
     /// <summary>
-    /// Gets or Sets CompanyId
-    /// </summary>
-    [DataMember(Name="companyId", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "companyId")]
-    public int? CompanyId { get; set; }
-
-    /// <summary>
     /// Gets or Sets ChartOptions
     /// </summary>
     [DataMember(Name="chartOptions", EmitDefaultValue=false)]
@@ -65,7 +58,6 @@ namespace IO.Swagger.Model {
       sb.Append("  Name: ").Append(Name).Append("\n");
       sb.Append("  Description: ").Append(Description).Append("\n");
       sb.Append("  IsFavorite: ").Append(IsFavorite).Append("\n");
-      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  ChartOptions: ").Append(ChartOptions).Append("\n");
       sb.Append("  DataOptions: ").Append(DataOptions).Append("\n");
       sb.Append("}\n");

@@ -13,6 +13,13 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class YAxisItem {
     /// <summary>
+    /// Gets or Sets Categories
+    /// </summary>
+    [DataMember(Name="categories", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "categories")]
+    public List<string> Categories { get; set; }
+
+    /// <summary>
     /// Gets or Sets TickWidth
     /// </summary>
     [DataMember(Name="tickWidth", EmitDefaultValue=false)]
@@ -334,6 +341,7 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class YAxisItem {\n");
+      sb.Append("  Categories: ").Append(Categories).Append("\n");
       sb.Append("  TickWidth: ").Append(TickWidth).Append("\n");
       sb.Append("  AllowDecimals: ").Append(AllowDecimals).Append("\n");
       sb.Append("  AlternateGridColor: ").Append(AlternateGridColor).Append("\n");

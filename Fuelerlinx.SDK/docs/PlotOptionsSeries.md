@@ -25,6 +25,7 @@ Name | Type | Description | Notes
 **StickyTracking** | **bool?** |  | [optional] 
 **Visible** | **bool?** |  | [optional] 
 **ZIndex** | **int?** |  | [optional] 
+**ChartType** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

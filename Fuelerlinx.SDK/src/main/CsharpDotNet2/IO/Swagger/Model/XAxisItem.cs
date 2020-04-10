@@ -17,7 +17,7 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="categories", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "categories")]
-    public List<Object> Categories { get; set; }
+    public List<string> Categories { get; set; }
 
     /// <summary>
     /// Gets or Sets TickWidth

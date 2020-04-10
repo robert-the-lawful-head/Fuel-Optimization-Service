@@ -126,6 +126,13 @@ namespace IO.Swagger.Model {
     public double? DispatchedPricePerGallon { get; set; }
 
     /// <summary>
+    /// Gets or Sets MarketUpdatedPricePerGallon
+    /// </summary>
+    [DataMember(Name="marketUpdatedPricePerGallon", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "marketUpdatedPricePerGallon")]
+    public double? MarketUpdatedPricePerGallon { get; set; }
+
+    /// <summary>
     /// Gets or Sets CreationDate
     /// </summary>
     [DataMember(Name="creationDate", EmitDefaultValue=false)]
@@ -477,6 +484,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "companyFuelVendorInfo")]
     public CompanyFuelerDTO CompanyFuelVendorInfo { get; set; }
 
+    /// <summary>
+    /// Gets or Sets PreUpliftPriceSync
+    /// </summary>
+    [DataMember(Name="preUpliftPriceSync", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "preUpliftPriceSync")]
+    public PriceSyncTransactionDTO PreUpliftPriceSync { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -501,6 +515,7 @@ namespace IO.Swagger.Model {
       sb.Append("  FuelVendor: ").Append(FuelVendor).Append("\n");
       sb.Append("  DispatchedVolume: ").Append(DispatchedVolume).Append("\n");
       sb.Append("  DispatchedPricePerGallon: ").Append(DispatchedPricePerGallon).Append("\n");
+      sb.Append("  MarketUpdatedPricePerGallon: ").Append(MarketUpdatedPricePerGallon).Append("\n");
       sb.Append("  CreationDate: ").Append(CreationDate).Append("\n");
       sb.Append("  TimeStandard: ").Append(TimeStandard).Append("\n");
       sb.Append("  InvoicedPricePerGallon: ").Append(InvoicedPricePerGallon).Append("\n");
@@ -551,6 +566,7 @@ namespace IO.Swagger.Model {
       sb.Append("  AirportInfo: ").Append(AirportInfo).Append("\n");
       sb.Append("  FboHandlerDetail: ").Append(FboHandlerDetail).Append("\n");
       sb.Append("  CompanyFuelVendorInfo: ").Append(CompanyFuelVendorInfo).Append("\n");
+      sb.Append("  PreUpliftPriceSync: ").Append(PreUpliftPriceSync).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

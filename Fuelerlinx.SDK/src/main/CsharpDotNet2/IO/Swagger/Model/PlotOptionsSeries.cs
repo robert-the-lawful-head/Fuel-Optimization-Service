@@ -168,6 +168,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "zIndex")]
     public int? ZIndex { get; set; }
 
+    /// <summary>
+    /// Gets or Sets ChartType
+    /// </summary>
+    [DataMember(Name="chartType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "chartType")]
+    public string ChartType { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -198,6 +205,7 @@ namespace IO.Swagger.Model {
       sb.Append("  StickyTracking: ").Append(StickyTracking).Append("\n");
       sb.Append("  Visible: ").Append(Visible).Append("\n");
       sb.Append("  ZIndex: ").Append(ZIndex).Append("\n");
+      sb.Append("  ChartType: ").Append(ChartType).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
