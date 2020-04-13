@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **Width** | **int?** |  | [optional] 
 **ColumnFormat** | **int?** |  | [optional] 
 **IsHidden** | **bool?** |  | [optional] 
+**IsVisible** | **bool?** |  | [optional] 
 **Description** | **string** |  | [optional] 
 **PropertyName** | **string** |  | [optional] 
 
