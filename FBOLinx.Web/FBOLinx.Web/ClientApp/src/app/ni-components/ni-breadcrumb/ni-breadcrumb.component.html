@@ -1,23 +1,15 @@
 <div class="row">
     <div class="col-md-6">
-    <ul class="breadcrumb" [ngClass]="getClasses()">
-        <li *ngFor="let item of menu; let last = last">
-            <a href="{{item.link}}" *ngIf="item.link"><span class="icon {{item.icon}}" *ngIf="item.icon"></span>{{item.title}}</a>
-            <!--
-            -->
-            <span class="static" *ngIf="!item.link"><span class="icon {{item.icon}}" *ngIf="item.icon"></span>{{item.title}}</span>
-            <!--
-            -->
-            <span class="separator" *ngIf="!last">{{separator}}</span>
-        </li>
-    </ul>
-     </div>
-    <div class="col-md-6 justify-content-end" style="display:inherit;">
-        <div class="col-md-4 retailCl" *ngIf="currentFboPriceJetARetail">
-            <h6 class="mt-1 mb-1 title p-1" style="text-align: center;">RETAIL (JET A)&nbsp;&nbsp;${{(livePrice ? livePrice.retailPrice : currentFboPriceJetARetail.price) | number:'1.4-4'}}</h6>
-        </div>
-        <div class="col-md-4 costCl" style="margin-right:24px;" *ngIf="currentFboPriceJetACost">
-            <h6 class="mt-1 mb-1 title p-1" style="text-align: center;">COST (JET A)&nbsp;&nbsp;${{(livePrice ? livePrice.costPrice : currentFboPriceJetACost.price) | number:'1.4-4'}}</h6>
-        </div>
+        <ul class="breadcrumb" [ngClass]="getClasses()">
+            <li *ngFor="let item of menu; let last = last">
+                <a href="{{item.link}}" *ngIf="item.link"><span class="icon {{item.icon}}" *ngIf="item.icon"></span>{{item.title}}</a>
+                <!--
+                -->
+                <span class="static" *ngIf="!item.link"><span class="icon {{item.icon}}" *ngIf="item.icon"></span>{{item.title}}</span>
+                <!--
+                -->
+                <span class="separator" *ngIf="!last">{{separator}}</span>
+            </li>
+        </ul>
     </div>
 </div>

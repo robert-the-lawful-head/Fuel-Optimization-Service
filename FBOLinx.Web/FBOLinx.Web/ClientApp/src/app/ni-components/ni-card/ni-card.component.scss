@@ -14,6 +14,16 @@
         box-shadow: 1px 1px 5px 0px rgba(main-color(500),.25);
         position: relative;
 
+        &.collapsible {
+            .card-header {
+                cursor: pointer;
+            }
+
+            .card-content {
+                overflow: hidden;
+            }
+        }
+
         &:not(.outline-card) {
             border: 0 !important;
         }
@@ -29,6 +39,7 @@
 
             &.success-card-header {
                 background: $success-color;
+                color: white;
             }
 
             &.info-card-header {
@@ -44,16 +55,47 @@
             }
 
             &.danger-card-header {
-                background: $error-color;
+                background: $accent-color;
+                color: white;
+            }
+
+            &.dead-card-header {
+                background-color: main-color(500);
+                color: white;
+            }
+
+            &.dark-card-header {
+                background-color: main-color(200);
+                color: white;
             }
 
             &.small-header {
-                padding: 0.1875rem 0.575rem;
+                padding: 0.3rem 1.5rem;
                 font-size: 1.1571429rem;
+                font-weight: normal;
+
+                .card-subtitle {
+                    font-size: 0.8rem;
+                    font-weight: normal;
+                }
+            }
+
+            &.tiny-header {
+                padding: 0.3rem 1.5rem;
+                font-size: 1rem;
+                font-weight: normal;
             }
 
             + .card-content {
                 border-radius: 0 0 3px 3px;
+            }
+
+            .card-subtitle {
+                position: absolute;
+                right: 15px;
+                bottom: 0;
+                margin: 0;
+                line-height: normal;
             }
         }
 
@@ -63,6 +105,10 @@
             display: block;
             padding: $module-rem * 2;
             position: relative;
+
+            &.tiny-content {
+                padding: 0.3rem 1rem !important;
+            }
         }
 
         &.success-card {
@@ -78,6 +124,14 @@
             background: $gray-color;
             border-color: $gray-color;
 
+            &:not(.outline-card) {
+                color: #fff;
+            }
+        }
+
+        &.dark-card {
+            background: main-color(200);
+            border-color: main-color(200);
             &:not(.outline-card) {
                 color: #fff;
             }
@@ -102,9 +156,18 @@
         }
 
         &.danger-card {
-            background: $error-color;
-            border-color: $error-color;
+            background: $accent-color;
+            border-color: $accent-color;
 
+            &:not(.outline-card) {
+                color: #fff;
+            }
+        }
+
+        &.dead-card {
+            background-color: main-color(500);
+            border-color: main-color(500);
+            
             &:not(.outline-card) {
                 color: #fff;
             }
@@ -127,11 +190,11 @@
         }
 
         &.danger-color-card {
-            color: $error-color;
+            color: $accent-color;
         }
 
         &.outline-card {
-            background: none !important;
+            background: white !important;
             box-shadow: none !important;
         }
 
@@ -149,11 +212,6 @@
                 top: 0;
                 width: 100%;
             }
-        }
-
-        button {
-            //padding-top:0 ;
-            //padding-bottom:0;
         }
     }
 

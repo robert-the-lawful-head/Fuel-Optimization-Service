@@ -78,8 +78,4 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
         this.statisticsTotalAircraft.refreshData();
         this.statisticsOrdersByLocation.refreshData();
     }
-
-    public priceLiveUpdated(price: any) {
-        this.updatedPrice = price;
-    }
 }
