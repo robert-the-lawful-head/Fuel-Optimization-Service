@@ -1,429 +1,341 @@
-<div *ngIf="!currentPrices">
-    <mat-spinner></mat-spinner>
-</div>
-
-<div class="container-fluid" *ngIf="(currentPrices && distributionLog) || show">
-    <div class="row mb-2" *ngIf="isSaved">
-        <div class="text-center col-12">
-            <ni-badge [size]="'medium'" [color]="'success'">Your changes have been saved.</ni-badge>
-        </div>
+<ni-card
+    *ngIf="currentPrices"
+    title="Jet-A"
+    bgColor="success"
+    headerBgColor="success"
+    outline="true"
+    theme="tiny"
+    [align]="'center'"
+    style="position: absolute; top: -100px; right: 30px; min-width: 150px; min-height: 90px;"
+>
+    <div class="d-flex justify-content-between">
+        <h6 class="text-muted mt-0 mb-1 font-weight-normal">Retail:</h6>
+        <h6 class="mt-0 mb-1 font-weight-bold">
+            <span *ngIf="jetARetailExists()">${{ currentFboPriceJetARetail.price | number: "1.4-4" }}</span>
+            <span *ngIf="!jetARetailExists()">Expired</span>
+        </h6>
     </div>
+    <div class="d-flex justify-content-between">
+        <h6 class="text-muted mt-0 mb-1 font-weight-normal">Cost:</h6>
+        <h6 class="mt-0 mb-1 font-weight-bold">
+            <span *ngIf="jetACostExists()">${{ currentFboPriceJetACost.price | number: "1.4-4" }}</span>
+            <span *ngIf="!jetACostExists()">Expired</span>
+        </h6>
+    </div>
+</ni-card>
+
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-3 mt-3">
+        <div class="col-md-4 mt-3">
             <ni-card
-                [fboPrices]="currentPrices"
-                [bgColor]="'success'"
-                [outline]="true"
-                [color]="'success'"
-                *ngIf="(currentFboPriceJetARetail && currentFboPriceJetARetail.price > 0) || activePrice; else notValid">
-                <h6 class="mt-0 title">CURRENT POSTED RETAIL (JET A)</h6>
-                <div class="row">
-                    <div class="col-9">
-                        <h4 class="mt-0 mb-1">
-                            ${{ currentFboPriceJetARetail.price | number: "1.4-4" }}
-                        </h4>
-                    </div>
-                    <div class="col-3"  *ngIf="staticCurrentFboPriceJetAEffectiveToRetail">
-                        <div class="table disabledData">
-                            <span>Effective To</span>
-                            <div class="float-none"></div>
-                            <span style="display: block;">
-                                {{ staticCurrentFboPriceJetAEffectiveToRetail | date }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <button
-                            ni-button
-                            [view]="'error'"
-                            [size]="'small'"
-                            (click)="suspendRetailPricing()"
-                        >
-                            Clear Pricing
-                        </button>
-                    </div>
-                </div>
-            </ni-card>
-            <ng-template #notValid>
-                <ni-card
-                    [bgColor]="'success'"
-                    [outline]="true"
-                    [color]="'success'"
+                title="Live Pricing"
+                subtitle="Costs are always kept confidential"
+                bgColor="success"
+                headerBgColor="success"
+                outline="true"
+                theme="small"
+                customStyle="min-height: 160px; padding-top: 15px; padding-bottom: 15px;"
+            >
+                <div
+                    *ngIf="currentPrices"
+                    class="row"
                 >
-                    <h6 class="mt-0 title">CURRENT POSTED RETAIL (JET A)</h6>
-                    <h4 class="mt-0">
-                        EXPIRED
-                    </h4>
-                </ni-card>
-            </ng-template>
-            <ni-card
-                [fboPrices]="currentPrices"
-                [bgColor]="'info'"
-                [outline]="true"
-                [color]="'info'"
-                *ngIf="(currentFboPriceJetACost && currentFboPriceJetACost.price > 0) || activePrice;else notValidJet">
-                <h6 class="mt-0 title">CURRENT COST (JET A)</h6>
-                <div class="row">
-                    <div class="col-9">
-                        <h4 class="mt-0 mb-1">
-                            ${{ currentFboPriceJetACost.price | number: "1.4-4" }}
-                        </h4>
-                    </div>
-                    <div class="col-3">
-                        <div class="table disabledData">
-                            <span>Effective To</span>
-                            <div class="float-none"></div>
-                            <span style="display: block;">
-                                {{ staticCurrentFboPriceJetAEffectiveToCost | date }}
-                            </span>
+                    <div class="col-2">
+                        <div class="text-center">
+                            <div class="h5 mt-0 mb-2">&nbsp;</div>
+                            <h4 class="mt-0">
+                                <span class="h5 mt-0 text-muted">Jet-A</span>
+                            </h4>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <button
-                            ni-button
-                            class="mb-2"
-                            [view]="'error'"
-                            [size]="'small'"
-                            (click)="suspendJetPricing()"
-                        >
-                            Clear Pricing
-                        </button>
+
+                    <div class="col-5">
+                        <div class="text-center">
+                            <div class="h5 mt-0 mb-2 text-muted">Retail</div>
+                            <h4
+                                *ngIf="jetARetailExists()"
+                                class="mt-0 mb-1"
+                            >
+                                ${{ currentFboPriceJetARetail.price | number: "1.4-4" }}
+                            </h4>
+                            <h4
+                                *ngIf="!jetARetailExists()"
+                                class="font-italic"
+                            >
+                                Expired
+                            </h4>
+                            <h6
+                                *ngIf="jetARetailExists()"
+                                class="expire-date mt-0 mb-2 text-muted"
+                            >
+                                Expires: {{ currentFboPriceJetARetail.effectiveTo | date }}
+                            </h6>
+                            <button
+                                *ngIf="jetARetailExists()"
+                                mat-raised-button
+                                class="clear-btn"
+                                color="warn"
+                                (click)="suspendRetailPricing()"
+                            >
+                                <span *ngIf="!isLoadingRetail">Clear</span>
+                                <mat-icon *ngIf="isLoadingRetail"><mat-spinner diameter="20"></mat-spinner></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="text-center">
+                            <div class="h5 mt-0 mb-2 text-muted">Cost</div>
+                            <h4
+                                *ngIf="jetACostExists()"
+                                class="mt-0 mb-1"
+                            >
+                                ${{ currentFboPriceJetACost.price | number: "1.4-4" }}
+                            </h4>
+                            <h4
+                                *ngIf="!jetACostExists()"
+                                class="font-italic"
+                            >
+                                Expired
+                            </h4>
+                            <h6 
+                                *ngIf="jetACostExists()"
+                                class="expire-date mt-0 mb-2 text-muted">
+                                Expires: {{ currentFboPriceJetACost.effectiveTo | date }}
+                            </h6>
+                            <button
+                                *ngIf="jetACostExists()"
+                                mat-raised-button
+                                class="clear-btn"
+                                color="warn"
+                                (click)="suspendJetPricing()"
+                            >
+                                <span *ngIf="!isLoadingCost">Clear</span>
+                                <mat-icon *ngIf="isLoadingCost"><mat-spinner diameter="20"></mat-spinner></mat-icon>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <small>{{ costPlusText }}</small>
-            </ni-card>
-            <ng-template #notValidJet>
-                <ni-card [bgColor]="'info'" [outline]="true" [color]="'info'">
-                    <h6 class="mt-0 title">CURRENT COST (JET A)</h6>
-                    <h4 class="mt-0">
-                        EXPIRED
-                    </h4>
-                    <small
-                        >Cost pricing is confidential and not publicly
-                        displayed. It is only used to calculate Cost+
-                        Pricing</small
-                    >
-                </ni-card>
-            </ng-template>
-            <ni-card
-                id="{{ TempValueId }}"
-                [fboPrices]="currentPrices"
-                [bgColor]="'danger'"
-                [outline]="true"
-                [color]="'danger'"
-                *ngIf="TempValueJet > 0 || TempValueJet < 0">
-                <h6 class="mt-0">TEMPORARY ADD-ON MARGIN (ALL)</h6>
-                <div class="row">
-                    <div class="col-6">
-                        <h4 class="mt-0">
-                            ${{ TempValueJet | number: "1.4-4" }} (JET A)
-                        </h4>
-                    </div>
-                    <div class="col-3">
-                        <div class="table disabledData">
-                            <span>Effective From</span>
-                            <span style="display: block;">
-                                {{ TempDateFrom }}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="table disabledData">
-                            <span>Effective To</span>
-                            <span style="display: block;">
-                                {{ TempDateTo }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <button
-                    ni-button
-                    [view]="'error'"
-                    [padding]="'padding'"
-                    class="mr-1 float-md-right"
-                    (click)="deleteMargin(TempValueId)"
-                >
-                    Clear Margin
-                </button>
-                <button
-                    ni-button
-                    [padding]="'padding'"
-                    class="mr-1 float-md-right temporary"
-                    (click)="editTempAd()"
-                >
-                    Edit
-                </button>
-                <div class="clearfix"></div>
+                <ngx-ui-loader
+                    [loaderId]="pricingLoader"
+                    bgsPosition="center-center"
+                    fgsType="pulse"
+                    fgsColor="#81C784"
+                    pbColor="#81C784"
+                    overlayColor="rgba(0, 0, 0, 0.03)"
+                ></ngx-ui-loader>
             </ni-card>
         </div>
         <div class="col-md-8 mt-3">
             <ni-card
-                #niCard
-                title="Update your pricing here"
-                [fboPrices]="currentPrices"
-                [headerBgColor]="'success'"
-                (jetChanged)="jetChangedHandler($event)"
-                [visible]="'true'"
-                [tempId]="TempValueId"
                 class="mb-0"
-                [addOnMargin]="true"
-                [noActivePricing]="!activePrice && 
-                            (
-                                !currentFboPriceJetARetail || 
-                                currentFboPriceJetARetail.price <= 0 ||
-                                !currentFboPriceJetACost ||
-                                currentFboPriceJetACost.price <= 0
-                            )"
+                title="Update your pricing here"
+                bgColor="dead"
+                headerBgColor="dead"
+                theme="small"
+                outline="true"
+                customStyle="min-height: 160px;"
             >
-                <div title="">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-2">
-                                <mat-form-field>
-                                    <input
-                                        matInput
-                                        [min]="todayDate"
-                                            [max]="todayDate"
-                                        [(ngModel)]="
-                                            currentPricingEffectiveFrom
-                                        "
-                                        [matDatepicker]="
-                                            currentPricingEffectiveFromDatePicker
-                                        "
-                                        (focus)="
-                                            currentPricingEffectiveFromDatePicker.open()
-                                        "
-                                        placeholder="Effective From"
-                                        (dateChange)="
-                                            fboCurrentPriceDateChange(null)
-                                        "
-                                    />
-                                    <mat-datepicker-toggle
-                                        matSuffix
-                                        [for]="
-                                            currentPricingEffectiveFromDatePicker
-                                        "
-                                    ></mat-datepicker-toggle>
-                                    <mat-datepicker
-                                        #currentPricingEffectiveFromDatePicker
-                                    ></mat-datepicker>
-                                </mat-form-field>
-                                <button
-                                    #tooltip="ngbPopover"
-                                    style="right: 0px; top: 65%;"
-                                    popoverClass="noArrowPopover"
-                                    class="tooltip-button"
-                                    popoverTitle="Date fields"
-                                    [ngbPopover]="dateTooltipContent"
-                                    triggers="manual"
-                                    placement="bottom"
-                                    (hidden)="tooltipHidden()"
-                                ></button>
-                                <ng-template #dateTooltipContent>
-                                    These dates control when your pricing is valid
-                                    <div class="popover-actions">
-                                        <button>Got it</button>
-                                    </div>
-                                </ng-template>
-                            </div>
-                            <div class="col-2">
-                                <mat-form-field>
-                                    <input matInput id="idTo" [min]="minimumAllowedDate" [(ngModel)]="currentPricingEffectiveTo" [matDatepicker]="currentPricingEffectiveToDatePicker" (focus)="currentPricingEffectiveToDatePicker.open()" placeholder="Effective To" (dateChange)="fboCurrentPriceDateChange('hide')" />
-                                    <mat-datepicker-toggle matSuffix [for]="currentPricingEffectiveToDatePicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #currentPricingEffectiveToDatePicker disabled="false"></mat-datepicker>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-1">
-                                <div
-                                    style="
-                                        position: absolute;
-                                        bottom: 40%;
-                                        font-weight: 800;
-                                    "
-                                >
-                                    Jet A
-                                </div>
-                            </div>
-                            <div
-                                class="col-3"
-                                *ngIf="
-                                    currentFboPriceJetACost &&
-                                    currentFboPriceJetARetail
-                                "
+                <div class="row">
+                    <div class="col-1 mt-1">
+                        <span class="h5 mt-0">Jet-A</span>
+                    </div>
+                    <div class="col-3 mt-4">
+                        <mat-form-field>
+                            <input
+                                matInput
+                                id="idTo"
+                                [min]="currentPricingEffectiveFrom"
+                                [(ngModel)]="currentPricingEffectiveTo"
+                                [matDatepicker]="currentPricingEffectiveToDatePicker"
+                                (focus)="currentPricingEffectiveToDatePicker.open()"
+                                placeholder="Effective To"
+                            />
+                            <mat-datepicker-toggle
+                                matSuffix
+                                [for]="currentPricingEffectiveToDatePicker"
+                            ></mat-datepicker-toggle>
+                            <mat-datepicker
+                                #currentPricingEffectiveToDatePicker
+                                disabled="false"
+                            ></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-3 mt-4">
+                        <mat-form-field>
+                            <input
+                                matInput
+                                type="number"
+                                step="0.01"
+                                title="Your Retail values should be inclusive of all taxes/fees"
+                                placeholder="Retail*"
+                                [ngModelOptions]="{updateOn: 'blur'}"
+                                (click)="$event.target.select()"
+                                [ngModel]="jtRetail | number: '1.4-4'"
+                                (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Retail')"
+                            />
+                            <span matPrefix class="prefixDollar">$</span>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-3 mt-4">
+                        <mat-form-field>
+                            <input
+                                matInput
+                                type="number"
+                                step="0.01"
+                                title="Your Cost values should be inclusive of all taxes/fees"
+                                placeholder="Cost*"
+                                [ngModelOptions]="{updateOn: 'blur'}"
+                                (click)="$event.target.select()"
+                                [ngModel]="jtCost | number: '1.4-4'"
+                                (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Cost')"
+                            />
+                            <span matPrefix class="prefixDollar">$</span>
+                            <span
+                                class="fbo-prices-error-msg"
+                                *ngIf="priceEntryError.length > 0"
+                            >{{ priceEntryError }}</span>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-2 mt-4 pt-2">
+                        <div class="text-center">
+                            <button
+                                mat-raised-button
+                                color="accent"
+                                [disabled]="!canUpdatePricing()"
+                                class="mr-1"
+                                (click)="updatePricing()"
                             >
-                                <div class="row">
-                                    <div class="col-6 text-left">
-                                        <mat-form-field>
-                                            <input matInput type="number" step="0.01" title="Your Retail values should be inclusive of all taxes/fees" placeholder="Retail*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="jtRetail | number: '1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Retail')" />
-                                            <span matPrefix class="prefixDollar">$</span>
-                                        </mat-form-field>
-                                        <button
-                                            #tooltip="ngbPopover"
-                                            popoverClass="noArrowPopover"
-                                            style="right: 0px; top: 65%;"
-                                            class="tooltip-button"
-                                            popoverTitle="Price/Cost Entry"
-                                            [ngbPopover]="pricingTooltipContent"
-                                            triggers="manual"
-                                            placement="bottom"
-                                            (hidden)="tooltipHidden()"
-                                        ></button>
-                                        <ng-template #pricingTooltipContent>
-                                            Enter your current pricing here
-                                            <div class="popover-actions">
-                                                <button>Got it</button>
-                                            </div>
-                                        </ng-template>
-                                    </div>
-                                    <div class="col-6">
-                                        <mat-form-field>
-                                            <input matInput type="number" step="0.01" title="Your Cost values should be inclusive of all taxes/fees" placeholder="Cost*" [ngModelOptions]="{updateOn: 'blur'}" (click)="$event.target.select()" [ngModel]="jtCost | number: '1.4-4'" (ngModelChange)="fboPriceRequiresUpdate($event,'JetA Cost')" />
-                                            <span matPrefix class="prefixDollar">$</span>
-                                            <span
-                                                class="fbo-prices-error-msg"
-                                                *ngIf="priceEntryError.length > 0">{{ priceEntryError }}</span>
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <!--*ngIf="requiresUpdate"-->
-                                <div class="text-center">
-                                    <button ni-button [view]="'success'" [disabled]="saveOk || priceEntryError.length > 0" class="mr-1" (click)="saveChangesClicked()"><span [innerHtml]="buttonTextValue"></span>
-                                    </button>
-                                </div>
-                            </div>
+                                Update Pricing
+                            </button>
                         </div>
                     </div>
                 </div>
             </ni-card>
-            <!--<ni-card
-                title="Staged Prices"
-                [fboPrices]="currentPrices"
-                [headerBgColor]="'gray'"
-                class="mb-0 mt-3"
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <ni-card
+                title="Add On Margin"
+                subtitle="This margin is applies to all customers"
+                bgColor="danger"
+                headerBgColor="danger"
+                outline="true"
+                theme="small"
+                [collapsible]="'true'"
+                [opened]="TempValueId > 0"
             >
-                <div title="">
-                    <div class="container-fluid">
-                        <div *ngFor="let pom of stagedFboPriceJetA">
-                            <div
-                                class="row"
-                                *ngIf="
-                                    (pom.CostPrice && pom.CostPrice > 0) ||
-                                    (pom.RetailPrice && pom.RetailPrice > 0)
-                                "
-                            >
-                                <div class="col-2">
-                                    <mat-form-field class="disabledInput">
-                                        <input
-                                            matInput
-                                            disabled
-                                            [(ngModel)]="pom.effectiveFrom"
-                                            placeholder="Effective From"
-                                        />
-                                    </mat-form-field>
-                                </div>
-                                <div class="col-2">
-                                    <mat-form-field class="disabledInput">
-                                        <input
-                                            matInput
-                                            disabled
-                                            [(ngModel)]="pom.effectiveTo"
-                                            placeholder="Effective To"
-                                        />
-                                    </mat-form-field>
-                                </div>
-                                <div class="col-1">
-                                    <div
-                                        style="
-                                            position: absolute;
-                                            bottom: 40%;
-                                            font-weight: 800;
-                                        "
-                                    >
-                                        {{ pom.description }}
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="row">
-                                        <div class="col-6 text-left">
-                                            <mat-form-field
-                                                class="disabledInput"
-                                            >
-                                                <input
-                                                    class="text-left"
-                                                    disabled
-                                                    matInput
-                                                    placeholder="Retail"
-                                                    [(ngModel)]="
-                                                        pom.RetailPrice
-                                                    "
-                                                    type="text"
-                                                    currencyMask
-                                                    [options]="{
-                                                        prefix: '',
-                                                        thousands: ',',
-                                                        decimal: '.',
-                                                        precision: 4
-                                                    }"
-                                                />
-                                                <span
-                                                    matPrefix
-                                                    class="prefixDollar"
-                                                    >$</span
-                                                >
-                                            </mat-form-field>
-                                        </div>
-                                        <div class="col-6">
-                                            <mat-form-field
-                                                class="disabledInput"
-                                            >
-                                                <input
-                                                    matInput
-                                                    disabled
-                                                    class="text-left"
-                                                    placeholder="Cost"
-                                                    [(ngModel)]="pom.CostPrice"
-                                                    type="text"
-                                                    currencyMask
-                                                    [options]="{
-                                                        prefix: '',
-                                                        thousands: ',',
-                                                        decimal: '.',
-                                                        precision: 4
-                                                    }"
-                                                />
-                                                <span
-                                                    matPrefix
-                                                    class="prefixDollar"
-                                                    >$</span
-                                                >
-                                            </mat-form-field>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="text-center">
-                                        <button
-                                            ni-button
-                                            [view]="'error'"
-                                            class="mr-1"
-                                            (click)="removeStaged(pom)"
-                                        >
-                                            Clear Staged Price
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="row">
+                    <div class="col-2">
+                        <div class="text-center">
+                            <div class="h5 mt-0 mb-2">&nbsp;</div>
+                            <h4 class="mt-0">
+                                <span class="h5 mt-0 text-muted">Jet-A</span>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="text-center">
+                            <mat-form-field>
+                                <input
+                                    matInput
+                                    [min]="currentPricingEffectiveFrom"
+                                    [(ngModel)]="TempDateFrom"
+                                    [matDatepicker]="addOnMarginEffectiveFromDatePicker"
+                                    (focus)="addOnMarginEffectiveFromDatePicker.open()"
+                                    placeholder="From"
+                                />
+                                <mat-datepicker-toggle
+                                    matSuffix
+                                    [for]="addOnMarginEffectiveFromDatePicker"
+                                ></mat-datepicker-toggle>
+                                <mat-datepicker
+                                    #addOnMarginEffectiveFromDatePicker
+                                    disabled="false"
+                                ></mat-datepicker>
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <input
+                                    matInput
+                                    [min]="TempDateFrom"
+                                    [(ngModel)]="TempDateTo"
+                                    [matDatepicker]="addOnMarginEffectiveToDatePicker"
+                                    (focus)="addOnMarginEffectiveToDatePicker.open()"
+                                    placeholder="To"
+                                />
+                                <mat-datepicker-toggle
+                                    matSuffix
+                                    [for]="addOnMarginEffectiveToDatePicker"
+                                ></mat-datepicker-toggle>
+                                <mat-datepicker
+                                    #addOnMarginEffectiveToDatePicker
+                                    disabled="false"
+                                ></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="d-flex h-100 align-items-end text-center">
+                            <mat-form-field class="add-on-margin-input">
+                                <input
+                                    matInput
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="Margin"
+                                    [ngModelOptions]="{updateOn: 'blur'}"
+                                    (click)="$event.target.select()"
+                                    [ngModel]="TempValueJet | number: '1.4-4'"
+                                    (ngModelChange)="marginValueChanged($event)"
+                                />
+                                <span matPrefix class="prefixDollar bigPrefix">$</span>
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>
-            </ni-card>-->
+
+                <div class="row">
+                    <div class="col-12 text-right">
+                        <button
+                            *ngIf="TempValueId"
+                            mat-raised-button
+                            color="warn"
+                            class="mr-3 clear-btn"
+                            (click)="clearMargin()"
+                            style="min-width: 125px;"
+                        >
+                            <span *ngIf="!isClearingMargin">Clear Add On</span>
+                            <mat-icon *ngIf="isClearingMargin"><mat-spinner diameter="20"></mat-spinner></mat-icon>
+                        </button>
+                        <button
+                            mat-raised-button
+                            color="accent"
+                            class="mr-1 clear-btn"
+                            [disabled]="!canUpdateMargin()"
+                            (click)="updateMargin()"
+                            style="min-width: 125px;"
+                        >
+                            <span *ngIf="!isUpdatingMargin">Update Margin</span>
+                            <mat-icon *ngIf="isUpdatingMargin"><mat-spinner diameter="20"></mat-spinner></mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </ni-card>
+        </div>
+        <div class="col-md-8">
+            <ni-card
+                title="Stage Future Prices"
+                bgColor="dark"
+                headerBgColor="dark"
+                outline="true"
+                theme="small"
+                [collapsible]="'true'"
+            >
+            </ni-card>
         </div>
     </div>
 </div>

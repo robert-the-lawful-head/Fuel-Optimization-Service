@@ -1,43 +1,54 @@
-.btnremoveDisabled {
-    color: #000;
-}
-.disabledData {
-    color: rgba(0, 0, 0, 0.54);
-    font-size: 10px;
-    font-weight: 600;
-    line-height: 1.125;
-    font-family: "Lato", sans-serif;
-    line-height: 1.32;
-}
-body .mat-form-field-flex .mat-form-field-prefix {
-    padding-right: 0;
-}
-
-.updateClass .mat-form-field-label-wrapper {
-    left: -10px !important;
-}
-body .disabledInput .mat-form-field-wrapper .mat-form-field-underline {
-    background-image: none !important;
-}
-
-body .disabledInput .mat-form-field-flex .mat-form-field-prefix {
-    color: rgba(0, 0, 0, 0.38);
-}
-
-.fbo-prices-error-msg {
-    position: absolute;
-    right: 0;
-    white-space: nowrap;
-    top: calc(100% + 5px);
-    font-size: 12px;
-    color: red;
-}
-
-.tooltip-button {
-    position: absolute;
-    right: 30px;
-    top: 50%;
-    transform: translateY(-50%);
+:host {
     display: block;
-    visibility: hidden;
+    border: 1px solid #e5e6e9;
+    margin-top: 25px;
+    margin-bottom: 20px;
+    position: relative;
+
+    .expire-date {
+        font-size: 0.8rem;
+        font-weight: normal;
+    }
+
+    h5, .h5 {
+        font-size: 1.2rem;
+        font-weight: normal;
+    }
+
+    h6, .h6 {
+        font-size: 0.8rem;
+        font-weight: normal;
+    }
+
+    .clear-btn {
+        line-height: 30px;
+
+        ::ng-deep {
+            .mat-progress-spinner circle, .mat-spinner circle {
+                stroke: white;
+            }
+        }
+    }
+
+    .fbo-prices-error-msg {
+        position: absolute;
+        right: 0;
+        white-space: nowrap;
+        top: calc(100% + 5px);
+        font-size: 12px;
+        color: red;
+    }
+
+    .add-on-margin-input {
+        input.mat-input-element, .bigPrefix {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        ::ng-deep {
+            label.mat-form-field-label {
+                font-size: 18px;
+            }
+        }
+    }
 }

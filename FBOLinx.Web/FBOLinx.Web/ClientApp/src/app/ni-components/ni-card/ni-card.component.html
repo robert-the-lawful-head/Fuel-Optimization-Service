@@ -6,75 +6,43 @@
         'gray-card': bgColor === 'gray',
         'warning-card': bgColor === 'warning',
         'danger-card': bgColor === 'danger',
-        'success-color-card': color === 'success',
-        'info-color-card': color === 'info',
-        'warning-color-card': color === 'warning',
-        'danger-color-card': color === 'danger',
-        'bg-image-card': bgImage,
-        'outline-card': outline
-    }"
-    [ngStyle]="{
-        'background-color': customBgColor,
-        'background-image': 'url(' + bgImage + ')',
-        'border-color': customBgColor,
-        color: customColor
+        'dead-card': bgColor === 'dead',
+        'dark-card': bgColor === 'dark',
+        'outline-card': outline,
+        'collapsible': collapsible
     }"
 >
     <h3
         class="card-header h5"
         *ngIf="title"
+        (click)="headerClick()"
         [ngClass]="{
-            'text-right': align === 'right',
             'text-center': align === 'center',
             'success-card-header': headerBgColor === 'success',
             'info-card-header': headerBgColor === 'info',
             'gray-card-header': headerBgColor === 'gray',
             'warning-card-header': headerBgColor === 'warning',
             'danger-card-header': headerBgColor === 'danger',
-            'success-color-card-header': headerColor === 'success',
-            'info-color-card-header': headerColor === 'info',
-            'warning-color-card-header': headerColor === 'warning',
-            'danger-color-card-header': headerColor === 'danger',
-            'small-header': theme === 'small'
+            'dead-card-header': headerBgColor === 'dead',
+            'dark-card-header': headerBgColor === 'dark',
+            'small-header': theme === 'small',
+            'tiny-header': theme === 'tiny'
         }"
     >
         <div class="row">
             <div class="col-12">
-                {{ title }}
-                &nbsp;
-                <button
-                    ni-button
-                    [disabled]="noActivePricing"
-                    title="Temporarily increase or decrease your pricing to ALL customers"
-                    *ngIf="!tempId && visible == 'true'"
-                    [view]="'blank'"
-                    class="mr-1 pull-right"
-                    popoverTitle="Add-on Margin: Usability"
-                    [ngbPopover]="addOnMarginPopoverContent"
-                    #addOnMargin="ngbPopover"
-                    triggers="manual"
-                    [autoClose]="'outside'"
-                    (click)="openAddOnMargin()"
-                >
-                    Add On Margin
-                </button>
-                &nbsp;
-                <ng-template #addOnMarginPopoverContent>
-                    This is an additional margin that applies across the board to all customers and all templates (including Cost + and Retail -).  A value of $0.10 will increase all prices and all volume tiers by $0.10.  Simply click &quot;Clear Margin&quot; to instantly remove for all customers.
-                    <div class="popover-actions">
-                        <button (click)="openDialog()">Got it</button>
-                    </div>
-                </ng-template>
+                {{ title }} {{ collapsible && !opened ? " + " : "" }}
+                <h6 class="card-subtitle">{{ subtitle }}</h6>
             </div>
         </div>
     </h3>
     <div
+        [@openClose]="!collapsible || opened"
         class="card-content"
+        [style]="customStyle"
         [ngClass]="{
-            'text-right': align === 'right',
-            'text-center': align === 'center'
+            'tiny-content': theme === 'tiny'
         }"
-        [ngStyle]="{ padding: indents }"
     >
         <ng-content></ng-content>
     </div>
