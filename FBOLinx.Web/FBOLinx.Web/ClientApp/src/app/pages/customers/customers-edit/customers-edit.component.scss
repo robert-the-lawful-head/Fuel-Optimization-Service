@@ -1,25 +1,30 @@
-.stickyStyle {
-    padding-bottom: 10px;
-    padding-top: 5px;
-    background-color: #f8f8f8;
-    z-index: 900;
-}
+:host {
+    position: relative;
+    display: block;
+
+    .stickyStyle {
+        padding-bottom: 10px;
+        padding-top: 5px;
+        background-color: #f8f8f8;
+        z-index: 900;
+    }
 
 
-.card-container-right {
-    display: inline;
-    float: right;
-}
+    .card-container-right {
+        display: inline;
+        float: right;
+    }
 
-.card-container-left {
-    display: inline;
-}
+    .card-container-left {
+        display: inline;
+    }
 
-::ng-deep .mat-card-header-text {
-    padding-bottom: 10px;
-    padding-top: 5px;
-    background-color: white;
-    position: sticky;
-    top: 0;
-    z-index: 800;
+    ::ng-deep .mat-card-header-text {
+        padding-bottom: 10px;
+        padding-top: 5px;
+        background-color: white;
+        position: sticky;
+        top: 0;
+        z-index: 800;
+    }
 }
