@@ -82,33 +82,34 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
-                from ca in _context.CustomerAircrafts
-                join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
-                join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId
-                into leftJoinAircraftPrices
-                from a in leftJoinAircraftPrices.DefaultIfEmpty()
-                join p in _context.PricingTemplate on a.PriceTemplateId equals p.Oid
-                into leftJoinPricingTemplate
-                from p in leftJoinPricingTemplate.DefaultIfEmpty()
-                where ca.GroupId.GetValueOrDefault() == groupId && ca.CustomerId == customerId
-                select new CustomerAircraftsGridViewModel
-                {
-                    Oid = ca.Oid,
-                    GroupId = ca.GroupId.GetValueOrDefault(),
-                    CustomerId = ca.CustomerId,
-                    AircraftId = ca.AircraftId,
-                    TailNumber = ca.TailNumber,
-                    Size = ca.Size.HasValue && ca.Size != Models.AirCrafts.AircraftSizes.NotSet
-                        ? ca.Size
-                        : ac.Size.GetValueOrDefault(),
-                    BasedPaglocation = ca.BasedPaglocation,
-                    NetworkCode = ca.NetworkCode,
-                    AddedFrom = ca.AddedFrom.GetValueOrDefault(),
-                    PricingTemplateName = p == null ? "" : p.Name,
-                    Make = ac.Make,
-                    Model = ac.Model
-                }).OrderBy((x => x.TailNumber)).ToListAsync();
+             List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
+             from ca in _context.CustomerAircrafts
+             join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+             into leftJoinCustomerAircrafts
+             from b in leftJoinCustomerAircrafts.DefaultIfEmpty()
+             where ca.GroupId.GetValueOrDefault() == groupId && ca.CustomerId == customerId
+             select new CustomerAircraftsGridViewModel
+             {
+                 Oid = ca.Oid,
+                 GroupId = ca.GroupId.GetValueOrDefault(),
+                 CustomerId = ca.CustomerId,
+                 AircraftId = ca.AircraftId,
+                 TailNumber = ca.TailNumber,
+                 Size = ca.Size.HasValue && ca.Size != Models.AirCrafts.AircraftSizes.NotSet
+                             ? ca.Size
+                              : b.Size.GetValueOrDefault(),
+                 BasedPaglocation = ca.BasedPaglocation,
+                 NetworkCode = ca.NetworkCode,
+                 AddedFrom = ca.AddedFrom.GetValueOrDefault(),
+                 PricingTemplateName = (from ap in _context.AircraftPrices
+                                        join pt in _context.PricingTemplate
+                                        on ap.PriceTemplateId equals pt.Oid into leftJoinPricingTemplates
+                                        from ptLeftJoin in leftJoinPricingTemplates.DefaultIfEmpty()
+                                        where ptLeftJoin.Fboid == fboId
+                                        select ptLeftJoin.Name).FirstOrDefault(),
+                 Make = b.Make,
+                 Model = b.Model
+             }).OrderBy(x => x.TailNumber).ToListAsync();
 
             return Ok(customerAircraftVM);
         }
