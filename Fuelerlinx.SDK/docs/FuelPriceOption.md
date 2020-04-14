@@ -37,6 +37,7 @@ Name | Type | Description | Notes
 **PreferredFBOText** | **string** |  | [optional] 
 **WeightUnit** | [**Weight**](Weight.md) |  | [optional] 
 **Currency** | **string** |  | [optional] 
+**SpecificTailNumbers** | **List&lt;string&gt;** | If the SpecificTailNumbers list is empty/null then the price applies to all tails. | [optional] 
 **Taxes** | [**List&lt;FuelerTaxByTierDTO&gt;**](FuelerTaxByTierDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

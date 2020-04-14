@@ -251,6 +251,14 @@ namespace IO.Swagger.Model {
     public string Currency { get; set; }
 
     /// <summary>
+    /// If the SpecificTailNumbers list is empty/null then the price applies to all tails.
+    /// </summary>
+    /// <value>If the SpecificTailNumbers list is empty/null then the price applies to all tails.</value>
+    [DataMember(Name="specificTailNumbers", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "specificTailNumbers")]
+    public List<string> SpecificTailNumbers { get; set; }
+
+    /// <summary>
     /// Gets or Sets Taxes
     /// </summary>
     [DataMember(Name="taxes", EmitDefaultValue=false)]
@@ -299,6 +307,7 @@ namespace IO.Swagger.Model {
       sb.Append("  PreferredFBOText: ").Append(PreferredFBOText).Append("\n");
       sb.Append("  WeightUnit: ").Append(WeightUnit).Append("\n");
       sb.Append("  Currency: ").Append(Currency).Append("\n");
+      sb.Append("  SpecificTailNumbers: ").Append(SpecificTailNumbers).Append("\n");
       sb.Append("  Taxes: ").Append(Taxes).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
