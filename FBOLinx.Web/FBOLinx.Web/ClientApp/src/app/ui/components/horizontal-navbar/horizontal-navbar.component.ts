@@ -186,7 +186,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
 
     public updatePricingClicked(event) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(["/default-layout/fbo-prices"]);
+        this.router.navigate(["/default-layout/dashboard-fbo"]);
         this.close(event);
     }
 
