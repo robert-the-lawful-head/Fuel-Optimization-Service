@@ -1,14 +1,22 @@
 <ni-breadcrumb
     [menu]="breadcrumb"
     [style]="'custom1'"
-    class="mb-4"
+    class="mb-5"
 ></ni-breadcrumb>
+
+<app-fbo-prices-panel
+    style="
+        position: absolute;
+        top: -14px;
+        right: 62px;
+    "
+></app-fbo-prices-panel>
 
 <div *ngIf="!rampFees">
     <mat-spinner></mat-spinner>
 </div>
 
-<ni-card title="" class="mb-0" *ngIf="rampFees">
+<ni-card title="" class="mb-0 " *ngIf="rampFees">
     <div class="mb-3">
         <div class="">
             <div class="row">

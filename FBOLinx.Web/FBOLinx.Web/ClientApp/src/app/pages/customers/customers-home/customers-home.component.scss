@@ -1,4 +1,9 @@
-﻿.table-container {
-    min-height: 300px;
-    padding-top: 20px;
+﻿:host {
+    display: block;
+    position: relative;
+    
+    .table-container {
+        min-height: 300px;
+        padding-top: 20px;
+    }
 }

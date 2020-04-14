@@ -106,23 +106,24 @@ import { UsersGridComponent } from "./users/users-grid/users-grid.component";
 import { UsersHomeComponent } from "./users/users-home/users-home.component";
 
 // Shared
-import { AccountProfileComponent } from ".././shared/components/account-profile/account-profile.component";
-import { AirportAutocompleteComponent } from ".././shared/components/airport-autocomplete/airport-autocomplete.component";
-import { DeleteConfirmationComponent } from ".././shared/components/delete-confirmation/delete-confirmation.component";
-import { CloseConfirmationComponent } from ".././shared/components/close-confirmation/close-confirmation.component";
-import { DistributionWizardMainComponent } from ".././shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component";
-import { DistributionWizardReviewComponent } from ".././shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component";
-import { EmailContentEditComponent } from ".././shared/components/email-content-edit/email-content-edit.component";
-import { EmailContentSelectionComponent } from ".././shared/components/email-content-selection/email-content-selection.component";
-import { ForgotPasswordDialogComponent } from ".././shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component";
-import { ManageConfirmationComponent } from ".././shared/components/manage-confirmation/manage-confirmation.component";
-import { NotificationComponent } from ".././shared/components/notification/notification.component";
-import { PricingExpiredNotificationComponent } from ".././shared/components/pricing-expired-notification/pricing-expired-notification.component";
-import { TemporaryAddOnMarginComponent } from ".././shared/components/temporary-add-on-margin/temporary-add-on-margin.component";
-import { StatisticsOrdersByLocationComponent } from ".././shared/components/statistics-orders-by-location/statistics-orders-by-location.component";
-import { StatisticsTotalAircraftComponent } from ".././shared/components/statistics-total-aircraft/statistics-total-aircraft.component";
-import { StatisticsTotalCustomersComponent } from ".././shared/components/statistics-total-customers/statistics-total-customers.component";
-import { StatisticsTotalOrdersComponent } from ".././shared/components/statistics-total-orders/statistics-total-orders.component";
+import { FboPricesPanelComponent } from "../shared/components/fbo-prices-panel/fbo-prices-panel.component";
+import { AccountProfileComponent } from "../shared/components/account-profile/account-profile.component";
+import { AirportAutocompleteComponent } from "../shared/components/airport-autocomplete/airport-autocomplete.component";
+import { DeleteConfirmationComponent } from "../shared/components/delete-confirmation/delete-confirmation.component";
+import { CloseConfirmationComponent } from "../shared/components/close-confirmation/close-confirmation.component";
+import { DistributionWizardMainComponent } from "../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component";
+import { DistributionWizardReviewComponent } from "../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component";
+import { EmailContentEditComponent } from "../shared/components/email-content-edit/email-content-edit.component";
+import { EmailContentSelectionComponent } from "../shared/components/email-content-selection/email-content-selection.component";
+import { ForgotPasswordDialogComponent } from "../shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component";
+import { ManageConfirmationComponent } from "../shared/components/manage-confirmation/manage-confirmation.component";
+import { NotificationComponent } from "../shared/components/notification/notification.component";
+import { PricingExpiredNotificationComponent } from "../shared/components/pricing-expired-notification/pricing-expired-notification.component";
+import { TemporaryAddOnMarginComponent } from "../shared/components/temporary-add-on-margin/temporary-add-on-margin.component";
+import { StatisticsOrdersByLocationComponent } from "../shared/components/statistics-orders-by-location/statistics-orders-by-location.component";
+import { StatisticsTotalAircraftComponent } from "../shared/components/statistics-total-aircraft/statistics-total-aircraft.component";
+import { StatisticsTotalCustomersComponent } from "../shared/components/statistics-total-customers/statistics-total-customers.component";
+import { StatisticsTotalOrdersComponent } from "../shared/components/statistics-total-orders/statistics-total-orders.component";
 import { AnalyticsOrdersQuoteChartComponent } from "../shared/components/analytics-orders-quote-chart/analytics-orders-quote-chart.component";
 import { AnalyticsOrdersOverTimeChartComponent } from "../shared/components/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component";
 import { AnalyticsVolumesNearbyAirportChartComponent } from "../shared/components/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component";
@@ -253,6 +254,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         CloseConfirmationComponent,
         DistributionWizardMainComponent,
         DistributionWizardReviewComponent,
+        FboPricesPanelComponent,
         AccountProfileComponent,
         EmailContentEditComponent,
         EmailContentSelectionComponent,
@@ -285,6 +287,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         DialogConfirmAircraftDeleteComponent,
         DistributionWizardMainComponent,
         DistributionWizardReviewComponent,
+        FboPricesPanelComponent,
         AccountProfileComponent,
         ForgotPasswordDialogComponent,
         FbosDialogNewFboComponent,
