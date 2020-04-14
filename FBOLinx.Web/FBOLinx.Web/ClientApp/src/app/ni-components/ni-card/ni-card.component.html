@@ -31,8 +31,16 @@
     >
         <div class="row">
             <div class="col-12">
-                {{ title }} {{ collapsible && !opened ? " + " : "" }}
-                <h6 class="card-subtitle">{{ subtitle }}</h6>
+                <span #cardTitle>{{ title }} {{ collapsible && !opened ? " + " : "" }}</span>
+                <h6
+                    #cardSubTitle
+                    class="card-subtitle"
+                    [ngClass]="{
+                        'invisible': !subTitleVisible
+                    }"
+                >
+                    {{ subtitle }}
+                </h6>
             </div>
         </div>
     </h3>

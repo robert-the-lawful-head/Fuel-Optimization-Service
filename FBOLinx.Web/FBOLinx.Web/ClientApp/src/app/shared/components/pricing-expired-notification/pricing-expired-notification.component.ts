@@ -22,7 +22,7 @@ export class PricingExpiredNotificationComponent {
     ) {}
 
     public onConfirmClicked() {
-        this.router.navigate(["/default-layout/fbo-prices"]);
+        this.router.navigate(["/default-layout/dashboard-fbo"]);
         this.dialogRef.close();
     }
 

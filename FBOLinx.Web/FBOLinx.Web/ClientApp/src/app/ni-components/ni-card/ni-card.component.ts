@@ -1,7 +1,10 @@
 import {
     Component,
-    OnInit,
     Input,
+    ViewChild,
+    HostListener,
+    ElementRef,
+    AfterContentChecked,
 } from "@angular/core";
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
@@ -29,7 +32,10 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
         "[class.ni-card]": "true",
     },
 })
-export class NiCardComponent implements OnInit {
+export class NiCardComponent implements AfterContentChecked {
+    @ViewChild("cardTitle") cardTitle: ElementRef;
+    @ViewChild("cardSubTitle") cardSubTitle: ElementRef;
+
     @Input() title = "";
     @Input() subtitle = "";
 
@@ -49,14 +55,35 @@ export class NiCardComponent implements OnInit {
 
     @Input() opened = false;
 
+    subTitleVisible = true;
+
     constructor() {}
 
-    ngOnInit() {
+    ngAfterContentChecked(): void {
+        this.checkSubtitleVisible();
     }
 
     public headerClick() {
         if (this.collapsible) {
             this.opened = !this.opened;
+        }
+    }
+
+    @HostListener('window:resize')
+    onResize() {
+        this.checkSubtitleVisible();
+    }
+
+    private checkSubtitleVisible() {
+        if (this.subtitle && this.cardTitle && this.cardSubTitle) {
+            const limit = this.cardTitle.nativeElement.offsetLeft + this.cardTitle.nativeElement.offsetWidth + 10;
+            const subtitleStart = this.cardSubTitle.nativeElement.offsetLeft;
+            if (subtitleStart < limit && this.subTitleVisible) {
+                this.subTitleVisible = false;
+            }
+            if (subtitleStart >= limit && !this.subTitleVisible) {
+                this.subTitleVisible = true;
+            }
         }
     }
 }
