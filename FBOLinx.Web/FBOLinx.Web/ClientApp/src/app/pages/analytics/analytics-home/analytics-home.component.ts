@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 import * as moment from "moment";
 // Services
@@ -71,6 +71,6 @@ export class AnalyticsHomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.ngxLoader.startLoader('loader-01');
+        this.ngxLoader.startLoader("loader-01");
     }
 }

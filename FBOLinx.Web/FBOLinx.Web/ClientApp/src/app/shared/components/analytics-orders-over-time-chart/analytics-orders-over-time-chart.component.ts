@@ -4,7 +4,7 @@ import * as _ from "lodash";
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
     selector: "app-analytics-orders-over-time",

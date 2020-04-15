@@ -5,8 +5,8 @@ import {
     AfterViewInit,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Observable } from 'rxjs';
+import { NgxUiLoaderService } from "ngx-ui-loader";
+import { Observable } from "rxjs";
 import * as moment from "moment";
 import * as _ from "lodash";
 
@@ -29,17 +29,17 @@ export interface DefaultTemplateUpdate {
 }
 
 export interface TemporaryAddOnMargin {
-    id: any;
-    fboId: any;
-    EffectiveFrom: any;
-    EffectiveTo: any;
-    MarginJet: any;
+    id?: any;
+    fboId?: any;
+    EffectiveFrom?: any;
+    EffectiveTo?: any;
+    MarginJet?: any;
 }
 
 @Component({
     selector: "app-fbo-prices-home",
     templateUrl: "./fbo-prices-home.component.html",
-    styleUrls: ["./fbo-prices-home.component.scss"]
+    styleUrls: ["./fbo-prices-home.component.scss"],
 })
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     // Public Members
@@ -55,7 +55,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public isLoadingCost = false;
 
     public TempValueJet: number;
-    public TempValueId: number = 0;
+    public TempValueId = 0;
     public TempDateFrom: Date;
     public TempDateTo: Date;
     public isUpdatingMargin = false;
@@ -86,7 +86,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         private customCustomerService: CustomcustomertypesService,
         private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private NgxUiLoader: NgxUiLoaderService,
-        private fboPricesSelectDefaultTemplateDialog: MatDialog,
+        private fboPricesSelectDefaultTemplateDialog: MatDialog
     ) {}
 
     ngOnInit(): void {
@@ -200,20 +200,20 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             return;
         }
         this.isUpdatingMargin = true;
-        const payload = {
+        const payload: TemporaryAddOnMargin = {
             EffectiveFrom: this.TempDateFrom,
             EffectiveTo: this.TempDateTo,
             MarginJet: this.TempValueJet,
-        }
+        };
         if (this.TempValueId) {
-            payload['id'] = this.TempValueId;
+            payload.id = this.TempValueId;
             this.temporaryAddOnMargin
                 .update(payload)
                 .subscribe(() => {
                     this.isUpdatingMargin = false;
                 });
         } else {
-            payload['fboId'] = this.sharedService.currentUser.fboId;
+            payload.fboId = this.sharedService.currentUser.fboId;
             this.temporaryAddOnMargin
                 .add(payload)
                 .subscribe((savedTemplate: TemporaryAddOnMargin) => {
@@ -257,12 +257,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
                     if (this.currentFboPriceJetARetail.effectiveTo) {
                         this.currentFboPriceJetARetail.effectiveTo = 
-                            moment.utc(this.currentFboPriceJetARetail.effectiveTo).local().format("MM/DD/YYYY")
+                            moment.utc(this.currentFboPriceJetARetail.effectiveTo).local().format("MM/DD/YYYY");
                     }
                     
                     if (this.currentFboPriceJetACost.effectiveTo) {
                         this.currentFboPriceJetACost.effectiveTo = 
-                            moment.utc(this.currentFboPriceJetACost.effectiveTo).local().format("MM/DD/YYYY")
+                            moment.utc(this.currentFboPriceJetACost.effectiveTo).local().format("MM/DD/YYYY");
                     }
 
                     if(data.length > 0) {

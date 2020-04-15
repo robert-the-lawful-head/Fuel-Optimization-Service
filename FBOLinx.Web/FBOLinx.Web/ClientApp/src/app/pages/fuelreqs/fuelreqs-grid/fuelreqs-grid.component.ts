@@ -23,7 +23,7 @@ import { FuelReqsExportModalComponent } from "../../../shared/components/fuelreq
     selector: "app-fuelreqs-grid",
     templateUrl: "./fuelreqs-grid.component.html",
     styleUrls: ["./fuelreqs-grid.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Output() dateFilterChanged = new EventEmitter<any>();
