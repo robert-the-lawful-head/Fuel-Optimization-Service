@@ -32,6 +32,10 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
 
+    public pageIndex = 0;
+    public pageSize = 100;
+
+    
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
     displayedColumns: string[] = [
@@ -61,6 +65,19 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     ngOnInit() {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.sort.active = "eta";
+
+        if (localStorage.getItem("pageIndexFuelReqs")) {
+            this.paginator.pageIndex = localStorage.getItem("pageIndexFuelReqs") as any;
+        } else {
+            this.paginator.pageIndex = 0;
+        }
+
+        if (sessionStorage.getItem("pageSizeValueFuelReqs")) {
+            this.pageSize = sessionStorage.getItem("pageSizeValueFuelReqs") as any;
+        } else {
+            this.pageSize = 100;
+        }
+
     }
 
     ngOnChanges() {
@@ -101,5 +118,13 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
             }
             this.exportTriggered.emit(result);
         });
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem("pageIndexFuelReqs", event.pageIndex);
+        sessionStorage.setItem(
+            "pageSizeValueFuelReqs",
+            this.paginator.pageSize.toString()
+        );
     }
 }
