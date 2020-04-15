@@ -76,7 +76,7 @@ export class PageSortingTableComponent implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(private _sharedService: SharedService) {
-        this._sharedService.emitChange(this.pageTitle);
+        this._sharedService.titleChange(this.pageTitle);
     }
 
     ngOnInit() {

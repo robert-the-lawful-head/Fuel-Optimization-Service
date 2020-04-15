@@ -289,6 +289,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 this.loadFboPrices().subscribe(() => {
                     this.NgxUiLoader.stopLoader(this.pricingLoader);
                 });
+                this.sharedService.emitChange(SharedEvents.fboPricesUpdatedEvent);
             });
     }
 

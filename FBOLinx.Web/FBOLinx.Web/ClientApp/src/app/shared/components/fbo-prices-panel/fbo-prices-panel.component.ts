@@ -1,6 +1,9 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, AfterViewInit, OnDestroy } from "@angular/core";
 import { FbopricesService } from '../../../services/fboprices.service';
 import { SharedService } from '../../../layouts/shared-service';
+
+import * as SharedEvents from "../../../models/sharedEvents";
+import { Subscription } from 'rxjs';
 
 // Interfaces
 
@@ -9,16 +12,31 @@ import { SharedService } from '../../../layouts/shared-service';
     templateUrl: "./fbo-prices-panel.component.html",
     styleUrls: ["./fbo-prices-panel.component.scss"],
 })
-export class FboPricesPanelComponent {
+export class FboPricesPanelComponent implements AfterViewInit, OnDestroy {
     public retail = 0;
     public cost = 0;
     public isLoading = false;
+    private subscription: Subscription;
 
     constructor(
         private fboPricesService: FbopricesService,
         private sharedService: SharedService,
     ) {
         this.loadFboPrices();
+    }
+
+    ngAfterViewInit() {
+        this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
+            if (message == SharedEvents.fboPricesUpdatedEvent) {
+                this.loadFboPrices();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 
     private loadFboPrices() {
