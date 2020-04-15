@@ -6,7 +6,7 @@ import * as moment from "moment";
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
 import * as SharedEvent from "../../../models/sharedEvents";
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
     selector: "app-analytics-market-share-airport",

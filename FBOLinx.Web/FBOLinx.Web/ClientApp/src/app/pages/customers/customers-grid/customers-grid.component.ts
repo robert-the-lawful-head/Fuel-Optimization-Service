@@ -360,7 +360,7 @@ export class CustomersGridComponent implements OnInit {
         });
 
         customer.needsAttention = changedPricingTemplate.default || 
-            (customer.customerCompanyTypeName != 'FuelerLinx' && !customer.contactExists);
+            (customer.customerCompanyTypeName !== "FuelerLinx" && !customer.contactExists);
         customer.allInPrice = changedPricingTemplate.intoPlanePrice;
         const vm = {
             id: customer.customerId,
@@ -378,7 +378,7 @@ export class CustomersGridComponent implements OnInit {
         _.forEach(this.customersData, (customer) => {
             if (customer.selectAll === true) {
                 customer.needsAttention = event.value.default ||
-                    (customer.customerCompanyTypeName != 'FuelerLinx' && !customer.contactExists);;
+                    (customer.customerCompanyTypeName !== "FuelerLinx" && !customer.contactExists);
                 customer.pricingTemplateName = event.value.name;
                 customer.allInPrice = event.value.intoPlanePrice;
                 listCustomers.push({

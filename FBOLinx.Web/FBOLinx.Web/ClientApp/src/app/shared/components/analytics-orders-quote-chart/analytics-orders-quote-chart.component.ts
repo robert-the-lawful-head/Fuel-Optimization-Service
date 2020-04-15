@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 import * as _ from "lodash";
 
 // Services

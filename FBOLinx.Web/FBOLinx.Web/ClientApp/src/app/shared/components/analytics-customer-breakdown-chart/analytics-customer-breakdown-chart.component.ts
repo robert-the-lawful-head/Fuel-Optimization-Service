@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { MatButtonToggleChange } from "@angular/material/button-toggle";
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
     selector: "app-analytics-customer-breakdown",

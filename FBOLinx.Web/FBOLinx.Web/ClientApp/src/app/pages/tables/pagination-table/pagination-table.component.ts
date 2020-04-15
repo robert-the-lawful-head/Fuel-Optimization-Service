@@ -75,7 +75,7 @@ export class PagePaginationTableComponent implements OnInit {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
     constructor(private _sharedService: SharedService) {
-        this._sharedService.emitChange(this.pageTitle);
+        this._sharedService.titleChange(this.pageTitle);
     }
 
     ngOnInit() {

@@ -5,7 +5,7 @@ import { MatSliderChange } from "@angular/material/slider";
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
     selector: "app-analytics-volumes-nearby-airport",

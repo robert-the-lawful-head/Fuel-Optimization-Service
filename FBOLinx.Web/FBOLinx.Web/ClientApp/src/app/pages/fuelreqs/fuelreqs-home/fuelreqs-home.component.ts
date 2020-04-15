@@ -7,7 +7,7 @@ import * as XLSX from "xlsx";
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
 import { SharedService } from "../../../layouts/shared-service";
-import { interval, Subscription } from 'rxjs';
+import { interval, Subscription } from "rxjs";
 
 const BREADCRUMBS: any[] = [
     {

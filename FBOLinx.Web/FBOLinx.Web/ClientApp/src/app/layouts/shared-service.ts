@@ -62,10 +62,6 @@ export class SharedService {
         this.priceTemplateMessageSource.next(message);
     }
 
-    NotifyPricingSavedComponent(message: string) {
-        this.priceUpdateMessage.next(message);
-    }
-
     titleChange(title: string) {
         this.titleChangeSource.next(title);
     }
