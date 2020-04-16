@@ -25,6 +25,12 @@ namespace IO.Swagger.Api
         /// <returns>DeleteCompanyFuelerNotesResponse</returns>
         DeleteCompanyFuelerNotesResponse DeleteCompanyFuelerNotes (int? companyFuelerId, int? noteId);
         /// <summary>
+        /// Delete a price adjustment for a company fueler. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteCompanyFuelerPriceAdjustmentResponse</returns>
+        DeleteCompanyFuelerPriceAdjustmentResponse DeleteCompanyFuelerPriceAdjustment (int? id);
+        /// <summary>
         /// Delete a company-specific settings record for a fuel vendor. 
         /// </summary>
         /// <param name="companyFuelerId"></param>
@@ -55,6 +61,12 @@ namespace IO.Swagger.Api
         /// <returns>CompanyFuelerNotesResponse</returns>
         CompanyFuelerNotesResponse GetCompanyFuelerNotes (int? companyFuelerId);
         /// <summary>
+        /// Get all price adjustments for a company fueler. 
+        /// </summary>
+        /// <param name="companyFuelerId"></param>
+        /// <returns>CompanyFuelerPriceAdjustmentListResponse</returns>
+        CompanyFuelerPriceAdjustmentListResponse GetCompanyFuelerPriceAdjustmentList (int? companyFuelerId);
+        /// <summary>
         /// Fetch the company-specific settings for the specified {companyFuelerId} record. 
         /// </summary>
         /// <param name="companyFuelerId"></param>
@@ -72,6 +84,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostCompanyFuelerNotesResponse</returns>
         PostCompanyFuelerNotesResponse PostCompanyFuelerNotes (PostCompanyFuelerNotesRequest body);
+        /// <summary>
+        /// Add a new price adjustment for a company fueler.  This price adjustment will be applied to the user&#39;s own adjusted price section when reviewing prices. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostCompanyFuelerPriceAdjustmentResponse</returns>
+        PostCompanyFuelerPriceAdjustmentResponse PostCompanyFuelerPriceAdjustment (PostCompanyFuelerPriceAdjustmentRequest body);
         /// <summary>
         /// Add a company-specific settings record for a fuel vendor. 
         /// </summary>
@@ -228,6 +246,43 @@ path = path.Replace("{" + "noteId" + "}", ApiClient.ParameterToString(noteId));
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyFuelerNotes: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteCompanyFuelerNotesResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCompanyFuelerNotesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Delete a price adjustment for a company fueler. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteCompanyFuelerPriceAdjustmentResponse</returns>            
+        public DeleteCompanyFuelerPriceAdjustmentResponse DeleteCompanyFuelerPriceAdjustment (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteCompanyFuelerPriceAdjustment");
+            
+    
+            var path = "/api/FuelVendor/company-specific/price-adjustment/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyFuelerPriceAdjustment: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyFuelerPriceAdjustment: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteCompanyFuelerPriceAdjustmentResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCompanyFuelerPriceAdjustmentResponse), response.Headers);
         }
     
         /// <summary>
@@ -416,6 +471,43 @@ path = path.Replace("{" + "settingsId" + "}", ApiClient.ParameterToString(settin
         }
     
         /// <summary>
+        /// Get all price adjustments for a company fueler. 
+        /// </summary>
+        /// <param name="companyFuelerId"></param> 
+        /// <returns>CompanyFuelerPriceAdjustmentListResponse</returns>            
+        public CompanyFuelerPriceAdjustmentListResponse GetCompanyFuelerPriceAdjustmentList (int? companyFuelerId)
+        {
+            
+            // verify the required parameter 'companyFuelerId' is set
+            if (companyFuelerId == null) throw new ApiException(400, "Missing required parameter 'companyFuelerId' when calling GetCompanyFuelerPriceAdjustmentList");
+            
+    
+            var path = "/api/FuelVendor/company-specific/{companyFuelerId}/price-adjustment/list";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "companyFuelerId" + "}", ApiClient.ParameterToString(companyFuelerId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyFuelerPriceAdjustmentList: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyFuelerPriceAdjustmentList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CompanyFuelerPriceAdjustmentListResponse) ApiClient.Deserialize(response.Content, typeof(CompanyFuelerPriceAdjustmentListResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Fetch the company-specific settings for the specified {companyFuelerId} record. 
         /// </summary>
         /// <param name="companyFuelerId"></param> 
@@ -518,6 +610,40 @@ path = path.Replace("{" + "settingsId" + "}", ApiClient.ParameterToString(settin
                 throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyFuelerNotes: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostCompanyFuelerNotesResponse) ApiClient.Deserialize(response.Content, typeof(PostCompanyFuelerNotesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Add a new price adjustment for a company fueler.  This price adjustment will be applied to the user&#39;s own adjusted price section when reviewing prices. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostCompanyFuelerPriceAdjustmentResponse</returns>            
+        public PostCompanyFuelerPriceAdjustmentResponse PostCompanyFuelerPriceAdjustment (PostCompanyFuelerPriceAdjustmentRequest body)
+        {
+            
+    
+            var path = "/api/FuelVendor/company-specific/price-adjustment";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyFuelerPriceAdjustment: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyFuelerPriceAdjustment: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostCompanyFuelerPriceAdjustmentResponse) ApiClient.Deserialize(response.Content, typeof(PostCompanyFuelerPriceAdjustmentResponse), response.Headers);
         }
     
         /// <summary>

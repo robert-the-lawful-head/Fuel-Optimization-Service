@@ -197,14 +197,17 @@ Class | Method | HTTP request | Description
 *FuelPricingApi* | [**PostFuelOrder**](docs/FuelPricingApi.md#postfuelorder) | **POST** /api/FuelPricing/fuel-order | Internal use only - Please use the \"dispatching\" API to dispatch a full fuel order.  This API method is strictly for notifying the fuel vendor.
 *FuelVendorApi* | [**DeleteCompanyFueler**](docs/FuelVendorApi.md#deletecompanyfueler) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId} | Delete the company-specific details of a fuel vendor based on the provided {companyFuelerId}.
 *FuelVendorApi* | [**DeleteCompanyFuelerNotes**](docs/FuelVendorApi.md#deletecompanyfuelernotes) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId}/notes/{noteId} | Delete a company-specific note for the provided {companyFuelerId} record.
+*FuelVendorApi* | [**DeleteCompanyFuelerPriceAdjustment**](docs/FuelVendorApi.md#deletecompanyfuelerpriceadjustment) | **DELETE** /api/FuelVendor/company-specific/price-adjustment/{id} | Delete a price adjustment for a company fueler.
 *FuelVendorApi* | [**DeleteCompanyFuelerSettings**](docs/FuelVendorApi.md#deletecompanyfuelersettings) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId}/settings/{settingsId} | Delete a company-specific settings record for a fuel vendor.
 *FuelVendorApi* | [**GetCompanyFuelerByFuelerId**](docs/FuelVendorApi.md#getcompanyfuelerbyfuelerid) | **GET** /api/FuelVendor/company-specific/by-fueler/{fuelVendorId} | Fetch a company-specific record tied to the fuel vendor for the provided {fuelVendorId}.
 *FuelVendorApi* | [**GetCompanyFuelerById**](docs/FuelVendorApi.md#getcompanyfuelerbyid) | **GET** /api/FuelVendor/company-specific/{companyFuelerId} | Fetch a company-specific fuel vendor record for the provided {companyFuelerId}.
 *FuelVendorApi* | [**GetCompanyFuelerList**](docs/FuelVendorApi.md#getcompanyfuelerlist) | **GET** /api/FuelVendor/company-specific/list | Fetch all company-specific records for the authenticated company.
 *FuelVendorApi* | [**GetCompanyFuelerNotes**](docs/FuelVendorApi.md#getcompanyfuelernotes) | **GET** /api/FuelVendor/company-specific/{companyFuelerId}/notes | Fetch the company-specific notes for a particular fuel vendor based on the provided {companyFuelerId}.
+*FuelVendorApi* | [**GetCompanyFuelerPriceAdjustmentList**](docs/FuelVendorApi.md#getcompanyfuelerpriceadjustmentlist) | **GET** /api/FuelVendor/company-specific/{companyFuelerId}/price-adjustment/list | Get all price adjustments for a company fueler.
 *FuelVendorApi* | [**GetCompanyFuelerSettings**](docs/FuelVendorApi.md#getcompanyfuelersettings) | **GET** /api/FuelVendor/company-specific/{companyFuelerId}/settings | Fetch the company-specific settings for the specified {companyFuelerId} record.
 *FuelVendorApi* | [**PostCompanyFueler**](docs/FuelVendorApi.md#postcompanyfueler) | **POST** /api/FuelVendor/company-specific | Add a company-specific record for a fuel vendor.  These details are unique for each flight department.
 *FuelVendorApi* | [**PostCompanyFuelerNotes**](docs/FuelVendorApi.md#postcompanyfuelernotes) | **POST** /api/FuelVendor/company-specific/notes | Add a new company-specific note for a fuel vendor.
+*FuelVendorApi* | [**PostCompanyFuelerPriceAdjustment**](docs/FuelVendorApi.md#postcompanyfuelerpriceadjustment) | **POST** /api/FuelVendor/company-specific/price-adjustment | Add a new price adjustment for a company fueler.  This price adjustment will be applied to the user's own adjusted price section when reviewing prices.
 *FuelVendorApi* | [**PostCompanyFuelerSettings**](docs/FuelVendorApi.md#postcompanyfuelersettings) | **POST** /api/FuelVendor/company-specific/settings | Add a company-specific settings record for a fuel vendor.
 *FuelVendorApi* | [**UpdateCompanyFueler**](docs/FuelVendorApi.md#updatecompanyfueler) | **PUT** /api/FuelVendor/company-specific | Update the company-specific details of a fuel vendor.  These details are unique for each flight department.
 *FuelVendorApi* | [**UpdateCompanyFuelerNotes**](docs/FuelVendorApi.md#updatecompanyfuelernotes) | **PUT** /api/FuelVendor/company-specific/notes | Update an existing company-specific note for a fuel vendor.
@@ -350,6 +353,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CompanyFuelerListResponse](docs/CompanyFuelerListResponse.md)
  - [IO.Swagger.Model.CompanyFuelerNotesDTO](docs/CompanyFuelerNotesDTO.md)
  - [IO.Swagger.Model.CompanyFuelerNotesResponse](docs/CompanyFuelerNotesResponse.md)
+ - [IO.Swagger.Model.CompanyFuelerPriceAdjustmentDTO](docs/CompanyFuelerPriceAdjustmentDTO.md)
+ - [IO.Swagger.Model.CompanyFuelerPriceAdjustmentListResponse](docs/CompanyFuelerPriceAdjustmentListResponse.md)
  - [IO.Swagger.Model.CompanyFuelerResponse](docs/CompanyFuelerResponse.md)
  - [IO.Swagger.Model.CompanyFuelerSettingsDTO](docs/CompanyFuelerSettingsDTO.md)
  - [IO.Swagger.Model.CompanyFuelerSettingsResponse](docs/CompanyFuelerSettingsResponse.md)
@@ -370,6 +375,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteAutoReconProcessResponse](docs/DeleteAutoReconProcessResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconciledFileResponse](docs/DeleteAutoReconciledFileResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerNotesResponse](docs/DeleteCompanyFuelerNotesResponse.md)
+ - [IO.Swagger.Model.DeleteCompanyFuelerPriceAdjustmentResponse](docs/DeleteCompanyFuelerPriceAdjustmentResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerResponse](docs/DeleteCompanyFuelerResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerSettingsResponse](docs/DeleteCompanyFuelerSettingsResponse.md)
  - [IO.Swagger.Model.DeleteCompanyResponse](docs/DeleteCompanyResponse.md)
@@ -502,6 +508,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostAutoReconciledFileResponse](docs/PostAutoReconciledFileResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerNotesRequest](docs/PostCompanyFuelerNotesRequest.md)
  - [IO.Swagger.Model.PostCompanyFuelerNotesResponse](docs/PostCompanyFuelerNotesResponse.md)
+ - [IO.Swagger.Model.PostCompanyFuelerPriceAdjustmentRequest](docs/PostCompanyFuelerPriceAdjustmentRequest.md)
+ - [IO.Swagger.Model.PostCompanyFuelerPriceAdjustmentResponse](docs/PostCompanyFuelerPriceAdjustmentResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerRequest](docs/PostCompanyFuelerRequest.md)
  - [IO.Swagger.Model.PostCompanyFuelerResponse](docs/PostCompanyFuelerResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerSettingsRequest](docs/PostCompanyFuelerSettingsRequest.md)

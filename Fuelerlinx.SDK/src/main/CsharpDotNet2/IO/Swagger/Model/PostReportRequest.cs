@@ -34,11 +34,11 @@ namespace IO.Swagger.Model {
     public bool? IsFavorite { get; set; }
 
     /// <summary>
-    /// Gets or Sets ChartSettings
+    /// Gets or Sets ChartOptions
     /// </summary>
-    [DataMember(Name="chartSettings", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "chartSettings")]
-    public ChartSettings ChartSettings { get; set; }
+    [DataMember(Name="chartOptions", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "chartOptions")]
+    public ChartSettings ChartOptions { get; set; }
 
     /// <summary>
     /// Gets or Sets DataOptions
@@ -58,7 +58,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Name: ").Append(Name).Append("\n");
       sb.Append("  Description: ").Append(Description).Append("\n");
       sb.Append("  IsFavorite: ").Append(IsFavorite).Append("\n");
-      sb.Append("  ChartSettings: ").Append(ChartSettings).Append("\n");
+      sb.Append("  ChartOptions: ").Append(ChartOptions).Append("\n");
       sb.Append("  DataOptions: ").Append(DataOptions).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
