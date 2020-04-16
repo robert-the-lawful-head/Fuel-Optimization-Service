@@ -87,22 +87,27 @@ export class DefaultLayoutComponent implements OnInit {
         ) {
             return;
         }
-        this.fboPricesService
-            .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
-            .subscribe((data: any) => {
-                if (data) {
-                    if (data.price > 0) {
-                        return;
-                    }
-                }
 
-                const dialogRef = this.expiredPricingDialog.open(
-                    PricingExpiredNotificationComponent,
-                    {
-                        data: {},
+        if (this.sharedService.currentUser.role == 2 || this.sharedService.currentUser.role == 4) {
+            this.fboPricesService
+                .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
+                .subscribe((data: any) => {
+                    if (data) {
+                        if (data.price > 0) {
+                            return;
+                        }
                     }
-                );
-                dialogRef.afterClosed().subscribe((result) => {});
-            });
+
+                    const dialogRef = this.expiredPricingDialog.open(
+                        PricingExpiredNotificationComponent,
+                        {
+                            data: {},
+                        }
+                    );
+                    dialogRef.afterClosed().subscribe((result) => { });
+                });
+        }
+
+        
     }
 }
