@@ -43,17 +43,8 @@
     class="mb-0"
     *ngIf="customerInfoByGroup"
 >
-    <!--<ni-card class="mb-0" *ngIf="customerInfoByGroup">
-    <mat-card-header class="card-container sticky-top stickyStyle mb-0">
-        <mat-card-title class="card-container-left" style="font-size:1.3571429rem; line-height:1.21; font-weight:bolder;">{{customerInfoByGroup.company}}</mat-card-title>
-        <mat-card-title class="card-container-right">
-            <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveCustomerEdit()" class="mr-1">Save Changes</button>
-            <button mat-stroked-button style="background-color:white;" (click)="cancelCustomerEdit()">Cancel</button>
-        </mat-card-title>
-    </mat-card-header>-->
     <div>
         <mat-tab-group>
-            <!--FBO Info Tab-->
             <mat-tab label="Customer Details">
                 <div class="container-fluid" *ngIf="isLoading">
                     <mat-spinner></mat-spinner>
