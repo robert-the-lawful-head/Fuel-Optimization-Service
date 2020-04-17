@@ -60,45 +60,48 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
+            var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
+
+            var fboprices = await (
+                            from f in _context.Fboprices
+                            where Convert.ToDateTime(f.EffectiveFrom).Date <= DateTime.Now.Date && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                            && f.Fboid == fboId && f.Price != null && f.Expired != true
+                            select f).ToListAsync();
+            var addOnMargins = await (
+                            from s in _context.TempAddOnMargin
+                            where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
+                            select s).ToListAsync();
 
             var result = (from p in products
-                          join f in (from f in _context.Fboprices
-                                     where Convert.ToDateTime(f.EffectiveFrom).Date <= DateTime.Now.Date && f.EffectiveTo > DateTime.Now.AddDays(-1)
-                                     && f.Fboid == fboId && f.Price != null
-                                     select f) on new { Product = p.Description, FboId = fboId } equals new
-                                     {
-                                         f.Product,
-                                         FboId = f.Fboid.GetValueOrDefault()
-                                     }
-                              into leftJoinFBOPrices
+                          join f in fboprices on
+                                new { Product = p.Description, FboId = fboId }
+                                equals
+                                new { f.Product, FboId = f.Fboid.GetValueOrDefault() }
+                          into leftJoinFBOPrices
                           from f in leftJoinFBOPrices.DefaultIfEmpty()
-                          join s in (from s in _context.TempAddOnMargin
-                                     where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
-                                     select s) on new { FboId = fboId } equals new
-                                     {
-                                         FboId = s.FboId
-                                     }
-                              into tmpJoin
-                          from s in tmpJoin.DefaultIfEmpty()    
+                          join s in addOnMargins on new { FboId = fboId } equals new { s.FboId }
+                          into tmpJoin
+                          from s in tmpJoin.DefaultIfEmpty()
                           select new
                           {
                               Oid = f?.Oid ?? 0,
                               Fboid = fboId,
                               Product = p.Description,
-                              Price = f?.Price,
+                              f?.Price,
                               EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
                               EffectiveTo = f?.EffectiveTo ?? null,
                               TimeStamp = f?.Timestamp,
-                              SalesTax = f?.SalesTax,
-                              Currency = f?.Currency,
+                              f?.SalesTax,
+                              f?.Currency,
                               tempJet = s?.MarginJet,
                               tempAvg = s?.MarginAvgas,
                               tempId = s?.Id,
                               tempDateFrom = s?.EffectiveFrom,
                               tempDateTo = s?.EffectiveTo
-                          });
-
+                          })
+                          .GroupBy(p => p.Product)
+                          .Select(p => p.OrderByDescending(q => q.Oid).FirstOrDefault())
+                          .ToList();
             return Ok(result);
         }
 
@@ -114,82 +117,9 @@ namespace FBOLinx.Web.Controllers
             var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
 
 
-            var activePricing = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && (s.Product == "JetA Cost" || s.Product == "JetA Retail") && s.Fboid == fboId);
-
-            //var result = (from p in products
-            //              join f in (from f in _context.Fboprices
-            //                             //where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
-            //                         where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Product == "JetA Cost"
-            //                         && f.Fboid == fboId
-            //                         select f) on new { Product = p.Description, FboId = fboId } equals new
-            //                         {
-            //                             f.Product,
-            //                             FboId = f.Fboid.GetValueOrDefault()
-            //                         }
-            //                  into leftJoinFBOPrices
-            //              from f in leftJoinFBOPrices.DefaultIfEmpty()
-            //              join s in (from s in _context.TempAddOnMargin
-            //                         where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
-            //                         select s) on new { FboId = fboId } equals new
-            //                         {
-            //                             FboId = s.FboId
-            //                         }
-            //                  into tmpJoin
-            //              from s in tmpJoin.DefaultIfEmpty()
-            //              select new
-            //              {
-            //                  Oid = f?.Oid ?? 0,
-            //                  Fboid = fboId,
-            //                  Product = p.Description,
-            //                  Price = f?.Price,
-            //                  EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
-            //                  EffectiveTo = f?.EffectiveTo,
-            //                  TimeStamp = f?.Timestamp,
-            //                  SalesTax = f?.SalesTax,
-            //                  Currency = f?.Currency,
-            //                  tempJet = s?.MarginJet,
-            //                  tempAvg = s?.MarginAvgas,
-            //                  tempId = s?.Id,
-            //                  tempDateFrom = s?.EffectiveFrom,
-            //                  tempDateTo = s?.EffectiveTo
-            //              });
+            var activePricing = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId);
 
             return Ok(activePricing);
-        }
-
-
-        // GET: api/Fboprices/fbo/current/5
-        [HttpGet("group/{groupid}/ispricingexpiredgroupadmin")]
-        public async Task<IActionResult> CheckPricingIsExpiredGroupAdmin([FromRoute] int groupId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
-
-            var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId).Select(s => s.Oid).ToList();
-
-            var activePricing = _context.Fboprices.Where(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && (s.Product == "JetA Cost" || s.Product == "JetA Retail") && groupFbos.Contains(Convert.ToInt32(s.Fboid)));
-
-            if(activePricing.ToList().Count.Equals(0))
-            {
-                List<FBOGroupPriceUpdateVM> groupPriceUpdate = new List<FBOGroupPriceUpdateVM>();
-
-                foreach(var groupFbo in groupFbos)
-                {
-                    FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM();
-                    gPU.FboId = groupFbo;
-                    gPU.FboName = _context.Fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo;
-                    groupPriceUpdate.Add(gPU);
-                }
-
-                return Ok(groupPriceUpdate);
-            }
-
-
-            return Ok(null);
         }
 
         [HttpPost("fbo/{fboId}/suspendpricing/jet")]
@@ -413,11 +343,11 @@ namespace FBOLinx.Web.Controllers
                         return Ok(vfboprices);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     var exxx = ex.Message;
                 }
-                
+
             }
 
             return Ok(null);
@@ -489,6 +419,7 @@ namespace FBOLinx.Web.Controllers
                     newFboPrice.Product = fboprices.Product;
                     newFboPrice.SalesTax = fboprices.SalesTax;
                     newFboPrice.Timestamp = DateTime.Now;
+                    newFboPrice.Timestamp = DateTime.Now;
                     _context.Fboprices.Add(newFboPrice);
                     await _context.SaveChangesAsync();
                 }
@@ -535,6 +466,40 @@ namespace FBOLinx.Web.Controllers
 
             return CreatedAtAction("GetFboprices", new { id = fboprices.Oid }, fboprices);
 
+        }
+
+        // GET: api/Fboprices/fbo/current/5
+        [HttpGet("group/{groupid}/ispricingexpiredgroupadmin")]
+        public async Task<IActionResult> CheckPricingIsExpiredGroupAdmin([FromRoute] int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
+
+            var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId).Select(s => s.Oid).ToList();
+
+            var activePricing = _context.Fboprices.Where(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && (s.Product == "JetA Cost" || s.Product == "JetA Retail") && groupFbos.Contains(Convert.ToInt32(s.Fboid)));
+
+            if (activePricing.ToList().Count.Equals(0))
+            {
+                List<FBOGroupPriceUpdateVM> groupPriceUpdate = new List<FBOGroupPriceUpdateVM>();
+
+                foreach (var groupFbo in groupFbos)
+                {
+                    FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM();
+                    gPU.FboId = groupFbo;
+                    gPU.FboName = _context.Fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo;
+                    groupPriceUpdate.Add(gPU);
+                }
+
+                return Ok(groupPriceUpdate);
+            }
+
+
+            return Ok(null);
         }
 
         // DELETE: api/Fboprices/5
