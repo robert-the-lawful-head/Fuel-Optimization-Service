@@ -168,19 +168,32 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     }
 
     public updatePricing() {
+        const effectiveFrom = moment(this.currentPricingEffectiveFrom).format("MM/DD/YYYY");
+        const effectiveTo = moment(this.currentPricingEffectiveTo).format("MM/DD/YYYY");
+        const newPrices = [];
         for (const price of this.currentPrices) {
+            const priceFrom = moment(price.effectiveFrom).format("MM/DD/YYYY");
+            const priceTo = moment(price.effectiveTo).format("MM/DD/YYYY");
             if (price.product === "JetA Retail" && this.jtRetail > 0) {
                 price.price = this.jtRetail;
-                price.effectiveFrom = this.currentPricingEffectiveFrom;
-                price.effectiveTo = this.currentPricingEffectiveTo;
+                if (priceFrom !== effectiveFrom || priceTo !== effectiveTo) {
+                    price.oid = 0;
+                    price.effectiveFrom = effectiveFrom;
+                    price.effectiveTo = effectiveTo;
+                }
+                newPrices.push(price);
             }
             if (price.product === "JetA Cost" && this.jtCost > 0) {
                 price.price = this.jtCost;
-                price.effectiveFrom = this.currentPricingEffectiveFrom;
-                price.effectiveTo = this.currentPricingEffectiveTo;
+                if (priceFrom !== effectiveFrom || priceTo !== effectiveTo) {
+                    price.oid = 0;
+                    price.effectiveFrom = effectiveFrom;
+                    price.effectiveTo = effectiveTo;
+                }
+                newPrices.push(price);
             }
         }
-        this.savePriceChangesAll(this.currentPrices);
+        this.savePriceChangesAll(newPrices);
 
         this.jtRetail = "";
         this.jtCost = "";
@@ -257,22 +270,28 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
                     if (this.currentFboPriceJetARetail.effectiveTo) {
                         this.currentFboPriceJetARetail.effectiveTo = 
-                            moment.utc(this.currentFboPriceJetARetail.effectiveTo).local().format("MM/DD/YYYY");
+                            moment(this.currentFboPriceJetARetail.effectiveTo).format("MM/DD/YYYY");
                     }
                     
                     if (this.currentFboPriceJetACost.effectiveTo) {
                         this.currentFboPriceJetACost.effectiveTo = 
-                            moment.utc(this.currentFboPriceJetACost.effectiveTo).local().format("MM/DD/YYYY");
+                            moment(this.currentFboPriceJetACost.effectiveTo).format("MM/DD/YYYY");
                     }
 
                     if(data.length > 0) {
                         this.TempValueJet = data[0].tempJet;
                         this.TempValueId = data[0].tempId;
-                        this.TempDateFrom = moment.utc(data[0].tempDateFrom).local().toDate();
-                        this.TempDateTo = moment.utc(data[0].tempDateTo).local().toDate();
+                        this.TempDateFrom = moment(data[0].tempDateFrom).toDate();
+                        this.TempDateTo = moment(data[0].tempDateTo).toDate();
                     }
 
-                    this.sharedService.loadedChange("fbo-prices-loaded");
+                    this.sharedService.emitChange("fbo-prices-loaded");
+                    this.sharedService.valueChange({
+                        message: SharedEvents.fboPricesUpdatedEvent,
+                        JetACost: this.currentFboPriceJetACost.price,
+                        JetARetail: this.currentFboPriceJetARetail.price,
+                    });
+
                     observer.next();
                 }, (error: any) => {
                     observer.error(error);
@@ -289,7 +308,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 this.loadFboPrices().subscribe(() => {
                     this.NgxUiLoader.stopLoader(this.pricingLoader);
                 });
-                this.sharedService.emitChange(SharedEvents.fboPricesUpdatedEvent);
             });
     }
 
