@@ -251,33 +251,7 @@
 
             <div class="row mt-2">
                 <div class="sub-title">
-                    <h5 class="mb-0 mt-0">Subject</h5>
-                    <span class="flavor-label"
-                        >Subject for pricing emails to customers assigned to
-                        this template</span
-                    >
-                </div>
-            </div>
-            <div class="row">
-                <mat-form-field>
-                    <input
-                        matInput
-                        placeholder="Subject"
-                        [(ngModel)]="pricingTemplate.subject"
-                        aria-label="Subject"
-                    />
-                </mat-form-field>
-            </div>
-            <div class="row">
-                <br />
-            </div>
-            <div class="row mt-2">
-                <div class="sub-title">
-                    <h5 class="mb-0 mt-0">Notes</h5>
-                    <span class="flavor-label"
-                        >These notes are automatically sent to FuelerLinx
-                        customers</span
-                    >
+                    <h5 class="mb-0 mt-0">Notes for Fuelerlinx customers</h5>
                 </div>
             </div>
             <div class="row">
@@ -296,15 +270,23 @@
             <div class="row mt-2">
                 <div class="sub-title">
                     <h5 class="mb-0 mt-0">Distribution Emails</h5>
-                    <span class="flavor-label"
-                        >The message to accompany pricing emails you send to
-                        customers assigned to this template</span
-                    >
+                    <span class="flavor-label">Subject and body for your pricing emails</span>
                 </div>
+            </div>
+            <div class="row">
+                <mat-form-field style="max-width: 600px;">
+                    <input
+                        matInput
+                        placeholder="Subject"
+                        [(ngModel)]="pricingTemplate.subject"
+                        aria-label="Subject"
+                    />
+                </mat-form-field>
             </div>
             <div class="row">
                 <ejs-richtexteditor
                     #typeEmail
+                    placeholder="Enter email body here..."
                     id="rteEmail"
                     (focusout)="enableToolbarEmail()"
                     (focus)="disableToolbarEmail()"
