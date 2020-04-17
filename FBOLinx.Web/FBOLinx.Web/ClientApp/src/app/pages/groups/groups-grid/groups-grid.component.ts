@@ -90,24 +90,15 @@ export class GroupsGridComponent implements OnInit {
             const deleteIndex = this.groupsData.indexOf(record);
             this.groupsService.remove(record).subscribe(() => {
                 this.groupsData.splice(deleteIndex, 1);
+                this.groupsDataSource = new MatTableDataSource(this.groupsData);
+                this.groupsDataSource.sort = this.sort;
+                this.groupsDataSource.paginator = this.paginator;
             });
             this.recordDeleted.emit(record);
         });
     }
 
-    public editRecord(record, $event) {
-        if ($event.srcElement) {
-            if (
-                $event.srcElement.nodeName.toLowerCase() === "button" ||
-                $event.srcElement.nodeName.toLowerCase() === "select" ||
-                ($event.srcElement.nodeName.toLowerCase() === "input" &&
-                    $event.srcElement.getAttribute("type") === "checkbox")
-            ) {
-                // $event.preventDefault();
-                $event.stopPropagation();
-                return;
-            }
-        }
+    public editRecord(record) {
         const clonedRecord = Object.assign({}, record);
         this.editGroupClicked.emit(clonedRecord);
     }
@@ -122,10 +113,9 @@ export class GroupsGridComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            console.log("Dialog data: ", result);
             result.active = true;
             this.groupsService.add(result).subscribe((data: any) => {
-                this.editRecord(data, Event);
+                this.editRecord(data);
             });
         });
         this.newGroupClicked.emit();
