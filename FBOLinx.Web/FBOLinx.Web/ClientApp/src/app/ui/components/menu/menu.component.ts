@@ -37,7 +37,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.sharedService.changeEmitted$.subscribe((message) => {
+        this.sharedService.loadedEmitted$.subscribe((message) => {
             if (message === "fbo-prices-loaded") {
                 this.showTooltipsIfFirstLogin();
             }
@@ -132,6 +132,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
         } else {
             this.user.goOverTutorial = true;
             this.userService.update(this.user).subscribe(() => {});
+            this.sharedService.loadedChange("menu-tooltips-showed");
         }
     }
 }

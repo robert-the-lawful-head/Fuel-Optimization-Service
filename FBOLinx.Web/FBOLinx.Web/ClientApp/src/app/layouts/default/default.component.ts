@@ -88,7 +88,7 @@ export class DefaultLayoutComponent implements OnInit {
             return;
         }
 
-        if (this.sharedService.currentUser.role === 2 || this.sharedService.currentUser.role === 4) {
+        if (this.sharedService.currentUser.role === 1 || this.sharedService.currentUser.role === 2 || this.sharedService.currentUser.role === 4) {
             this.fboPricesService
                 .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
                 .subscribe((data: any) => {

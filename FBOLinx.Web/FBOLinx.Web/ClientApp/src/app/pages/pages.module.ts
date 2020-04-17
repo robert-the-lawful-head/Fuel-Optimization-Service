@@ -119,6 +119,7 @@ import { ForgotPasswordDialogComponent } from "../shared/components/forgot-passw
 import { ManageConfirmationComponent } from "../shared/components/manage-confirmation/manage-confirmation.component";
 import { NotificationComponent } from "../shared/components/notification/notification.component";
 import { PricingExpiredNotificationComponent } from "../shared/components/pricing-expired-notification/pricing-expired-notification.component";
+import { PricingExpiredNotificationGroupComponent } from "../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component";
 import { TemporaryAddOnMarginComponent } from "../shared/components/temporary-add-on-margin/temporary-add-on-margin.component";
 import { StatisticsOrdersByLocationComponent } from "../shared/components/statistics-orders-by-location/statistics-orders-by-location.component";
 import { StatisticsTotalAircraftComponent } from "../shared/components/statistics-total-aircraft/statistics-total-aircraft.component";
@@ -262,6 +263,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         ManageConfirmationComponent,
         NotificationComponent,
         PricingExpiredNotificationComponent,
+        PricingExpiredNotificationGroupComponent,
         TemporaryAddOnMarginComponent,
         StatisticsOrdersByLocationComponent,
         StatisticsTotalAircraftComponent,
@@ -295,6 +297,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         ManageConfirmationComponent,
         NotificationComponent,
         PricingExpiredNotificationComponent,
+        PricingExpiredNotificationGroupComponent,
         TemporaryAddOnMarginComponent,
         PricingTemplatesDialogNewTemplateComponent,
         PricingTemplatesDialogDeleteWarningComponent,

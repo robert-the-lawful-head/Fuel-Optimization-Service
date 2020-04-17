@@ -17,11 +17,14 @@ import { Router } from "@angular/router";
 import { FbosService } from "../../../services/fbos.service";
 import { FboairportsService } from "../../../services/fboairports.service";
 import { SharedService } from "../../../layouts/shared-service";
+import { FbopricesService } from '../../../services/fboprices.service';
 
 // Components
 import { FbosDialogNewFboComponent } from "../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component";
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { ManageConfirmationComponent } from "../../../shared/components/manage-confirmation/manage-confirmation.component";
+import { PricingExpiredNotificationGroupComponent } from '../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component';
+
 
 const BREADCRUMBS: any[] = [
     {
@@ -63,12 +66,14 @@ export class FbosGridComponent implements OnInit {
     constructor(
         private newFboDialog: MatDialog,
         private fboService: FbosService,
+        private fboPricesService: FbopricesService,
         private fboAirportsService: FboairportsService,
         private sharedService: SharedService,
         private deleteFboDialog: MatDialog,
         private manageFboDialog: MatDialog,
         private snackBar: MatSnackBar,
-        private router: Router
+        private router: Router,
+        private checkPricingDialog: MatDialog,
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.canManageFbo = this.sharedService.currentUser.role === 2;
@@ -92,6 +97,8 @@ export class FbosGridComponent implements OnInit {
         this.fbosDataSource.sort = this.sort;
         this.fbosDataSource.paginator = this.paginator;
         this.resultsLength = this.fbosData.length;
+
+        this.checkExistingPrices();
     }
 
     public deleteRecord(record) {
@@ -186,11 +193,43 @@ export class FbosGridComponent implements OnInit {
             if (!result) {
                 return;
             }
+
             this.sharedService.currentUser.impersonatedRole = 1;
             this.sharedService.currentUser.fboId = result.oid;
             sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
             this.sharedService.emitChange("fbo changed");
             this.router.navigate(["/default-layout/dashboard-fbo/"]);
         });
+    }
+
+    public checkExistingPrices() {
+        this.fboPricesService
+            .checkFboExpiredPricingGroup(this.sharedService.currentUser.groupId)
+            .subscribe((data: any) => {
+                var isGroupUpdate = false;
+                if (data) {
+                    if (data[0].fboId) {
+                        isGroupUpdate = true;
+                    }
+                }
+
+                if (isGroupUpdate) {
+                    const dialogRef = this.checkPricingDialog.open(
+                        PricingExpiredNotificationGroupComponent,
+                        {
+                            data: data,
+                        }
+                    );
+                    dialogRef.afterClosed().subscribe((result) => {
+                        if (result.fboId) {
+                            this.sharedService.currentUser.impersonatedRole = 1;
+                            this.sharedService.currentUser.fboId = result.fboId;
+                            sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
+                            this.sharedService.emitChange("fbo changed");
+                            this.router.navigate(["/default-layout/dashboard-fbo/"]);
+                        }
+                    });
+                }
+            });
     }
 }
