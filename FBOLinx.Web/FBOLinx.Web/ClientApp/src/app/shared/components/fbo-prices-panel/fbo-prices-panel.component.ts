@@ -26,7 +26,6 @@ export class FboPricesPanelComponent implements OnInit, AfterViewInit, OnDestroy
     ) {}
 
     ngOnInit() {
-        console.log(this.load);
         if (this.load === true) {
             this.loadFboPrices();
         } else {
