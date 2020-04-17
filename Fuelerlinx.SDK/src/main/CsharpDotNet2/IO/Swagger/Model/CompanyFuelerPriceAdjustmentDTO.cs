@@ -42,11 +42,11 @@ namespace IO.Swagger.Model {
     public double? PriceAdjustment { get; set; }
 
     /// <summary>
-    /// Gets or Sets Currency
+    /// Gets or Sets CurrencyConversionId
     /// </summary>
-    [DataMember(Name="currency", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "currency")]
-    public string Currency { get; set; }
+    [DataMember(Name="currencyConversionId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "currencyConversionId")]
+    public int? CurrencyConversionId { get; set; }
 
     /// <summary>
     /// Gets or Sets CreationDateUtc
@@ -62,6 +62,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "expirationDateUtc")]
     public DateTime? ExpirationDateUtc { get; set; }
 
+    /// <summary>
+    /// Gets or Sets PriceAdjustmentInUSD
+    /// </summary>
+    [DataMember(Name="priceAdjustmentInUSD", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "priceAdjustmentInUSD")]
+    public double? PriceAdjustmentInUSD { get; set; }
+
+    /// <summary>
+    /// Gets or Sets CurrencyConversion
+    /// </summary>
+    [DataMember(Name="currencyConversion", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "currencyConversion")]
+    public CurrencyConversionDTO CurrencyConversion { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -74,9 +88,11 @@ namespace IO.Swagger.Model {
       sb.Append("  CompanyFuelerId: ").Append(CompanyFuelerId).Append("\n");
       sb.Append("  FlightTypeClassification: ").Append(FlightTypeClassification).Append("\n");
       sb.Append("  PriceAdjustment: ").Append(PriceAdjustment).Append("\n");
-      sb.Append("  Currency: ").Append(Currency).Append("\n");
+      sb.Append("  CurrencyConversionId: ").Append(CurrencyConversionId).Append("\n");
       sb.Append("  CreationDateUtc: ").Append(CreationDateUtc).Append("\n");
       sb.Append("  ExpirationDateUtc: ").Append(ExpirationDateUtc).Append("\n");
+      sb.Append("  PriceAdjustmentInUSD: ").Append(PriceAdjustmentInUSD).Append("\n");
+      sb.Append("  CurrencyConversion: ").Append(CurrencyConversion).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
