@@ -9,6 +9,7 @@ import { PricingtemplatesService } from "../../services/pricingtemplates.service
 import { PricingExpiredNotificationComponent } from "../../shared/components/pricing-expired-notification/pricing-expired-notification.component";
 import * as moment from "moment";
 
+
 @Component({
     moduleId: module.id,
     selector: "default-layout",
@@ -88,7 +89,7 @@ export class DefaultLayoutComponent implements OnInit {
             return;
         }
 
-        if (this.sharedService.currentUser.role == 2 || this.sharedService.currentUser.role == 4) {
+        if (this.sharedService.currentUser.role == 1 || this.sharedService.currentUser.role == 2 || this.sharedService.currentUser.role == 4) {
             this.fboPricesService
                 .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
                 .subscribe((data: any) => {
@@ -107,7 +108,6 @@ export class DefaultLayoutComponent implements OnInit {
                     dialogRef.afterClosed().subscribe((result) => { });
                 });
         }
-
         
     }
 }

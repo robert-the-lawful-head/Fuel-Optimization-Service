@@ -37,6 +37,15 @@ export class FbopricesService {
         );
     }
 
+    public checkFboExpiredPricingGroup(groupid) {
+        return this.http.get(
+            this.accessPointUrl + "/group/" + groupid + "/ispricingexpiredgroupadmin",
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public getFbopricesByFboIdStaged(fboId) {
         return this.http.get(
             this.accessPointUrl + "/fbo/" + fboId + "/staged",
