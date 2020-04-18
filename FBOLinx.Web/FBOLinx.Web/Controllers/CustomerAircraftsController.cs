@@ -166,6 +166,51 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerAircraft);
         }
 
+        [HttpGet("group/{groupId}/fbo/{fboId}")]
+        public async Task<IActionResult> GetCustomerAircraftsByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId)
+        {
+            var pricingTemplates = await (
+                                   from ap in _context.AircraftPrices
+                                   join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
+                                   where pt.Fboid == fboId
+                                   select new
+                                   {
+                                       Oid = pt == null ? 0 : pt.Oid,
+                                       Name = pt == null ? "" : pt.Name,
+                                       ap.CustomerAircraftId
+                                   }).Distinct().ToListAsync();
+
+            List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
+               from ca in _context.CustomerAircrafts
+               join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+               join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
+               into leftJoinPt
+               from pt in leftJoinPt.DefaultIfEmpty()
+               where ca.GroupId == groupId
+               select new CustomerAircraftsGridViewModel
+               {
+                   Oid = ca.Oid,
+                   GroupId = ca.GroupId,
+                   CustomerId = ca.CustomerId,
+                   AircraftId = ca.AircraftId,
+                   TailNumber = ca.TailNumber,
+                   Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet
+                               ? ca.Size
+                                : ac.Size.GetValueOrDefault(),
+                   BasedPaglocation = ca.BasedPaglocation,
+                   NetworkCode = ca.NetworkCode,
+                   AddedFrom = ca.AddedFrom.GetValueOrDefault(),
+                   PricingTemplateId = pt == null ? 0 : pt.Oid,
+                   PricingTemplateName = pt == null ? "" : pt.Name,
+                   Make = ac.Make,
+                   Model = ac.Model
+               })
+               .OrderBy(x => x.TailNumber)
+               .ToListAsync();
+
+            return Ok(customerAircraftVM);
+        }
+
         [HttpGet("group/{groupId}/count")]
         public IActionResult GetCustomerAircraftsCountByGroupId([FromRoute] int groupId)
         {

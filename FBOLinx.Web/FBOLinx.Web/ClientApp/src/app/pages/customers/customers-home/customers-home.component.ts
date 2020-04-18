@@ -101,7 +101,7 @@ export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
     private loadCustomerAircrafts() {
         this.aircraftsData = null;
         this.customerAircraftsService
-            .getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId)
+            .getCustomerAircraftsByGroupAndFbo(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
                 this.aircraftsData = data;
             });
