@@ -35,11 +35,11 @@ namespace IO.Swagger.Model {
     public double? PriceAdjustment { get; set; }
 
     /// <summary>
-    /// Gets or Sets CurrencyConversionId
+    /// Gets or Sets Currency
     /// </summary>
-    [DataMember(Name="currencyConversionId", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "currencyConversionId")]
-    public int? CurrencyConversionId { get; set; }
+    [DataMember(Name="currency", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "currency")]
+    public string Currency { get; set; }
 
 
     /// <summary>
@@ -52,7 +52,7 @@ namespace IO.Swagger.Model {
       sb.Append("  CompanyFuelerId: ").Append(CompanyFuelerId).Append("\n");
       sb.Append("  FlightTypeClassification: ").Append(FlightTypeClassification).Append("\n");
       sb.Append("  PriceAdjustment: ").Append(PriceAdjustment).Append("\n");
-      sb.Append("  CurrencyConversionId: ").Append(CurrencyConversionId).Append("\n");
+      sb.Append("  Currency: ").Append(Currency).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
