@@ -217,13 +217,10 @@ export class CustomerAircraftsGridComponent implements OnInit {
                         });
                 }
 
-                let aircraftSizes = [];
                 this.aircraftsService
                     .getAircraftSizes()
                     .subscribe((data: any) => {
                         if (data) {
-                            aircraftSizes = data;
-
                             this.customerAircraftsService
                                 .getCustomerAircraftsByGroupAndCustomerId(
                                     this.sharedService.currentUser.groupId,
@@ -238,36 +235,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                     this.customerAircraftsDataSource.sort = this.sort;
                                     this.customerAircraftsDataSource.paginator = this.paginator;
                                 });
-
-                            // this.customerAircraftsService
-                            //    .get({ oid: result.oid })
-                            //    .subscribe((data: any) => {
-                            //        if (data) {
-                            //            const selectedAircraft = this.customerAircraftsData.find(
-                            //                (x) => x.oid === result.oid
-                            //            );
-
-                            //            if (selectedAircraft) {
-                            //                selectedAircraft.tailNumber = data.tailNumber;
-                            //                selectedAircraft.make = data.make;
-                            //                selectedAircraft.model = data.model;
-                            //                selectedAircraft.size = data.size;
-
-                            //                if (data.size) {
-                            //                    const sizeText = aircraftSizes.find(
-                            //                        (x) => x.value === data.size
-                            //                    );
-
-                            //                    if (sizeText) {
-                            //                        selectedAircraft.aircraftSizeDescription =
-                            //                            sizeText.description;
-                            //                    }
-                            //                }
-
-                            //                this.editCustomerAircraftClicked.emit(result);
-                            //            }
-                            //        }
-                            //    });
                         }
                     });
             });
