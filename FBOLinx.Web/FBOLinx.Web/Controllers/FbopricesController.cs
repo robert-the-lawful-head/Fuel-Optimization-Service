@@ -481,23 +481,25 @@ namespace FBOLinx.Web.Controllers
 
             var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId).Select(s => s.Oid).ToList();
 
-            var activePricing = _context.Fboprices.Where(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && (s.Product == "JetA Cost" || s.Product == "JetA Retail") && groupFbos.Contains(Convert.ToInt32(s.Fboid)));
-
-            if (activePricing.ToList().Count.Equals(0))
+            var activePricing = _context.Fboprices.Where(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && (s.Product == "JetA Cost" || s.Product == "JetA Retail") && groupFbos.Contains(Convert.ToInt32(s.Fboid))).ToList();
+            List<FBOGroupPriceUpdateVM> groupPriceUpdate = new List<FBOGroupPriceUpdateVM>();
+            foreach (var groupFbo in groupFbos)
             {
-                List<FBOGroupPriceUpdateVM> groupPriceUpdate = new List<FBOGroupPriceUpdateVM>();
-
-                foreach (var groupFbo in groupFbos)
+                var isFboActivePricing = activePricing.FirstOrDefault(s => s.Fboid == groupFbo);
+                
+                if (isFboActivePricing == null)
                 {
                     FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM();
                     gPU.FboId = groupFbo;
                     gPU.FboName = _context.Fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo;
                     groupPriceUpdate.Add(gPU);
                 }
-
-                return Ok(groupPriceUpdate);
             }
 
+            if(groupPriceUpdate.Count > 0)
+            {
+                return Ok(groupPriceUpdate);
+            }
 
             return Ok(null);
         }
