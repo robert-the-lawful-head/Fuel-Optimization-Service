@@ -3,8 +3,8 @@
     <div class="text-center">
         Pricing for some of your FBOs has expired. Please click below to navigate to their FBO page and update the pricing.
     </div>
-    <div class="text-center" style="margin-top:20px;">
-        <div *ngFor="let fbo of data">
+    <div class="text-center marginTop20">
+        <div *ngFor="let fbo of data" class="marginTop20">
             <button ni-button [view]="'accent'" (click)="onManageClick(fbo)"> Manage {{fbo.fboName}} </button>
         </div>
     </div>
