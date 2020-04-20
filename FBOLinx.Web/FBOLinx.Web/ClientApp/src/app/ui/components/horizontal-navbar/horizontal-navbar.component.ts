@@ -24,6 +24,7 @@ import * as SharedEvents from "../../../models/sharedEvents";
 
 // Components
 import { AccountProfileComponent } from "../../../shared/components/account-profile/account-profile.component";
+import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 
 @Component({
     moduleId: module.id,
@@ -34,6 +35,7 @@ import { AccountProfileComponent } from "../../../shared/components/account-prof
         "[class.app-navbar]": "true",
         "[class.show-overlay]": "showOverlay",
     },
+    providers: [WindowRef]
 })
 export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     @Input()
@@ -45,6 +47,9 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     showOverlay: boolean;
     isOpened: boolean;
     isLocationsLoaded: boolean;
+
+    window: any;
+
     public userFullName: string;
     public accountProfileMenu: any = { isOpened: false };
     public needsAttentionMenu: any = { isOpened: false };
@@ -68,12 +73,18 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
         private userService: UserService,
         private fboPricesService: FbopricesService,
         private fboAirportsService: FboairportsService,
-        private fbosService: FbosService
+        private fbosService: FbosService,
+        private winRef: WindowRef
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
         this.isOpened = false;
         this.currentUser = this.sharedService.currentUser;
+
+        // getting the native window obj
+        console.log('Native window obj', winRef.nativeWindow);
+        this.window = winRef.nativeWindow;
+
         if (!this.currentUser) {
             return;
         }
@@ -296,5 +307,13 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
             .subscribe((data: any) => {
                 this.needsAttentionCustomersData = data;
             });
+    }
+
+    showWidget() {
+        this.window && this.window.$zoho.salesiq.floatwindow.visible('show');
+    }
+
+    hideWidget() {
+        this.window && this.window.$zoho.salesiq.floatwindow.visible('hide');
     }
 }

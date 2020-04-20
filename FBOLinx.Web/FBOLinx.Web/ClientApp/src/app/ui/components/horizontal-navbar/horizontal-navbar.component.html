@@ -1,9 +1,7 @@
 <div class="navbar-wrap">
-    <div
-        class="navbar-button"
-        [ngClass]="{ open: openedSidebar }"
-        (click)="openSidebar()"
-    >
+    <div class="navbar-button"
+         [ngClass]="{ open: openedSidebar }"
+         (click)="openSidebar()">
         <span></span>
         <span></span>
         <span></span>
@@ -13,40 +11,25 @@
     </div>
 
     <h1 class="page-title">{{ title }}</h1>
-    <h2
-        *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao"
-        class="page-info"
-    >
-        {{ fbo.fbo }} / {{ fboAirport.icao }}
-    </h2>
+    <button mat-stroked-button style="margin-right:10px; width: 10%;" (click)="showWidget()">Live Chat</button>
+    <h2 *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao" class="page-info">{{ fbo.fbo }} / {{ fboAirport.icao }}</h2>
     <div class="nav-items">
-        <div
-            class="nav-item"
-            [ngClass]="{ opened: needsAttentionMenu.isOpened }"
-        >
+        <div class="nav-item" [ngClass]="{ opened: needsAttentionMenu.isOpened }">
             <a (click)="openUpdate()" class="nav-link">
                 <span class="icon sli-bell"></span>
-                <span
-                    [ngClass]="{
-                        marker:
-                            (needsAttentionCustomersData &&
-                            needsAttentionCustomersData.length > 0) ||
-                            (hasLoadedJetACost && !currrentJetACostPricing) ||
-                            (hasLoadedJetARetail && !currrentJetARetailPricing)
-                    }"
-                ></span>
+                <span [ngClass]="{marker:(needsAttentionCustomersData && needsAttentionCustomersData.length > 0) || (hasLoadedJetACost && !currrentJetACostPricing) || (hasLoadedJetARetail && !currrentJetARetailPricing)}"></span>
             </a>
 
             <div class="dropdown-menu">
-                <h4
-                    class="menu-title"
+                <h4 class="menu-title"
                     *ngIf="
-                        (hasLoadedJetACost && !currrentJetACostPricing) ||
-                        (hasLoadedJetARetail && !currrentJetARetailPricing) ||
-                        (needsAttentionCustomersData &&
-                            needsAttentionCustomersData.length > 0)
+                    (hasLoadedJetACost && !currrentJetACostPricing) ||
+                    (hasLoadedJetARetail && !currrentJetARetailPricing) ||
+                    (needsAttentionCustomersData &&
+                    needsAttentionCustomersData.length>
+                    0)
                     "
-                >
+                    >
                     Notifications
                 </h4>
 
@@ -56,18 +39,14 @@
                         <a>
                             <span class="icon sli-feed"></span>
                             <div class="content">
-                                <span class="desc"
-                                    >Your cost pricing has expired!</span
-                                >
+                                <span class="desc">Your cost pricing has expired!</span>
                                 <span class="date"></span>
                                 <div class="text-right">
-                                    <button
-                                        ni-button
-                                        [view]="'accent'"
-                                        size="small"
-                                        (click)="updatePricingClicked($event)"
-                                        class="mr-1"
-                                    >
+                                    <button ni-button
+                                            [view]="'accent'"
+                                            size="small"
+                                            (click)="updatePricingClicked($event)"
+                                            class="mr-1">
                                         Update Pricing
                                     </button>
                                 </div>
@@ -76,26 +55,20 @@
                     </li>
 
                     <!--JetA Retail Notification-->
-                    <li
-                        *ngIf="
+                    <li *ngIf="
                             hasLoadedJetARetail && !currrentJetARetailPricing
-                        "
-                    >
+                        ">
                         <a>
                             <span class="icon sli-feed"></span>
                             <div class="content">
-                                <span class="desc"
-                                    >Your retail pricing has expired!</span
-                                >
+                                <span class="desc">Your retail pricing has expired!</span>
                                 <span class="date"></span>
                                 <div class="text-right">
-                                    <button
-                                        ni-button
-                                        [view]="'accent'"
-                                        size="small"
-                                        (click)="updatePricingClicked($event)"
-                                        class="mr-1"
-                                    >
+                                    <button ni-button
+                                            [view]="'accent'"
+                                            size="small"
+                                            (click)="updatePricingClicked($event)"
+                                            class="mr-1">
                                         Update Pricing
                                     </button>
                                 </div>
@@ -114,13 +87,11 @@
                                 </span>
                                 <span class="date"></span>
                                 <div class="text-right">
-                                    <button
-                                        ni-button
-                                        [view]="'success'"
-                                        size="small"
-                                        (click)="gotoCustomer(customer, $event)"
-                                        class="mr-1"
-                                    >
+                                    <button ni-button
+                                            [view]="'success'"
+                                            size="small"
+                                            (click)="gotoCustomer(customer, $event)"
+                                            class="mr-1">
                                         See customer
                                     </button>
                                 </div>
@@ -130,18 +101,14 @@
                 </ul>
 
                 <div class="menu-footer">
-                    <a (click)="viewAllNotificationsClicked($event)"
-                        >View all notifications</a
-                    >
+                    <a (click)="viewAllNotificationsClicked($event)">View all notifications</a>
                 </div>
             </div>
         </div>
 
-        <div
-            class="nav-item"
-            [ngClass]="{ opened: false }"
-            style="display: none;"
-        >
+        <div class="nav-item"
+             [ngClass]="{ opened: false }"
+             style="display: none;">
             <a (click)="toggle($event)" class="nav-link">
                 <span class="icon sli-event"></span>
             </a>
@@ -154,10 +121,10 @@
                         <a href="#">
                             <span class="icon sli-emotsmile"></span>
                             <div class="content">
-                                <span class="desc"
-                                    >This is a new message for my dear friend
-                                    <strong>Rob</strong>.</span
-                                >
+                                <span class="desc">
+                                    This is a new message for my dear friend
+                                    <strong>Rob</strong>.
+                                </span>
                                 <span class="date">2 minutes ago</span>
                             </div>
                         </a>
@@ -166,10 +133,10 @@
                         <a href="#">
                             <span class="icon sli-layers"></span>
                             <div class="content">
-                                <span class="desc"
-                                    >This is a new message for my dear friend
-                                    <strong>Rob</strong>.</span
-                                >
+                                <span class="desc">
+                                    This is a new message for my dear friend
+                                    <strong>Rob</strong>.
+                                </span>
                                 <span class="date">14 minutes ago</span>
                             </div>
                         </a>
@@ -178,10 +145,10 @@
                         <a href="#">
                             <span class="icon sli-graduation"></span>
                             <div class="content">
-                                <span class="desc"
-                                    >This is a new message for my dear friend
-                                    <strong>Rob</strong>.</span
-                                >
+                                <span class="desc">
+                                    This is a new message for my dear friend
+                                    <strong>Rob</strong>.
+                                </span>
                                 <span class="date">15 minutes ago</span>
                             </div>
                         </a>
@@ -194,11 +161,9 @@
             </div>
         </div>
 
-        <div
-            class="nav-item"
-            [ngClass]="{ opened: false }"
-            style="display: none;"
-        >
+        <div class="nav-item"
+             [ngClass]="{ opened: false }"
+             style="display: none;">
             <a (click)="toggle($event)" class="nav-link">
                 <span class="icon sli-bubbles"></span>
             </a>
@@ -209,65 +174,59 @@
                 <ul>
                     <li>
                         <a href="#">
-                            <img
-                                class="avatar"
-                                src="assets/content/avatar-1.jpg"
-                                width="42"
-                                height="42"
-                                alt=""
-                            />
+                            <img class="avatar"
+                                 src="assets/content/avatar-1.jpg"
+                                 width="42"
+                                 height="42"
+                                 alt="" />
 
                             <div class="content">
                                 <span class="meta">
                                     <strong class="name">Victor Jara</strong>
                                     <span class="date">3 Apr</span>
                                 </span>
-                                <span class="desc"
-                                    >Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. Ab, odio.</span
-                                >
+                                <span class="desc">
+                                    Lorem ipsum dolor sit amet, consectetur
+                                    adipisicing elit. Ab, odio.
+                                </span>
                             </div>
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <img
-                                class="avatar"
-                                src="assets/content/avatar-4.jpg"
-                                width="42"
-                                height="42"
-                                alt=""
-                            />
+                            <img class="avatar"
+                                 src="assets/content/avatar-4.jpg"
+                                 width="42"
+                                 height="42"
+                                 alt="" />
                             <div class="content">
                                 <span class="meta">
                                     <strong class="name">Nancy Allen</strong>
                                     <span class="date">2 Apr</span>
                                 </span>
-                                <span class="desc"
-                                    >Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit.</span
-                                >
+                                <span class="desc">
+                                    Lorem ipsum dolor sit amet, consectetur
+                                    adipisicing elit.
+                                </span>
                             </div>
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <img
-                                class="avatar"
-                                src="assets/content/avatar-3.jpg"
-                                width="42"
-                                height="42"
-                                alt=""
-                            />
+                            <img class="avatar"
+                                 src="assets/content/avatar-3.jpg"
+                                 width="42"
+                                 height="42"
+                                 alt="" />
                             <div class="content">
                                 <span class="meta">
                                     <strong class="name">Emma Watson</strong>
                                     <span class="date">1 Apr</span>
                                 </span>
-                                <span class="desc"
-                                    >Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing.</span
-                                >
+                                <span class="desc">
+                                    Lorem ipsum dolor sit amet, consectetur
+                                    adipisicing.
+                                </span>
                             </div>
                         </a>
                     </li>
@@ -275,10 +234,8 @@
             </div>
         </div>
 
-        <div
-            class="nav-item"
-            [ngClass]="{ opened: accountProfileMenu.isOpened }"
-        >
+        <div class="nav-item"
+             [ngClass]="{ opened: accountProfileMenu.isOpened }">
             <a (click)="toggleProfileMenu()" class="nav-link">
                 <div class="name" *ngIf="userFullName">{{ userFullName }}</div>
             </a>
@@ -287,10 +244,8 @@
             <div class="dropdown-menu mini-menu" *ngIf="isLocationsLoaded">
                 <ul>
                     <li>
-                        <a
-                            style="cursor: pointer;"
-                            (click)="accountProfileClicked($event)"
-                        >
+                        <a style="cursor: pointer;"
+                           (click)="accountProfileClicked($event)">
                             <span class="icon sli-settings"></span> Account
                             Profile
                         </a>
@@ -301,24 +256,17 @@
                             Location
                         </a>
                         <mat-list class="nav-sub-item-menu">
-                            <mat-list-item
-                                *ngFor="let location of locations"
-                                (click)="changeLocation(location)"
-                            >
-                                <span
-                                    *ngIf="location.oid == fboAirport.fboid"
-                                    class="icon sli-flag"
-                                ></span
-                                >&nbsp;
+                            <mat-list-item *ngFor="let location of locations"
+                                           (click)="changeLocation(location)">
+                                <span *ngIf="location.oid == fboAirport.fboid"
+                                      class="icon sli-flag"></span>&nbsp;
                                 {{ location.icao }}
                             </mat-list-item>
                         </mat-list>
                     </li>
                     <li *ngIf="currentUser && currentUser.impersonatedRole > 0">
-                        <a
-                            style="cursor: pointer;"
-                            (click)="stopManagingClicked($event)"
-                        >
+                        <a style="cursor: pointer;"
+                           (click)="stopManagingClicked($event)">
                             <span class="icon sli-settings"></span> Stop
                             Managing FBO
                         </a>
