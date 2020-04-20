@@ -225,6 +225,39 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqVM);
         }
 
+        [HttpPost("fbo/{fboId}/create")]
+        public async Task<IActionResult> CreateFuelReqByFbo([FromRoute] int fboId, [FromBody] FuelReqRequest request)
+        {
+            List<FuelReq> fuelReqs = 
+                            (from c in _context.Customers
+                            join cg in _context.CustomerInfoByGroup on new { CustomerId = c.Oid, c.FuelerlinxId } equals new { cg.CustomerId, FuelerlinxId = request.SourceId }
+                            join f in _context.Fbos on new { cg.GroupId, FboId = fboId } equals new { GroupId = f.GroupId.GetValueOrDefault(), FboId = f.Oid }
+                            join ca in _context.CustomerAircrafts on new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId } equals new { TailNumber = ca.TailNumber.Trim(), ca.CustomerId, GroupId = ca.GroupId.GetValueOrDefault() }
+                            select new FuelReq
+                            {
+                                Fboid = fboId,
+                                CustomerAircraftId = ca.Oid,
+                                Eta = request.Eta,
+                                Etd = request.Etd,
+                                Icao = request.Icao,
+                                Notes = request.Notes,
+                                QuotedPpg = request.FuelEstCost,
+                                QuotedVolume = request.FuelEstWeight,
+                                TimeStandard = request.TimeStandard,
+                                CustomerId = c.Oid,
+                                DateCreated = DateTime.Now,
+                                Source = "Fuelerlinx",
+                                SourceId = request.SourceId
+                            })
+                            .Distinct()
+                            .ToList();
+
+            _context.FuelReq.AddRange(fuelReqs);
+            await _context.SaveChangesAsync();
+
+            return Ok(fuelReqs);
+        }
+
         // Get: api/FuelReqs/fbo/5
         [HttpGet("fbo/{fboId}/count")]
         public async Task<IActionResult> GetFuelReqsByFboCount([FromRoute] int fboId)
