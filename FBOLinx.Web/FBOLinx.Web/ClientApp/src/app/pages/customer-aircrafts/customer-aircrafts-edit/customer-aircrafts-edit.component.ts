@@ -45,8 +45,6 @@ export class CustomerAircraftsEditComponent implements OnInit {
         if (this.data) {
             this.aircraftsService.get(this.data).subscribe((data: any) => {
                 this.customerAircraftInfo = data;
-
-                console.log(this.customerAircraftInfo);
             });
         }
 

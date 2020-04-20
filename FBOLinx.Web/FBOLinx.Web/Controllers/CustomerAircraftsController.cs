@@ -182,6 +182,7 @@ namespace FBOLinx.Web.Controllers
 
             List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
                from ca in _context.CustomerAircrafts
+               join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
                join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
                join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
                into leftJoinPt
@@ -192,6 +193,7 @@ namespace FBOLinx.Web.Controllers
                    Oid = ca.Oid,
                    GroupId = ca.GroupId,
                    CustomerId = ca.CustomerId,
+                   Company = cg.Company,
                    AircraftId = ca.AircraftId,
                    TailNumber = ca.TailNumber,
                    Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet
