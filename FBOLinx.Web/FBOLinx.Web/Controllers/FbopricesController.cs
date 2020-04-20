@@ -169,11 +169,11 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
+            await _context.SaveChangesAsync();
             return Ok(fboId);
         }
 
 
-        // GET: api/Fboprices/fbo/current/5
         [HttpPost("fbo/{fboId}/suspendpricing")]
         public async Task<IActionResult> SuspendPricing([FromRoute] int fboId)
         {
@@ -250,7 +250,6 @@ namespace FBOLinx.Web.Controllers
             return Ok(result);
         }
 
-        // GET: api/Fboprices/fbo/current/5
         [HttpGet("fbo/{fboId}/product/{product}/current")]
         public async Task<IActionResult> GetFbopricesByFboIdAndProductCurrent([FromRoute] int fboId, [FromRoute] string product)
         {
@@ -416,7 +415,6 @@ namespace FBOLinx.Web.Controllers
 
         }
 
-        // GET: api/Fboprices/fbo/current/5
         [HttpGet("group/{groupid}/ispricingexpiredgroupadmin")]
         public async Task<IActionResult> CheckPricingIsExpiredGroupAdmin([FromRoute] int groupId)
         {
