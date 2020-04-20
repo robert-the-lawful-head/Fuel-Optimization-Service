@@ -24,7 +24,7 @@ import * as SharedEvents from "../../../models/sharedEvents";
 
 // Components
 import { AccountProfileComponent } from "../../../shared/components/account-profile/account-profile.component";
-import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
+import { WindowRef } from "../../../shared/components/zoho-chat/WindowRef";
 
 @Component({
     moduleId: module.id,
@@ -35,7 +35,7 @@ import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
         "[class.app-navbar]": "true",
         "[class.show-overlay]": "showOverlay",
     },
-    providers: [WindowRef]
+    providers: [WindowRef],
 })
 export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     @Input()
@@ -82,7 +82,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
         this.currentUser = this.sharedService.currentUser;
 
         // getting the native window obj
-        console.log('Native window obj', winRef.nativeWindow);
+        console.log("Native window obj", winRef.nativeWindow);
         this.window = winRef.nativeWindow;
 
         if (!this.currentUser) {
@@ -310,10 +310,14 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     }
 
     showWidget() {
-        this.window && this.window.$zoho.salesiq.floatwindow.visible('show');
+        if (this.window) {
+            this.window.$zoho.salesiq.floatwindow.visible("show");
+        }
     }
 
     hideWidget() {
-        this.window && this.window.$zoho.salesiq.floatwindow.visible('hide');
+        if (this.window) { 
+            this.window.$zoho.salesiq.floatwindow.visible("hide");
+        }
     }
 }

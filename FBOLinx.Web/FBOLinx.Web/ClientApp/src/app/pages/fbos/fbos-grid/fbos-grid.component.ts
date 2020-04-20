@@ -17,13 +17,13 @@ import { Router } from "@angular/router";
 import { FbosService } from "../../../services/fbos.service";
 import { FboairportsService } from "../../../services/fboairports.service";
 import { SharedService } from "../../../layouts/shared-service";
-import { FbopricesService } from '../../../services/fboprices.service';
+import { FbopricesService } from "../../../services/fboprices.service";
 
 // Components
 import { FbosDialogNewFboComponent } from "../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component";
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { ManageConfirmationComponent } from "../../../shared/components/manage-confirmation/manage-confirmation.component";
-import { PricingExpiredNotificationGroupComponent } from '../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component';
+import { PricingExpiredNotificationGroupComponent } from "../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component";
 
 
 const BREADCRUMBS: any[] = [
@@ -73,7 +73,7 @@ export class FbosGridComponent implements OnInit {
         private manageFboDialog: MatDialog,
         private snackBar: MatSnackBar,
         private router: Router,
-        private checkPricingDialog: MatDialog,
+        private checkPricingDialog: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.canManageFbo = this.sharedService.currentUser.role === 2;
@@ -206,7 +206,7 @@ export class FbosGridComponent implements OnInit {
         this.fboPricesService
             .checkFboExpiredPricingGroup(this.sharedService.currentUser.groupId)
             .subscribe((data: any) => {
-                var isGroupUpdate = false;
+                let isGroupUpdate = false;
                 if (data) {
                     if (data[0].fboId) {
                         isGroupUpdate = true;
@@ -217,7 +217,7 @@ export class FbosGridComponent implements OnInit {
                     const dialogRef = this.checkPricingDialog.open(
                         PricingExpiredNotificationGroupComponent,
                         {
-                            data: data,
+                            data,
                         }
                     );
                     dialogRef.afterClosed().subscribe((result) => {

@@ -26,11 +26,6 @@ export class PricingExpiredNotificationGroupComponent {
         this.dialogRef.close();
     }
 
-    ngOnInit(): void {
-        console.log('in component');
-        console.log(this);
-    }
-
     public onRemindMeLaterClick() {
         localStorage.setItem(
             "pricingExpiredNotification",
