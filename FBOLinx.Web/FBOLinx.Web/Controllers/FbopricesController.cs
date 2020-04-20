@@ -129,18 +129,20 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var activeJetPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId);
-            if (activeJetPricing != null)
+            List<Fboprices> oldPrices = _context.Fboprices
+                                                .Where(f => f.Fboid.Equals(fboId) && f.Product.Equals("JetA Cost") && f.Expired != true)
+                                                .ToList();
+            foreach (Fboprices oldPrice in oldPrices)
             {
-                var checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == activeJetPricing.Oid).ToList();
+                oldPrice.Expired = true;
+                _context.Fboprices.Update(oldPrice);
+                List<MappingPrices> checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == oldPrice.Oid).ToList();
                 if (checkForMappingPrices != null)
                 {
                     _context.MappingPrices.RemoveRange(checkForMappingPrices);
-                    await _context.SaveChangesAsync();
                 }
-
-                _context.Fboprices.Remove(activeJetPricing);
             }
+
             await _context.SaveChangesAsync();
 
             return Ok(fboId);
@@ -153,19 +155,19 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var activeRetailPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Retail" && s.Fboid == fboId);
-            if (activeRetailPricing != null)
+            List<Fboprices> oldPrices = _context.Fboprices
+                                               .Where(f => f.Fboid.Equals(fboId) && f.Product.Equals("JetA Retail") && f.Expired != true)
+                                               .ToList();
+            foreach (Fboprices oldPrice in oldPrices)
             {
-                var checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == activeRetailPricing.Oid).ToList();
+                oldPrice.Expired = true;
+                _context.Fboprices.Update(oldPrice);
+                List<MappingPrices> checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == oldPrice.Oid).ToList();
                 if (checkForMappingPrices != null)
                 {
                     _context.MappingPrices.RemoveRange(checkForMappingPrices);
-                    await _context.SaveChangesAsync();
                 }
-
-                _context.Fboprices.Remove(activeRetailPricing);
             }
-            await _context.SaveChangesAsync();
 
             return Ok(fboId);
         }
@@ -266,88 +268,34 @@ namespace FBOLinx.Web.Controllers
             return Ok(fboprices);
         }
 
-        // POST: api/Fboprices/fbo/5/check/from/12.10.2019/to/18.10.2019
         [HttpPost("fbo/{fboId}/check")]
-        public async Task<IActionResult> checkifExistFrboPrice([FromRoute] int fboId, [FromBody] IEnumerable<Fboprices> vfboprices)
+        public async Task<IActionResult> checkifExistFrboPrice([FromRoute] int fboId, [FromBody] IEnumerable<Fboprices> fboprices)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var pm = vfboprices.FirstOrDefault();
-            int num = 0;
-            if (pm.EffectiveFrom > DateTime.Now)
+
+            foreach (Fboprices price in fboprices)
             {
-                var fboprices = await GetAllFboPrices().Where(f => f.Fboid == fboId && f.Price != null && ((pm.EffectiveFrom >= f.EffectiveFrom && pm.EffectiveFrom < f.EffectiveTo) || (pm.EffectiveTo > f.EffectiveFrom && pm.EffectiveTo < f.EffectiveTo))).FirstOrDefaultAsync();
-                foreach (var pom in vfboprices)
+                price.Timestamp = DateTime.Now;
+                if (price.Oid > 0)
                 {
-                    MappingPrices map = new MappingPrices();
-                    pom.Timestamp = DateTime.Now;
-                    _context.Fboprices.Add(pom);
-                    await _context.SaveChangesAsync();
-                    if (num == 0)
-                    {
-                        num = _context.MappingPrices.Select(x => x.GroupId).DefaultIfEmpty(0).Max() + 1;
-                    }
-                    map.GroupId = num;
-                    map.FboPriceId = pom.Oid;
-                    _context.MappingPrices.Add(map);
-                    await _context.SaveChangesAsync();
+                    _context.Fboprices.Update(price);
                 }
-
-                return Ok(fboprices);
-            }
-            else
-            {
-                try
+                else if (price.Price != null)
                 {
-                    var fboprices = await GetAllFboPrices().Where(f => f.Fboid == fboId && f.Price != null && ((pm.EffectiveFrom >= f.EffectiveFrom && pm.EffectiveFrom < f.EffectiveTo) || (pm.EffectiveTo > f.EffectiveFrom && pm.EffectiveTo < f.EffectiveTo))).FirstOrDefaultAsync();
-
-                    if (fboprices == null)
+                    List<Fboprices> oldPrices = _context.Fboprices
+                                               .Where(f => f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product) && f.Expired != true)
+                                               .ToList();
+                    foreach (Fboprices oldPrice in oldPrices)
                     {
-                        foreach (var pom in vfboprices)
-                        {
-                            MappingPrices map = new MappingPrices();
-                            pom.Timestamp = DateTime.Now;
-                            _context.Fboprices.Add(pom);
-                            await _context.SaveChangesAsync();
-                            if (num == 0)
-                            {
-                                num = _context.MappingPrices.Select(x => x.GroupId).DefaultIfEmpty(0).Max() + 1;
-                            }
-                            map.GroupId = num;
-                            map.FboPriceId = pom.Oid;
-                            _context.MappingPrices.Add(map);
-                            await _context.SaveChangesAsync();
-                        }
+                        oldPrice.Expired = true;
+                        _context.Fboprices.Update(oldPrice);
                     }
-                    else
-                    {
-                        foreach (var price in vfboprices)
-                        {
-                            var firstPrice = price;
-                            var fboprice = await GetAllFboPrices().Where(f => f.Fboid == fboId && f.Price != null && f.Product == price.Product).OrderByDescending(s => s.Oid).FirstOrDefaultAsync();
-                            if (fboprice != null)
-                            {
-
-                                fboprice.Timestamp = DateTime.Now;
-                                fboprice.EffectiveFrom = price.EffectiveFrom;
-                                fboprice.EffectiveTo = price.EffectiveTo;
-                                fboprice.Price = price.Price;
-                                _context.Fboprices.Update(fboprice);
-                                await _context.SaveChangesAsync();
-
-                            }
-                        }
-
-                        return Ok(vfboprices);
-                    }
+                    _context.Fboprices.Add(price);
                 }
-                catch (Exception ex)
-                {
-                    var exxx = ex.Message;
-                }
-
+                await _context.SaveChangesAsync();
             }
 
             return Ok(null);
