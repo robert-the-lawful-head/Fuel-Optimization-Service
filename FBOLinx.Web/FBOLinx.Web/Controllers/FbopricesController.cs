@@ -116,10 +116,15 @@ namespace FBOLinx.Web.Controllers
 
             var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
 
+            var activePricingCost = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId && s.Expired != true);
+            var activePricingRetail = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Retail" && s.Fboid == fboId && s.Expired != true);
 
-            var activePricing = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId);
+            if(activePricingCost !=null && activePricingRetail != null)
+            {
+                return Ok(true);
+            }
 
-            return Ok(activePricing);
+            return Ok(null);
         }
 
         [HttpPost("fbo/{fboId}/suspendpricing/jet")]
