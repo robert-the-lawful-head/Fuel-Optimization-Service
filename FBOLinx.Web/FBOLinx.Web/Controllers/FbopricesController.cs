@@ -64,9 +64,10 @@ namespace FBOLinx.Web.Controllers
 
             var fboprices = await (
                             from f in _context.Fboprices
-                            where Convert.ToDateTime(f.EffectiveFrom).Date <= DateTime.Now.Date && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                            where f.EffectiveTo > DateTime.Now.AddDays(-1)
                             && f.Fboid == fboId && f.Price != null && f.Expired != true
                             select f).ToListAsync();
+
             var addOnMargins = await (
                             from s in _context.TempAddOnMargin
                             where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
@@ -118,8 +119,8 @@ namespace FBOLinx.Web.Controllers
 
             var activePricingCost = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId && s.Expired != true);
             var activePricingRetail = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Retail" && s.Fboid == fboId && s.Expired != true);
-
-            if(activePricingCost !=null && activePricingRetail != null)
+            
+            if (activePricingCost != null && activePricingRetail != null)
             {
                 return Ok(true);
             }
@@ -178,43 +179,6 @@ namespace FBOLinx.Web.Controllers
             return Ok(fboId);
         }
 
-
-        [HttpPost("fbo/{fboId}/suspendpricing")]
-        public async Task<IActionResult> SuspendPricing([FromRoute] int fboId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var activeJetPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId);
-            if (activeJetPricing != null)
-            {
-                var checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == activeJetPricing.Oid).ToList();
-                if (checkForMappingPrices != null)
-                {
-                    _context.MappingPrices.RemoveRange(checkForMappingPrices);
-                    await _context.SaveChangesAsync();
-                }
-
-                _context.Fboprices.Remove(activeJetPricing);
-            }
-            var activeRetailPricing = _context.Fboprices.FirstOrDefault(s => Convert.ToDateTime(s.EffectiveFrom).Date <= DateTime.Now.Date && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Retail" && s.Fboid == fboId);
-            if (activeRetailPricing != null)
-            {
-                var checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == activeRetailPricing.Oid).ToList();
-                if (checkForMappingPrices != null)
-                {
-                    _context.MappingPrices.RemoveRange(checkForMappingPrices);
-                    await _context.SaveChangesAsync();
-                }
-
-                _context.Fboprices.Remove(activeRetailPricing);
-            }
-            await _context.SaveChangesAsync();
-
-            return Ok(fboId);
-        }
-
         // GET: api/Fboprices/fbo/staged/5
         [HttpGet("fbo/{fboId}/staged")]
         public async Task<IActionResult> GetFbopricesByFboIdStaged([FromRoute] int fboId)
@@ -228,8 +192,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = (from p in products
                           join f in (from f in _context.Fboprices
-                                         //where f.EffectiveFrom > DateTime.Now
-                                     where Convert.ToDateTime(f.EffectiveFrom).Date > DateTime.Now.Date
+                                     where Convert.ToDateTime(f.EffectiveFrom).Date > DateTime.Now.Date && f.Expired != true
                                      select f) on new { Product = p.Description, FboId = fboId } equals new
                                      {
                                          f.Product,
@@ -290,7 +253,7 @@ namespace FBOLinx.Web.Controllers
                 else if (price.Price != null)
                 {
                     List<Fboprices> oldPrices = _context.Fboprices
-                                               .Where(f => f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product) && f.Expired != true)
+                                               .Where(f => f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product))
                                                .ToList();
                     foreach (Fboprices oldPrice in oldPrices)
                     {
@@ -432,7 +395,12 @@ namespace FBOLinx.Web.Controllers
 
             var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId).Select(s => s.Oid).ToList();
 
-            var activePricing = _context.Fboprices.Where(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && (s.Product == "JetA Cost" || s.Product == "JetA Retail") && groupFbos.Contains(Convert.ToInt32(s.Fboid))).ToList();
+            var activePricing = _context.Fboprices.Where(s => 
+                                        s.EffectiveFrom <= DateTime.Now && 
+                                        s.EffectiveTo > DateTime.Now.AddDays(-1) && 
+                                        (s.Product == "JetA Cost" || s.Product == "JetA Retail") && 
+                                        groupFbos.Contains(Convert.ToInt32(s.Fboid)) && 
+                                        s.Expired != true).ToList();
             List<FBOGroupPriceUpdateVM> groupPriceUpdate = new List<FBOGroupPriceUpdateVM>();
             foreach (var groupFbo in groupFbos)
             {
@@ -469,7 +437,11 @@ namespace FBOLinx.Web.Controllers
             {
                 return NotFound();
             }
-            var fbopricesRange = await _context.Fboprices.Where(x => x.EffectiveFrom == fboprices.EffectiveFrom && x.EffectiveTo == fboprices.EffectiveTo && x.Fboid == fboprices.Fboid).ToListAsync();
+            var fbopricesRange = await _context.Fboprices.Where(x => 
+                                                            x.EffectiveFrom == fboprices.EffectiveFrom && 
+                                                            x.EffectiveTo == fboprices.EffectiveTo && 
+                                                            x.Fboid == fboprices.Fboid
+                                                            ).ToListAsync();
             //_context.Fboprices.Remove(fboprices);
             _context.Fboprices.RemoveRange(fbopricesRange);
             await _context.SaveChangesAsync();

@@ -379,7 +379,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
                                 }
                             },
-                            (error: any) => {
+                            () => {
                                 this.pricingTemplates = [];
                             }
                         );

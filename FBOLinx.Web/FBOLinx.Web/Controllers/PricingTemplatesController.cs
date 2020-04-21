@@ -10,6 +10,8 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Remotion.Linq.Clauses;
+using FBOLinx.Web.DTO;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -19,10 +21,12 @@ namespace FBOLinx.Web.Controllers
     public class PricingTemplatesController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly PriceFetchingService _priceFetchingService;
 
         public PricingTemplatesController(FboLinxContext context)
         {
             _context = context;
+            _priceFetchingService = new PriceFetchingService(_context);
         }
 
         // GET: api/PricingTemplates
@@ -55,149 +59,10 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fbo/{fboId}")]
         public async Task<IActionResult> GetPricingTemplateByFboId([FromRoute] int fboId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, null);
 
-            Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost").FirstOrDefaultAsync();
-            IEnumerable<Utilities.Enum.EnumDescriptionValue> products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
-            var resultPrices =
-                          from p in products
-                          join f in (
-                                     from f in _context.Fboprices
-                                     where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId
-                                     select f
-                          ) on new { Product = p.Description, FboId = fboId } equals new { f.Product, FboId = f.Fboid.GetValueOrDefault() }
-                          into leftJoinFBOPrices
-                          from f in leftJoinFBOPrices.DefaultIfEmpty()
-                          join s in (from s in _context.TempAddOnMargin
-                                     where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
-                                     select s) on new { FboId = fboId } equals new
-                                     {
-                                         FboId = s.FboId
-                                     }
-                              into tmpJoin
-                          from s in tmpJoin.DefaultIfEmpty()
-                          select new
-                          {
-                              Oid = f?.Oid ?? 0,
-                              Fboid = fboId,
-                              Product = p.Description,
-                              Price = f?.Price,
-                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
-                              EffectiveTo = f?.EffectiveTo,
-                              TimeStamp = f?.Timestamp,
-                              SalesTax = f?.SalesTax,
-                              Currency = f?.Currency,
-                              tempJet = s?.MarginJet,
-                              tempAvg = s?.MarginAvgas,
-                              tempId = s?.Id,
-                              tempDateFrom = s?.EffectiveFrom,
-                              tempDateTo = s?.EffectiveTo
-                          };
-
-            double? jetACost = resultPrices.FirstOrDefault(s => s.Product == "JetA Cost").Price;
-            double? jetARetail = resultPrices.FirstOrDefault(s => s.Product == "JetA Retail").Price;
-
-            List<PricingTemplatesGridViewModel> result = (
-                from p in _context.PricingTemplate
-                join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
-                join cm in (
-                    from c in _context.CustomerMargins
-                    join tm in _context.PriceTiers
-                    on c.PriceTierId equals tm.Oid
-                    group c by new {c.TemplateId} 
-                    into cmResults
-                    select new {
-                        templateId = cmResults.Key.TemplateId,
-                        maxPrice = cmResults.FirstOrDefault().Amount
-                    }
-                ) on p.Oid equals cm.templateId
-                into leftJoinCustomerMargins
-                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
-                join fp in (
-                    from f in _context.Fboprices
-                    where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId
-                    select f
-                ) on p.MarginTypeProduct equals fp.Product
-                into leftJoinFboPrices
-                from fp in leftJoinFboPrices.DefaultIfEmpty()
-                where p.Fboid == fboId
-                select new PricingTemplatesGridViewModel
-                {
-                    CustomerId = p.CustomerId.GetValueOrDefault(),
-                    Default = p.Default.GetValueOrDefault(),
-                    Fboid = p.Fboid,
-                    Margin = cm == null ? 0 : cm.maxPrice.Value,
-                    MarginType = p.MarginType.GetValueOrDefault(),
-                    Name = p.Name,
-                    Notes = p.Notes,
-                    Oid = p.Oid,
-                    Type = p.Type.GetValueOrDefault(),
-                    Subject = p.Subject,
-                    Email = p.Email,
-                    IntoPlanePrice = (jetaACostRecord == null ? 0 : jetaACostRecord.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice.Value),
-                    IsInvalid = (f != null && f.Preferences != null &&
-                        ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus)
-                        || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)
-                    ) ? true : false,
-                    IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
-                    YourMargin = jetaACostRecord == null ||
-                        (jetaACostRecord != null && jetaACostRecord.Price.GetValueOrDefault() <= 0)
-                        ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord != null ? jetaACostRecord.Price.GetValueOrDefault() : 0)
-                }).ToList();
-
-            foreach (PricingTemplatesGridViewModel res in result)
-            {
-                if (res.Oid != 0)
-                {
-                    CustomerMargins margins = _context.CustomerMargins.FirstOrDefault(s => s.TemplateId == res.Oid && s.PriceTierId != 0);
-
-                    if (margins != null)
-                    {
-                        if (res.MarginTypeDescription == "Retail -")
-                        {
-                            if (jetARetail != null)
-                            {
-                                res.IntoPlanePrice = jetARetail.Value - Convert.ToDouble(margins.Amount);
-                            }
-                            else
-                            {
-                                res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                            }
-
-                            if (jetACost != null)
-                            {
-                                res.YourMargin = res.Margin;
-                            }
-                            else
-                            {
-                                res.YourMargin = res.IntoPlanePrice - 0;
-                            }
-                        }
-                        else if (res.MarginTypeDescription == "Cost +")
-                        {
-                            if (jetACost != null)
-                            {
-                                res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetACost.Value;
-                                res.YourMargin = res.IntoPlanePrice - jetACost.Value;
-                            }
-                            else
-                            {
-                                res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                                res.YourMargin = res.IntoPlanePrice - 0;
-                            }
-                        }
-                    }
-                }
-            }
-
-            result = result.OrderBy(s => s.Name).GroupBy(s => s.Oid).Select(g => g.First()).ToList();
-
-            return Ok(result);
+            return Ok(marginTemplates);
         }
-
 
         [HttpGet("fbodefaultpricingtemplate/{fboId}")]
         public async Task<IActionResult> GetPricingTemplateByFboIdForDefaultTemplate([FromRoute] int fboId)
@@ -207,298 +72,30 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost").FirstOrDefaultAsync();
-            IEnumerable<Utilities.Enum.EnumDescriptionValue> products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
-            var resultPrices =
-                          from p in products
-                          join f in (
-                                     from f in _context.Fboprices
-                                     where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId
-                                     select f
-                          ) on new { Product = p.Description, FboId = fboId } equals new { f.Product, FboId = f.Fboid.GetValueOrDefault() }
-                          into leftJoinFBOPrices
-                          from f in leftJoinFBOPrices.DefaultIfEmpty()
-                          join s in (from s in _context.TempAddOnMargin
-                                     where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
-                                     select s) on new { FboId = fboId } equals new
-                                     {
-                                         FboId = s.FboId
-                                     }
-                              into tmpJoin
-                          from s in tmpJoin.DefaultIfEmpty()
-                          select new
-                          {
-                              Oid = f?.Oid ?? 0,
-                              Fboid = fboId,
-                              Product = p.Description,
-                              Price = f?.Price,
-                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
-                              EffectiveTo = f?.EffectiveTo,
-                              TimeStamp = f?.Timestamp,
-                              SalesTax = f?.SalesTax,
-                              Currency = f?.Currency,
-                              tempJet = s?.MarginJet,
-                              tempAvg = s?.MarginAvgas,
-                              tempId = s?.Id,
-                              tempDateFrom = s?.EffectiveFrom,
-                              tempDateTo = s?.EffectiveTo
-                          };
+            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, null);
 
-            double? jetACost = resultPrices.FirstOrDefault(s => s.Product == "JetA Cost").Price;
-            double? jetARetail = resultPrices.FirstOrDefault(s => s.Product == "JetA Retail").Price;
-
-            List<PricingTemplatesGridViewModel> result = (
-                from p in _context.PricingTemplate
-                join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
-                join cm in (
-                    from c in _context.CustomerMargins
-                    join tm in _context.PriceTiers
-                    on c.PriceTierId equals tm.Oid
-                    group c by new { c.TemplateId }
-                    into cmResults
-                    select new
-                    {
-                        templateId = cmResults.Key.TemplateId,
-                        maxPrice = cmResults.FirstOrDefault().Amount
-                    }
-                ) on p.Oid equals cm.templateId
-                into leftJoinCustomerMargins
-                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
-                join fp in (
-                    from f in _context.Fboprices
-                    where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId
-                    select f
-                ) on p.MarginTypeProduct equals fp.Product
-                into leftJoinFboPrices
-                from fp in leftJoinFboPrices.DefaultIfEmpty()
-                where p.Fboid == fboId
-                select new PricingTemplatesGridViewModel
-                {
-                    CustomerId = p.CustomerId.GetValueOrDefault(),
-                    Default = p.Default.GetValueOrDefault(),
-                    Fboid = p.Fboid,
-                    Margin = cm == null ? 0 : cm.maxPrice.Value,
-                    MarginType = p.MarginType.GetValueOrDefault(),
-                    Name = p.Name,
-                    Notes = p.Notes,
-                    Oid = p.Oid,
-                    Type = p.Type.GetValueOrDefault(),
-                    Subject = p.Subject,
-                    Email = p.Email,
-                    IntoPlanePrice = (jetaACostRecord == null ? 0 : jetaACostRecord.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice.Value),
-                    IsInvalid = (f != null && f.Preferences != null &&
-                        ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus)
-                        || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)
-                    ) ? true : false,
-                    IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
-                    YourMargin = jetaACostRecord == null ||
-                        (jetaACostRecord != null && jetaACostRecord.Price.GetValueOrDefault() <= 0)
-                        ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord != null ? jetaACostRecord.Price.GetValueOrDefault() : 0)
-                }).ToList();
-
-            if (result.Count > 0)
+            if (fboId != 0 && marginTemplates.Count == 0)
             {
-                foreach (PricingTemplatesGridViewModel res in result)
+                PricingTemplate ptNew = new PricingTemplate
                 {
-                    if (res.Oid != 0)
-                    {
-                        CustomerMargins margins = _context.CustomerMargins.FirstOrDefault(s => s.TemplateId == res.Oid && s.PriceTierId != 0);
-
-                        if (margins != null)
-                        {
-                            if (res.MarginTypeDescription == "Retail -")
-                            {
-                                if (jetARetail != null)
-                                {
-                                    res.IntoPlanePrice = jetARetail.Value - Convert.ToDouble(margins.Amount);
-                                }
-                                else
-                                {
-                                    res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                                }
-
-                                if (jetACost != null)
-                                {
-                                    res.YourMargin = res.Margin;
-                                }
-                                else
-                                {
-                                    res.YourMargin = res.IntoPlanePrice - 0;
-                                }
-                            }
-                            else if (res.MarginTypeDescription == "Cost +")
-                            {
-                                if (jetACost != null)
-                                {
-                                    res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetACost.Value;
-                                    res.YourMargin = res.IntoPlanePrice - jetACost.Value;
-                                }
-                                else
-                                {
-                                    res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                                    res.YourMargin = res.IntoPlanePrice - 0;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                result = result.OrderBy(s => s.Name).GroupBy(s => s.Oid).Select(g => g.First()).ToList();
-            }
-            else if (fboId != 0)
-            {
-                PricingTemplate ptNew = new PricingTemplate();
-                ptNew.Fboid = fboId;
-                ptNew.Name = "Temporary Default Template";
-                ptNew.Default = true;
-                ptNew.Notes = "This is temporary default template created because the customer did not have any templates";
-                ptNew.Type = 0;
-                ptNew.MarginType = PricingTemplate.MarginTypes.RetailMinus;
+                    Fboid = fboId,
+                    Name = "Temporary Default Template",
+                    Default = true,
+                    Notes = "This is temporary default template created because the customer did not have any templates",
+                    Type = 0,
+                    MarginType = PricingTemplate.MarginTypes.RetailMinus
+                };
 
                 _context.PricingTemplate.Add(ptNew);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
-                var resultPricesTemp =
-                          from p in products
-                          join f in (
-                                     from f in _context.Fboprices
-                                     where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId
-                                     select f
-                          ) on new { Product = p.Description, FboId = fboId } equals new { f.Product, FboId = f.Fboid.GetValueOrDefault() }
-                          into leftJoinFBOPrices
-                          from f in leftJoinFBOPrices.DefaultIfEmpty()
-                          join s in (from s in _context.TempAddOnMargin
-                                     where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
-                                     select s) on new { FboId = fboId } equals new
-                                     {
-                                         FboId = s.FboId
-                                     }
-                              into tmpJoin
-                          from s in tmpJoin.DefaultIfEmpty()
-                          select new
-                          {
-                              Oid = f?.Oid ?? 0,
-                              Fboid = fboId,
-                              Product = p.Description,
-                              Price = f?.Price,
-                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
-                              EffectiveTo = f?.EffectiveTo,
-                              TimeStamp = f?.Timestamp,
-                              SalesTax = f?.SalesTax,
-                              Currency = f?.Currency,
-                              tempJet = s?.MarginJet,
-                              tempAvg = s?.MarginAvgas,
-                              tempId = s?.Id,
-                              tempDateFrom = s?.EffectiveFrom,
-                              tempDateTo = s?.EffectiveTo
-                          };
+                List<PricingTemplatesGridViewModel> updatedMarginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, null);
 
-                double? jetACostTemp = resultPricesTemp.FirstOrDefault(s => s.Product == "JetA Cost").Price;
-                double? jetARetailTemp = resultPricesTemp.FirstOrDefault(s => s.Product == "JetA Retail").Price;
 
-                List<PricingTemplatesGridViewModel> resultPricesTempresult = (
-               from p in _context.PricingTemplate
-               join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
-               join cm in (
-                   from c in _context.CustomerMargins
-                   join tm in _context.PriceTiers
-                   on c.PriceTierId equals tm.Oid
-                   group c by new { c.TemplateId }
-                   into cmResults
-                   select new
-                   {
-                       templateId = cmResults.Key.TemplateId,
-                       maxPrice = cmResults.FirstOrDefault().Amount
-                   }
-               ) on p.Oid equals cm.templateId
-               into leftJoinCustomerMargins
-               from cm in leftJoinCustomerMargins.DefaultIfEmpty()
-               join fp in (
-                   from f in _context.Fboprices
-                   where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId
-                   select f
-               ) on p.MarginTypeProduct equals fp.Product
-               into leftJoinFboPrices
-               from fp in leftJoinFboPrices.DefaultIfEmpty()
-               where p.Fboid == fboId
-               select new PricingTemplatesGridViewModel
-               {
-                   CustomerId = p.CustomerId.GetValueOrDefault(),
-                   Default = p.Default.GetValueOrDefault(),
-                   Fboid = p.Fboid,
-                   Margin = cm == null ? 0 : cm.maxPrice.Value,
-                   MarginType = p.MarginType.GetValueOrDefault(),
-                   Name = p.Name,
-                   Notes = p.Notes,
-                   Oid = p.Oid,
-                   Type = p.Type.GetValueOrDefault(),
-                   Subject = p.Subject,
-                   Email = p.Email,
-                   IntoPlanePrice = (jetaACostRecord == null ? 0 : jetaACostRecord.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice.Value),
-                   IsInvalid = (f != null && f.Preferences != null &&
-                       ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus)
-                       || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)
-                   ) ? true : false,
-                   IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
-                   YourMargin = jetaACostRecord == null ||
-                       (jetaACostRecord != null && jetaACostRecord.Price.GetValueOrDefault() <= 0)
-                       ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord != null ? jetaACostRecord.Price.GetValueOrDefault() : 0)
-               }).ToList();
-
-                if (resultPricesTempresult.Count > 0)
-                {
-                    foreach (PricingTemplatesGridViewModel res in result)
-                    {
-                        if (res.Oid != 0)
-                        {
-                            CustomerMargins margins = _context.CustomerMargins.FirstOrDefault(s => s.TemplateId == res.Oid && s.PriceTierId != 0);
-
-                            if (margins != null)
-                            {
-                                if (res.MarginTypeDescription == "Retail -")
-                                {
-                                    if (jetARetailTemp != null)
-                                    {
-                                        res.IntoPlanePrice = jetARetailTemp.Value - Convert.ToDouble(margins.Amount);
-                                    }
-                                    else
-                                    {
-                                        res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                                    }
-
-                                    if (jetACostTemp != null)
-                                    {
-                                        res.YourMargin = res.Margin;
-                                    }
-                                    else
-                                    {
-                                        res.YourMargin = res.IntoPlanePrice - 0;
-                                    }
-                                }
-                                else if (res.MarginTypeDescription == "Cost +")
-                                {
-                                    if (jetACostTemp != null)
-                                    {
-                                        res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetACostTemp.Value;
-                                        res.YourMargin = res.IntoPlanePrice - jetACostTemp.Value;
-                                    }
-                                    else
-                                    {
-                                        res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                                        res.YourMargin = res.IntoPlanePrice - 0;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-
-                return Ok(resultPricesTempresult);
+                return Ok(updatedMarginTemplates);
             }
 
-
-            return Ok(result);
+            return Ok(marginTemplates);
         }
 
         [HttpGet("group/{groupId}/fbo/{fboId}")]
@@ -509,173 +106,9 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost").FirstOrDefaultAsync();
-            IEnumerable<Utilities.Enum.EnumDescriptionValue> products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
-            var resultPrices =
-                          from p in products
-                          join f in (
-                                     from f in _context.Fboprices
-                                     where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId
-                                     select f
-                          ) on new { Product = p.Description, FboId = fboId } equals new { f.Product, FboId = f.Fboid.GetValueOrDefault() }
-                          into leftJoinFBOPrices
-                          from f in leftJoinFBOPrices.DefaultIfEmpty()
-                          join s in (from s in _context.TempAddOnMargin
-                                     where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
-                                     select s) on new { FboId = fboId } equals new
-                                     {
-                                         FboId = s.FboId
-                                     }
-                              into tmpJoin
-                          from s in tmpJoin.DefaultIfEmpty()
-                          select new
-                          {
-                              Oid = f?.Oid ?? 0,
-                              Fboid = fboId,
-                              Product = p.Description,
-                              Price = f?.Price,
-                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
-                              EffectiveTo = f?.EffectiveTo,
-                              TimeStamp = f?.Timestamp,
-                              SalesTax = f?.SalesTax,
-                              Currency = f?.Currency,
-                              tempJet = s?.MarginJet,
-                              tempAvg = s?.MarginAvgas,
-                              tempId = s?.Id,
-                              tempDateFrom = s?.EffectiveFrom,
-                              tempDateTo = s?.EffectiveTo
-                          };
+            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
 
-            double? jetACost = resultPrices.FirstOrDefault(s => s.Product == "JetA Cost").Price;
-            double? jetARetail = resultPrices.FirstOrDefault(s => s.Product == "JetA Retail").Price;
-            TempAddOnMargin marginPrice = _context.TempAddOnMargin.FirstOrDefault(s => s.FboId == fboId && s.EffectiveTo > DateTime.Now);
-
-            var templateCustomersCount = (
-                from tc in
-                (
-                    from cig in _context.CustomerInfoByGroup
-                    join cct in _context.CustomCustomerTypes on cig.CustomerId equals cct.CustomerId
-                    join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
-                    where cig.GroupId == groupId && pt.Fboid == fboId && !string.IsNullOrEmpty(cct.CustomerType.ToString())
-                    select new
-                    {
-                        pt.Oid,
-                        cct.CustomerId
-                    }
-                )
-                group tc by tc.Oid into resultsGroup
-                select new
-                {
-                    Oid = resultsGroup.Key,
-                    Count = resultsGroup.Count()
-                }).ToList();
-                
-
-            try
-            {
-                List<PricingTemplatesGridViewModel> result = (
-              from p in _context.PricingTemplate
-              join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
-              join cm in (
-                  from c in _context.CustomerMargins
-                  join tm in (_context.PriceTiers)
-                  on c.PriceTierId equals tm.Oid
-                  group c by new { c.TemplateId }
-                  into cmResults
-                  select new
-                  {
-                      templateId = cmResults.Key.TemplateId,
-                      maxPrice = cmResults.FirstOrDefault().Amount
-                  }
-              ) on p.Oid equals cm.templateId
-              into leftJoinCustomerMargins
-              from cm in leftJoinCustomerMargins.DefaultIfEmpty()
-              join fp in (
-                  from f in _context.Fboprices
-                  where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId
-                  select f
-              ) on p.MarginTypeProduct equals fp.Product
-              into leftJoinFboPrices
-              from fp in leftJoinFboPrices.DefaultIfEmpty()
-              join tcc in templateCustomersCount on p.Oid equals tcc.Oid
-              into leftJoinTemplateCustomersCount
-              from tcc in leftJoinTemplateCustomersCount.DefaultIfEmpty()
-              where p.Fboid == fboId
-              select new PricingTemplatesGridViewModel
-              {
-                  CustomerId = p.CustomerId.GetValueOrDefault(),
-                  Default = p.Default.GetValueOrDefault(),
-                  Fboid = p.Fboid,
-                  Margin = cm == null ? 0 : cm.maxPrice.Value,
-                  MarginType = p.MarginType.GetValueOrDefault(),
-                  Name = p.Name,
-                  Notes = p.Notes,
-                  Oid = p.Oid,
-                  Type = p.Type.GetValueOrDefault(),
-                  Subject = p.Subject,
-                  Email = p.Email,
-                  IntoPlanePrice = (jetaACostRecord == null ? 0 : jetaACostRecord.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice.Value),
-                  IsInvalid = (f != null && f.Preferences != null && ((f.Preferences.OmitJetACost.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.CostPlus) || f.Preferences.OmitJetARetail.GetValueOrDefault() && p.MarginType.GetValueOrDefault() == Models.PricingTemplate.MarginTypes.RetailMinus)) ? true : false,
-                  IsPricingExpired = (fp == null && (p.MarginType == null || p.MarginType != PricingTemplate.MarginTypes.FlatFee)),
-                  YourMargin = jetaACostRecord == null || jetaACostRecord.Price.GetValueOrDefault() <= 0 ? 0 : ((fp == null ? 0 : fp.Price.GetValueOrDefault()) + (cm == null ? 0 : cm.maxPrice)) - (jetaACostRecord.Price.GetValueOrDefault()),
-                  CustomersAssigned = tcc == null ? 0 : tcc.Count
-              }).ToList();
-
-                foreach (PricingTemplatesGridViewModel res in result)
-                {
-                    if (res.Oid != 0)
-                    {
-                        CustomerMargins margins = _context.CustomerMargins.FirstOrDefault(s => s.TemplateId == res.Oid && s.PriceTierId != 0);
-
-                        if (margins != null)
-                        {
-                            if (res.MarginTypeDescription == "Retail -")
-                            {
-                                if (jetARetail != null)
-                                {
-                                    res.IntoPlanePrice = jetARetail.Value - Convert.ToDouble(margins.Amount);
-                                }
-                                else
-                                {
-                                    res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                                }
-
-                                if (jetACost != null)
-                                {
-                                    res.YourMargin = res.Margin;
-                                }
-                                else
-                                {
-                                    res.YourMargin = res.IntoPlanePrice - 0;
-                                }
-                            }
-                            else if (res.MarginTypeDescription == "Cost +")
-                            {
-                                if (jetACost != null)
-                                {
-                                    res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + jetACost.Value;
-                                    res.YourMargin = res.IntoPlanePrice - jetACost.Value;
-                                }
-                                else
-                                {
-                                    res.IntoPlanePrice = Convert.ToDouble(margins.Amount) + 0;
-                                    res.YourMargin = res.IntoPlanePrice - 0;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                result = result.OrderBy(s => s.Name).GroupBy(s => s.Oid).Select(g => g.First()).ToList();
-
-                return Ok(result);
-
-            }
-            catch(Exception ex)
-            {
-                return Ok(null);
-            }
-            return null;
+            return Ok(marginTemplates);
         }
 
         [HttpGet("getcostpluspricingtemplate/{fboId}")]
@@ -693,7 +126,6 @@ namespace FBOLinx.Web.Controllers
                     from cig in _context.CustomerInfoByGroup
                     join cct in _context.CustomCustomerTypes on cig.CustomerId equals cct.CustomerId
                     join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
-                    //where cig.GroupId == groupId && pt.Fboid == fboId && !string.IsNullOrEmpty(cct.CustomerType.ToString())
                     where pt.Fboid == fboId && !string.IsNullOrEmpty(cct.CustomerType.ToString())
                     select new
                     {
@@ -712,28 +144,6 @@ namespace FBOLinx.Web.Controllers
 
             List<PricingTemplatesGridViewModel> result = (
                 from p in _context.PricingTemplate
-                join f in (_context.Fbos.Include("Preferences")) on p.Fboid equals f.Oid
-                join cm in (
-                    from c in _context.CustomerMargins
-                    join tm in (_context.PriceTiers)
-                    on c.PriceTierId equals tm.Oid
-                    group c by new { c.TemplateId }
-                    into cmResults
-                    select new
-                    {
-                        templateId = cmResults.Key.TemplateId,
-                        maxPrice = cmResults.FirstOrDefault().Amount
-                    }
-                ) on p.Oid equals cm.templateId
-                into leftJoinCustomerMargins
-                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
-                join fp in (
-                    from f in _context.Fboprices
-                    where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId
-                    select f
-                ) on p.MarginTypeProduct equals fp.Product
-                into leftJoinFboPrices
-                from fp in leftJoinFboPrices.DefaultIfEmpty()
                 join tcc in templateCustomersCount on p.Oid equals tcc.Oid
                 into leftJoinTemplateCustomersCount
                 from tcc in leftJoinTemplateCustomersCount.DefaultIfEmpty()
@@ -770,12 +180,21 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await (from p in _context.PricingTemplate
-                join cm in (from c in _context.CustomerMargins group c by new { c.TemplateId } into cmResults select new { templateId = cmResults.Key.TemplateId, maxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault()) }) on p.Oid equals cm.templateId into leftJoinCustomerMargins
+            var result = await (
+                from p in _context.PricingTemplate
+                join cm in (
+                    from c in _context.CustomerMargins
+                    group c by new { c.TemplateId }
+                    into cmResults
+                    select new CustomerMarginModel {
+                        TemplateId = cmResults.Key.TemplateId,
+                        MaxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault())
+                    }) on p.Oid equals cm.TemplateId
+                into leftJoinCustomerMargins
                 from cm in leftJoinCustomerMargins.DefaultIfEmpty()
-                join fp in (from f in _context.Fboprices
-                    where f.EffectiveFrom.HasValue && f.EffectiveFrom <= DateTime.Now && f.EffectiveTo.HasValue && f.EffectiveTo > DateTime.Now.AddDays(-1)
-                          && f.Fboid.GetValueOrDefault() == fboId
+                join fp in (
+                    from f in _context.Fboprices
+                    where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId && f.Expired != true
                     select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
                 from fp in leftJoinFboPrices.DefaultIfEmpty()
                 where p.Fboid == fboId
@@ -785,7 +204,7 @@ namespace FBOLinx.Web.Controllers
                     CustomerId = p.CustomerId,
                     Default = p.Default,
                     Fboid = p.Fboid,
-                    Margin = cm.maxPrice,
+                    Margin = cm == null ? 0 : cm.MaxPrice,
                     MarginType = p.MarginType,
                     Name = p.Name,
                     Notes = p.Notes,
@@ -794,7 +213,7 @@ namespace FBOLinx.Web.Controllers
                     Oid = p.Oid,
                     Type = p.Type,
                     IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
-                                     (cm == null ? 0 : cm.maxPrice)
+                                     (cm == null ? 0 : cm.MaxPrice)
                 }).ToListAsync();
 
 
@@ -850,10 +269,6 @@ namespace FBOLinx.Web.Controllers
 
             _context.PricingTemplate.Add(pricingTemplate);
 
-            //Commented out by Angel (Dec 17th) because it creates duplicate null price tiers https://prnt.sc/qbvy3b
-            //var priceTier = new PriceTiers() {Min = 1, Max = 99999, MaxEntered = 0};
-            //_context.PriceTiers.Add(priceTier);
-
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetPricingTemplate", new { id = pricingTemplate.Oid }, pricingTemplate);
@@ -873,15 +288,16 @@ namespace FBOLinx.Web.Controllers
 
                 if(existingTemplate != null)
                 {
-                    PricingTemplate pt = new PricingTemplate();
-
-                    pt.Name = pricingTemplate.name;
-                    pt.Fboid = existingTemplate.Fboid;
-                    pt.Default = false;
-                    pt.Notes = "";
-                    pt.MarginType = existingTemplate.MarginType;
-                    pt.Email = existingTemplate.Email;
-                    pt.Subject = existingTemplate.Subject;
+                    PricingTemplate pt = new PricingTemplate
+                    {
+                        Name = pricingTemplate.name,
+                        Fboid = existingTemplate.Fboid,
+                        Default = false,
+                        Notes = "",
+                        MarginType = existingTemplate.MarginType,
+                        Email = existingTemplate.Email,
+                        Subject = existingTemplate.Subject
+                    };
 
                     _context.PricingTemplate.Add(pt);
                     await _context.SaveChangesAsync();
@@ -894,9 +310,11 @@ namespace FBOLinx.Web.Controllers
                         {
                             foreach(var margin in listMargins)
                             {
-                                CustomerMargins cm = new CustomerMargins();
-                                cm.TemplateId = pt.Oid;
-                                cm.Amount = margin.Amount;
+                                CustomerMargins cm = new CustomerMargins
+                                {
+                                    TemplateId = pt.Oid,
+                                    Amount = margin.Amount
+                                };
 
                                 _context.CustomerMargins.Add(cm);
                                 _context.SaveChanges();
@@ -905,9 +323,11 @@ namespace FBOLinx.Web.Controllers
 
                                 foreach (var pricet in priceTier)
                                 {
-                                    PriceTiers ptNew = new PriceTiers();
-                                    ptNew.Min = pricet.Min;
-                                    ptNew.Max = pricet.Max;
+                                    PriceTiers ptNew = new PriceTiers
+                                    {
+                                        Min = pricet.Min,
+                                        Max = pricet.Max
+                                    };
 
                                     _context.PriceTiers.Add(ptNew);
                                     await _context.SaveChangesAsync();
@@ -928,10 +348,6 @@ namespace FBOLinx.Web.Controllers
                     return Ok(pt.Oid);
                 }
             }
-
-            //Commented out by Angel (Dec 17th) because it creates duplicate null price tiers https://prnt.sc/qbvy3b
-            //var priceTier = new PriceTiers() {Min = 1, Max = 99999, MaxEntered = 0};
-            //_context.PriceTiers.Add(priceTier);
 
             return null;
 
@@ -994,11 +410,6 @@ namespace FBOLinx.Web.Controllers
         private bool PricingTemplateExists(int id)
         {
             return _context.PricingTemplate.Any(e => e.Oid == id);
-        }
-
-        private IQueryable<PricingTemplate> GetAllPricingTemplates()
-        {
-            return _context.PricingTemplate.AsQueryable();
         }
 
         private void FixOtherDefaults(PricingTemplate pricingTemplate)
