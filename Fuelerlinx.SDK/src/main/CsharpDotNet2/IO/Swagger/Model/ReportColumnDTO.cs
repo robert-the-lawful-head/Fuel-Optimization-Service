@@ -42,6 +42,13 @@ namespace IO.Swagger.Model {
     public bool? IsHidden { get; set; }
 
     /// <summary>
+    /// Gets or Sets IsVisible
+    /// </summary>
+    [DataMember(Name="isVisible", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "isVisible")]
+    public bool? IsVisible { get; set; }
+
+    /// <summary>
     /// Gets or Sets Description
     /// </summary>
     [DataMember(Name="description", EmitDefaultValue=false)]
@@ -67,6 +74,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Width: ").Append(Width).Append("\n");
       sb.Append("  ColumnFormat: ").Append(ColumnFormat).Append("\n");
       sb.Append("  IsHidden: ").Append(IsHidden).Append("\n");
+      sb.Append("  IsVisible: ").Append(IsVisible).Append("\n");
       sb.Append("  Description: ").Append(Description).Append("\n");
       sb.Append("  PropertyName: ").Append(PropertyName).Append("\n");
       sb.Append("}\n");
