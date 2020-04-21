@@ -88,23 +88,22 @@ export class DefaultLayoutComponent implements OnInit {
             return;
         }
 
+        console.log(this.sharedService.currentUser);
+        
+
         if (this.sharedService.currentUser.role === 1 || this.sharedService.currentUser.role === 4) {
             this.fboPricesService
                 .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
                 .subscribe((data: any) => {
-                    if (data) {
-                        if (data.price > 0) {
-                            return;
-                        }
+                    if (!data) {
+                        const dialogRef = this.expiredPricingDialog.open(
+                            PricingExpiredNotificationComponent,
+                            {
+                                data: {},
+                            }
+                        );
+                        dialogRef.afterClosed().subscribe((result) => { });
                     }
-
-                    const dialogRef = this.expiredPricingDialog.open(
-                        PricingExpiredNotificationComponent,
-                        {
-                            data: {},
-                        }
-                    );
-                    dialogRef.afterClosed().subscribe((result) => { });
                 });
         }
 
