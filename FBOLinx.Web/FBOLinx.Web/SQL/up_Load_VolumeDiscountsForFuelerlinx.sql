@@ -37,20 +37,6 @@ BEGIN
 				from PricingTemplate pt2
 				left join AircraftPrices ap2 on ap2.PriceTemplateID = pt2.OID) AP ON AP.CustomerAircraftID = @CustomerAircraftID and AP.FBOID = F.OID
 			where AP.FBOID is null
-			
-			
-	INSERT INTO AircraftPrices (CustomerAircraftID, PriceTemplateID)
-			select @CustomerAircraftID, CCT.CustomerType AS PricingTemplateID
-			from FBOs F
-			inner join PricingTemplate pt on pt.FBOID = F.OID and F.GroupID > 1
-			inner join Customers C ON C.FuelerlinxID = @FuelerlinxCompanyID
-			inner join CustomerInfoByGroup CIBG ON C.OID = CIBG.CustomerID AND CIBG.GroupID = F.GroupID
-			inner join CustomCustomerTypes CCT ON CCT.CustomerID = CIBG.CustomerID AND CCT.FBOID = F.OID and CCT.CustomerType = pt.OID
-			left join
-			(select ap2.CustomerAircraftID, pt2.FBOID
-				from PricingTemplate pt2
-				left join AircraftPrices ap2 on ap2.PriceTemplateID = pt2.OID) AP ON AP.CustomerAircraftID = @CustomerAircraftID and AP.FBOID = F.OID
-			where AP.FBOID is null
 
 	INSERT INTO CompanyPricingLog (CompanyID, ICAO) VALUES(@FuelerlinxCompanyID, @ICAO)
 
@@ -113,7 +99,8 @@ BEGIN
 			INNER JOIN FBOPrices FP ON F.OID = FP.FBOID AND FP.Price > 0 AND
 										(((VSD.MarginType = 0 AND VSD.Margin > 0 AND FP.Product = 'JetA Cost') OR
 												(VSD.MarginType = 1 AND FP.Product = 'JetA Retail')) AND
-												(EffectiveFrom <= @date AND EffectiveTo > @date))
+												(EffectiveFrom <= @date AND EffectiveTo > @date) AND
+												(Expired IS NULL))
 			LEFT JOIN
 				(select PT.[Min], PT.[Max], PT.MaxEntered, CM.* 
 				FROM CustomerMargins CM
@@ -161,7 +148,8 @@ BEGIN
 			INNER JOIN FBOPrices FP ON F.OID = FP.FBOID AND FP.Price > 0 AND
 										(((T.MarginType = 0 AND FP.Product = 'JetA Cost') OR
 												(T.MarginType = 1 AND FP.Product = 'JetA Retail') OR (T.MarginType = 2 AND FP.Product = 'JetA Retail')) AND
-												(EffectiveFrom <= GETDATE() AND EffectiveTo > GETDATE()))
+												(EffectiveFrom <= GETDATE() AND EffectiveTo > GETDATE()) AND
+												(Expired IS NULL))
 			INNER JOIN CustomersViewedByFBO CVBF ON CVBF.CustomerID = CIBG.CustomerID AND CVBF.FBOID = F.OID
 			left join FBOFees FF ON FF.FBOID = F.OID AND T.MarginType = 0 AND FF.FeeType = 8
 			LEFT JOIN
