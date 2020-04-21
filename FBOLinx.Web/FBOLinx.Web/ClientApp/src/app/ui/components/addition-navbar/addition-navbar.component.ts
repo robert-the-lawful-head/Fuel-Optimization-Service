@@ -5,7 +5,7 @@ import {
     Input,
     ElementRef,
     HostListener,
-    HostBinding,
+    AfterViewInit,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatPaginator } from "@angular/material/paginator";
@@ -26,7 +26,7 @@ import * as moment from "moment";
         "[class.open]": "open",
     },
 })
-export class AdditionNavbarComponent implements OnInit {
+export class AdditionNavbarComponent implements OnInit, AfterViewInit {
     title: string;
     open: boolean;
     // Public Members
@@ -58,15 +58,8 @@ export class AdditionNavbarComponent implements OnInit {
     ) {
         this.title = "Distribute Prices";
         this.open = false;
-
-        // this.marginTemplateDataSource = new MatTableDataSource(this.pricingTemplatesData);
     }
 
-    openNavbar(event) {
-        event.preventDefault();
-
-        this.open = !this.open;
-    }
     ngOnInit() {
         this.distributionService
             .getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50)
@@ -93,7 +86,6 @@ export class AdditionNavbarComponent implements OnInit {
 
         this.pricingTemplatesData = this.templatelst.filter(
             (element: any, index: number, array: any[]) => {
-                // return true;
                 return (
                     array.indexOf(
                         array.find(
@@ -106,6 +98,7 @@ export class AdditionNavbarComponent implements OnInit {
                 );
             }
         );
+
         this.selectAll = false;
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.marginTemplateDataSource = new MatTableDataSource(
@@ -114,7 +107,9 @@ export class AdditionNavbarComponent implements OnInit {
         this.marginTemplateDataSource.sort = this.sort;
         this.marginTemplateDataSource.paginator = this.paginator;
         this.resultsLength = this.pricingTemplatesData.length;
+    }
 
+    ngAfterViewInit() {
         this.sharedService.currentMessage.subscribe((message) => {
             this.message = message;
             this.pricingTemplatesService
@@ -123,15 +118,22 @@ export class AdditionNavbarComponent implements OnInit {
                     this.sharedService.currentUser.groupId
                 )
                 .subscribe((data: any) => {
-                    this.pricingTemplatesData = data;
+                    this.pricingTemplatesData = [];
+                    if (data) {
+                        this.pricingTemplatesData = data;
+                    }
                     this.marginTemplateDataSource = new MatTableDataSource(
                         this.pricingTemplatesData
                     );
-                    this.marginTemplateDataSource.sort = this.sort;
-                    this.marginTemplateDataSource.paginator = this.paginator;
                     this.resultsLength = this.pricingTemplatesData.length;
                 });
         });
+    }
+
+    openNavbar(event) {
+        event.preventDefault();
+
+        this.open = !this.open;
     }
 
     public OpenMarginInfo(event) {
