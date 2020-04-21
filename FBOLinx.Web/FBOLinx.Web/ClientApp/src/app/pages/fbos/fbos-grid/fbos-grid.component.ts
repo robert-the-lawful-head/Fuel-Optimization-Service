@@ -97,8 +97,10 @@ export class FbosGridComponent implements OnInit {
         this.fbosDataSource.sort = this.sort;
         this.fbosDataSource.paginator = this.paginator;
         this.resultsLength = this.fbosData.length;
-
-        this.checkExistingPrices();
+        if (this.sharedService.currentUser.role !== 3) {
+            this.checkExistingPrices();
+        }
+        
     }
 
     public deleteRecord(record) {
@@ -203,6 +205,7 @@ export class FbosGridComponent implements OnInit {
     }
 
     public checkExistingPrices() {
+
         this.fboPricesService
             .checkFboExpiredPricingGroup(this.sharedService.currentUser.groupId)
             .subscribe((data: any) => {
