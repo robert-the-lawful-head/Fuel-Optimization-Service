@@ -64,9 +64,10 @@ namespace FBOLinx.Web.Controllers
 
             var fboprices = await (
                             from f in _context.Fboprices
-                            where Convert.ToDateTime(f.EffectiveFrom).Date <= DateTime.Now.Date && f.EffectiveTo > DateTime.Now.AddDays(-1)
+                            where f.EffectiveTo > DateTime.Now.AddDays(-1)
                             && f.Fboid == fboId && f.Price != null && f.Expired != true
                             select f).ToListAsync();
+
             var addOnMargins = await (
                             from s in _context.TempAddOnMargin
                             where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
@@ -190,7 +191,6 @@ namespace FBOLinx.Web.Controllers
 
             var result = (from p in products
                           join f in (from f in _context.Fboprices
-                                         //where f.EffectiveFrom > DateTime.Now
                                      where Convert.ToDateTime(f.EffectiveFrom).Date > DateTime.Now.Date && f.Expired != true
                                      select f) on new { Product = p.Description, FboId = fboId } equals new
                                      {
