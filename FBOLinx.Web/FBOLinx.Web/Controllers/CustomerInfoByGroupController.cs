@@ -439,12 +439,12 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost").FirstOrDefaultAsync();
+                Fboprices jetaACostRecord = await _context.Fboprices.Where(x => x.Fboid == fboId && x.Product == "JetA Cost" && x.Expired != true).FirstOrDefaultAsync();
                 var resultPrices =
                           from p in Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes))
                           join f in (
                                      from f in _context.Fboprices
-                                     where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId
+                                     where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId && f.Expired != true
                                      select f
                           ) on new { Product = p.Description, FboId = fboId } equals new { f.Product, FboId = f.Fboid.GetValueOrDefault() }
                           into leftJoinFBOPrices
@@ -486,7 +486,7 @@ namespace FBOLinx.Web.Controllers
                         from cm in leftJoinCustomerMargins.DefaultIfEmpty()
                         join fp in (
                             from f in _context.Fboprices
-                            where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId
+                            where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid.GetValueOrDefault() == fboId && f.Expired != true
                             select f
                         ) on p.MarginTypeProduct equals fp.Product
                         into leftJoinFboPrices
@@ -574,6 +574,7 @@ namespace FBOLinx.Web.Controllers
                                                     } into leftJoinFF
                                                     from ff in leftJoinFF.DefaultIfEmpty()
                                                     join fp in _context.Fboprices.Where((x =>
+                                                        x.Expired != true &&
                                                         x.EffectiveFrom.Value < DateTime.Now &&
                                                         (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.Now))) on new
                                                         {

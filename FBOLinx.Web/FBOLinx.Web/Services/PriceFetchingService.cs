@@ -55,9 +55,10 @@ namespace FBOLinx.Web.Services
                         feeType = ff.FeeType
                     } into leftJoinFF
                     from ff in leftJoinFF.DefaultIfEmpty()
-                    join fp in _context.Fboprices.Where((x =>
+                    join fp in _context.Fboprices.Where(x =>
                         x.EffectiveFrom.Value < DateTime.Now &&
-                        (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.Now))) on new
+                        (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.Now) &&
+                        x.Expired != true) on new
                     {
                         fboId = (pt != null ? pt.Fboid : 0),
                         product = (pt != null ? pt.MarginTypeProduct : "")
