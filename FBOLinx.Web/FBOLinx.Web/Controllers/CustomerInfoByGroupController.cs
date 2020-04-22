@@ -380,55 +380,6 @@ namespace FBOLinx.Web.Controllers
             return _context.CustomerInfoByGroup.Any(e => e.Oid == id);
         }
 
-        private Tuple<double, double> getPrices(double prevIntoPlanePrice, double? prevYourMargin, int oid, CustomerMarginModel margins, double margin, PricingTemplate.MarginTypes? marginType, 
-                                        double? jetARetail, double? jetACost)
-        {
-            double intoPlanePrice = prevIntoPlanePrice;
-            double? yourMargin = prevYourMargin;
-
-            if (oid != 0)
-            {
-                if (margins != null)
-                {
-                    string marginTypeDescription = Utilities.Enum.GetDescription(marginType ?? PricingTemplate.MarginTypes.CostPlus);
-                    if (marginTypeDescription == "Retail -")
-                    {
-                        if (jetARetail != null)
-                        {
-                            intoPlanePrice = jetARetail.Value - margins.MaxPrice;
-                        }
-                        else
-                        {
-                            intoPlanePrice = margins.MaxPrice;
-                        }
-
-                        if (jetACost != null)
-                        {
-                            yourMargin = margin;
-                        }
-                        else
-                        {
-                            yourMargin = intoPlanePrice - 0;
-                        }
-                    }
-                    else if (marginTypeDescription == "Cost +")
-                    {
-                        if (jetACost != null)
-                        {
-                            intoPlanePrice = margins.MaxPrice + jetACost.Value;
-                            yourMargin = intoPlanePrice - jetACost.Value;
-                        }
-                        else
-                        {
-                            intoPlanePrice = margins.MaxPrice + 0;
-                            yourMargin = intoPlanePrice - 0;
-                        }
-                    }
-                }
-            }
-            return Tuple.Create(intoPlanePrice, yourMargin.GetValueOrDefault());
-        }
-
         private async Task<List<CustomersGridViewModel>> FetchCustomersViewModelByGroupAndFbo(int groupId, int fboId)
         {
             try
