@@ -8,7 +8,8 @@ Method | HTTP request | Description
 [**DeleteFboDetailsByCompany**](FBOApi.md#deletefbodetailsbycompany) | **DELETE** /api/FBO/company-specific-details/{fboDetailsByCompanyId} | Delete company-specific details for a particular FBO.
 [**DeleteFboDetailsByCompanyNotes**](FBOApi.md#deletefbodetailsbycompanynotes) | **DELETE** /api/FBO/company-specific-details/{fboDetailsByCompanyId}/notes/{noteId} | Delete a company-specific note for a particular FBO.  The note will be changed to a \&quot;deleted\&quot; state but will not be removed from the database to allow for change-tracking.
 [**GetFBOLinxFboByAcukwikId**](FBOApi.md#getfbolinxfbobyacukwikid) | **GET** /api/FBO/fbolinx/fbo-by-acukwik-id/{acukwikId} | 
-[**GetFboAlias**](FBOApi.md#getfboalias) | **GET** /api/FBO/fboAlias/by-airport/{icao} | 
+[**GetFboAliasByAirport**](FBOApi.md#getfboaliasbyairport) | **GET** /api/FBO/fboAlias/by-airport/{icao} | 
+[**GetFboAliasList**](FBOApi.md#getfboaliaslist) | **GET** /api/FBO/fboAlias/list | 
 [**GetFboDetailsByCompany**](FBOApi.md#getfbodetailsbycompany) | **GET** /api/FBO/company-specific-details/{fboDetailsByCompanyId} | Fetch company-specific details for a particular FBO based on the provided [fboDetailsByCompanyId].
 [**GetFboDetailsByCompanyByLocation**](FBOApi.md#getfbodetailsbycompanybylocation) | **GET** /api/FBO/company-specific-details/by-location/{icao}/{fboName} | Fetch company-specific details for a particular FBO based on the provided [icao] and [fboName].
 [**GetFboDetailsByCompanyNotes**](FBOApi.md#getfbodetailsbycompanynotes) | **GET** /api/FBO/company-specific-details/{fboDetailsByCompanyId}/notes | Fetch company-specific notes for a particular FBO based on the provided [fboDetailsByCompanyId].
@@ -296,9 +297,9 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-<a name="getfboalias"></a>
-# **GetFboAlias**
-> FboAliasResponse GetFboAlias (string icao)
+<a name="getfboaliasbyairport"></a>
+# **GetFboAliasByAirport**
+> FboAliasListResponse GetFboAliasByAirport (string icao)
 
 
 
@@ -312,7 +313,7 @@ using IO.Swagger.Model;
 
 namespace Example
 {
-    public class GetFboAliasExample
+    public class GetFboAliasByAirportExample
     {
         public void main()
         {
@@ -331,12 +332,12 @@ namespace Example
 
             try
             {
-                FboAliasResponse result = apiInstance.GetFboAlias(icao);
+                FboAliasListResponse result = apiInstance.GetFboAliasByAirport(icao);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling FBOApi.GetFboAlias: " + e.Message );
+                Debug.Print("Exception when calling FBOApi.GetFboAliasByAirport: " + e.Message );
             }
         }
     }
@@ -351,7 +352,71 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**FboAliasResponse**](FboAliasResponse.md)
+[**FboAliasListResponse**](FboAliasListResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getfboaliaslist"></a>
+# **GetFboAliasList**
+> FboAliasListResponse GetFboAliasList ()
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetFboAliasListExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FBOApi();
+
+            try
+            {
+                FboAliasListResponse result = apiInstance.GetFboAliasList();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FBOApi.GetFboAliasList: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**FboAliasListResponse**](FboAliasListResponse.md)
 
 ### Authorization
 

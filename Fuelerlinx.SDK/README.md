@@ -140,7 +140,8 @@ Class | Method | HTTP request | Description
 *FBOApi* | [**DeleteFboDetailsByCompany**](docs/FBOApi.md#deletefbodetailsbycompany) | **DELETE** /api/FBO/company-specific-details/{fboDetailsByCompanyId} | Delete company-specific details for a particular FBO.
 *FBOApi* | [**DeleteFboDetailsByCompanyNotes**](docs/FBOApi.md#deletefbodetailsbycompanynotes) | **DELETE** /api/FBO/company-specific-details/{fboDetailsByCompanyId}/notes/{noteId} | Delete a company-specific note for a particular FBO.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
 *FBOApi* | [**GetFBOLinxFboByAcukwikId**](docs/FBOApi.md#getfbolinxfbobyacukwikid) | **GET** /api/FBO/fbolinx/fbo-by-acukwik-id/{acukwikId} | 
-*FBOApi* | [**GetFboAlias**](docs/FBOApi.md#getfboalias) | **GET** /api/FBO/fboAlias/by-airport/{icao} | 
+*FBOApi* | [**GetFboAliasByAirport**](docs/FBOApi.md#getfboaliasbyairport) | **GET** /api/FBO/fboAlias/by-airport/{icao} | 
+*FBOApi* | [**GetFboAliasList**](docs/FBOApi.md#getfboaliaslist) | **GET** /api/FBO/fboAlias/list | 
 *FBOApi* | [**GetFboDetailsByCompany**](docs/FBOApi.md#getfbodetailsbycompany) | **GET** /api/FBO/company-specific-details/{fboDetailsByCompanyId} | Fetch company-specific details for a particular FBO based on the provided [fboDetailsByCompanyId].
 *FBOApi* | [**GetFboDetailsByCompanyByLocation**](docs/FBOApi.md#getfbodetailsbycompanybylocation) | **GET** /api/FBO/company-specific-details/by-location/{icao}/{fboName} | Fetch company-specific details for a particular FBO based on the provided [icao] and [fboName].
 *FBOApi* | [**GetFboDetailsByCompanyNotes**](docs/FBOApi.md#getfbodetailsbycompanynotes) | **GET** /api/FBO/company-specific-details/{fboDetailsByCompanyId}/notes | Fetch company-specific notes for a particular FBO based on the provided [fboDetailsByCompanyId].
@@ -427,7 +428,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FBOsByCompanyDTO](docs/FBOsByCompanyDTO.md)
  - [IO.Swagger.Model.FboAirport](docs/FboAirport.md)
  - [IO.Swagger.Model.FboAliasDTO](docs/FboAliasDTO.md)
- - [IO.Swagger.Model.FboAliasResponse](docs/FboAliasResponse.md)
+ - [IO.Swagger.Model.FboAliasListResponse](docs/FboAliasListResponse.md)
  - [IO.Swagger.Model.FboByCompanyNotesDTO](docs/FboByCompanyNotesDTO.md)
  - [IO.Swagger.Model.FboDetailsByCompanyNotesResponse](docs/FboDetailsByCompanyNotesResponse.md)
  - [IO.Swagger.Model.FboDetailsByCompanyResponse](docs/FboDetailsByCompanyResponse.md)
