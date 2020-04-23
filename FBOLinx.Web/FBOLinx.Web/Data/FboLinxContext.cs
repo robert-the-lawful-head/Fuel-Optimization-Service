@@ -465,6 +465,8 @@ namespace FBOLinx.Web.Data
 
             modelBuilder.Entity<CustomerDefaultTemplates>(entity =>
             {
+                entity.HasKey(e => e.Oid);
+                entity.Property(e => e.Oid).HasColumnName("OID");
                 entity.Property(e => e.CustomerID).IsRequired();
                 entity.Property(e => e.PricingTemplateID).IsRequired();
                 entity.Property(e => e.Fboid).HasColumnName("FBOID").IsRequired();
