@@ -27,18 +27,15 @@ export class PricingExpiredNotificationGroupComponent {
     }
 
     public onRemindMeLaterClick() {
-        localStorage.setItem(
-            "pricingExpiredNotification",
-            moment().format("L")
-        );
+        localStorage.setItem("pricingExpiredNotification", moment().add(1, "days").format("L"));
         this.dialogRef.close();
     }
 
     public onCancelClick() {
-        sessionStorage.setItem(
-            "pricingExpiredNotification",
-            moment().format("L")
-        );
+        //sessionStorage.setItem(
+        //    "pricingExpiredNotification",
+        //    moment().format("L")
+        //);
         this.dialogRef.close();
     }
 

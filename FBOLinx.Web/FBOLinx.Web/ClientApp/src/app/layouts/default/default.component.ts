@@ -81,15 +81,10 @@ export class DefaultLayoutComponent implements OnInit {
         if (noThanksFlag) {
             return;
         }
-        if (
-            remindMeLaterFlag &&
-            moment(moment().format("L")).isAfter(moment(remindMeLaterFlag))
-        ) {
+        //if (remindMeLaterFlag && moment(moment().format("L")).isAfter(moment(remindMeLaterFlag)))
+        if (remindMeLaterFlag && (moment(moment().format("L")) !== moment(remindMeLaterFlag))) {
             return;
         }
-
-        console.log(this.sharedService.currentUser);
-        
 
         if (this.sharedService.currentUser.role === 1 || this.sharedService.currentUser.role === 4) {
             this.fboPricesService
