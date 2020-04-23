@@ -107,27 +107,75 @@ namespace FBOLinx.Web.Controllers
         // POST: api/Groups
         [HttpPost]
         [UserRole(Models.User.UserRoles.Conductor)]
-        public async Task<IActionResult> PostGroup([FromBody] Group @group)
+        public async Task<IActionResult> PostGroup([FromBody] Group group)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            try
+            {
+                _context.Group.Add(group);
+                await _context.SaveChangesAsync();
 
-            //try
-            //{
-                
-            //}
-            //catch(Exception ex)
-            //{
-            //    var sss = ex.Message;
-            //}
+                if (group.Oid != 0)
+                {
+                    _fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
 
-            _context.Group.Add(@group);
-            await _context.SaveChangesAsync();
+                    var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company !=null).ToList();
 
-            _fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + @group.GroupName + "', @GroupID=" + @group.Oid + "");
+                    foreach (var cust in listWithCustomers)
+                    {
+                        CustomerInfoByGroup cibg = new CustomerInfoByGroup();
+                        cibg.GroupId = group.Oid;
+                        cibg.CustomerId = cust.Oid;
+                        cibg.Company = cust.Company;
+                        cibg.Username = cust.Username;
+                        cibg.Password = cust.Password;
+                        cibg.Joined = cust.Joined;
+                        cibg.Active = cust.Active;
+                        cibg.Distribute = cust.Distribute;
+                        cibg.Network = cust.Network;
+                        cibg.MainPhone = cust.MainPhone;
+                        cibg.Address = cust.Address;
+                        cibg.City = cust.City;
+                        cibg.State = cust.State;
+                        cibg.ZipCode = cust.ZipCode;
+                        cibg.Country = cust.Country;
+                        cibg.Website = cust.Website;
+                        cibg.ShowJetA = cust.ShowJetA;
+                        cibg.Show100Ll = cust.Show100Ll;
+                        cibg.Suspended = cust.Suspended;
+
+                        _context.CustomerInfoByGroup.Add(cibg);
+                        _context.SaveChanges();
+
+                        var listOfAirplanes = _context.CustomerAircrafts.Where(s => s.CustomerId == cust.Oid).GroupBy(s => s.AircraftId).ToList();
+
+                        foreach (var airplane in listOfAirplanes)
+                        {
+                            var singleAirplane = airplane;
+                            CustomerAircrafts ca = new CustomerAircrafts();
+                            ca.AircraftId = airplane.Key;
+                            ca.CustomerId = cust.Oid;
+                            ca.GroupId = group.Oid;
+                            ca.TailNumber = airplane.First().TailNumber;
+                            ca.Size = airplane.First().Size;
+                            ca.NetworkCode = airplane.First().NetworkCode;
+                            ca.AddedFrom = airplane.First().AddedFrom;
+
+                            _context.CustomerAircrafts.Add(ca);
+                            _context.SaveChanges();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var sss = ex.Message;
+                return Ok(null);
+            }
 
             return CreatedAtAction("GetGroup", new { id = @group.Oid }, @group);
         }
