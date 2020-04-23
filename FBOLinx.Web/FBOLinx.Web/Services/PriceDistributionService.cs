@@ -30,26 +30,28 @@ namespace FBOLinx.Web.Services
         private MailSettings _MailSettings;
         private DistributePricingRequest _DistributePricingRequest;
         private FboLinxContext _context;
+        private FuelerLinxContext _fuelerLinxContext;
         private IFileProvider _FileProvider;
         private bool _IsPreview = false;
         private int _DistributionLogID = 0;
         private IHttpContextAccessor _HttpContextAccessor;
 
         #region Constructors
-        public PriceDistributionService(MailSettings mailSettings, FboLinxContext context, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor)
+        public PriceDistributionService(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor)
         {
             _HttpContextAccessor = httpContextAccessor;
             _FileProvider = fileProvider;
             _context = context;
+            _fuelerLinxContext = fuelerLinxContext;
             _MailSettings = mailSettings;
         }
         #endregion
 
         #region Static Methods
-        public static async Task BeginPriceDistribution(MailSettings mailSettings, FboLinxContext context,
+        public static async Task BeginPriceDistribution(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext,
             Models.Requests.DistributePricingRequest request, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor)
         {
-            PriceDistributionService service = new PriceDistributionService(mailSettings, context, fileProvider, httpContextAccessor);
+            PriceDistributionService service = new PriceDistributionService(mailSettings, context, fuelerLinxContext, fileProvider, httpContextAccessor);
             await service.DistributePricing(request);
         }
         #endregion
@@ -345,7 +347,7 @@ namespace FBOLinx.Web.Services
         {
             var pom = await new Controllers.CustomerMarginsController(_context).GetCustomerMarginsByPricingTemplateId(num);
             var res = pom as OkObjectResult;
-            var prom = await new Controllers.FbopricesController(_context).GetFbopricesByFboIdCurrent(fboId);
+            var prom = await new Controllers.FbopricesController(_context, _fuelerLinxContext).GetFbopricesByFboIdCurrent(fboId);
             var resProm = prom as OkObjectResult;
          
             string body = "";

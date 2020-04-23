@@ -22,16 +22,18 @@ namespace FBOLinx.Web.Controllers
     public class DistributionController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly FuelerLinxContext _fuelerLinxContext;
         private IHttpContextAccessor _HttpContextAccessor;
         private IFileProvider _FileProvider;
         private IOptions<MailSettings> _MailSettings;
 
-        public DistributionController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings)
+        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings)
         {
             _MailSettings = mailSettings;
             _FileProvider = fileProvider;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
+            _fuelerLinxContext = fuelerLinxContext;
         }
 
         // GET: fbo/5/log/10
@@ -124,7 +126,7 @@ namespace FBOLinx.Web.Controllers
             if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
                 return BadRequest(ModelState);
 
-            await Task.Run(() => Services.PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context,
+            await Task.Run(() => Services.PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context, _fuelerLinxContext,
                 request,
                 _FileProvider, _HttpContextAccessor));
 
@@ -143,7 +145,7 @@ namespace FBOLinx.Web.Controllers
             if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
                 return BadRequest(ModelState);
 
-            Services.PriceDistributionService service = new PriceDistributionService(_MailSettings.Value, _context, _FileProvider, _HttpContextAccessor);
+            Services.PriceDistributionService service = new PriceDistributionService(_MailSettings.Value, _context, _fuelerLinxContext, _FileProvider, _HttpContextAccessor);
             string preview = await service.GeneratePreview(request);
 
             return Ok(new {preview = preview});
