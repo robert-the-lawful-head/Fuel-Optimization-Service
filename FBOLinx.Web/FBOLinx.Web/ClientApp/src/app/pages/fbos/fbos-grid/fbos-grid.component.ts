@@ -24,6 +24,7 @@ import { FbosDialogNewFboComponent } from "../fbos-dialog-new-fbo/fbos-dialog-ne
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { ManageConfirmationComponent } from "../../../shared/components/manage-confirmation/manage-confirmation.component";
 import { PricingExpiredNotificationGroupComponent } from "../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component";
+import * as moment from 'moment';
 
 
 const BREADCRUMBS: any[] = [
@@ -98,6 +99,20 @@ export class FbosGridComponent implements OnInit {
         this.fbosDataSource.paginator = this.paginator;
         this.resultsLength = this.fbosData.length;
         if (this.sharedService.currentUser.role !== 3) {
+            const remindMeLaterFlag = localStorage.getItem(
+                "pricingExpiredNotification"
+            );
+            const noThanksFlag = sessionStorage.getItem(
+                "pricingExpiredNotification"
+            );
+            if (noThanksFlag) {
+                return;
+            }
+            
+            if (remindMeLaterFlag && (moment(moment().format("L")) !== moment(remindMeLaterFlag))) {
+                return;
+            }
+
             this.checkExistingPrices();
         }
         
