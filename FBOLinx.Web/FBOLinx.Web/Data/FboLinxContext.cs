@@ -53,6 +53,8 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<TempAddOnMargin> TempAddOnMargin { get; set; }
         public virtual DbSet<MappingPrices> MappingPrices { get; set; }
         public virtual DbSet<IntegrationPartners> IntegrationPartners { get; set; }
+        public virtual DbSet<VolumeScaleDiscount> VolumeScaleDiscount { get; set; }
+        public virtual DbSet<CustomerDefaultTemplates> CustomerDefaultTemplates { get; set; }
 
         // Unable to generate entity type for table 'dbo.AdminEmails'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.FBOContacts'. Please see the warning messages.
@@ -420,6 +422,52 @@ namespace FBOLinx.Web.Data
             modelBuilder.Entity<IntegrationPartners>(entity =>
             {
                 entity.Property(e => e.PartnerName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<VolumeScaleDiscount>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+
+                entity.HasIndex(e => new { e.Margin, e.MarginType, e.Fboid })
+                    .HasName("indx_VolumeScaleDiscount_FBOID");
+
+                entity.HasIndex(e => new { e.CustomerId, e.Fboid, e.Margin, e.MarginType })
+                    .HasName("INX_VolScaleDis_MarginType");
+
+                entity.HasIndex(e => new { e.Fboid, e.Margin, e.CustomerId, e.MarginType })
+                    .HasName("INX_VolScaleDis_CustIDMarginType");
+
+                entity.HasIndex(e => new { e.CustomerId, e.Fboid, e.Margin, e.MarginType, e.DefaultSettings })
+                    .HasName("INX_VolumeScaleDiscount_DefaultSettings");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.DefaultSettings).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.DefaultSettings100Ll)
+                    .HasColumnName("DefaultSettings100LL")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.JetAvolumeDiscount).HasColumnName("JetAVolumeDiscount");
+
+                entity.Property(e => e.LastUpdated).HasColumnType("datetime");
+
+                entity.Property(e => e.Margin100Ll).HasColumnName("Margin100LL");
+
+                entity.Property(e => e.MarginType100Ll).HasColumnName("MarginType100LL");
+
+                entity.Property(e => e.TemplateId).HasColumnName("TemplateID");
+            });
+
+            modelBuilder.Entity<CustomerDefaultTemplates>(entity =>
+            {
+                entity.Property(e => e.CustomerID).IsRequired();
+                entity.Property(e => e.PricingTemplateID).IsRequired();
+                entity.Property(e => e.Fboid).HasColumnName("FBOID").IsRequired();
             });
         }
     }
