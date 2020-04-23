@@ -43,16 +43,16 @@ export class LandingSiteLayoutComponent implements OnInit {
     public rememberMePasswordKey = "rememberMePassword";
 
     // Images
-    public slideHalfImage1URL = require("../../../assets/content/slide-half-1.png");
-    public slideHalfImage2URL = require("../../../assets/content/slide-half-2.png");
-    public slideHalfImage3URL = require("../../../assets/content/slide-half-3.png");
-    public featureLayoutImage = require("../../../assets/content/feature-layout.png");
-    public featureHtml5Image = require("../../../assets/content/feature-html5.png");
-    public featureWebfontImage = require("../../../assets/content/feature-webfonts.png");
-    public featureDesignImage = require("../../../assets/content/feature-design.png");
-    public featureCustomizeImage = require("../../../assets/content/feature-customize.png");
-    public featureSupportImage = require("../../../assets/content/feature-support.png");
-    public paragonSmallLogoImage = require("../../../assets/content/paragon-2c-logo_small.png");
+    public slideHalfImage1URL = "../../../assets/content/slide-half-1.png";
+    public slideHalfImage2URL = "../../../assets/content/slide-half-2.png";
+    public slideHalfImage3URL = "../../../assets/content/slide-half-3.png";
+    public featureLayoutImage = "../../../assets/content/feature-layout.png";
+    public featureHtml5Image = "../../../assets/content/feature-html5.png";
+    public featureWebfontImage = "../../../assets/content/feature-webfonts.png";
+    public featureDesignImage = "../../../assets/content/feature-design.png";
+    public featureCustomizeImage = "../../../assets/content/feature-customize.png";
+    public featureSupportImage = "../../../assets/content/feature-support.png";
+    public paragonSmallLogoImage = "../../../assets/content/paragon-2c-logo_small.png";
 
     public carouselImages: Array<any>;
     public contactUsMessage: ContactUsMessage;
