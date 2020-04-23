@@ -420,7 +420,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(null);
         }
 
-        [HttpPost("volumn-discounts-for-fuelerlinx")]
+        [HttpPost("volume-discounts-for-fuelerlinx")]
         public async Task<IActionResult> GetFuelPricesForFuelerlinx([FromBody] VolumeDiscountLoadRequest request)
         {
             int aircraftId = await (
