@@ -247,7 +247,9 @@ namespace FBOLinx.Web.Controllers
                                 CustomerId = c.Oid,
                                 DateCreated = DateTime.Now,
                                 Source = "Fuelerlinx",
-                                SourceId = request.SourceId
+                                SourceId = request.SourceId,
+                                Email = request.Email,
+                                PhoneNumber = request.PhoneNumber
                             })
                             .Distinct()
                             .ToList();

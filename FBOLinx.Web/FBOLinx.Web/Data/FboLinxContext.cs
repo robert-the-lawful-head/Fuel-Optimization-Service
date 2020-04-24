@@ -242,6 +242,10 @@ namespace FBOLinx.Web.Data
 
                 entity.Property(e => e.Source).IsUnicode(false);
 
+                entity.Property(e => e.Email).IsUnicode(false);
+
+                entity.Property(e => e.PhoneNumber).IsUnicode(false);
+
                 entity.Property(e => e.TimeStandard).IsUnicode(false);
             });
 

@@ -41,6 +41,8 @@ namespace FBOLinx.Web.Models
         public int? SourceId { get; set; }
         public string DispatchNotes { get; set; }
         public bool? Archived { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
 
         [ForeignKey("CustomerId")]
         [InverseProperty("FuelReqs")]
