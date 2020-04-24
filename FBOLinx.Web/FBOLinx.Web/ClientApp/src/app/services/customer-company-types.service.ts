@@ -19,6 +19,12 @@ export class CustomerCompanyTypesService {
         });
     }
 
+    public getNonFuelerLinxForFbo(fboId) {
+        return this.http.get(this.accessPointUrl + "/fbo/" + fboId + "/nofuelerlinx", {
+            headers: this.headers,
+        });
+    }
+
     public get(payload) {
         return this.http.get(this.accessPointUrl + "/" + payload.oid, {
             headers: this.headers,

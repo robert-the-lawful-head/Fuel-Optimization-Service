@@ -16,6 +16,7 @@ using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using IO.Swagger.Model;
 using FBOLinx.Web.DTO;
+using FBOLinx.Web.Auth;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -225,9 +226,15 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqVM);
         }
 
+        [AllowAnonymous]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
         [HttpPost("fbo/{fboId}/create")]
         public async Task<IActionResult> CreateFuelReqByFbo([FromRoute] int fboId, [FromBody] FuelReqRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             List<FuelReq> fuelReqs = 
                             (from c in _context.Customers
                             join cg in _context.CustomerInfoByGroup on new { CustomerId = c.Oid, c.FuelerlinxId } equals new { cg.CustomerId, FuelerlinxId = request.SourceId }

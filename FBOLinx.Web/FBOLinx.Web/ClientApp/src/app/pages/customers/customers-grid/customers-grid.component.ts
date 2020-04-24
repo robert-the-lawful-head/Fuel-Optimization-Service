@@ -51,6 +51,7 @@ export class CustomersGridComponent implements OnInit {
         "needsAttention",
         "company",
         "customerCompanyTypeName",
+        "isFuelerLinxCustomer",
         "pricingTemplateName",
         "allInPrice",
         "fleetSize",

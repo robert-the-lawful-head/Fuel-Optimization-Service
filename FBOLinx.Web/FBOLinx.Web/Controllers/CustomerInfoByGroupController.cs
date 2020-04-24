@@ -507,6 +507,7 @@ namespace FBOLinx.Web.Controllers
                                                         FuelerLinxId = resultsGroup.Key.FuelerLinxId,
                                                         Network = resultsGroup.Key.Network,
                                                         GroupId = resultsGroup.Key.GroupId,
+                                                        IsFuelerLinxCustomer = resultsGroup.Key.FuelerLinxId > 0,
                                                         CustomerCompanyType = resultsGroup.Key.CustomerCompanyType,
                                                         CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
                                                         TailNumbers = resultsGroup.Key.Tails,

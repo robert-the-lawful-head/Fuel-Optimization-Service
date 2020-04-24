@@ -10,6 +10,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.ViewModels;
+using FBOLinx.Web.Auth;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -420,9 +421,15 @@ namespace FBOLinx.Web.Controllers
             return Ok(null);
         }
 
+        [AllowAnonymous]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
         [HttpPost("volume-discounts-for-fuelerlinx")]
         public async Task<IActionResult> GetFuelPricesForFuelerlinx([FromBody] VolumeDiscountLoadRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             int aircraftId = await (
                                 from ca in _context.CustomerAircrafts
                                 join c in _context.Customers
