@@ -17,5 +17,7 @@ namespace FBOLinx.Web.Models.Requests
         public int? SourceId { get; set; }
         public int? CompanyId { get; set; }
         public string TailNumber { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }
