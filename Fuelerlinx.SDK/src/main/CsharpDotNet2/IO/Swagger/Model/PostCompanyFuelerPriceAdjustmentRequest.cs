@@ -11,13 +11,13 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class PostFlightTypeMappingRequest {
+  public class PostCompanyFuelerPriceAdjustmentRequest {
     /// <summary>
-    /// Gets or Sets FlightTypeName
+    /// Gets or Sets CompanyFuelerId
     /// </summary>
-    [DataMember(Name="flightTypeName", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "flightTypeName")]
-    public string FlightTypeName { get; set; }
+    [DataMember(Name="companyFuelerId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyFuelerId")]
+    public int? CompanyFuelerId { get; set; }
 
     /// <summary>
     /// NotSet = 0,             Private = 1,             Commercial = 2    * `NotSet` - Not Set  * `Private` - Private  * `Commercial` - Commercial  
@@ -28,11 +28,18 @@ namespace IO.Swagger.Model {
     public int? FlightTypeClassification { get; set; }
 
     /// <summary>
-    /// Gets or Sets CompanyId
+    /// Gets or Sets PriceAdjustment
     /// </summary>
-    [DataMember(Name="companyId", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "companyId")]
-    public int? CompanyId { get; set; }
+    [DataMember(Name="priceAdjustment", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "priceAdjustment")]
+    public double? PriceAdjustment { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Currency
+    /// </summary>
+    [DataMember(Name="currency", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "currency")]
+    public string Currency { get; set; }
 
 
     /// <summary>
@@ -41,10 +48,11 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class PostFlightTypeMappingRequest {\n");
-      sb.Append("  FlightTypeName: ").Append(FlightTypeName).Append("\n");
+      sb.Append("class PostCompanyFuelerPriceAdjustmentRequest {\n");
+      sb.Append("  CompanyFuelerId: ").Append(CompanyFuelerId).Append("\n");
       sb.Append("  FlightTypeClassification: ").Append(FlightTypeClassification).Append("\n");
-      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
+      sb.Append("  PriceAdjustment: ").Append(PriceAdjustment).Append("\n");
+      sb.Append("  Currency: ").Append(Currency).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

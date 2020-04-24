@@ -251,6 +251,14 @@ namespace IO.Swagger.Model {
     public string Currency { get; set; }
 
     /// <summary>
+    /// An adjusted price specified by the flight department for this particular fuel vendor.  The adjusted price is the [EstimatedTotal] +- the adjusted rate setup by the flight department.
+    /// </summary>
+    /// <value>An adjusted price specified by the flight department for this particular fuel vendor.  The adjusted price is the [EstimatedTotal] +- the adjusted rate setup by the flight department.</value>
+    [DataMember(Name="companyAdjustedTotal", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyAdjustedTotal")]
+    public double? CompanyAdjustedTotal { get; set; }
+
+    /// <summary>
     /// If the SpecificTailNumbers list is empty/null then the price applies to all tails.
     /// </summary>
     /// <value>If the SpecificTailNumbers list is empty/null then the price applies to all tails.</value>
@@ -307,6 +315,7 @@ namespace IO.Swagger.Model {
       sb.Append("  PreferredFBOText: ").Append(PreferredFBOText).Append("\n");
       sb.Append("  WeightUnit: ").Append(WeightUnit).Append("\n");
       sb.Append("  Currency: ").Append(Currency).Append("\n");
+      sb.Append("  CompanyAdjustedTotal: ").Append(CompanyAdjustedTotal).Append("\n");
       sb.Append("  SpecificTailNumbers: ").Append(SpecificTailNumbers).Append("\n");
       sb.Append("  Taxes: ").Append(Taxes).Append("\n");
       sb.Append("}\n");

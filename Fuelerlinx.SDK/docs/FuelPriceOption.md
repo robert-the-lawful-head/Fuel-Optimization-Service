@@ -37,6 +37,7 @@ Name | Type | Description | Notes
 **PreferredFBOText** | **string** |  | [optional] 
 **WeightUnit** | [**Weight**](Weight.md) |  | [optional] 
 **Currency** | **string** |  | [optional] 
+**CompanyAdjustedTotal** | **double?** | An adjusted price specified by the flight department for this particular fuel vendor.  The adjusted price is the [EstimatedTotal] +- the adjusted rate setup by the flight department. | [optional] 
 **SpecificTailNumbers** | **List&lt;string&gt;** | If the SpecificTailNumbers list is empty/null then the price applies to all tails. | [optional] 
 **Taxes** | [**List&lt;FuelerTaxByTierDTO&gt;**](FuelerTaxByTierDTO.md) |  | [optional] 
 
