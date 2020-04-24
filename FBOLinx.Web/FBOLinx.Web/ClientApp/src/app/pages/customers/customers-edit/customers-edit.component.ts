@@ -503,7 +503,7 @@ export class CustomersEditComponent {
 
     private loadCustomerCompanyTypes() {
         this.customerCompanyTypesService
-            .getForFbo(this.sharedService.currentUser.fboId)
+            .getNonFuelerLinxForFbo(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
                 this.customerCompanyTypes = data;
                 this.customerCompanyTypes.push({

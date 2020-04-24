@@ -148,6 +148,20 @@
             </td>
         </ng-container>
 
+        <ng-container matColumnDef="isFuelerLinxCustomer">
+            <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                (click)="alertHeader('isFuelerLinxCustomer')"
+            >
+                FuelerLinx Network
+            </th>
+            <td mat-cell *matCellDef="let customer">
+                {{ customer.isFuelerLinxCustomer ? 'YES' : 'NO' }}
+            </td>
+        </ng-container>
+
         <ng-container matColumnDef="pricingTemplateName">
             <th
                 mat-header-cell

@@ -54,7 +54,31 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest("Invalid FBO");
             }
 
-            var customerCompanyTypes = await _context.CustomerCompanyTypes.Where((x => x.Fboid == fboId || x.Fboid == 0)).OrderBy((x => x.Name)).ToListAsync();
+            var customerCompanyTypes = await _context.CustomerCompanyTypes
+                                                        .Where((x => x.Fboid == fboId || x.Fboid == 0))
+                                                        .OrderBy((x => x.Name))
+                                                        .ToListAsync();
+
+            if (customerCompanyTypes == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(customerCompanyTypes);
+        }
+
+        [HttpGet("fbo/{fboId}/nofuelerlinx")]
+        public async Task<ActionResult<CustomerCompanyTypes>> GetNoFuelerlinxCustomerCompanyTypesForFbo([FromRoute] int fboId)
+        {
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            var customerCompanyTypes = await _context.CustomerCompanyTypes
+                                                        .Where(x => (x.Fboid == fboId || x.Fboid == 0) && (x.Name != "FuelerLinx"))
+                                                        .OrderBy((x => x.Name))
+                                                        .ToListAsync();
 
             if (customerCompanyTypes == null)
             {

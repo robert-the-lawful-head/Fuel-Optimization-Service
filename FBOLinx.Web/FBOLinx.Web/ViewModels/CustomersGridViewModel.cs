@@ -27,6 +27,7 @@ namespace FBOLinx.Web.ViewModels
         public Models.CustomerInfoByGroup.CertificateTypes? CertificateType { get; set; }
         public double? MinGallons { get; set; }
         public double? MaxGallons { get; set; }
+        public bool? IsFuelerLinxCustomer { get; set; }
         public int? CustomerCompanyType { get; set; }
         public string CustomerCompanyTypeName { get; set; }
         public bool HasBeenViewed { get; set; }
