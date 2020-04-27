@@ -52,6 +52,8 @@ export class CustomersEditComponent {
     // Public Members
     public pageTitle = "Edit Customer";
     public breadcrumb: any[] = BREADCRUMBS;
+
+    public customerInfoByGroup: any;
     public pricingTemplatesDataSource: Array<any>;
     public contactsData: Array<any>;
     public pricingTemplatesData: Array<any>;
@@ -70,7 +72,6 @@ export class CustomersEditComponent {
     // Input/Output Bindings
     @Output() saveCustomerClicked = new EventEmitter<any>();
     @Output() cancelCustomerEditclicked = new EventEmitter<any>();
-    @Input() customerInfoByGroup: any;
 
     constructor(
         private route: ActivatedRoute,

@@ -50,7 +50,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerInfoByGroup = await _context.CustomerInfoByGroup.FindAsync(id);
+            var customerInfoByGroup = await _context.CustomerInfoByGroup
+                                                        .Include(cg => cg.Customer)
+                                                        .Where(cg => cg.Oid.Equals(id))
+                                                        .FirstAsync();
 
             if (customerInfoByGroup == null)
             {
@@ -190,8 +193,6 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(new {fileLocation = fileName });
         }
-
-
 
         // GET: api/CustomerInfoByGroup/group/5/fbo/6/pricingtemplate/7
         [HttpGet("group/{groupId}/fbo/{fboId}/pricingtemplate/{pricingTemplateId}")]
@@ -517,7 +518,7 @@ namespace FBOLinx.Web.Controllers
                                                         PricingTemplateName = resultsGroup.Key.PricingTemplateName,
                                                         Active = resultsGroup.Key.Active,
                                                         NeedsAttention = resultsGroup.Key.PricingTemplateName.Equals(defaultPricingTemplate.Name) ? true :
-                                                            resultsGroup.Key.CustomerCompanyTypeName != "FuelerLinx" &&
+                                                            resultsGroup.Key.FuelerLinxId == 0 &&
                                                             resultsGroup.Key.ContactExists == false ? true : false,
                                                         ContactExists = resultsGroup.Key.ContactExists,
                                                         FleetSize = resultsGroup.Key.FleetSize,
