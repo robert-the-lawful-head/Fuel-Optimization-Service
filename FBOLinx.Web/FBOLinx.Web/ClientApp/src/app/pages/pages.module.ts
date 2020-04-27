@@ -78,6 +78,7 @@ import { DashboardFboComponent } from "./dashboards/dashboard-fbo/dashboard-fbo.
 import { DashboardHomeComponent } from "./dashboards/dashboard-home/dashboard-home.component";
 import { FbosContactsComponent } from "./fbos/fbos-contacts/fbos-contacts.component";
 import { FbosDialogNewFboComponent } from "./fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component";
+import { FbosGridNewFboDialogComponent } from "./fbos/fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component";
 import { FboPricesHomeComponent } from "./fbo-prices/fbo-prices-home/fbo-prices-home.component";
 import { FbosHomeComponent } from "./fbos/fbos-home/fbos-home.component";
 import { FbosGridComponent } from "./fbos/fbos-grid/fbos-grid.component";
@@ -218,6 +219,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         DashboardHomeComponent,
         FbosContactsComponent,
         FbosDialogNewFboComponent,
+        FbosGridNewFboDialogComponent,
         FboPricesHomeComponent,
         FbosHomeComponent,
         FbosGridComponent,
@@ -293,6 +295,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         AccountProfileComponent,
         ForgotPasswordDialogComponent,
         FbosDialogNewFboComponent,
+        FbosGridNewFboDialogComponent,
         GroupsDialogNewGroupComponent,
         ManageConfirmationComponent,
         NotificationComponent,
