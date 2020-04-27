@@ -37,12 +37,6 @@ namespace FBOLinx.Web.Data
                 fboLinxContext.CustomerCompanyTypes.Add(new CustomerCompanyTypes()
                 {
                     AllowMultiplePricingTemplates = false,
-                    Name = "FuelerLinx"
-                });
-
-                fboLinxContext.CustomerCompanyTypes.Add(new CustomerCompanyTypes()
-                {
-                    AllowMultiplePricingTemplates = false,
                     Name = "Transient"
                 });
                 fboLinxContext.SaveChanges();

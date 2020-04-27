@@ -49,7 +49,7 @@ namespace FBOLinx.Web.Services
 
         #region Static Methods
         public static async Task BeginPriceDistribution(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext,
-            Models.Requests.DistributePricingRequest request, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor)
+            DistributePricingRequest request, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor)
         {
             PriceDistributionService service = new PriceDistributionService(mailSettings, context, fuelerLinxContext, fileProvider, httpContextAccessor);
             await service.DistributePricing(request);
@@ -57,7 +57,7 @@ namespace FBOLinx.Web.Services
         #endregion
 
         #region Public Methods
-        public async Task DistributePricing(Models.Requests.DistributePricingRequest request)
+        public async Task DistributePricing(DistributePricingRequest request)
         {
             _DistributePricingRequest = request;
             var customers = GetCustomersForDistribution(request);
@@ -69,8 +69,7 @@ namespace FBOLinx.Web.Services
 
             foreach (var customer in customers)
             {
-                    await GenerateDistributionMailMessage(customer);
-                
+                await GenerateDistributionMailMessage(customer);
             }
         }
 
@@ -110,18 +109,11 @@ namespace FBOLinx.Web.Services
 
         private List<Models.CustomerInfoByGroup> GetCustomersForDistribution()
         {
-            //var result = (from cg in _context.CustomerInfoByGroup
-            //    join c in _context.Customers on cg.CustomerId equals c.Oid
-            //    where cg.GroupId == _DistributePricingRequest.GroupId
-            //    && cg.Distribute.GetValueOrDefault()
-            //    select cg).ToList();
-
             var result = (from cg in _context.CustomerInfoByGroup
                           join c in _context.Customers on cg.CustomerId equals c.Oid
                           join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
                           join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
-                          where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid
-                          // && cg.Distribute.GetValueOrDefault()
+                          where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid && c.FuelerlinxId.GetValueOrDefault() == 0
                           select cg).ToList();
 
             return result;

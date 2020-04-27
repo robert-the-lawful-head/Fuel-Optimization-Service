@@ -82,7 +82,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
         this.currentUser = this.sharedService.currentUser;
 
         // getting the native window obj
-        console.log("Native window obj", winRef.nativeWindow);
         this.window = winRef.nativeWindow;
 
         if (!this.currentUser) {
