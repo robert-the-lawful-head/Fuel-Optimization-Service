@@ -81,7 +81,7 @@ export class DefaultLayoutComponent implements OnInit {
         if (noThanksFlag) {
             return;
         }
-        //if (remindMeLaterFlag && moment(moment().format("L")).isAfter(moment(remindMeLaterFlag)))
+        // if (remindMeLaterFlag && moment(moment().format("L")).isAfter(moment(remindMeLaterFlag)))
         if (remindMeLaterFlag && (moment(moment().format("L")) !== moment(remindMeLaterFlag))) {
             return;
         }

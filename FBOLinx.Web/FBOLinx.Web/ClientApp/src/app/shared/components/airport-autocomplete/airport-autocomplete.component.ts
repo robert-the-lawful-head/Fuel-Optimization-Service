@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
 import { FormControl } from "@angular/forms";
 import {
     startWith,
@@ -60,7 +60,7 @@ export class AirportAutocompleteComponent implements OnInit {
     }
 
     lookup(value: any): Observable<AirportAutoCompleteDataSource> {
-        if (typeof value == "object") {
+        if (typeof value === "object") {
             return of(null);
         }
         return this.acukwikAirportsService.search(value).pipe(

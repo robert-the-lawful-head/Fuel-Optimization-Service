@@ -25,7 +25,7 @@ import { FbosGridNewFboDialogComponent } from "../fbos-grid-new-fbo-dialog/fbos-
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { ManageConfirmationComponent } from "../../../shared/components/manage-confirmation/manage-confirmation.component";
 import { PricingExpiredNotificationGroupComponent } from "../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component";
-import * as moment from 'moment';
+import * as moment from "moment";
 
 
 const BREADCRUMBS: any[] = [
@@ -184,7 +184,7 @@ export class FbosGridComponent implements OnInit {
         } else {
             const dialogRef = this.newFboDialog.open(FbosGridNewFboDialogComponent, {
                 width: "450px",
-                data: {}
+                data: {},
             });
 
             dialogRef.afterClosed().subscribe((result) => {
