@@ -485,16 +485,17 @@ namespace FBOLinx.Web.Controllers
                                                         });
                 _context.AircraftPrices.AddRange(aircraftPrices);
 
-                var companyPricingLog = new CompanyPricingLog
+                CompanyPricingLog companyPricingLog = new CompanyPricingLog
                 {
                     CompanyId = request.FuelerlinxCompanyID,
-                    ICAO = request.ICAO
+                    ICAO = request.ICAO,
+                    CreatedDate = DateTime.Now
                 };
                 _context.CompanyPricingLog.Add(companyPricingLog);
 
                 await _context.SaveChangesAsync();
 
-                var fuelerlinxData = await (
+                List<FuelerlinxDataList> fuelerlinxData = await (
                     from fd in _fuelerlinxContext.FuelerData
                     join fl in _fuelerlinxContext.FuelerList on
                             new { FuelerId = fd.FuelerId.GetValueOrDefault(), fd.Active }
@@ -538,7 +539,7 @@ namespace FBOLinx.Web.Controllers
                                              }
                                             ).Take(1).ToListAsync();
 
-                var vsdFboPrices = await (
+                List<VolumeScaleDiscountFboPrice> vsdFboPrices = await (
                                         from vsd in _context.VolumeScaleDiscount
                                         from fp in _context.Fboprices
                                         where ((vsd.MarginType == 0 && vsd.Margin > 0 && fp.Product == "JetA Cost") ||
@@ -557,7 +558,7 @@ namespace FBOLinx.Web.Controllers
                                         }).ToListAsync();
 
 
-                var result1 = (
+                var result1 = 
                     from fa in _context.Fboairports
                     join f in _context.Fbos on
                             new { fa.Fboid, Active = true, Suspended = false }
@@ -609,13 +610,13 @@ namespace FBOLinx.Web.Controllers
                         t.Notes,
                         Price = GetTPrice(vsd, p, flf)
                     }
-                    );
+                    ;
 
                 var tempAddonMargins = _context.TempAddOnMargin
                                                     .Where(taom => taom.EffectiveFrom <= DateTime.Now &&
                                                                 taom.EffectiveTo.AddDays(1) > DateTime.Now);
 
-                var result2 = (
+                var result2 = 
                     from fa in _context.Fboairports
                     join f in _context.Fbos on
                             new { fa.Fboid, Active = true, Suspended = false }
@@ -691,7 +692,7 @@ namespace FBOLinx.Web.Controllers
                         t.Notes,
                         Price = GetDTPrice(fp, p, ff, t)
                     }
-                    );
+                    ;
 
                 var result = result1.Concat(result2).OrderBy(x => x.Fueler)
                     .ThenBy(x => x.Fbo)
