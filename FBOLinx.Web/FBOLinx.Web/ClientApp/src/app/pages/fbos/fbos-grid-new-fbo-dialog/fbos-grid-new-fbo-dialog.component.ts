@@ -1,36 +1,34 @@
 import { Component, Inject, EventEmitter, Output } from "@angular/core";
-import {
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 // Services
 import { AcukwikairportsService } from "../../../services/acukwikairports.service";
 
 // Interfaces
-export interface NewFBODialogData {
+export interface NewFboModel {
     oid: number;
     fbo: string;
     icao: string;
     iata: string;
     acukwikFboHandlerId: number;
     acukwikFbo: any;
+    group: string;
 }
 
 @Component({
-    selector: "app-fbos-dialog-new-fbo",
-    templateUrl: "./fbos-dialog-new-fbo.component.html",
-    styleUrls: ["./fbos-dialog-new-fbo.component.scss"],
+    selector: "app-fbos-grid-new-fbo-dialog",
+    templateUrl: "./fbos-grid-new-fbo-dialog.component.html",
+    styleUrls: ["./fbos-grid-new-fbo-dialog.component.scss"],
 })
-export class FbosDialogNewFboComponent {
+export class FbosGridNewFboDialogComponent {
     @Output() contactAdded = new EventEmitter<any>();
 
     // Public Members
     public dataSources: any = {};
 
     constructor(
-        public dialogRef: MatDialogRef<FbosDialogNewFboComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: NewFBODialogData,
+        public dialogRef: MatDialogRef<FbosGridNewFboDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: NewFboModel,
         private acukwikairportsService: AcukwikairportsService
     ) {}
 
@@ -44,6 +42,7 @@ export class FbosDialogNewFboComponent {
                 if (!result) {
                     return;
                 }
+
                 this.dataSources.acukwikFbos.push(...result);
             });
     }
@@ -51,6 +50,7 @@ export class FbosDialogNewFboComponent {
     public fboSelectionChange() {
         this.data.fbo = this.data.acukwikFbo.handlerLongName;
         this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
+        this.data.group = `${this.data.fbo} - ${this.data.icao}`;
     }
 
     public onCancelClick(): void {
