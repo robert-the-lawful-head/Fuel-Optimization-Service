@@ -173,8 +173,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
-                var sss = ex.Message;
-                return Ok(null);
+                return Ok(ex.Message);
             }
 
             return CreatedAtAction("GetGroup", new { id = @group.Oid }, @group);
