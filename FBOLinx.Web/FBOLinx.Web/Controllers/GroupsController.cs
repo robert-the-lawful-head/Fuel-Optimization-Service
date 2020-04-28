@@ -43,24 +43,32 @@ namespace FBOLinx.Web.Controllers
         [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin)]
         public async Task<IActionResult> GetGroup([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+                if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var @group = await _context.Group.FindAsync(id);
+
+                if (@group == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(@group);
+            }
+            catch(Exception ex)
             {
-                return BadRequest(ModelState);
+                return Ok(ex.Message);
             }
-
-            var @group = await _context.Group.FindAsync(id);
-
-            if (@group == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(@group);
+            
         }
 
         // PUT: api/Groups/5
@@ -176,7 +184,7 @@ namespace FBOLinx.Web.Controllers
                 return Ok(ex.Message);
             }
 
-            return CreatedAtAction("GetGroup", new { id = @group.Oid }, @group);
+            return CreatedAtAction("GetGroup", new { id = group.Oid }, group);
         }
 
         // DELETE: api/Groups/5
