@@ -129,7 +129,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (group.Oid != 0)
                 {
-                    //_fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
+                    _fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
 
                     var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company !=null).ToList();
 
