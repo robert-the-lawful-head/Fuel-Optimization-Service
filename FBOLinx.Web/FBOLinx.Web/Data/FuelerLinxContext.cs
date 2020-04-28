@@ -18,7 +18,7 @@ namespace FBOLinx.Web.Data
         {
         }
 
-        public virtual DbSet<FuelerData> FuelerData { get; set; }
+        public virtual DbSet<CompanyFuelers> CompanyFuelers { get; set; }
         public virtual DbSet<FuelerList> FuelerList { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -32,44 +32,23 @@ namespace FBOLinx.Web.Data
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
-            modelBuilder.Entity<FuelerData>(entity =>
+            modelBuilder.Entity<CompanyFuelers>(entity =>
             {
                 entity.HasKey(e => e.Oid);
 
-                entity.ToTable("fuelerData");
+                entity.HasIndex(e => new { e.FuelerId, e.CompanyId, e.Active })
+                    .HasName("INX_CompanyFuelers_CompanyIDActive");
 
-                entity.HasIndex(e => e.CustId)
-                    .HasName("FD_Cust");
-
-                entity.HasIndex(e => new { e.QbvendorName, e.FuelerId, e.CompanyId })
-                    .HasName("FD_ID_CoID");
+                entity.HasIndex(e => new { e.Oid, e.CompanyId, e.FuelerId })
+                    .HasName("INX_CompanyFuelers_FuelerID");
 
                 entity.Property(e => e.Oid).HasColumnName("OID");
 
-                entity.Property(e => e.Active).HasColumnName("active");
+                entity.Property(e => e.AddDate).HasColumnType("datetime");
 
-                entity.Property(e => e.AddDate)
-                    .HasColumnName("addDate")
-                    .HasColumnType("datetime");
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
 
-                entity.Property(e => e.ChgDate)
-                    .HasColumnName("chgDate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.CompanyId).HasColumnName("companyID");
-
-                entity.Property(e => e.CustId).HasColumnName("custID");
-
-                entity.Property(e => e.FuelerId).HasColumnName("fuelerID");
-
-                entity.Property(e => e.OffDate)
-                    .HasColumnName("offDate")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.QbvendorName)
-                    .HasColumnName("QBVendorName")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.FuelerId).HasColumnName("FuelerID");
             });
 
             modelBuilder.Entity<FuelerList>(entity =>
