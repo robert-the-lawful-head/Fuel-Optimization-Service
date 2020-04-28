@@ -30,6 +30,8 @@ namespace FBOLinx.Web.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+
             modelBuilder.Entity<FuelerData>(entity =>
             {
                 entity.HasKey(e => e.Oid);
@@ -69,6 +71,7 @@ namespace FBOLinx.Web.Data
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });
+
             modelBuilder.Entity<FuelerList>(entity =>
             {
                 entity.HasKey(e => e.Oid);

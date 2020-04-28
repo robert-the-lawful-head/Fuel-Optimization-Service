@@ -109,6 +109,7 @@ namespace FBOLinx.Web.Data
             modelBuilder.Entity<CompanyPricingLog>(entity =>
             {
                 entity.Property(e => e.ICAO).IsUnicode(false);
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("getdate()");
             });
 
             modelBuilder.Entity<CustomerAircrafts>(entity =>
