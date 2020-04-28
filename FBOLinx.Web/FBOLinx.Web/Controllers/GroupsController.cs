@@ -43,24 +43,32 @@ namespace FBOLinx.Web.Controllers
         [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin)]
         public async Task<IActionResult> GetGroup([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+                if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var @group = await _context.Group.FindAsync(id);
+
+                if (@group == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(@group);
+            }
+            catch(Exception ex)
             {
-                return BadRequest(ModelState);
+                return Ok("Get error: " + ex.Message);
             }
-
-            var @group = await _context.Group.FindAsync(id);
-
-            if (@group == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(@group);
+            
         }
 
         // PUT: api/Groups/5
@@ -121,63 +129,76 @@ namespace FBOLinx.Web.Controllers
 
                 if (group.Oid != 0)
                 {
-                    _fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
-
-                    var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company !=null).ToList();
-
-                    foreach (var cust in listWithCustomers)
+                    try
                     {
-                        CustomerInfoByGroup cibg = new CustomerInfoByGroup();
-                        cibg.GroupId = group.Oid;
-                        cibg.CustomerId = cust.Oid;
-                        cibg.Company = cust.Company;
-                        cibg.Username = cust.Username;
-                        cibg.Password = cust.Password;
-                        cibg.Joined = cust.Joined;
-                        cibg.Active = cust.Active;
-                        cibg.Distribute = cust.Distribute;
-                        cibg.Network = cust.Network;
-                        cibg.MainPhone = cust.MainPhone;
-                        cibg.Address = cust.Address;
-                        cibg.City = cust.City;
-                        cibg.State = cust.State;
-                        cibg.ZipCode = cust.ZipCode;
-                        cibg.Country = cust.Country;
-                        cibg.Website = cust.Website;
-                        cibg.ShowJetA = cust.ShowJetA;
-                        cibg.Show100Ll = cust.Show100Ll;
-                        cibg.Suspended = cust.Suspended;
+                        _fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
+                    }
+                    catch(Exception ex)
+                    {
+                        return Ok("SP error: " + ex.Message);
+                    }
 
-                        _context.CustomerInfoByGroup.Add(cibg);
-                        _context.SaveChanges();
+                    try
+                    {
+                        var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null).ToList();
 
-                        var listOfAirplanes = _context.CustomerAircrafts.Where(s => s.CustomerId == cust.Oid).GroupBy(s => s.AircraftId).ToList();
-
-                        foreach (var airplane in listOfAirplanes)
+                        foreach (var cust in listWithCustomers)
                         {
-                            var singleAirplane = airplane;
-                            CustomerAircrafts ca = new CustomerAircrafts();
-                            ca.AircraftId = airplane.Key;
-                            ca.CustomerId = cust.Oid;
-                            ca.GroupId = group.Oid;
-                            ca.TailNumber = airplane.First().TailNumber;
-                            ca.Size = airplane.First().Size;
-                            ca.NetworkCode = airplane.First().NetworkCode;
-                            ca.AddedFrom = airplane.First().AddedFrom;
+                            CustomerInfoByGroup cibg = new CustomerInfoByGroup();
+                            cibg.GroupId = group.Oid;
+                            cibg.CustomerId = cust.Oid;
+                            cibg.Company = cust.Company;
+                            cibg.Username = cust.Username;
+                            cibg.Password = cust.Password;
+                            cibg.Joined = cust.Joined;
+                            cibg.Active = cust.Active;
+                            cibg.Distribute = cust.Distribute;
+                            cibg.Network = cust.Network;
+                            cibg.MainPhone = cust.MainPhone;
+                            cibg.Address = cust.Address;
+                            cibg.City = cust.City;
+                            cibg.State = cust.State;
+                            cibg.ZipCode = cust.ZipCode;
+                            cibg.Country = cust.Country;
+                            cibg.Website = cust.Website;
+                            cibg.ShowJetA = cust.ShowJetA;
+                            cibg.Show100Ll = cust.Show100Ll;
+                            cibg.Suspended = cust.Suspended;
 
-                            _context.CustomerAircrafts.Add(ca);
+                            _context.CustomerInfoByGroup.Add(cibg);
                             _context.SaveChanges();
+
+                            var listOfAirplanes = _context.CustomerAircrafts.Where(s => s.CustomerId == cust.Oid).GroupBy(s => s.AircraftId).ToList();
+
+                            foreach (var airplane in listOfAirplanes)
+                            {
+                                var singleAirplane = airplane;
+                                CustomerAircrafts ca = new CustomerAircrafts();
+                                ca.AircraftId = airplane.Key;
+                                ca.CustomerId = cust.Oid;
+                                ca.GroupId = group.Oid;
+                                ca.TailNumber = airplane.First().TailNumber;
+                                ca.Size = airplane.First().Size;
+                                ca.NetworkCode = airplane.First().NetworkCode;
+                                ca.AddedFrom = airplane.First().AddedFrom;
+
+                                _context.CustomerAircrafts.Add(ca);
+                                _context.SaveChanges();
+                            }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        return Ok("Customer Aircraft add error: " + ex.Message);
                     }
                 }
             }
             catch (Exception ex)
             {
-                var sss = ex.Message;
-                return Ok(null);
+                return Ok("Global error: " + ex.Message);
             }
 
-            return CreatedAtAction("GetGroup", new { id = @group.Oid }, @group);
+            return CreatedAtAction("GetGroup", new { id = group.Oid }, group);
         }
 
         // DELETE: api/Groups/5
