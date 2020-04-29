@@ -209,6 +209,13 @@ namespace IO.Swagger.Model {
     public string TripKey { get; set; }
 
     /// <summary>
+    /// Gets or Sets TransactionId
+    /// </summary>
+    [DataMember(Name="transactionId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "transactionId")]
+    public int? TransactionId { get; set; }
+
+    /// <summary>
     /// Gets or Sets Company
     /// </summary>
     [DataMember(Name="company", EmitDefaultValue=false)]
@@ -251,6 +258,7 @@ namespace IO.Swagger.Model {
       sb.Append("  ArrivalRemarks: ").Append(ArrivalRemarks).Append("\n");
       sb.Append("  FlightPlanId: ").Append(FlightPlanId).Append("\n");
       sb.Append("  TripKey: ").Append(TripKey).Append("\n");
+      sb.Append("  TransactionId: ").Append(TransactionId).Append("\n");
       sb.Append("  Company: ").Append(Company).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

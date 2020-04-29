@@ -31,6 +31,7 @@ Name | Type | Description | Notes
 **ArrivalRemarks** | **string** |  | [optional] 
 **FlightPlanId** | **string** |  | [optional] 
 **TripKey** | **string** |  | [optional] 
+**TransactionId** | **int?** |  | [optional] 
 **Company** | [**CompanyDTO**](CompanyDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
