@@ -595,6 +595,7 @@ namespace FBOLinx.Web.Controllers
                             Product = "JetA",
                             MinVolume = (p == null ? 1 : p.Min),
                             t.Notes,
+                            Default = t.Default ?? false,
                             Price = GetTPrice(vsd, p, g.Oid),
                             vsd.ExpirationDate
                         }).ToListAsync();
@@ -660,13 +661,29 @@ namespace FBOLinx.Web.Controllers
                             Product = "JetA",
                             MinVolume = p == null ? 1 : p.Min,
                             t.Notes,
+                            Default = t.Default ?? false,
                             Price = GetDTPrice(fp, p, ff, t),
                             ExpirationDate = fp.EffectiveTo
                         }).Distinct().ToListAsync();
 
-                    var result = result1.Concat(result2).ToList();
+                    var result = result1.Concat(result2)
+                                        .Distinct()
+                                        .ToList();
 
-                    return Ok(result);
+                    var clonedResult = result.Select(x => x)
+                                             .OrderBy(x => x.FboId)
+                                             .ThenBy(x => x.MinVolume)
+                                             .ToList();
+                    foreach(var price in result.Where(x => x.Default))
+                    {
+                        var aircraftNonDefaultPT = result.Any(x => x.FboId == price.FboId && x.GroupId == price.GroupId);
+                        if (aircraftNonDefaultPT)
+                        {
+                            clonedResult.Remove(price);
+                        }
+                    }
+
+                    return Ok(clonedResult);
                 }
 
                 return Ok(null);
