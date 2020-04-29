@@ -676,7 +676,7 @@ namespace FBOLinx.Web.Controllers
                                              .ToList();
                     foreach(var price in result.Where(x => x.Default))
                     {
-                        var aircraftNonDefaultPT = result.Any(x => x.FboId == price.FboId && x.GroupId == price.GroupId);
+                        var aircraftNonDefaultPT = result.Any(x => x.FboId == price.FboId && x.GroupId == price.GroupId && x.Default);
                         if (aircraftNonDefaultPT)
                         {
                             clonedResult.Remove(price);
