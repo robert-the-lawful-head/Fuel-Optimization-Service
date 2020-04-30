@@ -68,7 +68,6 @@ export class FbosGridComponent implements OnInit {
         private newFboDialog: MatDialog,
         private fboService: FbosService,
         private fboPricesService: FbopricesService,
-        private fboAirportsService: FboairportsService,
         private sharedService: SharedService,
         private deleteFboDialog: MatDialog,
         private manageFboDialog: MatDialog,
@@ -175,9 +174,10 @@ export class FbosGridComponent implements OnInit {
                         this.fbosData.push(newFbo);
                         this.refreshTable();
                         this.snackBar.open(newFbo.fbo + " is created", "", {
-                            duration: 2000,
+                            duration: 3000,
                             panelClass: ["blue-snackbar"],
                         });
+                        this.editRecord(newFbo, null);
                     });
                 }
             });
@@ -193,9 +193,10 @@ export class FbosGridComponent implements OnInit {
                         this.fbosData.push(newFbo);
                         this.refreshTable();
                         this.snackBar.open(newFbo.fbo + " is created", "", {
-                            duration: 2000,
+                            duration: 3000,
                             panelClass: ["blue-snackbar"],
                         });
+                        this.router.navigate(["/default-layout/fbos/" + newFbo.oid]);
                     });
                 }
             });

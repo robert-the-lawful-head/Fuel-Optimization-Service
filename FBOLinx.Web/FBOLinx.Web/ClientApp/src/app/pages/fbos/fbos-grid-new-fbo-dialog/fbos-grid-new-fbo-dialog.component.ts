@@ -35,10 +35,11 @@ export class FbosGridNewFboDialogComponent {
     public airportValueChanged(airport: any) {
         this.data.icao = airport.icao;
         this.data.iata = airport.iata;
+        this.dataSources.acukwikFbos = [];
+        this.data.acukwikFbo = null;
         this.acukwikairportsService
             .getAcukwikFboHandlerDetailByIcao(this.data.icao)
             .subscribe((result: any) => {
-                this.dataSources.acukwikFbos = [];
                 if (!result) {
                     return;
                 }
