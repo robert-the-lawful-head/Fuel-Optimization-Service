@@ -167,7 +167,10 @@ namespace FBOLinx.Web.Controllers
 
                             _context.CustomerInfoByGroup.Add(cibg);
                             _context.SaveChanges();
+                        }
 
+                        foreach (var cust in listWithCustomers)
+                        {
                             var listOfAirplanes = _context.CustomerAircrafts.Where(s => s.CustomerId == cust.Oid).GroupBy(s => s.AircraftId).ToList();
 
                             foreach (var airplane in listOfAirplanes)
@@ -186,6 +189,8 @@ namespace FBOLinx.Web.Controllers
                                 _context.SaveChanges();
                             }
                         }
+
+                       
                     }
                     catch (Exception ex)
                     {
