@@ -71,4 +71,15 @@ export class GroupsEditComponent implements OnInit {
             this.cancelClicked.emit();
         }
     }
+
+    public activeToggle() {
+        this.groupInfo.active = !this.groupInfo.active;
+        if (this.groupInfo.active) {
+            this.groupsService.activate({ oid: this.groupInfo.oid }).subscribe(() => {
+                console.log("success");
+            });
+        } else {
+            this.groupsService.deactivate({ oid: this.groupInfo.oid }).subscribe();
+        }
+    }
 }

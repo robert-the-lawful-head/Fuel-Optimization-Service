@@ -36,7 +36,11 @@
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
-                            <mat-slide-toggle color="accent" [(ngModel)]="groupInfo.active">Active</mat-slide-toggle>
+                            <mat-slide-toggle
+                                color="accent"
+                                [(ngModel)]="groupInfo.active"
+                                (toggleChange)="activeToggle()"
+                            >Active</mat-slide-toggle>
                         </div>
                     </div>
                 </div>
