@@ -40,7 +40,6 @@ import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 
 import { NgxUiLoaderModule } from "ngx-ui-loader";
 
-import { NgxCurrencyModule } from "ngx-currency";
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
 
 import { PageTypographyComponent } from "./typography/typography.component";
@@ -179,7 +178,6 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         MatTooltipModule,
         NgxChartsModule,
         TextMaskModule,
-        NgxCurrencyModule,
         RichTextEditorAllModule,
         AppPipesModule,
         NgbPopoverModule,
