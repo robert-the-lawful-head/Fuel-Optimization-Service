@@ -74,6 +74,11 @@ namespace FBOLinx.Web.Data
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.1-servicing-10028");
 
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(e => e.Active).HasDefaultValue(true);
+            });
+
             modelBuilder.Entity<AirCrafts>(entity =>
             {
                 entity.Property(e => e.FuelType).IsUnicode(false);

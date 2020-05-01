@@ -89,13 +89,7 @@ namespace FBOLinx.Web.Controllers
             Group oldGroup = await _context.Group.FindAsync(id);
             if (oldGroup.Active != group.Active)
             {
-                IQueryable<Fbos> fbos = _context.Fbos.Where(f => f.GroupId.Equals(id));
-
-                List<User> users = _context.User.Join(fbos,
-                                                  u => u.FboId,
-                                                  f => f.Oid,
-                                                  (u, f) => u)
-                                            .Distinct()
+                List<User> users = _context.User.Where(u => u.GroupId.Equals(id))
                                             .ToList();
                 foreach (var user in users)
                 {
@@ -107,12 +101,15 @@ namespace FBOLinx.Web.Controllers
                 if (!group.Active)
                 {
                     // Expire All Prices from the de-activated FBOLinx accounts
-                    List<Fboprices> fboPrices = _context.Fboprices.Join(fbos,
-                                                                        fp => fp.Fboid,
-                                                                        f => f.Oid,
-                                                                        (fp, f) => fp)
-                                                                  .Distinct()
-                                                                  .ToList();
+                    IQueryable<Fbos> fbos = _context.Fbos.Where(f => f.GroupId.Equals(id));
+
+                    List<Fboprices> fboPrices = await (
+                                        from fp in _context.Fboprices
+                                        join f in _context.Fbos on fp.Fboid equals f.Oid
+                                        where f.GroupId == id
+                                        select fp
+                                    ).ToListAsync();
+
                     foreach (var fboPrice in fboPrices)
                     {
                         fboPrice.Expired = true;
