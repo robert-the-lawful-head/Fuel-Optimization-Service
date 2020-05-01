@@ -44,7 +44,6 @@
     "jquery-fancybox": "^3.1.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "ngx-currency": "^2.3.3",
     "ngx-ui-loader": "^9.1.1",
     "rxjs": "~6.5.5",
     "tslib": "^1.11.1",
