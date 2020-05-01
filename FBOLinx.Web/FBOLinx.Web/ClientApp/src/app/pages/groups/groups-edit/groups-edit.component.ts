@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 // Services
 import { GroupsService } from "../../../services/groups.service";
 import { SharedService } from "../../../layouts/shared-service";
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const BREADCRUMBS: any[] = [
     {
@@ -26,7 +27,6 @@ const BREADCRUMBS: any[] = [
     styleUrls: ["./groups-edit.component.scss"],
 })
 export class GroupsEditComponent implements OnInit {
-    @Output() saveClicked = new EventEmitter<any>();
     @Output() cancelClicked = new EventEmitter<any>();
     @Input() groupInfo: any;
 
@@ -43,7 +43,8 @@ export class GroupsEditComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private groupsService: GroupsService
+        private groupsService: GroupsService,
+        private snackBar: MatSnackBar,
     ) {}
 
     ngOnInit() {
@@ -60,26 +61,15 @@ export class GroupsEditComponent implements OnInit {
 
     // Public Methods
     public saveEdit() {
-        this.groupsService.update(this.groupInfo).subscribe(() => {});
-        this.saveClicked.emit(this.groupInfo);
+        this.groupsService.update(this.groupInfo).subscribe(() => {
+            this.snackBar.open("Successfully updated!", "", {
+                duration: 2000,
+                panelClass: ["blue-snackbar"],
+            });
+        });
     }
 
     public cancelEdit() {
-        if (this.requiresRouting) {
-            this.router.navigate(["/default-layout/groups/"]);
-        } else {
-            this.cancelClicked.emit();
-        }
-    }
-
-    public activeToggle() {
-        this.groupInfo.active = !this.groupInfo.active;
-        if (this.groupInfo.active) {
-            this.groupsService.activate({ oid: this.groupInfo.oid }).subscribe(() => {
-                console.log("success");
-            });
-        } else {
-            this.groupsService.deactivate({ oid: this.groupInfo.oid }).subscribe();
-        }
+        this.router.navigate(["/default-layout/groups/"]);
     }
 }
