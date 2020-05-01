@@ -40,4 +40,16 @@ export class GroupsService {
             headers: this.headers,
         });
     }
+
+    public activate(payload) {
+        return this.http.post(this.accessPointUrl + "/" + payload.oid + "/activate", payload, {
+            headers: this.headers,
+        });
+    }
+
+    public deactivate(payload) {
+        return this.http.post(this.accessPointUrl + "/" + payload.oid + "/deactivate", payload, {
+            headers: this.headers,
+        });
+    }
 }
