@@ -116,7 +116,7 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="companySettings", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "companySettings")]
-    public List<CompanySettingsDTO> CompanySettings { get; set; }
+    public CompanyAccountSettingsDTO CompanySettings { get; set; }
 
 
     /// <summary>

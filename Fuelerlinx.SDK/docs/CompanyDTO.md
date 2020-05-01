@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 **FaaId** | **string** |  | [optional] 
 **FaaCertificateNumber** | **string** |  | [optional] 
 **ImageFileDataId** | **int?** |  | [optional] 
-**CompanySettings** | [**List&lt;CompanySettingsDTO&gt;**](CompanySettingsDTO.md) |  | [optional] 
+**CompanySettings** | [**CompanyAccountSettingsDTO**](CompanyAccountSettingsDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
