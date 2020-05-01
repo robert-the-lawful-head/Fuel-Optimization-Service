@@ -99,7 +99,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GroupExists(id))
+                if (!_context.Group.Any(e => e.Oid == id))
                 {
                     return NotFound();
                 }
@@ -228,14 +228,81 @@ namespace FBOLinx.Web.Controllers
             return Ok(@group);
         }
 
-        private bool GroupExists(int id)
+        [HttpPost("{id}/deactivate")]
+        [UserRole(Models.User.UserRoles.Conductor)]
+        public async Task<IActionResult> Deactivate([FromRoute] int id)
         {
-            return _context.Group.Any(e => e.Oid == id);
+            var @group = await _context.Group.FindAsync(id);
+            if (@group == null)
+            {
+                return NotFound();
+            }
+
+            // Get All Fbos inside the deleted group
+            IQueryable<Fbos> fbos = _context.Fbos.Where(f => f.GroupId.Equals(id));
+
+            // De-activate FBOLinx users
+            List<User> users = _context.User.Join(fbos,
+                                                  u => u.FboId,
+                                                  f => f.Oid,
+                                                  (u, f) => u)
+                                            .ToList();
+            foreach (var user in users)
+            {
+                user.Active = false;
+            }
+
+            _context.User.UpdateRange(users);
+
+            // Expire All Prices from the de-activated FBOLinx accounts
+            List<Fboprices> fboPrices = _context.Fboprices.Join(fbos,
+                                                                fp => fp.Fboid,
+                                                                f => f.Oid,
+                                                                (fp, f) => fp)
+                                                          .ToList();
+            foreach (var fboPrice in fboPrices)
+            {
+                fboPrice.Expired = true;
+            }
+
+            _context.Fboprices.UpdateRange(fboPrices);
+
+            // Save All Changes
+            await _context.SaveChangesAsync();
+
+            return Ok(null);
         }
 
-        private void InsertNewGroupInfo()
+        [HttpPost("{id}/activate")]
+        [UserRole(Models.User.UserRoles.Conductor)]
+        public async Task<IActionResult> Activate([FromRoute] int id)
         {
+            var @group = await _context.Group.FindAsync(id);
+            if (@group == null)
+            {
+                return NotFound();
+            }
 
+            // Get All Fbos inside the deleted group
+            IQueryable<Fbos> fbos = _context.Fbos.Where(f => f.GroupId.Equals(id));
+
+            // De-activate FBOLinx users
+            List<User> users = _context.User.Join(fbos,
+                                                  u => u.FboId,
+                                                  f => f.Oid,
+                                                  (u, f) => u)
+                                            .ToList();
+            foreach (var user in users)
+            {
+                user.Active = true;
+            }
+
+            _context.User.UpdateRange(users);
+
+            // Save All Changes
+            await _context.SaveChangesAsync();
+
+            return Ok(null);
         }
     }
 }
