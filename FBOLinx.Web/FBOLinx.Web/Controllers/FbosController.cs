@@ -107,7 +107,35 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(fbos).State = EntityState.Modified;
+            bool activeStatus = await _context.Fbos.Where(f => f.Oid.Equals(fbos.Oid))
+                                                   .Select(f => f.Active ?? false)
+                                                   .FirstAsync();
+            if (activeStatus != fbos.Active)
+            {
+                List<User> users = _context.User.Where(u => u.FboId.Equals(id))
+                                            .ToList();
+                foreach (var user in users)
+                {
+                    user.Active = fbos.Active ?? false;
+                }
+
+                _context.User.UpdateRange(users);
+
+                if (!fbos.Active.GetValueOrDefault())
+                {
+                    // Expire All Prices from the de-activated FBOLinx accounts
+                    var fboPrices = _context.Fboprices.Where(fp => fp.Fboid.Equals(id));
+
+                    foreach (var fboPrice in fboPrices)
+                    {
+                        fboPrice.Expired = true;
+                    }
+
+                    _context.Fboprices.UpdateRange(fboPrices);
+                }
+            }
+
+            _context.Fbos.Update(fbos);
 
             try
             {

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
+import * as _ from "lodash";
 
 // Services
 import { FbosService } from "../../../services/fbos.service";
@@ -54,6 +55,8 @@ export class FbosHomeComponent implements OnInit {
     public saveFboEditClicked() {
         this.currentFboAirport = null;
         this.currentFbo = null;
+        this.fbosData = null;
+        this.loadInitialData();
     }
 
     public cancelFboEditClicked() {

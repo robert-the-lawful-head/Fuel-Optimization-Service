@@ -86,8 +86,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            Group oldGroup = await _context.Group.FindAsync(id);
-            if (oldGroup.Active != group.Active)
+            bool groupActiveStatus = await _context.Group.Where(g => g.Oid.Equals(group.Oid))
+                                                         .Select(g => g.Active)
+                                                         .FirstAsync();
+            if (groupActiveStatus != group.Active)
             {
                 List<User> users = _context.User.Where(u => u.GroupId.Equals(id))
                                             .ToList();
@@ -98,11 +100,18 @@ namespace FBOLinx.Web.Controllers
 
                 _context.User.UpdateRange(users);
 
+                List<Fbos> fbos = _context.Fbos.Where(f => f.GroupId.Equals(id)).ToList();
+
+                foreach (var fbo in fbos)
+                {
+                    fbo.Active = group.Active;
+                }
+
+                _context.Fbos.UpdateRange(fbos);
+
                 if (!group.Active)
                 {
                     // Expire All Prices from the de-activated FBOLinx accounts
-                    IQueryable<Fbos> fbos = _context.Fbos.Where(f => f.GroupId.Equals(id));
-
                     List<Fboprices> fboPrices = await (
                                         from fp in _context.Fboprices
                                         join f in _context.Fbos on fp.Fboid equals f.Oid
@@ -119,10 +128,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            oldGroup.Active = @group.Active;
-            oldGroup.GroupName = @group.GroupName;
-
-            _context.Group.Update(oldGroup);
+            _context.Group.Update(group);
 
             try
             {

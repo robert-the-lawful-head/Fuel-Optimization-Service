@@ -66,6 +66,7 @@ export class GroupsEditComponent implements OnInit {
                 duration: 2000,
                 panelClass: ["blue-snackbar"],
             });
+            this.router.navigate(["/default-layout/groups/"]);
         });
     }
 

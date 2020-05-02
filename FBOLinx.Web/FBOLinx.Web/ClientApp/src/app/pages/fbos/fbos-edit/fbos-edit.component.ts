@@ -82,10 +82,9 @@ export class FbosEditComponent implements OnInit {
             this.fboAirportsService
                 .update(this.fboAirportInfo)
                 .subscribe(() => {
-                    // this.fboAirportInfo = null;
+                    this.saveClicked.emit(this.fboInfo);
                 });
         });
-        this.saveClicked.emit(this.fboInfo);
     }
 
     public cancelEdit() {
