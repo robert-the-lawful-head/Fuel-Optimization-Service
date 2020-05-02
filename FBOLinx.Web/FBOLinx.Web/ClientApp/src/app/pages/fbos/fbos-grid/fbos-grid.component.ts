@@ -12,10 +12,10 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
+import * as moment from "moment";
 
 // Services
 import { FbosService } from "../../../services/fbos.service";
-import { FboairportsService } from "../../../services/fboairports.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { FbopricesService } from "../../../services/fboprices.service";
 
@@ -25,8 +25,8 @@ import { FbosGridNewFboDialogComponent } from "../fbos-grid-new-fbo-dialog/fbos-
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { ManageConfirmationComponent } from "../../../shared/components/manage-confirmation/manage-confirmation.component";
 import { PricingExpiredNotificationGroupComponent } from "../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component";
-import * as moment from "moment";
 
+import { fboChangedEvent } from "../../../models/sharedEvents";
 
 const BREADCRUMBS: any[] = [
     {
@@ -231,7 +231,7 @@ export class FbosGridComponent implements OnInit {
             this.sharedService.currentUser.impersonatedRole = 1;
             this.sharedService.currentUser.fboId = result.oid;
             sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
-            this.sharedService.emitChange("fbo changed");
+            this.sharedService.emitChange(fboChangedEvent);
             this.router.navigate(["/default-layout/dashboard-fbo/"]);
         });
     }
@@ -256,11 +256,11 @@ export class FbosGridComponent implements OnInit {
                         }
                     );
                     dialogRef.afterClosed().subscribe((result) => {
-                        if (result.fboId) {
+                        if (result && result.fboId) {
                             this.sharedService.currentUser.impersonatedRole = 1;
                             this.sharedService.currentUser.fboId = result.fboId;
                             sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
-                            this.sharedService.emitChange("fbo changed");
+                            this.sharedService.emitChange(fboChangedEvent);
                             this.router.navigate(["/default-layout/dashboard-fbo/"]);
                         }
                     });
