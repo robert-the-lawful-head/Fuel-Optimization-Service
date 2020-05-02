@@ -136,7 +136,10 @@ export class AircraftsGridComponent implements OnInit {
                 CustomerAircraftsEditComponent,
                 {
                     width: "450px",
-                    data: { oid: customerAircraft.oid },
+                    data: {
+                        oid: customerAircraft.oid,
+                        disableDelete: customerAircraft.isFuelerlinxNetwork && customerAircraft.addedFrom,
+                    },
                 }
             );
 
