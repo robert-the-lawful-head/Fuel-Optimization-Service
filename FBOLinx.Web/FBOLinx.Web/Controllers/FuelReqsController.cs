@@ -237,9 +237,18 @@ namespace FBOLinx.Web.Controllers
             }
             List<FuelReq> fuelReqs = 
                             (from c in _context.Customers
-                            join cg in _context.CustomerInfoByGroup on new { CustomerId = c.Oid, c.FuelerlinxId } equals new { cg.CustomerId, FuelerlinxId = request.SourceId }
-                            join f in _context.Fbos on new { cg.GroupId, FboId = fboId } equals new { GroupId = f.GroupId.GetValueOrDefault(), FboId = f.Oid }
-                            join ca in _context.CustomerAircrafts on new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId } equals new { TailNumber = ca.TailNumber.Trim(), ca.CustomerId, GroupId = ca.GroupId.GetValueOrDefault() }
+                            join cg in _context.CustomerInfoByGroup on 
+                                new { CustomerId = c.Oid, c.FuelerlinxId, Active = true } 
+                                equals 
+                                new { cg.CustomerId, FuelerlinxId = request.SourceId, Active = cg.Active ?? false }
+                            join f in _context.Fbos on 
+                                new { cg.GroupId, FboId = fboId, Active = true } 
+                                equals 
+                                new { GroupId = f.GroupId.GetValueOrDefault(), FboId = f.Oid, Active = f.Active ?? false }
+                            join ca in _context.CustomerAircrafts on 
+                                new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId } 
+                                equals 
+                                new { TailNumber = ca.TailNumber.Trim(), ca.CustomerId, GroupId = ca.GroupId.GetValueOrDefault() }
                             select new FuelReq
                             {
                                 Fboid = fboId,

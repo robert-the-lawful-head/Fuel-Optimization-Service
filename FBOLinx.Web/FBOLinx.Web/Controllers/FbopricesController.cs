@@ -505,9 +505,9 @@ namespace FBOLinx.Web.Controllers
                                                         equals
                                                         new { Fboid = f.Oid, PtId = f.Oid, Active = f.Active ?? false, Suspended = f.Suspended ?? false }
                                                  join g in _context.Group on
-                                                        new { GroupId = f.GroupId ?? 0, Isfbonetwork = true }
+                                                        new { GroupId = f.GroupId ?? 0, Isfbonetwork = true, Active = true }
                                                         equals
-                                                        new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork ?? false }
+                                                        new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork ?? false, g.Active }
                                                  join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId
                                                  join cibg in _context.CustomerInfoByGroup on
                                                         new { CustomerId = c.Oid, GroupId = g.Oid, Suspended = false, Active = true }
@@ -562,9 +562,9 @@ namespace FBOLinx.Web.Controllers
                                 new { Fboid = f.Oid, Active = f.Active ?? false, Suspended = f.Suspended ?? false }
                         join t in _context.PricingTemplate on f.Oid equals t.Fboid
                         join g in _context.Group on
-                                new { GroupId = f.GroupId ?? 0, Isfbonetwork = true }
+                                new { GroupId = f.GroupId ?? 0, Isfbonetwork = true, Active = true }
                                 equals
-                                new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork ?? false }
+                                new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork ?? false, g.Active }
                         join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId ?? 0
                         join cibg in _context.CustomerInfoByGroup on
                                 new { CustomerId = c.Oid, GroupId = g.Oid, Suspended = false, Active = true }
@@ -608,14 +608,14 @@ namespace FBOLinx.Web.Controllers
                                 new { Fboid = f.Oid, Active = f.Active ?? false, Suspended = f.Suspended ?? false }
                         join t in _context.PricingTemplate on f.Oid equals t.Fboid
                         join g in _context.Group on
-                                new { GroupId = f.GroupId ?? 0, Isfbonetwork = false }
+                                new { GroupId = f.GroupId ?? 0, Isfbonetwork = false, Active = true }
                                 equals
-                                new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork ?? false }
+                                new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork ?? false, g.Active }
                         join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId
                         join cibg in _context.CustomerInfoByGroup on
-                                new { CustomerId = c.Oid, GroupId = g.Oid, Distribute = true }
+                                new { CustomerId = c.Oid, GroupId = g.Oid, Distribute = true, Active = true }
                                 equals
-                                new { cibg.CustomerId, cibg.GroupId, Distribute = cibg.Distribute ?? false }
+                                new { cibg.CustomerId, cibg.GroupId, Distribute = cibg.Distribute ?? false, Active = cibg.Active ?? false }
                         join ca in _context.CustomerAircrafts on
                                 new { CustomerId = c.Oid, request.TailNumber }
                                 equals
