@@ -183,8 +183,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
     public editCustomerAircraft(customerAircraft: any) {
         if (customerAircraft) {
-            console.log(customerAircraft);
-            console.log(this.customer);
             const dialogRef = this.editCustomerAircraftDialog.open(
                 CustomerAircraftsEditComponent,
                 {
