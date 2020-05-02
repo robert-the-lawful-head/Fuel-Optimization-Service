@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, AfterViewInit } from "@angular/core";
 import { SharedService } from "../shared-service";
-import { MatDialog, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 
 // Services
 import { FbopricesService } from "../../services/fboprices.service";
@@ -8,6 +8,7 @@ import { PricingtemplatesService } from "../../services/pricingtemplates.service
 // Components
 import { PricingExpiredNotificationComponent } from "../../shared/components/pricing-expired-notification/pricing-expired-notification.component";
 import * as moment from "moment";
+import { fboChangedEvent } from "../../models/sharedEvents";
 
 @Component({
     moduleId: module.id,
@@ -16,7 +17,7 @@ import * as moment from "moment";
     styleUrls: ["../layouts.scss"],
     providers: [SharedService],
 })
-export class DefaultLayoutComponent implements OnInit {
+export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     pageTitle: any;
     boxed: boolean;
     compress: boolean;
@@ -25,6 +26,7 @@ export class DefaultLayoutComponent implements OnInit {
     @Input()
     openedSidebar: boolean;
     public pricingTemplatesData: any[];
+    public subscription: any;
 
     constructor(
         private sharedService: SharedService,
@@ -47,10 +49,18 @@ export class DefaultLayoutComponent implements OnInit {
             });
         }
     }
+    ngAfterViewInit() {
+        this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
+            if (message === fboChangedEvent && this.sharedService.currentUser.fboId) {
+                this.pricingTemplatesService
+                    .getByFbo(this.sharedService.currentUser.fboId)
+                    .subscribe((data: any) => (this.pricingTemplatesData = data));
+            }
+        });
+    }
 
     ngOnInit() {
         this.checkCurrentPrices();
-        // this.callTemporaryAddOn();
     }
 
     getClasses() {
@@ -81,7 +91,7 @@ export class DefaultLayoutComponent implements OnInit {
         if (noThanksFlag) {
             return;
         }
-        // if (remindMeLaterFlag && moment(moment().format("L")).isAfter(moment(remindMeLaterFlag)))
+
         if (remindMeLaterFlag && (moment(moment().format("L")) !== moment(remindMeLaterFlag))) {
             return;
         }
@@ -97,7 +107,7 @@ export class DefaultLayoutComponent implements OnInit {
                                 data: {},
                             }
                         );
-                        dialogRef.afterClosed().subscribe((result) => { });
+                        dialogRef.afterClosed().subscribe();
                     }
                 });
         }
