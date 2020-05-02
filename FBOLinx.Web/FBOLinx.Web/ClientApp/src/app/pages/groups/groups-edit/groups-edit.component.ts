@@ -3,8 +3,7 @@ import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 
 // Services
 import { GroupsService } from "../../../services/groups.service";
-import { SharedService } from "../../../layouts/shared-service";
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 const BREADCRUMBS: any[] = [
     {
@@ -36,23 +35,16 @@ export class GroupsEditComponent implements OnInit {
     public currentContact: any;
     public contactsData: any;
 
-    // Private Members
-    private selectedContactRecord: any;
-    private requiresRouting = false;
-
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private groupsService: GroupsService,
-        private snackBar: MatSnackBar,
+        private snackBar: MatSnackBar
     ) {}
 
     ngOnInit() {
         const id = this.route.snapshot.paramMap.get("id");
-        if (!id) {
-            this.requiresRouting = false;
-        } else {
-            this.requiresRouting = true;
+        if (id) {
             this.groupsService.get({ oid: id }).subscribe((data: any) => {
                 this.groupInfo = data;
             });
