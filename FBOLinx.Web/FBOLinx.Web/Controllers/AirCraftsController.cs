@@ -46,6 +46,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var customerAircrafts = await (from ca in _context.CustomerAircrafts
+                                           join c in _context.Customers on ca.CustomerId equals c.Oid
                                            join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
                                            from ac in leftJoinAircrafts.DefaultIfEmpty()
                                            where ca.Oid == id

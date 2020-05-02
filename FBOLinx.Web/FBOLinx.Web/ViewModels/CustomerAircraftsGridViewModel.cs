@@ -22,6 +22,7 @@ namespace FBOLinx.Web.ViewModels
         public string PricingTemplateName { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }
+        public bool IsFuelerlinxNetwork { get; set; }
 
         public string AircraftSizeDescription
         {

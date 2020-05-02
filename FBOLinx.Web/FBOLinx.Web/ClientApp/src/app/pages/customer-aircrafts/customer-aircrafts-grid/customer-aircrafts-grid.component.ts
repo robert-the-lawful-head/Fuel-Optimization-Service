@@ -183,13 +183,15 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
     public editCustomerAircraft(customerAircraft: any) {
         if (customerAircraft) {
+            console.log(customerAircraft);
+            console.log(this.customer);
             const dialogRef = this.editCustomerAircraftDialog.open(
                 CustomerAircraftsEditComponent,
                 {
                     width: "450px",
                     data: { 
                         oid: customerAircraft.oid, 
-                        disableDelete: this.customer && this.customer.customer && this.customer.customer.fuelerlinxId > 0,
+                        disableDelete: customerAircraft.isFuelerlinxNetwork && customerAircraft.addedFrom
                     },
                 }
             );
