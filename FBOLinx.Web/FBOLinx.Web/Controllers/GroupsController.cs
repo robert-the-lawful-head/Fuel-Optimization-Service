@@ -10,6 +10,7 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -21,12 +22,14 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly FuelerLinxContext _fcontext;
         private readonly IHttpContextAccessor _HttpContextAccessor;
+        public IServiceScopeFactory _serviceScopeFactory;
 
-        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory)
         {
             _context = context;
             _fcontext = fcontext;
             _HttpContextAccessor = httpContextAccessor;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         // GET: api/Groups
@@ -169,28 +172,15 @@ namespace FBOLinx.Web.Controllers
                             _context.SaveChanges();
                         }
 
-                        foreach (var cust in listWithCustomers)
+                        var task = Task.Run(async () =>
                         {
-                            var listOfAirplanes = _context.CustomerAircrafts.Where(s => s.CustomerId == cust.Oid).GroupBy(s => s.AircraftId).ToList();
-
-                            foreach (var airplane in listOfAirplanes)
+                            using (var scope = _serviceScopeFactory.CreateScope())
                             {
-                                var singleAirplane = airplane;
-                                CustomerAircrafts ca = new CustomerAircrafts();
-                                ca.AircraftId = airplane.Key;
-                                ca.CustomerId = cust.Oid;
-                                ca.GroupId = group.Oid;
-                                ca.TailNumber = airplane.First().TailNumber;
-                                ca.Size = airplane.First().Size;
-                                ca.NetworkCode = airplane.First().NetworkCode;
-                                ca.AddedFrom = airplane.First().AddedFrom;
-
-                                _context.CustomerAircrafts.Add(ca);
-                                _context.SaveChanges();
+                                var db = scope.ServiceProvider.GetService<FboLinxContext>();
+                                await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Oid);
                             }
-                        }
 
-                       
+                        });
                     }
                     catch (Exception ex)
                     {
@@ -231,11 +221,6 @@ namespace FBOLinx.Web.Controllers
         private bool GroupExists(int id)
         {
             return _context.Group.Any(e => e.Oid == id);
-        }
-
-        private void InsertNewGroupInfo()
-        {
-
         }
     }
 }
