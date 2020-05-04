@@ -183,6 +183,7 @@ namespace FBOLinx.Web.Controllers
             List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
                from ca in _context.CustomerAircrafts
                join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
+               join c in _context.Customers on cg.CustomerId equals c.Oid
                join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
                join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
                into leftJoinPt
@@ -205,7 +206,8 @@ namespace FBOLinx.Web.Controllers
                    PricingTemplateId = pt == null ? 0 : pt.Oid,
                    PricingTemplateName = pt == null ? "" : pt.Name,
                    Make = ac.Make,
-                   Model = ac.Model
+                   Model = ac.Model,
+                   IsFuelerlinxNetwork = c.FuelerlinxId > 0
                })
                .OrderBy(x => x.TailNumber)
                .ToListAsync();

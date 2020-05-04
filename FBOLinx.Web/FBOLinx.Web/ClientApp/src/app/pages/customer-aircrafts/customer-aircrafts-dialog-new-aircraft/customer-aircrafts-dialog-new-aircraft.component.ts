@@ -55,7 +55,6 @@ export class CustomerAircraftsDialogNewAircraftComponent implements OnInit {
     }
 
     public onCancelClick(): void {
-        this.data = null;
         this.dialogRef.close();
     }
 }

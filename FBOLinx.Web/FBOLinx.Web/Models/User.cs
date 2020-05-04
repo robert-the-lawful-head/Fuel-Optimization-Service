@@ -36,6 +36,7 @@ namespace FBOLinx.Web.Models
         public long? LoginCount { get;set; }
         public int? AddOnMarginTries { get; set; }
         public bool? GoOverTutorial { get; set; }
+        public bool Active { get; set; }
         public UserRoles Role { get; set; }
         [Column("FBOID")]
         public int FboId { get; set; }

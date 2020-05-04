@@ -16,7 +16,6 @@ import {
     MatDialog,
 } from "@angular/material/dialog";
 import { DialogConfirmAircraftDeleteComponent } from "../customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component";
-import FlatfileImporter from "flatfile-csv-importer";
 
 @Component({
     selector: "app-customer-aircrafts-edit",

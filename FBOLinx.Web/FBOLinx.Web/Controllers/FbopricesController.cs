@@ -11,6 +11,7 @@ using FBOLinx.Web.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Web.Auth;
+using FBOLinx.Web.DTO;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -430,321 +431,266 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest();
             }
-            int aircraftId = await (
-                                from ca in _context.CustomerAircrafts
-                                join c in _context.Customers
-                                    on
-                                    new { ca.CustomerId, FuelerlinxId = request.FuelerlinxCompanyID }
-                                    equals
-                                    new { CustomerId = c.Oid, FuelerlinxId = c.FuelerlinxId.GetValueOrDefault() }
-                                where ca.TailNumber == request.TailNumber
-                                select ca.Oid).FirstOrDefaultAsync();
-
-            if (aircraftId > 0)
+            try
             {
-                var ptAircrafts = await (from pt in _context.PricingTemplate
-                                         join ap in _context.AircraftPrices on pt.Oid equals ap.PriceTemplateId
-                                         select new
-                                         {
-                                             ap.CustomerAircraftId,
-                                             pt.Fboid
-                                         }).ToListAsync();
+                int aircraftId = await (
+                                    from ca in _context.CustomerAircrafts
+                                    join c in _context.Customers
+                                        on
+                                        new { ca.CustomerId, FuelerlinxId = request.FuelerlinxCompanyID }
+                                        equals
+                                        new { CustomerId = c.Oid, FuelerlinxId = c.FuelerlinxId ?? 0 }
+                                    where ca.TailNumber == request.TailNumber
+                                    select ca.Oid).FirstOrDefaultAsync();
 
-                IQueryable<AircraftPrices> aircraftPrices = (
-                                                        from f in _context.Fbos
-                                                        join pt in _context.PricingTemplate on
-                                                                new { Fboid = f.Oid, GroupId = f.GroupId.GetValueOrDefault() }
-                                                                equals
-                                                                new { pt.Fboid, GroupId = 1 }
-                                                        join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId
-                                                        join vsd in _context.VolumeScaleDiscount on
-                                                                new { CustomerId = c.Oid, pt.Fboid }
-                                                                equals
-                                                                new { CustomerId = vsd.CustomerId.GetValueOrDefault(), vsd.Fboid }
-                                                        join cibg in _context.CustomerInfoByGroup on
-                                                                new { CustomerId = c.Oid, GroupId = f.GroupId.GetValueOrDefault() }
-                                                                equals
-                                                                new { cibg.CustomerId, cibg.GroupId }
-                                                        join cdt in _context.CustomerDefaultTemplates on
-                                                                new { PricingTemplateID = pt.Oid, Fboid = f.Oid, CustomerID = c.Oid }
-                                                                equals
-                                                                new { cdt.PricingTemplateID, cdt.Fboid, cdt.CustomerID }
-                                                        into leftJoinCdt
-                                                        from cdt in leftJoinCdt.DefaultIfEmpty()
-                                                        join ap in ptAircrafts on
-                                                                new { CustomerAircraftId = aircraftId, Fboid = f.Oid }
-                                                                equals
-                                                                new { ap.CustomerAircraftId, ap.Fboid }
-                                                        into leftJoinAp
-                                                        from ap in leftJoinAp.DefaultIfEmpty()
-                                                        where ap == null
-                                                        select new AircraftPrices
-                                                        {
-                                                            CustomerAircraftId = aircraftId,
-                                                            PriceTemplateId = cdt == null ? vsd.JetAvolumeDiscount.GetValueOrDefault() : cdt.PricingTemplateID
-                                                        });
-                _context.AircraftPrices.AddRange(aircraftPrices);
-
-                var companyPricingLog = new CompanyPricingLog
+                if (aircraftId > 0)
                 {
-                    CompanyId = request.FuelerlinxCompanyID,
-                    ICAO = request.ICAO
-                };
-                _context.CompanyPricingLog.Add(companyPricingLog);
+                    List<AircraftPrices> aircraftPrices = (
+                                                            from f in _context.Fbos
+                                                            join pt in _context.PricingTemplate on
+                                                                    new { Fboid = f.Oid, GroupId = f.GroupId ?? 0 }
+                                                                    equals
+                                                                    new { pt.Fboid, GroupId = 1 }
+                                                            join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId
+                                                            join vsd in _context.VolumeScaleDiscount on
+                                                                    new { CustomerId = c.Oid, pt.Fboid }
+                                                                    equals
+                                                                    new { CustomerId = vsd.CustomerId ?? 0, vsd.Fboid }
+                                                            join cibg in _context.CustomerInfoByGroup on
+                                                                    new { CustomerId = c.Oid, GroupId = f.GroupId ?? 0 }
+                                                                    equals
+                                                                    new { cibg.CustomerId, cibg.GroupId }
+                                                            join cdt in _context.CustomerDefaultTemplates on
+                                                                    new { PricingTemplateID = pt.Oid, Fboid = f.Oid, CustomerID = c.Oid }
+                                                                    equals
+                                                                    new { cdt.PricingTemplateID, cdt.Fboid, cdt.CustomerID }
+                                                            into leftJoinCdt
+                                                            from cdt in leftJoinCdt.DefaultIfEmpty()
+                                                            join ap in
+                                                                    (from pt in _context.PricingTemplate
+                                                                     join ap in _context.AircraftPrices on pt.Oid equals ap.PriceTemplateId
+                                                                     select new
+                                                                     {
+                                                                         ap.CustomerAircraftId,
+                                                                         pt.Fboid
+                                                                     }) on
+                                                                    new { CustomerAircraftId = aircraftId, Fboid = f.Oid }
+                                                                    equals
+                                                                    new { ap.CustomerAircraftId, ap.Fboid }
+                                                            into leftJoinAp
+                                                            from ap in leftJoinAp.DefaultIfEmpty()
+                                                            where ap == null
+                                                            select new AircraftPrices
+                                                            {
+                                                                CustomerAircraftId = aircraftId,
+                                                                PriceTemplateId = cdt == null ? (vsd.JetAvolumeDiscount ?? 0) : cdt.PricingTemplateID
+                                                            }).ToList();
+                    _context.AircraftPrices.AddRange(aircraftPrices);
 
-                await _context.SaveChangesAsync();
-
-                var fuelerlinxData = await (
-                    from fd in _fuelerlinxContext.FuelerData
-                    join fl in _fuelerlinxContext.FuelerList on
-                            new { FuelerId = fd.FuelerId.GetValueOrDefault(), fd.Active }
-                            equals
-                            new { FuelerId = fl.Oid, Active = true }
-                    where fd.CompanyId == request.FuelerlinxCompanyID && fl.FbolinxId > 0
-                    select new FuelerlinxDataList
+                    CompanyPricingLog companyPricingLog = new CompanyPricingLog
                     {
-                        GroupId = fl.FbolinxId,
-                        Fueler = fl.ProcessNm,
-                        FuelerName = fl.FuelerNm
-                    }).Distinct().ToListAsync();
+                        CompanyId = request.FuelerlinxCompanyID,
+                        ICAO = request.ICAO
+                    };
+                    _context.CompanyPricingLog.Add(companyPricingLog);
 
-                List<AircraftPrices> aircraftPricesPT = await (
-                                             from a in _context.AircraftPrices
-                                             join pt in _context.PricingTemplate on a.PriceTemplateId equals pt.Oid
-                                             join fa in _context.Fboairports on request.ICAO equals fa.Icao
-                                             join f in _context.Fbos on
-                                                    new { fa.Fboid, Active = true, Suspended = false }
-                                                    equals
-                                                    new { Fboid = f.Oid, Active = f.Active.GetValueOrDefault(), Suspended = f.Suspended.GetValueOrDefault() }
-                                             join g in _context.Group on
-                                                    new { GroupId = f.GroupId.GetValueOrDefault(), Isfbonetwork = true }
-                                                    equals
-                                                    new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork.GetValueOrDefault() }
-                                             join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId
-                                             join cibg in _context.CustomerInfoByGroup on
-                                                    new { CustomerId = c.Oid, GroupId = g.Oid, Suspended = false, Active = true }
-                                                    equals
-                                                    new { cibg.CustomerId, cibg.GroupId, Suspended = cibg.Suspended.GetValueOrDefault(), Active = cibg.Active.GetValueOrDefault() }
-                                             join ca in _context.CustomerAircrafts on
-                                                    new { CustomerId = c.Oid, request.TailNumber, GroupId = g.Oid, a.CustomerAircraftId }
-                                                    equals
-                                                    new { ca.CustomerId, ca.TailNumber, GroupId = ca.GroupId.GetValueOrDefault(), CustomerAircraftId = ca.Oid }
-                                             where pt.Fboid == f.Oid && c.ShowJetA.GetValueOrDefault() == true
-                                             orderby a.Oid ascending
-                                             select new AircraftPrices
-                                             {
-                                                 CustomerAircraftId = a.CustomerAircraftId,
-                                                 PriceTemplateId = a.PriceTemplateId
-                                             }
-                                            ).Take(1).ToListAsync();
+                    _context.SaveChanges();
 
-                var vsdFboPrices = await (
-                                        from vsd in _context.VolumeScaleDiscount
-                                        from fp in _context.Fboprices
-                                        where ((vsd.MarginType == 0 && vsd.Margin > 0 && fp.Product == "JetA Cost") ||
-                                            (vsd.MarginType == 1 && fp.Product == "JetA Retail")) &&
-                                            fp.EffectiveFrom <= DateTime.Now && fp.EffectiveTo > DateTime.Now &&
-                                            fp.Expired != true
-                                        select new VolumeScaleDiscountFboPrice
-                                        {
-                                            CustomerId = vsd.CustomerId,
-                                            Fboid = vsd.Fboid,
-                                            DefaultSettings = vsd.DefaultSettings,
-                                            MarginType = vsd.MarginType,
-                                            Price = fp.Price,
-                                            Margin = vsd.Margin,
-                                            SalesTax = fp.SalesTax
-                                        }).ToListAsync();
+                    List<AircraftPrices> aircraftPricesPT = (
+                                                 from a in _context.AircraftPrices
+                                                 join pt in _context.PricingTemplate on a.PriceTemplateId equals pt.Oid
+                                                 join fa in _context.Fboairports on request.ICAO equals fa.Icao
+                                                 join f in _context.Fbos on
+                                                        new { fa.Fboid, PtId = pt.Fboid, Active = true, Suspended = false }
+                                                        equals
+                                                        new { Fboid = f.Oid, PtId = f.Oid, Active = f.Active ?? false, Suspended = f.Suspended ?? false }
+                                                 join g in _context.Group on
+                                                        new { GroupId = f.GroupId ?? 0, Isfbonetwork = true, Active = true }
+                                                        equals
+                                                        new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork ?? false, g.Active }
+                                                 join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId
+                                                 join cibg in _context.CustomerInfoByGroup on
+                                                        new { CustomerId = c.Oid, GroupId = g.Oid, Suspended = false, Active = true }
+                                                        equals
+                                                        new { cibg.CustomerId, cibg.GroupId, Suspended = cibg.Suspended ?? false, Active = cibg.Active ?? false }
+                                                 join ca in _context.CustomerAircrafts on
+                                                        new { CustomerId = c.Oid, request.TailNumber, GroupId = g.Oid, a.CustomerAircraftId }
+                                                        equals
+                                                        new { ca.CustomerId, ca.TailNumber, GroupId = ca.GroupId ?? 0, CustomerAircraftId = ca.Oid }
+                                                 where pt.Fboid == f.Oid && c.ShowJetA == true
+                                                 orderby a.Oid ascending
+                                                 select new AircraftPrices
+                                                 {
+                                                     CustomerAircraftId = a.CustomerAircraftId,
+                                                     PriceTemplateId = a.PriceTemplateId
+                                                 }
+                                                ).Take(1).ToList();
 
+                    List<CustomerMarginPriceTier> customerMarginPrices = (
+                                                from cm in _context.CustomerMargins
+                                                join pt in _context.PriceTiers on cm.PriceTierId equals pt.Oid
+                                                select new CustomerMarginPriceTier
+                                                {
+                                                    Min = pt.Min ?? 1,
+                                                    TemplateId = cm.TemplateId,
+                                                    Amount = cm.Amount
+                                                }).ToList();
 
-                var result1 = (
-                    from fa in _context.Fboairports
-                    join f in _context.Fbos on
-                            new { fa.Fboid, Active = true, Suspended = false }
-                            equals
-                            new { Fboid = f.Oid, Active = f.Active.GetValueOrDefault(), Suspended = f.Suspended.GetValueOrDefault() }
-                    join t in _context.PricingTemplate on f.Oid equals t.Fboid
-                    join g in _context.Group on
-                            new { GroupId = f.GroupId.GetValueOrDefault(), Isfbonetwork = true }
-                            equals
-                            new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork.GetValueOrDefault() }
-                    join flf in fuelerlinxData on g.Oid equals flf.GroupId
-                    join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId
-                    join cibg in _context.CustomerInfoByGroup on
-                            new { CustomerId = c.Oid, GroupId = g.Oid, Suspended = false, Active = true }
-                            equals
-                            new { cibg.CustomerId, cibg.GroupId, Suspended = cibg.Suspended.GetValueOrDefault(), Active = cibg.Active.GetValueOrDefault() }
-                    join ca in _context.CustomerAircrafts on
-                            new { CustomerId = c.Oid, request.TailNumber, flf.GroupId }
-                            equals
-                            new { ca.CustomerId, ca.TailNumber, ca.GroupId }
-                    join ap in aircraftPricesPT on
-                            new { CustomerAircraftId = ca.Oid, PriceTemplateId = t.Oid }
-                            equals
-                            new { ap.CustomerAircraftId, PriceTemplateId = ap.PriceTemplateId.GetValueOrDefault() }
-                    join vsd in vsdFboPrices on
-                            new { ca.CustomerId, Fboid = f.Oid, DefaultSettings = false }
-                            equals
-                            new { CustomerId = vsd.CustomerId.GetValueOrDefault(), vsd.Fboid, DefaultSettings = vsd.DefaultSettings.GetValueOrDefault() }
-                    join p in (
-                        from cm in _context.CustomerMargins
-                        join pt in _context.PriceTiers on cm.PriceTierId equals pt.Oid
-                        select new CustomerMarginPriceTier
+                    var volumes = (from vsd in _context.VolumeScaleDiscount
+                                   from fp in _context.Fboprices
+                                   where ((vsd.MarginType == 0 && vsd.Margin > 0 && fp.Product == "JetA Cost") ||
+                                       (vsd.MarginType == 1 && fp.Product == "JetA Retail")) &&
+                                       fp.EffectiveFrom <= DateTime.Now && fp.EffectiveTo > DateTime.Now &&
+                                       fp.Expired != true
+                                   select new VolumeScaleDiscountFboPrice
+                                   {
+                                       CustomerId = vsd.CustomerId ?? 0,
+                                       Fboid = vsd.Fboid,
+                                       DefaultSettings = vsd.DefaultSettings ?? false,
+                                       MarginType = vsd.MarginType ?? 0,
+                                       Price = fp.Price ?? 0,
+                                       Margin = vsd.Margin ?? 0,
+                                       SalesTax = fp.SalesTax ?? 0,
+                                       ExpirationDate = fp.EffectiveTo
+                                   }).ToList();
+
+                    var result1 = await (
+                        from fa in _context.Fboairports
+                        join f in _context.Fbos on
+                                new { fa.Fboid, Active = true, Suspended = false }
+                                equals
+                                new { Fboid = f.Oid, Active = f.Active ?? false, Suspended = f.Suspended ?? false }
+                        join t in _context.PricingTemplate on f.Oid equals t.Fboid
+                        join g in _context.Group on
+                                new { GroupId = f.GroupId ?? 0, Isfbonetwork = true, Active = true }
+                                equals
+                                new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork ?? false, g.Active }
+                        join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId ?? 0
+                        join cibg in _context.CustomerInfoByGroup on
+                                new { CustomerId = c.Oid, GroupId = g.Oid, Suspended = false, Active = true }
+                                equals
+                                new { cibg.CustomerId, cibg.GroupId, Suspended = cibg.Suspended ?? false, Active = cibg.Active ?? false }
+                        join ca in _context.CustomerAircrafts on
+                                new { CustomerId = c.Oid, request.TailNumber }
+                                equals
+                                new { ca.CustomerId, ca.TailNumber }
+                        join ap in aircraftPricesPT on
+                                new { CustomerAircraftId = ca.Oid, PriceTemplateId = t.Oid }
+                                equals
+                                new { ap.CustomerAircraftId, PriceTemplateId = ap.PriceTemplateId ?? 0 }
+                        join vsd in volumes on
+                                new { ca.CustomerId, Fboid = f.Oid, DefaultSettings = false }
+                                equals
+                                new { vsd.CustomerId, vsd.Fboid, vsd.DefaultSettings }
+                        join p in customerMarginPrices on t.Oid equals p.TemplateId
+                        into leftJoinP
+                        from p in leftJoinP.DefaultIfEmpty()
+                        where fa.Icao == request.ICAO && c.ShowJetA == true
+                        select new
                         {
-                            Min = pt.Min,
-                            TemplateId = cm.TemplateId,
-                            Amount = cm.Amount
-                        }
-                    ) on t.Oid equals p.TemplateId
-                    into leftJoinP
-                    from p in leftJoinP.DefaultIfEmpty()
-                    where fa.Icao == request.ICAO && c.ShowJetA.GetValueOrDefault() == true
-                    select new
-                    {
-                        f.Fbo,
-                        flf.Fueler,
-                        Product = "JetA",
-                        MinVolume = p == null || p.Min == null ? 1 : p.Min,
-                        FuelerDisplayName = flf.FuelerName,
-                        t.Notes,
-                        Price = GetTPrice(vsd, p, flf)
-                    }
-                    );
+                            FboId = f.Oid,
+                            f.Fbo,
+                            GroupId = g.Oid,
+                            Group = g.GroupName,
+                            Product = "JetA",
+                            MinVolume = (p == null ? 1 : p.Min),
+                            t.Notes,
+                            Default = t.Default ?? false,
+                            Price = GetTPrice(vsd, p, g.Oid),
+                            vsd.ExpirationDate
+                        }).ToListAsync();
 
-                var tempAddonMargins = _context.TempAddOnMargin
-                                                    .Where(taom => taom.EffectiveFrom <= DateTime.Now &&
-                                                                taom.EffectiveTo.AddDays(1) > DateTime.Now);
-
-                var result2 = (
-                    from fa in _context.Fboairports
-                    join f in _context.Fbos on
-                            new { fa.Fboid, Active = true, Suspended = false }
-                            equals
-                            new { Fboid = f.Oid, Active = f.Active.GetValueOrDefault(), Suspended = f.Suspended.GetValueOrDefault() }
-                    join t in _context.PricingTemplate on f.Oid equals t.Fboid
-                    join g in _context.Group on
-                            new { GroupId = f.GroupId.GetValueOrDefault(), Isfbonetwork = false }
-                            equals
-                            new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork.GetValueOrDefault() }
-                    join flf in fuelerlinxData on g.Oid equals flf.GroupId
-                    join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId
-                    join cibg in _context.CustomerInfoByGroup on
-                            new { CustomerId = c.Oid, GroupId = g.Oid, Distribute = true }
-                            equals
-                            new { cibg.CustomerId, cibg.GroupId, Distribute = cibg.Distribute.GetValueOrDefault() }
-                    join ca in _context.CustomerAircrafts on
-                            new { CustomerId = c.Oid, request.TailNumber, flf.GroupId }
-                            equals
-                            new { ca.CustomerId, ca.TailNumber, ca.GroupId }
-                    join ap in _context.AircraftPrices on
-                            new { CustomerAircraftId = ca.Oid, PriceTemplateId = t.Oid }
-                            equals
-                            new { ap.CustomerAircraftId, PriceTemplateId = ap.PriceTemplateId.GetValueOrDefault() }
-                    into leftJoinAP
-                    from ap in leftJoinAP.DefaultIfEmpty()
-                    join cct in _context.CustomCustomerTypes on
-                            new { cibg.CustomerId, Fboid = f.Oid }
-                            equals
-                            new { cct.CustomerId, cct.Fboid }
-                    join fp in _context.Fboprices on f.Oid equals fp.Fboid
-                    join cvbf in _context.CustomersViewedByFbo on 
-                            new { cibg.CustomerId, Fboid = f.Oid }
-                            equals
-                            new { cvbf.CustomerId, cvbf.Fboid }
-                    join ff in _context.Fbofees on
-                            new { Fboid = f.Oid, FeeType = 8 }
-                            equals
-                            new { ff.Fboid, ff.FeeType }
-                    into leftJoinFF
-                    from ff in leftJoinFF.DefaultIfEmpty()
-                    join p in (
-                        from cm in _context.CustomerMargins
-                        join pt in _context.PriceTiers on cm.PriceTierId equals pt.Oid
-                        select new CustomerMarginPriceTier
+                    var result2 = await (
+                        from fa in _context.Fboairports
+                        join f in _context.Fbos on
+                                new { fa.Fboid, Active = true, Suspended = false }
+                                equals
+                                new { Fboid = f.Oid, Active = f.Active ?? false, Suspended = f.Suspended ?? false }
+                        join t in _context.PricingTemplate on f.Oid equals t.Fboid
+                        join g in _context.Group on
+                                new { GroupId = f.GroupId ?? 0, Isfbonetwork = false, Active = true }
+                                equals
+                                new { GroupId = g.Oid, Isfbonetwork = g.Isfbonetwork ?? false, g.Active }
+                        join c in _context.Customers on request.FuelerlinxCompanyID equals c.FuelerlinxId
+                        join cibg in _context.CustomerInfoByGroup on
+                                new { CustomerId = c.Oid, GroupId = g.Oid, Distribute = true, Active = true }
+                                equals
+                                new { cibg.CustomerId, cibg.GroupId, Distribute = cibg.Distribute ?? false, Active = cibg.Active ?? false }
+                        join ca in _context.CustomerAircrafts on
+                                new { CustomerId = c.Oid, request.TailNumber }
+                                equals
+                                new { ca.CustomerId, ca.TailNumber }
+                        join ap in _context.AircraftPrices on
+                                new { CustomerAircraftId = ca.Oid, PriceTemplateId = t.Oid }
+                                equals
+                                new { ap.CustomerAircraftId, PriceTemplateId = ap.PriceTemplateId ?? 0 }
+                        into leftJoinAP
+                        from ap in leftJoinAP.DefaultIfEmpty()
+                        join cct in _context.CustomCustomerTypes on
+                                new { cibg.CustomerId, Fboid = f.Oid }
+                                equals
+                                new { cct.CustomerId, cct.Fboid }
+                        join fp in _context.Fboprices on f.Oid equals fp.Fboid
+                        join cvbf in _context.CustomersViewedByFbo on
+                                new { cibg.CustomerId, Fboid = f.Oid }
+                                equals
+                                new { cvbf.CustomerId, cvbf.Fboid }
+                        join ff in _context.Fbofees on
+                                new { Fboid = f.Oid, FeeType = 8 }
+                                equals
+                                new { ff.Fboid, ff.FeeType }
+                        into leftJoinFF
+                        from ff in leftJoinFF.DefaultIfEmpty()
+                        join p in customerMarginPrices on t.Oid equals p.TemplateId
+                        into leftJoinP
+                        from p in leftJoinP.DefaultIfEmpty()
+                        where fa.Icao == request.ICAO && (c.ShowJetA == null || c.ShowJetA == true) &&
+                            ((ap.PriceTemplateId ?? 0) == 0 ? cct.CustomerType : ap.PriceTemplateId) == t.Oid &&
+                            fp.Price > 0 &&
+                            ((t.MarginType == PricingTemplate.MarginTypes.CostPlus && fp.Product == "JetA Cost") ||
+                              (t.MarginType == PricingTemplate.MarginTypes.RetailMinus && fp.Product == "JetA Retail") ||
+                              (t.MarginType == PricingTemplate.MarginTypes.FlatFee && fp.Product == "JetA Retail")) &&
+                              fp.EffectiveFrom <= DateTime.Now && fp.EffectiveTo > DateTime.Now &&
+                              fp.Expired != true
+                        select new
                         {
-                            Min = pt.Min,
-                            TemplateId = cm.TemplateId,
-                            Amount = cm.Amount
-                        }
-                    ) on t.Oid equals p.TemplateId
-                    into leftJoinP
-                    from p in leftJoinP.DefaultIfEmpty()
-                    join taom in tempAddonMargins on f.Oid equals taom.FboId
-                    into leftJoinTempAddonMargin
-                    from taom in leftJoinTempAddonMargin.DefaultIfEmpty()
-                    where fa.Icao == request.ICAO && (c.ShowJetA == null || c.ShowJetA == true) &&
-                        (ap.PriceTemplateId.GetValueOrDefault() == 0 ? cct.CustomerType : ap.PriceTemplateId) == t.Oid &&
-                        fp.Price > 0 && 
-                        ((t.MarginType == PricingTemplate.MarginTypes.CostPlus && fp.Product == "JetA Cost") || 
-                          (t.MarginType == PricingTemplate.MarginTypes.RetailMinus && fp.Product == "JetA Retail") ||
-                          (t.MarginType == PricingTemplate.MarginTypes.FlatFee && fp.Product == "JetA Retail")) &&
-                          fp.EffectiveFrom <= DateTime.Now && fp.EffectiveTo > DateTime.Now &&
-                          fp.Expired != true &&
-                          t.MarginType == PricingTemplate.MarginTypes.CostPlus
-                    select new
+                            FboId = f.Oid,
+                            f.Fbo,
+                            GroupId = g.Oid,
+                            Group = g.GroupName,
+                            Product = "JetA",
+                            MinVolume = p == null ? 1 : p.Min,
+                            t.Notes,
+                            Default = t.Default ?? false,
+                            Price = GetDTPrice(fp, p, ff, t),
+                            ExpirationDate = fp.EffectiveTo
+                        }).Distinct().ToListAsync();
+
+                    var result = result1.Concat(result2)
+                                        .Distinct()
+                                        .ToList();
+
+                    var clonedResult = result.Select(x => x)
+                                             .OrderBy(x => x.FboId)
+                                             .ThenBy(x => x.MinVolume)
+                                             .ToList();
+                    foreach(var price in result.Where(x => x.Default))
                     {
-                        f.Fbo,
-                        flf.Fueler,
-                        Product = "JetA",
-                        MinVolume = p == null || p.Min == null ? 1 : p.Min,
-                        FuelerDisplayName = "Direct Pricing",
-                        t.Notes,
-                        Price = GetDTPrice(fp, p, ff, t)
+                        var aircraftNonDefaultPT = result.Any(x => x.FboId == price.FboId && x.GroupId == price.GroupId && x.Default);
+                        if (aircraftNonDefaultPT)
+                        {
+                            clonedResult.Remove(price);
+                        }
                     }
-                    );
 
-                var result = result1.Concat(result2).OrderBy(x => x.Fueler)
-                    .ThenBy(x => x.Fbo)
-                    .ThenBy(x => x.MinVolume)
-                    .ToList();
+                    return Ok(clonedResult);
+                }
 
-                return Ok(result);
-            }
-
-            return Ok(null);
-        }
-
-        private double? GetDTPrice(Fboprices fp, CustomerMarginPriceTier p, Fbofees ff, PricingTemplate t)
-        {
-            double? price = 0;
-            double? pAmount = (p == null || p.Amount == null) ? 0 : Math.Abs(p.Amount.Value);
-            if (t.MarginType == null || t.MarginType == PricingTemplate.MarginTypes.CostPlus)
+                return Ok(null);
+            } catch (Exception ex)
             {
-                price = (fp.Price + pAmount) * (1 + (ff.FeeAmount.GetValueOrDefault() / 100));
+                return BadRequest(ex);
             }
-            else if (t.MarginType == PricingTemplate.MarginTypes.RetailMinus)
-            {
-                price = fp.Price - pAmount;
-            }
-            else if (t.MarginType == PricingTemplate.MarginTypes.FlatFee)
-            {
-                price = pAmount;
-            }
-            return price;
-        }
-
-        private double? GetTPrice(VolumeScaleDiscountFboPrice vsd, CustomerMarginPriceTier p, FuelerlinxDataList flf)
-        {
-            double? price;
-            double? pAmount = (p == null || p.Amount == null) ? 0 : p.Amount;
-            double? salesTax = 1 + (vsd.SalesTax == null ? 0 : vsd.SalesTax);
-            if (vsd.MarginType == null || vsd.MarginType == 0)
-            {
-                price = (vsd.Price + vsd.Margin) * salesTax + pAmount;
-            }
-            else if (vsd.MarginType == 1 && vsd.Margin == 0 && flf.GroupId == 1)
-            {
-                price = vsd.Price + pAmount;
-            }
-            else if (vsd.MarginType == 1 && vsd.Margin == 0)
-            {
-                price = vsd.Price * salesTax + pAmount;
-            }
-            else
-            {
-                price = (vsd.Price / salesTax - vsd.Margin) * salesTax + pAmount;
-            }
-            return price;
         }
 
         // DELETE: api/Fboprices/5
@@ -782,30 +728,48 @@ namespace FBOLinx.Web.Controllers
         {
             return _context.Fboprices.AsQueryable();
         }
-    }
 
-    public class VolumeScaleDiscountFboPrice
-    {
-        public int? CustomerId { get; set; }
-        public int Fboid { get; set; }
-        public bool? DefaultSettings { get; set; }
-        public short? MarginType { get; set; }
-        public double? Price { get; set; }
-        public double? Margin { get; set; }
-        public double? SalesTax { get; set; }
-    }
+        private double GetTPrice(VolumeScaleDiscountFboPrice vsd, CustomerMarginPriceTier p, int groupId)
+        {
+            double? price;
+            double? pAmount = (p == null || p.Amount == null) ? 0 : p.Amount;
+            double? salesTax = 1 + vsd.SalesTax;
+            if (vsd.MarginType == 0)
+            {
+                price = (vsd.Price + vsd.Margin) * salesTax + pAmount;
+            }
+            else if (vsd.MarginType == 1 && vsd.Margin == 0 && groupId == 1)
+            {
+                price = vsd.Price + pAmount;
+            }
+            else if (vsd.MarginType == 1 && vsd.Margin == 0)
+            {
+                price = vsd.Price * salesTax + pAmount;
+            }
+            else
+            {
+                price = (vsd.Price / salesTax - vsd.Margin) * salesTax + pAmount;
+            }
+            return price ?? 0;
+        }
 
-    public class CustomerMarginPriceTier
-    {
-        public double? Min { get; set; }
-        public int TemplateId { get; set; }
-        public double? Amount { get; set; }
-    }
-
-    public class FuelerlinxDataList
-    {
-        public int? GroupId { get; set; }
-        public string Fueler { get; set; }
-        public string FuelerName { get; set; }
+        private double GetDTPrice(Fboprices fp, CustomerMarginPriceTier p, Fbofees ff, PricingTemplate t)
+        {
+            double? price = 0;
+            double? pAmount = (p == null || p.Amount == null) ? 0 : Math.Abs(p.Amount.Value);
+            if (t.MarginType == null || t.MarginType == PricingTemplate.MarginTypes.CostPlus)
+            {
+                price = (fp.Price + pAmount) * (1 + (ff.FeeAmount.GetValueOrDefault() / 100));
+            }
+            else if (t.MarginType == PricingTemplate.MarginTypes.RetailMinus)
+            {
+                price = fp.Price - pAmount;
+            }
+            else if (t.MarginType == PricingTemplate.MarginTypes.FlatFee)
+            {
+                price = pAmount;
+            }
+            return price ?? 0;
+        }
     }
 }

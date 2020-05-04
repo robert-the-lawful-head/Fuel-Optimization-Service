@@ -9,7 +9,6 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgbCarouselModule, NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 
 // 3rd Party Modules
-import { NgxCurrencyModule } from "ngx-currency";
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
 
 // Angular Material Modules
@@ -106,7 +105,6 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
-        NgxCurrencyModule,
         RichTextEditorAllModule,
 
         // Start bootstrap template additions

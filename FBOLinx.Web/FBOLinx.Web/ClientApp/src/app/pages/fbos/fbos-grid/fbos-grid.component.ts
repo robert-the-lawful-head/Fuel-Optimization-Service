@@ -12,20 +12,21 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
+import * as moment from "moment";
 
 // Services
 import { FbosService } from "../../../services/fbos.service";
-import { FboairportsService } from "../../../services/fboairports.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { FbopricesService } from "../../../services/fboprices.service";
 
 // Components
 import { FbosDialogNewFboComponent } from "../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component";
+import { FbosGridNewFboDialogComponent } from "../fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component";
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { ManageConfirmationComponent } from "../../../shared/components/manage-confirmation/manage-confirmation.component";
 import { PricingExpiredNotificationGroupComponent } from "../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component";
-import * as moment from 'moment';
 
+import { fboChangedEvent } from "../../../models/sharedEvents";
 
 const BREADCRUMBS: any[] = [
     {
@@ -46,7 +47,6 @@ const BREADCRUMBS: any[] = [
 export class FbosGridComponent implements OnInit {
     // Input/Output Bindings
     @Output() recordDeleted = new EventEmitter<any>();
-    @Output() newFboClicked = new EventEmitter<any>();
     @Output() editFboClicked = new EventEmitter<any>();
     @Input() fbosData: Array<any>;
     @Input() groupInfo: any;
@@ -68,7 +68,6 @@ export class FbosGridComponent implements OnInit {
         private newFboDialog: MatDialog,
         private fboService: FbosService,
         private fboPricesService: FbopricesService,
-        private fboAirportsService: FboairportsService,
         private sharedService: SharedService,
         private deleteFboDialog: MatDialog,
         private manageFboDialog: MatDialog,
@@ -94,10 +93,7 @@ export class FbosGridComponent implements OnInit {
             return;
         }
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.fbosDataSource = new MatTableDataSource(this.fbosData);
-        this.fbosDataSource.sort = this.sort;
-        this.fbosDataSource.paginator = this.paginator;
-        this.resultsLength = this.fbosData.length;
+        this.refreshTable();
         if (this.sharedService.currentUser.role !== 3) {
             const remindMeLaterFlag = localStorage.getItem(
                 "pricingExpiredNotification"
@@ -136,10 +132,7 @@ export class FbosGridComponent implements OnInit {
                 this.sort.sortChange.subscribe(() => {
                     this.paginator.pageIndex = 0;
                 });
-                this.fbosDataSource = new MatTableDataSource(this.fbosData);
-                this.fbosDataSource.sort = this.sort;
-                this.fbosDataSource.paginator = this.paginator;
-                this.resultsLength = this.fbosData.length;
+                this.refreshTable();
                 this.isDeleting = false;
                 this.snackBar.open(record.fbo + " is deleted", "", {
                     duration: 2000,
@@ -168,29 +161,53 @@ export class FbosGridComponent implements OnInit {
     }
 
     public newRecord() {
-        const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
-            width: "450px",
-            data: { oid: 0, initialSetupPhase: true },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            result.groupId = this.groupInfo.oid;
-            this.fboService.add(result).subscribe((data: any) => {
-                if (!result.airport) {
-                    return;
-                }
-                this.fboAirportsService
-                    .add({
-                        fboId: data.oid,
-                        icao: result.airport.icao,
-                        iata: result.airport.iata,
-                    })
-                    .subscribe(() => {
-                        this.editRecord(data, null);
-                    });
+        if (this.groupInfo) {
+            const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
+                width: "450px",
+                data: { oid: 0, initialSetupPhase: true },
             });
-        });
-        this.newFboClicked.emit();
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (result) {
+                    result.groupId = this.groupInfo.oid;
+                    this.fboService.add(result).subscribe((newFbo: any) => {
+                        this.fbosData.push(newFbo);
+                        this.refreshTable();
+                        this.snackBar.open(newFbo.fbo + " is created", "", {
+                            duration: 3000,
+                            panelClass: ["blue-snackbar"],
+                        });
+                        this.editRecord(newFbo, null);
+                    });
+                }
+            });
+        } else {
+            const dialogRef = this.newFboDialog.open(FbosGridNewFboDialogComponent, {
+                width: "450px",
+                data: {},
+            });
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (result) {
+                    this.fboService.addSingleFbo(result).subscribe((newFbo: any) => {
+                        this.fbosData.push(newFbo);
+                        this.refreshTable();
+                        this.snackBar.open(newFbo.fbo + " is created", "", {
+                            duration: 3000,
+                            panelClass: ["blue-snackbar"],
+                        });
+                        this.router.navigate(["/default-layout/fbos/" + newFbo.oid]);
+                    });
+                }
+            });
+        }
+    }
+
+    public refreshTable() {
+        this.fbosDataSource = new MatTableDataSource(this.fbosData);
+        this.fbosDataSource.sort = this.sort;
+        this.fbosDataSource.paginator = this.paginator;
+        this.resultsLength = this.fbosData.length;
     }
 
     public applyFilter(filterValue: string) {
@@ -214,7 +231,7 @@ export class FbosGridComponent implements OnInit {
             this.sharedService.currentUser.impersonatedRole = 1;
             this.sharedService.currentUser.fboId = result.oid;
             sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
-            this.sharedService.emitChange("fbo changed");
+            this.sharedService.emitChange(fboChangedEvent);
             this.router.navigate(["/default-layout/dashboard-fbo/"]);
         });
     }
@@ -239,11 +256,11 @@ export class FbosGridComponent implements OnInit {
                         }
                     );
                     dialogRef.afterClosed().subscribe((result) => {
-                        if (result.fboId) {
+                        if (result && result.fboId) {
                             this.sharedService.currentUser.impersonatedRole = 1;
                             this.sharedService.currentUser.fboId = result.fboId;
                             sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
-                            this.sharedService.emitChange("fbo changed");
+                            this.sharedService.emitChange(fboChangedEvent);
                             this.router.navigate(["/default-layout/dashboard-fbo/"]);
                         }
                     });

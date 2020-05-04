@@ -5,6 +5,7 @@ import {
     Input,
     Output,
     EventEmitter,
+    OnDestroy,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
@@ -25,6 +26,7 @@ import * as SharedEvents from "../../../models/sharedEvents";
 // Components
 import { AccountProfileComponent } from "../../../shared/components/account-profile/account-profile.component";
 import { WindowRef } from "../../../shared/components/zoho-chat/WindowRef";
+import { fboChangedEvent } from "../../../models/sharedEvents";
 
 @Component({
     moduleId: module.id,
@@ -37,7 +39,7 @@ import { WindowRef } from "../../../shared/components/zoho-chat/WindowRef";
     },
     providers: [WindowRef],
 })
-export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
+export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input()
     title: string;
     @Input()
@@ -63,6 +65,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     public fbo: any;
     public currentUser: any;
     public needsAttentionCustomersData: any[];
+    public subscription: any;
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -82,7 +85,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
         this.currentUser = this.sharedService.currentUser;
 
         // getting the native window obj
-        console.log("Native window obj", winRef.nativeWindow);
         this.window = winRef.nativeWindow;
 
         if (!this.currentUser) {
@@ -103,12 +105,18 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === "fbo changed") {
+        this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
+            if (message === fboChangedEvent) {
                 this.loadLocations();
                 this.loadFboInfo();
             }
         });
+    }
+
+    ngOnDestroy() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 
     toggle(event) {

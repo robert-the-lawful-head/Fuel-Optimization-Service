@@ -1,0 +1,5 @@
+ALTER TABLE
+	[User]
+ADD
+	Active BIT NOT NULL DEFAULT(1)
+GO

@@ -1,16 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
-import {
-    FormControl,
-    FormGroupDirective,
-    NgForm,
-    Validators,
-} from "@angular/forms";
+import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
+import { FormControl } from "@angular/forms";
 import {
     startWith,
     map,
     debounceTime,
-    mergeMapTo,
-    mergeMap,
     switchMap,
     catchError,
 } from "rxjs/operators";
@@ -44,22 +38,6 @@ export class AirportAutocompleteComponent implements OnInit {
     airportModel = null;
 
     constructor(private acukwikAirportsService: AcukwikairportsService) {
-        // acukwikAirportsService.getAllAirports().subscribe((data: AirportAutoCompleteData[]) => {
-        //    this.airports = data;
-        //    this.registerFilter();
-        // });
-        // this.filteredAirports = this.searchControl.valueChanges.pipe(
-        //    startWith<string | AirportAutoCompleteData>(''),
-        //    map(val => {
-        //        return this.filter(val || '');
-        //    })
-        // );
-        // .startWith(null)
-        // .debounceTime(200)
-        // .distinctUntilChanged()
-        // .switchMap(val => {
-        //    return this.filter(val || '');
-        // });
     }
 
     ngOnInit() {
@@ -81,7 +59,10 @@ export class AirportAutocompleteComponent implements OnInit {
         );
     }
 
-    lookup(value: string): Observable<AirportAutoCompleteDataSource> {
+    lookup(value: any): Observable<AirportAutoCompleteDataSource> {
+        if (typeof value === "object") {
+            return of(null);
+        }
         return this.acukwikAirportsService.search(value).pipe(
             // map the item property of the github results as our return object
             map((results) => results),
@@ -98,10 +79,9 @@ export class AirportAutocompleteComponent implements OnInit {
             : undefined;
     }
 
-    public selected(airport) {
-        console.log(airport);
-        this.airportModel = airport;
+    public selected(airport: MatAutocompleteSelectedEvent) {
+        this.airportModel = airport.option.value;
         // send to parent or do whatever you want to do
-        this.valueChange.emit(airport);
+        this.valueChange.emit(airport.option.value);
     }
 }

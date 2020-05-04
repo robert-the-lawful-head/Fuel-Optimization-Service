@@ -109,7 +109,7 @@
                     </ni-badge>
                     <a
                         *ngIf="
-                            customer.customerCompanyTypeName != 'FuelerLinx' &&
+                            !customer.IsFuelerLinxCustomer &&
                             !customer.contactExists
                         "
                         style="float: right;"
@@ -258,6 +258,7 @@
             <td mat-cell *matCellDef="let customer">
                 <div class="pull-right">
                     <button
+                        *ngIf="!customer.isFuelerLinxCustomer"
                         ni-button
                         [view]="'error'"
                         size="small"

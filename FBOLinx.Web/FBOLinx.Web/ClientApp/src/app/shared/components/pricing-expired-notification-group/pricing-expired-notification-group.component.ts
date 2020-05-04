@@ -32,10 +32,10 @@ export class PricingExpiredNotificationGroupComponent {
     }
 
     public onCancelClick() {
-        //sessionStorage.setItem(
+        // sessionStorage.setItem(
         //    "pricingExpiredNotification",
         //    moment().format("L")
-        //);
+        // );
         this.dialogRef.close();
     }
 

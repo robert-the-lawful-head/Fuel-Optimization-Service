@@ -11,6 +11,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -106,7 +107,35 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(fbos).State = EntityState.Modified;
+            bool activeStatus = await _context.Fbos.Where(f => f.Oid.Equals(fbos.Oid))
+                                                   .Select(f => f.Active ?? false)
+                                                   .FirstAsync();
+            if (activeStatus != fbos.Active)
+            {
+                List<User> users = _context.User.Where(u => u.FboId.Equals(id))
+                                            .ToList();
+                foreach (var user in users)
+                {
+                    user.Active = fbos.Active ?? false;
+                }
+
+                _context.User.UpdateRange(users);
+
+                if (!fbos.Active.GetValueOrDefault())
+                {
+                    // Expire All Prices from the de-activated FBOLinx accounts
+                    var fboPrices = _context.Fboprices.Where(fp => fp.Fboid.Equals(id));
+
+                    foreach (var fboPrice in fboPrices)
+                    {
+                        fboPrice.Expired = true;
+                    }
+
+                    _context.Fboprices.UpdateRange(fboPrices);
+                }
+            }
+
+            _context.Fbos.Update(fbos);
 
             try
             {
@@ -129,17 +158,85 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/Fbos
         [HttpPost]
-        public async Task<IActionResult> PostFbos([FromBody] Fbos fbos)
+        public async Task<IActionResult> PostFbos([FromBody] SingleFboRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Fbos.Add(fbos);
+            Fbos fbo = new Fbos
+            {
+                Fbo = request.Fbo,
+                GroupId = request.GroupId,
+                AcukwikFBOHandlerId = request.AcukwikFboHandlerId
+            };
+
+            _context.Fbos.Add(fbo);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFbo", new { id = fbos.Oid }, fbos);
+            Fboairports fboairport = new Fboairports
+            {
+                Icao = request.Icao,
+                Iata = request.Iata,
+                Fboid = fbo.Oid
+            };
+            _context.Fboairports.Add(fboairport);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetFbo", new { id = fbo.Oid }, new
+            {
+                request.Icao,
+                request.Iata,
+                Active = false,
+                request.Fbo,
+                fbo.Oid
+            });
+        }
+
+        [HttpPost("single")]
+        public async Task<IActionResult> CreateSingleFbo([FromBody] SingleFboRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Group group = new Group
+            {
+                GroupName = request.Group,
+                Active = true
+            };
+            _context.Group.Add(group);
+            await _context.SaveChangesAsync();
+
+            Fbos fbo = new Fbos
+            {
+                Fbo = request.Fbo,
+                GroupId = group.Oid,
+                AcukwikFBOHandlerId = request.AcukwikFboHandlerId
+            };
+
+            _context.Fbos.Add(fbo);
+            await _context.SaveChangesAsync();
+
+            Fboairports fboairport = new Fboairports
+            {
+                Icao = request.Icao,
+                Iata = request.Iata,
+                Fboid = fbo.Oid
+            };
+            _context.Fboairports.Add(fboairport);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetFbo", new { id = fbo.Oid }, new
+            {
+                request.Icao,
+                request.Iata,
+                Active = false,
+                request.Fbo,
+                fbo.Oid
+            });
         }
 
         // DELETE: api/Fbos/5

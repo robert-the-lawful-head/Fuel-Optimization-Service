@@ -84,17 +84,54 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != @group.Oid)
-            {
-                return BadRequest();
-            }
-
             if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Entry(@group).State = EntityState.Modified;
+            bool groupActiveStatus = await _context.Group.Where(g => g.Oid.Equals(group.Oid))
+                                                         .Select(g => g.Active)
+                                                         .FirstAsync();
+            if (groupActiveStatus != group.Active)
+            {
+                List<User> users = _context.User.Where(u => u.GroupId.Equals(id))
+                                            .ToList();
+                foreach (var user in users)
+                {
+                    user.Active = group.Active;
+                }
+
+                _context.User.UpdateRange(users);
+
+                List<Fbos> fbos = _context.Fbos.Where(f => f.GroupId.Equals(id)).ToList();
+
+                foreach (var fbo in fbos)
+                {
+                    fbo.Active = group.Active;
+                }
+
+                _context.Fbos.UpdateRange(fbos);
+
+                if (!group.Active)
+                {
+                    // Expire All Prices from the de-activated FBOLinx accounts
+                    List<Fboprices> fboPrices = await (
+                                        from fp in _context.Fboprices
+                                        join f in _context.Fbos on fp.Fboid equals f.Oid
+                                        where f.GroupId == id
+                                        select fp
+                                    ).ToListAsync();
+
+                    foreach (var fboPrice in fboPrices)
+                    {
+                        fboPrice.Expired = true;
+                    }
+
+                    _context.Fboprices.UpdateRange(fboPrices);
+                }
+            }
+
+            _context.Group.Update(group);
 
             try
             {
@@ -102,7 +139,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GroupExists(id))
+                if (!_context.Group.Any(e => e.Oid == id))
                 {
                     return NotFound();
                 }
@@ -143,34 +180,34 @@ namespace FBOLinx.Web.Controllers
 
                     try
                     {
-                        var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null).ToList();
+                        //var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null).ToList();
 
-                        foreach (var cust in listWithCustomers)
-                        {
-                            CustomerInfoByGroup cibg = new CustomerInfoByGroup();
-                            cibg.GroupId = group.Oid;
-                            cibg.CustomerId = cust.Oid;
-                            cibg.Company = cust.Company;
-                            cibg.Username = cust.Username;
-                            cibg.Password = cust.Password;
-                            cibg.Joined = cust.Joined;
-                            cibg.Active = cust.Active;
-                            cibg.Distribute = cust.Distribute;
-                            cibg.Network = cust.Network;
-                            cibg.MainPhone = cust.MainPhone;
-                            cibg.Address = cust.Address;
-                            cibg.City = cust.City;
-                            cibg.State = cust.State;
-                            cibg.ZipCode = cust.ZipCode;
-                            cibg.Country = cust.Country;
-                            cibg.Website = cust.Website;
-                            cibg.ShowJetA = cust.ShowJetA;
-                            cibg.Show100Ll = cust.Show100Ll;
-                            cibg.Suspended = cust.Suspended;
+                        //foreach (var cust in listWithCustomers)
+                        //{
+                        //    CustomerInfoByGroup cibg = new CustomerInfoByGroup();
+                        //    cibg.GroupId = group.Oid;
+                        //    cibg.CustomerId = cust.Oid;
+                        //    cibg.Company = cust.Company;
+                        //    cibg.Username = cust.Username;
+                        //    cibg.Password = cust.Password;
+                        //    cibg.Joined = cust.Joined;
+                        //    cibg.Active = cust.Active;
+                        //    cibg.Distribute = cust.Distribute;
+                        //    cibg.Network = cust.Network;
+                        //    cibg.MainPhone = cust.MainPhone;
+                        //    cibg.Address = cust.Address;
+                        //    cibg.City = cust.City;
+                        //    cibg.State = cust.State;
+                        //    cibg.ZipCode = cust.ZipCode;
+                        //    cibg.Country = cust.Country;
+                        //    cibg.Website = cust.Website;
+                        //    cibg.ShowJetA = cust.ShowJetA;
+                        //    cibg.Show100Ll = cust.Show100Ll;
+                        //    cibg.Suspended = cust.Suspended;
 
-                            _context.CustomerInfoByGroup.Add(cibg);
-                            _context.SaveChanges();
-                        }
+                        //    _context.CustomerInfoByGroup.Add(cibg);
+                        //    _context.SaveChanges();
+                        //}
 
                         var task = Task.Run(async () =>
                         {
@@ -181,6 +218,8 @@ namespace FBOLinx.Web.Controllers
                             }
 
                         });
+
+
                     }
                     catch (Exception ex)
                     {
@@ -216,11 +255,6 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(@group);
-        }
-
-        private bool GroupExists(int id)
-        {
-            return _context.Group.Any(e => e.Oid == id);
         }
     }
 }

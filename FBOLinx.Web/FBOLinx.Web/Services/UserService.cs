@@ -47,8 +47,16 @@ namespace FBOLinx.Web.Services
             else
             {
                 if (!resetPassword && !hashUtility.VerifyHashedPassword(user.Password, password))
+                {
                     return null;
+                }
             }
+
+            if (!user.Active)
+            {
+                return null;
+            }
+
             UpdateLoginCount(user);
             SetAuthToken(user);
             
@@ -84,7 +92,8 @@ namespace FBOLinx.Web.Services
                 LastName = contactRecord?.LastName,
                 Password = hashUtility.HashPassword(fboRecord.Password),
                 Role = User.UserRoles.Primary,
-                Username = fboRecord.Username
+                Username = fboRecord.Username,
+                Active = true
             };
             _Context.User.Add(user);
             //fboRecord.Password = "";
@@ -114,7 +123,8 @@ namespace FBOLinx.Web.Services
                 LastName = "",
                 Password = hashUtility.HashPassword(groupRecord.Password),
                 Role = (groupRecord.GroupName == "FBOLinx") ? User.UserRoles.Conductor : User.UserRoles.GroupAdmin,
-                Username = groupRecord.Username
+                Username = groupRecord.Username,
+                Active = true
             };
 
             _Context.User.Add(user);

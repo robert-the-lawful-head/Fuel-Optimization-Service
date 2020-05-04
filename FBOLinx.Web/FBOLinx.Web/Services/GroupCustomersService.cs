@@ -32,6 +32,33 @@ namespace FBOLinx.Web.Services
 
                 foreach (var cust in listWithCustomers)
                 {
+                    CustomerInfoByGroup cibg = new CustomerInfoByGroup();
+                    cibg.GroupId = groupId;
+                    cibg.CustomerId = cust.Oid;
+                    cibg.Company = cust.Company;
+                    cibg.Username = cust.Username;
+                    cibg.Password = cust.Password;
+                    cibg.Joined = cust.Joined;
+                    cibg.Active = cust.Active;
+                    cibg.Distribute = cust.Distribute;
+                    cibg.Network = cust.Network;
+                    cibg.MainPhone = cust.MainPhone;
+                    cibg.Address = cust.Address;
+                    cibg.City = cust.City;
+                    cibg.State = cust.State;
+                    cibg.ZipCode = cust.ZipCode;
+                    cibg.Country = cust.Country;
+                    cibg.Website = cust.Website;
+                    cibg.ShowJetA = cust.ShowJetA;
+                    cibg.Show100Ll = cust.Show100Ll;
+                    cibg.Suspended = cust.Suspended;
+
+                    _context.CustomerInfoByGroup.Add(cibg);
+                    _context.SaveChanges();
+                }
+
+                foreach (var cust in listWithCustomers)
+                {
                     var listOfAirplanes = _context.CustomerAircrafts.Where(s => s.CustomerId == cust.Oid).GroupBy(s => s.AircraftId).ToList();
 
                     foreach (var airplane in listOfAirplanes)

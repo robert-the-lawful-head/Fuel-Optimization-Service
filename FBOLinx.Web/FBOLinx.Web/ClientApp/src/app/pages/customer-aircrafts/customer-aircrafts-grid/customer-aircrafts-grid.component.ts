@@ -9,11 +9,7 @@ import {
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 
 // Services
 import { AircraftsService } from "../../../services/aircrafts.service";
@@ -181,13 +177,16 @@ export class CustomerAircraftsGridComponent implements OnInit {
         });
     }
 
-    public editCustomerAircraft(customerAircraft) {
+    public editCustomerAircraft(customerAircraft: any) {
         if (customerAircraft) {
             const dialogRef = this.editCustomerAircraftDialog.open(
                 CustomerAircraftsEditComponent,
                 {
                     width: "450px",
-                    data: { oid: customerAircraft.oid },
+                    data: { 
+                        oid: customerAircraft.oid, 
+                        disableDelete: customerAircraft.isFuelerlinxNetwork && customerAircraft.addedFrom,
+                    },
                 }
             );
 
