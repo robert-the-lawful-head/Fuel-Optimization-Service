@@ -214,7 +214,8 @@ namespace FBOLinx.Web.Controllers
             {
                 Fbo = request.Fbo,
                 GroupId = group.Oid,
-                AcukwikFBOHandlerId = request.AcukwikFboHandlerId
+                AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
+                Active = true
             };
 
             _context.Fbos.Add(fbo);
