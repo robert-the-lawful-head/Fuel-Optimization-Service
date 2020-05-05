@@ -465,6 +465,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FuelData](docs/FuelData.md)
  - [IO.Swagger.Model.FuelOrderCancellationOptions](docs/FuelOrderCancellationOptions.md)
  - [IO.Swagger.Model.FuelOrderDetailsForScheduledLegResponse](docs/FuelOrderDetailsForScheduledLegResponse.md)
+ - [IO.Swagger.Model.FuelOrderResult](docs/FuelOrderResult.md)
  - [IO.Swagger.Model.FuelPriceOption](docs/FuelPriceOption.md)
  - [IO.Swagger.Model.FuelPriceOptionsByAirport](docs/FuelPriceOptionsByAirport.md)
  - [IO.Swagger.Model.FuelPriceResponse](docs/FuelPriceResponse.md)
