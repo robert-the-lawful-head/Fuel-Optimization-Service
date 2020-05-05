@@ -12,6 +12,8 @@ using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using FBOLinx.Web.Models.Requests;
+using Microsoft.Extensions.DependencyInjection;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -21,10 +23,12 @@ namespace FBOLinx.Web.Controllers
     public class FbosController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private IServiceScopeFactory _serviceScopeFactory;
 
-        public FbosController(FboLinxContext context)
+        public FbosController(FboLinxContext context, IServiceScopeFactory serviceScopeFactory)
         {
             _context = context;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         // GET: api/Fbos/group/5
@@ -229,6 +233,16 @@ namespace FBOLinx.Web.Controllers
             };
             _context.Fboairports.Add(fboairport);
             await _context.SaveChangesAsync();
+
+            var task = Task.Run(async () =>
+            {
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetService<FboLinxContext>();
+                    await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Oid);
+                }
+
+            });
 
             return CreatedAtAction("GetFbo", new { id = fbo.Oid }, new
             {
