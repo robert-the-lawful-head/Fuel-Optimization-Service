@@ -692,12 +692,20 @@ namespace FBOLinx.Web.Controllers
                         }
                     }
 
+                    List<CustomerAircrafts> customerAircrafts = await (
+                                            from ca in _context.CustomerAircrafts
+                                            join c in _context.Customers on ca.CustomerId equals c.Oid
+                                            where c.FuelerlinxId == request.FuelerlinxCompanyID
+                                            select ca
+                                            ).Distinct().ToListAsync();
+
                     foreach (var price in clonedResult)
                     {
-                        string[] aircrafts = _context.CustomerAircrafts.Where(c => c.CustomerId == price.CustomerId && c.AircraftId == price.AircraftId)
-                                                                       .Select(c => c.TailNumber)
-                                                                       .Distinct()
-                                                                       .ToArray();
+                        string[] aircrafts = customerAircrafts.Where(c => c.AircraftId == price.AircraftId)
+                                                              .Select(c => c.TailNumber)
+                                                              .OrderBy(t => t)
+                                                              .Distinct()
+                                                              .ToArray();
                         price.TailNumberList = String.Join(",", aircrafts);
                     }
 
