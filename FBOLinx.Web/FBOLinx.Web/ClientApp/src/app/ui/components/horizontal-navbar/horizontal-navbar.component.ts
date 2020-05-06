@@ -102,6 +102,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.loadLocations();
         this.loadFboInfo();
         this.loadNeedsAttentionCustomers();
+        this.checkImpersonatedRole();
     }
 
     ngAfterViewInit() {
@@ -195,6 +196,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
 
     public stopManagingClicked(event) {
         this.sharedService.currentUser.impersonatedRole = null;
+        sessionStorage.removeItem('impersonatedrole');
         this.sharedService.currentUser.fboId = 0;
         this.locations = [];
         this.fboAirport = null;
@@ -266,9 +268,14 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     public loadFboInfo() {
-        if (!this.currentUser.fboId) {
+        if (!this.currentUser.fboId && !sessionStorage.getItem('fboId')) {
             return;
         }
+
+        if (!this.currentUser.fboId) {
+            this.currentUser.fboId = sessionStorage.getItem('fboId');
+        }
+
         this.fboAirportsService
             .getForFbo({ oid: this.currentUser.fboId })
             .subscribe(
@@ -289,6 +296,19 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
                 console.log(error);
             }
         );
+    }
+
+    public checkImpersonatedRole() {
+        if (!this.currentUser.fboId && !sessionStorage.getItem('fboId')) {
+            return;
+        }
+
+        if (!this.currentUser.impersonatedRole) {
+            if (sessionStorage.getItem('impersonatedrole')) {
+                this.currentUser.impersonatedRole = 1;
+            }
+        }
+
     }
 
     public changeLocation(location: any) {
