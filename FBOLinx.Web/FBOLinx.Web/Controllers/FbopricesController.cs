@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.DTO;
+using FBOLinx.Web.Models.Responses;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -586,18 +587,22 @@ namespace FBOLinx.Web.Controllers
                         into leftJoinP
                         from p in leftJoinP.DefaultIfEmpty()
                         where fa.Icao == request.ICAO && c.ShowJetA == true
-                        select new
+                        select new FuelPriceResponse
                         {
+                            CustomerId = cibg.CustomerId,
+                            AircraftId = ca.AircraftId,
+                            Icao = fa.Icao,
+                            Iata = fa.Iata,
                             FboId = f.Oid,
-                            f.Fbo,
+                            Fbo = f.Fbo,
                             GroupId = g.Oid,
                             Group = g.GroupName,
                             Product = "JetA",
                             MinVolume = (p == null ? 1 : p.Min),
-                            t.Notes,
+                            Notes = t.Notes,
                             Default = t.Default ?? false,
                             Price = GetTPrice(vsd, p, g.Oid),
-                            vsd.ExpirationDate
+                            ExpirationDate = vsd.ExpirationDate,
                         }).ToListAsync();
 
                     var result2 = await (
@@ -652,19 +657,23 @@ namespace FBOLinx.Web.Controllers
                               (t.MarginType == PricingTemplate.MarginTypes.FlatFee && fp.Product == "JetA Retail")) &&
                               fp.EffectiveFrom <= DateTime.Now && fp.EffectiveTo > DateTime.Now &&
                               fp.Expired != true
-                        select new
+                        select new FuelPriceResponse
                         {
+                            CustomerId = cibg.CustomerId,
+                            AircraftId = ca.AircraftId,
+                            Icao = fa.Icao,
+                            Iata = fa.Iata,
                             FboId = f.Oid,
-                            f.Fbo,
+                            Fbo = f.Fbo,
                             GroupId = g.Oid,
                             Group = g.GroupName,
                             Product = "JetA",
-                            MinVolume = p == null ? 1 : p.Min,
-                            t.Notes,
+                            MinVolume = (p == null ? 1 : p.Min),
+                            Notes = t.Notes,
                             Default = t.Default ?? false,
                             Price = GetDTPrice(fp, p, ff, t),
                             ExpirationDate = fp.EffectiveTo
-                        }).Distinct().ToListAsync();
+                        }).ToListAsync();
 
                     var result = result1.Concat(result2)
                                         .Distinct()
@@ -674,13 +683,22 @@ namespace FBOLinx.Web.Controllers
                                              .OrderBy(x => x.FboId)
                                              .ThenBy(x => x.MinVolume)
                                              .ToList();
-                    foreach(var price in result.Where(x => x.Default))
+                    foreach (var price in result.Where(x => x.Default))
                     {
                         var aircraftNonDefaultPT = result.Any(x => x.FboId == price.FboId && x.GroupId == price.GroupId && x.Default);
                         if (aircraftNonDefaultPT)
                         {
                             clonedResult.Remove(price);
                         }
+                    }
+
+                    foreach (var price in clonedResult)
+                    {
+                        string[] aircrafts = _context.CustomerAircrafts.Where(c => c.CustomerId == price.CustomerId && c.AircraftId == price.AircraftId)
+                                                                       .Select(c => c.TailNumber)
+                                                                       .Distinct()
+                                                                       .ToArray();
+                        price.TailNumberList = String.Join(",", aircrafts);
                     }
 
                     return Ok(clonedResult);
