@@ -54,9 +54,11 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
     getLiClasses(item: any, isActive: any) {
         let role = this.sharedService.currentUser.role;
-        if (this.sharedService.currentUser.impersonatedRole) {
-            role = this.sharedService.currentUser.impersonatedRole;
+        if (this.sharedService.currentUser.impersonatedRole || sessionStorage.getItem('impersonatedrole')) {
+            //role = this.sharedService.currentUser.impersonatedRole;
+            role = 1;
         }
+        
         const hidden = item.roles && item.roles.indexOf(role) === -1;
         return {
             "has-sub": item.sub,
@@ -69,8 +71,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
     isHidden(item: any) {
         let role = this.sharedService.currentUser.role;
-        if (this.sharedService.currentUser.impersonatedRole) {
-            role = this.sharedService.currentUser.impersonatedRole;
+        if (this.sharedService.currentUser.impersonatedRole || sessionStorage.getItem('impersonatedrole')) {
+            role = 1;
         }
         return item.roles && item.roles.indexOf(role) === -1;
     }
