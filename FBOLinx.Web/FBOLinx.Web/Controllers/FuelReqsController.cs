@@ -235,6 +235,15 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest();
             }
+
+            var fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.Oid == fboId);
+
+            if (fbo == null)
+                return BadRequest("Invalid FBO");
+
+            if (fbo.Group == null || fbo.Group.IsLegacyAccount.GetValueOrDefault())
+                return BadRequest("Legacy FBO client.  This FBO does not support API orders yet.");
+
             List<FuelReq> fuelReqs = 
                             (from c in _context.Customers
                             join cg in _context.CustomerInfoByGroup on 
