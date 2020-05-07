@@ -434,17 +434,16 @@ namespace FBOLinx.Web.Controllers
             }
             try
             {
-                int aircraftId = await (
+                var aircraftIds = await (
                                     from ca in _context.CustomerAircrafts
                                     join c in _context.Customers
                                         on
                                         new { ca.CustomerId, FuelerlinxId = request.FuelerlinxCompanyID }
                                         equals
                                         new { CustomerId = c.Oid, FuelerlinxId = c.FuelerlinxId ?? 0 }
-                                    where ca.TailNumber == request.TailNumber
-                                    select ca.Oid).FirstOrDefaultAsync();
+                                    select ca.Oid).ToListAsync();
 
-                if (aircraftId > 0)
+                if (aircraftIds.Count > 0)
                 {
                     List<AircraftPrices> aircraftPrices = (
                                                             from f in _context.Fbos
@@ -468,24 +467,33 @@ namespace FBOLinx.Web.Controllers
                                                             into leftJoinCdt
                                                             from cdt in leftJoinCdt.DefaultIfEmpty()
                                                             join ap in
-                                                                    (from pt in _context.PricingTemplate
-                                                                     join ap in _context.AircraftPrices on pt.Oid equals ap.PriceTemplateId
-                                                                     select new
-                                                                     {
-                                                                         ap.CustomerAircraftId,
-                                                                         pt.Fboid
-                                                                     }) on
-                                                                    new { CustomerAircraftId = aircraftId, Fboid = f.Oid }
+                                                                    (
+                                                                    from pt in _context.PricingTemplate
+                                                                    join ap in _context.AircraftPrices on pt.Oid equals ap.PriceTemplateId
+                                                                    join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
+                                                                    join c in _context.Customers on
+                                                                                            new { ca.CustomerId, FuelerlinxId = request.FuelerlinxCompanyID }
+                                                                                            equals
+                                                                                            new { CustomerId = c.Oid, FuelerlinxId = c.FuelerlinxId ?? 0 }
+                                                                    select new
+                                                                    {
+                                                                        ap.CustomerAircraftId,
+                                                                        pt.Fboid
+                                                                    }) on
+                                                                    new { Fboid = f.Oid }
                                                                     equals
-                                                                    new { ap.CustomerAircraftId, ap.Fboid }
+                                                                    new { ap.Fboid }
                                                             into leftJoinAp
                                                             from ap in leftJoinAp.DefaultIfEmpty()
                                                             where ap == null
                                                             select new AircraftPrices
                                                             {
-                                                                CustomerAircraftId = aircraftId,
+                                                                CustomerAircraftId = ap.CustomerAircraftId,
                                                                 PriceTemplateId = cdt == null ? (vsd.JetAvolumeDiscount ?? 0) : cdt.PricingTemplateID
-                                                            }).ToList();
+                                                            })
+                                                            .Distinct()
+                                                            .ToList();
+
                     _context.AircraftPrices.AddRange(aircraftPrices);
 
                     CompanyPricingLog companyPricingLog = new CompanyPricingLog
@@ -515,9 +523,9 @@ namespace FBOLinx.Web.Controllers
                                                         equals
                                                         new { cibg.CustomerId, cibg.GroupId, Suspended = cibg.Suspended ?? false, Active = cibg.Active ?? false }
                                                  join ca in _context.CustomerAircrafts on
-                                                        new { CustomerId = c.Oid, request.TailNumber, GroupId = g.Oid, a.CustomerAircraftId }
+                                                        new { CustomerId = c.Oid, GroupId = g.Oid, a.CustomerAircraftId }
                                                         equals
-                                                        new { ca.CustomerId, ca.TailNumber, GroupId = ca.GroupId ?? 0, CustomerAircraftId = ca.Oid }
+                                                        new { ca.CustomerId, GroupId = ca.GroupId ?? 0, CustomerAircraftId = ca.Oid }
                                                  where pt.Fboid == f.Oid && c.ShowJetA == true
                                                  orderby a.Oid ascending
                                                  select new AircraftPrices
@@ -571,10 +579,7 @@ namespace FBOLinx.Web.Controllers
                                 new { CustomerId = c.Oid, GroupId = g.Oid, Suspended = false, Active = true }
                                 equals
                                 new { cibg.CustomerId, cibg.GroupId, Suspended = cibg.Suspended ?? false, Active = cibg.Active ?? false }
-                        join ca in _context.CustomerAircrafts on
-                                new { CustomerId = c.Oid, request.TailNumber }
-                                equals
-                                new { ca.CustomerId, ca.TailNumber }
+                        join ca in _context.CustomerAircrafts on c.Oid equals ca.CustomerId
                         join ap in aircraftPricesPT on
                                 new { CustomerAircraftId = ca.Oid, PriceTemplateId = t.Oid }
                                 equals
@@ -621,10 +626,7 @@ namespace FBOLinx.Web.Controllers
                                 new { CustomerId = c.Oid, GroupId = g.Oid, Distribute = true, Active = true }
                                 equals
                                 new { cibg.CustomerId, cibg.GroupId, Distribute = cibg.Distribute ?? false, Active = cibg.Active ?? false }
-                        join ca in _context.CustomerAircrafts on
-                                new { CustomerId = c.Oid, request.TailNumber }
-                                equals
-                                new { ca.CustomerId, ca.TailNumber }
+                        join ca in _context.CustomerAircrafts on c.Oid equals ca.CustomerId
                         join ap in _context.AircraftPrices on
                                 new { CustomerAircraftId = ca.Oid, PriceTemplateId = t.Oid }
                                 equals
