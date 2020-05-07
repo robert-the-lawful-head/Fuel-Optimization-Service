@@ -1,9 +1,11 @@
 @import '../../../../assets/sass/variable';
 
 :host {
-  display: table-cell;
+  background: url(../../../../assets/content/header-bg.png) 50% 50% no-repeat;
+  background-size: cover;
+  display: block;
   height: 100%;
-  vertical-align: middle;
+  padding: ($module-rem * 2) 0;
   width: 100%;
 
   .ni-card {
@@ -21,6 +23,14 @@
         background: rgba(#000,.1);
         margin: $module-rem * 2 (-($module-rem * 2)) (-($module-rem * 2));
         padding: $module-rem $module-rem * 2;
+
+        .divider {
+          border-left: 1px solid rgba(#000,.2);
+          display: inline-block;
+          height: 18px;
+          margin: 0 10px;
+          vertical-align: bottom;
+        }
       }
     }
   }

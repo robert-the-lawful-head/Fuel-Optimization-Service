@@ -37,25 +37,11 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { TextMaskModule } from "angular2-text-mask";
 import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
-
 import { NgxUiLoaderModule } from "ngx-ui-loader";
-
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
 
-import { PageTypographyComponent } from "./typography/typography.component";
-import { PageNotFoundComponent } from "./not-found/not-found.component";
-import { PageLayoutsComponent } from "./layouts/layouts.component";
-import { PageSignIn1Component } from "./extra-pages/sign-in-1/sign-in-1.component";
-import { PageSignIn2Component } from "./extra-pages/sign-in-2/sign-in-2.component";
-import { PageSignIn3Component } from "./extra-pages/sign-in-3/sign-in-3.component";
-import { PageSignUp1Component } from "./extra-pages/sign-up-1/sign-up-1.component";
-import { PageSignUp2Component } from "./extra-pages/sign-up-2/sign-up-2.component";
-import { PageForgotComponent } from "./extra-pages/forgot/forgot.component";
-import { PageConfirmComponent } from "./extra-pages/confirm/confirm.component";
-import { Page404Component } from "./extra-pages/page-404/page-404.component";
-import { Page500Component } from "./extra-pages/page-500/page-500.component";
-
 import { AuthtokenComponent } from "./auth/authtoken/authtoken.component";
+import { LoginComponent } from "./auth/login/login.component";
 import { AircraftsGridComponent } from "./aircrafts/aircrafts-grid/aircrafts-grid.component";
 import { ContactsEditComponent } from "./contacts/contacts-edit/contacts-edit.component";
 import { ContactsDialogNewContactComponent } from "./contacts/contacts-edit-modal/contacts-edit-modal.component";
@@ -184,19 +170,8 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         NgxUiLoaderModule,
     ],
     declarations: [
-        PageTypographyComponent,
-        PageNotFoundComponent,
-        PageSignIn1Component,
-        PageSignIn2Component,
-        PageSignIn3Component,
-        PageSignUp1Component,
-        PageSignUp2Component,
-        PageForgotComponent,
-        PageConfirmComponent,
-        Page404Component,
-        Page500Component,
-        PageLayoutsComponent,
         AuthtokenComponent,
+        LoginComponent,
         ContactsEditComponent,
         ContactsDialogNewContactComponent,
         ContactsDialogConfirmContactDeleteComponent,
