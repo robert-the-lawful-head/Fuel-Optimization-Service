@@ -46,8 +46,8 @@ namespace FBOLinx.Web.Services
                 foreach(var price in pricing)
                 {
                     var template = templates.FirstOrDefault(x => x.Oid == price.PricingTemplateId);
-                    if (template != null)
-                        price.TailNumbers = template.TailNumbers;
+                    if (template != null && template.TailNumbers != null)
+                        price.TailNumbers = string.Join(",", template.TailNumbers);
                 }
 
                 if (pricing != null)
@@ -175,25 +175,34 @@ namespace FBOLinx.Web.Services
             _FboId = fboId;
             _GroupId = groupId;
 
-            var result = await GetStandardPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
+            List<PricingTemplate> result = new List<PricingTemplate>();
+            var standardTemplates = await GetStandardPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
             var aircraftPricesResult = await GetTailSpecificPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
 
+            result.AddRange(standardTemplates);
+
+            //Set the applicable tail numbers for the aircraft-specific templates
             foreach (PricingTemplate aircraftPricingTemplate in aircraftPricesResult)
             {
-                if (result.Any(x => x.Oid == aircraftPricingTemplate.Oid))
+                if (standardTemplates.Any(x => x.Oid == aircraftPricingTemplate.Oid))
                     continue;
-                var tailNumbers = string.Join(",", (from ca in _context.CustomerAircrafts
-                    join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
-                    where ap.PriceTemplateId == aircraftPricingTemplate.Oid
-                          && ca.CustomerId == customer.CustomerId
-                          && ca.GroupId == _GroupId
-                    select ca.TailNumber).ToList());
-                if (string.IsNullOrEmpty(tailNumbers))
+                List<string> tailNumberList = (from ca in _context.CustomerAircrafts
+                                      join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
+                                      where ap.PriceTemplateId == aircraftPricingTemplate.Oid
+                                            && ca.CustomerId == customer.CustomerId
+                                            && ca.GroupId == _GroupId
+                                      select ca.TailNumber).ToList();
+                if (tailNumberList == null || tailNumberList.Count == 0)
                     continue;
-                aircraftPricingTemplate.Name += " - " + tailNumbers;
-                aircraftPricingTemplate.TailNumbers = tailNumbers;
+                aircraftPricingTemplate.Name += " - " + string.Join(",", tailNumberList);
+                aircraftPricingTemplate.TailNumbers = tailNumberList;
                 result.Add(aircraftPricingTemplate);
             }
+
+            //Set the applicable tail numbers for the standard/default templates
+            var customerAircrafts = _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == groupId);
+
+            standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber).ToList());
 
             return result;
         }
