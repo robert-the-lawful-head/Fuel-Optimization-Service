@@ -428,7 +428,7 @@ namespace FBOLinx.Web.Services
         private async Task<string> GetPriceBreakdownHTML(Models.CustomerInfoByGroup customer, Models.PricingTemplate pricingTemplate)
         {
             PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-            var priceResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, pricingTemplate.Oid);
+            var priceResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid } );
 
             priceResults = priceResults.GroupBy(s => s.MinGallons).Select(s => s.Last()).ToList();
 
