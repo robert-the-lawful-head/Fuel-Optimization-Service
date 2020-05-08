@@ -23,11 +23,11 @@ import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor"
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "ITP Margin Templates",
-        link: "#/default-layout/pricing-templates",
+        link: "/default-layout/pricing-templates",
     },
     {
         title: "Edit Margin Template",

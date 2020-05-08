@@ -12,11 +12,11 @@ import { SharedService } from "../../../layouts/shared-service";
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "FBOs",
-        link: "#/default-layout/fbos",
+        link: "/default-layout/fbos",
     },
     {
         title: "Edit FBO",

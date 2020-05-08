@@ -14,11 +14,11 @@ import { DeleteConfirmationComponent } from "../../../shared/components/delete-c
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "ITP Margin Templates",
-        link: "#/default-layout/pricing-templates",
+        link: "/default-layout/pricing-templates",
     },
 ];
 

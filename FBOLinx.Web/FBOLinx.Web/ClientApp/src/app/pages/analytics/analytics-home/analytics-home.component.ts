@@ -21,11 +21,11 @@ import { AnalyticsCompaniesQuotesDealTableComponent } from "../../../shared/comp
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "Analytics",
-        link: "#/default-layout/analytics",
+        link: "/default-layout/analytics",
     },
 ];
 
