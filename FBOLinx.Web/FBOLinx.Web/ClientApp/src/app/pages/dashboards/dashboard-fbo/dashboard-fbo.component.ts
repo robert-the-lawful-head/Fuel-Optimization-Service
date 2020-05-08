@@ -16,11 +16,11 @@ import { StatisticsOrdersByLocationComponent } from "../../../shared/components/
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "Dashboard",
-        link: "#/default-layout/dashboard-fbo",
+        link: "/default-layout/dashboard-fbo",
     },
 ];
 

@@ -19,11 +19,11 @@ import { RampFeesCategoryComponent } from "../ramp-fees-category/ramp-fees-categ
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "Ramp Fees",
-        link: "#/default-layout/ramp-fees",
+        link: "/default-layout/ramp-fees",
     },
 ];
 

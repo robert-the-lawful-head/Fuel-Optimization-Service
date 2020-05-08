@@ -8,11 +8,11 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "Groups",
-        link: "#/default-layout/groups",
+        link: "/default-layout/groups",
     },
     {
         title: "Edit Group",

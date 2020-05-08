@@ -26,7 +26,7 @@ import { DeleteConfirmationComponent } from "../../../shared/components/delete-c
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "Groups",

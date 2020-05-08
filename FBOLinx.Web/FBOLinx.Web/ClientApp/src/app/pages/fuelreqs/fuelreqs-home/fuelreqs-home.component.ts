@@ -12,11 +12,11 @@ import { interval, Subscription } from "rxjs";
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "Fuel Orders",
-        link: "#/default-layout/fuelreqs",
+        link: "/default-layout/fuelreqs",
     },
 ];
 
