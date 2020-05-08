@@ -193,7 +193,7 @@ namespace FBOLinx.Web.Controllers
             {
                 request.Icao,
                 request.Iata,
-                Active = false,
+                Active = true,
                 request.Fbo,
                 fbo.Oid
             });
@@ -249,7 +249,7 @@ namespace FBOLinx.Web.Controllers
             {
                 request.Icao,
                 request.Iata,
-                Active = false,
+                Active = true,
                 request.Fbo,
                 fbo.Oid
             });
