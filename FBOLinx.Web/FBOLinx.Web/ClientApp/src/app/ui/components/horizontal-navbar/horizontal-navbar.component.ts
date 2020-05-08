@@ -159,6 +159,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     public logout() {
+        sessionStorage.removeItem('impersonatedrole');
         this.authenticationService.logout();
         this.router.navigate(["/landing-site-layout"]);
     }
