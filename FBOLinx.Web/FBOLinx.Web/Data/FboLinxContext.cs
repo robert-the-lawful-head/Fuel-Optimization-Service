@@ -55,8 +55,13 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<IntegrationPartners> IntegrationPartners { get; set; }
         public virtual DbSet<VolumeScaleDiscount> VolumeScaleDiscount { get; set; }
         public virtual DbSet<CustomerDefaultTemplates> CustomerDefaultTemplates { get; set; }
+        public virtual DbSet<AdminEmails> AdminEmails { get; set; }
+        public virtual DbSet<CustomerAircraftViewedByGroup> CustomerAircraftViewedByGroup { get; set; }
+        public virtual DbSet<CustomerNotes> CustomerNotes { get; set; }
+        public virtual DbSet<CustomerSchedulingSoftwareByGroup> CustomerSchedulingSoftwareByGroup { get; set; }
+        public virtual DbSet<Jobs> Jobs { get; set; }
+        public virtual DbSet<NetworkNotes> NetworkNotes { get; set; }
 
-        // Unable to generate entity type for table 'dbo.AdminEmails'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.FBOContacts'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.FBOLogos'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.FBOPreferences'. Please see the warning messages.
@@ -480,6 +485,135 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.CustomerID).IsRequired();
                 entity.Property(e => e.PricingTemplateID).IsRequired();
                 entity.Property(e => e.Fboid).HasColumnName("FBOID").IsRequired();
+            });
+
+            modelBuilder.Entity<DistributionQueue>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.DistributionLogId).HasColumnName("DistributionLogID");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+            });
+
+            modelBuilder.Entity<AdminEmails>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__AdminEma__CB394B39D11BD235");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.ContactEmail)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ContactName)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ContactPhone)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ContactTitle)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EmailBody).IsUnicode(false);
+
+                entity.Property(e => e.FromEmail)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+
+                entity.Property(e => e.Page)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Subject)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ToEmail)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<CustomerAircraftViewedByGroup>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__Customer__CB394B39B45E3BF6");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerAircraftId).HasColumnName("CustomerAircraftID");
+
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+            });
+
+            modelBuilder.Entity<CustomerNotes>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__Customer__CB394B39D4BF72CF");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.CustomerNotes1)
+                    .HasColumnName("CustomerNotes")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+            });
+
+            modelBuilder.Entity<CustomerSchedulingSoftwareByGroup>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__Customer__CB394B39245A0032");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+
+                entity.Property(e => e.SchedulingSoftware)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Jobs>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__Jobs__CB394B39213A15E5");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+            });
+
+            modelBuilder.Entity<NetworkNotes>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__NetworkN__CB394B390007520A");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+
+                entity.Property(e => e.Notes).IsUnicode(false);
             });
         }
     }

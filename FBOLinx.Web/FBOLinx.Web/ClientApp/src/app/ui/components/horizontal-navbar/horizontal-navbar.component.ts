@@ -159,7 +159,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     public logout() {
-        sessionStorage.removeItem('impersonatedrole');
+        sessionStorage.removeItem("impersonatedrole");
         this.authenticationService.logout();
         this.router.navigate(["/landing-site-layout"]);
     }
@@ -197,7 +197,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
 
     public stopManagingClicked(event) {
         this.sharedService.currentUser.impersonatedRole = null;
-        sessionStorage.removeItem('impersonatedrole');
+        sessionStorage.removeItem("impersonatedrole");
         this.sharedService.currentUser.fboId = 0;
         this.locations = [];
         this.fboAirport = null;
@@ -269,12 +269,12 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     public loadFboInfo() {
-        if (!this.currentUser.fboId && !sessionStorage.getItem('fboId')) {
+        if (!this.currentUser.fboId && !sessionStorage.getItem("fboId")) {
             return;
         }
 
         if (!this.currentUser.fboId) {
-            this.currentUser.fboId = sessionStorage.getItem('fboId');
+            this.currentUser.fboId = sessionStorage.getItem("fboId");
         }
 
         this.fboAirportsService
@@ -300,12 +300,12 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     public checkImpersonatedRole() {
-        if (!this.currentUser.fboId && !sessionStorage.getItem('fboId')) {
+        if (!this.currentUser.fboId && !sessionStorage.getItem("fboId")) {
             return;
         }
 
         if (!this.currentUser.impersonatedRole) {
-            if (sessionStorage.getItem('impersonatedrole')) {
+            if (sessionStorage.getItem("impersonatedrole")) {
                 this.currentUser.impersonatedRole = 1;
             }
         }
