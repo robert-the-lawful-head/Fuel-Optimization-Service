@@ -77,7 +77,7 @@ export class GroupsGridComponent implements OnInit {
         const dialogRef = this.deleteGroupDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: record, description: "group" },
+                data: { item: record, fullDescription: "You are about to remove this group. This will remove the fbos and all the other data related to the group. Are you sure?" },
             }
         );
 

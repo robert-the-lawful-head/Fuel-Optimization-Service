@@ -7,7 +7,8 @@ import {
 
 export interface DeleteConfirmationData {
     item: any;
-    description: string;
+    description?: string;
+    fullDescription?: string;
 }
 
 @Component({
