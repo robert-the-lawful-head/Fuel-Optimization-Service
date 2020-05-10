@@ -251,56 +251,15 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            var  companiesByGroup = _context.CompaniesByGroup.Where(c => c.GroupId.Equals(id));
-            _context.CompaniesByGroup.RemoveRange(companiesByGroup);
-
-            var containInfoByGroup = _context.ContactInfoByGroup.Where(c => c.GroupId.Equals(id));
-            _context.ContactInfoByGroup.RemoveRange(containInfoByGroup);
-
-            var customerAircrafts = _context.CustomerAircrafts.Where(c => c.GroupId.Equals(id));
-            _context.CustomerAircrafts.RemoveRange(customerAircrafts);
-
-            var customerCompanyTypes = _context.CustomerCompanyTypes.Where(c => c.GroupId.Equals(id));
-            _context.CustomerCompanyTypes.RemoveRange(customerCompanyTypes);
-
-            var customerInfoByGroups = _context.CustomerInfoByGroup.Where(c => c.GroupId.Equals(id));
-            _context.CustomerInfoByGroup.RemoveRange(customerInfoByGroups);
-
-            var customers = _context.Customers.Where(c => c.GroupId.Equals(id));
-            _context.Customers.RemoveRange(customers);
-
-            var distributionLogs = _context.DistributionLog.Where(c => c.GroupId.Equals(id));
-            _context.DistributionLog.RemoveRange(distributionLogs);
-
-            var distributionQueues = _context.DistributionQueue.Where(c => c.GroupId.Equals(id));
-            _context.DistributionQueue.RemoveRange(distributionQueues);
-
-            var mappingPrices = _context.MappingPrices.Where(c => c.GroupId.Equals(id));
-            _context.MappingPrices.RemoveRange(mappingPrices);
-
-            var users = _context.User.Where(c => c.GroupId.Equals(id));
-            _context.User.RemoveRange(users);
-
-            var adminEmails = _context.AdminEmails.Where(c => c.GroupId.Equals(id));
-            _context.AdminEmails.RemoveRange(adminEmails);
-
-            var customerAircraftViewedByGroups = _context.CustomerAircraftViewedByGroup.Where(c => c.GroupId.Equals(id));
-            _context.CustomerAircraftViewedByGroup.RemoveRange(customerAircraftViewedByGroups);
-
-            var customerNotes = _context.CustomerNotes.Where(c => c.GroupId.Equals(id));
-            _context.CustomerNotes.RemoveRange(customerNotes);
-
-            var customerSchedulingSoftwareByGroups = _context.CustomerSchedulingSoftwareByGroup.Where(c => c.GroupId.Equals(id));
-            _context.CustomerSchedulingSoftwareByGroup.RemoveRange(customerSchedulingSoftwareByGroups);
-
-            var jobs = _context.Jobs.Where(c => c.GroupId.Equals(id));
-            _context.Jobs.RemoveRange(jobs);
-
-            var networkNotes = _context.NetworkNotes.Where(c => c.GroupId.Equals(id));
-            _context.NetworkNotes.RemoveRange(networkNotes);
-
-            _context.Group.Remove(@group);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var groupsFboService = new GroupFboService(_context);
+                await groupsFboService.DeleteGroup(id);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
 
             return Ok(@group);
         }

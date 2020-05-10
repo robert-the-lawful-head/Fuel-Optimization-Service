@@ -26,8 +26,7 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<Fboairports> Fboairports { get; set; }
         public virtual DbSet<Fbos> Fbos { get; set; }
         public virtual DbSet<Group> Group { get; set; }
-        public DbSet<FBOLinx.Web.Models.Fbocontacts> Fbocontacts { get; set; }
-        public DbSet<FBOLinx.Web.Models.FuelReq> FuelReq { get; set; }
+        public DbSet<Fbocontacts> Fbocontacts { get; set; }
         public virtual DbSet<CustomCustomerTypes> CustomCustomerTypes { get; set; }
         public virtual DbSet<CustomerMargins> CustomerMargins { get; set; }
         public virtual DbSet<CustomersViewedByFbo> CustomersViewedByFbo { get; set; }
@@ -61,12 +60,16 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<CustomerSchedulingSoftwareByGroup> CustomerSchedulingSoftwareByGroup { get; set; }
         public virtual DbSet<Jobs> Jobs { get; set; }
         public virtual DbSet<NetworkNotes> NetworkNotes { get; set; }
-
-        // Unable to generate entity type for table 'dbo.FBOContacts'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.FBOLogos'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.FBOPreferences'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.FBOSalesTax'. Please see the warning messages.
-        // Unable to generate entity type for table 'dbo.RampFeeSettings'. Please see the warning messages.
+        public virtual DbSet<DefaultDiscount> DefaultDiscount { get; set; }
+        public virtual DbSet<FuelReq> FuelReq { get; set; }
+        public virtual DbSet<ReminderEmailsToFbos> ReminderEmailsToFbos { get; set; }
+        public virtual DbSet<ContractFuelRelationships> ContractFuelRelationships { get; set; }
+        public virtual DbSet<DistributionEmailsBody> DistributionEmailsBody { get; set; }
+        public virtual DbSet<FbocustomerPricing> FbocustomerPricing { get; set; }
+        public virtual DbSet<Fbologos> Fbologos { get; set; }
+        public virtual DbSet<FbosalesTax> FbosalesTax { get; set; }
+        public virtual DbSet<PriceHistory> PriceHistory { get; set; }
+        public virtual DbSet<RequestPricingTracker> RequestPricingTracker { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -614,6 +617,220 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.GroupId).HasColumnName("GroupID");
 
                 entity.Property(e => e.Notes).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<DefaultDiscount>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.LastUpdated).HasColumnType("datetime");
+
+                entity.Property(e => e.Notes).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<FuelReq>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__FuelReq__CB394B39DBB2377B");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.ActualPpg).HasColumnName("ActualPPG");
+
+                entity.Property(e => e.CustomerAircraftId).HasColumnName("CustomerAircraftID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.DateCreated).HasColumnType("datetime");
+
+                entity.Property(e => e.DispatchNotes).IsUnicode(false);
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Eta)
+                    .HasColumnName("ETA")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Etd)
+                    .HasColumnName("ETD")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.Icao)
+                    .HasColumnName("ICAO")
+                    .HasMaxLength(4)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Notes).IsUnicode(false);
+
+                entity.Property(e => e.PhoneNumber)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.QuotedPpg).HasColumnName("QuotedPPG");
+
+                entity.Property(e => e.Source)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SourceId).HasColumnName("SourceID");
+
+                entity.Property(e => e.TimeStandard)
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ReminderEmailsToFbos>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__Reminder__CB394B39831AD733");
+
+                entity.ToTable("ReminderEmailsToFBOs");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.Date).HasColumnType("datetime");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.Message).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ContractFuelRelationships>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__Contract__CB394B3901F1903A");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.DateAdded).HasColumnType("datetime");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.FuelVendorId).HasColumnName("FuelVendorID");
+
+                entity.Property(e => e.TemplateId).HasColumnName("TemplateID");
+            });
+
+            modelBuilder.Entity<DistributionEmailsBody>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__Distribu__CB394B393F37F287");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.BodyOfEmail).IsUnicode(false);
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.UnsubscribeLink).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<FbocustomerPricing>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__FBOCusto__CB394B39F8359FAF");
+
+                entity.ToTable("FBOCustomerPricing");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.LastUpdated).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<Fbologos>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__FBOLogos__CB394B392D88E74A");
+
+                entity.ToTable("FBOLogos");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.LogoFilename).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<FbosalesTax>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__FBOSales__CB394B399B085A65");
+
+                entity.ToTable("FBOSalesTax");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.SalesTax100Lldecimal).HasColumnName("SalesTax100LLDecimal");
+            });
+
+            modelBuilder.Entity<PriceHistory>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__PriceHis__CB394B39F6AC8701");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.Amount).HasMaxLength(10);
+
+                entity.Property(e => e.Company)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.Fbo)
+                    .HasColumnName("FBO")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.Icao)
+                    .HasColumnName("ICAO")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PostedRetail100Ll).HasColumnName("PostedRetail100LL");
+
+                entity.Property(e => e.TemplateId).HasColumnName("TemplateID");
+
+                entity.Property(e => e.TotalCost100Ll).HasColumnName("TotalCost100LL");
+
+                entity.Property(e => e.ValidUntil).HasColumnType("datetime");
+
+                entity.Property(e => e._100llmargin).HasColumnName("100LLMargin");
+
+                entity.Property(e => e._100llmarginType).HasColumnName("100LLMarginType");
+            });
+
+            modelBuilder.Entity<RequestPricingTracker>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK__RequestP__CB394B3912DFF6F5");
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.Date).HasColumnType("datetime");
+
+                entity.Property(e => e.Fboid).HasColumnName("FBOID");
+
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
             });
         }
     }
