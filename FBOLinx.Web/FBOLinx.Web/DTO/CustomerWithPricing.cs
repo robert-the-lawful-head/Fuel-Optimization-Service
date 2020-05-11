@@ -47,7 +47,7 @@ namespace FBOLinx.Web.DTO
                 if (!MarginType.HasValue)
                     return 0;
                 if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
-                    return (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault())) * (1 + (FboFeeAmount.GetValueOrDefault() / 100.0));
+                    return (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
                 if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
                     return (FboPrice.GetValueOrDefault() - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
                 if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
