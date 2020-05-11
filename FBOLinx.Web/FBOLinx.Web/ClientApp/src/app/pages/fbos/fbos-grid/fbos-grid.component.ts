@@ -177,6 +177,7 @@ export class FbosGridComponent implements OnInit {
                             duration: 3000,
                             panelClass: ["blue-snackbar"],
                         });
+                        sessionStorage.setItem('isNewFbo', 'yes');
                         this.editRecord(newFbo, null);
                     });
                 }
