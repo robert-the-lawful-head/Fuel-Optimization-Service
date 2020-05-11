@@ -541,24 +541,5 @@ namespace FBOLinx.Web.Controllers
             }
             return price ?? 0;
         }
-
-        private double GetDTPrice(Fboprices fp, CustomerMarginPriceTier p, Fbofees ff, PricingTemplate t)
-        {
-            double? price = 0;
-            double? pAmount = (p == null || p.Amount == null) ? 0 : Math.Abs(p.Amount.Value);
-            if (t.MarginType == null || t.MarginType == PricingTemplate.MarginTypes.CostPlus)
-            {
-                price = (fp.Price + pAmount) * (1 + (ff.FeeAmount.GetValueOrDefault() / 100));
-            }
-            else if (t.MarginType == PricingTemplate.MarginTypes.RetailMinus)
-            {
-                price = fp.Price - pAmount;
-            }
-            else if (t.MarginType == PricingTemplate.MarginTypes.FlatFee)
-            {
-                price = pAmount;
-            }
-            return price ?? 0;
-        }
     }
 }
