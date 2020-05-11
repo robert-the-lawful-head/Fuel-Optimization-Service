@@ -77,6 +77,9 @@ export class FbosEditComponent implements OnInit {
     }
 
     public saveEdit() {
+        if (sessionStorage.getItem('isNewFbo')) {
+            sessionStorage.removeItem('isNewFbo');
+        }
         this.fboAirportInfo.fboId = this.fboInfo.oid;
         this.fboService.update(this.fboInfo).subscribe(() => {
             this.fboAirportsService
@@ -88,10 +91,21 @@ export class FbosEditComponent implements OnInit {
     }
 
     public cancelEdit() {
-        if (this.requiresRouting) {
-            this.router.navigate(["/default-layout/fbos/"]);
-        } else {
-            this.cancelClicked.emit();
+        if (sessionStorage.getItem('isNewFbo')) {
+            this.fboService.remove(this.fboInfo).subscribe(() => {
+                sessionStorage.removeItem('isNewFbo');
+                this.saveClicked.emit(this.fboInfo);
+            }, () => {
+
+            });
+
+        }
+        else {
+            if (this.requiresRouting) {
+                this.router.navigate(["/default-layout/fbos/"]);
+            } else {
+                this.cancelClicked.emit();
+            }
         }
     }
 
