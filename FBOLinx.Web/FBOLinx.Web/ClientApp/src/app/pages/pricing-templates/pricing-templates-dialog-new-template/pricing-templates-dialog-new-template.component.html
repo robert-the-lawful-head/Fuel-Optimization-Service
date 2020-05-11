@@ -152,14 +152,17 @@
                                         </td>
                                         <td class="mat-cell text-center">
                                             <mat-form-field class="col-4">
-                                                <input
-                                                    matInput
-                                                    class="text-lg-right"
-                                                    disabled="disabled"
-                                                    value="{{
-                                                        customerMargin.min + 249
-                                                    }}"
-                                                />
+                                                <!--<input
+        matInput
+        class="text-lg-right"
+        disabled="disabled"
+        value="{{customerMargin.min + 249 }}"
+    />-->
+                                                <input matInput
+                                                       class="text-lg-right"
+                                                       disabled="disabled"
+                                                       [(ngModel)]="customerMargin.max"
+                                                    [ngModelOptions]="{standalone: true}"/>
                                             </mat-form-field>
                                         </td>
                                         <td

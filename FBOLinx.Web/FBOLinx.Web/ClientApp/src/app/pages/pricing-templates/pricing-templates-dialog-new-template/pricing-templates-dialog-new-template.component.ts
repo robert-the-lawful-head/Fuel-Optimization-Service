@@ -74,9 +74,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     ];
 
     constructor(
-        public dialogRef: MatDialogRef<
-            PricingTemplatesDialogNewTemplateComponent
-        >,
+        public dialogRef: MatDialogRef<PricingTemplatesDialogNewTemplateComponent>,
         public closeConfirmationDialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: NewPricingTemplateDialogData,
         private formBuilder: FormBuilder,
@@ -163,13 +161,23 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         };
         if (this.data.customerMargins.length > 0) {
             customerMargin.min =
-                this.data.customerMargins[this.data.customerMargins.length - 1]
-                    .min + 250;
+                Math.abs(this.data.customerMargins[this.data.customerMargins.length - 1]
+                    .min) + 250;
         }
+        this.data.customerMargins[this.data.customerMargins.length - 1]
+            .max = Math.abs(customerMargin.min) - 1;
+
         this.data.customerMargins.push(customerMargin);
     }
 
     public updateCustomerMargin(margin) {
+        
+        var index = this.data.customerMargins.findIndex(x => x.min === margin.min);
+
+        if (index) {
+            this.data.customerMargins[index - 1].max = margin.min - 1;
+        }
+
         const jetACost = this.currentPrice.filter(
             (item) => item.product === "JetA Cost"
         )[0].price;
