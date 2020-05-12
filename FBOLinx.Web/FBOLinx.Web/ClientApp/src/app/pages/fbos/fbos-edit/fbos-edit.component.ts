@@ -86,6 +86,7 @@ export class FbosEditComponent implements OnInit {
                 .update(this.fboAirportInfo)
                 .subscribe(() => {
                     this.saveClicked.emit(this.fboInfo);
+                    this.router.navigate(["/default-layout/fbos/"]);
                 });
         });
     }
