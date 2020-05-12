@@ -112,11 +112,11 @@ namespace IO.Swagger.Model {
     public int? ImageFileDataId { get; set; }
 
     /// <summary>
-    /// Gets or Sets Settings
+    /// Gets or Sets CompanySettings
     /// </summary>
-    [DataMember(Name="settings", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "settings")]
-    public CompanyAccountSettingsDTO Settings { get; set; }
+    [DataMember(Name="companySettings", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companySettings")]
+    public List<CompanySettingsDTO> CompanySettings { get; set; }
 
 
     /// <summary>
@@ -140,7 +140,7 @@ namespace IO.Swagger.Model {
       sb.Append("  FaaId: ").Append(FaaId).Append("\n");
       sb.Append("  FaaCertificateNumber: ").Append(FaaCertificateNumber).Append("\n");
       sb.Append("  ImageFileDataId: ").Append(ImageFileDataId).Append("\n");
-      sb.Append("  Settings: ").Append(Settings).Append("\n");
+      sb.Append("  CompanySettings: ").Append(CompanySettings).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

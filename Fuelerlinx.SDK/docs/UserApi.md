@@ -4,89 +4,16 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**DeleteCompanyUserProfiles**](UserApi.md#deletecompanyuserprofiles) | **DELETE** /api/User/company-user-profiles/{id} | Deletes company user profile based on Id
 [**DeleteUserFromIFlightPlanner**](UserApi.md#deleteuserfromiflightplanner) | **DELETE** /api/User/iflightplanner/user | Internal use only - Delete a user from iFlightPlanner to stop the flight planning integration.
 [**ExchangeRefreshToken**](UserApi.md#exchangerefreshtoken) | **POST** /api/User/refreshtoken | Exchanges a valid [RefreshToken] and expired [AccessToken] for a new [RefreshToken] and [AccessToken].
-[**GetCompanyUserProfiles**](UserApi.md#getcompanyuserprofiles) | **GET** /api/User/company-user-profiles/by-company/list | Fetches all user profiles by companyId
 [**GetUser**](UserApi.md#getuser) | **GET** /api/User/{id} | Fetch a user by their [id].
 [**GetUserByCredentials**](UserApi.md#getuserbycredentials) | **GET** /api/User/by-credentials/{username}/{password} | 
-[**PostCompanyUserProfiles**](UserApi.md#postcompanyuserprofiles) | **POST** /api/User/company-user-profiles | 
 [**SaveCompanyToIFlightPlanner**](UserApi.md#savecompanytoiflightplanner) | **POST** /api/User/iflightplanner/company | Internal use only - Save a company to IFlightPlanner to use the flight planning integration.
 [**SaveUserToIFlightPlanner**](UserApi.md#saveusertoiflightplanner) | **POST** /api/User/iflightplanner/user | Internal use only - Save a user to IFlightPlanner to use the flight planning integration.
-[**UpdateCompanyUserProfiles**](UserApi.md#updatecompanyuserprofiles) | **PUT** /api/User/company-user-profiles | Updates company user profile based on companyId
 [**UserAuthToken**](UserApi.md#userauthtoken) | **POST** /api/User/token | Authenticates a user by username and password.
 [**UserAuthTokenFromAccessToken**](UserApi.md#userauthtokenfromaccesstoken) | **POST** /api/User/accesstoken | Authenticates a user from an existing [AccessToken].
 [**UserAuthTokenFromIFlightPlannerGUID**](UserApi.md#userauthtokenfromiflightplannerguid) | **GET** /api/User/iflightplanner/user/{guid} | Authenticate a user via the iFlightPlanner integration
 
-
-<a name="deletecompanyuserprofiles"></a>
-# **DeleteCompanyUserProfiles**
-> DeleteCompanyUserProfilesResponse DeleteCompanyUserProfiles (int? id)
-
-Deletes company user profile based on Id
-
-### Example
-```csharp
-using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class DeleteCompanyUserProfilesExample
-    {
-        public void main()
-        {
-            
-            // Configure API key authorization: ApiKeyScheme
-            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new UserApi();
-            var id = 56;  // int? | 
-
-            try
-            {
-                // Deletes company user profile based on Id
-                DeleteCompanyUserProfilesResponse result = apiInstance.DeleteCompanyUserProfiles(id);
-                Debug.WriteLine(result);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling UserApi.DeleteCompanyUserProfiles: " + e.Message );
-            }
-        }
-    }
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **id** | **int?**|  | 
-
-### Return type
-
-[**DeleteCompanyUserProfilesResponse**](DeleteCompanyUserProfilesResponse.md)
-
-### Authorization
-
-[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: text/plain, application/json, text/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 <a name="deleteuserfromiflightplanner"></a>
 # **DeleteUserFromIFlightPlanner**
@@ -220,71 +147,6 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
- - **Accept**: text/plain, application/json, text/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-<a name="getcompanyuserprofiles"></a>
-# **GetCompanyUserProfiles**
-> CompanyUserProfileListResponse GetCompanyUserProfiles ()
-
-Fetches all user profiles by companyId
-
-### Example
-```csharp
-using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class GetCompanyUserProfilesExample
-    {
-        public void main()
-        {
-            
-            // Configure API key authorization: ApiKeyScheme
-            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new UserApi();
-
-            try
-            {
-                // Fetches all user profiles by companyId
-                CompanyUserProfileListResponse result = apiInstance.GetCompanyUserProfiles();
-                Debug.WriteLine(result);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling UserApi.GetCompanyUserProfiles: " + e.Message );
-            }
-        }
-    }
-}
-```
-
-### Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
-[**CompanyUserProfileListResponse**](CompanyUserProfileListResponse.md)
-
-### Authorization
-
-[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
  - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
@@ -430,74 +292,6 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-<a name="postcompanyuserprofiles"></a>
-# **PostCompanyUserProfiles**
-> PostCompanyUserProfilesResponse PostCompanyUserProfiles (PostCompanyUserProfilesRequest body)
-
-
-
-### Example
-```csharp
-using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class PostCompanyUserProfilesExample
-    {
-        public void main()
-        {
-            
-            // Configure API key authorization: ApiKeyScheme
-            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new UserApi();
-            var body = new PostCompanyUserProfilesRequest(); // PostCompanyUserProfilesRequest |  (optional) 
-
-            try
-            {
-                PostCompanyUserProfilesResponse result = apiInstance.PostCompanyUserProfiles(body);
-                Debug.WriteLine(result);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling UserApi.PostCompanyUserProfiles: " + e.Message );
-            }
-        }
-    }
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **body** | [**PostCompanyUserProfilesRequest**](PostCompanyUserProfilesRequest.md)|  | [optional] 
-
-### Return type
-
-[**PostCompanyUserProfilesResponse**](PostCompanyUserProfilesResponse.md)
-
-### Authorization
-
-[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
-
-### HTTP request headers
-
- - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
- - **Accept**: text/plain, application/json, text/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
 <a name="savecompanytoiflightplanner"></a>
 # **SaveCompanyToIFlightPlanner**
 > SaveCompanyToIFlightPlannerResponse SaveCompanyToIFlightPlanner (SaveCompanyToIFlightPlannerRequest body)
@@ -624,75 +418,6 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**SaveUserToIFlightPlannerResponse**](SaveUserToIFlightPlannerResponse.md)
-
-### Authorization
-
-[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
-
-### HTTP request headers
-
- - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
- - **Accept**: text/plain, application/json, text/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-<a name="updatecompanyuserprofiles"></a>
-# **UpdateCompanyUserProfiles**
-> UpdateCompanyUserProfilesResponse UpdateCompanyUserProfiles (UpdateCompanyUserProfilesRequest body)
-
-Updates company user profile based on companyId
-
-### Example
-```csharp
-using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class UpdateCompanyUserProfilesExample
-    {
-        public void main()
-        {
-            
-            // Configure API key authorization: ApiKeyScheme
-            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new UserApi();
-            var body = new UpdateCompanyUserProfilesRequest(); // UpdateCompanyUserProfilesRequest |  (optional) 
-
-            try
-            {
-                // Updates company user profile based on companyId
-                UpdateCompanyUserProfilesResponse result = apiInstance.UpdateCompanyUserProfiles(body);
-                Debug.WriteLine(result);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling UserApi.UpdateCompanyUserProfiles: " + e.Message );
-            }
-        }
-    }
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **body** | [**UpdateCompanyUserProfilesRequest**](UpdateCompanyUserProfilesRequest.md)|  | [optional] 
-
-### Return type
-
-[**UpdateCompanyUserProfilesResponse**](UpdateCompanyUserProfilesResponse.md)
 
 ### Authorization
 

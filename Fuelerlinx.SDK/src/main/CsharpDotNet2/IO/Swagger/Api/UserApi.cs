@@ -12,12 +12,6 @@ namespace IO.Swagger.Api
     public interface IUserApi
     {
         /// <summary>
-        /// Deletes company user profile based on Id 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>DeleteCompanyUserProfilesResponse</returns>
-        DeleteCompanyUserProfilesResponse DeleteCompanyUserProfiles (int? id);
-        /// <summary>
         /// Internal use only - Delete a user from iFlightPlanner to stop the flight planning integration. 
         /// </summary>
         /// <returns>DeleteUserFromIFlightPlannerResponse</returns>
@@ -28,11 +22,6 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>ExchangeRefreshTokenResponse</returns>
         ExchangeRefreshTokenResponse ExchangeRefreshToken (ExchangeRefreshTokenRequest body);
-        /// <summary>
-        /// Fetches all user profiles by companyId 
-        /// </summary>
-        /// <returns>CompanyUserProfileListResponse</returns>
-        CompanyUserProfileListResponse GetCompanyUserProfiles ();
         /// <summary>
         /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
         /// </summary>
@@ -47,12 +36,6 @@ namespace IO.Swagger.Api
         /// <returns>UserResponse</returns>
         UserResponse GetUserByCredentials (string username, string password);
         /// <summary>
-        ///  
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>PostCompanyUserProfilesResponse</returns>
-        PostCompanyUserProfilesResponse PostCompanyUserProfiles (PostCompanyUserProfilesRequest body);
-        /// <summary>
         /// Internal use only - Save a company to IFlightPlanner to use the flight planning integration. 
         /// </summary>
         /// <param name="body"></param>
@@ -64,12 +47,6 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>SaveUserToIFlightPlannerResponse</returns>
         SaveUserToIFlightPlannerResponse SaveUserToIFlightPlanner (SaveUserToIFlightPlannerRequest body);
-        /// <summary>
-        /// Updates company user profile based on companyId 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>UpdateCompanyUserProfilesResponse</returns>
-        UpdateCompanyUserProfilesResponse UpdateCompanyUserProfiles (UpdateCompanyUserProfilesRequest body);
         /// <summary>
         /// Authenticates a user by username and password. The returned object contains a [AccessToken] (JWT) that can be used to identify the user for other API requests using the [Bearer] authorization header.  The response also contains a [RefreshToken] that can be used in the /api/user/refreshtoken api to receive a new [Token].
         /// </summary>
@@ -144,43 +121,6 @@ namespace IO.Swagger.Api
         public ApiClient ApiClient {get; set;}
     
         /// <summary>
-        /// Deletes company user profile based on Id 
-        /// </summary>
-        /// <param name="id"></param> 
-        /// <returns>DeleteCompanyUserProfilesResponse</returns>            
-        public DeleteCompanyUserProfilesResponse DeleteCompanyUserProfiles (int? id)
-        {
-            
-            // verify the required parameter 'id' is set
-            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteCompanyUserProfiles");
-            
-    
-            var path = "/api/User/company-user-profiles/{id}";
-            path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
-    
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyUserProfiles: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyUserProfiles: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (DeleteCompanyUserProfilesResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCompanyUserProfilesResponse), response.Headers);
-        }
-    
-        /// <summary>
         /// Internal use only - Delete a user from iFlightPlanner to stop the flight planning integration. 
         /// </summary>
         /// <returns>DeleteUserFromIFlightPlannerResponse</returns>            
@@ -244,38 +184,6 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling ExchangeRefreshToken: " + response.ErrorMessage, response.ErrorMessage);
     
             return (ExchangeRefreshTokenResponse) ApiClient.Deserialize(response.Content, typeof(ExchangeRefreshTokenResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Fetches all user profiles by companyId 
-        /// </summary>
-        /// <returns>CompanyUserProfileListResponse</returns>            
-        public CompanyUserProfileListResponse GetCompanyUserProfiles ()
-        {
-            
-    
-            var path = "/api/User/company-user-profiles/by-company/list";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyUserProfiles: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyUserProfiles: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (CompanyUserProfileListResponse) ApiClient.Deserialize(response.Content, typeof(CompanyUserProfileListResponse), response.Headers);
         }
     
         /// <summary>
@@ -358,40 +266,6 @@ path = path.Replace("{" + "password" + "}", ApiClient.ParameterToString(password
         }
     
         /// <summary>
-        ///  
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>PostCompanyUserProfilesResponse</returns>            
-        public PostCompanyUserProfilesResponse PostCompanyUserProfiles (PostCompanyUserProfilesRequest body)
-        {
-            
-    
-            var path = "/api/User/company-user-profiles";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyUserProfiles: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyUserProfiles: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (PostCompanyUserProfilesResponse) ApiClient.Deserialize(response.Content, typeof(PostCompanyUserProfilesResponse), response.Headers);
-        }
-    
-        /// <summary>
         /// Internal use only - Save a company to IFlightPlanner to use the flight planning integration. 
         /// </summary>
         /// <param name="body"></param> 
@@ -457,40 +331,6 @@ path = path.Replace("{" + "password" + "}", ApiClient.ParameterToString(password
                 throw new ApiException ((int)response.StatusCode, "Error calling SaveUserToIFlightPlanner: " + response.ErrorMessage, response.ErrorMessage);
     
             return (SaveUserToIFlightPlannerResponse) ApiClient.Deserialize(response.Content, typeof(SaveUserToIFlightPlannerResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Updates company user profile based on companyId 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>UpdateCompanyUserProfilesResponse</returns>            
-        public UpdateCompanyUserProfilesResponse UpdateCompanyUserProfiles (UpdateCompanyUserProfilesRequest body)
-        {
-            
-    
-            var path = "/api/User/company-user-profiles";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyUserProfiles: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyUserProfiles: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (UpdateCompanyUserProfilesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCompanyUserProfilesResponse), response.Headers);
         }
     
         /// <summary>

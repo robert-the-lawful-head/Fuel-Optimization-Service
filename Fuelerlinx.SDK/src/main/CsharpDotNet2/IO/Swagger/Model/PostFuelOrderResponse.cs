@@ -13,13 +13,6 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class PostFuelOrderResponse {
     /// <summary>
-    /// Gets or Sets Result
-    /// </summary>
-    [DataMember(Name="result", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "result")]
-    public FuelOrderResult Result { get; set; }
-
-    /// <summary>
     /// Gets or Sets Success
     /// </summary>
     [DataMember(Name="success", EmitDefaultValue=false)]
@@ -41,7 +34,6 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class PostFuelOrderResponse {\n");
-      sb.Append("  Result: ").Append(Result).Append("\n");
       sb.Append("  Success: ").Append(Success).Append("\n");
       sb.Append("  Message: ").Append(Message).Append("\n");
       sb.Append("}\n");
