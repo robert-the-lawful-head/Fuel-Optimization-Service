@@ -16,6 +16,8 @@ export class LoginComponent implements OnInit {
     partner: string;
     redirectTo: string;
     loginForm: FormGroup;
+    error: string;
+    submit: boolean;
 
     constructor(
         private route: ActivatedRoute,
@@ -41,13 +43,22 @@ export class LoginComponent implements OnInit {
     }
 
     public onSubmit() {
+        if (this.submit) return;
+
+        this.error = "";
         if (this.loginForm.valid) {
+            this.submit = true;
             this.authenticationService.accessToken({
                 username: this.loginForm.value.username,
                 password: this.loginForm.value.password,
                 partnerId: this.partner
             }).subscribe((token: any) => {
                 window.location.href = this.redirectTo + "?accessToken=" + token.accessToken;
+            }, (err: any) => {
+                console.log(err);
+                this.error = err;
+                this.submit = false;
+            }, () => {
             })
         }
     }
