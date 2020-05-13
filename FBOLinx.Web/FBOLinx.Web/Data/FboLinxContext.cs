@@ -18,6 +18,7 @@ namespace FBOLinx.Web.Data
         {
         }
 
+        public virtual DbSet<AccessTokens> AccessTokens { get; set; }
         public virtual DbSet<AirCrafts> Aircrafts { get; set; }
         public virtual DbSet<Contacts> Contacts { get; set; }
         public virtual DbSet<CompanyPricingLog> CompanyPricingLog { get; set; }
@@ -70,6 +71,7 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<FbosalesTax> FbosalesTax { get; set; }
         public virtual DbSet<PriceHistory> PriceHistory { get; set; }
         public virtual DbSet<RequestPricingTracker> RequestPricingTracker { get; set; }
+        public virtual DbSet<RefreshTokens> RefreshTokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -831,6 +833,41 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.Fboid).HasColumnName("FBOID");
 
                 entity.Property(e => e.GroupId).HasColumnName("GroupID");
+            });
+
+            modelBuilder.Entity<RefreshTokens>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.Token)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+            });
+
+            modelBuilder.Entity<AccessTokens>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.AccessToken)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Expired).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.AccessTokens)
+                    .HasForeignKey(e => e.UserId);
             });
         }
     }

@@ -85,6 +85,8 @@ namespace FBOLinx.Web
             services.Configure<AppPartnerSDKSettings>(appParnterSDKSettings);
 
             // configure DI for application services
+            services.AddScoped<AccessTokenService, AccessTokenService>();
+
             services.AddScoped<FuelerLinxService, FuelerLinxService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<Auth.UserRoleAttribute>();
@@ -92,14 +94,14 @@ namespace FBOLinx.Web
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //Auth services
+            services.AddScoped<IJwtManager, JwtManager>();
+            services.AddScoped<IRefreshTokenManager, RefreshTokenManager>();
             services.AddScoped<IAPIKeyManager, APIKeyManager>();
 
             //Add file provider
             IFileProvider physicalProvider = new PhysicalFileProvider(System.IO.Directory.GetCurrentDirectory());
 
             services.AddSingleton<IFileProvider>(physicalProvider);
-
-            //services.AddIdentityServer().AddDeveloperSigningCredential();
 
         }
 

@@ -42,7 +42,13 @@ export class LoginComponent implements OnInit {
 
     public onSubmit() {
         if (this.loginForm.valid) {
-            console.log(this.loginForm.value);
+            this.authenticationService.accessToken({
+                username: this.loginForm.value.username,
+                password: this.loginForm.value.password,
+                partnerId: this.partner
+            }).subscribe((token: any) => {
+                window.location.href = this.redirectTo + "?accessToken=" + token.accessToken;
+            })
         }
     }
 }
