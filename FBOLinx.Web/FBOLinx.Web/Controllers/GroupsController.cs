@@ -11,6 +11,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -23,9 +24,11 @@ namespace FBOLinx.Web.Controllers
         private readonly FuelerLinxContext _fcontext;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         public IServiceScopeFactory _serviceScopeFactory;
+        private GroupFboService _groupFboService;
 
-        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService)
         {
+            _groupFboService = groupFboService;
             _context = context;
             _fcontext = fcontext;
             _HttpContextAccessor = httpContextAccessor;
@@ -164,72 +167,11 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                _context.Group.Add(group);
-                await _context.SaveChangesAsync();
-
-                if (group.Oid != 0)
-                {
-                    try
-                    {
-                        _fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
-                    }
-                    catch(Exception ex)
-                    {
-                        return Ok("SP error: " + ex.Message);
-                    }
-
-                    try
-                    {
-                        //var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null).ToList();
-
-                        //foreach (var cust in listWithCustomers)
-                        //{
-                        //    CustomerInfoByGroup cibg = new CustomerInfoByGroup();
-                        //    cibg.GroupId = group.Oid;
-                        //    cibg.CustomerId = cust.Oid;
-                        //    cibg.Company = cust.Company;
-                        //    cibg.Username = cust.Username;
-                        //    cibg.Password = cust.Password;
-                        //    cibg.Joined = cust.Joined;
-                        //    cibg.Active = cust.Active;
-                        //    cibg.Distribute = cust.Distribute;
-                        //    cibg.Network = cust.Network;
-                        //    cibg.MainPhone = cust.MainPhone;
-                        //    cibg.Address = cust.Address;
-                        //    cibg.City = cust.City;
-                        //    cibg.State = cust.State;
-                        //    cibg.ZipCode = cust.ZipCode;
-                        //    cibg.Country = cust.Country;
-                        //    cibg.Website = cust.Website;
-                        //    cibg.ShowJetA = cust.ShowJetA;
-                        //    cibg.Show100Ll = cust.Show100Ll;
-                        //    cibg.Suspended = cust.Suspended;
-
-                        //    _context.CustomerInfoByGroup.Add(cibg);
-                        //    _context.SaveChanges();
-                        //}
-
-                        var task = Task.Run(async () =>
-                        {
-                            using (var scope = _serviceScopeFactory.CreateScope())
-                            {
-                                var db = scope.ServiceProvider.GetService<FboLinxContext>();
-                                await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Oid);
-                            }
-
-                        });
-
-
-                    }
-                    catch (Exception ex)
-                    {
-                        return Ok("Customer Aircraft add error: " + ex.Message);
-                    }
-                }
+                group = await _groupFboService.CreateNewGroup(group.GroupName);
             }
             catch (Exception ex)
             {
-                return Ok("Global error: " + ex.Message);
+                return Ok(ex.Message);
             }
 
             return CreatedAtAction("GetGroup", new { id = group.Oid }, group);
@@ -253,8 +195,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                var groupsFboService = new GroupFboService(_context);
-                await groupsFboService.DeleteGroup(id);
+                await _groupFboService.DeleteGroup(id);
             }
             catch(Exception ex)
             {
