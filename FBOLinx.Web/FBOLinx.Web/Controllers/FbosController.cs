@@ -174,7 +174,8 @@ namespace FBOLinx.Web.Controllers
                 Fbo = request.Fbo,
                 GroupId = request.GroupId,
                 AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
-                Active = true
+                Active = true,
+                DateActivated = DateTime.Now
             };
 
             _context.Fbos.Add(fbo);
@@ -220,7 +221,8 @@ namespace FBOLinx.Web.Controllers
                 Fbo = request.Fbo,
                 GroupId = group.Oid,
                 AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
-                Active = true
+                Active = true,
+                DateActivated = DateTime.Now
             };
 
             _context.Fbos.Add(fbo);
