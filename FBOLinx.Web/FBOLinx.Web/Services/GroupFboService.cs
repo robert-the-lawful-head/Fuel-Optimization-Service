@@ -44,8 +44,7 @@ namespace FBOLinx.Web.Services
                 {
                     try
                     {
-                        await _fuelerLinxContext.Database.ExecuteSqlCommandAsync(
-                            $"exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='{group.GroupName}', @GroupID={group.Oid}");
+                        await _fuelerLinxContext.Database.ExecuteSqlCommandAsync("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
                     }
                     catch (Exception ex)
                     {
