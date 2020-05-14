@@ -164,6 +164,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 this.pricingTemplate.customerMargins.indexOf(customerMargin),
                 1
             );
+            this.pricingTemplate.customerMargins[this.pricingTemplate.customerMargins.length - 1].max = 99999;
         } else {
             this.customerMarginsService.remove(customerMargin).subscribe(() => {
                 this.priceTiersService
@@ -175,9 +176,13 @@ export class PricingTemplatesEditComponent implements OnInit {
                             ),
                             1
                         );
+
+                        this.pricingTemplate.customerMargins[this.pricingTemplate.customerMargins.length - 1].max = 99999;
                     });
             });
         }
+
+        
     }
 
     public addCustomerMargin() {
