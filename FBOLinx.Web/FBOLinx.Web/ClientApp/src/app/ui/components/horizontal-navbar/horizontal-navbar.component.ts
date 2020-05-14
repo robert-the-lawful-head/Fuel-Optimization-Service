@@ -160,6 +160,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
 
     public logout() {
         sessionStorage.removeItem("impersonatedrole");
+        sessionStorage.removeItem("fboId");
         this.authenticationService.logout();
         this.router.navigate(["/landing-site-layout"]);
     }
@@ -198,6 +199,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     public stopManagingClicked(event) {
         this.sharedService.currentUser.impersonatedRole = null;
         sessionStorage.removeItem("impersonatedrole");
+        sessionStorage.removeItem("fboId");
         this.sharedService.currentUser.fboId = 0;
         this.locations = [];
         this.fboAirport = null;
