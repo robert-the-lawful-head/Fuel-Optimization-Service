@@ -173,6 +173,10 @@ namespace FBOLinx.Web.Controllers
 
             var fbo = await _groupFboService.CreateNewFbo(request);
 
+            PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
+
+            await pricingTemplateService.FixCustomCustomerTypes(request.GroupId ?? 0, fbo.Oid);
+
             return CreatedAtAction("GetFbo", new { id = fbo.Oid }, new
             {
                 request.Icao,
