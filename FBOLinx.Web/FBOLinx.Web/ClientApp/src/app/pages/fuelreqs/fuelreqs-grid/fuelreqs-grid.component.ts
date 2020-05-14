@@ -46,8 +46,8 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         "quotedVolume",
         "quotedPpg",
         "tailNumber",
-        "fboEmail",
-        "fboPhoneNumber",        
+        "email",
+        "phoneNumber",        
         "source",
     ];
     public dashboardSettings: any;

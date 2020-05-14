@@ -27,7 +27,7 @@ namespace FBOLinx.Web.ViewModels
         public string CustomerName { get; set; }
         public string TailNumber { get; set; }
         public string FboName { get; set; }
-        public string FboEmail { get; set; }
-        public string FboPhoneNumber { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }
