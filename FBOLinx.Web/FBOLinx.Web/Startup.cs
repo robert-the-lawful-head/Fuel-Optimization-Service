@@ -91,6 +91,8 @@ namespace FBOLinx.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<Auth.UserRoleAttribute>();
 
+            services.AddTransient<GroupFboService, GroupFboService>();
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //Auth services

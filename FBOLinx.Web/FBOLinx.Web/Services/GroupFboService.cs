@@ -5,22 +5,111 @@ using System.Threading.Tasks;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models;
+using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.Web.Services
 {
     public class GroupFboService
     {
         private FboLinxContext _context;
+        private IServiceScopeFactory _serviceScopeFactory;
+        private FuelerLinxContext _fuelerLinxContext;
 
-        public GroupFboService(FboLinxContext context)
+        public GroupFboService(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, FuelerLinxContext fuelerLinxContext)
         {
+            _fuelerLinxContext = fuelerLinxContext;
+            _serviceScopeFactory = serviceScopeFactory;
             _context = context;
         }
 
         #region Public Methods
+
+        public async Task<Group> CreateNewGroup(string groupName)
+        {
+            Group group = new Group
+            {
+                GroupName = groupName,
+                Active = true
+            };
+            try
+            {
+                _context.Group.Add(group);
+                await _context.SaveChangesAsync();
+
+                if (group.Oid != 0)
+                {
+                    try
+                    {
+                        await _fuelerLinxContext.Database.ExecuteSqlCommandAsync("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("SP error: " + ex.Message);
+                    }
+
+                    try
+                    {
+                        var task = Task.Run(async () =>
+                        {
+                            using (var scope = _serviceScopeFactory.CreateScope())
+                            {
+                                var db = scope.ServiceProvider.GetService<FboLinxContext>();
+                                await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Oid);
+                            }
+
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Customer Aircraft add error: " + ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Global error: " + ex.Message);
+            }
+
+            return group;
+        }
+
+        public async Task<Fbos> CreateNewFbo(SingleFboRequest request)
+        {
+            if (request.GroupId.GetValueOrDefault() == 0)
+            {
+                var group = await CreateNewGroup(request.Group);
+                if (group == null || group.Oid == 0)
+                    throw new Exception("There was an issue creating a new group.");
+                request.GroupId = group.Oid;
+            }
+
+            Fbos fbo = new Fbos
+            {
+                Fbo = request.Fbo,
+                GroupId = request.GroupId,
+                AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
+                Active = true,
+                DateActivated = DateTime.Now
+            };
+
+            _context.Fbos.Add(fbo);
+            await _context.SaveChangesAsync();
+
+            Fboairports fboairport = new Fboairports
+            {
+                Icao = request.Icao,
+                Iata = request.Iata,
+                Fboid = fbo.Oid
+            };
+            _context.Fboairports.Add(fboairport);
+            await _context.SaveChangesAsync();
+
+            return fbo;
+        }
 
         public async Task DeleteFbo(int fboId)
         {
