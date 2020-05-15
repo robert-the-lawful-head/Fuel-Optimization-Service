@@ -3,9 +3,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
 
 // Services
-import { AuthenticationService } from "../../../services/authentication.service";
-import { UserService } from "../../../services/user.service";
-
+import { OAuthService } from "../../../services/oauth.service";
 
 @Component({
     selector: "app-login",
@@ -16,12 +14,13 @@ export class LoginComponent implements OnInit {
     partner: string;
     redirectTo: string;
     loginForm: FormGroup;
+    error: string;
+    submit: boolean;
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private authenticationService: AuthenticationService,
-        private userService: UserService,
+        private oauthService: OAuthService,
         private formBuilder: FormBuilder
     ) {
         this.loginForm = this.formBuilder.group({
@@ -41,14 +40,19 @@ export class LoginComponent implements OnInit {
     }
 
     public onSubmit() {
+        if (this.submit) return;
+
+        this.error = "";
         if (this.loginForm.valid) {
-            this.authenticationService.accessToken({
-                username: this.loginForm.value.username,
-                password: this.loginForm.value.password,
-                partnerId: this.partner
-            }).subscribe((token: any) => {
-                window.location.href = this.redirectTo + "?accessToken=" + token.accessToken;
-            })
+            this.submit = true;
+            this.oauthService.login(this.loginForm.value.username, this.loginForm.value.password, this.partner)
+                .subscribe((token: any) => {
+                    window.location.href = this.redirectTo + "?accessToken=" + token.accessToken;
+                }, (err: any) => {
+                    console.log(err);
+                    this.error = err;
+                    this.submit = false;
+                })
         }
     }
 }

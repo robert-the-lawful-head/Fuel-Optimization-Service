@@ -5,16 +5,11 @@
       </mat-form-field>
   
       <mat-form-field>
-        <input matInput placeholder="Password" formControlName="password" required>
+        <input matInput type="password" placeholder="Password" formControlName="password" required>
+        <mat-hint *ngIf="error" class="text-danger">{{ error }}</mat-hint>
       </mat-form-field>
   
-      <div class="text-left mb-module">
-        <mat-checkbox>
-          Keep me signed in
-        </mat-checkbox>
-      </div>
-  
-      <button mat-flat-button color="accent" type="submit">Sign In</button>
+      <button mat-flat-button class="mt-3" color="accent" type="submit">Sign In</button>
   
       <div class="additional-info">
       </div>

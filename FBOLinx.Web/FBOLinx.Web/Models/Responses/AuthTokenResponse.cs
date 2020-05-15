@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Models.Responses
 {
-    public class UserAuthTokenResponse
+    public class AuthTokenResponse
     {
         public string Token => string.Format("Bearer {0}", AuthToken);
         public string AuthToken { get; set; }
@@ -17,13 +17,13 @@ namespace FBOLinx.Web.Models.Responses
         public bool Success { get; }
         public string Message { get; }
 
-        public UserAuthTokenResponse(bool success = false, string message = null)
+        public AuthTokenResponse(bool success = false, string message = null)
         {
             Success = success;
             Message = message;
         }
 
-        public UserAuthTokenResponse(string authToken, DateTime authTokenExpiration, string refreshToken, DateTime? refreshTokenExpiration, string username, int userId, bool success = true, string message = null)
+        public AuthTokenResponse(string authToken, DateTime authTokenExpiration, string refreshToken, DateTime? refreshTokenExpiration, string username, int userId, bool success = true, string message = null)
         {
             Success = success;
             Message = message;
