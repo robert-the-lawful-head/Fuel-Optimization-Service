@@ -1,5 +1,6 @@
 CREATE TABLE [dbo].[RefreshTokens] (
 	[OID] [int] IDENTITY(1,1) NOT NULL,
+	[AccessTokenID] [int] NOT NULL,
 	[Token] [varchar](255) NOT NULL,
 	[Expired] [datetime2](7) NULL,
 	[UserID] [int] NOT NULL,

@@ -26,23 +26,17 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly IUserService _userService;
         private readonly FboLinxContext _context;
-        private readonly IJwtManager _jwtManager;
-        private readonly IRefreshTokenManager _refreshTokenManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly AccessTokenService _accessTokenService;
         private readonly IFileProvider _fileProvider;
         private readonly MailSettings _MailSettings;
 
-        public UsersController(IUserService userService, IJwtManager iJwtManager, IRefreshTokenManager refreshTokenManager, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, AccessTokenService accessTokenService)
+        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings)
         {
             _userService = userService;
-            _jwtManager = iJwtManager;
-            _refreshTokenManager = refreshTokenManager;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _MailSettings = mailSettings.Value;
             _fileProvider = fileProvider;
-            _accessTokenService = accessTokenService;
         }
 
         [HttpGet("current")]
@@ -66,65 +60,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Username or password is incorrect" });
 
             return Ok(user);
-        }
-
-        [AllowAnonymous]
-        [HttpPost("oauth/accessToken")]
-        public async Task<IActionResult> OAuthLogin([FromBody]OAuthRequest userParam)
-        {
-            if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
-                return BadRequest(new { message = "Username or password is invalid/empty" });
-
-            var user = _userService.CheckUserByCredentials(userParam.Username, userParam.Password);
-
-            if (user == null)
-            {
-                return BadRequest(new { message = "Username or password is incorrect" });
-            }
-
-            var partner = _context.IntegrationPartners.Where(p => p.PartnerId.Equals(new Guid(userParam.PartnerId))).FirstOrDefault();
-            if (partner == null)
-            {
-                return BadRequest(new { message = "Incorrect partner" });
-            }
-
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-            }
-
-            var accessToken = new AccessTokens
-            {
-                Oid = 0,
-                AccessToken = Convert.ToBase64String(randomNumber),
-                CreatedAt = DateTime.UtcNow,
-                Expired = DateTime.UtcNow.AddHours(1),
-                UserId = user.Oid
-            };
-            _context.AccessTokens.Add(accessToken);
-            await _context.SaveChangesAsync();
-
-            return Ok(accessToken);
-        }
-
-        [HttpPost("accesstoken")]
-        [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
-        public async Task<ActionResult<UserAuthTokenResponse>> UserAuthTokenFromAccessToken([FromBody] UserAuthTokenFromAccessTokenRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var validAccessToken = await _accessTokenService.GetUserFromValidToken(request.AccessToken);
-            if (validAccessToken == null || validAccessToken.User == null)
-            {
-                return Ok(new UserAuthTokenResponse(false,
-                    "The provided access token is invalid.  Please ensure you are using the token within 1 hour of receiving it."));
-            }
-            UserAuthTokenResponse result = await _jwtManager.GetUserAccessInformation(validAccessToken.User.Oid, _refreshTokenManager);
-            return Ok(result);
         }
 
         // GET: api/users/5
