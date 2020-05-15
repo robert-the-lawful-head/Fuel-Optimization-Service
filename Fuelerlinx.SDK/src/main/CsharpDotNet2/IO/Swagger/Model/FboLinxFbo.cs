@@ -188,6 +188,13 @@ namespace IO.Swagger.Model {
     public string FuelDeskEmail { get; set; }
 
     /// <summary>
+    /// Gets or Sets Website
+    /// </summary>
+    [DataMember(Name="website", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "website")]
+    public string Website { get; set; }
+
+    /// <summary>
     /// Gets or Sets MainPhone
     /// </summary>
     [DataMember(Name="mainPhone", EmitDefaultValue=false)]
@@ -339,6 +346,7 @@ namespace IO.Swagger.Model {
       sb.Append("  GroupMargin100Llmargin: ").Append(GroupMargin100Llmargin).Append("\n");
       sb.Append("  GroupMargin100Lltype: ").Append(GroupMargin100Lltype).Append("\n");
       sb.Append("  FuelDeskEmail: ").Append(FuelDeskEmail).Append("\n");
+      sb.Append("  Website: ").Append(Website).Append("\n");
       sb.Append("  MainPhone: ").Append(MainPhone).Append("\n");
       sb.Append("  Extension: ").Append(Extension).Append("\n");
       sb.Append("  DefaultMarginTypeJetA: ").Append(DefaultMarginTypeJetA).Append("\n");

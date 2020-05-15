@@ -1,12 +1,10 @@
-# IO.Swagger.Model.CompanySettingsDTO
+# IO.Swagger.Model.DeleteCompanyUserProfilesResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Id** | **int?** |  | [optional] 
-**SettingId** | **int?** |  | [optional] 
-**CompanyId** | **int?** |  | [optional] 
-**SettingValue** | **string** |  | [optional] 
+**Success** | **bool?** |  | [optional] 
+**Message** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
