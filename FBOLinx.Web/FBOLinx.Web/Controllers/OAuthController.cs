@@ -1,20 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Web.Auth;
-using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using FBOLinx.Web.Models.Responses;
-using System.Security.Cryptography;
 using System;
 
 namespace FBOLinx.Web.Controllers
