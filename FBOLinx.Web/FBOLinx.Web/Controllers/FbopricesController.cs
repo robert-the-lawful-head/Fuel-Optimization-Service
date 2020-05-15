@@ -14,6 +14,8 @@ using FBOLinx.Web.Auth;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Responses;
 using FBOLinx.Web.Services;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -23,12 +25,15 @@ namespace FBOLinx.Web.Controllers
     public class FbopricesController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly FuelerLinxContext _fuelerlinxContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly JwtManager _jwtManager;
 
-        public FbopricesController(FboLinxContext context, FuelerLinxContext fuelerlinxContext)
+
+        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
         {
             _context = context;
-            _fuelerlinxContext = fuelerlinxContext;
+            _httpContextAccessor = httpContextAccessor;
+            _jwtManager = jwtManager;
         }
 
         // GET: api/Fboprices
@@ -272,6 +277,72 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(null);
+        }
+
+        [HttpPost("update")]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        public async Task<IActionResult> UpdatePricing([FromBody] PricingUpdateRequest request)
+        {
+            if ((request.Retail == null && request.Cost == null) || request.ExpirationDate == null)
+            {
+                return BadRequest(new { message = "Invalid body request!" });
+            }
+            try
+            {
+                var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var claimPrincipal = _jwtManager.GetPrincipal(token);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+
+                var user = await _context.User.FindAsync(claimedId);
+
+                if (request.Retail != null)
+                {
+                    var retailPrice = new Fboprices
+                    {
+                        EffectiveFrom = DateTime.Now,
+                        EffectiveTo = request.ExpirationDate,
+                        Product = "JetA Retail",
+                        Price = request.Retail,
+                        Fboid = user.FboId
+                    };
+                    List<Fboprices> oldPrices = _context.Fboprices
+                                                   .Where(f => f.Fboid.Equals(user.FboId) && f.Product.Equals("JetA Retail"))
+                                                   .ToList();
+                    foreach (Fboprices oldPrice in oldPrices)
+                    {
+                        oldPrice.Expired = true;
+                        _context.Fboprices.Update(oldPrice);
+                    }
+                    _context.Fboprices.Add(retailPrice);
+                }
+                if (request.Cost != null)
+                {
+                    var costPrice = new Fboprices
+                    {
+                        EffectiveFrom = DateTime.Now,
+                        EffectiveTo = request.ExpirationDate,
+                        Product = "JetA Cost",
+                        Price = request.Cost,
+                        Fboid = user.FboId
+                    };
+                    List<Fboprices> oldPrices = _context.Fboprices
+                                                   .Where(f => f.Fboid.Equals(user.FboId) && f.Product.Equals("JetA Cost"))
+                                                   .ToList();
+                    foreach (Fboprices oldPrice in oldPrices)
+                    {
+                        oldPrice.Expired = true;
+                        _context.Fboprices.Update(oldPrice);
+                    }
+                    _context.Fboprices.Add(costPrice);
+                }
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         // POST: api/Fboprices/analysis/prices-by-month/fbo/5

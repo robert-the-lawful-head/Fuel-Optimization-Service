@@ -1,4 +1,5 @@
 ﻿using EFCore.BulkExtensions;
+using FBOLinx.Web.Auth;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
@@ -35,23 +36,25 @@ namespace FBOLinx.Web.Services
         private bool _IsPreview = false;
         private int _DistributionLogID = 0;
         private IHttpContextAccessor _HttpContextAccessor;
+        private JwtManager _jwtManager;
 
         #region Constructors
-        public PriceDistributionService(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor)
+        public PriceDistributionService(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
         {
             _HttpContextAccessor = httpContextAccessor;
             _FileProvider = fileProvider;
             _context = context;
             _fuelerLinxContext = fuelerLinxContext;
             _MailSettings = mailSettings;
+            _jwtManager = jwtManager;
         }
         #endregion
 
         #region Static Methods
         public static async Task BeginPriceDistribution(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext,
-            DistributePricingRequest request, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor)
+            DistributePricingRequest request, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
         {
-            PriceDistributionService service = new PriceDistributionService(mailSettings, context, fuelerLinxContext, fileProvider, httpContextAccessor);
+            PriceDistributionService service = new PriceDistributionService(mailSettings, context, fuelerLinxContext, fileProvider, httpContextAccessor, jwtManager);
             await service.DistributePricing(request);
         }
         #endregion
@@ -339,7 +342,7 @@ namespace FBOLinx.Web.Services
         {
             var pom = await new Controllers.CustomerMarginsController(_context).GetCustomerMarginsByPricingTemplateId(num);
             var res = pom as OkObjectResult;
-            var prom = await new Controllers.FbopricesController(_context, _fuelerLinxContext).GetFbopricesByFboIdCurrent(fboId);
+            var prom = await new Controllers.FbopricesController(_context, _HttpContextAccessor, _jwtManager).GetFbopricesByFboIdCurrent(fboId);
             var resProm = prom as OkObjectResult;
          
             string body = "";
