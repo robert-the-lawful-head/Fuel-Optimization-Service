@@ -51,4 +51,15 @@
             }
         }
     }
+
+    .updateBtn {
+        &.cdk-keyboard-focused {
+            ::ng-deep {
+                .mat-button-focus-overlay {
+                    background: white;
+                    opacity: 0.1;
+                }
+            }
+        }
+    }
 }
