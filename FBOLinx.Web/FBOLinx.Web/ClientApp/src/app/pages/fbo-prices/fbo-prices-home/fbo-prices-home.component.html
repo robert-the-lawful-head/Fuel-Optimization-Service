@@ -135,6 +135,29 @@
                                 disabled="false"
                             ></mat-datepicker>
                         </mat-form-field>
+
+                        <div style="
+                            position: absolute;
+                            bottom: 20px;
+                            left: 50%;
+                            "
+                        >
+                            <button
+                                class="tooltip-button"
+                                #tooltip="ngbPopover"
+                                popoverTitle="Expiration Date"
+                                [ngbPopover]="content1"
+                                triggers="manual"
+                                placement="bottom"
+                                (hidden)="tooltipHidden()"
+                            ></button>
+                            <ng-template #content1>
+                                This date controls when your pricing is valid
+                                <div class="popover-actions">
+                                    <button>Got it</button>
+                                </div>
+                            </ng-template>
+                        </div>
                     </div>
                     <div class="col-3 mt-4">
                         <mat-form-field>
@@ -151,6 +174,28 @@
                             />
                             <span matPrefix class="prefixDollar">$</span>
                         </mat-form-field>
+                        <div style="
+                            position: absolute;
+                            right: 0;
+                            bottom: 20px;"
+                        >
+                            <button
+                                class="tooltip-button"
+                                #tooltip="ngbPopover"
+                                popoverTitle="Price/Cost Entry"
+                                popoverClass="no-arrow"
+                                [ngbPopover]="content2"
+                                triggers="manual"
+                                placement="bottom"
+                                (hidden)="tooltipHidden()"
+                            ></button>
+                            <ng-template #content2>
+                                Enter your current pricing here
+                                <div class="popover-actions">
+                                    <button>Got it</button>
+                                </div>
+                            </ng-template>
+                        </div>
                     </div>
                     <div class="col-3 mt-4">
                         <mat-form-field>
