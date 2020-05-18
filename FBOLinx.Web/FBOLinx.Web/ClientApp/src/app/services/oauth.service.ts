@@ -16,11 +16,11 @@ export class OAuthService {
     public login(username: string, password: string, partnerId: string) {
         return this.http.post(this.accessPointUrl + "/login",
             {
-                username: username,
-                password: password,
-                partnerId: partnerId
+                username,
+                password,
+                partnerId,
             },
             { headers: this.headers }
-        )
+        );
     }
 }

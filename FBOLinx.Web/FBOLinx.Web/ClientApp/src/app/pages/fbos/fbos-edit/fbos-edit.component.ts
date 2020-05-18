@@ -77,8 +77,8 @@ export class FbosEditComponent implements OnInit {
     }
 
     public saveEdit() {
-        if (sessionStorage.getItem('isNewFbo')) {
-            sessionStorage.removeItem('isNewFbo');
+        if (sessionStorage.getItem("isNewFbo")) {
+            sessionStorage.removeItem("isNewFbo");
         }
         this.fboAirportInfo.fboId = this.fboInfo.oid;
         this.fboService.update(this.fboInfo).subscribe(() => {
@@ -92,9 +92,9 @@ export class FbosEditComponent implements OnInit {
     }
 
     public cancelEdit() {
-        if (sessionStorage.getItem('isNewFbo')) {
+        if (sessionStorage.getItem("isNewFbo")) {
             this.fboService.remove(this.fboInfo).subscribe(() => {
-                sessionStorage.removeItem('isNewFbo');
+                sessionStorage.removeItem("isNewFbo");
                 this.saveClicked.emit(this.fboInfo);
             }, () => {
 

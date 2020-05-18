@@ -114,7 +114,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.tooltipIndex = this.priceTooltips.length - 1;
                     this.showTooltips();
                 }
-        })
+        });
     }
 
     ngOnDestroy(): void {
