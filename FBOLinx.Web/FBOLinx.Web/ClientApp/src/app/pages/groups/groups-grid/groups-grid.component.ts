@@ -49,6 +49,13 @@ export class GroupsGridComponent implements OnInit {
     public groupsDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = ["group", "active", "delete"];
     public resultsLength = 0;
+    public searchValue = "";
+
+    public pageIndexGroups = 0;
+    public pageSizeGroups = 25;
+
+    public tableSortGroups = "group";
+    public tableSortOrderGroups = "asc";
 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -71,6 +78,34 @@ export class GroupsGridComponent implements OnInit {
         this.groupsDataSource.sort = this.sort;
         this.groupsDataSource.paginator = this.paginator;
         this.resultsLength = this.groupsData.length;
+
+
+        if (localStorage.getItem("pageIndexGroups")) {
+            this.paginator.pageIndex = localStorage.getItem("pageIndexGroups") as any;
+        } else {
+            this.paginator.pageIndex = 0;
+        }
+
+        if (sessionStorage.getItem("pageSizeGroups")) {
+            this.pageSizeGroups = sessionStorage.getItem("pageSizeGroups") as any;
+        } else {
+            this.pageSizeGroups = 25;
+        }
+
+        if (sessionStorage.getItem("tableSortValueGroups")) {
+            this.tableSortGroups = sessionStorage.getItem("tableSortValueGroups") as any;
+        }
+
+        if (sessionStorage.getItem("tableSortValueGroupsGroups")) {
+            this.tableSortOrderGroups = sessionStorage.getItem(
+                "tableSortValueGroupsGroups"
+            ) as any;
+        }
+
+        if (sessionStorage.getItem("searchValueGroups")) {
+            this.searchValue = sessionStorage.getItem("searchValueGroups").trim().toLowerCase();
+            this.groupsDataSource.filter = sessionStorage.getItem("searchValueGroups").trim().toLowerCase();
+        }
     }
 
     public deleteRecord(record) {
@@ -127,5 +162,30 @@ export class GroupsGridComponent implements OnInit {
 
     public applyFilter(filterValue: string) {
         this.groupsDataSource.filter = filterValue.trim().toLowerCase();
+        sessionStorage.setItem("searchValueGroups", filterValue);
+        if (!filterValue) {
+            sessionStorage.removeItem("searchValueGroups");
+        }
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem("pageIndexGroups", event.pageIndex);
+        sessionStorage.setItem(
+            "pageSizeGroups",
+            this.paginator.pageSize.toString()
+        );
+    }
+
+    public saveHeader(value) {
+        if (value) {
+            sessionStorage.setItem("tableSortValueGroups", value);
+        }
+
+        if (this.sort.direction) {
+            sessionStorage.setItem(
+                "tableSortValueDirectionGroups",
+                this.sort.direction
+            );
+        }
     }
 }
