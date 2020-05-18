@@ -49,8 +49,8 @@ export class GroupsEditComponent implements OnInit {
                 this.groupInfo = data;
             });
         }
-        if (sessionStorage.getItem('isNewFbo')) {
-            sessionStorage.removeItem('isNewFbo');
+        if (sessionStorage.getItem("isNewFbo")) {
+            sessionStorage.removeItem("isNewFbo");
         }
     }
 

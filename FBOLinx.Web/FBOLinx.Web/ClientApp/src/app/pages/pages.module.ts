@@ -123,6 +123,7 @@ import { FuelReqsExportModalComponent } from "../shared/components/fuelreqs-expo
 import { AppPipesModule } from "../app-pipes.module";
 
 import { ClickStopPropagationDirective } from "../shared/directives/click-stop-propagation.directive";
+import { RouterModule } from "@angular/router";
 
 
 @NgModule({
@@ -168,6 +169,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         AppPipesModule,
         NgbPopoverModule,
         NgxUiLoaderModule,
+        RouterModule,
     ],
     declarations: [
         AuthtokenComponent,

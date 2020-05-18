@@ -42,7 +42,7 @@ export class SharedService {
     // Public Members
     get currentUser(): User {
         if (!this._currentUser.fboId && sessionStorage.getItem("fboId")) {
-            this._currentUser.fboId = Number(sessionStorage.getItem("fboId"))
+            this._currentUser.fboId = Number(sessionStorage.getItem("fboId"));
         }
         return this._currentUser;
     }

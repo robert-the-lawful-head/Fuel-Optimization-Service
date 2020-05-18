@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
                     console.log(err);
                     this.error = err;
                     this.submit = false;
-                })
+                });
         }
     }
 }
