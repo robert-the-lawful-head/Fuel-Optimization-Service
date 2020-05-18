@@ -92,8 +92,7 @@ namespace FBOLinx.Web.Services
                     } into leftJoinFF
                     from ff in leftJoinFF.DefaultIfEmpty()
                     join fp in _context.Fboprices.Where(x =>
-                        x.EffectiveFrom.Value < DateTime.Now &&
-                        (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.Now) &&
+                        (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.UtcNow) &&
                         x.Expired != true) on new
                     {
                         fboId = (pt != null ? pt.Fboid : 0),
@@ -268,7 +267,7 @@ namespace FBOLinx.Web.Services
             IEnumerable<Utilities.Enum.EnumDescriptionValue> products = Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
 
             var fboPrices = await (from f in _context.Fboprices
-                                   where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId && f.Expired != true
+                                   where f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
                                    select f).ToListAsync();
 
             var templateCustomersCount = await (
