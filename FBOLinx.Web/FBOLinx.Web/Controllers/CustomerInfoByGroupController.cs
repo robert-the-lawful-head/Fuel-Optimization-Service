@@ -426,8 +426,7 @@ namespace FBOLinx.Web.Controllers
                                                     from ff in leftJoinFF.DefaultIfEmpty()
                                                     join fp in _context.Fboprices.Where((x =>
                                                         x.Expired != true &&
-                                                        x.EffectiveFrom.Value < DateTime.Now &&
-                                                        (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.Now))) on new
+                                                        (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.UtcNow))) on new
                                                         {
                                                             fboId = (pt != null ? pt.Fboid : 0),
                                                             product = (pt != null ? pt.MarginTypeProduct : "")
