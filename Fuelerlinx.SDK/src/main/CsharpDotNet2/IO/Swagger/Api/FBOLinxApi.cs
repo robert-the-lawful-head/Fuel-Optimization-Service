@@ -14,6 +14,11 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
+        /// <returns>FbolinxAircraftDTO</returns>
+        FbolinxAircraftDTO GetAircraftTailsGroupedByCompany ();
+        /// <summary>
+        ///  
+        /// </summary>
         /// <param name="body"></param>
         /// <returns>FBOLinxOrdersResponse</returns>
         FBOLinxOrdersResponse GetTransactionsCount (FBOLinxOrdersRequest body);
@@ -83,6 +88,38 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>FbolinxAircraftDTO</returns>            
+        public FbolinxAircraftDTO GetAircraftTailsGroupedByCompany ()
+        {
+            
+    
+            var path = "/api/FBOLinx/get-aircraft-tails-grouped-by-company";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAircraftTailsGroupedByCompany: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAircraftTailsGroupedByCompany: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FbolinxAircraftDTO) ApiClient.Deserialize(response.Content, typeof(FbolinxAircraftDTO), response.Headers);
+        }
     
         /// <summary>
         ///  

@@ -151,6 +151,7 @@ Class | Method | HTTP request | Description
 *FBOApi* | [**UpdateFboAlias**](docs/FBOApi.md#updatefboalias) | **PUT** /api/FBO/fboAlias | 
 *FBOApi* | [**UpdateFboDetailsByCompany**](docs/FBOApi.md#updatefbodetailsbycompany) | **PUT** /api/FBO/company-specific-details | Update company-specific details for a particular FBO.
 *FBOApi* | [**UpdateFboDetailsByCompanyNotes**](docs/FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
+*FBOLinxApi* | [**GetAircraftTailsGroupedByCompany**](docs/FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
 *FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
 *FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | 
 *FBOLinxApi* | [**GetTransactionsDirectOrdersCount**](docs/FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
@@ -456,6 +457,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FboLinxContact](docs/FboLinxContact.md)
  - [IO.Swagger.Model.FboLinxFbo](docs/FboLinxFbo.md)
  - [IO.Swagger.Model.FboLinxGroup](docs/FboLinxGroup.md)
+ - [IO.Swagger.Model.FbolinxAircraftDTO](docs/FbolinxAircraftDTO.md)
  - [IO.Swagger.Model.FlightBridgeAuthorizationCheckResponse](docs/FlightBridgeAuthorizationCheckResponse.md)
  - [IO.Swagger.Model.FlightBridgeExternalUserInformation](docs/FlightBridgeExternalUserInformation.md)
  - [IO.Swagger.Model.FlightPlanningSettingsDTO](docs/FlightPlanningSettingsDTO.md)
