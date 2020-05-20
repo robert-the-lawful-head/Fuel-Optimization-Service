@@ -12,6 +12,7 @@ import { NgbCarouselModule, NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap"
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
 
 // Angular Material Modules
+import { MatIconModule } from "@angular/material/icon";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
@@ -48,6 +49,7 @@ import { PagesModule } from "./pages/pages.module";
 import { DefaultLayoutComponent } from "./layouts/default/default.component";
 import { LandingSiteLayoutComponent } from "./layouts/landing-site/landing-site.component";
 
+import { LoginModalComponent } from "./shared/components/login-modal/login-modal.component"
 // Services
 import { AcukwikairportsService } from "./services/acukwikairports.service";
 import { AircraftsService } from "./services/aircrafts.service";
@@ -91,6 +93,7 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         AppComponent,
         DefaultLayoutComponent,
         LandingSiteLayoutComponent,
+        LoginModalComponent
     ],
     imports: [
         BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
@@ -110,6 +113,7 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         // NgBoostrap Modules
         NgbCarouselModule,
         NgbPopoverModule,
+        MatIconModule,
         MatAutocompleteModule,
         MatButtonModule,
         MatButtonToggleModule,
@@ -137,7 +141,9 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         RouterModule.forRoot(routes),
     ],
     exports: [],
-    entryComponents: [],
+    entryComponents: [
+        LoginModalComponent
+    ],
     providers: [
         {
             provide: HTTP_INTERCEPTORS,

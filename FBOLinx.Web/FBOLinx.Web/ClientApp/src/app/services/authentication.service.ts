@@ -27,7 +27,7 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(username: string, password: string) {
+    login(username: string, password: string, remember = false) {
         return this.http
             .post<any>(
                 this.accessPointUrl + "/authenticate",
