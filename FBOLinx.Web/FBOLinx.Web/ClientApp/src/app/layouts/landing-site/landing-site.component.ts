@@ -17,6 +17,7 @@ import { UserService } from "../../services/user.service";
 // Components
 import { ForgotPasswordDialogComponent } from "../../shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component";
 import { MatButtonToggleChange } from "@angular/material/button-toggle";
+import { LoginModalComponent } from '../../shared/components/login-modal/login-modal.component';
 
 // import * as jqueryFancyBox from "jquery.fancybox";
 
@@ -96,8 +97,9 @@ export class LandingSiteLayoutComponent implements OnInit {
         private router: Router,
         private authenticationService: AuthenticationService,
         private snackBar: MatSnackBar,
-        public forgotPasswordDialog: MatDialog,
-        private userService: UserService
+        private forgotPasswordDialog: MatDialog,
+        private userService: UserService,
+        private loginDialog: MatDialog
     ) {}
 
     ngOnInit() {
@@ -163,6 +165,25 @@ export class LandingSiteLayoutComponent implements OnInit {
             return;
         }
         this.attemptLogin();
+    }
+
+    public onLogin() {
+        const data = {};
+        const dialogRef = this.loginDialog.open(
+            LoginModalComponent,
+            {
+                data
+            }
+        )
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log(result);
+            if (!result) {
+                return;
+            }
+
+            console.log(result);
+        })
     }
 
     public forgotPasswordClicked() {
