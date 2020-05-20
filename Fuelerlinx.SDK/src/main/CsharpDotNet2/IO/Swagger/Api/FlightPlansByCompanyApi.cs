@@ -45,6 +45,13 @@ namespace IO.Swagger.Api
         /// <returns>IFLightPlannerRouteRequestServiceLogListResponse</returns>
         IFLightPlannerRouteRequestServiceLogListResponse GetIFlightPlannerRouteRequestServiceLog (int? companyId, string tailNumber, string departureAirport, string arrivalAirport, DateTime? startDate, DateTime? endDate);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="departureAirportIdentifier"></param>
+        /// <param name="arrivalAirportIdentifier"></param>
+        /// <returns>RecentATCResponse</returns>
+        RecentATCResponse GetRecentATCRoutes (string departureAirportIdentifier, string arrivalAirportIdentifier);
+        /// <summary>
         /// Internal use only - Post a new service log record for a iFlightPlanner route request. 
         /// </summary>
         /// <param name="body"></param>
@@ -315,6 +322,48 @@ path = path.Replace("{" + "arrivalAirport" + "}", ApiClient.ParameterToString(ar
                 throw new ApiException ((int)response.StatusCode, "Error calling GetIFlightPlannerRouteRequestServiceLog: " + response.ErrorMessage, response.ErrorMessage);
     
             return (IFLightPlannerRouteRequestServiceLogListResponse) ApiClient.Deserialize(response.Content, typeof(IFLightPlannerRouteRequestServiceLogListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="departureAirportIdentifier"></param> 
+        /// <param name="arrivalAirportIdentifier"></param> 
+        /// <returns>RecentATCResponse</returns>            
+        public RecentATCResponse GetRecentATCRoutes (string departureAirportIdentifier, string arrivalAirportIdentifier)
+        {
+            
+            // verify the required parameter 'departureAirportIdentifier' is set
+            if (departureAirportIdentifier == null) throw new ApiException(400, "Missing required parameter 'departureAirportIdentifier' when calling GetRecentATCRoutes");
+            
+            // verify the required parameter 'arrivalAirportIdentifier' is set
+            if (arrivalAirportIdentifier == null) throw new ApiException(400, "Missing required parameter 'arrivalAirportIdentifier' when calling GetRecentATCRoutes");
+            
+    
+            var path = "/api/FlightPlansByCompany/recent-atc/{departureAirportIdentifier}/{arrivalAirportIdentifier}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "departureAirportIdentifier" + "}", ApiClient.ParameterToString(departureAirportIdentifier));
+path = path.Replace("{" + "arrivalAirportIdentifier" + "}", ApiClient.ParameterToString(arrivalAirportIdentifier));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetRecentATCRoutes: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetRecentATCRoutes: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (RecentATCResponse) ApiClient.Deserialize(response.Content, typeof(RecentATCResponse), response.Headers);
         }
     
         /// <summary>

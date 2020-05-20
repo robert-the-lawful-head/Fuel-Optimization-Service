@@ -182,6 +182,7 @@ Class | Method | HTTP request | Description
 *FlightPlansByCompanyApi* | [**GetCurrentPlannedFlightsByTail**](docs/FlightPlansByCompanyApi.md#getcurrentplannedflightsbytail) | **GET** /api/FlightPlansByCompany/current/tail/{tailNumber} | Fetch upcoming trip info pulled from the user's flight planning provider by tail number
 *FlightPlansByCompanyApi* | [**GetIFlightPlannerAviationProfiles**](docs/FlightPlansByCompanyApi.md#getiflightplanneraviationprofiles) | **GET** /api/FlightPlansByCompany/iflightplanner/aviationprofiles | Fetching stored aviation profiles from the user's iFlightPlanner account
 *FlightPlansByCompanyApi* | [**GetIFlightPlannerRouteRequestServiceLog**](docs/FlightPlansByCompanyApi.md#getiflightplannerrouterequestservicelog) | **GET** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request/company/{companyId}/tail/{tailNumber}/departure/{departureAirport}/arrival/{arrivalAirport} | Internal use only - Fetch the service logs for iFlightPlanner route requests based on the provided search parameters.
+*FlightPlansByCompanyApi* | [**GetRecentATCRoutes**](docs/FlightPlansByCompanyApi.md#getrecentatcroutes) | **GET** /api/FlightPlansByCompany/recent-atc/{departureAirportIdentifier}/{arrivalAirportIdentifier} | 
 *FlightPlansByCompanyApi* | [**PostIFlightPlannerRouteRequestServiceLog**](docs/FlightPlansByCompanyApi.md#postiflightplannerrouterequestservicelog) | **POST** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request | Internal use only - Post a new service log record for a iFlightPlanner route request.
 *FlightPlansByCompanyApi* | [**PostTripInfo**](docs/FlightPlansByCompanyApi.md#posttripinfo) | **POST** /api/FlightPlansByCompany/tripinfo | Accepts a serialized set of trip/leg information from a user's flight planning provider.
 *FlightPlansByCompanyApi* | [**UpdateFuelPurchaseInfoForFlight**](docs/FlightPlansByCompanyApi.md#updatefuelpurchaseinfoforflight) | **POST** /api/FlightPlansByCompany/fuelpurchaseinfo/update | Internal use only - Update fuel purchase information for a flight planning
@@ -340,6 +341,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AmstatAircraftDTO](docs/AmstatAircraftDTO.md)
  - [IO.Swagger.Model.AnalysisSettingsDTO](docs/AnalysisSettingsDTO.md)
  - [IO.Swagger.Model.Appearance](docs/Appearance.md)
+ - [IO.Swagger.Model.ArrayOfRoutesBetweenAirportsExStruct](docs/ArrayOfRoutesBetweenAirportsExStruct.md)
  - [IO.Swagger.Model.AssociatedDetails](docs/AssociatedDetails.md)
  - [IO.Swagger.Model.AssociatedDetailsRequest](docs/AssociatedDetailsRequest.md)
  - [IO.Swagger.Model.AssociatedDetailsResponse](docs/AssociatedDetailsResponse.md)
@@ -613,6 +615,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.RampFeeByCompanyNoteDTO](docs/RampFeeByCompanyNoteDTO.md)
  - [IO.Swagger.Model.RampFeeByCompanyNotesResponse](docs/RampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.RampFeeByCompanyResponse](docs/RampFeeByCompanyResponse.md)
+ - [IO.Swagger.Model.RecentATCResponse](docs/RecentATCResponse.md)
  - [IO.Swagger.Model.RecommendationSummary](docs/RecommendationSummary.md)
  - [IO.Swagger.Model.ReportColumnDTO](docs/ReportColumnDTO.md)
  - [IO.Swagger.Model.ReportDTO](docs/ReportDTO.md)
@@ -626,6 +629,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ResultItem](docs/ResultItem.md)
  - [IO.Swagger.Model.RouteDetailsCalculation](docs/RouteDetailsCalculation.md)
  - [IO.Swagger.Model.RouteDetailsCalculationAircraftData](docs/RouteDetailsCalculationAircraftData.md)
+ - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerRequest](docs/SaveCompanyToIFlightPlannerRequest.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerResponse](docs/SaveCompanyToIFlightPlannerResponse.md)
  - [IO.Swagger.Model.SaveUserToIFlightPlannerRequest](docs/SaveUserToIFlightPlannerRequest.md)
