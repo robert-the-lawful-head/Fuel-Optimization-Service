@@ -9,6 +9,7 @@ Method | HTTP request | Description
 [**GetCurrentPlannedFlightsByTail**](FlightPlansByCompanyApi.md#getcurrentplannedflightsbytail) | **GET** /api/FlightPlansByCompany/current/tail/{tailNumber} | Fetch upcoming trip info pulled from the user&#39;s flight planning provider by tail number
 [**GetIFlightPlannerAviationProfiles**](FlightPlansByCompanyApi.md#getiflightplanneraviationprofiles) | **GET** /api/FlightPlansByCompany/iflightplanner/aviationprofiles | Fetching stored aviation profiles from the user&#39;s iFlightPlanner account
 [**GetIFlightPlannerRouteRequestServiceLog**](FlightPlansByCompanyApi.md#getiflightplannerrouterequestservicelog) | **GET** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request/company/{companyId}/tail/{tailNumber}/departure/{departureAirport}/arrival/{arrivalAirport} | Internal use only - Fetch the service logs for iFlightPlanner route requests based on the provided search parameters.
+[**GetRecentATCRoutes**](FlightPlansByCompanyApi.md#getrecentatcroutes) | **GET** /api/FlightPlansByCompany/recent-atc/{departureAirportIdentifier}/{arrivalAirportIdentifier} | 
 [**PostIFlightPlannerRouteRequestServiceLog**](FlightPlansByCompanyApi.md#postiflightplannerrouterequestservicelog) | **POST** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request | Internal use only - Post a new service log record for a iFlightPlanner route request.
 [**PostTripInfo**](FlightPlansByCompanyApi.md#posttripinfo) | **POST** /api/FlightPlansByCompany/tripinfo | Accepts a serialized set of trip/leg information from a user&#39;s flight planning provider.
 [**UpdateFuelPurchaseInfoForFlight**](FlightPlansByCompanyApi.md#updatefuelpurchaseinfoforflight) | **POST** /api/FlightPlansByCompany/fuelpurchaseinfo/update | Internal use only - Update fuel purchase information for a flight planning
@@ -354,6 +355,76 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**IFLightPlannerRouteRequestServiceLogListResponse**](IFLightPlannerRouteRequestServiceLogListResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getrecentatcroutes"></a>
+# **GetRecentATCRoutes**
+> RecentATCResponse GetRecentATCRoutes (string departureAirportIdentifier, string arrivalAirportIdentifier)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetRecentATCRoutesExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FlightPlansByCompanyApi();
+            var departureAirportIdentifier = departureAirportIdentifier_example;  // string | 
+            var arrivalAirportIdentifier = arrivalAirportIdentifier_example;  // string | 
+
+            try
+            {
+                RecentATCResponse result = apiInstance.GetRecentATCRoutes(departureAirportIdentifier, arrivalAirportIdentifier);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FlightPlansByCompanyApi.GetRecentATCRoutes: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **departureAirportIdentifier** | **string**|  | 
+ **arrivalAirportIdentifier** | **string**|  | 
+
+### Return type
+
+[**RecentATCResponse**](RecentATCResponse.md)
 
 ### Authorization
 

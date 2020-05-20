@@ -138,6 +138,12 @@ namespace IO.Swagger.Api
         /// <returns>TransactionsResponse</returns>
         TransactionsResponse GetTransactionsByInvoiceNumber (string invoiceNumber, int? fuelerId);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="processId"></param>
+        /// <returns>TransactionsResponse</returns>
+        TransactionsResponse GetTransactionsFromInvoiceImport (int? processId);
+        /// <summary>
         /// Internal use only - Add a file captured by an invoice import. 
         /// </summary>
         /// <param name="body"></param>
@@ -1009,6 +1015,43 @@ path = path.Replace("{" + "fuelerId" + "}", ApiClient.ParameterToString(fuelerId
                 throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsByInvoiceNumber: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsByInvoiceNumber: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (TransactionsResponse) ApiClient.Deserialize(response.Content, typeof(TransactionsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="processId"></param> 
+        /// <returns>TransactionsResponse</returns>            
+        public TransactionsResponse GetTransactionsFromInvoiceImport (int? processId)
+        {
+            
+            // verify the required parameter 'processId' is set
+            if (processId == null) throw new ApiException(400, "Missing required parameter 'processId' when calling GetTransactionsFromInvoiceImport");
+            
+    
+            var path = "/api/Transaction/invoice-import/transaction-list/{processId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "processId" + "}", ApiClient.ParameterToString(processId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsFromInvoiceImport: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsFromInvoiceImport: " + response.ErrorMessage, response.ErrorMessage);
     
             return (TransactionsResponse) ApiClient.Deserialize(response.Content, typeof(TransactionsResponse), response.Headers);
         }

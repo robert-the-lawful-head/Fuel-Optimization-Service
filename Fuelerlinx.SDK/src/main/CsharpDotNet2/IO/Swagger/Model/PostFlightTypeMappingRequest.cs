@@ -27,6 +27,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "flightTypeClassification")]
     public int? FlightTypeClassification { get; set; }
 
+    /// <summary>
+    /// Gets or Sets CompanyId
+    /// </summary>
+    [DataMember(Name="companyId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyId")]
+    public int? CompanyId { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -37,6 +44,7 @@ namespace IO.Swagger.Model {
       sb.Append("class PostFlightTypeMappingRequest {\n");
       sb.Append("  FlightTypeName: ").Append(FlightTypeName).Append("\n");
       sb.Append("  FlightTypeClassification: ").Append(FlightTypeClassification).Append("\n");
+      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

@@ -34,25 +34,18 @@ namespace IO.Swagger.Model {
     public bool? IsFavorite { get; set; }
 
     /// <summary>
-    /// Gets or Sets CompanyId
+    /// Gets or Sets ChartSettings
     /// </summary>
-    [DataMember(Name="companyId", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "companyId")]
-    public int? CompanyId { get; set; }
+    [DataMember(Name="chartSettings", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "chartSettings")]
+    public ChartSettings ChartSettings { get; set; }
 
     /// <summary>
-    /// Gets or Sets ChartOptionsJson
+    /// Gets or Sets DataOptions
     /// </summary>
-    [DataMember(Name="chartOptionsJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "chartOptionsJson")]
-    public string ChartOptionsJson { get; set; }
-
-    /// <summary>
-    /// Gets or Sets DataOptionsJson
-    /// </summary>
-    [DataMember(Name="dataOptionsJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dataOptionsJson")]
-    public string DataOptionsJson { get; set; }
+    [DataMember(Name="dataOptions", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "dataOptions")]
+    public ReportDataOptions DataOptions { get; set; }
 
 
     /// <summary>
@@ -65,9 +58,8 @@ namespace IO.Swagger.Model {
       sb.Append("  Name: ").Append(Name).Append("\n");
       sb.Append("  Description: ").Append(Description).Append("\n");
       sb.Append("  IsFavorite: ").Append(IsFavorite).Append("\n");
-      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
-      sb.Append("  ChartOptionsJson: ").Append(ChartOptionsJson).Append("\n");
-      sb.Append("  DataOptionsJson: ").Append(DataOptionsJson).Append("\n");
+      sb.Append("  ChartSettings: ").Append(ChartSettings).Append("\n");
+      sb.Append("  DataOptions: ").Append(DataOptions).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

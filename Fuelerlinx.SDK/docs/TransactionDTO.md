@@ -19,6 +19,7 @@ Name | Type | Description | Notes
 **FuelVendor** | **string** |  | [optional] 
 **DispatchedVolume** | [**Weight**](Weight.md) |  | [optional] 
 **DispatchedPricePerGallon** | **double?** |  | [optional] 
+**MarketUpdatedPricePerGallon** | **double?** |  | [optional] 
 **CreationDate** | **DateTime?** |  | [optional] 
 **TimeStandard** | **int?** |  | [optional] 
 **InvoicedPricePerGallon** | **double?** |  | [optional] 
@@ -56,6 +57,8 @@ Name | Type | Description | Notes
 **ServiceDateYearFirstFormat** | **string** |  | [optional] 
 **ScheduledTripID** | **string** |  | [optional] 
 **LegNumber** | **int?** |  | [optional] 
+**NonFuelServicesTotal** | **double?** |  | [optional] 
+**NonFuelServiceNames** | **string** |  | [optional] 
 **TransactionNotes** | [**List&lt;TransactionNoteDTO&gt;**](TransactionNoteDTO.md) |  | [optional] 
 **TransactionFuelTaxes** | [**List&lt;TransactionFuelTaxDTO&gt;**](TransactionFuelTaxDTO.md) |  | [optional] 
 **TransactionServiceFees** | [**List&lt;TransactionServiceFeeDTO&gt;**](TransactionServiceFeeDTO.md) |  | [optional] 
@@ -67,6 +70,7 @@ Name | Type | Description | Notes
 **AirportInfo** | [**AcukwikAirportDTO**](AcukwikAirportDTO.md) |  | [optional] 
 **FboHandlerDetail** | [**AcukwikFboHandlerDetailDTO**](AcukwikFboHandlerDetailDTO.md) |  | [optional] 
 **CompanyFuelVendorInfo** | [**CompanyFuelerDTO**](CompanyFuelerDTO.md) |  | [optional] 
+**PreUpliftPriceSync** | [**PriceSyncTransactionDTO**](PriceSyncTransactionDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

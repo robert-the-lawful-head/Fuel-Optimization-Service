@@ -91,6 +91,13 @@ namespace IO.Swagger.Model {
     public int? Role { get; set; }
 
     /// <summary>
+    /// Gets or Sets CompanyUserProfileId
+    /// </summary>
+    [DataMember(Name="companyUserProfileId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyUserProfileId")]
+    public int? CompanyUserProfileId { get; set; }
+
+    /// <summary>
     /// Gets or Sets Company
     /// </summary>
     [DataMember(Name="company", EmitDefaultValue=false)]
@@ -111,6 +118,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "emailAddresses")]
     public List<UserEmailDTO> EmailAddresses { get; set; }
 
+    /// <summary>
+    /// Gets or Sets CompanyUserProfile
+    /// </summary>
+    [DataMember(Name="companyUserProfile", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyUserProfile")]
+    public CompanyUserProfileDTO CompanyUserProfile { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -130,9 +144,11 @@ namespace IO.Swagger.Model {
       sb.Append("  PhoneNumber: ").Append(PhoneNumber).Append("\n");
       sb.Append("  FullName: ").Append(FullName).Append("\n");
       sb.Append("  Role: ").Append(Role).Append("\n");
+      sb.Append("  CompanyUserProfileId: ").Append(CompanyUserProfileId).Append("\n");
       sb.Append("  Company: ").Append(Company).Append("\n");
       sb.Append("  Preferences: ").Append(Preferences).Append("\n");
       sb.Append("  EmailAddresses: ").Append(EmailAddresses).Append("\n");
+      sb.Append("  CompanyUserProfile: ").Append(CompanyUserProfile).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

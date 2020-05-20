@@ -42,10 +42,16 @@ namespace IO.Swagger.Api
         /// <returns>IndustryAveragePriceByTransactionResponse</returns>
         IndustryAveragePriceByTransactionResponse GetIndustryAveragePriceByTransaction (int? transactionId);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>ReportDataResponse</returns>
+        ReportDataResponse GetReportData (ReportDataJsonRequest body);
+        /// <summary>
         /// Fetch a list of reports for the authenticated company. 
         /// </summary>
         /// <returns>ReportListResponse</returns>
-        ReportListResponse GetReportListByCompanyId ();
+        ReportListResponse GetReportList ();
         /// <summary>
         /// Add a new custom report for the authenticated company. 
         /// </summary>
@@ -312,10 +318,44 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>ReportDataResponse</returns>            
+        public ReportDataResponse GetReportData (ReportDataJsonRequest body)
+        {
+            
+    
+            var path = "/api/Analysis/custom-reports/data";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (ReportDataResponse) ApiClient.Deserialize(response.Content, typeof(ReportDataResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Fetch a list of reports for the authenticated company. 
         /// </summary>
         /// <returns>ReportListResponse</returns>            
-        public ReportListResponse GetReportListByCompanyId ()
+        public ReportListResponse GetReportList ()
         {
             
     
@@ -336,9 +376,9 @@ namespace IO.Swagger.Api
             IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
     
             if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetReportListByCompanyId: " + response.Content, response.Content);
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportList: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetReportListByCompanyId: " + response.ErrorMessage, response.ErrorMessage);
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportList: " + response.ErrorMessage, response.ErrorMessage);
     
             return (ReportListResponse) ApiClient.Deserialize(response.Content, typeof(ReportListResponse), response.Headers);
         }

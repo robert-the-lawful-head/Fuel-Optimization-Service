@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **Settings** | [**CompanyFuelerSettingsDTO**](CompanyFuelerSettingsDTO.md) |  | [optional] 
 **FuelVendor** | [**FuelVendorDTO**](FuelVendorDTO.md) |  | [optional] 
 **CompanyFuelerNotes** | [**List&lt;CompanyFuelerNotesDTO&gt;**](CompanyFuelerNotesDTO.md) |  | [optional] 
+**PriceAdjustments** | [**List&lt;CompanyFuelerPriceAdjustmentDTO&gt;**](CompanyFuelerPriceAdjustmentDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

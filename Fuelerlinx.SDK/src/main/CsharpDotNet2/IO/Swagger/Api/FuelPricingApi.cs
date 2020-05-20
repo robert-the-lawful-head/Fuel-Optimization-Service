@@ -18,16 +18,18 @@ namespace IO.Swagger.Api
         /// <returns>AssociatedDetailsResponse</returns>
         AssociatedDetailsResponse GetAssociatedDetailsForFuelOption (AssociatedDetailsRequest body);
         /// <summary>
-        /// Internal use only - Fetch all cached pricing 
-        /// </summary>
-        /// <returns>CurrentPricingResponse</returns>
-        CurrentPricingResponse GetCurrentPricing ();
-        /// <summary>
         /// Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user. 
         /// </summary>
         /// <param name="commaDelimitedIcaos"></param>
         /// <returns>CurrentPricingResponse</returns>
         CurrentPricingResponse GetCurrentPricingForLocation (string commaDelimitedIcaos);
+        /// <summary>
+        /// Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user. 
+        /// </summary>
+        /// <param name="commaDelimitedIcaos"></param>
+        /// <param name="flightType"></param>
+        /// <returns>CurrentPricingResponse</returns>
+        CurrentPricingResponse GetCurrentPricingForLocationAndFlightType (string commaDelimitedIcaos, string flightType);
         /// <summary>
         /// Retrieves a live quote from all vendor web services tied to the flight department&#39;s account using their default flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings. It is always recommended to do a live quote for pricing if one hasn&#39;t been done in the last few hours for the desired airports.
         /// </summary>
@@ -156,38 +158,6 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Internal use only - Fetch all cached pricing 
-        /// </summary>
-        /// <returns>CurrentPricingResponse</returns>            
-        public CurrentPricingResponse GetCurrentPricing ()
-        {
-            
-    
-            var path = "/api/FuelPricing/current";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetCurrentPricing: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetCurrentPricing: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (CurrentPricingResponse) ApiClient.Deserialize(response.Content, typeof(CurrentPricingResponse), response.Headers);
-        }
-    
-        /// <summary>
         /// Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user. 
         /// </summary>
         /// <param name="commaDelimitedIcaos"></param> 
@@ -220,6 +190,48 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCurrentPricingForLocation: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCurrentPricingForLocation: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CurrentPricingResponse) ApiClient.Deserialize(response.Content, typeof(CurrentPricingResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user. 
+        /// </summary>
+        /// <param name="commaDelimitedIcaos"></param> 
+        /// <param name="flightType"></param> 
+        /// <returns>CurrentPricingResponse</returns>            
+        public CurrentPricingResponse GetCurrentPricingForLocationAndFlightType (string commaDelimitedIcaos, string flightType)
+        {
+            
+            // verify the required parameter 'commaDelimitedIcaos' is set
+            if (commaDelimitedIcaos == null) throw new ApiException(400, "Missing required parameter 'commaDelimitedIcaos' when calling GetCurrentPricingForLocationAndFlightType");
+            
+            // verify the required parameter 'flightType' is set
+            if (flightType == null) throw new ApiException(400, "Missing required parameter 'flightType' when calling GetCurrentPricingForLocationAndFlightType");
+            
+    
+            var path = "/api/FuelPricing/current/{commaDelimitedIcaos}/flight-type/{flightType}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "commaDelimitedIcaos" + "}", ApiClient.ParameterToString(commaDelimitedIcaos));
+path = path.Replace("{" + "flightType" + "}", ApiClient.ParameterToString(flightType));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCurrentPricingForLocationAndFlightType: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCurrentPricingForLocationAndFlightType: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CurrentPricingResponse) ApiClient.Deserialize(response.Content, typeof(CurrentPricingResponse), response.Headers);
         }

@@ -24,6 +24,7 @@ Method | HTTP request | Description
 [**GetTransactionsByAirportAndTailNumber**](TransactionApi.md#gettransactionsbyairportandtailnumber) | **GET** /api/Transaction/by-airport/{airportIdentifier}/tailNumber/{tailNumber} | Get all transactions for the specified airport, tail, and date range.  This can include both fuel orders and service-only transactions.
 [**GetTransactionsByDateRange**](TransactionApi.md#gettransactionsbydaterange) | **GET** /api/Transaction/by-date-range | Get all transactions for the specified date range.  This can include both fuel orders and service-only transactions.
 [**GetTransactionsByInvoiceNumber**](TransactionApi.md#gettransactionsbyinvoicenumber) | **GET** /api/Transaction/by-invoice-number/{invoiceNumber}/fueler/{fuelerId} | Get all transactions for the specified invoice number.  This can include both fuel orders and service-only transactions.
+[**GetTransactionsFromInvoiceImport**](TransactionApi.md#gettransactionsfrominvoiceimport) | **GET** /api/Transaction/invoice-import/transaction-list/{processId} | 
 [**PostAutoReconciledFile**](TransactionApi.md#postautoreconciledfile) | **POST** /api/Transaction/invoice-import/file-capture | Internal use only - Add a file captured by an invoice import.
 [**PostInvoiceImport**](TransactionApi.md#postinvoiceimport) | **POST** /api/Transaction/invoice-import | Internal use only - Add an invoice import record.
 [**PostTransactionAccountTransferStatus**](TransactionApi.md#posttransactionaccounttransferstatus) | **POST** /api/Transaction/accounting-transfer | Internal use only - Post a new accounting transfer status for a particular transaction.
@@ -1420,6 +1421,74 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **invoiceNumber** | **string**|  | 
  **fuelerId** | **int?**|  | 
+
+### Return type
+
+[**TransactionsResponse**](TransactionsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="gettransactionsfrominvoiceimport"></a>
+# **GetTransactionsFromInvoiceImport**
+> TransactionsResponse GetTransactionsFromInvoiceImport (int? processId)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetTransactionsFromInvoiceImportExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new TransactionApi();
+            var processId = 56;  // int? | 
+
+            try
+            {
+                TransactionsResponse result = apiInstance.GetTransactionsFromInvoiceImport(processId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling TransactionApi.GetTransactionsFromInvoiceImport: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **processId** | **int?**|  | 
 
 ### Return type
 

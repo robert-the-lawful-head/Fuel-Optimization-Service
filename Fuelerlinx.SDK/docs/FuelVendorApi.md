@@ -6,14 +6,17 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**DeleteCompanyFueler**](FuelVendorApi.md#deletecompanyfueler) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId} | Delete the company-specific details of a fuel vendor based on the provided {companyFuelerId}.
 [**DeleteCompanyFuelerNotes**](FuelVendorApi.md#deletecompanyfuelernotes) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId}/notes/{noteId} | Delete a company-specific note for the provided {companyFuelerId} record.
+[**DeleteCompanyFuelerPriceAdjustment**](FuelVendorApi.md#deletecompanyfuelerpriceadjustment) | **DELETE** /api/FuelVendor/company-specific/price-adjustment/{id} | Delete a price adjustment for a company fueler.
 [**DeleteCompanyFuelerSettings**](FuelVendorApi.md#deletecompanyfuelersettings) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId}/settings/{settingsId} | Delete a company-specific settings record for a fuel vendor.
 [**GetCompanyFuelerByFuelerId**](FuelVendorApi.md#getcompanyfuelerbyfuelerid) | **GET** /api/FuelVendor/company-specific/by-fueler/{fuelVendorId} | Fetch a company-specific record tied to the fuel vendor for the provided {fuelVendorId}.
 [**GetCompanyFuelerById**](FuelVendorApi.md#getcompanyfuelerbyid) | **GET** /api/FuelVendor/company-specific/{companyFuelerId} | Fetch a company-specific fuel vendor record for the provided {companyFuelerId}.
 [**GetCompanyFuelerList**](FuelVendorApi.md#getcompanyfuelerlist) | **GET** /api/FuelVendor/company-specific/list | Fetch all company-specific records for the authenticated company.
 [**GetCompanyFuelerNotes**](FuelVendorApi.md#getcompanyfuelernotes) | **GET** /api/FuelVendor/company-specific/{companyFuelerId}/notes | Fetch the company-specific notes for a particular fuel vendor based on the provided {companyFuelerId}.
+[**GetCompanyFuelerPriceAdjustmentList**](FuelVendorApi.md#getcompanyfuelerpriceadjustmentlist) | **GET** /api/FuelVendor/company-specific/{companyFuelerId}/price-adjustment/list | Get all price adjustments for a company fueler.
 [**GetCompanyFuelerSettings**](FuelVendorApi.md#getcompanyfuelersettings) | **GET** /api/FuelVendor/company-specific/{companyFuelerId}/settings | Fetch the company-specific settings for the specified {companyFuelerId} record.
 [**PostCompanyFueler**](FuelVendorApi.md#postcompanyfueler) | **POST** /api/FuelVendor/company-specific | Add a company-specific record for a fuel vendor.  These details are unique for each flight department.
 [**PostCompanyFuelerNotes**](FuelVendorApi.md#postcompanyfuelernotes) | **POST** /api/FuelVendor/company-specific/notes | Add a new company-specific note for a fuel vendor.
+[**PostCompanyFuelerPriceAdjustment**](FuelVendorApi.md#postcompanyfuelerpriceadjustment) | **POST** /api/FuelVendor/company-specific/price-adjustment | Add a new price adjustment for a company fueler.  This price adjustment will be applied to the user&#39;s own adjusted price section when reviewing prices.
 [**PostCompanyFuelerSettings**](FuelVendorApi.md#postcompanyfuelersettings) | **POST** /api/FuelVendor/company-specific/settings | Add a company-specific settings record for a fuel vendor.
 [**UpdateCompanyFueler**](FuelVendorApi.md#updatecompanyfueler) | **PUT** /api/FuelVendor/company-specific | Update the company-specific details of a fuel vendor.  These details are unique for each flight department.
 [**UpdateCompanyFuelerNotes**](FuelVendorApi.md#updatecompanyfuelernotes) | **PUT** /api/FuelVendor/company-specific/notes | Update an existing company-specific note for a fuel vendor.
@@ -148,6 +151,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteCompanyFuelerNotesResponse**](DeleteCompanyFuelerNotesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletecompanyfuelerpriceadjustment"></a>
+# **DeleteCompanyFuelerPriceAdjustment**
+> DeleteCompanyFuelerPriceAdjustmentResponse DeleteCompanyFuelerPriceAdjustment (int? id)
+
+Delete a price adjustment for a company fueler.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteCompanyFuelerPriceAdjustmentExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FuelVendorApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Delete a price adjustment for a company fueler.
+                DeleteCompanyFuelerPriceAdjustmentResponse result = apiInstance.DeleteCompanyFuelerPriceAdjustment(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FuelVendorApi.DeleteCompanyFuelerPriceAdjustment: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteCompanyFuelerPriceAdjustmentResponse**](DeleteCompanyFuelerPriceAdjustmentResponse.md)
 
 ### Authorization
 
@@ -503,6 +575,75 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="getcompanyfuelerpriceadjustmentlist"></a>
+# **GetCompanyFuelerPriceAdjustmentList**
+> CompanyFuelerPriceAdjustmentListResponse GetCompanyFuelerPriceAdjustmentList (int? companyFuelerId)
+
+Get all price adjustments for a company fueler.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetCompanyFuelerPriceAdjustmentListExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FuelVendorApi();
+            var companyFuelerId = 56;  // int? | 
+
+            try
+            {
+                // Get all price adjustments for a company fueler.
+                CompanyFuelerPriceAdjustmentListResponse result = apiInstance.GetCompanyFuelerPriceAdjustmentList(companyFuelerId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FuelVendorApi.GetCompanyFuelerPriceAdjustmentList: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **companyFuelerId** | **int?**|  | 
+
+### Return type
+
+[**CompanyFuelerPriceAdjustmentListResponse**](CompanyFuelerPriceAdjustmentListResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="getcompanyfuelersettings"></a>
 # **GetCompanyFuelerSettings**
 > CompanyFuelerSettingsResponse GetCompanyFuelerSettings (int? companyFuelerId)
@@ -698,6 +839,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PostCompanyFuelerNotesResponse**](PostCompanyFuelerNotesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="postcompanyfuelerpriceadjustment"></a>
+# **PostCompanyFuelerPriceAdjustment**
+> PostCompanyFuelerPriceAdjustmentResponse PostCompanyFuelerPriceAdjustment (PostCompanyFuelerPriceAdjustmentRequest body)
+
+Add a new price adjustment for a company fueler.  This price adjustment will be applied to the user's own adjusted price section when reviewing prices.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostCompanyFuelerPriceAdjustmentExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FuelVendorApi();
+            var body = new PostCompanyFuelerPriceAdjustmentRequest(); // PostCompanyFuelerPriceAdjustmentRequest |  (optional) 
+
+            try
+            {
+                // Add a new price adjustment for a company fueler.  This price adjustment will be applied to the user's own adjusted price section when reviewing prices.
+                PostCompanyFuelerPriceAdjustmentResponse result = apiInstance.PostCompanyFuelerPriceAdjustment(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FuelVendorApi.PostCompanyFuelerPriceAdjustment: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostCompanyFuelerPriceAdjustmentRequest**](PostCompanyFuelerPriceAdjustmentRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostCompanyFuelerPriceAdjustmentResponse**](PostCompanyFuelerPriceAdjustmentResponse.md)
 
 ### Authorization
 
