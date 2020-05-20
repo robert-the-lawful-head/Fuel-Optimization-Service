@@ -114,48 +114,8 @@
 
                                 </div>
                             </div>
-
-<<<<<<< HEAD
-    <!--Integration Section-->
-    <section id="integration" #integration>
-        <div class="row">
-            <div class="span12">
-                <h2><em><i class="fa fa-bookmark"></i> Integration</em> <a class="up anchorLink" href="#home"><i class="fa fa-chevron-up"></i></a></h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="span5">
-                FBOlinx integrates with The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a>. The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a> is an exclusive membership of independent FBOs that provide an elite experience to general aviation travelers in North America. Each FBO joining The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a> goes through a comprehensive audit of facility and services offered to ensure the quality of the member base. A set of core standards has been developed to which each member FBO must adhere and maintain in order to remain in the group. The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a> is facilitated by Paragon Aviation Group.Learn more about <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a> locations. Request custom fuel pricing from The <a href="http://www.paragonaviationgroup.com/" target="_blank">Paragon Network</a>.
-            </div>
-        </div>
-        <br />
-        <div class="row mb-5">
-            <div class="col-12 text-center integration-partners">
-                <mat-button-toggle-group
-                    name="integration-partners"
-                    value="{{integrationPartnerView}}"
-                    aria-label="Integration Partners"
-                    (change)="changeIntegrationPartnerView($event)"
-                >
-                    <mat-button-toggle value="0">All</mat-button-toggle>
-                    <mat-button-toggle value="1">Market Intelligence</mat-button-toggle>
-                    <mat-button-toggle value="2">Point of Sale</mat-button-toggle>
-                    <mat-button-toggle value="3">FBO Chains</mat-button-toggle>
-                </mat-button-toggle-group>
-            </div>
-        </div>
-        <div *ngFor="let partnerGroup of integrationPartners" class="d-flex justify-content-around mb-4">
-            <div *ngFor="let partner of partnerGroup">
-                <img src="{{partner}}" class="integration-partner-logo" alt="integration-partner">
-            </div>
-        </div>
-        <br /><!--/row-->
-    </section>
-=======
                         </div>
                     </div>
->>>>>>> f6167a95f052c4226515b108eff3f672ea195372
-
                 </div>
             </div>
         </div>
@@ -197,7 +157,7 @@
             </div>
 
         </div>
-        <div class="vw-100 integrations-container" style="background-color: #e4e4e4; color: black; scroll-margin-top: 150px;" id="integrations-content">
+        <div class="vw-100 integrations-container pb-5 pt-5" style="background-color: #e4e4e4; color: black; scroll-margin-top: 150px;" id="integrations-content">
             <div class="container-fluid">
                 <div>
                     <div class="text-center">
@@ -211,66 +171,24 @@
                     </div>
                 </div>
                 <div class="text-center mb-5">
-                    <div class="btn-group-lg" role="group" aria-label="Basic Example">
-                        <button type="button" class="btn">All</button>
-                        <button type="button" class="btn no-border-btn">Market Intelligence</button>
-                        <button type="button" class="btn">Point of Sale</button>
-                        <button type="button" class="btn">FBO Chains</button>
+                    <div class="col-12 text-center integration-partners">
+                        <mat-button-toggle-group
+                            name="integration-partners"
+                            value="{{integrationPartnerView}}"
+                            aria-label="Integration Partners"
+                            (change)="changeIntegrationPartnerView($event)"
+                        >
+                            <mat-button-toggle value="0">All</mat-button-toggle>
+                            <mat-button-toggle value="1">Market Intelligence</mat-button-toggle>
+                            <mat-button-toggle value="2">Point of Sale</mat-button-toggle>
+                            <mat-button-toggle value="3">FBO Chains</mat-button-toggle>
+                        </mat-button-toggle-group>
                     </div>
                 </div>
                 <div class="container">
-                    <div class="row">
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/FuelerLinxLogo.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/X1.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/million-air.png">
-                            </a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/FlightAware.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/titan-1.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/JetAviation.png">
-                            </a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/Amstat.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/fbodirector.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <div>
-                                <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/fbopartners.png">
-                                </a>
-                            </div>
-
+                    <div *ngFor="let partnerGroup of integrationPartners" class="d-flex justify-content-around mb-4">
+                        <div *ngFor="let partner of partnerGroup">
+                            <img src="{{partner}}" class="integration-partner-logo" alt="integration-partner">
                         </div>
                     </div>
                 </div>
