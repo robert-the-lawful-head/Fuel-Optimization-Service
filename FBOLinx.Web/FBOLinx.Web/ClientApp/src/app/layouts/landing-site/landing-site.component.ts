@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, HostListener } from "@angular/core";
 import { NgbCarouselConfig } from "@ng-bootstrap/ng-bootstrap";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import {
@@ -53,6 +53,7 @@ export class LandingSiteLayoutComponent implements OnInit {
     public featureCustomizeImage = "../../../assets/content/feature-customize.png";
     public featureSupportImage = "../../../assets/content/feature-support.png";
     public paragonSmallLogoImage = "../../../assets/content/paragon-2c-logo_small.png";
+    public planeFrontImage = "../../../assets/img/landing-page/DSC03168.jpg";
 
     public carouselImages: Array<any>;
     public contactUsMessage: ContactUsMessage;
@@ -60,6 +61,7 @@ export class LandingSiteLayoutComponent implements OnInit {
     public rememberMe: any;
     public isLoggingIn = false;
     public error = "";
+    public isSticky: boolean = false;    
 
     constructor(
         private config: NgbCarouselConfig,
@@ -212,5 +214,10 @@ export class LandingSiteLayoutComponent implements OnInit {
                 this.loginRequest.password
             );
         }
+    }
+
+    @HostListener('window:scroll', ['$event'])
+    public checkScroll(): void {
+        this.isSticky = window.pageYOffset >= 171;
     }
 }

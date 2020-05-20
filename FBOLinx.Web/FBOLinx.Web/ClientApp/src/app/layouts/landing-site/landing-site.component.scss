@@ -1,46 +1,302 @@
 
-
 body {
-    background: var(--base_vars-_-color-default);
+    height: 100%;
+    width: 100%;
+    color: white;
 }
 
-body {
-    color: var(--default_vars-_-color-text);
+body > div {
+    height: 100%;
+    width: 100%;
 }
 
-body {
-    color: var(--default_vars-_-color-text);
-    font-family: var(--default_vars-_-font-family-text);
-    font-size: var(--default_vars-_-font-size-text);
-    font-weight: var(--default_vars-_-font-weight-text);
-    text-transform: var(--default_vars-_-font-transform-text);
-    line-height: var(--default_vars-_-font-line-height-text);
-    letter-spacing: var(--default_vars-_-font-letter-spacing-text);
+.landing-page-container {
+    font-family: "Poppins-Regular";
 }
 
 
 
+div.citation-background {
+    background-size: cover !important;
+}
+
+.request-demo-white-border-button {
+    background-color: #1d5aa9 !important;
+    border: 1px solid white;
+    color: white;
+    border-radius: 2px;
+    font-size: 14px !important;
+    display: inline-flex;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    user-select: none;
+    background-image: none;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1.42857143;
+    border-radius: 0;
+    padding: 12px 45px;
+}
+
+.request-demo-white-border-button:hover {
+    color: #04131d;
+    border: 1px solid white;
+    border-radius: 2px;
+}
+
+.request-demo-button {
+    background-color: #1d5aa9 !important;
+    border: 1px solid #1d5aa9;
+    color: white;
+    border-radius: 2px;
+    font-size: 14px !important;
+    display: inline-flex;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    user-select: none;
+    background-image: none;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1.42857143;
+    border-radius: 0;
+    padding: 12px 45px;
+}
+
+.img-fluid.citation-background {
+    padding-top: 171px;
+}
+
+.request-demo-button:hover {
+    color: #04131d;
+    border-radius: 2px;
+    border: 1px solid #1d5aa9;
+}
+
+.header-top-bar {
+    padding: 13px 0;
+    color: white;
+}
+
+.theme-header-fixed {
+
+    padding: 13px 15px 45px 15px;
+    background-color: transparent;
+    position: absolute;
+    width: 100%;
+}
 
 
 
+/* The sticky class is added to the header with JS when it reaches its scroll position */
+
+.theme-header-fixed.sticky {
+    z-index: 100;
+    background: #04131d;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.plane-image img {
+    height: 358px !important;
+    width: 540px !important;
+}
+
+.fbolinx-screenshots img {
+    height: 258px !important;
+    width: 540px !important;
+}
+
+.navbar-nav .nav-item a {
+    color: white;
+}
+
+.navbar-nav .nav-item a:hover {
+    color: #369eea;
+}
 
 
+.navbar-nav .nav-item.active a {
+    color: #369eea;
+}
 
-    // Extra small devices (portrait phones, less than 576px)
-    // No media query for `xs` since this is the default in Bootstrap
-    // Small devices (landscape phones, 576px and up)
-    @media (min-width: 576px) {
+.active {
+    color: #369eea;
+}
+
+.large-title {
+    font-weight: 400;
+    font-size: 50px;
+}
+
+.medium-title {
+    font-weight: 400;
+    font-size: 34px;
+    color: white;
+}
+
+.contact-us-container .medium-title {
+    color: #04131d;
+}
+
+.integrations-container .medium-title {
+    color: #04131d;
+}
+
+
+.xl-title {
+    font-weight: 700;
+    font-size: 4.3em;
+    line-height: 1.2;
+    font-family: "Poppins-Bold";
+}
+
+    .seperating-line:after {
+        border-bottom: 4px solid black;
+        width: 50px;
+        content: "";
+        height: 3px;
+        left: 0;
+        margin: 0 auto;
+        position: absolute;
+        right: 0;
+        bottom: -12px;
+        width: 30px;
+        background-color: #ecf0f1;
     }
+
+
+    .divider-container hr {
+        margin-right: auto;
+        margin-left: auto;
+        width: 30%;
+        height: 1px;
+        background-color: #04131d;
+        border-width: 0
+    }
+
+
+    .small-divider-container hr {
+        margin-right: auto;
+        margin-left: auto;
+        width: 1.75%;
+        height: 3px;
+        background-color: #04131d;
+        border-width: 0
+    }
+
+    .btn-group-lg > .btn {
+        padding: 10px 30px;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.5;
+        border-radius: 0;
+        background-color: #acb0b2;
+        color: #04131d;
+        border: 1px solid #04131d;
+    }
+
+    .btn-group-lg > .btn:first-child {
+        border-left: 1px solid #04131d;
+        border-bottom-left-radius: 50px;
+        border-top-left-radius: 50px;
+    }
+
+    .btn-group-lg > .btn:last-child {
+        border-bottom-right-radius: 50px;
+        border-top-right-radius: 50px;
+        border: 1px solid #04131d;
+        border-left: none;
+    }
+
+    .btn-group-lg > .btn:hover {
+        background-color: #04131d;
+        color: white;
+    }
+
+    .btn-group-lg > .btn.no-border-btn {
+        border-left: none;
+        border-right: none;
+    }
+
+    .btn-group-lg > .btn:focus {
+        background-color: #04131d;
+        color: white;
+    }
+
+    .btn:focus,
+    .btn.focus {
+        box-shadow: none !important;
+    }
+
+    .contact-us-container hr {
+        margin-right: auto;
+        margin-left: auto;
+        height: 1px;
+        background-color: #04131d;
+        border-width: 0
+    }
+
+.zpcontainer {
+    padding: 0 15px;
+    font-family: "Poppins-Regular" !important;
+}
+
+.bulleted-content {
+font-size:16px;
+}
+
+
+
+.zpelement {
+    margin: 20px 0 0;
+    clear: both;
+    zoom: 1;
+    font-size: 16px;
+    line-height: 28.8px;
+}
+
+
+// Extra small devices (portrait phones, less than 576px)
+// No media query for `xs` since this is the default in Bootstrap
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {
+}
     // Medium devices (tablets, 768px and up)
     @media (min-width: 768px) {
+        .zpcontainer {
+            padding: 1em;
+        }
     }
     // Large devices (desktops, 992px and up)
     @media (min-width: 992px) {
 
-        .theme-header-fixed .theme-header-topbar {
-            background: transparent;
+
+        .zpcontainer {
+            width: 992px;
+            margin: 0 auto;
+            height: 100%;
+            padding: 1em;
         }
     }
     // Extra large devices (large desktops, 1200px and up)
     @media (min-width: 1200px) {
+
+        .title-container {
+            margin-left: 60px;
+            padding-top:100px;
+        }
+
+        .zpcontainer {
+            width: 1140px;
+            margin: 0 auto;
+        }
     }
