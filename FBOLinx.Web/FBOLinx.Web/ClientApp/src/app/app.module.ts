@@ -14,6 +14,7 @@ import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor"
 // Angular Material Modules
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatCardModule } from "@angular/material/card";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -111,6 +112,7 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         NgbPopoverModule,
         MatAutocompleteModule,
         MatButtonModule,
+        MatButtonToggleModule,
         MatCardModule,
         MatCheckboxModule,
         MatDatepickerModule,

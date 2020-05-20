@@ -6263,3 +6263,27 @@ div.login-progress-bar-container {
     color: #ffffff;
     cursor: pointer;
 }
+
+.integration-partners {
+    ::ng-deep {
+        .mat-button-toggle-group-appearance-standard {
+            border-radius: 25px;
+        }
+
+        .mat-button-toggle-appearance-standard {
+            background-color: #e0e0e0;
+
+            .mat-button-toggle-label-content {
+                padding: 0 30px;
+            }
+        }
+
+        .mat-button-toggle-checked {
+            background-color: #0a121c;
+
+            &.mat-button-toggle-appearance-standard {
+                color: white;
+            }
+        }
+    }
+}

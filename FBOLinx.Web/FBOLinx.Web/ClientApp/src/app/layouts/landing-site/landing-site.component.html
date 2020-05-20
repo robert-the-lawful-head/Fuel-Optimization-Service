@@ -203,7 +203,26 @@
             </div>
         </div>
         <br />
-        <div class="row"></div>
+        <div class="row mb-5">
+            <div class="col-12 text-center integration-partners">
+                <mat-button-toggle-group
+                    name="integration-partners"
+                    value="{{integrationPartnerView}}"
+                    aria-label="Integration Partners"
+                    (change)="changeIntegrationPartnerView($event)"
+                >
+                    <mat-button-toggle value="0">All</mat-button-toggle>
+                    <mat-button-toggle value="1">Market Intelligence</mat-button-toggle>
+                    <mat-button-toggle value="2">Point of Sale</mat-button-toggle>
+                    <mat-button-toggle value="3">FBO Chains</mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+        </div>
+        <div *ngFor="let partnerGroup of integrationPartners" class="d-flex justify-content-around mb-4">
+            <div *ngFor="let partner of partnerGroup">
+                <img src="{{partner}}" class="integration-partner-logo" alt="integration-partner">
+            </div>
+        </div>
         <br /><!--/row-->
     </section>
 
