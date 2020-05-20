@@ -14,6 +14,8 @@ using FBOLinx.Web.Auth;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Responses;
 using FBOLinx.Web.Services;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -23,12 +25,15 @@ namespace FBOLinx.Web.Controllers
     public class FbopricesController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly FuelerLinxContext _fuelerlinxContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly JwtManager _jwtManager;
 
-        public FbopricesController(FboLinxContext context, FuelerLinxContext fuelerlinxContext)
+
+        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
         {
             _context = context;
-            _fuelerlinxContext = fuelerlinxContext;
+            _httpContextAccessor = httpContextAccessor;
+            _jwtManager = jwtManager;
         }
 
         // GET: api/Fboprices
@@ -70,7 +75,7 @@ namespace FBOLinx.Web.Controllers
 
             var fboprices = await (
                             from f in _context.Fboprices
-                            where f.EffectiveTo > DateTime.Now.AddDays(-1)
+                            where f.EffectiveTo > DateTime.UtcNow
                             && f.Fboid == fboId && f.Price != null && f.Expired != true
                             select f).ToListAsync();
 
@@ -95,7 +100,7 @@ namespace FBOLinx.Web.Controllers
                               Fboid = fboId,
                               Product = p.Description,
                               f?.Price,
-                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.Now,
+                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.UtcNow,
                               EffectiveTo = f?.EffectiveTo ?? null,
                               TimeStamp = f?.Timestamp,
                               f?.SalesTax,
@@ -123,8 +128,8 @@ namespace FBOLinx.Web.Controllers
 
             var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
 
-            var activePricingCost = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Cost" && s.Fboid == fboId && s.Expired != true);
-            var activePricingRetail = _context.Fboprices.FirstOrDefault(s => s.EffectiveFrom <= DateTime.Now && s.EffectiveTo > DateTime.Now.AddDays(-1) && s.Product == "JetA Retail" && s.Fboid == fboId && s.Expired != true);
+            var activePricingCost = _context.Fboprices.FirstOrDefault(s => s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Cost" && s.Fboid == fboId && s.Expired != true);
+            var activePricingRetail = _context.Fboprices.FirstOrDefault(s => s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Retail" && s.Fboid == fboId && s.Expired != true);
             
             if (activePricingCost != null && activePricingRetail != null)
             {
@@ -198,7 +203,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = (from p in products
                           join f in (from f in _context.Fboprices
-                                     where Convert.ToDateTime(f.EffectiveFrom).Date > DateTime.Now.Date && f.Expired != true
+                                     where f.EffectiveTo > DateTime.UtcNow && f.Expired != true
                                      select f) on new { Product = p.Description, FboId = fboId } equals new
                                      {
                                          f.Product,
@@ -232,11 +237,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fboprices = await GetAllFboPrices().Where((f => f.Fboid == fboId &&
+            var fboprices = await GetAllFboPrices().Where(f => f.Fboid == fboId &&
                                                                 f.Product != null &&
                                                                 f.Product.ToLower() == product.ToLower() &&
-                                                                //f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1))).FirstOrDefaultAsync();
-                                                                f.EffectiveTo > DateTime.Now.AddDays(-1))).FirstOrDefaultAsync();
+                                                                f.EffectiveTo > DateTime.UtcNow).FirstOrDefaultAsync();
 
             return Ok(fboprices);
         }
@@ -272,6 +276,72 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(null);
+        }
+
+        [HttpPost("update")]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        public async Task<IActionResult> UpdatePricing([FromBody] PricingUpdateRequest request)
+        {
+            if ((request.Retail == null && request.Cost == null) || request.ExpirationDate == null)
+            {
+                return BadRequest(new { message = "Invalid body request!" });
+            }
+            try
+            {
+                var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var claimPrincipal = _jwtManager.GetPrincipal(token);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+
+                var user = await _context.User.FindAsync(claimedId);
+
+                if (request.Retail != null)
+                {
+                    var retailPrice = new Fboprices
+                    {
+                        EffectiveFrom = DateTime.UtcNow,
+                        EffectiveTo = request.ExpirationDate,
+                        Product = "JetA Retail",
+                        Price = request.Retail,
+                        Fboid = user.FboId
+                    };
+                    List<Fboprices> oldPrices = _context.Fboprices
+                                                   .Where(f => f.Fboid.Equals(user.FboId) && f.Product.Equals("JetA Retail"))
+                                                   .ToList();
+                    foreach (Fboprices oldPrice in oldPrices)
+                    {
+                        oldPrice.Expired = true;
+                        _context.Fboprices.Update(oldPrice);
+                    }
+                    _context.Fboprices.Add(retailPrice);
+                }
+                if (request.Cost != null)
+                {
+                    var costPrice = new Fboprices
+                    {
+                        EffectiveFrom = DateTime.UtcNow,
+                        EffectiveTo = request.ExpirationDate,
+                        Product = "JetA Cost",
+                        Price = request.Cost,
+                        Fboid = user.FboId
+                    };
+                    List<Fboprices> oldPrices = _context.Fboprices
+                                                   .Where(f => f.Fboid.Equals(user.FboId) && f.Product.Equals("JetA Cost"))
+                                                   .ToList();
+                    foreach (Fboprices oldPrice in oldPrices)
+                    {
+                        oldPrice.Expired = true;
+                        _context.Fboprices.Update(oldPrice);
+                    }
+                    _context.Fboprices.Add(costPrice);
+                }
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         // POST: api/Fboprices/analysis/prices-by-month/fbo/5
@@ -337,7 +407,6 @@ namespace FBOLinx.Web.Controllers
                     newFboPrice.Product = fboprices.Product;
                     newFboPrice.SalesTax = fboprices.SalesTax;
                     newFboPrice.Timestamp = DateTime.Now;
-                    newFboPrice.Timestamp = DateTime.Now;
                     _context.Fboprices.Add(newFboPrice);
                 }
                 await _context.SaveChangesAsync();
@@ -397,8 +466,7 @@ namespace FBOLinx.Web.Controllers
             var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId).Select(s => s.Oid).ToList();
 
             var activePricing = _context.Fboprices.Where(s => 
-                                        s.EffectiveFrom <= DateTime.Now && 
-                                        s.EffectiveTo > DateTime.Now.AddDays(-1) && 
+                                        s.EffectiveTo > DateTime.UtcNow && 
                                         (s.Product == "JetA Cost" || s.Product == "JetA Retail") && 
                                         groupFbos.Contains(Convert.ToInt32(s.Fboid)) && 
                                         s.Expired != true).ToList();

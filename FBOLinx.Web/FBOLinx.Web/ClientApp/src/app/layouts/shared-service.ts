@@ -18,6 +18,9 @@ export class DashboardSettings {
 
 @Injectable()
 export class SharedService {
+    // Private members
+    private _currentUser: User;
+
     constructor(private authenticationService: AuthenticationService) {
         this.authenticationService.currentUser.subscribe(
             (x) => (this.currentUser = x)
@@ -37,7 +40,17 @@ export class SharedService {
         }
     }
     // Public Members
-    currentUser: User;
+    get currentUser(): User {
+        if (!this._currentUser.fboId && sessionStorage.getItem("fboId")) {
+            this._currentUser.fboId = Number(sessionStorage.getItem("fboId"));
+        }
+        return this._currentUser;
+    }
+
+    set currentUser(user: User) {
+        this._currentUser = user;
+    }
+
     dashboardSettings: DashboardSettings = new DashboardSettings();
 
     public priceTemplateMessageSource = new BehaviorSubject(

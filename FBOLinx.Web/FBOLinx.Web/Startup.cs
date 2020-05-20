@@ -85,19 +85,17 @@ namespace FBOLinx.Web
             services.Configure<AppPartnerSDKSettings>(appParnterSDKSettings);
 
             // configure DI for application services
-            services.AddScoped<AccessTokenService, AccessTokenService>();
-
             services.AddScoped<FuelerLinxService, FuelerLinxService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<Auth.UserRoleAttribute>();
+            services.AddScoped<UserRoleAttribute>();
 
             services.AddTransient<GroupFboService, GroupFboService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //Auth services
-            services.AddScoped<IJwtManager, JwtManager>();
-            services.AddScoped<IRefreshTokenManager, RefreshTokenManager>();
+            services.AddScoped<JwtManager, JwtManager>();
+            services.AddScoped<OAuthService, OAuthService>();
             services.AddScoped<IAPIKeyManager, APIKeyManager>();
 
             //Add file provider

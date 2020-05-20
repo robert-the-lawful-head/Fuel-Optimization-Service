@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Auth
 {
-    public class JwtManager : IJwtManager
+    public class JwtManager
     {
         private IHttpContextAccessor _HttpContextAccessor;
         private readonly FboLinxContext _context;
@@ -27,28 +27,6 @@ namespace FBOLinx.Web.Auth
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
             _appSettings = appSettings.Value;
-        }
-
-        public async Task<UserAuthTokenResponse> GetUserAccessInformation(string username, string password, IUserService userService, IRefreshTokenManager refreshTokenManager)
-        {
-            var dbUser = userService.Authenticate(username, password, false);
-            if (dbUser == null)
-                return new UserAuthTokenResponse(false, "Invalid credentials.");
-
-            var token = GenerateToken(dbUser.Oid, string.Format("{0} {1}", dbUser.FirstName, dbUser.LastName), dbUser.Username, dbUser.FboId);
-            var refreshToken = await refreshTokenManager.GenerateRefreshToken(dbUser);
-            return new UserAuthTokenResponse(token, DateTime.UtcNow.AddMinutes(10080), refreshToken.Token, refreshToken.Expired, dbUser.Username, dbUser.Oid);
-        }
-
-        public async Task<UserAuthTokenResponse> GetUserAccessInformation(int userId, IRefreshTokenManager refreshTokenManager)
-        {
-            var dbUser = await _context.User.FindAsync(userId);
-            if (dbUser == null)
-                return new UserAuthTokenResponse(false, "Invalid credentials.");
-
-            var token = GenerateToken(dbUser.Oid, string.Format("{0} {1}", dbUser.FirstName, dbUser.LastName), dbUser.Username, dbUser.FboId);
-            var refreshToken = await refreshTokenManager.GenerateRefreshToken(dbUser);
-            return new UserAuthTokenResponse(token, DateTime.UtcNow.AddMinutes(10080), refreshToken.Token, refreshToken.Expired, dbUser.Username, dbUser.FboId);
         }
 
         public string GenerateToken(int id, string name, string username, int? fboid, int expireMinutes = 10080)
@@ -76,7 +54,7 @@ namespace FBOLinx.Web.Auth
             var plainToken = tokenHandler.CreateToken(securityTokenDescriptor);
             var signedAndEncodedToken = tokenHandler.WriteToken(plainToken);
 
-            return string.Format("{0}", signedAndEncodedToken);
+            return signedAndEncodedToken;
         }
 
         public string GetCurrentAuthToken()
@@ -111,7 +89,7 @@ namespace FBOLinx.Web.Auth
                 if (token == null)
                     return null;
 
-                token = token.Replace("JWT ", "");
+                token = token.Replace("Bearer ", "");
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
 

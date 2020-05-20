@@ -98,11 +98,4 @@ export class AuthenticationService {
         localStorage.removeItem("currentUser");
         this.currentUserSubject.next(null);
     }
-
-    public accessToken(payload) {
-        return this.http.post(this.accessPointUrl + "/oauth/accessToken",
-            payload,
-            { headers: this.headers }
-        )
-    }
 }

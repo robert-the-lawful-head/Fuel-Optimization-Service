@@ -3,6 +3,8 @@ import {
     OnInit,
     OnDestroy,
     AfterViewInit,
+    ViewChildren,
+    QueryList,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { NgxUiLoaderService } from "ngx-ui-loader";
@@ -42,6 +44,7 @@ export interface TemporaryAddOnMargin {
     styleUrls: ["./fbo-prices-home.component.scss"],
 })
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
+    @ViewChildren("tooltip") priceTooltips: QueryList<any>;
     // Public Members
     public pricingLoader = "pricing-loader";
 
@@ -63,6 +66,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     public priceEntryError = "";
 
+    public tooltipIndex = 0;
+
     public updateModel: DefaultTemplateUpdate = {
         currenttemplate: 0,
         fboid: 0,
@@ -78,6 +83,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public stagedFboPrice100LL: any;
 
     public locationChangedSubscription: any;
+    public tooltipSubscription: any;
 
     constructor(
         private fboPricesService: FbopricesService,
@@ -101,11 +107,22 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 }
             }
         );
+
+        this.tooltipSubscription = this.sharedService.changeEmitted$.subscribe(
+            (message) => {
+                if (message === SharedEvents.menuTooltipShowedEvent) {
+                    this.tooltipIndex = this.priceTooltips.length - 1;
+                    this.showTooltips();
+                }
+        });
     }
 
     ngOnDestroy(): void {
         if (this.locationChangedSubscription) {
             this.locationChangedSubscription.unsubscribe();
+        }
+        if (this.tooltipSubscription) {
+            this.tooltipSubscription.unsubscribe();
         }
     }
 
@@ -256,6 +273,24 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             });
     }
 
+    public jetACostExists() {
+        return this.currentFboPriceJetACost && this.currentFboPriceJetACost.price > 0;
+    }
+
+    public jetARetailExists() {
+        return this.currentFboPriceJetARetail && this.currentFboPriceJetARetail.price > 0;
+    }
+
+    public tooltipHidden() {
+        const tooltipsArr = this.priceTooltips.toArray();
+        if (this.tooltipIndex >= 0) {
+            setTimeout(() => {
+                tooltipsArr[this.tooltipIndex].open();
+                this.tooltipIndex--;
+            }, 400);
+        }
+    }
+
     // Private Methods
     private loadFboPrices() {
         return new Observable((observer) => {
@@ -387,11 +422,11 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             });
     }
 
-    public jetACostExists() {
-        return this.currentFboPriceJetACost && this.currentFboPriceJetACost.price > 0;
-    }
-
-    public jetARetailExists() {
-        return this.currentFboPriceJetARetail && this.currentFboPriceJetARetail.price > 0;
+    private showTooltips() {
+        setTimeout(() => {
+            const tooltipsArr = this.priceTooltips.toArray();
+            tooltipsArr[this.tooltipIndex].open();
+            this.tooltipIndex--;
+        }, 400);
     }
 }

@@ -10,6 +10,7 @@ import { IMenuItem } from "./menu-item";
 import { MenuService } from "./menu.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { UserService } from "../../../services/user.service";
+import { menuTooltipShowedEvent } from "../../../models/sharedEvents";
 
 @Component({
     moduleId: module.id,
@@ -134,6 +135,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
         } else {
             this.user.goOverTutorial = true;
             this.userService.update(this.user).subscribe(() => {});
+            this.sharedService.emitChange(menuTooltipShowedEvent);
         }
     }
 }

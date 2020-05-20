@@ -839,6 +839,8 @@ namespace FBOLinx.Web.Data
             {
                 entity.HasKey(e => e.Oid);
 
+                entity.Property(e => e.AccessTokenId).HasColumnName("AccessTokenID");
+
                 entity.Property(e => e.Oid).HasColumnName("OID");
 
                 entity.Property(e => e.Token)
