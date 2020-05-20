@@ -14,8 +14,8 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <returns>FbolinxAircraftDTO</returns>
-        FbolinxAircraftDTO GetAircraftTailsGroupedByCompany ();
+        /// <returns>FboLinxAircraftsResponse</returns>
+        FboLinxAircraftsResponse GetAircraftTailsGroupedByCompany ();
         /// <summary>
         ///  
         /// </summary>
@@ -92,8 +92,8 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <returns>FbolinxAircraftDTO</returns>            
-        public FbolinxAircraftDTO GetAircraftTailsGroupedByCompany ()
+        /// <returns>FboLinxAircraftsResponse</returns>            
+        public FboLinxAircraftsResponse GetAircraftTailsGroupedByCompany ()
         {
             
     
@@ -118,7 +118,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetAircraftTailsGroupedByCompany: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (FbolinxAircraftDTO) ApiClient.Deserialize(response.Content, typeof(FbolinxAircraftDTO), response.Headers);
+            return (FboLinxAircraftsResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxAircraftsResponse), response.Headers);
         }
     
         /// <summary>
