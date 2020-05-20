@@ -15,32 +15,35 @@
         <div class="zpcontainer">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="">
-                        <nav class="navbar navbar-expand-lg">
+                        <div class="col-4">
                             <a class="ml-n4">
                                 <img src="/../../../assets/img/landing-page/FBOlinx-Logo-v2.2-DARK-BACKGROUND.png" style="height:62px;width:207px;">
                             </a>
-                            <div class="collapse navbar-collapse" id="navbarNav">
-                                <ul class="navbar-nav">
-                                    <li class="nav-item active">
-                                        <a class="nav-link" onclick="document.getElementById('home-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Home <span class="sr-only">(current)</span></a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" onclick="document.getElementById('about-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">About</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" onclick="document.getElementById('marketplace-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Marketplace</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" onclick="document.getElementById('integrations-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Integrations</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" onclick="document.getElementById('contact-us-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Contact</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </nav>
-                    </div>
+                        </div>
+                        <div class="col-8">
+                            <nav class="navbar navbar-expand-lg">
+
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item active">
+                                            <a class="nav-link" onclick="document.getElementById('home-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Home <span class="sr-only">(current)</span></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" onclick="document.getElementById('about-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">About</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" onclick="document.getElementById('marketplace-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Marketplace</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" onclick="document.getElementById('integrations-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Integrations</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" onclick="document.getElementById('contact-us-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Contact</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
                 </div>
             </div>
         </div>
@@ -50,24 +53,24 @@
             <div class="home-content vh-100 zpcontainer" id="home-content">
                 <div class="container-fluid zpelement">
                     <div class="row">
-                        <div class="col-xs-12 col-md-8">
+                        <div class="col-lg-8">
                             <div class="xl-title" style="color: white;">Precision Marketing</div>
                         </div>
-                        <div class="col-xs-12 col-md-8">
+                        <div class="col-lg-8">
                             <div class="xl-title" style="color:#369eea;">Platform for FBOs</div>
                         </div>
-                        <div class="col-xs-12 col-md-8 zpelement mb-2">
+                        <div class="zpelement mb-2 col-lg-8">
                             <p style="color: white;">
                                 A direct pricing solution, designed to integrate into FuelerLinx; The world's largest business aviation fuel marketplace and tankering software system. FBOs can automatically push direct quotes, receive fuel orders, and accept payments al from one easy to manage interface.
                             </p>
                         </div>
-                        <div class="col-xs-12 col-md-8 zpelement mb-2">
+                        <div class="zpelement mb-2 col-lg-8">
                             <p style="color: white;">
                                 FBOLinx includes a CRM feature that will help you manage flight department leads and existing customer negotiated margins through an efficient and confidential portal.
                                 FBOLinx is a must-have for any location interested in having a more accessible relationship with customers, resulting in loyalty and increased efficiency.
                             </p>
                         </div>
-                        <div class="col-xs-12 col-md-8 zpelement">
+                        <div class="zpelement col-lg-8">
                             <button type="button" class="request-demo-white-border-button">Request Demo</button>
 
                         </div>
@@ -75,10 +78,10 @@
                 </div>
             </div>
         </div>
-        <div class="" style="background-color: #ecf0f1; color: black; scroll-margin-top: 150px;" id="about-content">
+        <div class="theme-container" style="background-color: #ecf0f1; color: black; scroll-margin-top: 100px;" id="about-content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="title-container">
+                    <div class="title-container zpcontainer">
                         <div class="large-title">
                             Real-Time Fuel Quoting
                             <br />
@@ -89,12 +92,12 @@
                     <div class="zpcontainer">
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-xs-12 col-lg-6">
                                     <div class="text-right plane-image zpelement">
                                         <img class="" src="{{planeFrontImage}}" size="fit" alt="" title="" style="width:100%;padding:0px;margin:0px;" />
                                     </div>
                                 </div>
-                                <div class="col-6 bulleted-content">
+                                <div class="col-xs-12 col-lg-6 bulleted-content">
                                     <div class="zpelement">
                                         <ul>
                                             <li>
@@ -121,29 +124,29 @@
                 </div>
             </div>
         </div>
-        <div style="background-color: #091a26; color: white; scroll-margin-top: 90px;" id="marketplace-content">
+        <div class="theme-container" style="background-color: #091a26; color: white; scroll-margin-top: 80px;" id="marketplace-content">
             <div class="zpcontainer">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-6">
-                            <div class="">
-                                <h2 class="" data-editor="true">
+                        <div class="col-xs-12 col-lg-6">
+                            <div class="title-container">
+                                <div class="medium-title" data-editor="true">
                                     <span>
                                         Connect directly into the&nbsp;<span style="font-family:Arial, sans-serif;"><span style="font-weight:700;">Fueler</span><span style="font-weight:700;color:rgb(54, 158, 234);"><span style="font-style:italic;">Linx </span></span></span><span>Marketplace</span>
                                     </span>
-                                </h2>
-                                <div class=".zpelement">
-                                    <p><span style="font-size:12pt;">FuelerLinx is an aviation fuel planning and tankering software system flight departments use to compare all fuel price options on a field, find tech stops, and purchase fuel.&nbsp;</span><br></p>
-                                    <p><span style="color:inherit;"><span><br></span></span></p>
-                                    <p><span style="font-size:12pt;">Over the past decade, FuelerLinx has built the premier fuel software for the business aviation industry.&nbsp; FuelerLinx spans nearly all software systems, brings together critical data, and boasts a customer base featuring the largest fuel buyers in the industry.</span></p>
-                                    <p><span style="color:inherit;"><span><br></span></span></p>
-                                    <p><span style="font-size:12pt;">Additional features such as multi-leg tankering calculations , proximity fuel maps, and fuel transaction auditing components make FuelerLinx a one-stop shop for anyone who wants to streamline their fuel purchasing and maximize operational efficiency.</span></p>
+                                </div>
+                                <div class="zpelement">
+                                    <p><span >FuelerLinx is an aviation fuel planning and tankering software system flight departments use to compare all fuel price options on a field, find tech stops, and purchase fuel.&nbsp;</span><br></p>
+                                   
+                                    <p><span >Over the past decade, FuelerLinx has built the premier fuel software for the business aviation industry.&nbsp; FuelerLinx spans nearly all software systems, brings together critical data, and boasts a customer base featuring the largest fuel buyers in the industry.</span></p>
+                                  
+                                    <p><span >Additional features such as multi-leg tankering calculations , proximity fuel maps, and fuel transaction auditing components make FuelerLinx a one-stop shop for anyone who wants to streamline their fuel purchasing and maximize operational efficiency.</span></p>
                                 </div>
                             </div>
 
                         </div>
-                        <div class="col-6">
-                            <div class="text-left">
+                        <div class="col-xs-12 col-lg-6 screenshot-container">
+                            <div class="title-container">
                                 <div class="fbolinx-screenshots">
                                     <img class="" src="/../../../assets/img/landing-page/Web 1920 – 2.png" size="fit" alt="" title="" style="width:100%;padding:0px;margin:0px;" />
                                 </div>
@@ -159,119 +162,131 @@
             </div>
 
         </div>
-        <div class="vw-100 integrations-container" style="background-color: #e4e4e4; color: black; scroll-margin-top: 150px;" id="integrations-content">
-            <div class="container-fluid">
-                <div>
-                    <div class="text-center">
-                        <div class="medium-title">Integrations</div>
-                    </div>
-                    <div class="mt-4 small-divider-container">
-                        <hr />
-                    </div>
-                    <div class="mt-4 mb-5 divider-container">
-                        <hr />
-                    </div>
-                </div>
-                <div class="text-center mb-5">
-                    <div class="btn-group-lg" role="group" aria-label="Basic Example">
-                        <button type="button" class="btn">All</button>
-                        <button type="button" class="btn no-border-btn">Market Intelligence</button>
-                        <button type="button" class="btn">Point of Sale</button>
-                        <button type="button" class="btn">FBO Chains</button>
-                    </div>
-                </div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/FuelerLinxLogo.png">
-                            </a>
+        <div class="vw-100 theme-container integrations-container" style="background-color: #e4e4e4; color: black; scroll-margin-top: 90px;" id="integrations-content">
+            <div class="zpcontainer">
+                <div class="container-fluid">
+                    <div class="title-container">
+                        <div class="text-center">
+                            <div class="medium-title">Integrations</div>
                         </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/X1.png">
-                            </a>
+                        <div class="mt-4 small-divider-container">
+                            <hr />
                         </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/million-air.png">
-                            </a>
+                        <div class="mt-4 mb-5 divider-container">
+                            <hr />
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/FlightAware.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/titan-1.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/JetAviation.png">
-                            </a>
+                    <div class="text-center mb-5">
+                        <div class="btn-group-lg" role="group" aria-label="Basic Example">
+                            <button type="button" class="btn">All</button>
+                            <button type="button" class="btn no-border-btn">Market Intelligence</button>
+                            <button type="button" class="btn">Point of Sale</button>
+                            <button type="button" class="btn">FBO Chains</button>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/Amstat.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <a>
-                                <img class=" " src="/../../../assets/img/landing-page/fbodirector.png">
-                            </a>
-                        </div>
-                        <div class="col-4 mb-4">
-                            <div>
+                    <div class="container pt-3">
+                        <div class="row">
+                            <div class="col-4 mb-4">
                                 <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/fbopartners.png">
+                                    <img class=" " src="/../../../assets/img/landing-page/FuelerLinxLogo.png">
                                 </a>
                             </div>
+                            <div class="col-4 mb-4">
+                                <a>
+                                    <img class=" " src="/../../../assets/img/landing-page/X1.png">
+                                </a>
+                            </div>
+                            <div class="col-4 mb-4">
+                                <a>
+                                    <img class=" " src="/../../../assets/img/landing-page/million-air.png">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 mb-4">
+                                <a>
+                                    <img class=" " src="/../../../assets/img/landing-page/FlightAware.png">
+                                </a>
+                            </div>
+                            <div class="col-4 mb-4">
+                                <a>
+                                    <img class=" " src="/../../../assets/img/landing-page/titan-1.png">
+                                </a>
+                            </div>
+                            <div class="col-4 mb-4">
+                                <a>
+                                    <img class=" " src="/../../../assets/img/landing-page/JetAviation.png">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 mb-4">
+                                <a>
+                                    <img class=" " src="/../../../assets/img/landing-page/Amstat.png">
+                                </a>
+                            </div>
+                            <div class="col-4 mb-4">
+                                <a>
+                                    <img class=" " src="/../../../assets/img/landing-page/fbodirector.png">
+                                </a>
+                            </div>
+                            <div class="col-4 mb-4">
+                                <div>
+                                    <a>
+                                        <img class=" " src="/../../../assets/img/landing-page/fbopartners.png">
+                                    </a>
+                                </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="vw-100 pb-3 contact-us-container" style="background-color: #ecf0f1; color:#04131d; scroll-margin-top: 150px;" id="contact-us-content">
-            <div class="container-fluid">
-                <div class="medium-title mb-5">
-                    Contact Us
-                </div>
-                <hr class="mb-5 mt-5" />
-                <div class="row">
-                    <div class="col-4">
-                        <p>7415 Hayvenhurst Place</p>
-                        <p>Van Nuys, CA 91406&nbsp;<br><span>Phone: <span id="gc-number-0" class="gc-cs-link" title="Call with Google Voice">(866) 998-5469</span></span></p>
+        <div class="vw-100 pb-3 contact-us-container theme-container" style="background-color: #ecf0f1; color:#04131d;" id="contact-us-content">
+            <div class="zpcontainer">
+                <div class="container-fluid">
+                    <div class="title-container">
+                        <div class="medium-title mb-5">
+                            Contact Us
+                        </div>
                     </div>
+                  
+                    <hr class="mb-5 mt-5" />
+                    <div class="row">
+                        <div class="col-4">
+                            <p>7415 Hayvenhurst Place</p>
+                            <p>Van Nuys, CA 91406&nbsp;<br><span>Phone: <span id="gc-number-0" class="gc-cs-link" title="Call with Google Voice">(866) 998-5469</span></span></p>
+                        </div>
 
-                    <div class="col-4">
-                        <p>Phone : <span id="gc-number-0" class="gc-cs-link" title="Call with Google Voice">+1 (866) 998-5469</span></p>
+                        <div class="col-4">
+                            <p>Phone : <span id="gc-number-0" class="gc-cs-link" title="Call with Google Voice">+1 (866) 998-5469</span></p>
+                        </div>
+                        <div class="col-4">
+                            <p>Email : info@fbolinx.com</p>
+                        </div>
                     </div>
-                    <div class="col-4">
-                        <p>Email : info@fbolinx.com</p>
-                    </div>
+                    <hr class="mb-3 mt-5" />
                 </div>
-                <hr class="mb-3 mt-5" />
             </div>
         </div>
-        <div style="background-color: #091a26; color: white;">
-            <div class="container-fluid">
+        <div class="theme-container" style="background-color: #091a26; color: white;">
+            <div class="zpcontainer">
+                <div class="container-fluid">
+                    <div class="title-container">
+                        <div class="text-center medium-title">
+                            FBO<span class="font-italic">Linx </span>: Precision Marketing
+                            Platform for FBOs
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5 mb-4 text-center">
+                        <button type="button" class="request-demo-button">Request Demo</button>
+                    </div>
 
-                <div class="text-center medium-title">
-                    FBO<span class="font-italic">Linx</span>: Precision Marketing
-                    Platform for FBOs
-                </div>
-                <div class="mt-5 mb-3 text-center">
-                    <button type="button" class="request-demo-button">Request Demo</button>
-                </div>
-                <div class="text-center">
-                    FBO <span class="font-italic">Linx</span> is the most efficient way to stream direct pricing to the top business aircraft operating in today's marketplace!
+                    <div class="page-footer text-center">
+                        FBO <span class="font-italic">Linx</span> is the most efficient way to stream direct pricing to the top <br /> business aircraft operating in today's marketplace!
+                    </div>
                 </div>
             </div>
         </div>

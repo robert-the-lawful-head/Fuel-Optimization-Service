@@ -103,16 +103,13 @@ div.citation-background {
     position: fixed;
     top: 0;
     width: 100%;
+    padding: 0;
 }
 
-.plane-image img {
-    height: 358px !important;
-    width: 540px !important;
-}
 
-.fbolinx-screenshots img {
-    height: 258px !important;
-    width: 540px !important;
+
+.screenshot-container .title-container {
+    text-align:center;
 }
 
 .navbar-nav .nav-item a {
@@ -134,7 +131,7 @@ div.citation-background {
 
 .large-title {
     font-weight: 400;
-    font-size: 50px;
+    font-size: 34px;
 }
 
 .medium-title {
@@ -152,12 +149,7 @@ div.citation-background {
 }
 
 
-.xl-title {
-    font-weight: 700;
-    font-size: 4.3em;
-    line-height: 1.2;
-    font-family: "Poppins-Bold";
-}
+
 
     .seperating-line:after {
         border-bottom: 4px solid black;
@@ -264,6 +256,23 @@ font-size:16px;
     line-height: 28.8px;
 }
 
+.xl-title {
+    line-height: 1.6;
+    font-size: 3em;
+}
+
+.bulleted-content .zpelement div {
+    text-align: center;
+}
+
+.theme-container {
+    padding-bottom: 80px;
+}
+
+.title-container {
+    padding-top: 80px;
+}
+
 
 // Extra small devices (portrait phones, less than 576px)
 // No media query for `xs` since this is the default in Bootstrap
@@ -272,12 +281,64 @@ font-size:16px;
 }
     // Medium devices (tablets, 768px and up)
     @media (min-width: 768px) {
+
+        .zpcontainer {
+            padding: 1em;
+        }
+
+        .xl-title {
+            line-height: 1.6;
+            font-size: 3em;
+        }
+
+        .page-footer {
+            margin: 0 auto;
+        }
         .zpcontainer {
             padding: 1em;
         }
     }
     // Large devices (desktops, 992px and up)
     @media (min-width: 992px) {
+
+        .fbolinx-screenshots img {
+            height: 258px !important;
+            width: 540px !important;
+        }
+
+        .screenshot-container .title-container {
+            text-align: left;
+        }
+
+        .bulleted-content .zpelement div {
+            text-align: left;
+        }
+
+        .plane-image img {
+            height: 358px !important;
+            width: 540px !important;
+        }
+
+        .large-title {
+            font-weight: 400;
+            font-size: 50px;
+        }
+
+        .xl-title {
+            font-weight: 700;
+            font-size: 4.3em;
+            line-height: 1.2;
+            font-family: "Poppins-Bold";
+        }
+
+        .theme-container {
+            padding-bottom: 80px;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+         
+            flex-flow: row-reverse;
+        }
 
 
         .zpcontainer {
@@ -286,14 +347,22 @@ font-size:16px;
             height: 100%;
             padding: 1em;
         }
+        .title-container {
+            padding-top: 80px;
+        }
+
     }
     // Extra large devices (large desktops, 1200px and up)
     @media (min-width: 1200px) {
 
-        .title-container {
-            margin-left: 60px;
-            padding-top:100px;
+        .xl-title {
+            font-weight: 700;
+            font-size: 4.3em;
+            line-height: 1.2;
+            font-family: "Poppins-Bold";
         }
+
+    
 
         .zpcontainer {
             width: 1140px;
