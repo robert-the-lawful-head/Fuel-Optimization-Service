@@ -124,6 +124,14 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "supplierId")]
     public int? SupplierId { get; set; }
 
+    /// <summary>
+    /// Transaction Reconciliation Comparisons:             0 = Quoted price-per-unit             1 = Company-adjusted price-per-unit             2 = Quoted price-per-unit and quoted volume             3 = Company-adjusted price-per-unit and quoted volume    * `QuotedUnitPrice` - Quoted price-per-unit  * `CompanyAdjustedUnitPrice` - Company-adjusted price-per-unit  * `QuotedUnitPriceAndVolume` - Quoted price-per-unit and quoted volume  * `CompanyAdjustedUnitPriceAndVolume` - Company-adjusted price-per-unit and quoted volume  
+    /// </summary>
+    /// <value>Transaction Reconciliation Comparisons:             0 = Quoted price-per-unit             1 = Company-adjusted price-per-unit             2 = Quoted price-per-unit and quoted volume             3 = Company-adjusted price-per-unit and quoted volume    * `QuotedUnitPrice` - Quoted price-per-unit  * `CompanyAdjustedUnitPrice` - Company-adjusted price-per-unit  * `QuotedUnitPriceAndVolume` - Quoted price-per-unit and quoted volume  * `CompanyAdjustedUnitPriceAndVolume` - Company-adjusted price-per-unit and quoted volume  </value>
+    [DataMember(Name="transactionReconciliationComparisonType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "transactionReconciliationComparisonType")]
+    public int? TransactionReconciliationComparisonType { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -148,6 +156,7 @@ namespace IO.Swagger.Model {
       sb.Append("  TailNumbers: ").Append(TailNumbers).Append("\n");
       sb.Append("  DispatchEmail: ").Append(DispatchEmail).Append("\n");
       sb.Append("  SupplierId: ").Append(SupplierId).Append("\n");
+      sb.Append("  TransactionReconciliationComparisonType: ").Append(TransactionReconciliationComparisonType).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

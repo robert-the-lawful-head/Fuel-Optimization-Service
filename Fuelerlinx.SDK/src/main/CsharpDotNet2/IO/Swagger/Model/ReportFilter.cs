@@ -1,0 +1,93 @@
+using System;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+
+namespace IO.Swagger.Model {
+
+  /// <summary>
+  /// 
+  /// </summary>
+  [DataContract]
+  public class ReportFilter {
+    /// <summary>
+    /// Gets or Sets StartDate
+    /// </summary>
+    [DataMember(Name="startDate", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "startDate")]
+    public DateTime? StartDate { get; set; }
+
+    /// <summary>
+    /// Gets or Sets EndDate
+    /// </summary>
+    [DataMember(Name="endDate", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "endDate")]
+    public DateTime? EndDate { get; set; }
+
+    /// <summary>
+    /// Gets or Sets TailNumberList
+    /// </summary>
+    [DataMember(Name="tailNumberList", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "tailNumberList")]
+    public List<string> TailNumberList { get; set; }
+
+    /// <summary>
+    /// Gets or Sets AllowedInvoiceStatusesList
+    /// </summary>
+    [DataMember(Name="allowedInvoiceStatusesList", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "allowedInvoiceStatusesList")]
+    public List<int?> AllowedInvoiceStatusesList { get; set; }
+
+    /// <summary>
+    /// Gets or Sets AirportIcao
+    /// </summary>
+    [DataMember(Name="airportIcao", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "airportIcao")]
+    public string AirportIcao { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    [DataMember(Name="dateInterval", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "dateInterval")]
+    public int? DateInterval { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Currency
+    /// </summary>
+    [DataMember(Name="currency", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "currency")]
+    public string Currency { get; set; }
+
+
+    /// <summary>
+    /// Get the string presentation of the object
+    /// </summary>
+    /// <returns>String presentation of the object</returns>
+    public override string ToString()  {
+      var sb = new StringBuilder();
+      sb.Append("class ReportFilter {\n");
+      sb.Append("  StartDate: ").Append(StartDate).Append("\n");
+      sb.Append("  EndDate: ").Append(EndDate).Append("\n");
+      sb.Append("  TailNumberList: ").Append(TailNumberList).Append("\n");
+      sb.Append("  AllowedInvoiceStatusesList: ").Append(AllowedInvoiceStatusesList).Append("\n");
+      sb.Append("  AirportIcao: ").Append(AirportIcao).Append("\n");
+      sb.Append("  DateInterval: ").Append(DateInterval).Append("\n");
+      sb.Append("  Currency: ").Append(Currency).Append("\n");
+      sb.Append("}\n");
+      return sb.ToString();
+    }
+
+    /// <summary>
+    /// Get the JSON string presentation of the object
+    /// </summary>
+    /// <returns>JSON string presentation of the object</returns>
+    public string ToJson() {
+      return JsonConvert.SerializeObject(this, Formatting.Indented);
+    }
+
+}
+}

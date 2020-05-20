@@ -27,6 +27,27 @@ namespace IO.Swagger.Model {
     public Time TimeUnit { get; set; }
 
     /// <summary>
+    /// Gets or Sets EstTotalFlightTime
+    /// </summary>
+    [DataMember(Name="estTotalFlightTime", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "estTotalFlightTime")]
+    public string EstTotalFlightTime { get; set; }
+
+    /// <summary>
+    /// Gets or Sets LegDistance
+    /// </summary>
+    [DataMember(Name="legDistance", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "legDistance")]
+    public string LegDistance { get; set; }
+
+    /// <summary>
+    /// Gets or Sets TankeringPenalty
+    /// </summary>
+    [DataMember(Name="tankeringPenalty", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "tankeringPenalty")]
+    public string TankeringPenalty { get; set; }
+
+    /// <summary>
     /// Gets or Sets LegNumber
     /// </summary>
     [DataMember(Name="legNumber", EmitDefaultValue=false)]
@@ -43,6 +64,9 @@ namespace IO.Swagger.Model {
       sb.Append("class TripTimeResults {\n");
       sb.Append("  Items: ").Append(Items).Append("\n");
       sb.Append("  TimeUnit: ").Append(TimeUnit).Append("\n");
+      sb.Append("  EstTotalFlightTime: ").Append(EstTotalFlightTime).Append("\n");
+      sb.Append("  LegDistance: ").Append(LegDistance).Append("\n");
+      sb.Append("  TankeringPenalty: ").Append(TankeringPenalty).Append("\n");
       sb.Append("  LegNumber: ").Append(LegNumber).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

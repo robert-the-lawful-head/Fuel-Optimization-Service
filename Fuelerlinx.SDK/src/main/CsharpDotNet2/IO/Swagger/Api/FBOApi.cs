@@ -12,6 +12,12 @@ namespace IO.Swagger.Api
     public interface IFBOApi
     {
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteFboAliasResponse</returns>
+        DeleteFboAliasResponse DeleteFboAlias (int? id);
+        /// <summary>
         /// Delete company-specific details for a particular FBO. 
         /// </summary>
         /// <param name="fboDetailsByCompanyId"></param>
@@ -30,6 +36,17 @@ namespace IO.Swagger.Api
         /// <param name="acukwikId"></param>
         /// <returns>FBOLinxFBOResponse</returns>
         FBOLinxFBOResponse GetFBOLinxFboByAcukwikId (int? acukwikId);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="icao"></param>
+        /// <returns>FboAliasListResponse</returns>
+        FboAliasListResponse GetFboAliasByAirport (string icao);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>FboAliasListResponse</returns>
+        FboAliasListResponse GetFboAliasList ();
         /// <summary>
         /// Fetch company-specific details for a particular FBO based on the provided [fboDetailsByCompanyId]. 
         /// </summary>
@@ -50,6 +67,12 @@ namespace IO.Swagger.Api
         /// <returns>FboDetailsByCompanyNotesResponse</returns>
         FboDetailsByCompanyNotesResponse GetFboDetailsByCompanyNotes (int? fboDetailsByCompanyId);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostFboAliasResponse</returns>
+        PostFboAliasResponse PostFboAliasAsync (PostFboAliasRequest body);
+        /// <summary>
         /// Add company-specific details for a particular FBO.  If a record already exists for this FBO, the previous record will be replaced. 
         /// </summary>
         /// <param name="body"></param>
@@ -61,6 +84,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostFboDetailsByCompanyNotesResponse</returns>
         PostFboDetailsByCompanyNotesResponse PostFboDetailsByCompanyNotes (PostFboDetailsByCompanyNotesRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateFboAliasResponse</returns>
+        UpdateFboAliasResponse UpdateFboAlias (UpdateFboAliasRequest body);
         /// <summary>
         /// Update company-specific details for a particular FBO. 
         /// </summary>
@@ -127,6 +156,43 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteFboAliasResponse</returns>            
+        public DeleteFboAliasResponse DeleteFboAlias (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteFboAlias");
+            
+    
+            var path = "/api/FBO/fboAlias/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteFboAlias: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteFboAlias: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteFboAliasResponse) ApiClient.Deserialize(response.Content, typeof(DeleteFboAliasResponse), response.Headers);
+        }
     
         /// <summary>
         /// Delete company-specific details for a particular FBO. 
@@ -242,6 +308,75 @@ path = path.Replace("{" + "noteId" + "}", ApiClient.ParameterToString(noteId));
                 throw new ApiException ((int)response.StatusCode, "Error calling GetFBOLinxFboByAcukwikId: " + response.ErrorMessage, response.ErrorMessage);
     
             return (FBOLinxFBOResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxFBOResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="icao"></param> 
+        /// <returns>FboAliasListResponse</returns>            
+        public FboAliasListResponse GetFboAliasByAirport (string icao)
+        {
+            
+            // verify the required parameter 'icao' is set
+            if (icao == null) throw new ApiException(400, "Missing required parameter 'icao' when calling GetFboAliasByAirport");
+            
+    
+            var path = "/api/FBO/fboAlias/by-airport/{icao}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "icao" + "}", ApiClient.ParameterToString(icao));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetFboAliasByAirport: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetFboAliasByAirport: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FboAliasListResponse) ApiClient.Deserialize(response.Content, typeof(FboAliasListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>FboAliasListResponse</returns>            
+        public FboAliasListResponse GetFboAliasList ()
+        {
+            
+    
+            var path = "/api/FBO/fboAlias/list";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetFboAliasList: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetFboAliasList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FboAliasListResponse) ApiClient.Deserialize(response.Content, typeof(FboAliasListResponse), response.Headers);
         }
     
         /// <summary>
@@ -361,6 +496,40 @@ path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName))
         }
     
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostFboAliasResponse</returns>            
+        public PostFboAliasResponse PostFboAliasAsync (PostFboAliasRequest body)
+        {
+            
+    
+            var path = "/api/FBO/fboAlias";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostFboAliasAsync: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostFboAliasAsync: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostFboAliasResponse) ApiClient.Deserialize(response.Content, typeof(PostFboAliasResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Add company-specific details for a particular FBO.  If a record already exists for this FBO, the previous record will be replaced. 
         /// </summary>
         /// <param name="body"></param> 
@@ -426,6 +595,40 @@ path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName))
                 throw new ApiException ((int)response.StatusCode, "Error calling PostFboDetailsByCompanyNotes: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostFboDetailsByCompanyNotesResponse) ApiClient.Deserialize(response.Content, typeof(PostFboDetailsByCompanyNotesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateFboAliasResponse</returns>            
+        public UpdateFboAliasResponse UpdateFboAlias (UpdateFboAliasRequest body)
+        {
+            
+    
+            var path = "/api/FBO/fboAlias";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateFboAlias: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateFboAlias: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateFboAliasResponse) ApiClient.Deserialize(response.Content, typeof(UpdateFboAliasResponse), response.Headers);
         }
     
         /// <summary>

@@ -27,6 +27,20 @@ namespace IO.Swagger.Model {
     public string Currency { get; set; }
 
     /// <summary>
+    /// Gets or Sets TotalFlightCost
+    /// </summary>
+    [DataMember(Name="totalFlightCost", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "totalFlightCost")]
+    public double? TotalFlightCost { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ExtraFuelCost
+    /// </summary>
+    [DataMember(Name="extraFuelCost", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "extraFuelCost")]
+    public double? ExtraFuelCost { get; set; }
+
+    /// <summary>
     /// Gets or Sets LegNumber
     /// </summary>
     [DataMember(Name="legNumber", EmitDefaultValue=false)]
@@ -43,6 +57,8 @@ namespace IO.Swagger.Model {
       sb.Append("class TripCostResults {\n");
       sb.Append("  Items: ").Append(Items).Append("\n");
       sb.Append("  Currency: ").Append(Currency).Append("\n");
+      sb.Append("  TotalFlightCost: ").Append(TotalFlightCost).Append("\n");
+      sb.Append("  ExtraFuelCost: ").Append(ExtraFuelCost).Append("\n");
       sb.Append("  LegNumber: ").Append(LegNumber).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

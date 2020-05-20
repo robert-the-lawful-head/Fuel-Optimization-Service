@@ -28,6 +28,7 @@ Name | Type | Description | Notes
 **GroupMargin100Llmargin** | **double?** |  | [optional] 
 **GroupMargin100Lltype** | **int?** |  | [optional] 
 **FuelDeskEmail** | **string** |  | [optional] 
+**Website** | **string** |  | [optional] 
 **MainPhone** | **string** |  | [optional] 
 **Extension** | **string** |  | [optional] 
 **DefaultMarginTypeJetA** | **int?** |  | [optional] 

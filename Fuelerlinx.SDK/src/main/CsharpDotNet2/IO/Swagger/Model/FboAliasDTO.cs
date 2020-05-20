@@ -11,7 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class CompanySettingsDTO {
+  public class FboAliasDTO {
     /// <summary>
     /// Gets or Sets Id
     /// </summary>
@@ -20,26 +20,25 @@ namespace IO.Swagger.Model {
     public int? Id { get; set; }
 
     /// <summary>
-    /// 
+    /// Gets or Sets Icao
     /// </summary>
-    /// <value></value>
-    [DataMember(Name="settingId", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "settingId")]
-    public int? SettingId { get; set; }
+    [DataMember(Name="icao", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "icao")]
+    public string Icao { get; set; }
 
     /// <summary>
-    /// Gets or Sets CompanyId
+    /// Gets or Sets Alias
     /// </summary>
-    [DataMember(Name="companyId", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "companyId")]
-    public int? CompanyId { get; set; }
+    [DataMember(Name="alias", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "alias")]
+    public string Alias { get; set; }
 
     /// <summary>
-    /// Gets or Sets SettingValue
+    /// Gets or Sets FboStandard
     /// </summary>
-    [DataMember(Name="settingValue", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "settingValue")]
-    public string SettingValue { get; set; }
+    [DataMember(Name="fboStandard", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fboStandard")]
+    public string FboStandard { get; set; }
 
 
     /// <summary>
@@ -48,11 +47,11 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class CompanySettingsDTO {\n");
+      sb.Append("class FboAliasDTO {\n");
       sb.Append("  Id: ").Append(Id).Append("\n");
-      sb.Append("  SettingId: ").Append(SettingId).Append("\n");
-      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
-      sb.Append("  SettingValue: ").Append(SettingValue).Append("\n");
+      sb.Append("  Icao: ").Append(Icao).Append("\n");
+      sb.Append("  Alias: ").Append(Alias).Append("\n");
+      sb.Append("  FboStandard: ").Append(FboStandard).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
