@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 <a name="getaircrafttailsgroupedbycompany"></a>
 # **GetAircraftTailsGroupedByCompany**
-> FbolinxAircraftDTO GetAircraftTailsGroupedByCompany ()
+> FboLinxAircraftsResponse GetAircraftTailsGroupedByCompany ()
 
 
 
@@ -44,7 +44,7 @@ namespace Example
 
             try
             {
-                FbolinxAircraftDTO result = apiInstance.GetAircraftTailsGroupedByCompany();
+                FboLinxAircraftsResponse result = apiInstance.GetAircraftTailsGroupedByCompany();
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -61,7 +61,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**FbolinxAircraftDTO**](FbolinxAircraftDTO.md)
+[**FboLinxAircraftsResponse**](FboLinxAircraftsResponse.md)
 
 ### Authorization
 

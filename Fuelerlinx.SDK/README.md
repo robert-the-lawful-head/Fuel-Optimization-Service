@@ -454,6 +454,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FboByCompanyNotesDTO](docs/FboByCompanyNotesDTO.md)
  - [IO.Swagger.Model.FboDetailsByCompanyNotesResponse](docs/FboDetailsByCompanyNotesResponse.md)
  - [IO.Swagger.Model.FboDetailsByCompanyResponse](docs/FboDetailsByCompanyResponse.md)
+ - [IO.Swagger.Model.FboLinxAircraftsResponse](docs/FboLinxAircraftsResponse.md)
  - [IO.Swagger.Model.FboLinxContact](docs/FboLinxContact.md)
  - [IO.Swagger.Model.FboLinxFbo](docs/FboLinxFbo.md)
  - [IO.Swagger.Model.FboLinxGroup](docs/FboLinxGroup.md)
