@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, HostListener } from "@angular/core";
 import { NgbCarouselConfig } from "@ng-bootstrap/ng-bootstrap";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import {
@@ -63,6 +63,7 @@ export class LandingSiteLayoutComponent implements OnInit {
     public amstatLogo = "../../../assets/img/Amstat.png";
     public fbodirectorLogo = "../../../assets/img/fbodirector.png";
     public fbopartnersLogo = "../../../assets/img/fbopartners.png";
+    public planeFrontImage = "../../../assets/img/landing-page/DSC03168.jpg";
 
     public carouselImages: Array<any> = [
         this.slideHalfImage1URL,
@@ -88,6 +89,7 @@ export class LandingSiteLayoutComponent implements OnInit {
     public rememberMe: any;
     public isLoggingIn = false;
     public error = "";
+    public isSticky: boolean = false;    
 
     constructor(
         private landingsiteService: LandingsiteService,
@@ -288,5 +290,10 @@ export class LandingSiteLayoutComponent implements OnInit {
             default:
                 break;
         }
+    }
+    
+    @HostListener('window:scroll', ['$event'])
+    public checkScroll(): void {
+        this.isSticky = window.pageYOffset >= 171;
     }
 }
