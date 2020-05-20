@@ -42,7 +42,7 @@ namespace FBOLinx.Web.Models
         public int FboId { get; set; }
         [Column("GroupID")]
         public int? GroupId { get; set; }
-
+        public ICollection<AccessTokens> AccessTokens { get; set; }
         public string RoleDescription
         {
             get { return Utilities.Enum.GetDescription(Role); }

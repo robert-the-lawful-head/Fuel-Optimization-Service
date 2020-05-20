@@ -14,11 +14,11 @@ import * as SharedEvents from "../../../models/sharedEvents";
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "Customers",
-        link: "#/default-layout/customers",
+        link: "/default-layout/customers",
     },
 ];
 

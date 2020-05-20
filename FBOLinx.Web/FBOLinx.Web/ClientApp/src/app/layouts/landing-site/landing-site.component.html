@@ -117,10 +117,8 @@
 
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -177,66 +175,24 @@
                         </div>
                     </div>
                     <div class="text-center mb-5">
-                        <div class="btn-group-lg" role="group" aria-label="Basic Example">
-                            <button type="button" class="btn">All</button>
-                            <button type="button" class="btn no-border-btn">Market Intelligence</button>
-                            <button type="button" class="btn">Point of Sale</button>
-                            <button type="button" class="btn">FBO Chains</button>
+                    <div class="col-12 text-center integration-partners">
+                        <mat-button-toggle-group
+                            name="integration-partners"
+                            value="{{integrationPartnerView}}"
+                            aria-label="Integration Partners"
+                            (change)="changeIntegrationPartnerView($event)"
+                        >
+                            <mat-button-toggle value="0">All</mat-button-toggle>
+                            <mat-button-toggle value="1">Market Intelligence</mat-button-toggle>
+                            <mat-button-toggle value="2">Point of Sale</mat-button-toggle>
+                            <mat-button-toggle value="3">FBO Chains</mat-button-toggle>
+                        </mat-button-toggle-group>
                         </div>
                     </div>
                     <div class="container pt-3">
-                        <div class="row">
-                            <div class="col-4 mb-4">
-                                <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/FuelerLinxLogo.png">
-                                </a>
-                            </div>
-                            <div class="col-4 mb-4">
-                                <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/X1.png">
-                                </a>
-                            </div>
-                            <div class="col-4 mb-4">
-                                <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/million-air.png">
-                                </a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4 mb-4">
-                                <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/FlightAware.png">
-                                </a>
-                            </div>
-                            <div class="col-4 mb-4">
-                                <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/titan-1.png">
-                                </a>
-                            </div>
-                            <div class="col-4 mb-4">
-                                <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/JetAviation.png">
-                                </a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4 mb-4">
-                                <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/Amstat.png">
-                                </a>
-                            </div>
-                            <div class="col-4 mb-4">
-                                <a>
-                                    <img class=" " src="/../../../assets/img/landing-page/fbodirector.png">
-                                </a>
-                            </div>
-                            <div class="col-4 mb-4">
-                                <div>
-                                    <a>
-                                        <img class=" " src="/../../../assets/img/landing-page/fbopartners.png">
-                                    </a>
-                                </div>
-
+                    <div *ngFor="let partnerGroup of integrationPartners" class="d-flex justify-content-around mb-4">
+                        <div *ngFor="let partner of partnerGroup">
+                            <img src="{{partner}}" class="integration-partner-logo" alt="integration-partner">
                             </div>
                         </div>
                     </div>

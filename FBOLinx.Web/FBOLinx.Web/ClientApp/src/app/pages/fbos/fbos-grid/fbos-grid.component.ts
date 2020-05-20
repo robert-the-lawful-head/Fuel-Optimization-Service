@@ -31,7 +31,7 @@ import { fboChangedEvent } from "../../../models/sharedEvents";
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "FBOs",
@@ -60,6 +60,13 @@ export class FbosGridComponent implements OnInit {
     public resultsLength = 0;
     public canManageFbo = false;
     public isDeleting: boolean;
+    public searchValue = "";
+
+    public pageIndexFbos = 0;
+    public pageSizeFbos = 25;
+
+    public tableSortFbos = "icao";
+    public tableSortOrderFbos = "asc";
 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -111,7 +118,33 @@ export class FbosGridComponent implements OnInit {
 
             this.checkExistingPrices();
         }
-        
+
+        if (localStorage.getItem("pageIndexFbos")) {
+            this.paginator.pageIndex = localStorage.getItem("pageIndexFbos") as any;
+        } else {
+            this.paginator.pageIndex = 0;
+        }
+
+        if (sessionStorage.getItem("pageSizeFbos")) {
+            this.pageSizeFbos = sessionStorage.getItem("pageSizeFbos") as any;
+        } else {
+            this.pageSizeFbos = 25;
+        }
+
+        if (sessionStorage.getItem("tableSortValueFbos")) {
+            this.tableSortFbos = sessionStorage.getItem("tableSortValueFbos") as any;
+        }
+
+        if (sessionStorage.getItem("tableSortValueDirectionFbos")) {
+            this.tableSortOrderFbos = sessionStorage.getItem(
+                "tableSortValueDirectionFbos"
+            ) as any;
+        }
+
+        if (sessionStorage.getItem("searchValueFbos")) {
+            this.searchValue = sessionStorage.getItem("searchValueFbos").trim().toLowerCase();
+            this.fbosDataSource.filter = sessionStorage.getItem("searchValueFbos").trim().toLowerCase();
+        }
     }
 
     public deleteRecord(record) {
@@ -177,6 +210,7 @@ export class FbosGridComponent implements OnInit {
                             duration: 3000,
                             panelClass: ["blue-snackbar"],
                         });
+                        sessionStorage.setItem("isNewFbo", "yes");
                         this.editRecord(newFbo, null);
                     });
                 }
@@ -212,6 +246,10 @@ export class FbosGridComponent implements OnInit {
 
     public applyFilter(filterValue: string) {
         this.fbosDataSource.filter = filterValue.trim().toLowerCase();
+        sessionStorage.setItem("searchValueFbos", filterValue);
+        if (!filterValue) {
+            sessionStorage.removeItem("searchValueFbos");
+        }
     }
 
     public manageFBO(fbo) {
@@ -229,6 +267,7 @@ export class FbosGridComponent implements OnInit {
             }
 
             this.sharedService.currentUser.impersonatedRole = 1;
+            sessionStorage.setItem("impersonatedrole", "1");
             this.sharedService.currentUser.fboId = result.oid;
             sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
             this.sharedService.emitChange(fboChangedEvent);
@@ -266,5 +305,26 @@ export class FbosGridComponent implements OnInit {
                     });
                 }
             });
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem("pageIndexFbos", event.pageIndex);
+        sessionStorage.setItem(
+            "pageSizeFbosValue",
+            this.paginator.pageSize.toString()
+        );
+    }
+
+    public saveHeader(value) {
+        if (value) {
+            sessionStorage.setItem("tableSortValueFbos", value);
+        }
+
+        if (this.sort.direction) {
+            sessionStorage.setItem(
+                "tableSortValueDirectionFbos",
+                this.sort.direction
+            );
+        }
     }
 }

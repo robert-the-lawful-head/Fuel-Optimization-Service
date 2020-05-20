@@ -18,6 +18,7 @@ namespace FBOLinx.Web.DTO
         public int? FuelerLinxId { get; set; }
         public bool? Network { get; set; } = false;
         public int? GroupId { get; set; }
+        public int FboId { get; set; }
         public PricingTemplate.MarginTypes? MarginType { get; set; }
         public double? FboPrice { get; set; }
         public double? CustomerMarginAmount { get; set; }
@@ -31,6 +32,13 @@ namespace FBOLinx.Web.DTO
         public string CustomerCompanyTypeName { get; set; }
         public bool HasBeenViewed { get; set; }
         public bool IsPricingExpired { get; set; }
+        public string TailNumbers { get; set; }
+        public DateTime? ExpirationDate { get; set; }
+        public string Icao { get; set; }
+        public string Iata { get; set; }
+        public string Notes { get; set; }
+        public string Fbo { get; set; }
+        public string Group { get; set; }
 
         public double? AllInPrice
         {
@@ -39,7 +47,7 @@ namespace FBOLinx.Web.DTO
                 if (!MarginType.HasValue)
                     return 0;
                 if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
-                    return (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault())) * (1 + (FboFeeAmount / 100.0));
+                    return (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
                 if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
                     return (FboPrice.GetValueOrDefault() - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
                 if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)

@@ -9,12 +9,15 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.Web.Services
 {
     public interface IUserService
     {
         User Authenticate(string username, string password, bool resetPassword);
+        User CheckUserByCredentials(string username, string password);
         System.Collections.Generic.IEnumerable<User> GetAll();
         User CreateFBOLoginIfNeeded(Fbos fboRecord);
         User CreateGroupLoginIfNeeded(Group groupRecord);
@@ -60,6 +63,33 @@ namespace FBOLinx.Web.Services
             UpdateLoginCount(user);
             SetAuthToken(user);
             
+            return user;
+        }
+
+        public User CheckUserByCredentials(string username, string password)
+        {
+            Utilities.Hash hashUtility = new Utilities.Hash();
+            var user = _Context.User.SingleOrDefault(x => x.Username == username);
+
+            // return null if user not found
+            if (user == null)
+            {
+                user = CheckForUserOnOldLogins(username, password);
+                if (user == null)
+                    return null;
+            }
+            else
+            {
+                if (!hashUtility.VerifyHashedPassword(user.Password, password))
+                {
+                    return null;
+                }
+            }
+
+            if (!user.Active)
+            {
+                return null;
+            }
             return user;
         }
 

@@ -24,9 +24,11 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private IServiceScopeFactory _serviceScopeFactory;
+        private GroupFboService _groupFboService;
 
-        public FbosController(FboLinxContext context, IServiceScopeFactory serviceScopeFactory)
+        public FbosController(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService)
         {
+            _groupFboService = groupFboService;
             _context = context;
             _serviceScopeFactory = serviceScopeFactory;
         }
@@ -169,30 +171,17 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            Fbos fbo = new Fbos
-            {
-                Fbo = request.Fbo,
-                GroupId = request.GroupId,
-                AcukwikFBOHandlerId = request.AcukwikFboHandlerId
-            };
+            var fbo = await _groupFboService.CreateNewFbo(request);
 
-            _context.Fbos.Add(fbo);
-            await _context.SaveChangesAsync();
+            PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
 
-            Fboairports fboairport = new Fboairports
-            {
-                Icao = request.Icao,
-                Iata = request.Iata,
-                Fboid = fbo.Oid
-            };
-            _context.Fboairports.Add(fboairport);
-            await _context.SaveChangesAsync();
+            await pricingTemplateService.FixCustomCustomerTypes(request.GroupId ?? 0, fbo.Oid);
 
             return CreatedAtAction("GetFbo", new { id = fbo.Oid }, new
             {
                 request.Icao,
                 request.Iata,
-                Active = false,
+                Active = true,
                 request.Fbo,
                 fbo.Oid
             });
@@ -206,52 +195,23 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            Group group = new Group
+            try
             {
-                GroupName = request.Group,
-                Active = true
-            };
-            _context.Group.Add(group);
-            await _context.SaveChangesAsync();
+                var fbo = await _groupFboService.CreateNewFbo(request);
 
-            Fbos fbo = new Fbos
-            {
-                Fbo = request.Fbo,
-                GroupId = group.Oid,
-                AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
-                Active = true
-            };
-
-            _context.Fbos.Add(fbo);
-            await _context.SaveChangesAsync();
-
-            Fboairports fboairport = new Fboairports
-            {
-                Icao = request.Icao,
-                Iata = request.Iata,
-                Fboid = fbo.Oid
-            };
-            _context.Fboairports.Add(fboairport);
-            await _context.SaveChangesAsync();
-
-            var task = Task.Run(async () =>
-            {
-                using (var scope = _serviceScopeFactory.CreateScope())
+                return CreatedAtAction("GetFbo", new {id = fbo.Oid}, new
                 {
-                    var db = scope.ServiceProvider.GetService<FboLinxContext>();
-                    await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Oid);
-                }
-
-            });
-
-            return CreatedAtAction("GetFbo", new { id = fbo.Oid }, new
+                    request.Icao,
+                    request.Iata,
+                    Active = true,
+                    request.Fbo,
+                    fbo.Oid
+                });
+            }
+            catch (System.Exception exception)
             {
-                request.Icao,
-                request.Iata,
-                Active = false,
-                request.Fbo,
-                fbo.Oid
-            });
+                return Ok(exception.Message);
+            }
         }
 
         // DELETE: api/Fbos/5

@@ -16,3 +16,8 @@
     transform: translateY(-50%);
 }
 
+.no-arrow {
+    .arrow {
+        visibility: hidden;
+    }
+}

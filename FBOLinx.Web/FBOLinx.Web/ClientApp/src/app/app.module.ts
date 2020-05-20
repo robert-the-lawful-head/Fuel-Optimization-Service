@@ -14,6 +14,7 @@ import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor"
 // Angular Material Modules
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatCardModule } from "@angular/material/card";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -45,10 +46,6 @@ import { NiComponentsModule } from "./ni-components/ni-components.module";
 import { PagesModule } from "./pages/pages.module";
 
 import { DefaultLayoutComponent } from "./layouts/default/default.component";
-import { BoxedLayoutComponent } from "./layouts/boxed/boxed.component";
-import { DefaultCLayoutComponent } from "./layouts/default-c/default-c.component";
-import { BoxedCLayoutComponent } from "./layouts/boxed-c/boxed-c.component";
-import { ExtraLayoutComponent } from "./layouts/extra/extra.component";
 import { LandingSiteLayoutComponent } from "./layouts/landing-site/landing-site.component";
 
 // Services
@@ -93,10 +90,6 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
     declarations: [
         AppComponent,
         DefaultLayoutComponent,
-        BoxedLayoutComponent,
-        DefaultCLayoutComponent,
-        BoxedCLayoutComponent,
-        ExtraLayoutComponent,
         LandingSiteLayoutComponent,
     ],
     imports: [
@@ -119,6 +112,7 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         NgbPopoverModule,
         MatAutocompleteModule,
         MatButtonModule,
+        MatButtonToggleModule,
         MatCardModule,
         MatCheckboxModule,
         MatDatepickerModule,
@@ -140,7 +134,7 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         MatToolbarModule,
         MatTooltipModule,
         TextMaskModule,
-        RouterModule.forRoot(routes, { useHash: true }),
+        RouterModule.forRoot(routes),
     ],
     exports: [],
     entryComponents: [],

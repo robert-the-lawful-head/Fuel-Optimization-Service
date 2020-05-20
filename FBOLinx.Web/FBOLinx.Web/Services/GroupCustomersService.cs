@@ -39,7 +39,7 @@ namespace FBOLinx.Web.Services
                     cibg.Username = cust.Username;
                     cibg.Password = cust.Password;
                     cibg.Joined = cust.Joined;
-                    cibg.Active = cust.Active;
+                    cibg.Active = true;
                     cibg.Distribute = cust.Distribute;
                     cibg.Network = cust.Network;
                     cibg.MainPhone = cust.MainPhone;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
@@ -26,14 +27,16 @@ namespace FBOLinx.Web.Controllers
         private IHttpContextAccessor _HttpContextAccessor;
         private IFileProvider _FileProvider;
         private IOptions<MailSettings> _MailSettings;
+        private JwtManager _jwtManager;
 
-        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings)
+        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager)
         {
             _MailSettings = mailSettings;
             _FileProvider = fileProvider;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
             _fuelerLinxContext = fuelerLinxContext;
+            _jwtManager = jwtManager;
         }
 
         // GET: fbo/5/log/10
@@ -104,8 +107,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var currentPrices = await (from f in _context.Fboprices
-                where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
-                && f.Fboid == fboId && f.Expired != true
+                where f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
                 select f).ToListAsync();
 
             if (currentPrices.Count == 0)
@@ -127,7 +129,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
 
             await Task.Run(() =>
-                PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context, _fuelerLinxContext, request, _FileProvider, _HttpContextAccessor));
+                PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context, _fuelerLinxContext, request, _FileProvider, _HttpContextAccessor, _jwtManager));
 
             return Ok();
         }
@@ -144,7 +146,7 @@ namespace FBOLinx.Web.Controllers
             if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
                 return BadRequest(ModelState);
 
-            Services.PriceDistributionService service = new PriceDistributionService(_MailSettings.Value, _context, _fuelerLinxContext, _FileProvider, _HttpContextAccessor);
+            Services.PriceDistributionService service = new PriceDistributionService(_MailSettings.Value, _context, _fuelerLinxContext, _FileProvider, _HttpContextAccessor, _jwtManager);
             string preview = await service.GeneratePreview(request);
 
             return Ok(new {preview = preview});

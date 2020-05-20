@@ -3,23 +3,11 @@ import { Routes, RouterModule } from "@angular/router";
 
 // Layout Components
 import { DefaultLayoutComponent } from "./layouts/default/default.component";
-import { BoxedLayoutComponent } from "./layouts/boxed/boxed.component";
-import { DefaultCLayoutComponent } from "./layouts/default-c/default-c.component";
-import { BoxedCLayoutComponent } from "./layouts/boxed-c/boxed-c.component";
-import { ExtraLayoutComponent } from "./layouts/extra/extra.component";
 import { LandingSiteLayoutComponent } from "./layouts/landing-site/landing-site.component";
-
-import { PageSignIn1Component } from "./pages/extra-pages/sign-in-1/sign-in-1.component";
-import { PageSignIn3Component } from "./pages/extra-pages/sign-in-3/sign-in-3.component";
-import { PageSignUp1Component } from "./pages/extra-pages/sign-up-1/sign-up-1.component";
-import { PageForgotComponent } from "./pages/extra-pages/forgot/forgot.component";
-import { PageConfirmComponent } from "./pages/extra-pages/confirm/confirm.component";
-import { Page404Component } from "./pages/extra-pages/page-404/page-404.component";
-import { Page500Component } from "./pages/extra-pages/page-500/page-500.component";
-import { PageLayoutsComponent } from "./pages/layouts/layouts.component";
 
 // Page Components
 import { AuthtokenComponent } from "./pages/auth/authtoken/authtoken.component";
+import { LoginComponent } from "./pages/auth/login/login.component";
 import { CustomersEditComponent } from "./pages/customers/customers-edit/customers-edit.component";
 import { CustomersHomeComponent } from "./pages/customers/customers-home/customers-home.component";
 import { DashboardAdminComponent } from "./pages/dashboards/dashboard-admin/dashboard-admin.component";
@@ -156,32 +144,6 @@ const defaultRoutes: Routes = [
     { path: "**", component: DashboardHomeComponent, canActivate: [AuthGuard] },
 ];
 
-const boxedRoutes: Routes = [
-    { path: "layouts", component: PageLayoutsComponent },
-];
-
-const boxedCRoutes: Routes = [
-    { path: "layouts", component: PageLayoutsComponent },
-];
-
-const defaultCRoutes: Routes = [
-    { path: "layouts", component: PageLayoutsComponent },
-];
-
-const extraRoutes: Routes = [
-    { path: "sign-in", component: PageSignIn1Component },
-    { path: "sign-in-social", component: PageSignIn3Component },
-    { path: "sign-up", component: PageSignUp1Component },
-    { path: "forgot", component: PageForgotComponent },
-    { path: "confirm", component: PageConfirmComponent },
-    { path: "page-404", component: Page404Component },
-    { path: "page-500", component: Page500Component },
-    {
-        path: "authtoken/:token",
-        component: AuthtokenComponent,
-    },
-];
-
 const landingSiteRoutes: Routes = [
     {
         path: "authtoken/:token",
@@ -195,8 +157,8 @@ const landingSiteRoutes: Routes = [
 export const routes: Routes = [
     {
         path: "",
-        redirectTo: "/landing-site-layout",
-        pathMatch: "full",
+        component: LandingSiteLayoutComponent,
+        children: landingSiteRoutes,
     },
     {
         path: "default-layout",
@@ -204,29 +166,8 @@ export const routes: Routes = [
         children: defaultRoutes,
     },
     {
-        path: "default-c-layout",
-        component: DefaultCLayoutComponent,
-        children: defaultCRoutes,
-    },
-    {
-        path: "boxed-layout",
-        component: BoxedLayoutComponent,
-        children: boxedRoutes,
-    },
-    {
-        path: "boxed-c-layout",
-        component: BoxedCLayoutComponent,
-        children: boxedCRoutes,
-    },
-    {
-        path: "extra-layout",
-        component: ExtraLayoutComponent,
-        children: extraRoutes,
-    },
-    {
-        path: "landing-site-layout",
-        component: LandingSiteLayoutComponent,
-        children: landingSiteRoutes,
+        path: "app-login",
+        component: LoginComponent,
     },
     {
         path: "**",

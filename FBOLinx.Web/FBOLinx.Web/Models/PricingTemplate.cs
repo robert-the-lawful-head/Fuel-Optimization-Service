@@ -35,6 +35,8 @@ namespace FBOLinx.Web.Models
         public string Subject { get; set; }
         public short? Type { get; set; }
         public MarginTypes? MarginType { get; set; }
+        [NotMapped]
+        public List<string> TailNumbers { get; set; }
 
         public string MarginTypeProduct
         {

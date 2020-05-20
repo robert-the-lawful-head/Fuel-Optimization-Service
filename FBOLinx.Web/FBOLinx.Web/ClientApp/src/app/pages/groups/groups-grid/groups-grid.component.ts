@@ -9,11 +9,8 @@ import {
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatDialog } from "@angular/material/dialog";
 
 // Services
 import { GroupsService } from "../../../services/groups.service";
@@ -26,7 +23,7 @@ import { DeleteConfirmationComponent } from "../../../shared/components/delete-c
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "Groups",
@@ -52,6 +49,13 @@ export class GroupsGridComponent implements OnInit {
     public groupsDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = ["group", "active", "delete"];
     public resultsLength = 0;
+    public searchValue = "";
+
+    public pageIndexGroups = 0;
+    public pageSizeGroups = 25;
+
+    public tableSortGroups = "group";
+    public tableSortOrderGroups = "asc";
 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -60,7 +64,8 @@ export class GroupsGridComponent implements OnInit {
         public newGroupDialog: MatDialog,
         private groupsService: GroupsService,
         private sharedService: SharedService,
-        public deleteGroupDialog: MatDialog
+        public deleteGroupDialog: MatDialog,
+        private snackBar: MatSnackBar
     ) {}
 
     ngOnInit() {
@@ -73,13 +78,41 @@ export class GroupsGridComponent implements OnInit {
         this.groupsDataSource.sort = this.sort;
         this.groupsDataSource.paginator = this.paginator;
         this.resultsLength = this.groupsData.length;
+
+
+        if (localStorage.getItem("pageIndexGroups")) {
+            this.paginator.pageIndex = localStorage.getItem("pageIndexGroups") as any;
+        } else {
+            this.paginator.pageIndex = 0;
+        }
+
+        if (sessionStorage.getItem("pageSizeGroups")) {
+            this.pageSizeGroups = sessionStorage.getItem("pageSizeGroups") as any;
+        } else {
+            this.pageSizeGroups = 25;
+        }
+
+        if (sessionStorage.getItem("tableSortValueGroups")) {
+            this.tableSortGroups = sessionStorage.getItem("tableSortValueGroups") as any;
+        }
+
+        if (sessionStorage.getItem("tableSortValueGroupsGroups")) {
+            this.tableSortOrderGroups = sessionStorage.getItem(
+                "tableSortValueGroupsGroups"
+            ) as any;
+        }
+
+        if (sessionStorage.getItem("searchValueGroups")) {
+            this.searchValue = sessionStorage.getItem("searchValueGroups").trim().toLowerCase();
+            this.groupsDataSource.filter = sessionStorage.getItem("searchValueGroups").trim().toLowerCase();
+        }
     }
 
     public deleteRecord(record) {
         const dialogRef = this.deleteGroupDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: record, description: "group" },
+                data: { item: record, fullDescription: "You are about to remove this group. This will remove the fbos and all the other data related to the group. Are you sure?" },
             }
         );
 
@@ -88,11 +121,17 @@ export class GroupsGridComponent implements OnInit {
                 return;
             }
             const deleteIndex = this.groupsData.indexOf(record);
+            const filter = this.groupsDataSource.filter;
             this.groupsService.remove(record).subscribe(() => {
                 this.groupsData.splice(deleteIndex, 1);
                 this.groupsDataSource = new MatTableDataSource(this.groupsData);
                 this.groupsDataSource.sort = this.sort;
                 this.groupsDataSource.paginator = this.paginator;
+                this.groupsDataSource.filter = filter;
+                this.snackBar.open(record.groupName + " is deleted", "", {
+                    duration: 2000,
+                    panelClass: ["blue-snackbar"],
+                });
             });
             this.recordDeleted.emit(record);
         });
@@ -123,5 +162,30 @@ export class GroupsGridComponent implements OnInit {
 
     public applyFilter(filterValue: string) {
         this.groupsDataSource.filter = filterValue.trim().toLowerCase();
+        sessionStorage.setItem("searchValueGroups", filterValue);
+        if (!filterValue) {
+            sessionStorage.removeItem("searchValueGroups");
+        }
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem("pageIndexGroups", event.pageIndex);
+        sessionStorage.setItem(
+            "pageSizeGroups",
+            this.paginator.pageSize.toString()
+        );
+    }
+
+    public saveHeader(value) {
+        if (value) {
+            sessionStorage.setItem("tableSortValueGroups", value);
+        }
+
+        if (this.sort.direction) {
+            sessionStorage.setItem(
+                "tableSortValueDirectionGroups",
+                this.sort.direction
+            );
+        }
     }
 }

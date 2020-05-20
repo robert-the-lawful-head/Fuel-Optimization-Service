@@ -22,7 +22,42 @@ namespace FBOLinx.Web.Services
         }
 
         #region Public Methods
-        public async Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId, int customerInfoByGroupId = 0, int pricingTemplateId = 0)
+
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId)
+        {
+            List<CustomerWithPricing> result = new List<CustomerWithPricing>();
+            var fboAirports = await _context.Fboairports.Include(x => x.Fbo).ThenInclude(x => x.Group).Where(x => x.Icao == icao && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true).ToListAsync();
+            if (fboAirports == null)
+                return result;
+            foreach (var fboAirport in fboAirports)
+            {
+                var fbo = await _context.Fbos.Include(x => x.Group).Where(x => x.Oid == fboAirport.Fboid).FirstOrDefaultAsync();
+                var customerInfoByGroup = await _context.CustomerInfoByGroup
+                    .Where(x => x.CustomerId == customerId && x.GroupId == fbo.GroupId).FirstOrDefaultAsync();
+                if (customerInfoByGroup == null)
+                    continue;
+
+                var templates = await GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault());
+                if (templates == null)
+                    continue;
+
+                var pricing =
+                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList());
+                foreach(var price in pricing)
+                {
+                    var template = templates.FirstOrDefault(x => x.Oid == price.PricingTemplateId);
+                    if (template != null && template.TailNumbers != null)
+                        price.TailNumbers = string.Join(",", template.TailNumbers);
+                }
+
+                if (pricing != null)
+                    result.AddRange(pricing);
+            }
+
+            return result;
+        }
+
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId, int customerInfoByGroupId, List<int> pricingTemplateIds)
         {
             _FboId = fboId;
             _GroupId = groupId;
@@ -37,14 +72,14 @@ namespace FBOLinx.Web.Services
 
                 var customerPricingResults = await (from cg in _context.CustomerInfoByGroup
                     join c in _context.Customers on cg.CustomerId equals c.Oid
-                    join cct in _context.CustomCustomerTypes on new {customerId = cg.CustomerId, fboId = _FboId} equals
-                        new
-                        {
-                            customerId = cct.CustomerId,
-                            fboId = cct.Fboid
-                        } into leftJoinCCT
-                    from cct in leftJoinCCT.DefaultIfEmpty()
-                    join pt in _context.PricingTemplate on (cct == null || cct.CustomerType == 0 ? defaultPricingTemplateId : cct.CustomerType) equals pt.Oid into leftJoinPT
+                    //join cct in _context.CustomCustomerTypes on new {customerId = cg.CustomerId, fboId = _FboId} equals
+                    //    new
+                    //    {
+                    //        customerId = cct.CustomerId,
+                    //        fboId = cct.Fboid
+                    //    } into leftJoinCCT
+                    //from cct in leftJoinCCT.DefaultIfEmpty()
+                    join pt in _context.PricingTemplate on fboId equals pt.Fboid into leftJoinPT
                     from pt in leftJoinPT.DefaultIfEmpty()
                     join ppt in _context.PriceTiers.Include("CustomerMargin") on pt.Oid equals ppt.CustomerMargin
                             .TemplateId
@@ -57,8 +92,7 @@ namespace FBOLinx.Web.Services
                     } into leftJoinFF
                     from ff in leftJoinFF.DefaultIfEmpty()
                     join fp in _context.Fboprices.Where(x =>
-                        x.EffectiveFrom.Value < DateTime.Now &&
-                        (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.Now) &&
+                        (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.UtcNow) &&
                         x.Expired != true) on new
                     {
                         fboId = (pt != null ? pt.Fboid : 0),
@@ -88,9 +122,12 @@ namespace FBOLinx.Web.Services
                     join ccot in _context.CustomerCompanyTypes on new { CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(), cg.GroupId} equals new {CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId } 
                     into leftJoinCCOT
                     from ccot in leftJoinCCOT.DefaultIfEmpty()
+                    join fbo in _context.Fbos on pt.Fboid equals fbo.Oid
+                    join fboAirport in _context.Fboairports on fbo.Oid equals fboAirport.Fboid
+                    join groups in _context.Group on fbo.GroupId equals groups.Oid
                     where cg.GroupId == _GroupId
                           && (customerInfoByGroupId == 0 || cg.Oid == customerInfoByGroupId)
-                          && (pricingTemplateId == 0 || pt.Oid == pricingTemplateId)
+                          && (pricingTemplateIds.Any(x => x == pt.Oid))
                     select new CustomerWithPricing()
                     {
                         CustomerId = cg.CustomerId,
@@ -106,6 +143,7 @@ namespace FBOLinx.Web.Services
                         FuelerLinxId = c.FuelerlinxId,
                         Network = cg.Network,
                         GroupId = cg.GroupId,
+                        FboId = pt.Fboid,
                         NeedsAttention = !(cvf != null && cvf.Oid > 0),
                         HasBeenViewed = (cvf != null && cvf.Oid > 0),
                         PricingTemplateName = pt == null ? "" : pt.Name,
@@ -113,8 +151,14 @@ namespace FBOLinx.Web.Services
                         MaxGallons = ppt.Max,
                         CustomerCompanyType = cg.CustomerCompanyType,
                         CustomerCompanyTypeName = ccot == null || string.IsNullOrEmpty(ccot.Name) ? "" : ccot.Name,
-                        IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null || pt.MarginType != PricingTemplate.MarginTypes.FlatFee))
-                    }).OrderBy(x => x.Company).ToListAsync();
+                        IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null || pt.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                        ExpirationDate = fp.EffectiveTo,
+                        Icao = fboAirport.Icao,
+                        Iata = fboAirport.Iata,
+                        Notes = pt.Notes,
+                        Fbo = fbo.Fbo,
+                        Group = groups.GroupName
+                    }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToListAsync();
 
                 return customerPricingResults;
             }
@@ -130,22 +174,34 @@ namespace FBOLinx.Web.Services
             _FboId = fboId;
             _GroupId = groupId;
 
-            var result = await GetStandardPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
+            List<PricingTemplate> result = new List<PricingTemplate>();
+            var standardTemplates = await GetStandardPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
             var aircraftPricesResult = await GetTailSpecificPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
 
+            result.AddRange(standardTemplates);
+
+            //Set the applicable tail numbers for the aircraft-specific templates
             foreach (PricingTemplate aircraftPricingTemplate in aircraftPricesResult)
             {
-                if (result.Any(x => x.Oid == aircraftPricingTemplate.Oid))
+                if (standardTemplates.Any(x => x.Oid == aircraftPricingTemplate.Oid))
                     continue;
-                var tailNumbers = string.Join(",", (from ca in _context.CustomerAircrafts
-                    join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
-                    where ap.PriceTemplateId == aircraftPricingTemplate.Oid
-                          && ca.CustomerId == customer.CustomerId
-                          && ca.GroupId == _GroupId
-                    select ca.TailNumber).ToList());
-                if (!string.IsNullOrEmpty(tailNumbers))
-                    aircraftPricingTemplate.Name += " - " + tailNumbers;
+                List<string> tailNumberList = (from ca in _context.CustomerAircrafts
+                                      join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
+                                      where ap.PriceTemplateId == aircraftPricingTemplate.Oid
+                                            && ca.CustomerId == customer.CustomerId
+                                            && ca.GroupId == _GroupId
+                                      select ca.TailNumber).ToList();
+                if (tailNumberList == null || tailNumberList.Count == 0)
+                    continue;
+                aircraftPricingTemplate.Name += " - " + string.Join(",", tailNumberList);
+                aircraftPricingTemplate.TailNumbers = tailNumberList;
+                result.Add(aircraftPricingTemplate);
             }
+
+            //Set the applicable tail numbers for the standard/default templates
+            var customerAircrafts = _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == groupId);
+
+            standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber).ToList());
 
             return result;
         }
@@ -211,7 +267,7 @@ namespace FBOLinx.Web.Services
             IEnumerable<Utilities.Enum.EnumDescriptionValue> products = Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
 
             var fboPrices = await (from f in _context.Fboprices
-                                   where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId && f.Expired != true
+                                   where f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
                                    select f).ToListAsync();
 
             var templateCustomersCount = await (

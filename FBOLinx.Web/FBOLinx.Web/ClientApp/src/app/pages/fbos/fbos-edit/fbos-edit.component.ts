@@ -12,11 +12,11 @@ import { SharedService } from "../../../layouts/shared-service";
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "FBOs",
-        link: "#/default-layout/fbos",
+        link: "/default-layout/fbos",
     },
     {
         title: "Edit FBO",
@@ -77,21 +77,36 @@ export class FbosEditComponent implements OnInit {
     }
 
     public saveEdit() {
+        if (sessionStorage.getItem("isNewFbo")) {
+            sessionStorage.removeItem("isNewFbo");
+        }
         this.fboAirportInfo.fboId = this.fboInfo.oid;
         this.fboService.update(this.fboInfo).subscribe(() => {
             this.fboAirportsService
                 .update(this.fboAirportInfo)
                 .subscribe(() => {
                     this.saveClicked.emit(this.fboInfo);
+                    this.router.navigate(["/default-layout/fbos/"]);
                 });
         });
     }
 
     public cancelEdit() {
-        if (this.requiresRouting) {
-            this.router.navigate(["/default-layout/fbos/"]);
-        } else {
-            this.cancelClicked.emit();
+        if (sessionStorage.getItem("isNewFbo")) {
+            this.fboService.remove(this.fboInfo).subscribe(() => {
+                sessionStorage.removeItem("isNewFbo");
+                this.saveClicked.emit(this.fboInfo);
+            }, () => {
+
+            });
+
+        }
+        else {
+            if (this.requiresRouting) {
+                this.router.navigate(["/default-layout/fbos/"]);
+            } else {
+                this.cancelClicked.emit();
+            }
         }
     }
 

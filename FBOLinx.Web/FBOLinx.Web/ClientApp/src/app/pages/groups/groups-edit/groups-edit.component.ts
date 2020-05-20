@@ -8,11 +8,11 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "Groups",
-        link: "#/default-layout/groups",
+        link: "/default-layout/groups",
     },
     {
         title: "Edit Group",
@@ -48,6 +48,9 @@ export class GroupsEditComponent implements OnInit {
             this.groupsService.get({ oid: id }).subscribe((data: any) => {
                 this.groupInfo = data;
             });
+        }
+        if (sessionStorage.getItem("isNewFbo")) {
+            sessionStorage.removeItem("isNewFbo");
         }
     }
 

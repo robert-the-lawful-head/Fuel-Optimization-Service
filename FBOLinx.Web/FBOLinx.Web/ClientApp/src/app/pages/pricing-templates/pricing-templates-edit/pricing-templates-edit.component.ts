@@ -23,11 +23,11 @@ import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor"
 const BREADCRUMBS: any[] = [
     {
         title: "Main",
-        link: "#/default-layout",
+        link: "/default-layout",
     },
     {
         title: "ITP Margin Templates",
-        link: "#/default-layout/pricing-templates",
+        link: "/default-layout/pricing-templates",
     },
     {
         title: "Edit Margin Template",
@@ -164,6 +164,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 this.pricingTemplate.customerMargins.indexOf(customerMargin),
                 1
             );
+            this.pricingTemplate.customerMargins[this.pricingTemplate.customerMargins.length - 1].max = 99999;
         } else {
             this.customerMarginsService.remove(customerMargin).subscribe(() => {
                 this.priceTiersService
@@ -175,9 +176,13 @@ export class PricingTemplatesEditComponent implements OnInit {
                             ),
                             1
                         );
+
+                        this.pricingTemplate.customerMargins[this.pricingTemplate.customerMargins.length - 1].max = 99999;
                     });
             });
         }
+
+        
     }
 
     public addCustomerMargin() {
@@ -193,12 +198,12 @@ export class PricingTemplatesEditComponent implements OnInit {
         };
         if (this.pricingTemplate.customerMargins.length > 0) {
             customerMargin.min =
-                this.pricingTemplate.customerMargins[
+                Math.abs(this.pricingTemplate.customerMargins[
                     this.pricingTemplate.customerMargins.length - 1
-                ].min + 250;
+                ].min) + 250;
             this.pricingTemplate.customerMargins[
                 this.pricingTemplate.customerMargins.length - 1
-            ].max = customerMargin.min - 1;
+            ].max = Math.abs(customerMargin.min) - 1;
         }
         this.pricingTemplate.customerMargins.push(customerMargin);
 
@@ -236,7 +241,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 this.pricingTemplate.customerMargins[indexNumber + 1].min > 0
             ) {
                 this.pricingTemplate.customerMargins[i].max =
-                    this.pricingTemplate.customerMargins[indexNumber + 1].min -
+                    Math.abs(this.pricingTemplate.customerMargins[indexNumber + 1].min) -
                     1;
             } else {
                 this.pricingTemplate.customerMargins[i].max = 99999;
@@ -256,7 +261,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 ];
 
                 if (previousPrice) {
-                    previousPrice.max = margin.min - 1;
+                    previousPrice.max = Math.abs(margin.min - 1);
                 }
             }
         }

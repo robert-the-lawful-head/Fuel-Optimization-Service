@@ -15,12 +15,14 @@ import { ColorDirective } from "./directives/color/color.directive";
 import { BgDirective } from "./directives/bg/bg.directive";
 import { GradientDirective } from "./directives/gradient/gradient.directive";
 import { AutoGrowDirective } from "./directives/auto-grow/auto-grow.directive";
+import { RouterModule } from "@angular/router";
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         NgbPopoverModule,
+        RouterModule,
     ],
     declarations: [
         NiAlertComponent,

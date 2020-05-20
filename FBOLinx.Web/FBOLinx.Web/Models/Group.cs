@@ -28,6 +28,7 @@ namespace FBOLinx.Web.Models
         [StringLength(50)]
         public string LoggedInHomePage { get; set; }
         public bool Active { get; set; }
+        public bool? IsLegacyAccount { get; set; }
 
         [InverseProperty("Group")]
         public ICollection<Fbos> Fbos { get; set; }

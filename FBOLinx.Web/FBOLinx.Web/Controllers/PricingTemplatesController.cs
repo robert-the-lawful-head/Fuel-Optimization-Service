@@ -194,7 +194,7 @@ namespace FBOLinx.Web.Controllers
                 from cm in leftJoinCustomerMargins.DefaultIfEmpty()
                 join fp in (
                     from f in _context.Fboprices
-                    where f.EffectiveTo > DateTime.Now.AddDays(-1) && f.Fboid == fboId && f.Expired != true
+                    where f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
                     select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
                 from fp in leftJoinFboPrices.DefaultIfEmpty()
                 where p.Fboid == fboId
