@@ -1,0 +1,44 @@
+@import '../../../../assets/sass/variable';
+
+
+
+
+form {
+    button {
+        
+        width: 100%;
+    }
+}
+
+
+.divider {
+    border-left: 1px solid rgba(#000,.2);
+    display: inline-block;
+    height: 18px;
+    margin: 0 10px;
+    vertical-align: bottom;
+}
+
+.login-button:hover {
+    color: #04131d;
+    border-radius: 2px;
+    border: 1px solid #1d5aa9;
+}
+
+.login-button {
+    background-color: #1d5aa9 !important;
+    border: 1px solid #1d5aa9;
+    color: white;
+    border-radius: 2px;
+    font-size: 16px !important;
+    display: inline-flex;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1.42857143;
+    padding: 12px 145px;
+}
+

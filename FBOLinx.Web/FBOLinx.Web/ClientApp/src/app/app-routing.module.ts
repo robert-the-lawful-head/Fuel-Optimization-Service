@@ -157,18 +157,13 @@ const landingSiteRoutes: Routes = [
 export const routes: Routes = [
     {
         path: "",
-        redirectTo: "/landing-site-layout",
-        pathMatch: "full",
+        component: LandingSiteLayoutComponent,
+        children: landingSiteRoutes,
     },
     {
         path: "default-layout",
         component: DefaultLayoutComponent,
         children: defaultRoutes,
-    },
-    {
-        path: "landing-site-layout",
-        component: LandingSiteLayoutComponent,
-        children: landingSiteRoutes,
     },
     {
         path: "app-login",

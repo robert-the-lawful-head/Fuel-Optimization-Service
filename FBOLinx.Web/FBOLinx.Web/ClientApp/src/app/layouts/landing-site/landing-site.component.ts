@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, HostListener } from "@angular/core";
 import { NgbCarouselConfig } from "@ng-bootstrap/ng-bootstrap";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import {
@@ -16,6 +16,8 @@ import { UserService } from "../../services/user.service";
 
 // Components
 import { ForgotPasswordDialogComponent } from "../../shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component";
+import { MatButtonToggleChange } from "@angular/material/button-toggle";
+import { LoginModalComponent } from '../../shared/components/login-modal/login-modal.component';
 
 // import * as jqueryFancyBox from "jquery.fancybox";
 
@@ -53,30 +55,52 @@ export class LandingSiteLayoutComponent implements OnInit {
     public featureCustomizeImage = "../../../assets/content/feature-customize.png";
     public featureSupportImage = "../../../assets/content/feature-support.png";
     public paragonSmallLogoImage = "../../../assets/content/paragon-2c-logo_small.png";
+    public fuelerlinxLogo = "../../../assets/img/FuelerLinxLogo.png";
+    public x1fboLogo = "../../../assets/img/X1.png";
+    public millionAirLogo = "../../../assets/img/million-air.png";
+    public flightAwareLogo = "../../../assets/img/FlightAware.png";
+    public titanLogo = "../../../assets/img/titan.png";
+    public jetAviation = "../../../assets/img/JetAviation.png";
+    public amstatLogo = "../../../assets/img/Amstat.png";
+    public fbodirectorLogo = "../../../assets/img/fbodirector.png";
+    public fbopartnersLogo = "../../../assets/img/fbopartners.png";
+    public planeFrontImage = "../../../assets/img/landing-page/DSC03168.jpg";
 
-    public carouselImages: Array<any>;
+    public carouselImages: Array<any> = [
+        this.slideHalfImage1URL,
+        this.slideHalfImage2URL,
+        this.slideHalfImage3URL,
+    ];
+
+    public integrationPartners: Array<any> = [
+        [this.fuelerlinxLogo,
+        this.x1fboLogo,
+        this.millionAirLogo],
+        [this.flightAwareLogo,
+        this.titanLogo,
+        this.jetAviation],
+        [this.amstatLogo,
+        this.fbodirectorLogo,
+        this.fbopartnersLogo],
+    ];
+
+    public integrationPartnerView = 0;
     public contactUsMessage: ContactUsMessage;
     public loginRequest: LoginRequest;
     public rememberMe: any;
     public isLoggingIn = false;
     public error = "";
+    public isSticky: boolean = false;    
 
     constructor(
-        private config: NgbCarouselConfig,
         private landingsiteService: LandingsiteService,
         private router: Router,
-        private sharedService: SharedService,
         private authenticationService: AuthenticationService,
         private snackBar: MatSnackBar,
-        public forgotPasswordDialog: MatDialog,
-        private userService: UserService
-    ) {
-        this.carouselImages = [
-            this.slideHalfImage1URL,
-            this.slideHalfImage2URL,
-            this.slideHalfImage3URL,
-        ];
-    }
+        private forgotPasswordDialog: MatDialog,
+        private userService: UserService,
+        private loginDialog: MatDialog
+    ) {}
 
     ngOnInit() {
         this.resetContactUsMessage();
@@ -103,7 +127,7 @@ export class LandingSiteLayoutComponent implements OnInit {
                     this.setRememberMeVariables();
                     this.authenticationService
                         .postAuth()
-                        .subscribe((postLoginCheckResult) => {
+                        .subscribe(() => {
                             if (data.role === 3 || data.role === 2) {
                                 this.router.navigate(["/default-layout/fbos/"]);
                             } else {
@@ -141,6 +165,25 @@ export class LandingSiteLayoutComponent implements OnInit {
             return;
         }
         this.attemptLogin();
+    }
+
+    public onLogin() {
+        const data = {};
+        const dialogRef = this.loginDialog.open(
+            LoginModalComponent,
+            {
+                data
+            }
+        )
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log(result);
+            if (!result) {
+                return;
+            }
+
+            console.log(result);
+        })
     }
 
     public forgotPasswordClicked() {
@@ -212,5 +255,66 @@ export class LandingSiteLayoutComponent implements OnInit {
                 this.loginRequest.password
             );
         }
+    }
+
+    public changeIntegrationPartnerView(event: MatButtonToggleChange) {
+        switch (Number(event.value)) {
+            case 0:
+                this.integrationPartners = [
+                    [
+                        this.fuelerlinxLogo,
+                        this.x1fboLogo,
+                        this.millionAirLogo
+                    ],
+                    [
+                        this.flightAwareLogo,
+                        this.titanLogo,
+                        this.jetAviation
+                    ],
+                    [
+                        this.amstatLogo,
+                        this.fbodirectorLogo,
+                        this.fbopartnersLogo
+                    ],
+                ];
+                break;
+            case 1:
+                this.integrationPartners = [
+                    [
+                        this.fuelerlinxLogo,
+                        this.flightAwareLogo,
+                        this.amstatLogo
+                    ],
+                    [
+                        this.fbopartnersLogo
+                    ],
+                ];
+                break;
+            case 2:
+                this.integrationPartners = [
+                    [
+                        this.fbopartnersLogo,
+                        this.titanLogo,
+                        this.fbodirectorLogo
+                    ]
+                ];
+                break;
+            case 3:
+                this.integrationPartners = [
+                    [
+                        this.titanLogo,
+                        this.millionAirLogo,
+                        this.jetAviation
+                    ]
+                ];
+                break;
+            default:
+                break;
+        }
+    }
+    
+    @HostListener('window:scroll', ['$event'])
+    public checkScroll(): void {
+        this.isSticky = window.pageYOffset >= 171;
     }
 }
