@@ -93,6 +93,7 @@ namespace FBOLinx.Web.Controllers
             List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
                 from ca in _context.CustomerAircrafts
                 join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+                into acjoin from subacjoin in acjoin.DefaultIfEmpty()
                 join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
                 into leftJoinPt
                 from pt in leftJoinPt.DefaultIfEmpty()
@@ -106,14 +107,14 @@ namespace FBOLinx.Web.Controllers
                     TailNumber = ca.TailNumber,
                     Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet
                                 ? ca.Size
-                                 : ac.Size.GetValueOrDefault(),
+                                 : subacjoin.Size.GetValueOrDefault(),
                     BasedPaglocation = ca.BasedPaglocation,
                     NetworkCode = ca.NetworkCode,
                     AddedFrom = ca.AddedFrom.GetValueOrDefault(),
                     PricingTemplateId = pt == null ? 0 : pt.Oid,
                     PricingTemplateName = pt == null ? "" : pt.Name,
-                    Make = ac.Make,
-                    Model = ac.Model
+                    Make = subacjoin.Make,
+                    Model = subacjoin.Model
                 })
                 .OrderBy(x => x.TailNumber)
                 .ToListAsync();
