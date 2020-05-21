@@ -32,7 +32,7 @@ namespace FBOLinx.Web.Services
             try
             {
                 var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null).ToList();
-
+                var aircrafts = _fuelerLinxService.GetAircraftsFromFuelerinx();
                 foreach (var cust in listWithCustomers)
                 {
                     CustomerInfoByGroup cibg = new CustomerInfoByGroup();
@@ -62,13 +62,9 @@ namespace FBOLinx.Web.Services
 
                 foreach (var cust in listWithCustomers)
                 {
-                   // var listOfAirplanes = _context.CustomerAircrafts.Where(s => s.CustomerId == cust.Oid).GroupBy(s => s.AircraftId).ToList();
-
-
-
-                    var aircrafts = _fuelerLinxService.GetAircraftsFromFuelerinx();
-
-                    foreach(var aircraft in aircrafts.Result)
+                    var filteredAircraftsByCompany = aircrafts.Result.Where(s => s.CompanyId == cust.FuelerlinxId).ToList();
+                    
+                    foreach(var aircraft in filteredAircraftsByCompany)
                     {
                         CustomerAircrafts ca = new CustomerAircrafts();
                         ca.AircraftId = Convert.ToInt32(aircraft.AircraftTypeId);
