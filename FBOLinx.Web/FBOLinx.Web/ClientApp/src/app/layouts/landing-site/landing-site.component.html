@@ -1,6 +1,6 @@
 <div class="landing-page-container">
     <div class="theme-header-fixed" id="landing-menu-header" [ngClass]="{'sticky' : isSticky}">
-        <div class="container-fluid">
+        <div class="container-fluid" *ngIf="!isSticky">
             <div class="row">
                 <div class="col-sm-12 col-md-10">
                     <div class="header-top-bar">
@@ -39,6 +39,9 @@
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" onclick="document.getElementById('contact-us-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Contact</a>
+                                        </li>
+                                        <li class="nav-item" *ngIf="isSticky">
+                                            <a class="nav-link" (click)="onLogin()">Sign In</a>
                                         </li>
                                     </ul>
                                 </div>
