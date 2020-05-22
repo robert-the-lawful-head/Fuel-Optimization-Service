@@ -72,28 +72,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
+            await pricingTemplateService.FixDefaultPricingTemplate(fboId);
+
             List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, null);
-
-            if (fboId != 0 && marginTemplates.Count == 0)
-            {
-                PricingTemplate ptNew = new PricingTemplate
-                {
-                    Fboid = fboId,
-                    Name = "Temporary Default Template",
-                    Default = true,
-                    Notes = "This is temporary default template created because the customer did not have any templates",
-                    Type = 0,
-                    MarginType = PricingTemplate.MarginTypes.RetailMinus
-                };
-
-                _context.PricingTemplate.Add(ptNew);
-                await _context.SaveChangesAsync();
-
-                List<PricingTemplatesGridViewModel> updatedMarginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, null);
-
-
-                return Ok(updatedMarginTemplates);
-            }
 
             return Ok(marginTemplates);
         }
