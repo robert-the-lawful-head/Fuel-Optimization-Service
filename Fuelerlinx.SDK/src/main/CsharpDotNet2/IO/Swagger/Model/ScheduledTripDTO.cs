@@ -222,6 +222,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "company")]
     public CompanyDTO Company { get; set; }
 
+    /// <summary>
+    /// Gets or Sets FlightTypeMapping
+    /// </summary>
+    [DataMember(Name="flightTypeMapping", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "flightTypeMapping")]
+    public FlightTypeMappingDTO FlightTypeMapping { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -260,6 +267,7 @@ namespace IO.Swagger.Model {
       sb.Append("  TripKey: ").Append(TripKey).Append("\n");
       sb.Append("  TransactionId: ").Append(TransactionId).Append("\n");
       sb.Append("  Company: ").Append(Company).Append("\n");
+      sb.Append("  FlightTypeMapping: ").Append(FlightTypeMapping).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
