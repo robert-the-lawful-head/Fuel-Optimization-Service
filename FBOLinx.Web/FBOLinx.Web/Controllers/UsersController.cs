@@ -295,32 +295,12 @@ namespace FBOLinx.Web.Controllers
 
                 int fboId = UserService.GetClaimedFboId(_httpContextAccessor);
 
-                var existingPricingTemplates =
-                    await _context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync();
-                if (existingPricingTemplates != null && existingPricingTemplates.Count != 0)
-                    return Ok();
+                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
 
-                //Add a default pricing template - project #1c5383
-                var newTemplate = new PricingTemplate()
-                {
-                    Default = true,
-                    Fboid = fboId,
-                    Name = "Posted Retail",
-                    MarginType = PricingTemplate.MarginTypes.RetailMinus,
-                    Notes = ""
-                };
-
-                await _context.PricingTemplate.AddAsync(newTemplate);
-                await _context.SaveChangesAsync();
-
-                await AddDefaultCustomerMargins(newTemplate.Oid, 1, 500);
-                await AddDefaultCustomerMargins(newTemplate.Oid, 501, 750);
-                await AddDefaultCustomerMargins(newTemplate.Oid, 751, 1000);
-                await AddDefaultCustomerMargins(newTemplate.Oid, 1001, 99999);
+                await pricingTemplateService.FixDefaultPricingTemplate(fboId);
             }
-            catch (System.Exception exception)
+            catch (Exception)
             {
-                //Resume the login without issue
             }
 
             return Ok();

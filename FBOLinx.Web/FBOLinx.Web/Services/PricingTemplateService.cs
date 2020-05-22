@@ -80,5 +80,48 @@ namespace FBOLinx.Web.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task FixDefaultPricingTemplate(int fboId)
+        {
+            var existingPricingTemplates =
+                   await _context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync();
+            if (existingPricingTemplates != null && existingPricingTemplates.Count != 0)
+                return;
+
+            //Add a default pricing template - project #1c5383
+            var newTemplate = new PricingTemplate()
+            {
+                Default = true,
+                Fboid = fboId,
+                Name = "Posted Retail",
+                MarginType = PricingTemplate.MarginTypes.RetailMinus,
+                Notes = ""
+            };
+
+            await _context.PricingTemplate.AddAsync(newTemplate);
+            await _context.SaveChangesAsync();
+
+            await AddDefaultCustomerMargins(newTemplate.Oid, 1, 500);
+            await AddDefaultCustomerMargins(newTemplate.Oid, 501, 750);
+            await AddDefaultCustomerMargins(newTemplate.Oid, 751, 1000);
+            await AddDefaultCustomerMargins(newTemplate.Oid, 1001, 99999);
+        }
+
+        private async Task AddDefaultCustomerMargins(int priceTemplateId, double min, double max)
+        {
+            var newPriceTier = new PriceTiers() { Min = min, Max = max, MaxEntered = max };
+            await _context.PriceTiers.AddAsync(newPriceTier);
+            await _context.SaveChangesAsync();
+
+            var newCustomerMargin = new CustomerMargins()
+            {
+                Amount = 0,
+                TemplateId = priceTemplateId,
+                PriceTierId = newPriceTier.Oid
+            };
+            await _context.CustomerMargins.AddAsync(newCustomerMargin);
+            await _context.SaveChangesAsync();
+
+        }
     }
 }

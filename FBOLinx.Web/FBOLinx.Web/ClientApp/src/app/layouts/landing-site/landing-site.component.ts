@@ -75,15 +75,21 @@ export class LandingSiteLayoutComponent {
     ];
 
     public integrationPartners: Array<any> = [
-        [this.fuelerlinxLogo,
-        this.x1fboLogo,
-        this.millionAirLogo],
-        [this.flightAwareLogo,
-        this.titanLogo,
-        this.jetAviation],
-        [this.amstatLogo,
-        this.fbodirectorLogo,
-        this.fbopartnersLogo],
+        [
+            this.fuelerlinxLogo,
+            this.x1fboLogo,
+            this.millionAirLogo
+        ],
+        [
+            this.flightAwareLogo,
+            this.titanLogo,
+            this.jetAviation
+        ],
+        [
+            this.amstatLogo,
+            this.fbodirectorLogo,
+            this.fbopartnersLogo
+        ],
     ];
 
     public integrationPartnerView = 0;
