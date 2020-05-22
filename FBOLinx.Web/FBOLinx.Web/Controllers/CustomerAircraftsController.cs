@@ -92,6 +92,7 @@ namespace FBOLinx.Web.Controllers
 
             List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
                 from ca in _context.CustomerAircrafts
+                join c in _context.Customers on ca.CustomerId equals c.Oid
                 join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
                 into acjoin from subacjoin in acjoin.DefaultIfEmpty()
                 join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
@@ -114,7 +115,8 @@ namespace FBOLinx.Web.Controllers
                     PricingTemplateId = pt == null ? 0 : pt.Oid,
                     PricingTemplateName = pt == null ? "" : pt.Name,
                     Make = subacjoin.Make,
-                    Model = subacjoin.Model
+                    Model = subacjoin.Model,
+                    IsFuelerlinxNetwork = c.FuelerlinxId > 0
                 })
                 .OrderBy(x => x.TailNumber)
                 .ToListAsync();
@@ -135,6 +137,7 @@ namespace FBOLinx.Web.Controllers
 
             List<CustomerAircraftsGridViewModel> customerAircraft = await (
                 from ca in _context.CustomerAircrafts
+                join c in _context.Customers on ca.CustomerId equals c.Oid
                 join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
                 join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId
                 into leftJoinAircraftPrices
@@ -161,7 +164,8 @@ namespace FBOLinx.Web.Controllers
                     PricingTemplateId = a == null ? 0 : a.PriceTemplateId.GetValueOrDefault(),
                     PricingTemplateName = p == null ? "" : p.Name,
                     Make = ac.Make,
-                    Model = ac.Model
+                    Model = ac.Model,
+                    IsFuelerlinxNetwork = c.FuelerlinxId > 0
                 }).OrderBy((x => x.TailNumber)).ToListAsync();
 
             return Ok(customerAircraft);
