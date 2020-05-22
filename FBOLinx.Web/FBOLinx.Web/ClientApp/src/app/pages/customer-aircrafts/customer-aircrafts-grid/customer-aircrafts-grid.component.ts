@@ -172,7 +172,22 @@ export class CustomerAircraftsGridComponent implements OnInit {
             result.groupId = this.sharedService.currentUser.groupId;
             result.customerId = this.customer.customerId;
             this.customerAircraftsService.add(result).subscribe((data: any) => {
-                this.newCustomerAircraftAdded.emit(data);
+                this.customerAircraftsService
+                    .getCustomerAircraftsByGroupAndCustomerId(
+                        this.sharedService.currentUser.groupId,
+                        this.sharedService.currentUser.fboId,
+                        result.customerId
+                    )
+                    .subscribe((data: any) => {
+                        this.customerAircraftsData = data;
+                        this.customerAircraftsDataSource = new MatTableDataSource(
+                            this.customerAircraftsData
+                        );
+                        this.customerAircraftsDataSource.sort = this.sort;
+                        this.customerAircraftsDataSource.paginator = this.paginator;
+                        this.newCustomerAircraftAdded.emit();
+                    });
+               
             });
         });
     }

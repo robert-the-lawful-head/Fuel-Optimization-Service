@@ -294,8 +294,8 @@ export class CustomersEditComponent {
     }
 
     public newCustomerAircraftAdded() {
-        this.saveCustomerEdit();
-        this.loadCustomerAircrafts();
+        //this.loadCustomerAircrafts();
+        //this.saveCustomerEdit();
     }
 
     public editCustomerAircraftClicked(customerAircraft) {
@@ -487,7 +487,7 @@ export class CustomersEditComponent {
                 this.customerInfoByGroup.customerId
             )
             .subscribe((data: any) => {
-                this.customerAircraftsData = data;
+                this.customerAircraftsData = data;                
             });
     }
 
