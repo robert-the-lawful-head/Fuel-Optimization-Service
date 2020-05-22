@@ -47,7 +47,6 @@ const BREADCRUMBS: any[] = [
 })
 export class FbosGridComponent implements OnInit {
     // Input/Output Bindings
-    @Output() recordDeleted = new EventEmitter<any>();
     @Output() editFboClicked = new EventEmitter<any>();
     @Input() fbosData: Array<any>;
     @Input() groupInfo: any;
@@ -176,7 +175,6 @@ export class FbosGridComponent implements OnInit {
             }, () => {
                 this.isDeleting = false;
             });
-            this.recordDeleted.emit(record);
         });
     }
 
