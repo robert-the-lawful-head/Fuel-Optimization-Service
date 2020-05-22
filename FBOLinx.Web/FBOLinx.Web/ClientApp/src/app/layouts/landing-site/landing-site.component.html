@@ -26,22 +26,22 @@
                                 <div class="collapse navbar-collapse" id="navbarNav">
                                     <ul class="navbar-nav">
                                         <li class="nav-item active">
-                                            <a class="nav-link" onclick="document.getElementById('home-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Home <span class="sr-only">(current)</span></a>
+                                            <a routerLink="." class="nav-link" onclick="document.getElementById('home-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Home <span class="sr-only">(current)</span></a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" onclick="document.getElementById('about-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">About</a>
+                                            <a routerLink="." class="nav-link" onclick="document.getElementById('about-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">About</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" onclick="document.getElementById('marketplace-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Marketplace</a>
+                                            <a routerLink="." class="nav-link" onclick="document.getElementById('marketplace-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Marketplace</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" onclick="document.getElementById('integrations-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Integrations</a>
+                                            <a routerLink="." class="nav-link" onclick="document.getElementById('integrations-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Integrations</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" onclick="document.getElementById('contact-us-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Contact</a>
+                                            <a routerLink="." class="nav-link" onclick="document.getElementById('contact-us-content').scrollIntoView({ behavior: 'smooth', block: 'center' });">Contact</a>
                                         </li>
                                         <li class="nav-item" *ngIf="isSticky">
-                                            <a class="nav-link" (click)="onLogin()">Sign In</a>
+                                            <a routerLink="." class="nav-link" (click)="onLogin()">Sign In</a>
                                         </li>
                                     </ul>
                                 </div>
