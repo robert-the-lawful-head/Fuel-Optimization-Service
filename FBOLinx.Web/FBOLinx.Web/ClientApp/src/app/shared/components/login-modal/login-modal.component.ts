@@ -50,6 +50,8 @@ export class LoginModalComponent {
                             ]);
                         }
                     });
+            }, (error) => {
+                this.error = error;
             });
         }
     }
