@@ -1,8 +1,8 @@
 import { Component, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
-import { AuthenticationService } from '../../../services/authentication.service';
-import { Router } from '@angular/router';
+import { AuthenticationService } from "../../../services/authentication.service";
+import { Router } from "@angular/router";
 
 @Component({
     selector: "app-login-modal",
@@ -23,7 +23,7 @@ export class LoginModalComponent {
         this.loginForm = this.formBuilder.group({
             username: new FormControl(""),
             password: new FormControl(""),
-            remember: new FormControl(false)
+            remember: new FormControl(false),
         });
     }
 
@@ -50,7 +50,7 @@ export class LoginModalComponent {
                             ]);
                         }
                     });
-            })
+            });
         }
     }
 }
