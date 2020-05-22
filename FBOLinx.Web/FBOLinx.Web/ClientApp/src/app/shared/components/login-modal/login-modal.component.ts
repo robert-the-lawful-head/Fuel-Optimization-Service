@@ -50,7 +50,21 @@ export class LoginModalComponent {
                             ]);
                         }
                     });
+            }, (error) => {
+                this.error = error;
             });
         }
+    }
+
+    public openRequestDemo() {
+        this.dialogRef.close({
+            mode: 'request-demo'
+        });
+    }
+
+    public openForgotPassword() {
+        this.dialogRef.close({
+            mode: 'forgot-password'
+        });
     }
 }

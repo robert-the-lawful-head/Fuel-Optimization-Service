@@ -42,7 +42,7 @@ export interface LoginRequest {
     styleUrls: ["./landing-site.component.scss"],
     providers: [SharedService],
 })
-export class LandingSiteLayoutComponent implements OnInit {
+export class LandingSiteLayoutComponent {
     public rememberMeUsernameKey = "rememberMeUsername";
     public rememberMePasswordKey = "rememberMePassword";
 
@@ -95,9 +95,6 @@ export class LandingSiteLayoutComponent implements OnInit {
     public isSticky = false;    
 
     constructor(
-        private landingsiteService: LandingsiteService,
-        private router: Router,
-        private authenticationService: AuthenticationService,
         private snackBar: MatSnackBar,
         private forgotPasswordDialog: MatDialog,
         private userService: UserService,
@@ -105,71 +102,6 @@ export class LandingSiteLayoutComponent implements OnInit {
         private requestDemoDialog: MatDialog,
         private requestDemoSuccessDialog: MatDialog
     ) {}
-
-    ngOnInit() {
-        this.resetContactUsMessage();
-        this.resetLoginRequest();
-    }
-
-    public sendContactUsEmailClicked() {
-        this.landingsiteService
-            .postContactUsMessage(this.contactUsMessage)
-            .subscribe((data: any) => {
-                this.resetContactUsMessage();
-                // Show successful message sent here
-            });
-    }
-
-    public attemptLogin() {
-        this.isLoggingIn = true;
-
-        this.authenticationService
-            .login(this.loginRequest.username, this.loginRequest.password)
-            // .pipe(first())
-            .subscribe(
-                (data) => {
-                    this.setRememberMeVariables();
-                    this.authenticationService
-                        .postAuth()
-                        .subscribe(() => {
-                            if (data.role === 3 || data.role === 2) {
-                                this.router.navigate(["/default-layout/fbos/"]);
-                            } else {
-                                this.router.navigate([
-                                    "/default-layout/dashboard-fbo/",
-                                ]);
-                            }
-                        });
-                },
-                (error) => {
-                    this.error = error;
-                    this.isLoggingIn = false;
-                    // Simple message.
-                    const snackBarRef = this.snackBar.open(this.error, "", {
-                        duration: 5000,
-                    });
-                }
-            );
-    }
-
-    public scrollToElement($element): void {
-        console.log($element);
-        $element.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-            inline: "nearest",
-        });
-    }
-
-    public onEnterKeyUp(event) {
-        if (
-            this.loginRequest.password === "" ||
-            this.loginRequest.username === ""
-        ) {
-            return;
-        }
-        this.attemptLogin();
-    }
 
     public onLogin() {
         const data = {};
@@ -181,12 +113,15 @@ export class LandingSiteLayoutComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            console.log(result);
             if (!result) {
                 return;
             }
-
-            console.log(result);
+            if (result.mode === 'request-demo') {
+                this.openRequestDemo()
+            }
+            if (result.mode === 'forgot-password') {
+                this.forgotPassword()
+            }
         });
     }
 
@@ -211,7 +146,7 @@ export class LandingSiteLayoutComponent implements OnInit {
         });
     }
 
-    public forgotPasswordClicked() {
+    public forgotPassword() {
         const data = { username: "" };
         const dialogRef = this.forgotPasswordDialog.open(
             ForgotPasswordDialogComponent,
@@ -245,22 +180,6 @@ export class LandingSiteLayoutComponent implements OnInit {
                 }
             );
         });
-    }
-
-    public resetContactUsMessage() {
-        this.contactUsMessage = {
-            name: "",
-            email: "",
-            phoneNumber: "",
-            message: "",
-        };
-    }
-
-    public resetLoginRequest() {
-        this.loginRequest = {
-            username: "",
-            password: "",
-        };
     }
 
     public setRememberMeVariables() {
