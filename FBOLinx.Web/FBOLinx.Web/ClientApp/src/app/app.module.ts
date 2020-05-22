@@ -37,6 +37,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { TextMaskModule } from "angular2-text-mask";
+import { NgxUiLoaderModule } from "ngx-ui-loader";
 
 
 // Bootstrap Assist Template Modules
@@ -49,7 +50,9 @@ import { PagesModule } from "./pages/pages.module";
 import { DefaultLayoutComponent } from "./layouts/default/default.component";
 import { LandingSiteLayoutComponent } from "./layouts/landing-site/landing-site.component";
 
-import { LoginModalComponent } from "./shared/components/login-modal/login-modal.component"
+import { LoginModalComponent } from "./shared/components/login-modal/login-modal.component";
+import { RequestDemoModalComponent } from "./shared/components/request-demo-modal/request-demo-modal.component";
+import { RequestDemoSuccessComponent } from "./shared/components/request-demo-success/request-demo-success.component";
 // Services
 import { AcukwikairportsService } from "./services/acukwikairports.service";
 import { AircraftsService } from "./services/aircrafts.service";
@@ -93,7 +96,9 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         AppComponent,
         DefaultLayoutComponent,
         LandingSiteLayoutComponent,
-        LoginModalComponent
+        LoginModalComponent,
+        RequestDemoModalComponent,
+        RequestDemoSuccessComponent,
     ],
     imports: [
         BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
@@ -109,6 +114,8 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         NiComponentsModule,
         PagesModule,
         // End bootstrap template additions
+
+        NgxUiLoaderModule,
 
         // NgBoostrap Modules
         NgbCarouselModule,
@@ -142,7 +149,9 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
     ],
     exports: [],
     entryComponents: [
-        LoginModalComponent
+        LoginModalComponent,
+        RequestDemoModalComponent,
+        RequestDemoSuccessComponent,
     ],
     providers: [
         {

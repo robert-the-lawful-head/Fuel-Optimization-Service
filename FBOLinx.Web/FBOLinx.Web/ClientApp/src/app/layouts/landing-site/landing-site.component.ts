@@ -17,7 +17,9 @@ import { UserService } from "../../services/user.service";
 // Components
 import { ForgotPasswordDialogComponent } from "../../shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component";
 import { MatButtonToggleChange } from "@angular/material/button-toggle";
-import { LoginModalComponent } from '../../shared/components/login-modal/login-modal.component';
+import { LoginModalComponent } from "../../shared/components/login-modal/login-modal.component";
+import { RequestDemoModalComponent } from "../../shared/components/request-demo-modal/request-demo-modal.component";
+import { RequestDemoSuccessComponent } from "../../shared/components/request-demo-success/request-demo-success.component";
 
 // import * as jqueryFancyBox from "jquery.fancybox";
 
@@ -90,7 +92,7 @@ export class LandingSiteLayoutComponent implements OnInit {
     public rememberMe: any;
     public isLoggingIn = false;
     public error = "";
-    public isSticky: boolean = false;    
+    public isSticky = false;    
 
     constructor(
         private landingsiteService: LandingsiteService,
@@ -99,7 +101,9 @@ export class LandingSiteLayoutComponent implements OnInit {
         private snackBar: MatSnackBar,
         private forgotPasswordDialog: MatDialog,
         private userService: UserService,
-        private loginDialog: MatDialog
+        private loginDialog: MatDialog,
+        private requestDemoDialog: MatDialog,
+        private requestDemoSuccessDialog: MatDialog
     ) {}
 
     ngOnInit() {
@@ -172,9 +176,9 @@ export class LandingSiteLayoutComponent implements OnInit {
         const dialogRef = this.loginDialog.open(
             LoginModalComponent,
             {
-                data
+                data,
             }
-        )
+        );
 
         dialogRef.afterClosed().subscribe((result) => {
             console.log(result);
@@ -183,7 +187,28 @@ export class LandingSiteLayoutComponent implements OnInit {
             }
 
             console.log(result);
-        })
+        });
+    }
+
+    public openRequestDemo() {
+        const data ={
+            succeed: false,
+        };
+        const dialogRef = this.requestDemoDialog.open(
+            RequestDemoModalComponent,
+            {
+                width: "600px",
+                height: "650px",
+                panelClass: "request-demo-container",
+                data,
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) return;
+
+            this.requestDemoSuccessDialog.open(RequestDemoSuccessComponent);
+        });
     }
 
     public forgotPasswordClicked() {
@@ -264,17 +289,17 @@ export class LandingSiteLayoutComponent implements OnInit {
                     [
                         this.fuelerlinxLogo,
                         this.x1fboLogo,
-                        this.millionAirLogo
+                        this.millionAirLogo,
                     ],
                     [
                         this.flightAwareLogo,
                         this.titanLogo,
-                        this.jetAviation
+                        this.jetAviation,
                     ],
                     [
                         this.amstatLogo,
                         this.fbodirectorLogo,
-                        this.fbopartnersLogo
+                        this.fbopartnersLogo,
                     ],
                 ];
                 break;
@@ -283,10 +308,10 @@ export class LandingSiteLayoutComponent implements OnInit {
                     [
                         this.fuelerlinxLogo,
                         this.flightAwareLogo,
-                        this.amstatLogo
+                        this.amstatLogo,
                     ],
                     [
-                        this.fbopartnersLogo
+                        this.fbopartnersLogo,
                     ],
                 ];
                 break;
@@ -295,8 +320,8 @@ export class LandingSiteLayoutComponent implements OnInit {
                     [
                         this.fbopartnersLogo,
                         this.titanLogo,
-                        this.fbodirectorLogo
-                    ]
+                        this.fbodirectorLogo,
+                    ],
                 ];
                 break;
             case 3:
@@ -304,8 +329,8 @@ export class LandingSiteLayoutComponent implements OnInit {
                     [
                         this.titanLogo,
                         this.millionAirLogo,
-                        this.jetAviation
-                    ]
+                        this.jetAviation,
+                    ],
                 ];
                 break;
             default:
@@ -313,7 +338,7 @@ export class LandingSiteLayoutComponent implements OnInit {
         }
     }
     
-    @HostListener('window:scroll', ['$event'])
+    @HostListener("window:scroll", ["$event"])
     public checkScroll(): void {
         this.isSticky = window.pageYOffset >= 171;
     }

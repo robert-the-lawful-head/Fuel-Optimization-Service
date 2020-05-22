@@ -392,3 +392,19 @@ font-size:16px;
 .signin-btn {
     color: white;
 }
+
+::ng-deep {
+    .request-demo-container {
+        .mat-dialog-container {
+            padding: 0;
+            overflow: hidden;
+
+            .mat-dialog-content {
+                margin: 0;
+                padding: 0;
+                max-height: none;
+                overflow: hidden;
+            }
+        }
+    }
+}
