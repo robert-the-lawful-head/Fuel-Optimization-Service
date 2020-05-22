@@ -50,8 +50,6 @@ export class FbosHomeComponent implements OnInit {
         }
     }
 
-    public deleteFboClicked(record) {}
-
     public saveFboEditClicked() {
         this.currentFboAirport = null;
         this.currentFbo = null;

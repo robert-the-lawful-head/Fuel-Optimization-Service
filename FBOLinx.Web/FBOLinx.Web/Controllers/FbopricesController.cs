@@ -461,15 +461,15 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var products = FBOLinx.Web.Utilities.Enum.GetDescriptions(typeof(Models.Fboprices.FuelProductPriceTypes));
+            var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
 
-            var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId).Select(s => s.Oid).ToList();
+            var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId && s.Active == true).Select(s => s.Oid).ToList();
 
-            var activePricing = _context.Fboprices.Where(s => 
+            var activePricing = await _context.Fboprices.Where(s => 
                                         s.EffectiveTo > DateTime.UtcNow && 
                                         (s.Product == "JetA Cost" || s.Product == "JetA Retail") && 
                                         groupFbos.Contains(Convert.ToInt32(s.Fboid)) && 
-                                        s.Expired != true).ToList();
+                                        s.Expired != true).ToListAsync();
             List<FBOGroupPriceUpdateVM> groupPriceUpdate = new List<FBOGroupPriceUpdateVM>();
             foreach (var groupFbo in groupFbos)
             {
@@ -477,19 +477,16 @@ namespace FBOLinx.Web.Controllers
                 
                 if (isFboActivePricing == null)
                 {
-                    FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM();
-                    gPU.FboId = groupFbo;
-                    gPU.FboName = _context.Fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo;
+                    FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM
+                    {
+                        FboId = groupFbo,
+                        FboName = _context.Fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo
+                    };
                     groupPriceUpdate.Add(gPU);
                 }
             }
 
-            if(groupPriceUpdate.Count > 0)
-            {
-                return Ok(groupPriceUpdate);
-            }
-
-            return Ok(null);
+            return Ok(groupPriceUpdate);
         }
 
         [AllowAnonymous]

@@ -27,6 +27,7 @@ import { ManageConfirmationComponent } from "../../../shared/components/manage-c
 import { PricingExpiredNotificationGroupComponent } from "../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component";
 
 import { fboChangedEvent } from "../../../models/sharedEvents";
+import { NotificationComponent } from "../../../shared/components/notification/notification.component";
 
 const BREADCRUMBS: any[] = [
     {
@@ -80,7 +81,8 @@ export class FbosGridComponent implements OnInit {
         private manageFboDialog: MatDialog,
         private snackBar: MatSnackBar,
         private router: Router,
-        private checkPricingDialog: MatDialog
+        private checkPricingDialog: MatDialog,
+        private notification: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.canManageFbo = this.sharedService.currentUser.role === 2;
@@ -253,26 +255,38 @@ export class FbosGridComponent implements OnInit {
     }
 
     public manageFBO(fbo) {
-        const dialogRef = this.manageFboDialog.open(
-            ManageConfirmationComponent,
-            {
-                width: "450px",
-                data: fbo,
-            }
-        );
+        if (!fbo.active) {
+            this.notification.open(
+                NotificationComponent,
+                {
+                    data: {
+                        title: "Inactive fbo",
+                        text: "You can't manage an inactive fbo!",
+                    },
+                }
+            );
+        } else {
+            const dialogRef = this.manageFboDialog.open(
+                ManageConfirmationComponent,
+                {
+                    width: "450px",
+                    data: fbo,
+                }
+            );
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    return;
+                }
 
-            this.sharedService.currentUser.impersonatedRole = 1;
-            sessionStorage.setItem("impersonatedrole", "1");
-            this.sharedService.currentUser.fboId = result.oid;
-            sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
-            this.sharedService.emitChange(fboChangedEvent);
-            this.router.navigate(["/default-layout/dashboard-fbo/"]);
-        });
+                this.sharedService.currentUser.impersonatedRole = 1;
+                sessionStorage.setItem("impersonatedrole", "1");
+                this.sharedService.currentUser.fboId = result.oid;
+                sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
+                this.sharedService.emitChange(fboChangedEvent);
+                this.router.navigate(["/default-layout/dashboard-fbo/"]);
+            });
+        }
     }
 
     public checkExistingPrices() {
@@ -280,14 +294,7 @@ export class FbosGridComponent implements OnInit {
         this.fboPricesService
             .checkFboExpiredPricingGroup(this.sharedService.currentUser.groupId)
             .subscribe((data: any) => {
-                let isGroupUpdate = false;
-                if (data) {
-                    if (data[0].fboId) {
-                        isGroupUpdate = true;
-                    }
-                }
-
-                if (isGroupUpdate) {
+                if (data && data.length) {
                     const dialogRef = this.checkPricingDialog.open(
                         PricingExpiredNotificationGroupComponent,
                         {
