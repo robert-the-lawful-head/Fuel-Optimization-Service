@@ -25,4 +25,8 @@ export class NotificationComponent {
         public dialogRef: MatDialogRef<NotificationComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
+
+    onCancelClick() {
+        this.dialogRef.close();
+    }
 }

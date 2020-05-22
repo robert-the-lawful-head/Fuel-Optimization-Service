@@ -78,17 +78,17 @@ export class LandingSiteLayoutComponent {
         [
             this.fuelerlinxLogo,
             this.x1fboLogo,
-            this.millionAirLogo
+            this.millionAirLogo,
         ],
         [
             this.flightAwareLogo,
             this.titanLogo,
-            this.jetAviation
+            this.jetAviation,
         ],
         [
             this.amstatLogo,
             this.fbodirectorLogo,
-            this.fbopartnersLogo
+            this.fbopartnersLogo,
         ],
     ];
 
@@ -122,11 +122,11 @@ export class LandingSiteLayoutComponent {
             if (!result) {
                 return;
             }
-            if (result.mode === 'request-demo') {
-                this.openRequestDemo()
+            if (result.mode === "request-demo") {
+                this.openRequestDemo();
             }
-            if (result.mode === 'forgot-password') {
-                this.forgotPassword()
+            if (result.mode === "forgot-password") {
+                this.forgotPassword();
             }
         });
     }
