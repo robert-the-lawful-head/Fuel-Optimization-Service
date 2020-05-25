@@ -294,8 +294,8 @@ export class CustomersEditComponent {
     }
 
     public newCustomerAircraftAdded() {
-        //this.loadCustomerAircrafts();
-        //this.saveCustomerEdit();
+        // this.loadCustomerAircrafts();
+        // this.saveCustomerEdit();
     }
 
     public editCustomerAircraftClicked(customerAircraft) {

@@ -171,7 +171,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             }
             result.groupId = this.sharedService.currentUser.groupId;
             result.customerId = this.customer.customerId;
-            this.customerAircraftsService.add(result).subscribe((data: any) => {
+            this.customerAircraftsService.add(result).subscribe(() => {
                 this.customerAircraftsService
                     .getCustomerAircraftsByGroupAndCustomerId(
                         this.sharedService.currentUser.groupId,
