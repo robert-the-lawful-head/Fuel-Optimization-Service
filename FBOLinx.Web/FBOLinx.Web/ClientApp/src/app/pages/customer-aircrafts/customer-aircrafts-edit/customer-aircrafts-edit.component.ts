@@ -16,7 +16,6 @@ import {
     MatDialog,
 } from "@angular/material/dialog";
 import { DialogConfirmAircraftDeleteComponent } from "../customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component";
-import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 
 @Component({
     selector: "app-customer-aircrafts-edit",
@@ -38,8 +37,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
         private dialogRef: MatDialogRef<CustomerAircraftsEditComponent>,
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
-        private dialogAircraftDeleteRef: MatDialog,
-        private notification: MatDialog,
+        private dialogAircraftDeleteRef: MatDialog
     ) {}
 
     ngOnInit() {
@@ -71,31 +69,19 @@ export class CustomerAircraftsEditComponent implements OnInit {
     }
 
     public ConfirmDelete(data: any) {
-        if (this.data.disableDelete) {
-            this.notification.open(
-                NotificationComponent,
-                {
-                    data: {
-                        title: 'Fuelerlinx Customer Aircraft',
-                        text: 'You can\'t delete fuelerlinx account tails.'
-                    }
-                }
-            )
-        } else {
-            const dialogRef = this.dialogAircraftDeleteRef.open(
-                DialogConfirmAircraftDeleteComponent,
-                {
-                    data,
-                }
-            );
+        const dialogRef = this.dialogAircraftDeleteRef.open(
+            DialogConfirmAircraftDeleteComponent,
+            {
+                data,
+            }
+        );
 
-            dialogRef.afterClosed().subscribe((result) => {
-                if (result === "cancel") {
-                } else if (result.oid) {
-                    result.toDelete = true;
-                    this.dialogRef.close(result);
-                }
-            });
-        }
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result === "cancel") {
+            } else if (result.oid) {
+                result.toDelete = true;
+                this.dialogRef.close(result);
+            }
+        });
     }
 }
