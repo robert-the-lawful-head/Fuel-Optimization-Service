@@ -48,8 +48,8 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (fboId != UserService.GetClaimedFboId(_HttpContextAccessor))
-                return BadRequest(ModelState);
+            //if (fboId != UserService.GetClaimedFboId(_HttpContextAccessor))
+            //    return BadRequest(ModelState);
 
             var distributionLog = await (from dl in _context.DistributionLog
                 join cg in _context.CustomerInfoByGroup on new
