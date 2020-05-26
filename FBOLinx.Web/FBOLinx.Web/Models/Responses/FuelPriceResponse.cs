@@ -22,5 +22,7 @@ namespace FBOLinx.Web.Models.Responses
         public string TailNumberList { get; set; }
         public int CustomerId { get; set; }
         public int AircraftId { get; set; }
+        public int PricingTemplateId { get; set; }
+        public string PricingTemplateName { get; set; }
     }
 }

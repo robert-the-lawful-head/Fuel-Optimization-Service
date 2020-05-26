@@ -26,22 +26,30 @@ namespace FBOLinx.Web.Services
         public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId)
         {
             List<CustomerWithPricing> result = new List<CustomerWithPricing>();
-            var fboAirports = await _context.Fboairports.Include(x => x.Fbo).ThenInclude(x => x.Group).Where(x => x.Icao == icao && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true).ToListAsync();
+            List<Fboairports> fboAirports = await _context.Fboairports
+                                                            .Include(x => x.Fbo)
+                                                            .ThenInclude(x => x.Group)
+                                                            .Where(x => x.Icao == icao && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true)
+                                                            .ToListAsync();
             if (fboAirports == null)
                 return result;
             foreach (var fboAirport in fboAirports)
             {
-                var fbo = await _context.Fbos.Include(x => x.Group).Where(x => x.Oid == fboAirport.Fboid).FirstOrDefaultAsync();
-                var customerInfoByGroup = await _context.CustomerInfoByGroup
-                    .Where(x => x.CustomerId == customerId && x.GroupId == fbo.GroupId).FirstOrDefaultAsync();
+                Fbos fbo = await _context.Fbos
+                                            .Include(x => x.Group)
+                                            .Where(x => x.Oid == fboAirport.Fboid)
+                                            .FirstOrDefaultAsync();
+                CustomerInfoByGroup customerInfoByGroup = await _context.CustomerInfoByGroup
+                                                                            .Where(x => x.CustomerId == customerId && x.GroupId == fbo.GroupId)
+                                                                            .FirstOrDefaultAsync();
                 if (customerInfoByGroup == null)
                     continue;
 
-                var templates = await GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault());
+                List<PricingTemplate> templates = await GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault());
                 if (templates == null)
                     continue;
 
-                var pricing =
+                List<CustomerWithPricing> pricing =
                     await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList());
                 foreach(var price in pricing)
                 {
