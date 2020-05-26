@@ -119,13 +119,6 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "visible")]
     public bool? Visible { get; set; }
 
-    /// <summary>
-    /// Gets or Sets DataJson
-    /// </summary>
-    [DataMember(Name="dataJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dataJson")]
-    public string DataJson { get; set; }
-
 
     /// <summary>
     /// Get the string presentation of the object
@@ -149,7 +142,6 @@ namespace IO.Swagger.Model {
       sb.Append("  ShowInLegend: ").Append(ShowInLegend).Append("\n");
       sb.Append("  Selected: ").Append(Selected).Append("\n");
       sb.Append("  Visible: ").Append(Visible).Append("\n");
-      sb.Append("  DataJson: ").Append(DataJson).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

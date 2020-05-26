@@ -18,7 +18,6 @@ Name | Type | Description | Notes
 **ShowInLegend** | **bool?** |  | [optional] 
 **Selected** | **bool?** |  | [optional] 
 **Visible** | **bool?** |  | [optional] 
-**DataJson** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

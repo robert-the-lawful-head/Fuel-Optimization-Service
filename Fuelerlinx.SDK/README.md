@@ -778,6 +778,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.WeeklyPricingListResponse](docs/WeeklyPricingListResponse.md)
  - [IO.Swagger.Model.Weight](docs/Weight.md)
  - [IO.Swagger.Model.WeightAndBalanceOptions](docs/WeightAndBalanceOptions.md)
+ - [IO.Swagger.Model.WeightConversionDTO](docs/WeightConversionDTO.md)
  - [IO.Swagger.Model.XAxisItem](docs/XAxisItem.md)
  - [IO.Swagger.Model.YAxisItem](docs/YAxisItem.md)
 
