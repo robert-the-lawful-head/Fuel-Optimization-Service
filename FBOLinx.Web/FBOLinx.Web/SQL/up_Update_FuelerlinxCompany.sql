@@ -36,7 +36,7 @@ BEGIN
 	SET @Local_Company = @Company
 
 	if (@Local_FBOLinxCompanyID is null)
-		SELECT @Local_FBOLinxCompanyID = OID FROM Customers WHERE FuelerlinxID = @Local_FuelerlinxCompanyID
+		SELECT @Local_FBOLinxCompanyID = OID FROM Customers WHERE FuelerlinxID = @Local_FuelerlinxCompanyID OR FuelerlinxID = -@Local_FuelerlinxCompanyID
 	
 	IF (ISNULL(@Local_FBOLinxCompanyID, 0) > 0 and @Local_FuelerlinxCompanyID <> 0)
 		BEGIN
@@ -44,7 +44,7 @@ BEGIN
 				BEGIN
 					IF (@Local_FBOLinxCompanyID > 0)
 						UPDATE Customers
-						SET FuelerlinxID = @Local_FuelerlinxCompanyID
+						SET FuelerlinxID = @Local_FuelerlinxCompanyID, Active = 1
 						WHERE FuelerLinxID = -@Local_FuelerlinxCompanyID
 						
 						UPDATE CG
