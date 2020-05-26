@@ -516,28 +516,38 @@ namespace FBOLinx.Web.Controllers
                     return Ok(null);
 
                 PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-                var validPricing =
+                List<CustomerWithPricing> validPricing =
                     await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid);
                 if (validPricing == null)
                     return Ok(null);
 
-                var result = validPricing.Select(x => new FuelPriceResponse()
-                {
-                    CustomerId = x.CustomerId,
-                    Icao = x.Icao,
-                    Iata = x.Iata,
-                    FboId = x.FboId,
-                    Fbo = x.Fbo,
-                    GroupId = x.GroupId.GetValueOrDefault(),
-                    Group = x.Group,
-                    Product = "JetA",
-                    MinVolume = x.MinGallons.GetValueOrDefault(),
-                    Notes = x.Notes,
-                    Default = string.IsNullOrEmpty(x.TailNumbers),
-                    Price = x.AllInPrice.GetValueOrDefault(),
-                    TailNumberList = x.TailNumbers,
-                    ExpirationDate = x.ExpirationDate
-                });
+                var result = (
+                    from p in validPricing
+                    join ct in _context.CustomCustomerTypes on new { p.CustomerId, p.FboId } equals new { ct.CustomerId, FboId = ct.Fboid }
+                    into leftJoinCustomerTypes
+                    from ct in leftJoinCustomerTypes.DefaultIfEmpty()
+                    join pt in _context.PricingTemplate on ct.CustomerType equals pt.Oid
+                    into leftJoinPricingTemplate
+                    from pt in leftJoinPricingTemplate.DefaultIfEmpty()
+                    select new FuelPriceResponse
+                    {
+                        CustomerId = p.CustomerId,
+                        Icao = p.Icao,
+                        Iata = p.Iata,
+                        FboId = p.FboId,
+                        Fbo = p.Fbo,
+                        GroupId = p.GroupId.GetValueOrDefault(),
+                        Group = p.Group,
+                        Product = "JetA",
+                        MinVolume = p.MinGallons.GetValueOrDefault(),
+                        Notes = p.Notes,
+                        Default = string.IsNullOrEmpty(p.TailNumbers),
+                        Price = p.AllInPrice.GetValueOrDefault(),
+                        TailNumberList = p.TailNumbers,
+                        ExpirationDate = p.ExpirationDate,
+                        PricingTemplateId = ct == null ? 0 : ct.CustomerType,
+                        PricingTemplateName = ct == null ? "" : pt.Name
+                    }).Distinct();
 
                 return Ok(result);
             }
