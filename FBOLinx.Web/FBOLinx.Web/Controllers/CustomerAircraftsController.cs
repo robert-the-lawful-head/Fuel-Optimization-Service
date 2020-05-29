@@ -305,7 +305,7 @@ namespace FBOLinx.Web.Controllers
                 CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
 
                 AircraftPrices aircraftPrice = _context.AircraftPrices.FirstOrDefault(a => a.CustomerAircraftId.Equals(custAircraft.Oid));
-                CustomCustomerTypes customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == customerAircrafts.CustomerId && s.Fboid == fboid);
+                CustomCustomerTypes customerTemplate = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == customerAircrafts.CustomerId && s.Fboid == fboid);
                 PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Name == customerAircrafts.PricingTemplateName && s.Fboid == fboid);
                 if (aircraftPrice != null)
                 {
@@ -330,10 +330,18 @@ namespace FBOLinx.Web.Controllers
                     _context.CustomerAircrafts.Update(custAircraft);
                 }
 
-                // Tail-specific margin template overrides customer level templates.
-                if (customerMargin != null && pricingTemplate != null)
+                var aircrafts = await (
+                    from ap in _context.AircraftPrices 
+                    join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
+                    join cm in _context.CustomCustomerTypes on ca.CustomerId equals cm.CustomerId
+                    where ca.CustomerId == customerAircrafts.CustomerId
+                    select ap).ToListAsync();
+
+                if (aircrafts.Count() > 0 && 
+                    aircrafts.Select(a => a.PriceTemplateId).Distinct().Count() == 1 && 
+                    aircrafts[0].PriceTemplateId > 0)
                 {
-                    customerMargin.CustomerType = pricingTemplate.Oid;
+                    customerTemplate.CustomerType = aircrafts[0].PriceTemplateId ?? 0;
                 }
 
                 await _context.SaveChangesAsync();
