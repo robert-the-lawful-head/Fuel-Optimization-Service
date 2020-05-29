@@ -521,14 +521,22 @@ namespace FBOLinx.Web.Controllers
                 if (validPricing == null)
                     return Ok(null);
 
+                var customerTemplates =
+                    from ct in _context.CustomCustomerTypes
+                    join pt in _context.PricingTemplate on ct.CustomerType equals pt.Oid
+                    select new
+                    {
+                        ct.CustomerId,
+                        ct.Fboid,
+                        ct.CustomerType,
+                        PricingTemplateName = pt.Name
+                    };
+
                 var result = (
                     from p in validPricing
-                    join ct in _context.CustomCustomerTypes on new { p.CustomerId, p.FboId } equals new { ct.CustomerId, FboId = ct.Fboid }
+                    join ct in customerTemplates on new { p.CustomerId, p.FboId } equals new { ct.CustomerId, FboId = ct.Fboid }
                     into leftJoinCustomerTypes
                     from ct in leftJoinCustomerTypes.DefaultIfEmpty()
-                    join pt in _context.PricingTemplate on ct.CustomerType equals pt.Oid
-                    into leftJoinPricingTemplate
-                    from pt in leftJoinPricingTemplate.DefaultIfEmpty()
                     select new FuelPriceResponse
                     {
                         CustomerId = p.CustomerId,
@@ -545,8 +553,8 @@ namespace FBOLinx.Web.Controllers
                         Price = p.AllInPrice.GetValueOrDefault(),
                         TailNumberList = p.TailNumbers,
                         ExpirationDate = p.ExpirationDate,
-                        PricingTemplateId = ct == null ? 0 : ct.CustomerType,
-                        PricingTemplateName = ct == null ? "" : pt.Name
+                        PricingTemplateId = p.PricingTemplateId.GetValueOrDefault() == 0 ? ct.CustomerType : p.PricingTemplateId.GetValueOrDefault(),
+                        PricingTemplateName = p.PricingTemplateId.GetValueOrDefault() == 0 ? ct.PricingTemplateName : p.PricingTemplateName
                     }).Distinct();
 
                 return Ok(result);
