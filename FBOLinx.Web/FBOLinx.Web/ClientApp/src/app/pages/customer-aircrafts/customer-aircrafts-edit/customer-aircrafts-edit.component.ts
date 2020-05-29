@@ -78,7 +78,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result === "cancel") {
-            } else if (result.oid) {
+            } else if (result && result.oid) {
                 result.toDelete = true;
                 this.dialogRef.close(result);
             }
