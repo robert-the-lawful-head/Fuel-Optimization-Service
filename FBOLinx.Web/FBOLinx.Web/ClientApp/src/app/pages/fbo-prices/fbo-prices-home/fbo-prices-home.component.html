@@ -1,6 +1,6 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-4 mt-3">
+    <div class="d-flex pricing-page justify-content-between">
+        <div class="mt-3 pricing-display-board">
             <ni-card
                 title="Live Pricing"
                 subtitle="Costs are always kept confidential"
@@ -101,7 +101,24 @@
                 ></ngx-ui-loader>
             </ni-card>
         </div>
-        <div class="col-md-8 mt-3">
+
+        <ng-container *ngIf="!layoutChanged; then pricingUpdate else addOnMargin"></ng-container>
+    </div>
+    <div class="d-flex" [ngClass]="{ 'mt-3': !layoutChanged }">
+        <ng-container *ngIf="layoutChanged; then pricingUpdate else addOnMargin"></ng-container>
+            <!-- <ni-card
+                title="Stage Future Prices"
+                bgColor="dark"
+                headerBgColor="dark"
+                outline="true"
+                theme="small"
+                [collapsible]="'true'"
+            >
+            </ni-card> -->
+    </div>
+
+    <ng-template #pricingUpdate>
+        <div class="pricing-update-board" [ngClass]="{ 'mt-3': !layoutChanged, 'mb-3': layoutChanged }">
             <ni-card
                 class="mb-0"
                 title="Update your pricing here"
@@ -112,10 +129,14 @@
                 customStyle="min-height: 160px;"
             >
                 <div class="row">
-                    <div class="col-1 mt-1">
-                        <span class="h5 mt-0">Jet-A</span>
+                    <div class="col-12">
+                        <div class="mt-1 pricing-name">
+                            <span class="h5 mt-0">Jet-A</span>
+                        </div>
                     </div>
-                    <div class="col-3 mt-4">
+                </div>
+                <div class="d-flex justify-content-around">
+                    <div class="pl-3 pr-2">
                         <mat-form-field>
                             <input
                                 matInput
@@ -159,7 +180,7 @@
                             </ng-template>
                         </div>
                     </div>
-                    <div class="col-3 mt-4">
+                    <div class="pr-2">
                         <mat-form-field>
                             <input
                                 matInput
@@ -197,7 +218,7 @@
                             </ng-template>
                         </div>
                     </div>
-                    <div class="col-3 mt-4">
+                    <div class="pr-2">
                         <mat-form-field>
                             <input
                                 matInput
@@ -217,7 +238,7 @@
                             >{{ priceEntryError }}</span>
                         </mat-form-field>
                     </div>
-                    <div class="col-2 mt-4 pt-2">
+                    <div class="pt-2">
                         <div class="text-center">
                             <button
                                 mat-raised-button
@@ -233,9 +254,10 @@
                 </div>
             </ni-card>
         </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col-md-4">
+    </ng-template>
+
+    <ng-template #addOnMargin>
+        <div class="add-on-margin-board" [ngClass]="{ 'mt-3': layoutChanged }">
             <ni-card
                 title="Add On Margin"
                 subtitle="This margin is applies to all customers"
@@ -345,16 +367,5 @@
                 </div>
             </ni-card>
         </div>
-        <div class="col-md-8">
-            <!-- <ni-card
-                title="Stage Future Prices"
-                bgColor="dark"
-                headerBgColor="dark"
-                outline="true"
-                theme="small"
-                [collapsible]="'true'"
-            >
-            </ni-card> -->
-        </div>
-    </div>
+    </ng-template>
 </div>
