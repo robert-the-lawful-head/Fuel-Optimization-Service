@@ -5,6 +5,55 @@
     margin-bottom: 20px;
     position: relative;
 
+    .pricing-display-board {
+        min-width: 495px;
+        width: 495px;
+    }
+
+    .pricing-update-board {
+        width: calc(100% - 510px);
+
+        .pricing-name {
+            min-width: 47px;
+        }
+    
+        .mat-form-field {
+            min-width: 120px;
+            max-width: 180px;
+    
+            ::ng-deep {
+                .mat-form-field-infix {
+                    width: auto;
+                }
+            }
+        }
+    }
+
+    .add-on-margin-board {
+        min-width: 495px;
+        width: 495px;
+    }
+
+    @media (max-width: 1425px) {
+        .pricing-update-board {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 1360px) {
+        .pricing-page {
+            flex-direction: column;
+        }
+
+        .pricing-update-board {
+            width: 100%;
+        }
+
+        .add-on-margin-board {
+            margin-top: 0 !important;
+        }
+    }
+
     .expire-date {
         font-size: 0.8rem;
         font-weight: normal;

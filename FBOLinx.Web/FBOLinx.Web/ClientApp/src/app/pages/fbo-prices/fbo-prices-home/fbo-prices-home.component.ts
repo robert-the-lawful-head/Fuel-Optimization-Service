@@ -5,6 +5,7 @@ import {
     AfterViewInit,
     ViewChildren,
     QueryList,
+    HostListener,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { NgxUiLoaderService } from "ngx-ui-loader";
@@ -85,6 +86,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public locationChangedSubscription: any;
     public tooltipSubscription: any;
 
+    public layoutChanged: boolean;
+
     constructor(
         private fboPricesService: FbopricesService,
         private pricingTemplateService: PricingtemplatesService,
@@ -97,6 +100,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     ngOnInit(): void {
         this.resetAll();
+        this.onResize({ target: {innerWidth: window.innerWidth }});
     }
 
     ngAfterViewInit(): void {
@@ -428,5 +432,14 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             tooltipsArr[this.tooltipIndex].open();
             this.tooltipIndex--;
         }, 400);
+    }
+
+    @HostListener("window:resize", ["$event"])
+    private onResize(event: any) {
+        if (event.target.innerWidth <= 1425) {
+            this.layoutChanged = true;
+        } else {
+            this.layoutChanged = false;
+        }
     }
 }
