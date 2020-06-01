@@ -295,7 +295,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPut("fbo/{fboid}")]
-        public async Task<IActionResult> PutCustomerAircraftsTemplate([FromRoute] int fboid, [FromBody] CustomerAircraftsGridViewModel customerAircrafts)
+        public async Task<IActionResult> PutCustomerAircraftsTemplate([FromRoute] int fboid, [FromBody] CustomerAircraftsGridViewModel request)
         {
             if (!ModelState.IsValid)
             {
@@ -304,11 +304,11 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
+                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == request.Oid);
 
                 AircraftPrices aircraftPrice = _context.AircraftPrices.FirstOrDefault(a => a.CustomerAircraftId.Equals(custAircraft.Oid));
-                CustomCustomerTypes customerTemplate = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == customerAircrafts.CustomerId && s.Fboid == fboid);
-                PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Name == customerAircrafts.PricingTemplateName && s.Fboid == fboid);
+                CustomCustomerTypes customerTemplate = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == request.CustomerId && s.Fboid == fboid);
+                PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Name == request.PricingTemplateName && s.Fboid == fboid);
                 if (aircraftPrice != null)
                 {
                     aircraftPrice.PriceTemplateId = pricingTemplate?.Oid;
@@ -326,32 +326,51 @@ namespace FBOLinx.Web.Controllers
 
                 if (custAircraft != null)
                 {
-                    custAircraft.TailNumber = customerAircrafts.TailNumber;
-                    custAircraft.AircraftId = customerAircrafts.AircraftId;
-                    custAircraft.Size = customerAircrafts.Size;
+                    custAircraft.TailNumber = request.TailNumber;
+                    custAircraft.AircraftId = request.AircraftId;
+                    custAircraft.Size = request.Size;
                     _context.CustomerAircrafts.Update(custAircraft);
                 }
 
-                var aircrafts = await (
-                    from ap in _context.AircraftPrices 
-                    join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
-                    join cm in _context.CustomCustomerTypes on ca.CustomerId equals cm.CustomerId
-                    where ca.CustomerId == customerAircrafts.CustomerId
-                    select ap).ToListAsync();
+                await _context.SaveChangesAsync();
 
-                if (aircrafts.Count() > 0 && 
-                    aircrafts.Select(a => a.PriceTemplateId).Distinct().Count() == 1 && 
-                    aircrafts[0].PriceTemplateId > 0)
+                var customerAircraftsPricing = await (
+                                   from ca in _context.CustomerAircrafts
+                                   join cg in _context.CustomerInfoByGroup on new { groupId = ca.GroupId ?? 0, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
+                                   join c in _context.Customers on cg.CustomerId equals c.Oid
+                                   join pt in (
+                                        from ap in _context.AircraftPrices
+                                        join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
+                                        where pt.Fboid == fboid
+                                        select new
+                                        {
+                                            Oid = pt == null ? 0 : pt.Oid,
+                                            Name = pt == null ? "" : pt.Name,
+                                            ap.CustomerAircraftId
+                                        }
+                                   ) on ca.Oid equals pt.CustomerAircraftId
+                                   into leftJoinPt
+                                   from pt in leftJoinPt.DefaultIfEmpty()
+                                   where ca.GroupId == request.GroupId && c.Oid == request.CustomerId
+                                   select new
+                                   {
+                                       PricingTemplateId = pt == null ? 0 : pt.Oid,
+                                   })
+                                   .Distinct()
+                                   .ToListAsync();
+
+                if (customerAircraftsPricing.Count() == 1)
                 {
-                    customerTemplate.CustomerType = aircrafts[0].PriceTemplateId ?? 0;
+                    customerTemplate.CustomerType = customerAircraftsPricing[0].PricingTemplateId;
+                    _context.CustomCustomerTypes.Update(customerTemplate);
+                    await _context.SaveChangesAsync();
                 }
 
-                await _context.SaveChangesAsync();
                 return Ok(custAircraft);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CustomerAircraftsExists(customerAircrafts.Oid))
+                if (!CustomerAircraftsExists(request.Oid))
                 {
                     return NotFound();
                 }
