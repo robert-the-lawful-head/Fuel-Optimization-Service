@@ -11,6 +11,8 @@ using FBOLinx.Web.Services;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using static FBOLinx.Web.Models.AirCrafts;
+using FBOLinx.Web.Auth;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -454,6 +456,45 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(customerAircrafts);
         }
+
+        #region Integration Partner APIs
+        [AllowAnonymous]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [HttpPost("fuelerlinx-aircraft-release")]
+        public async Task<IActionResult> GetFuelPricesForFuelerlinx([FromBody] FuelerLinxAircraftReleaseRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var customerAircrafts = await (
+                                        from ca in _context.CustomerAircrafts
+                                        join c in _context.Customers on ca.CustomerId equals c.Oid
+                                        where c.FuelerlinxId == request.FuelerlinxCompanyID && ca.TailNumber == request.TailNumber
+                                        select ca
+                                        ).ToListAsync();
+
+                if (customerAircrafts.Count == 0)
+                {
+                    return Ok(new { Message = "The FBOLinx company has no aircraft with the provided Tail Number!" });
+                }
+
+                customerAircrafts.ForEach(ca => ca.AddedFrom = 0);
+
+                _context.CustomerAircrafts.UpdateRange(customerAircrafts);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Message = "Successfully released the fuelerlinx aircrafts!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        #endregion
 
         private bool CustomerAircraftsExists(int id)
         {
