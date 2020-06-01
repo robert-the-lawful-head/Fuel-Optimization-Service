@@ -206,6 +206,15 @@ namespace FBOLinx.Web.Controllers
                     _context.CustomCustomerTypes.Add(newType);
                 }
 
+                var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == model.fboid).GroupId;
+                var customerInfo = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == model.id && s.GroupId == groupInfo);
+
+                if(customerInfo != null)
+                {
+                    customerInfo.PricingTemplateRemoved = false;
+                    _context.CustomerInfoByGroup.Update(customerInfo);
+                }
+
                 await _context.SaveChangesAsync();
             }
 

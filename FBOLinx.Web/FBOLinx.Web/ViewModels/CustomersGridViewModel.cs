@@ -23,6 +23,7 @@ namespace FBOLinx.Web.ViewModels
         public double? CustomerMarginAmount { get; set; }
         public double? FboFeeAmount { get; set; }
         public bool NeedsAttention { get; set; }
+        public string NeedsAttentionReason { get; set; }
         public string PricingTemplateName { get; set; }
         public Models.CustomerInfoByGroup.CertificateTypes? CertificateType { get; set; }
         public double? MinGallons { get; set; }
@@ -38,7 +39,9 @@ namespace FBOLinx.Web.ViewModels
         public bool IsPricingExpired { get; set; }
         public bool? ContactExists { get; set; }
         public int? FleetSize { get; set; }
-        
+        public bool? PricingTemplateExists { get; set; }
+        public bool? PricingTemplateRemoved { get; set; }
+
         public bool? Active { get; set; }
         public string DefaultCustomerTypeDescription
         {

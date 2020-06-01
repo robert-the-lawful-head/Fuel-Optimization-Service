@@ -364,6 +364,11 @@ export class CustomersGridComponent implements OnInit {
         customer.needsAttention = changedPricingTemplate.default || 
             (customer.customerCompanyTypeName !== "FuelerLinx" && !customer.contactExists);
         customer.allInPrice = changedPricingTemplate.intoPlanePrice;
+
+        if (changedPricingTemplate.default) {
+            customer.needsAttentionReason = "This customer was given the default template and has not been changed yet.";
+        }
+
         const vm = {
             id: customer.customerId,
             customerMarginName: newValue,
