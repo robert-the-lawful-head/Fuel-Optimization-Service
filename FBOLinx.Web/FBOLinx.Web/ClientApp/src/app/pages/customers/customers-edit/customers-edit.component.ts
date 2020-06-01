@@ -294,14 +294,11 @@ export class CustomersEditComponent {
     }
 
     public newCustomerAircraftAdded() {
-        // this.loadCustomerAircrafts();
-        // this.saveCustomerEdit();
     }
 
     public editCustomerAircraftClicked(customerAircraft) {
-        this.currentCustomerAircraft = null;
-        this.loadCustomerAircrafts();
-        this.selectedCustomerAircraftRecord = customerAircraft;
+        this.customCustomerTypes = null;
+        this.loadCustomCustomerType();
     }
 
     public saveEditCustomerAircraftClicked() {

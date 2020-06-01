@@ -293,7 +293,9 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 size,
                 pricingTemplateName,
             })
-            .subscribe((data: any) => {});
+            .subscribe(() => {
+                this.editCustomerAircraftClicked.emit();
+            });
     }
 
     async launchImporter() {
