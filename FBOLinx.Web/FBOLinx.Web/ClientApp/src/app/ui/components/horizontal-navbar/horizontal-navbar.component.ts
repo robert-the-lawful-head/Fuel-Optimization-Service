@@ -171,7 +171,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
                 AccountProfileComponent,
                 {
                     height: "550px",
-                    width: "650px",
+                    width: "850px",
                     data: response,
                 }
             );

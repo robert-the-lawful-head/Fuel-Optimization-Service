@@ -20,7 +20,6 @@ export class ContactsDialogConfirmContactDeleteComponent {
     ) {
         if (data) {
             this.contactId = data.contactId;
-            console.log(data);
         }
     }
 

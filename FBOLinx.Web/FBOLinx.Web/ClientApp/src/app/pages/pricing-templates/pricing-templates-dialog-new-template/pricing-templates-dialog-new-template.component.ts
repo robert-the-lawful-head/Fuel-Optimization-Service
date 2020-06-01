@@ -1,10 +1,5 @@
 import { Component, OnInit, Inject, ViewChild } from "@angular/core";
-import {
-    FormBuilder,
-    FormGroup,
-    Validators,
-    FormControl,
-} from "@angular/forms";
+import { FormBuilder, Validators } from "@angular/forms";
 import {
     MatDialog,
     MatDialogRef,
@@ -16,7 +11,6 @@ import { CustomermarginsService } from "../../../services/customermargins.servic
 import { FbopricesService } from "../../../services/fboprices.service";
 import { PricetiersService } from "../../../services/pricetiers.service";
 import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
-import { SharedService } from "../../../layouts/shared-service";
 import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor";
 import { CloseConfirmationComponent } from "../../../shared/components/close-confirmation/close-confirmation.component";
 
@@ -103,6 +97,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                             ok: "Discard",
                             cancel: "Cancel",
                         },
+                        autoFocus: false
                     }
                 );
                 closeDialogRef.afterClosed().subscribe((result) => {

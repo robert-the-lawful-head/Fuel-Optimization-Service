@@ -139,6 +139,7 @@ export class CustomersGridComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 data: { item: customer, description: "customer" },
+                autoFocus: false
             }
         );
 

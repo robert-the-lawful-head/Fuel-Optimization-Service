@@ -10,7 +10,7 @@
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button ni-button [view]="'error'" [mat-dialog-close]="true" class="mr-1">{{data.ok}}</button>
+        <button mat-flat-button color="warn" [mat-dialog-close]="true" class="mr-1">{{data.ok}}</button>
         <button mat-stroked-button (click)="onCancelClick()">{{data.cancel}}</button>
     </div>
 </div>

@@ -16,14 +16,13 @@
 </div>
 <div mat-dialog-actions>
     <button
-        ni-button
-        [view]="'success'"
+        mat-stroked-button
+        color="green"
         [mat-dialog-close]="data"
-        beforeIcon="fa fa-copy"
         (click)="ConfirmCopy()"
         class="mr-1"
-        style="background-color: forestgreen; color: white;"
     >
+        <mat-icon>file_copy</mat-icon>
         Copy Template
     </button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>&nbsp;

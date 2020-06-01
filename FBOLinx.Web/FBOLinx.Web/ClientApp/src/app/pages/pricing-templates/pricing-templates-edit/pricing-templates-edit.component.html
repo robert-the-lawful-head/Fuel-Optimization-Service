@@ -26,12 +26,12 @@
             Cancel
         </button>
         <button
-            ni-button
-            [view]="'success'"
-            beforeIcon="fa fa-floppy-o"
+            mat-stroked-button
+            color="green"
             (click)="savePricingTemplate()"
             class="mr-1 float-right"
         >
+            <mat-icon>save</mat-icon>
             Save Changes
         </button>
     </div>
@@ -306,12 +306,12 @@
                         Cancel
                     </button>
                     <button
-                        ni-button
-                        [view]="'success'"
-                        beforeIcon="fa fa-floppy-o"
+                        mat-stroked-button
+                        color="green"
                         (click)="savePricingTemplate()"
-                        class="mr-2 float-right"
+                        class="mr-1 float-right"
                     >
+                        <mat-icon>save</mat-icon>
                         Save Changes
                     </button>
                 </div>

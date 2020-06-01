@@ -27,12 +27,12 @@
             Cancel
         </button>
         <button
-            ni-button
-            [view]="'success'"
-            beforeIcon="fa fa-floppy-o"
+            mat-stroked-button
+            color="green"
             (click)="saveDirectCustomerEdit()"
             class="mr-1 float-right"
         >
+            <mat-icon>save</mat-icon>
             Save Changes
         </button>
     </div>
@@ -234,19 +234,19 @@
                                 >Show 100LL Pricing</mat-slide-toggle>
                         </div>
                     </div>
-                    <table style="width: 100%;">
+
+                    <div>
+                    </div>
+                    <table>
                         <thead>
                             <tr>
                                 <th>Margin Template</th>
-                                <!--<th class="text-right">
-                                    <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newCustomerPricingTemplate()">Add New</button>
-                                </th>-->
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let customCustomerType of customCustomerTypes">
                                 <td>
-                                    <mat-form-field>
+                                    <mat-form-field class="template-dropdown">
                                         <mat-select
                                             placeholder="Margin Template"
                                             [(ngModel)]="
@@ -289,12 +289,12 @@
                                 Cancel
                             </button>
                             <button
-                                ni-button
-                                [view]="'success'"
-                                beforeIcon="fa fa-floppy-o"
+                                mat-stroked-button
+                                color="green"
                                 (click)="saveDirectCustomerEdit()"
                                 class="mr-1 float-right"
                             >
+                                <mat-icon>save</mat-icon>
                                 Save Changes
                             </button>
                         </div>

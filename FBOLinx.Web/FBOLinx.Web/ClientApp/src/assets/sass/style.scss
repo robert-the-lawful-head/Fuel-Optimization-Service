@@ -29,3 +29,22 @@
     margin: 0 10px;
     vertical-align: bottom;
 }
+
+.mat-green {
+    background-color: #81C784;
+    color: #000000 !important;
+}
+
+.mat-orange {
+    background-color: #FFB74D;
+    color: #000000 !important;
+}
+
+.mat-button-wrapper {
+    .mat-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+        margin-right: 5px;
+    }
+}

@@ -1,10 +1,5 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 // Services
 import { AircraftsService } from "../../../services/aircrafts.service";

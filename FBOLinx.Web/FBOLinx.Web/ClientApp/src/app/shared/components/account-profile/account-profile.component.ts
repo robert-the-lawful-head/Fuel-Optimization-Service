@@ -37,9 +37,6 @@ export class AccountProfileComponent {
     public currentContact: any;
     public availableroles: any[];
 
-    // Private Members
-    private selectedContactRecord: any;
-
     constructor(
         public dialogRef: MatDialogRef<AccountProfileComponent>,
         @Inject(MAT_DIALOG_DATA) public data: AccountProfileDialogData,
@@ -73,7 +70,6 @@ export class AccountProfileComponent {
     }
 
     public editContactClicked(record) {
-        this.selectedContactRecord = record;
         this.contactsService
             .get({ oid: record.contactId })
             .subscribe((data: any) => (this.currentContact = data));
@@ -99,7 +95,8 @@ export class AccountProfileComponent {
         }
         this.fbosService
             .get({ oid: this.sharedService.currentUser.fboId })
-            .subscribe((fboData: any) => {
+            .subscribe((fboData) => {
+                this.fboInfo = fboData;
                 this.fboContactsService
                     .getForFbo(this.fboInfo)
                     .subscribe((data: any) => (this.contactsData = data));
@@ -120,8 +117,6 @@ export class AccountProfileComponent {
                     this.availableroles.push(role);
                 }
             }
-            // if (this.data.role > 0)
-            //    return;
 
             if (this.availableroles.length > 1) {
                 this.data.role = this.availableroles[
@@ -130,8 +125,6 @@ export class AccountProfileComponent {
             } else {
                 this.data.role = this.availableroles[0].value;
             }
-
-            // this.data.role = this.availableroles[this.availableroles.length - 1].Value;
         });
     }
 }

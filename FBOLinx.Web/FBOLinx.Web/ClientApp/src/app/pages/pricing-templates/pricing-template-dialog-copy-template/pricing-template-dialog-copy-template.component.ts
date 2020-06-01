@@ -1,10 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from "@angular/core";
-import {
-    FormBuilder,
-    FormGroup,
-    Validators,
-    FormControl,
-} from "@angular/forms";
+import { Component, Inject } from "@angular/core";
 import {
     MatDialog,
     MatDialogRef,
@@ -12,9 +6,6 @@ import {
 } from "@angular/material/dialog";
 
 // Services
-import { SharedService } from "../../../layouts/shared-service";
-import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor";
-import { CloseConfirmationComponent } from "../../../shared/components/close-confirmation/close-confirmation.component";
 import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
 import { PricetiersService } from "../../../services/pricetiers.service";
 import { Router } from "@angular/router";
@@ -29,7 +20,7 @@ export interface CopyPricingTemplateDialogData {
     templateUrl: "./pricing-template-dialog-copy-template.component.html",
     styleUrls: ["./pricing-template-dialog-copy-template.component.scss"],
 })
-export class PricingTemplatesDialogCopyTemplateComponent implements OnInit {
+export class PricingTemplatesDialogCopyTemplateComponent {
     constructor(
         public dialogRef: MatDialogRef<
             PricingTemplatesDialogCopyTemplateComponent
@@ -42,10 +33,6 @@ export class PricingTemplatesDialogCopyTemplateComponent implements OnInit {
     ) {
         // Prevent modal close on outside click
         dialogRef.disableClose = true;
-    }
-
-    ngOnInit() {
-        console.log(this.data.currentPricingTemplateId);
     }
 
     ConfirmCopy() {

@@ -70,6 +70,14 @@
     </div>
 </div>
 <div mat-dialog-actions>
-    <button ni-button [view]="'success'" [mat-dialog-close]="data" beforeIcon="fa fa-floppy-o" (click)="saveEdit()" class="mr-1">Save Contact</button>
+    <button
+        mat-stroked-button
+        color="green"
+        [mat-dialog-close]="data"
+        class="mr-1"
+    >
+        <mat-icon>save</mat-icon>
+        Save Contact
+    </button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
 </div>
