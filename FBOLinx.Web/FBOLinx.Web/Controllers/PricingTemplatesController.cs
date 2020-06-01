@@ -378,6 +378,14 @@ namespace FBOLinx.Web.Controllers
             PricingTemplate defaultPricingTemplate = _context.PricingTemplate.Where(p => p.Fboid.Equals(fboId) && p.Default.GetValueOrDefault()).FirstOrDefault();
             if (defaultPricingTemplate != null)
             {
+                var customers = _context.CustomCustomerTypes
+                    .Where(c => c.Fboid.Equals(fboId) && c.CustomerType.Equals(oid))
+                    .Select(s => s.CustomerId)
+                    .ToList();
+
+                var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == fboId).GroupId;
+                _context.CustomerInfoByGroup.Where(s => customers.Contains(s.CustomerId) && s.GroupId == groupInfo).ToList().ForEach(s => s.PricingTemplateRemoved = true);
+
                 _context.CustomCustomerTypes
                     .Where(c => c.Fboid.Equals(fboId) && c.CustomerType.Equals(oid))
                     .ToList()

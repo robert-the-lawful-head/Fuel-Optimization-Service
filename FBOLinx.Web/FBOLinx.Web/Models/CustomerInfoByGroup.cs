@@ -76,6 +76,7 @@ namespace FBOLinx.Web.Models
         public int Oid { get; set; }
         public CertificateTypes? CertificateType { get; set; }
         public int? CustomerCompanyType { get; set; }
+        public bool? PricingTemplateRemoved { get; set; }
 
         [InverseProperty("CustomerInfoByGroup")]
         [ForeignKey("CustomerId")]

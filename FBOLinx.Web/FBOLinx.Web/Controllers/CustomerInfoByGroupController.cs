@@ -490,7 +490,9 @@ namespace FBOLinx.Web.Controllers
                                                         IsPricingExpired = ai == null ? false : ai.IsPricingExpired,
                                                         Active = cg.Active.GetValueOrDefault(),
                                                         FleetSize = ca == null ? 0 : ca.Count,
-                                                        AllInPrice = ai == null ? 0 : ai.IntoPlanePrice
+                                                        AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
+                                                        PricingTemplateId = pt.Oid,
+                                                        cg.PricingTemplateRemoved
                                                     }
                                                     into resultsGroup
                                                     select new CustomersGridViewModel()
@@ -517,15 +519,20 @@ namespace FBOLinx.Web.Controllers
                                                         NeedsAttention = resultsGroup.Key.PricingTemplateName.Equals(defaultPricingTemplate.Name) ? true :
                                                             resultsGroup.Key.FuelerLinxId == 0 &&
                                                             resultsGroup.Key.ContactExists == false ? true : false,
+                                                        NeedsAttentionReason = resultsGroup.Key.PricingTemplateRemoved.Equals(true) ? "The pricing template was deleted for this customer and has been set to the default template." : (resultsGroup.Key.PricingTemplateName.Equals(defaultPricingTemplate.Name) ? "This customer was given the default template and has not been changed yet." : ""),
                                                         ContactExists = resultsGroup.Key.ContactExists,
                                                         FleetSize = resultsGroup.Key.FleetSize,
                                                         AllInPrice = resultsGroup.Key.AllInPrice,
-                                                        SelectAll = false
+                                                        SelectAll = false,
+                                                        PricingTemplateId = resultsGroup.Key.PricingTemplateId,
+                                                        PricingTemplateRemoved = resultsGroup.Key.PricingTemplateRemoved
                                                     })
                                                     .GroupBy(p => p.CustomerId)
                                                     .Select(g => g.FirstOrDefault())
                                                     .OrderByDescending(s => s.FleetSize.GetValueOrDefault())
                                                     .ToListAsync();
+
+
                 await _context.SaveChangesAsync();
 
                 return customerGridVM;
