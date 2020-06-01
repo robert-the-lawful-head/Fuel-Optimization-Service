@@ -61,6 +61,14 @@
     </div>
 </div>
 <div mat-dialog-actions>
-    <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" [mat-dialog-close]="data" class="mr-1">Add Ramp Fee</button>
+    <button
+        mat-stroked-button
+        color="green"
+        [mat-dialog-close]="data"
+        class="mr-1"
+    >
+        <mat-icon>save</mat-icon>
+        Add Ramp Fee
+    </button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
 </div>

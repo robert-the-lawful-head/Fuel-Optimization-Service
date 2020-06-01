@@ -35,8 +35,8 @@
                     </div>
                 </div>
                 <div class="text-right mt-2">
-                    <button mat-button [mat-dialog-close]="">Cancel</button>
-                    <button mat-button matStepperNext>Next</button>
+                    <button mat-stroked-button [mat-dialog-close]="" class="mr-1">Cancel</button>
+                    <button mat-stroked-button color="green" matStepperNext>Next</button>
                 </div>
             </form>
         </mat-step>
@@ -152,12 +152,6 @@
                                         </td>
                                         <td class="mat-cell text-center">
                                             <mat-form-field class="col-4">
-                                                <!--<input
-        matInput
-        class="text-lg-right"
-        disabled="disabled"
-        value="{{customerMargin.min + 249 }}"
-    />-->
                                                 <input matInput
                                                        class="text-lg-right"
                                                        disabled="disabled"
@@ -281,10 +275,10 @@
                     </div>
                 </div>
                 <div class="text-right mt-2">
-                    <button mat-button [mat-dialog-close]="">Cancel</button>
-                    <button mat-button (click)="stepper.reset()">Reset</button>
-                    <button mat-button matStepperPrevious>Back</button>
-                    <button mat-button matStepperNext>Next</button>
+                    <button mat-stroked-button [mat-dialog-close]="" class="mr-1">Cancel</button>
+                    <button mat-stroked-button (click)="stepper.reset()" class="mr-1">Reset</button>
+                    <button mat-stroked-button matStepperPrevious class="mr-1">Back</button>
+                    <button mat-stroked-button color="green" matStepperNext>Next</button>
                 </div>
             </form>
         </mat-step>
@@ -344,9 +338,9 @@
                     </div>
                 </div>
                 <div class="text-right mt-2">
-                    <button mat-button [mat-dialog-close]="">Cancel</button>
-                    <button mat-button matStepperPrevious>Back</button>
-                    <button mat-button (click)="addTemplateClicked()">
+                    <button mat-stroked-button [mat-dialog-close]="" class="mr-1">Cancel</button>
+                    <button mat-stroked-button matStepperPrevious class="mr-1">Back</button>
+                    <button mat-stroked-button color="green" (click)="addTemplateClicked()" class="mr-1">
                         Save Template
                     </button>
                 </div>

@@ -55,18 +55,12 @@ export class ContactsDialogNewContactComponent {
         public dialogRef: MatDialogRef<ContactsDialogNewContactComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewContactDialogData,
         public dialogContactDeleteRef: MatDialog
-    ) {
-        if (data) {
-            console.log(data);
-        }
-    }
+    ) {}
 
     // Public Methods
     public onCancelClick(): void {
         this.dialogRef.close("cancel");
     }
-
-    public saveEdit() {}
 
     public ConfirmDelete(data) {
         const dialogRef = this.dialogContactDeleteRef.open(

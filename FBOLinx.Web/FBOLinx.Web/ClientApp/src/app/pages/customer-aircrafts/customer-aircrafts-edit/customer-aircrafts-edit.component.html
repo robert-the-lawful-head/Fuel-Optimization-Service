@@ -6,10 +6,11 @@
         <div>
             <h5>General Information&nbsp;&nbsp;
                 <button
+                    mat-flat-button
+                    color="warn"
                     [disabled]="data && data.disableDelete"
-                    class="btn btn-danger btn-sm"
-                    style="color:white;"
-                    (click)="ConfirmDelete(customerAircraftInfo)">
+                    (click)="ConfirmDelete(customerAircraftInfo)"
+                >
                     Delete Aircraft
                 </button>
             </h5>
@@ -47,7 +48,15 @@
     <div class="row mt-5">
         <div class="col-12">
             <div class="pull-right">
-                <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveEdit()" class="mr-1">Save Aircraft</button>
+                <button
+                    mat-stroked-button
+                    color="green"
+                    (click)="saveEdit()"
+                    class="mr-1"
+                >
+                    <mat-icon>save</mat-icon>
+                    Save Aircraft
+                </button>
                 <button mat-stroked-button (click)="cancelEdit()">Cancel</button>
             </div>
         </div>

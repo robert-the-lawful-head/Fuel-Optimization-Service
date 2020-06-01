@@ -8,12 +8,8 @@ import {
 } from "@angular/core";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource, MatTable } from "@angular/material/table";
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatDialog } from "@angular/material/dialog";
 
 // Services
 import { SharedService } from "../../../layouts/shared-service";
@@ -22,7 +18,6 @@ import { CustomcustomertypesService } from "../../../services/customcustomertype
 // Components
 import { PricingTemplatesDialogNewTemplateComponent } from "../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component";
 import { PricingTemplatesDialogCopyTemplateComponent } from "../pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component";
-import { Router } from "@angular/router";
 import { PricingTemplatesDialogDeleteWarningComponent } from "../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component";
 
 export interface DefaultTemplateUpdate {
@@ -151,6 +146,8 @@ export class PricingTemplatesGridComponent implements OnInit {
                 PricingTemplatesDialogDeleteWarningComponent,
                 {
                     data: this.pricingTemplatesData,
+                    autoFocus: false,
+                    width: "600px"
                 }
             );
 

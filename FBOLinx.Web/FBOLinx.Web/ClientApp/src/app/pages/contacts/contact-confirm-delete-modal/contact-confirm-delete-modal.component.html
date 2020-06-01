@@ -12,13 +12,12 @@
 </div>
 <div mat-dialog-actions>
     <button
-        ni-button
-        [view]="'success'"
+        mat-flat-button
+        color="warn"
         [mat-dialog-close]="data"
-        beforeIcon="fa fa-trash-o"
         class="mr-1"
-        style="background-color: #dc143c; color: white;"
     >
+        <mat-icon>delete_forever</mat-icon>
         Delete
     </button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>&nbsp;

@@ -1,5 +1,6 @@
 import { Component, OnInit, HostBinding } from "@angular/core";
 import { AppService } from "../../../services/app.service";
+import * as moment from "moment";
 
 @Component({
     selector: "app-footer",
@@ -9,12 +10,15 @@ import { AppService } from "../../../services/app.service";
 })
 export class FooterComponent implements OnInit {
     public version: string;
+    public year: string;
 
     constructor(private appService: AppService) {
         this.getAppVersion();
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.year = moment().format('YYYY');
+    }
 
     private getAppVersion() {
         this.appService.getVersion().subscribe((data: any) => {

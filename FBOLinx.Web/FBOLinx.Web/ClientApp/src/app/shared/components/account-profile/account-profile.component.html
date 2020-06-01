@@ -4,7 +4,6 @@
         <mat-spinner></mat-spinner>
     </div>
 
-    <!--<div *ngIf="availableroles && contactsData">-->
     <div *ngIf="availableroles">
         <mat-tab-group>
 
@@ -57,7 +56,18 @@
                     </div>
                     <div class="row">
                         <div class="col-12 mt-2 text-center">
-                            <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="(!data.confirmPassword || !data.newPassword || data.confirmPassword.length == 0 || data.newPassword.length == 0 || data.newPassword === data.confirmPassword)  && !userLoginEmail.errors?.email">Save</button>
+                            <button
+                                mat-raised-button
+                                color="accent"
+                                [mat-dialog-close]="data"
+                                class="mr-1"
+                                disabled="(!data.confirmPassword || 
+                                             !data.newPassword || 
+                                             data.confirmPassword.length == 0 || 
+                                             data.newPassword.length == 0 || 
+                                             data.newPassword === data.confirmPassword
+                                            )  && !userLoginEmail.errors?.email"
+                            >Save</button>
                             <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
                         </div>
                     </div>

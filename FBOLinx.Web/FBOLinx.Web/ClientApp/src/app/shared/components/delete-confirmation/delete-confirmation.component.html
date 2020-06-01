@@ -8,14 +8,7 @@
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button
-            ni-button
-            [view]="'error'"
-            [mat-dialog-close]="data"
-            class="mr-1"
-        >
-            Confirm
-        </button>
+        <button mat-flat-button color="warn" [mat-dialog-close]="data" class="mr-1">Confirm</button>
         <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
     </div>
 </div>
