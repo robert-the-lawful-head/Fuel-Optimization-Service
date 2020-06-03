@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import * as _ from "lodash";
 
@@ -11,7 +11,7 @@ import { SharedService } from "../../../layouts/shared-service";
     templateUrl: "./analytics-orders-quote-chart.component.html",
     styleUrls: ["./analytics-orders-quote-chart.component.scss"],
 })
-export class AnalyticsOrdersQuoteChartComponent implements OnInit, OnChanges {
+export class AnalyticsOrdersQuoteChartComponent implements OnInit {
     @Input() startDate: Date;
     @Input() endDate: Date;
     // Public Members
@@ -40,13 +40,11 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit, OnChanges {
     ) {}
 
     ngOnInit() {
-    }
-
-    ngOnChanges() {
         this.refreshData();
     }
 
     public refreshData() {
+        console.log(this.startDate);
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
             .getQuotesAndOrders(

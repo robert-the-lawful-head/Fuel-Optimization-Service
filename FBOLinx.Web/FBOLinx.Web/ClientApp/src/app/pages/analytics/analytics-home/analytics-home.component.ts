@@ -73,4 +73,17 @@ export class AnalyticsHomeComponent implements OnInit {
     ngOnInit() {
         this.ngxLoader.startLoader("loader-01");
     }
+
+    public applyDateFilterChange() {
+        this.statisticsTotalOrders.refreshData();
+        this.statisticsTotalCustomers.refreshData();
+        this.statisticsTotalAircraft.refreshData();
+        this.statisticsOrdersByLocation.refreshData();
+        this.analyticsOrdersQuoteChart.refreshData();
+        this.analyticsOrdersOverTimeChart.refreshData();
+        this.analyticsVolumesNearbyAirportChart.refreshData();
+        this.analyticsMarketShareAirportChart.refreshData();
+        this.analyticsCustomerBreakdownChart.refreshData();
+        this.analyticsCompaniesQuotesDealTable.refreshData();
+    }
 }

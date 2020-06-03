@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import * as _ from "lodash";
 
 // Services
@@ -11,7 +11,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
     templateUrl: "./analytics-orders-over-time-chart.component.html",
     styleUrls: ["./analytics-orders-over-time-chart.component.scss"],
 })
-export class AnalyticsOrdersOverTimeChartComponent implements OnInit, OnChanges {
+export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
     @Input() startDate: Date;
     @Input() endDate: Date;
     // Public Members
@@ -39,9 +39,6 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit, OnChanges 
     ) {}
 
     ngOnInit() {
-    }
-
-    ngOnChanges(changes: SimpleChanges) {
         this.refreshData();
     }
 

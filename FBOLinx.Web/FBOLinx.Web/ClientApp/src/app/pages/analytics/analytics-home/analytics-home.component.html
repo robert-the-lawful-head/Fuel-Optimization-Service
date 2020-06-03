@@ -24,6 +24,7 @@
                         [matDatepicker]="dashboardSettingsStartDateFilter"
                         (focus)="dashboardSettingsStartDateFilter.open()"
                         placeholder="Start Date"
+                        (dateChange)="applyDateFilterChange()"
                     />
                     <mat-datepicker-toggle
                         matSuffix
@@ -44,6 +45,7 @@
                         [matDatepicker]="dashboardSettingsEndDateFilter"
                         (focus)="dashboardSettingsEndDateFilter.open()"
                         placeholder="End Date"
+                        (dateChange)="applyDateFilterChange()"
                     />
                     <mat-datepicker-toggle
                         matSuffix
