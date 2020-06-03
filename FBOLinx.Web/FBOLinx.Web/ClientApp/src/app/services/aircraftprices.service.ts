@@ -44,6 +44,12 @@ export class AircraftpricesService {
         });
     }
 
+    public removeMultiple(payload) {
+        return this.http.post(this.accessPointUrl + "/delete-multiple", payload, {
+            headers: this.headers,
+        });
+    }
+
     public update(payload) {
         return this.http.put(this.accessPointUrl + "/" + payload.oid, payload, {
             headers: this.headers,

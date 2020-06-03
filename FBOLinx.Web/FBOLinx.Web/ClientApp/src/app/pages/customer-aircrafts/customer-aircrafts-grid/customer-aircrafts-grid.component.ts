@@ -14,6 +14,8 @@ import { MatDialog } from "@angular/material/dialog";
 // Services
 import { AircraftsService } from "../../../services/aircrafts.service";
 import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
+import { AircraftpricesService } from "../../../services/aircraftprices.service";
+import { CustomcustomertypesService } from "../../../services/customcustomertypes.service";
 import { SharedService } from "../../../layouts/shared-service";
 
 // Components
@@ -22,7 +24,6 @@ import { CustomerAircraftsEditComponent } from "../customer-aircrafts-edit/custo
 import { CustomerAircraftSelectModelComponent } from "../customer-aircrafts-select-model-dialog/customer-aircrafts-select-model-dialog.component";
 import FlatfileImporter from "flatfile-csv-importer";
 
-
 @Component({
     selector: "app-customer-aircrafts-grid",
     templateUrl: "./customer-aircrafts-grid.component.html",
@@ -30,8 +31,7 @@ import FlatfileImporter from "flatfile-csv-importer";
 })
 export class CustomerAircraftsGridComponent implements OnInit {
     // Input/Output Bindings
-    @Output() editCustomerAircraftClicked = new EventEmitter<any>();
-    @Output() newCustomerAircraftAdded = new EventEmitter<any>();
+    @Output() updateCustomerPricingTemplate = new EventEmitter<any>();
     @Input() customer: any;
     @Input() customerAircraftsData: Array<any>;
     @Input() pricingTemplatesData: Array<any>;
@@ -66,6 +66,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
         public selectModalAircraftDialog: MatDialog,
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
+        private aircraftPricesService: AircraftpricesService,
+        private customCustomerTypeService: CustomcustomertypesService,
         private sharedService: SharedService
     ) {
         this.isLoadingAircraftTypes = true;
@@ -185,7 +187,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
                         );
                         this.customerAircraftsDataSource.sort = this.sort;
                         this.customerAircraftsDataSource.paginator = this.paginator;
-                        this.newCustomerAircraftAdded.emit();
                     });
                
             });
@@ -279,7 +280,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             make,
             model,
             size,
-            pricingTemplateName,
+            pricingTemplateId,
         } = customerAircraft;
         this.customerAircraftsService
             .updateTemplate(this.sharedService.currentUser.fboId, {
@@ -291,10 +292,30 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 make,
                 model,
                 size,
-                pricingTemplateName,
+                pricingTemplateId,
             })
             .subscribe(() => {
-                this.editCustomerAircraftClicked.emit();
+                const pricingTemplateIds = this.customerAircraftsDataSource.data.map(d => d.pricingTemplateId );
+                if (pricingTemplateIds.every(v => v === pricingTemplateId)) {
+                    this.customCustomerTypeService
+                        .updateForFboAndCustomer({
+                            fboId: this.sharedService.currentUser.fboId,
+                            customerId,
+                            pricingTemplateId,
+                        })
+                        .subscribe(() => {
+                            this.updateCustomerPricingTemplate.emit(pricingTemplateId);
+                        });
+
+                    this.aircraftPricesService
+                        .removeMultiple(this.customerAircraftsData)
+                        .subscribe(() => {
+                            this.customerAircraftsDataSource.data.forEach(element => {
+                                element.pricingTemplateId = null;
+                                element.pricingTemplateName = "";
+                            });
+                        });
+                }
             });
     }
 

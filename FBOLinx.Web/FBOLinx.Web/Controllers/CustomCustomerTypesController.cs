@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -45,12 +46,12 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/CustomCustomerTypes/5
         [HttpGet("fbo/{fboId}/customer/{customerId}")]
-        public async Task<ActionResult<List<CustomCustomerTypes>>> GetCustomCustomerTypesForCustomer([FromRoute] int fboId, [FromRoute] int customerId)
+        public async Task<IActionResult> GetCustomCustomerTypesForCustomer([FromRoute] int fboId, [FromRoute] int customerId)
         {
-            var customCustomerTypes = await _context.CustomCustomerTypes.Where((x => x.CustomerId == customerId && x.Fboid == fboId)).ToListAsync();
+            var customCustomerTypes = await _context.CustomCustomerTypes.FirstOrDefaultAsync((x => x.CustomerId == customerId && x.Fboid == fboId));
 
-            if (customCustomerTypes != null && customCustomerTypes.Count > 0)
-                return customCustomerTypes;
+            if (customCustomerTypes != null)
+                return Ok(customCustomerTypes);
 
             //If no previous pricing template was attached, grab the default
             var defaultPricingTemplate = await _context.PricingTemplate
@@ -65,9 +66,24 @@ namespace FBOLinx.Web.Controllers
                 CustomerType = defaultPricingTemplate.Oid,
                 Fboid = fboId
             };
-            var defaultResult = new List<CustomCustomerTypes>();
-            defaultResult.Add(defaultCustomerType);
-            return defaultResult;
+            return Ok(defaultCustomerType);
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> PutCustomCustomerTypesForCustomer([FromBody] CustomCustomerTypeUpdateRequest request)
+        {
+            var customCustomerType = _context.CustomCustomerTypes
+                                            .FirstOrDefault((x => x.CustomerId == request.CustomerId && x.Fboid == request.FboId));
+
+            if (customCustomerType == null)
+                return NotFound();
+
+            customCustomerType.CustomerType = request.PricingTemplateId;
+            _context.CustomCustomerTypes.Update(customCustomerType);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         // PUT: api/CustomCustomerTypes/5

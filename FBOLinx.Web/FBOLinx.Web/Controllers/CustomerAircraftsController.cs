@@ -308,7 +308,7 @@ namespace FBOLinx.Web.Controllers
 
                 AircraftPrices aircraftPrice = _context.AircraftPrices.FirstOrDefault(a => a.CustomerAircraftId.Equals(custAircraft.Oid));
                 CustomCustomerTypes customerTemplate = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == request.CustomerId && s.Fboid == fboid);
-                PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Name == request.PricingTemplateName && s.Fboid == fboid);
+                PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Oid == request.PricingTemplateId && s.Fboid == fboid);
                 if (aircraftPrice != null)
                 {
                     aircraftPrice.PriceTemplateId = pricingTemplate?.Oid;
@@ -334,41 +334,9 @@ namespace FBOLinx.Web.Controllers
 
                 await _context.SaveChangesAsync();
 
-                var customerAircraftsPricing = await (
-                                   from ca in _context.CustomerAircrafts
-                                   join cg in _context.CustomerInfoByGroup on new { groupId = ca.GroupId ?? 0, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
-                                   join c in _context.Customers on cg.CustomerId equals c.Oid
-                                   join pt in (
-                                        from ap in _context.AircraftPrices
-                                        join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
-                                        where pt.Fboid == fboid
-                                        select new
-                                        {
-                                            Oid = pt == null ? 0 : pt.Oid,
-                                            Name = pt == null ? "" : pt.Name,
-                                            ap.CustomerAircraftId
-                                        }
-                                   ) on ca.Oid equals pt.CustomerAircraftId
-                                   into leftJoinPt
-                                   from pt in leftJoinPt.DefaultIfEmpty()
-                                   where ca.GroupId == request.GroupId && c.Oid == request.CustomerId
-                                   select new
-                                   {
-                                       PricingTemplateId = pt == null ? 0 : pt.Oid,
-                                   })
-                                   .Distinct()
-                                   .ToListAsync();
-
-                if (customerAircraftsPricing.Count() == 1)
-                {
-                    customerTemplate.CustomerType = customerAircraftsPricing[0].PricingTemplateId;
-                    _context.CustomCustomerTypes.Update(customerTemplate);
-                    await _context.SaveChangesAsync();
-                }
-
                 return Ok(custAircraft);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
                 if (!CustomerAircraftsExists(request.Oid))
                 {
@@ -457,7 +425,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCustomerAircrafts([FromRoute] int id)
+        public async Task<IActionResult> DeleteCustomerAircraft([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {

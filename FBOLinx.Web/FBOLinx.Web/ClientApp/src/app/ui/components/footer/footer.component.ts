@@ -17,7 +17,7 @@ export class FooterComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.year = moment().format('YYYY');
+        this.year = moment().format("YYYY");
     }
 
     private getAppVersion() {

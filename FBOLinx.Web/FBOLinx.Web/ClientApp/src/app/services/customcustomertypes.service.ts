@@ -46,6 +46,12 @@ export class CustomcustomertypesService {
         });
     }
 
+    public updateForFboAndCustomer(payload) {
+        return this.http.put(this.accessPointUrl + "/update", payload, {
+            headers: this.headers,
+        });
+    }
+
     public updateCollection(payload) {
         return this.http.post(this.accessPointUrl + "/collection", payload, {
             headers: this.headers,

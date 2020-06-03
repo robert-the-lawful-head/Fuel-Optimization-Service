@@ -125,7 +125,7 @@ namespace FBOLinx.Web.Controllers
 
         // DELETE: api/AircraftPrices/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAircraftPrices([FromRoute] int id)
+        public async Task<IActionResult> DeleteAircraftPrice([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
@@ -142,6 +142,26 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(aircraftPrices);
+        }
+
+        [HttpPost("delete-multiple")]
+        public async Task<IActionResult> DeleteAircraftPricesByCustomerAircraftIds([FromBody] List<CustomerAircrafts> customerAircrafts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customerAircraftIds = customerAircrafts.Select(ca => ca.Oid).ToList();
+
+            var aircraftPrices = await _context.AircraftPrices
+                                            .Where(ap => customerAircraftIds.Contains(ap.CustomerAircraftId))
+                                            .ToListAsync();
+
+            _context.AircraftPrices.RemoveRange(aircraftPrices);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         private bool AircraftPricesExists(int id)
