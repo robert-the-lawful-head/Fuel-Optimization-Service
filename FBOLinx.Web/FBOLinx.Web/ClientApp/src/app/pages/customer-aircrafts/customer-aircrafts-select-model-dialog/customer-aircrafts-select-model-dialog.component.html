@@ -26,6 +26,11 @@
     </table>
 </div>
 <div class="mt-2 text-center">
-    <button ni-button [view]="'accent'" (click)="onSaveClick()" class="mr-1">Confirm Selection</button>
+    <button
+        mat-flat-button
+        color="accent"
+        (click)="onSaveClick()"
+        class="mr-1"
+    >Confirm Selection</button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
 </div>

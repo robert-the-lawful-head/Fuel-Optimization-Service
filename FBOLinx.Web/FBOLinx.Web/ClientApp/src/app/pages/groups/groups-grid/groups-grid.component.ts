@@ -113,6 +113,7 @@ export class GroupsGridComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 data: { item: record, fullDescription: "You are about to remove this group. This will remove the fbos and all the other data related to the group. Are you sure?" },
+                autoFocus: false,
             }
         );
 
@@ -152,6 +153,9 @@ export class GroupsGridComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
             result.active = true;
             this.groupsService.add(result).subscribe((data: any) => {
                 this.editRecord(data);

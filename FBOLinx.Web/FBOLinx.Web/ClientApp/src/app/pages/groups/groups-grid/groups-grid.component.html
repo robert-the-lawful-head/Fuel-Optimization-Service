@@ -18,16 +18,6 @@
             <td mat-cell *matCellDef="let group">{{group.active ? 'Active' : 'Inactive'}}</td>
         </ng-container>
 
-        <!--<ng-container matColumnDef="edit">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let group">
-                <div class="pull-right">
-                    <button ni-button size="small" beforeIcon="fa fa-edit" (click)="editRecord(group)">Edit</button>
-                </div>
-            </td>
-        </ng-container>-->
-
-
         <ng-container matColumnDef="delete">
             <th mat-header-cell *matHeaderCellDef>
                 <div class="pull-right">
