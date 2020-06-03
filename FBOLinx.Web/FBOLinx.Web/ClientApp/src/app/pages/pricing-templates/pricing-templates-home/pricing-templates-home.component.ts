@@ -82,7 +82,7 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
             DeleteConfirmationComponent,
             {
                 data: { item: pricingTemplate, description: "margin template" },
-                autoFocus: false
+                autoFocus: false,
             }
         );
 

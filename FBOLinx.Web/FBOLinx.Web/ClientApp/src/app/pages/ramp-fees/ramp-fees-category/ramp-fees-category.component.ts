@@ -82,7 +82,7 @@ export class RampFeesCategoryComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 data: { item: fee, description: "ramp fee" },
-                autoFocus: false
+                autoFocus: false,
             }
         );
 

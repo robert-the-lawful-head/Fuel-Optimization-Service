@@ -53,7 +53,7 @@ export class CustomersDialogNewCustomerComponent {
                             ok: "Discard",
                             cancel: "Cancel",
                         },
-                        autoFocus: false
+                        autoFocus: false,
                     }
                 );
                 closeDialogRef.afterClosed().subscribe((result) => {

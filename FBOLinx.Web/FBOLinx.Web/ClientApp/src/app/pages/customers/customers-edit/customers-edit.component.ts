@@ -62,7 +62,7 @@ export class CustomersEditComponent {
     public selectedCustomerAircraftRecord: any;
     public currentContactInfoByGroup: any;
     public currentCustomerAircraft: any;
-    public customCustomerTypes: any[];
+    public customCustomerType: any;
     public isSaving = false;
     public certificateTypes: any[];
     public customerCompanyTypes: any[];
@@ -128,9 +128,7 @@ export class CustomersEditComponent {
         this.customerInfoByGroupService
             .update(this.customerInfoByGroup)
             .subscribe(() => {
-                for (const customCustomerType of this.customCustomerTypes) {
-                    this.saveCustomCustomerType(customCustomerType);
-                }
+                this.saveCustomCustomerType(this.customCustomerType);
                 // Update other aspects
                 if (this.requiresRouting) {
                     sessionStorage.setItem("isCustomerEdit", "1");
@@ -148,9 +146,7 @@ export class CustomersEditComponent {
         this.customerInfoByGroupService
             .update(this.customerInfoByGroup)
             .subscribe((data: any) => {
-                for (const customCustomerType of this.customCustomerTypes) {
-                    this.saveCustomCustomerType(customCustomerType);
-                }
+                this.saveCustomCustomerType(this.customCustomerType);
                 // Update other aspects
                 if (this.requiresRouting) {
                     sessionStorage.setItem("isCustomerEdit", "1");
@@ -293,73 +289,19 @@ export class CustomersEditComponent {
         this.currentContactInfoByGroup = null;
     }
 
-    public newCustomerAircraftAdded() {
-    }
-
-    public editCustomerAircraftClicked(customerAircraft) {
-        this.customCustomerTypes = null;
-        this.loadCustomCustomerType();
+    public updateCustomerPricingTemplate(pricingTemplateId: number) {
+        if (this.customCustomerType) {
+            this.customCustomerType.customerType = pricingTemplateId;
+        }
     }
 
     public saveEditCustomerAircraftClicked() {
         this.currentCustomerAircraft = null;
-
         this.loadCustomerAircrafts();
     }
 
     public cancelEditCustomerAircraftClicked() {
         this.currentCustomerAircraft = null;
-    }
-
-    public distributePricing() {
-        this.isLoading = true;
-        const customer = this.customerInfoByGroup;
-        const data = {
-            customer,
-            fboId: this.sharedService.currentUser.fboId,
-            groupId: this.sharedService.currentUser.groupId,
-        };
-
-        // Update customer information
-        this.customerInfoByGroupService
-            .update(this.customerInfoByGroup)
-            .subscribe(() => {
-                for (const customCustomerType of this.customCustomerTypes) {
-                    customCustomerType.customerId = this.customerInfoByGroup.customerId;
-                }
-                const pricingTemplatesToUpdate = [];
-
-                for (const customCustomerType of this.customCustomerTypes) {
-                    if (customCustomerType.requiresUpdate) {
-                        pricingTemplatesToUpdate.push(customCustomerType);
-                    }
-                }
-
-                this.customCustomerTypesService
-                    .updateCollection(pricingTemplatesToUpdate)
-                    .subscribe(() => {
-                        this.customCustomerTypesService
-                            .getForFboAndCustomer(
-                                this.sharedService.currentUser.fboId,
-                                this.customerInfoByGroup.customerId
-                            )
-                            .subscribe((result: any) => {
-                                this.customCustomerTypes = result;
-                                this.isLoading = false;
-
-                                // Show dispatch dialog
-                                const dialogRef = this.dialog.open(
-                                    DistributionWizardMainComponent,
-                                    {
-                                        data,
-                                        disableClose: true,
-                                    }
-                                );
-
-                                dialogRef.afterClosed().subscribe(() => {});
-                            });
-                    });
-            });
     }
 
     public customerCompanyTypeChanged() {
@@ -384,49 +326,6 @@ export class CustomersEditComponent {
                     this.customerInfoByGroup.customerCompanyType = result.oid;
                     this.loadCustomerCompanyTypes();
                 });
-        });
-    }
-
-    public newCustomerPricingTemplate() {
-        this.customCustomerTypes.push({
-            oid: 0,
-            fboId: this.sharedService.currentUser.fboId,
-            customerId: this.customerInfoByGroup.customerId,
-        });
-    }
-
-    public deleteCustomerPricingTemplate(customCustomerType) {
-        const dialogRef = this.deleteCustomerDialog.open(
-            DeleteConfirmationComponent,
-            {
-                data: {
-                    item: customCustomerType,
-                    description: "customer's margin template",
-                },
-            }
-        );
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-            if (result.item.oid > 0) {
-                this.customCustomerTypesService
-                    .remove({ oid: result.item.oid })
-                    .subscribe(() => {
-                        this.customCustomerTypes.splice(
-                            this.customCustomerTypes.indexOf(
-                                customCustomerType
-                            ),
-                            1
-                        );
-                    });
-            } else {
-                this.customCustomerTypes.splice(
-                    this.customCustomerTypes.indexOf(customCustomerType),
-                    1
-                );
-            }
         });
     }
 
@@ -495,7 +394,7 @@ export class CustomersEditComponent {
                 this.customerInfoByGroup.customerId
             )
             .subscribe((data: any) => {
-                this.customCustomerTypes = data;
+                this.customCustomerType = data;
             });
     }
 

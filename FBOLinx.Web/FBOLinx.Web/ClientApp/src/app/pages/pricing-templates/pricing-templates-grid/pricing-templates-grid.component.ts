@@ -147,7 +147,7 @@ export class PricingTemplatesGridComponent implements OnInit {
                 {
                     data: this.pricingTemplatesData,
                     autoFocus: false,
-                    width: "600px"
+                    width: "600px",
                 }
             );
 

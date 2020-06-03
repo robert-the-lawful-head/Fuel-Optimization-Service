@@ -97,7 +97,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                             ok: "Discard",
                             cancel: "Cancel",
                         },
-                        autoFocus: false
+                        autoFocus: false,
                     }
                 );
                 closeDialogRef.afterClosed().subscribe((result) => {

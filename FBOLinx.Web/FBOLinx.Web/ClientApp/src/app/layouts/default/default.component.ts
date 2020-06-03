@@ -105,7 +105,7 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
                             PricingExpiredNotificationComponent,
                             {
                                 data: {},
-                                autoFocus: false
+                                autoFocus: false,
                             }
                         );
                         dialogRef.afterClosed().subscribe();
