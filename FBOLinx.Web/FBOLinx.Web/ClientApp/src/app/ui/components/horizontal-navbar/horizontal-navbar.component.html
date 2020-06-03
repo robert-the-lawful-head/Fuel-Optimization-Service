@@ -11,7 +11,7 @@
     </div>
 
     <h1 class="page-title">{{ title }}</h1>
-    <button mat-stroked-button style="margin-right:10px; width: 10%;" (click)="showWidget()">Live Chat</button>
+    <button mat-stroked-button style="margin-right:10px; width: 10%; min-width: 100px;" (click)="showWidget()">Live Chat</button>
     <h2 *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao" class="page-info">{{ fbo.fbo }} / {{ fboAirport.icao }}</h2>
     <div class="nav-items">
         <div class="nav-item" [ngClass]="{ opened: needsAttentionMenu.isOpened }">
