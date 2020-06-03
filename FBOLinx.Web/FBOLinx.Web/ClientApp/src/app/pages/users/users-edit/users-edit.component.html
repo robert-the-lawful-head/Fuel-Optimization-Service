@@ -55,7 +55,16 @@
                     </div>
                     
                     <div class="row">
-                        <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="saveEdit()" class="mr-1" *ngIf="(!userInfo.confirmPassword || !userInfo.newPassword || userInfo.confirmPassword.length == 0 || userInfo.newPassword.length == 0 || userInfo.newPassword === userInfo.confirmPassword)  && !userLoginEmail.errors?.email">Save Changes</button>
+                        <button
+                            mat-stroked-button
+                            color="green"
+                            (click)="saveEdit()"
+                            class="mr-1"
+                            *ngIf="(!userInfo.confirmPassword || !userInfo.newPassword || userInfo.confirmPassword.length == 0 || userInfo.newPassword.length == 0 || userInfo.newPassword === userInfo.confirmPassword)  && !userLoginEmail.errors?.email"
+                        >
+                            <mat-icon>save</mat-icon>
+                            Save Changes
+                        </button>
                         <button mat-stroked-button (click)="cancelEdit()">Cancel</button>
                     </div>
                 </div>

@@ -45,7 +45,17 @@
     </div>
 </div>
 <div class="mt-2 text-center">
-    <!--<button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword === data.confirmPassword && !userLoginEmail.errors?.email">Add User</button>-->
-    <button ni-button [view]="'accent'" (click)="onSaveClick()" class="mr-1" *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword === data.confirmPassword && !userLoginEmail.errors?.email">Add User</button>
+    <button
+        mat-flat-button
+        color="accent"
+        (click)="onSaveClick()"
+        class="mr-1"
+        [disabled]="!data.confirmPassword || 
+                    !data.confirmPassword.length ||
+                    !data.newPassword ||
+                    !data.newPassword.length ||
+                    data.newPassword !== data.confirmPassword ||
+                    userLoginEmail.errors?.email"
+    >Add New User</button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
 </div>

@@ -20,6 +20,14 @@
     </div>
 </div>
 <div mat-dialog-actions>
-    <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="onSaveChangesClick()" class="mr-1">{{emailContent.oid > 0 ? 'Save Changes' : 'Add New'}}</button>
+    <button
+        mat-stroked-button
+        color="green"
+        (click)="onSaveChangesClick()"
+        class="mr-1"
+    >
+        <mat-icon>save</mat-icon>
+        {{emailContent.oid > 0 ? 'Save Changes' : 'Add New'}}
+    </button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
 </div>
