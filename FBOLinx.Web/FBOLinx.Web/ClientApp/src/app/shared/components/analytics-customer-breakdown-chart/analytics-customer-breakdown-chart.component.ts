@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import * as _ from "lodash";
 
 // Services
@@ -12,7 +12,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
     templateUrl: "./analytics-customer-breakdown-chart.component.html",
     styleUrls: ["./analytics-customer-breakdown-chart.component.scss"],
 })
-export class AnalyticsCustomerBreakdownChartComponent implements OnInit, OnChanges {
+export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
     @Input() startDate: Date;
     @Input() endDate: Date;
 
@@ -43,9 +43,6 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit, OnChang
 
     ngOnInit() {
         this.chartType = "order";
-    }
-
-    ngOnChanges(changes: SimpleChanges) {
         this.refreshData();
     }
 

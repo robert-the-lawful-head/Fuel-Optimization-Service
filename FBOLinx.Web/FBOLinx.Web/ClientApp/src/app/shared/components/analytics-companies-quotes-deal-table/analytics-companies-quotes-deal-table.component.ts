@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges, OnChanges } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import * as _ from "lodash";
 
 // Services
@@ -12,7 +12,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
     templateUrl: "./analytics-companies-quotes-deal-table.component.html",
     styleUrls: ["./analytics-companies-quotes-deal-table.component.scss"],
 })
-export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, OnChanges {
+export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit {
     @Input() startDate: Date;
     @Input() endDate: Date;
 
@@ -28,9 +28,6 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, OnCha
     ) {}
 
     ngOnInit() {
-    }
-
-    ngOnChanges(changes: SimpleChanges) {
         this.refreshData();
     }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges, OnChanges } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import * as _ from "lodash";
 import { MatSliderChange } from "@angular/material/slider";
 
@@ -12,7 +12,7 @@ import { NgxUiLoaderService } from "ngx-ui-loader";
     templateUrl: "./analytics-volumes-nearby-airport-chart.component.html",
     styleUrls: ["./analytics-volumes-nearby-airport-chart.component.scss"],
 })
-export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit, OnChanges {
+export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
     @Input() startDate: Date;
     @Input() endDate: Date;
 
@@ -42,9 +42,6 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit, OnCh
     ) {}
 
     ngOnInit() {
-    }
-
-    ngOnChanges(changes: SimpleChanges) {
         this.refreshData();
     }
 
