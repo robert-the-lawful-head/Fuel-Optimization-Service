@@ -80,13 +80,6 @@ namespace FBOLinx.Web.Services
 
                 var customerPricingResults = await (from cg in _context.CustomerInfoByGroup
                     join c in _context.Customers on cg.CustomerId equals c.Oid
-                    //join cct in _context.CustomCustomerTypes on new {customerId = cg.CustomerId, fboId = _FboId} equals
-                    //    new
-                    //    {
-                    //        customerId = cct.CustomerId,
-                    //        fboId = cct.Fboid
-                    //    } into leftJoinCCT
-                    //from cct in leftJoinCCT.DefaultIfEmpty()
                     join pt in _context.PricingTemplate on fboId equals pt.Fboid into leftJoinPT
                     from pt in leftJoinPT.DefaultIfEmpty()
                     join ppt in _context.PriceTiers.Include("CustomerMargin") on pt.Oid equals ppt.CustomerMargin
@@ -109,8 +102,7 @@ namespace FBOLinx.Web.Services
                     {
                         fboId = fp.Fboid.GetValueOrDefault(),
                         product = fp.Product
-                    } into leftJoinFP
-                    from fp in leftJoinFP.DefaultIfEmpty()
+                    } 
                     join tmp in _context.TempAddOnMargin.Where((x =>
                                                         x.EffectiveFrom < DateTime.Now &&
                                                          x.EffectiveTo > DateTime.Now)) on new
