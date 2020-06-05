@@ -531,7 +531,7 @@ namespace FBOLinx.Web.Controllers
                                                     .Select(g => g.FirstOrDefault())
                                                     .OrderByDescending(s => s.FleetSize.GetValueOrDefault())
                                                     .ToListAsync();
-
+                
 
                 await _context.SaveChangesAsync();
 
@@ -541,6 +541,29 @@ namespace FBOLinx.Web.Controllers
             {
                 string sss = ex.Message;
                 return null;
+            }
+        }
+
+        [HttpGet("matchcustomerinfo/customerId/{customerId}/groupId/{groupId}")]
+        public void MatchCustomerInfo(int customerId, int groupId)
+        {
+            if(customerId != 0)
+            {
+                var custAircrafts = _context.CustomerAircrafts.Where(s => s.CustomerId == customerId && s.GroupId == groupId).Select(s => s.TailNumber).ToList();
+
+                if(custAircrafts.Count > 1)
+                {
+                    var checkOtheraircrafts = _context.CustomerAircrafts.Where(s => custAircrafts.Contains(s.TailNumber) && s.GroupId == groupId && s.CustomerId != customerId).Select(s => s.CustomerId).ToList();
+
+                    var duplicates = checkOtheraircrafts.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count() == custAircrafts.Count).Where(s => s.Value == true).Select(x => x.Key).ToList();
+
+                    if(duplicates.Count() > 0)
+                    {
+
+                    }
+                }
+
+                
             }
         }
     }

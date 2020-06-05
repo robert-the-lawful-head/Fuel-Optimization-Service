@@ -111,12 +111,17 @@ export class CustomersEditComponent {
                 .get({ oid: id })
                 .subscribe((data: any) => {
                     this.customerInfoByGroup = data;
+                    
                     this.loadCustomerContacts();
                     this.loadPricingTemplates();
                     this.loadCustomerAircrafts();
                     this.loadCustomCustomerType();
                     this.loadCustomerCompanyTypes();
                     this.markCustomerAsViewedByFbo();
+                    console.log(data.customer);
+                    if (!data.customer.fuelerlinxId) {
+                        this.checkForDuplicate(data.customer.oid, this.sharedService.currentUser.groupId);
+                    }
                 });
         }
     }
@@ -564,5 +569,9 @@ export class CustomersEditComponent {
                 customerId: this.customerInfoByGroup.customerId,
             })
             .subscribe(() => {});
+    }
+
+    private checkForDuplicate(id, groupid) {
+        this.customerInfoByGroupService.matchcustomerinfo(id, groupid).subscribe(() => { });
     }
 }

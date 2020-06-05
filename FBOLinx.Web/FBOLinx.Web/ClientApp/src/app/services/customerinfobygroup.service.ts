@@ -132,4 +132,13 @@ export class CustomerinfobygroupService {
             headers: this.headers,
         });
     }
+
+    public matchcustomerinfo(customerId: number, groupId: number) {
+        return this.http.get(
+            `${this.accessPointUrl}/matchcustomerinfo/customerId/${customerId}/groupId/${groupId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }
