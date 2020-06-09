@@ -53,242 +53,202 @@
             </div>
         </div>
     </div>
+    <div class="w-100" style="overflow-x:auto">
+        <table mat-table
+               [dataSource]="customersDataSource"
+               class="col-md-12 mb-0"
+               matSort
+               matSortActive="{{ tableSort }}"
+               matSortDirection="{{ tableSortOrder }}"
+               #customerTable>
+            <ng-container matColumnDef="selectAll">
+                <th mat-header-cell *matHeaderCellDef>
+                    <input type="checkbox"
+                           style="position: absolute; margin-top: 8px;"
+                           id="a"
+                           class="checkboxHeight"
+                           [(ngModel)]="selectAll"
+                           (change)="selectAction()" />
+                    <label for="a" style="margin-left: 25px; margin-top: 10px;">Select All</label>
+                </th>
+                <td mat-cell *matCellDef="let customer" clickStopPropagation>
+                    <input type="checkbox"
+                           class="checkboxHeight"
+                           [(ngModel)]="customer.selectAll"
+                           value="{{ customer.selectAll }}"
+                           (change)="selectUnique()" />
+                </td>
+            </ng-container>
 
-    <table
-        mat-table
-        [dataSource]="customersDataSource"
-        class="col-md-12"
-        matSort
-        matSortActive="{{ tableSort }}"
-        matSortDirection="{{ tableSortOrder }}"
-        #customerTable
-    >
-        <ng-container matColumnDef="selectAll">
-            <th mat-header-cell *matHeaderCellDef>
-                <input
-                    type="checkbox"
-                    style="position: absolute; margin-top: 8px;"
-                    id="a"
-                    class="checkboxHeight"
-                    [(ngModel)]="selectAll"
-                    (change)="selectAction()"
-                />
-                <label for="a" style="margin-left: 25px; margin-top: 10px;"
-                    >Select All</label
-                >
-            </th>
-            <td mat-cell *matCellDef="let customer" clickStopPropagation>
-                <input
-                    type="checkbox"
-                    class="checkboxHeight"
-                    [(ngModel)]="customer.selectAll"
-                    value="{{ customer.selectAll }}"
-                    (change)="selectUnique()"
-                />
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="needsAttention">
-            <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header
-                (click)="alertHeader('needsAttention')"
-            >
-                Needs Attention
-            </th>
-            <td mat-cell *matCellDef="let customer">
-                <div>
-                    <ni-badge
-                        *ngIf="customer.needsAttention"
-                        [color]="'warning'"
-                        [borderRadius]="false"
-                        [arrow]="'right'"
-                              matTooltip="{{customer.needsAttentionReason}}"
-                        matTooltipPosition="after"
-                    >
-                        Needs Attention
-                    </ni-badge>
-                    <a
-                        *ngIf="
+            <ng-container matColumnDef="needsAttention">
+                <th mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                    (click)="alertHeader('needsAttention')">
+                    Needs Attention
+                </th>
+                <td mat-cell *matCellDef="let customer">
+                    <div>
+                        <ni-badge *ngIf="customer.needsAttention"
+                                  [color]="'warning'"
+                                  [borderRadius]="false"
+                                  [arrow]="'right'"
+                                  matTooltip="{{customer.needsAttentionReason}}"
+                                  matTooltipPosition="after">
+                            Needs Attention
+                        </ni-badge>
+                        <a *ngIf="
                             !customer.isFuelerLinxCustomer &&
                             !customer.contactExists
                         "
-                        style="float: right;"
-                        matTooltip="This customer does not have any contacts setup to receive price distribution."
-                        matTooltipPosition="after"
-                    >
-                        <i class="fa fa-warning" style="color: red;"></i>
-                    </a>
-                </div>
-            </td>
-        </ng-container>
+                           style="float: right;"
+                           matTooltip="This customer does not have any contacts setup to receive price distribution."
+                           matTooltipPosition="after">
+                            <i class="fa fa-warning" style="color: red;"></i>
+                        </a>
+                    </div>
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="company">
-            <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header
-                (click)="alertHeader('company')"
-            >
-                Company
-            </th>
-            <td mat-cell *matCellDef="let customer">{{ customer.company }}</td>
-        </ng-container>
+            <ng-container matColumnDef="company">
+                <th mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                    (click)="alertHeader('company')">
+                    Company
+                </th>
+                <td mat-cell *matCellDef="let customer">{{ customer.company }}</td>
+            </ng-container>
 
-        <ng-container matColumnDef="customerCompanyTypeName">
-            <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header
-                (click)="alertHeader('customerCompanyTypeName')"
-            >
-                Customer Type
-            </th>
-            <td mat-cell *matCellDef="let customer">
-                {{ customer.customerCompanyTypeName }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="customerCompanyTypeName">
+                <th mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                    (click)="alertHeader('customerCompanyTypeName')">
+                    Customer Type
+                </th>
+                <td mat-cell *matCellDef="let customer">
+                    {{ customer.customerCompanyTypeName }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="isFuelerLinxCustomer">
-            <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header
-                (click)="alertHeader('isFuelerLinxCustomer')"
-            >
-                FuelerLinx Network
-            </th>
-            <td mat-cell *matCellDef="let customer">
-                {{ customer.isFuelerLinxCustomer ? 'YES' : 'NO' }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="isFuelerLinxCustomer">
+                <th mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                    (click)="alertHeader('isFuelerLinxCustomer')">
+                    FuelerLinx Network
+                </th>
+                <td mat-cell *matCellDef="let customer">
+                    {{ customer.isFuelerLinxCustomer ? 'YES' : 'NO' }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="pricingTemplateName">
-            <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header
-                (click)="alertHeader('pricingTemplateName')"
-            >
-                ITP Margin Template
-            </th>
-            <td mat-cell *matCellDef="let customer" clickStopPropagation>
-                <select
-                    id="pricingtemplates"
-                    name="ddlPricingTemplate"
-                    class="dropdownHeight"
-                    [(ngModel)]="customer.pricingTemplateName"
-                    (ngModelChange)="onMarginChange($event, customer)"
-                >
-                    <option
-                        *ngFor="let pricingTemplate of pricingTemplatesData"
-                        value="{{ pricingTemplate.name }}"
-                        >{{ pricingTemplate.name }}</option
-                    >
-                </select>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="pricingTemplateName">
+                <th mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                    (click)="alertHeader('pricingTemplateName')">
+                    ITP Margin Template
+                </th>
+                <td mat-cell *matCellDef="let customer" clickStopPropagation>
+                    <select id="pricingtemplates"
+                            name="ddlPricingTemplate"
+                            class="dropdownHeight"
+                            [(ngModel)]="customer.pricingTemplateName"
+                            (ngModelChange)="onMarginChange($event, customer)">
+                        <option *ngFor="let pricingTemplate of pricingTemplatesData"
+                                value="{{ pricingTemplate.name }}">
+                            {{ pricingTemplate.name }}
+                        </option>
+                    </select>
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="allInPrice">
-            <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header
-                (click)="alertHeader('allInPrice')"
-            >
-                All-in
-            </th>
-            <td mat-cell *matCellDef="let customer">
-                <span
-                    *ngIf="!customer.active"
-                    style="color: red; font-weight: bold;"
-                    >Inactive</span
-                >
-                <span *ngIf="!customer.isPricingExpired && customer.active">{{
+            <ng-container matColumnDef="allInPrice">
+                <th mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                    (click)="alertHeader('allInPrice')">
+                    All-in
+                </th>
+                <td mat-cell *matCellDef="let customer">
+                    <span *ngIf="!customer.active"
+                          style="color: red; font-weight: bold;">Inactive</span>
+                    <span *ngIf="!customer.isPricingExpired && customer.active">
+                        {{
                     customer.allInPrice | currency: "USD"
-                }}</span>
-                <span
-                    *ngIf="customer.isPricingExpired && customer.active"
-                    style="color: red; font-weight: bold;"
-                    >Expired</span
-                >
-            </td>
-        </ng-container>
+                        }}
+                    </span>
+                    <span *ngIf="customer.isPricingExpired && customer.active"
+                          style="color: red; font-weight: bold;">Expired</span>
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="fleetSize">
-            <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header
-                (click)="alertHeader('fleetSize')"
-            >
-                Fleet Size
-            </th>
-            <td mat-cell *matCellDef="let customer">
-                {{ customer.fleetSize }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="fleetSize">
+                <th mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                    (click)="alertHeader('fleetSize')">
+                    Fleet Size
+                </th>
+                <td mat-cell *matCellDef="let customer">
+                    {{ customer.fleetSize }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="delete">
-            <th mat-header-cell *matHeaderCellDef class="actions-header">
-                <div class="pull-right mr-5">
-                    <button
-                        ni-button
-                        class="action-btn"
-                        [view]="'accent'"
-                        beforeIcon="fa fa-plus"
-                        (click)="newCustomer()"
-                    >
-                        Add New
-                    </button>
-                </div>
-                <div class="actions-menu">
-                    <button mat-icon-button [matMenuTriggerFor]="gridActions">
-                        <mat-icon class="mat-icon material-icons" role="img" aria-hidden="true">more_vert</mat-icon>
-                    </button>
-                    <mat-menu #gridActions="matMenu" xPosition="before" class="switch-nested-menu-left-arrows">
-                        <button mat-menu-item (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }">Import</button>
-                        <button mat-menu-item [matMenuTriggerFor]="exportActions">Export</button>
-                    </mat-menu>
-                    <mat-menu #exportActions="matMenu" xPosition="before">
-                        <button mat-menu-item (click)="exportCustomersToExcel()">Export Customers</button>
-                        <button mat-menu-item (click)="exportCustomerAircraftToExcel()">Export Aircraft</button>
-                    </mat-menu>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let customer">
-                <div class="pull-right">
-                    <button
-                        *ngIf="!customer.isFuelerLinxCustomer"
-                        ni-button
-                        [view]="'error'"
-                        size="small"
-                        beforeIcon="fa fa-trash"
-                        (click)="
+            <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef class="actions-header">
+                    <div class="pull-right mr-5">
+                        <button ni-button
+                                class="action-btn"
+                                [view]="'accent'"
+                                beforeIcon="fa fa-plus"
+                                (click)="newCustomer()">
+                            Add New
+                        </button>
+                    </div>
+                    <div class="actions-menu">
+                        <button mat-icon-button [matMenuTriggerFor]="gridActions">
+                            <mat-icon class="mat-icon material-icons" role="img" aria-hidden="true">more_vert</mat-icon>
+                        </button>
+                        <mat-menu #gridActions="matMenu" xPosition="before" class="switch-nested-menu-left-arrows">
+                            <button mat-menu-item (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }">Import</button>
+                            <button mat-menu-item [matMenuTriggerFor]="exportActions">Export</button>
+                        </mat-menu>
+                        <mat-menu #exportActions="matMenu" xPosition="before">
+                            <button mat-menu-item (click)="exportCustomersToExcel()">Export Customers</button>
+                            <button mat-menu-item (click)="exportCustomerAircraftToExcel()">Export Aircraft</button>
+                        </mat-menu>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let customer">
+                    <div class="pull-right">
+                        <button *ngIf="!customer.isFuelerLinxCustomer"
+                                ni-button
+                                [view]="'error'"
+                                size="small"
+                                beforeIcon="fa fa-trash"
+                                (click)="
                             deleteCustomer(customer); $event.stopPropagation()
-                        "
-                    >
-                        Delete
-                    </button>
-                </div>
-            </td>
-        </ng-container>
+                        ">
+                            Delete
+                        </button>
+                    </div>
+                </td>
+            </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr
-            mat-row
-            *matRowDef="let row; columns: displayedColumns"
-            (click)="editCustomer(row, $event)"
-        ></tr>
-    </table>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row
+                *matRowDef="let row; columns: displayedColumns"
+                (click)="editCustomer(row, $event)"></tr>
+        </table>
+        <mat-paginator [length]="customersData.length"
+                       [pageSize]="pageSize"
+                       [pageSizeOptions]="[10, 25, 50, 100]"
+                       (page)="(pageIndex); onPageChanged($event)"></mat-paginator>
+    </div>
+    
 </div>
 
-<div>
-    <mat-paginator
-        [length]="customersData.length"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="[10, 25, 50, 100]"
-        (page)="(pageIndex); onPageChanged($event)"
-    ></mat-paginator>
-</div>
+

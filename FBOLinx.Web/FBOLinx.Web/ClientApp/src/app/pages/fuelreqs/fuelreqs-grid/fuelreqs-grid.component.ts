@@ -25,7 +25,7 @@ import { FuelReqsExportModalComponent } from "../../../shared/components/fuelreq
     styleUrls: ["./fuelreqs-grid.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FuelreqsGridComponent implements OnInit, OnChanges {
+export class FuelreqsGridComponent implements OnInit {
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Output() exportTriggered = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
@@ -77,10 +77,6 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         } else {
             this.pageSize = 100;
         }
-
-    }
-
-    ngOnChanges() {
         this.refreshTable();
     }
 
