@@ -132,4 +132,31 @@ export class CustomerinfobygroupService {
             headers: this.headers,
         });
     }
+
+    public matchcustomerinfo(customerId: number, groupId: number) {
+        return this.http.get(
+            `${this.accessPointUrl}/matchcustomerinfo/customerId/${customerId}/groupId/${groupId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public rejectmerge(customerId: number, groupId: number) {
+        return this.http.post(
+            `${this.accessPointUrl}/rejectmergeforcustomer/customerId/${customerId}/groupId/${groupId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public acceptmerge(customerId: number,flcustomerId: number, groupId: number) {
+        return this.http.post(
+            `${this.accessPointUrl}/mergecustomers/customerId/${customerId}/flcustomerid/${flcustomerId}/groupId/${groupId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }
