@@ -6,7 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**GetAircraftTailsGroupedByCompany**](FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
 [**GetTransactionsCount**](FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
-[**GetTransactionsCountForNearbyAirports**](FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | 
+[**GetTransactionsCountForNearbyAirports**](FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 [**GetTransactionsDirectOrdersCount**](FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
 
 
@@ -146,7 +146,7 @@ Name | Type | Description  | Notes
 # **GetTransactionsCountForNearbyAirports**
 > FBOLinxNearbyAirportsResponse GetTransactionsCountForNearbyAirports (FBOLinxNearbyAirportsRequest body)
 
-
+FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 
 ### Example
 ```csharp
@@ -177,6 +177,7 @@ namespace Example
 
             try
             {
+                // FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
                 FBOLinxNearbyAirportsResponse result = apiInstance.GetTransactionsCountForNearbyAirports(body);
                 Debug.WriteLine(result);
             }

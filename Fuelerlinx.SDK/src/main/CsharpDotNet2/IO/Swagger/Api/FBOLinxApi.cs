@@ -23,7 +23,7 @@ namespace IO.Swagger.Api
         /// <returns>FBOLinxOrdersResponse</returns>
         FBOLinxOrdersResponse GetTransactionsCount (FBOLinxOrdersRequest body);
         /// <summary>
-        ///  
+        /// FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>FBOLinxNearbyAirportsResponse</returns>
@@ -156,7 +156,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>FBOLinxNearbyAirportsResponse</returns>            

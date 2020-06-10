@@ -153,7 +153,7 @@ Class | Method | HTTP request | Description
 *FBOApi* | [**UpdateFboDetailsByCompanyNotes**](docs/FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
 *FBOLinxApi* | [**GetAircraftTailsGroupedByCompany**](docs/FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
 *FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
-*FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | 
+*FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 *FBOLinxApi* | [**GetTransactionsDirectOrdersCount**](docs/FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
 *FeeApi* | [**DeleteServicesAndFeesByCompany**](docs/FeeApi.md#deleteservicesandfeesbycompany) | **DELETE** /api/Fee/company-specific/{feeId} | Delete a company-specific service/fee.
 *FeeApi* | [**GetServicesAndFeesByCompany**](docs/FeeApi.md#getservicesandfeesbycompany) | **GET** /api/Fee/company-specific/{feeId} | Fetch a company-specific service/fee by it's Id.
