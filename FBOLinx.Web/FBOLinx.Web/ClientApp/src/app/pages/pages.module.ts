@@ -118,12 +118,13 @@ import { AnalyticsMarketShareAirportChartComponent } from "../shared/components/
 import { AnalyticsCustomerBreakdownChartComponent } from "../shared/components/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component";
 import { AnalyticsCompaniesQuotesDealTableComponent } from "../shared/components/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component";
 import { FuelReqsExportModalComponent } from "../shared/components/fuelreqs-export/fuelreqs-export.component";
-
+import { CustomerMatchDialogComponent } from './customers/customer-match-dialog/customer-match-dialog.component';
 // Pipes
 import { AppPipesModule } from "../app-pipes.module";
 
 import { ClickStopPropagationDirective } from "../shared/directives/click-stop-propagation.directive";
 import { RouterModule } from "@angular/router";
+
 
 
 @NgModule({
@@ -249,6 +250,7 @@ import { RouterModule } from "@angular/router";
         AircraftsGridComponent,
         FuelReqsExportModalComponent,
         ClickStopPropagationDirective,
+        CustomerMatchDialogComponent,
     ],
     exports: [
         ClickStopPropagationDirective,
@@ -285,6 +287,7 @@ import { RouterModule } from "@angular/router";
         RampFeesImportInformationComponent,
         UsersDialogNewUserComponent,
         FuelReqsExportModalComponent,
+        CustomerMatchDialogComponent
     ],
 })
 export class PagesModule {}

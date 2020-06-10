@@ -545,26 +545,240 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("matchcustomerinfo/customerId/{customerId}/groupId/{groupId}")]
-        public void MatchCustomerInfo(int customerId, int groupId)
+        public PotentialCustomerMatchVM MatchCustomerInfo(int customerId, int groupId)
         {
             if(customerId != 0)
             {
-                var custAircrafts = _context.CustomerAircrafts.Where(s => s.CustomerId == customerId && s.GroupId == groupId).Select(s => s.TailNumber).ToList();
-
-                if(custAircrafts.Count > 1)
+                var isMergeRejected = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == customerId).MergeRejected;
+                if (isMergeRejected == null || isMergeRejected.Equals(false))
                 {
-                    var checkOtheraircrafts = _context.CustomerAircrafts.Where(s => custAircrafts.Contains(s.TailNumber) && s.GroupId == groupId && s.CustomerId != customerId).Select(s => s.CustomerId).ToList();
+                   // var custAircrafts = _context.CustomerAircrafts.Where(s => s.CustomerId == customerId && s.GroupId == groupId).Select(s => s.TailNumber).ToList();
 
-                    var duplicates = checkOtheraircrafts.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count() == custAircrafts.Count).Where(s => s.Value == true).Select(x => x.Key).ToList();
+                    var custAircrafts = (from ca in _context.CustomerAircrafts
+                                       join c in _context.CustomerInfoByGroup
+                                       on ca.CustomerId equals c.CustomerId
+                                         where ca.GroupId == groupId
+                                       && ca.CustomerId == customerId
+                                       select new
+                                       {
+                                           CustomerId = ca.CustomerId,
+                                           TailNumber = ca.TailNumber,
+                                           Customer = c.Company
+                                       }).ToList();
 
-                    if(duplicates.Count() > 0)
+                    var custInfo = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == customerId);
+                    PotentialCustomerMatchVM newCustomerMatch = new PotentialCustomerMatchVM();
+                    if (custAircrafts.Count > 1)
                     {
+                        try
+                        {
+                            var ooAircrafts = (from ca in _context.CustomerAircrafts
+                                               join c in _context.Customers
+                                               on ca.CustomerId equals c.Oid
+                                               where ca.GroupId == groupId
+                                               && ca.CustomerId != customerId
+                                               && custAircrafts.ToList().Select(x => x.TailNumber).Contains(ca.TailNumber)
+                                               select new
+                                               {
+                                                   CustomerId = ca.CustomerId,
+                                                   TailNumber = ca.TailNumber
+                                               }).ToList();
 
+                            //var checkOtheraircrafts = _context.CustomerAircrafts.Where(s => custAircrafts.Contains(s.TailNumber) && s.GroupId == groupId && s.CustomerId != customerId).Select(s => s.CustomerId).ToList();
+
+                            //var duplicates = ooAircrafts.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count() == custAircrafts.Count).Where(s => s.Value == true).Select(x => x.Key).ToList();
+                            //var duplicates = ooAircrafts.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count() == custAircrafts.Count).Where(s => s.Value == true).Select(x => x.Key).ToList();
+
+                            var result = (from f in custAircrafts
+                                          join o in ooAircrafts
+                                          on f.TailNumber equals o.TailNumber
+                                          select o).ToList();
+
+                            if (result.Count() > 0)
+                            {
+                                newCustomerMatch.AircraftTails = result.Select(s => s.TailNumber).ToList();
+                                newCustomerMatch.CurrentCustomerId = customerId;
+                                //     var currentCustomerName = _context.Customers.FirstOrDefault(s => s.Oid == customerId).Company;
+                                newCustomerMatch.CurrentCustomerName = custAircrafts[0].Customer;
+
+                                var matchCustomerName = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == result[0].CustomerId && s.GroupId == groupId);
+
+                                newCustomerMatch.MatchCustomerId = matchCustomerName.CustomerId;
+                                newCustomerMatch.MatchCustomerOid = matchCustomerName.Oid;
+                                newCustomerMatch.MatchCustomerName = matchCustomerName.Company;
+
+                                newCustomerMatch.IsAircraftMatch = true;
+
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            var ee = ex;
+                        }
+                       
                     }
-                }
 
-                
+                    var custNameCheck = _context.CustomerInfoByGroup.FirstOrDefault(s => s.Company == custInfo.Company && s.CustomerId != custInfo.CustomerId && s.GroupId == groupId);
+
+                    if(custNameCheck != null)
+                    {
+                        newCustomerMatch.IsNameMatch = true;
+
+                        newCustomerMatch.MatchNameCustomerId = custNameCheck.CustomerId;
+                        newCustomerMatch.MatchNameCustomerOid = custNameCheck.Oid;
+                        newCustomerMatch.MatchNameCustomer = custNameCheck.Company;
+                    }
+
+                    var custContacts = _context.CustomerContacts.Where(s => s.CustomerId == custInfo.CustomerId).ToList();
+
+                    if(custContacts != null)
+                    {
+                        var contactEmails = _context.ContactInfoByGroup.Where(s => s.ContactId == custContacts[0].ContactId).Select(s => s.Email).ToList();
+
+                        if(contactEmails.Count > 0)
+                        {
+                            var checkOtherContacts = _context.ContactInfoByGroup.Where(s => contactEmails.Contains(s.Email)).Select(s =>s.ContactId).ToList();
+
+                            if(checkOtherContacts.Count > 0)
+                            {
+                                var otherContacts = _context.CustomerContacts.Where(s => checkOtherContacts.Contains(s.ContactId) && s.CustomerId != customerId).Select(s => s.CustomerId).FirstOrDefault();
+
+                                if (otherContacts != 0)
+                                {
+                                    var custInfoValue = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == otherContacts && s.GroupId == groupId);
+                                    newCustomerMatch.IsContactMatch = true;
+                                    newCustomerMatch.MatchContactCustomerId = custInfoValue.CustomerId;
+                                    newCustomerMatch.MatchContactCustomerOid = custInfoValue.Oid;
+                                }
+                            }
+                        }
+                    }
+
+                    return newCustomerMatch;
+                }
             }
+
+            return null;
+        }
+
+        [HttpPost("rejectmergeforcustomer/customerId/{customerId}/groupId/{groupId}")]
+        public async Task<IActionResult> RejectMergeForCustomer(int customerId, int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customer = _context.CustomerInfoByGroup.Where(s => s.CustomerId == customerId).ToList();
+            foreach(var cust in customer)
+            {
+                cust.MergeRejected = true;
+                _context.CustomerInfoByGroup.Update(cust);
+                await _context.SaveChangesAsync();
+            }
+           
+            return NoContent();
+        }
+
+        [HttpPost("mergecustomers/customerId/{customerId}/flcustomerId/{flcustomerId}/groupId/{groupId}")]
+        public async Task<IActionResult> MergeCustomers(int customerId, int flcustomerid, int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customer = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == customerId);
+
+            var flCustAircrafts = (from ca in _context.CustomerAircrafts
+                               where ca.GroupId == groupId
+                               && ca.CustomerId == flcustomerid
+                               select new
+                               {
+                                   CustomerId = ca.CustomerId,
+                                   TailNumber = ca.TailNumber,
+                                   AircraftId = ca.Oid
+                               }).ToList();
+
+            var customerAircrafts = (from ca in _context.CustomerAircrafts
+                                     where ca.GroupId == groupId
+                                     && ca.CustomerId == customerId
+                                     select new
+                                     {
+                                         CustomerId = ca.CustomerId,
+                                         TailNumber = ca.TailNumber,
+                                         AircraftId = ca.Oid
+                                     }).ToList();
+
+            var result = customerAircrafts.Where(p => !flCustAircrafts.Any(p2 => p2.TailNumber == p.TailNumber)).ToList();
+
+            //if(result.Count > 0)
+            //{
+            //    foreach(var aircraft in result.ToList())
+            //    {
+            //        var aircraftProp = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == aircraft.AircraftId);
+
+            //        if(aircraftProp != null)
+            //        {
+            //            aircraftProp.CustomerId = flcustomerid;
+            //            _context.CustomerAircrafts.Update(aircraftProp);
+            //            _context.SaveChanges();
+            //        }
+            //    }
+            //}
+
+
+            var custContacts = _context.CustomerContacts.Where(s => s.CustomerId == customerId).ToList();
+
+            var custContactsList = (from cc in _context.CustomerContacts
+                                    join c in _context.ContactInfoByGroup
+                                    on cc.ContactId equals c.ContactId 
+                                    where cc.CustomerId == customerId && c.GroupId == groupId
+                                    select new
+                                    {
+                                        ContactId = c.Oid,
+                                        ContactEmail = c.Email,
+                                        ContactOid = cc.Oid
+                                    }).ToList();
+
+            var custContactsListFl = (from cc in _context.CustomerContacts
+                                    join c in _context.ContactInfoByGroup
+                                    on cc.ContactId equals c.ContactId
+                                      where cc.CustomerId == flcustomerid && c.GroupId == groupId
+                                      select new
+                                    {
+                                        ContactId = c.Oid,
+                                        ContactEmail = c.Email,
+                                          ContactOid = cc.Oid
+                                      }).ToList();
+
+            var resultContact = custContactsList.Where(p => !custContactsListFl.Any(p2 => p2.ContactEmail == p.ContactEmail)).ToList();
+
+            if(resultContact.Count> 0)
+            {
+                //foreach(var contact in resultContact)
+                //{
+                //    var custContact = _context.CustomerContacts.FirstOrDefault(s => s.Oid == contact.ContactOid);
+
+                //    if(custContact != null)
+                //    {
+                //        custContact.CustomerId = flcustomerid;
+                //        _context.CustomerContacts.Update(custContact);
+                //        _context.SaveChanges();
+                //    }
+                //}
+            }
+
+            //if (customerId)
+            //{
+            //    _context.CustomerInfoByGroup.Remove(customerId);
+            //    _context.SaveChanges();
+            //}
+
+            var Flcustomerobject = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == flcustomerid);
+
+            //return NoContent();
+            return new JsonResult(Flcustomerobject.Oid);
         }
     }
 

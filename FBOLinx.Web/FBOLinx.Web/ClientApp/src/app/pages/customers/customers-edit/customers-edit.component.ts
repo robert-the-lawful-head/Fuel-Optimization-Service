@@ -24,6 +24,7 @@ import { DistributionWizardMainComponent } from "../../../shared/components/dist
 import { CustomerCompanyTypeDialogComponent } from "../customer-company-type-dialog/customer-company-type-dialog.component";
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { ContactsDialogNewContactComponent } from "../../contacts/contacts-edit-modal/contacts-edit-modal.component";
+import { CustomerMatchDialogComponent } from '../customer-match-dialog/customer-match-dialog.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -572,6 +573,34 @@ export class CustomersEditComponent {
     }
 
     private checkForDuplicate(id, groupid) {
-        this.customerInfoByGroupService.matchcustomerinfo(id, groupid).subscribe(() => { });
+        this.customerInfoByGroupService.matchcustomerinfo(id, groupid).subscribe((result) => {
+            if (result) {
+                
+                const dialogRef = this.newContactDialog.open(
+                    CustomerMatchDialogComponent,
+                    {
+                        data: result
+                    }
+                );
+
+                dialogRef.afterClosed().subscribe((result) => {
+                    if (result.result == 'KeepSeparate') {
+                        this.customerInfoByGroupService.rejectmerge(id, groupid).subscribe((result) => {
+                        });
+                    }
+                    else if (result.result == 'Merge') {
+                        this.customerInfoByGroupService.acceptmerge(result.currentCustomerId, result.matchCustomerId, groupid).subscribe((result) => {
+                            if (result) {
+                                console.log('return from merge');
+                                console.log(result);
+                                this.router.navigateByUrl('/default-layout/customers/' + result);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        
     }
 }

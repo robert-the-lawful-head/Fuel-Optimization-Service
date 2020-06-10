@@ -141,4 +141,22 @@ export class CustomerinfobygroupService {
             }
         );
     }
+
+    public rejectmerge(customerId: number, groupId: number) {
+        return this.http.post(
+            `${this.accessPointUrl}/rejectmergeforcustomer/customerId/${customerId}/groupId/${groupId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public acceptmerge(customerId: number,flcustomerId: number, groupId: number) {
+        return this.http.post(
+            `${this.accessPointUrl}/mergecustomers/customerId/${customerId}/flcustomerid/${flcustomerId}/groupId/${groupId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }
