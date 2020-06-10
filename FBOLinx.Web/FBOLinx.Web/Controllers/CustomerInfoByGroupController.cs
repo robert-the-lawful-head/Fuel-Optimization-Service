@@ -712,20 +712,20 @@ namespace FBOLinx.Web.Controllers
 
             var result = customerAircrafts.Where(p => !flCustAircrafts.Any(p2 => p2.TailNumber == p.TailNumber)).ToList();
 
-            //if(result.Count > 0)
-            //{
-            //    foreach(var aircraft in result.ToList())
-            //    {
-            //        var aircraftProp = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == aircraft.AircraftId);
+            if (result.Count > 0)
+            {
+                foreach (var aircraft in result.ToList())
+                {
+                    var aircraftProp = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == aircraft.AircraftId);
 
-            //        if(aircraftProp != null)
-            //        {
-            //            aircraftProp.CustomerId = flcustomerid;
-            //            _context.CustomerAircrafts.Update(aircraftProp);
-            //            _context.SaveChanges();
-            //        }
-            //    }
-            //}
+                    if (aircraftProp != null)
+                    {
+                        aircraftProp.CustomerId = flcustomerid;
+                        _context.CustomerAircrafts.Update(aircraftProp);
+                        _context.SaveChanges();
+                    }
+                }
+            }
 
 
             var custContacts = _context.CustomerContacts.Where(s => s.CustomerId == customerId).ToList();
@@ -756,24 +756,27 @@ namespace FBOLinx.Web.Controllers
 
             if(resultContact.Count> 0)
             {
-                //foreach(var contact in resultContact)
-                //{
-                //    var custContact = _context.CustomerContacts.FirstOrDefault(s => s.Oid == contact.ContactOid);
+                foreach (var contact in resultContact)
+                {
+                    var custContact = _context.CustomerContacts.FirstOrDefault(s => s.Oid == contact.ContactOid);
 
-                //    if(custContact != null)
-                //    {
-                //        custContact.CustomerId = flcustomerid;
-                //        _context.CustomerContacts.Update(custContact);
-                //        _context.SaveChanges();
-                //    }
-                //}
+                    if (custContact != null)
+                    {
+                        custContact.CustomerId = flcustomerid;
+                        _context.CustomerContacts.Update(custContact);
+                        _context.SaveChanges();
+                    }
+                }
             }
 
-            //if (customerId)
-            //{
-            //    _context.CustomerInfoByGroup.Remove(customerId);
-            //    _context.SaveChanges();
-            //}
+            if (customer != null)
+            {
+                var customerEntry = _context.Customers.FirstOrDefault(s => s.Oid == customer.CustomerId);
+
+                _context.CustomerInfoByGroup.Remove(customer);
+                _context.Customers.Remove(customerEntry);
+                _context.SaveChanges();
+            }
 
             var Flcustomerobject = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == flcustomerid);
 
