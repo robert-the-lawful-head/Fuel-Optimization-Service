@@ -79,6 +79,14 @@ namespace FBOLinx.Web.Controllers
                             && f.Fboid == fboId && f.Price != null && f.Expired != true
                             select f).ToListAsync();
 
+            var oldPrices = _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true);
+            foreach(var p in oldPrices)
+            {
+                p.Expired = true;
+                _context.Fboprices.Update(p);
+            }
+            await _context.SaveChangesAsync();
+
             var addOnMargins = await (
                             from s in _context.TempAddOnMargin
                             where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
