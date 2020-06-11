@@ -196,21 +196,17 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             const priceFrom = moment(price.effectiveFrom).format("MM/DD/YYYY");
             const priceTo = moment(price.effectiveTo).format("MM/DD/YYYY");
             if (price.product === "JetA Retail" && this.jtRetail > 0) {
+                price.oid = 0;
                 price.price = this.jtRetail;
-                if (priceFrom !== effectiveFrom || priceTo !== effectiveTo) {
-                    price.oid = 0;
-                    price.effectiveFrom = effectiveFrom;
-                    price.effectiveTo = effectiveTo;
-                }
+                price.effectiveFrom = effectiveFrom;
+                price.effectiveTo = effectiveTo;
                 newPrices.push(price);
             }
             if (price.product === "JetA Cost" && this.jtCost > 0) {
+                price.oid = 0;
                 price.price = this.jtCost;
-                if (priceFrom !== effectiveFrom || priceTo !== effectiveTo) {
-                    price.oid = 0;
-                    price.effectiveFrom = effectiveFrom;
-                    price.effectiveTo = effectiveTo;
-                }
+                price.effectiveFrom = effectiveFrom;
+                price.effectiveTo = effectiveTo;
                 newPrices.push(price);
             }
         }
