@@ -36,7 +36,8 @@ namespace FBOLinx.Web.Services
             foreach (var fboAirport in fboAirports)
             {
                 //Do not include Paragon results from the Paragon Network
-                if (fboAirport.Fbo.Group.Isfbonetwork.GetValueOrDefault())
+                //Do not include "Legacy" accounts that are still using the old system
+                if (fboAirport.Fbo.Group.Isfbonetwork.GetValueOrDefault() || fboAirport.Fbo.Group.IsLegacyAccount.GetValueOrDefault())
                     continue;
                 Fbos fbo = await _context.Fbos
                                             .Include(x => x.Group)
