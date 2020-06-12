@@ -35,6 +35,9 @@ namespace FBOLinx.Web.Services
                 return result;
             foreach (var fboAirport in fboAirports)
             {
+                //Do not include Paragon results from the Paragon Network
+                if (fboAirport.Fbo.Group.Isfbonetwork.GetValueOrDefault())
+                    continue;
                 Fbos fbo = await _context.Fbos
                                             .Include(x => x.Group)
                                             .Where(x => x.Oid == fboAirport.Fboid)
