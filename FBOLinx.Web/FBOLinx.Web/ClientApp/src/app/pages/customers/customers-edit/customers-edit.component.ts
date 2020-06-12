@@ -119,10 +119,10 @@ export class CustomersEditComponent {
                     this.loadCustomCustomerType();
                     this.loadCustomerCompanyTypes();
                     this.markCustomerAsViewedByFbo();
-                    console.log(data.customer);
+                    /*console.log(data.customer);
                     if (!data.customer.fuelerlinxId) {
                         this.checkForDuplicate(data.customer.oid, this.sharedService.currentUser.groupId);
-                    }
+                    }*/
                 });
         }
     }
