@@ -390,28 +390,35 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest("Invalid FBO");
             }
 
-            var customerFuelReqsByCustomer = await (from orders in (from fr in _context.FuelReq
-                                                                    join c in _context.Customers on fr.CustomerId.GetValueOrDefault() equals c.Oid
-                                                                    where fr.Fboid == fboId &&
-                                                                        fr.DateCreated.HasValue && fr.DateCreated.Value >= request.StartDateTime &&
-                                                                        fr.DateCreated.Value <= request.EndDateTime
-                                                                    select new
-                                                                    {
-                                                                        fr.CustomerId,
-                                                                        CustomerName = c.Company
-                                                                    })
-                                                    group orders by new { orders.CustomerId, orders.CustomerName }
-                into orderGroup
-                                                    select new FuelReqsTopCustomersForFboViewModel
-                                                    {
-                                                        CustomerId = orderGroup.Key.CustomerId,
-                                                        CustomerName = orderGroup.Key.CustomerName,
-                                                        TotalOrders = orderGroup.Count()
-                                                    })
-                .OrderByDescending(x => x.TotalOrders)
-                .Take(request.NumberOfResults).AsQueryable().ToListAsync();
+            try
+            {
+                var customerFuelReqsByCustomer = await (from orders in (from fr in _context.FuelReq
+                                                                        join c in _context.Customers on fr.CustomerId.GetValueOrDefault() equals c.Oid
+                                                                        where fr.Fboid == fboId &&
+                                                                            fr.DateCreated.HasValue && fr.DateCreated.Value >= request.StartDateTime &&
+                                                                            fr.DateCreated.Value <= request.EndDateTime
+                                                                        select new
+                                                                        {
+                                                                            fr.CustomerId,
+                                                                            CustomerName = c.Company
+                                                                        })
+                                                        group orders by new { orders.CustomerId, orders.CustomerName }
+                    into orderGroup
+                                                        select new FuelReqsTopCustomersForFboViewModel
+                                                        {
+                                                            CustomerId = orderGroup.Key.CustomerId,
+                                                            CustomerName = orderGroup.Key.CustomerName,
+                                                            TotalOrders = orderGroup.Count()
+                                                        })
+                    .OrderByDescending(x => x.TotalOrders)
+                    .Take(request.NumberOfResults).AsQueryable().ToListAsync();
 
-            return Ok(customerFuelReqsByCustomer);
+                return Ok(customerFuelReqsByCustomer);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("analysis/total-orders-by-month/fbo/{fboId}")]
@@ -427,105 +434,112 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest("Invalid FBO");
             }
 
-            IEnumerable<int> months = Enumerable.Range(1, 12);
-            IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
+            try
+            {
+                IEnumerable<int> months = Enumerable.Range(1, 12);
+                IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
 
 
-            //Average retail prices
-            var fboRetailPricesByMonth = from f in _context.Fboprices
-                                         where f.Product.ToLower() == "JetA Retail"
-                                               && f.Fboid == fboId
-                                               && f.EffectiveFrom >= request.StartDateTime
-                                               && f.EffectiveFrom <= request.EndDateTime
-                                         group f by new
-                                         {
-                                             f.EffectiveFrom.GetValueOrDefault().Month,
-                                             f.EffectiveFrom.Value.Year
-                                         }
-                                         into results
-                                         select new
-                                         {
-                                             results.Key.Month,
-                                             results.Key.Year,
-                                             AveragePrice = results.Average((x => x.Price.GetValueOrDefault()))
-                                         };
+                //Average retail prices
+                var fboRetailPricesByMonth = from f in _context.Fboprices
+                                             where f.Product.ToLower() == "JetA Retail"
+                                                   && f.Fboid == fboId
+                                                   && f.EffectiveFrom >= request.StartDateTime
+                                                   && f.EffectiveFrom <= request.EndDateTime
+                                             group f by new
+                                             {
+                                                 f.EffectiveFrom.GetValueOrDefault().Month,
+                                                 f.EffectiveFrom.Value.Year
+                                             }
+                                             into results
+                                             select new
+                                             {
+                                                 results.Key.Month,
+                                                 results.Key.Year,
+                                                 AveragePrice = results.Average((x => x.Price.GetValueOrDefault()))
+                                             };
 
-            //Average cost prices
-            var fboCostPricesByMonth = from f in _context.Fboprices
-                                       where f.Product.ToLower() == "JetA Cost"
-                                             && f.Fboid == fboId
-                                             && f.EffectiveFrom >= request.StartDateTime
-                                             && f.EffectiveFrom <= request.EndDateTime
-                                       group f by new
-                                       {
-                                           f.EffectiveFrom.GetValueOrDefault().Month,
-                                           f.EffectiveFrom.Value.Year
-                                       }
-                                        into results
-                                       select new
-                                       {
-                                           results.Key.Month,
-                                           results.Key.Year,
-                                           AveragePrice = results.Average((x => x.Price.GetValueOrDefault()))
-                                       };
+                //Average cost prices
+                var fboCostPricesByMonth = from f in _context.Fboprices
+                                           where f.Product.ToLower() == "JetA Cost"
+                                                 && f.Fboid == fboId
+                                                 && f.EffectiveFrom >= request.StartDateTime
+                                                 && f.EffectiveFrom <= request.EndDateTime
+                                           group f by new
+                                           {
+                                               f.EffectiveFrom.GetValueOrDefault().Month,
+                                               f.EffectiveFrom.Value.Year
+                                           }
+                                            into results
+                                           select new
+                                           {
+                                               results.Key.Month,
+                                               results.Key.Year,
+                                               AveragePrice = results.Average((x => x.Price.GetValueOrDefault()))
+                                           };
 
-            //Total orders by month
-            var fuelReqsOrdersByMonth = from f in _context.FuelReq
-                                        where f.Fboid == fboId
-                                              && f.DateCreated >= request.StartDateTime
-                                              && f.DateCreated <= request.EndDateTime
-                                        group f by new
-                                        {
-                                            f.DateCreated.GetValueOrDefault().Month,
-                                            f.DateCreated.Value.Year
-                                        }
-                                         into results
-                                        select new
-                                        {
-                                            results.Key.Month,
-                                            results.Key.Year,
-                                            TotalOrders = results.Count()
-                                        };
+                //Total orders by month
+                var fuelReqsOrdersByMonth = from f in _context.FuelReq
+                                            where f.Fboid == fboId
+                                                  && f.DateCreated >= request.StartDateTime
+                                                  && f.DateCreated <= request.EndDateTime
+                                            group f by new
+                                            {
+                                                f.DateCreated.GetValueOrDefault().Month,
+                                                f.DateCreated.Value.Year
+                                            }
+                                             into results
+                                            select new
+                                            {
+                                                results.Key.Month,
+                                                results.Key.Year,
+                                                TotalOrders = results.Count()
+                                            };
 
-            var fuelReqsTotalOrdersByMonthVM = (from m in months
-                                                join y in years on 1 equals 1
-                                                join retail in fboRetailPricesByMonth
-                                                    on new { Month = m, Year = y } equals new
+                var fuelReqsTotalOrdersByMonthVM = (from m in months
+                                                    join y in years on 1 equals 1
+                                                    join retail in fboRetailPricesByMonth
+                                                        on new { Month = m, Year = y } equals new
+                                                        {
+                                                            retail.Month,
+                                                            retail.Year
+                                                        }
+                                                    into leftJoinRetail
+                                                    from retail in leftJoinRetail.DefaultIfEmpty()
+                                                    join cost in fboCostPricesByMonth on new { Month = m, Year = y } equals new
                                                     {
-                                                        retail.Month,
-                                                        retail.Year
+                                                        cost.Month,
+                                                        cost.Year
                                                     }
-                                                into leftJoinRetail
-                                                from retail in leftJoinRetail.DefaultIfEmpty()
-                                                join cost in fboCostPricesByMonth on new { Month = m, Year = y } equals new
-                                                {
-                                                    cost.Month,
-                                                    cost.Year
-                                                }
-                                                into leftJoinCost
-                                                from cost in leftJoinCost.DefaultIfEmpty()
-                                                join orders in fuelReqsOrdersByMonth on new { Month = m, Year = y } equals new
-                                                {
-                                                    orders.Month,
-                                                    orders.Year
-                                                }
-                                                into leftJoinOrders
-                                                from orders in leftJoinOrders.DefaultIfEmpty()
-                                                where (m >= request.StartDateTime.Month || y > request.StartDateTime.Year)
-                                                      && (m <= request.EndDateTime.Month || y < request.EndDateTime.Year)
-                                                select new
-                                                {
-                                                    AverageJetACost = cost?.AveragePrice ?? 0,
-                                                    AverageJetARetail = retail?.AveragePrice ?? 0,
-                                                    TotalOrders = orders?.TotalOrders ?? 0,
-                                                    Month = m,
-                                                    Year = y,
-                                                    MonthName = new DateTime(y, m, 1).ToString("MMM", CultureInfo.InvariantCulture) + " " + y.ToString(),
-                                                    AverageJetACostFormatted = (cost?.AveragePrice ?? 0).ToString("C", CultureInfo.CurrentCulture),
-                                                    AverageJetARetailFormatted = (retail?.AveragePrice ?? 0).ToString("C", CultureInfo.CurrentCulture)
-                                                }).OrderBy((x => x.Year)).ThenBy((x => x.Month));
+                                                    into leftJoinCost
+                                                    from cost in leftJoinCost.DefaultIfEmpty()
+                                                    join orders in fuelReqsOrdersByMonth on new { Month = m, Year = y } equals new
+                                                    {
+                                                        orders.Month,
+                                                        orders.Year
+                                                    }
+                                                    into leftJoinOrders
+                                                    from orders in leftJoinOrders.DefaultIfEmpty()
+                                                    where (m >= request.StartDateTime.Month || y > request.StartDateTime.Year)
+                                                          && (m <= request.EndDateTime.Month || y < request.EndDateTime.Year)
+                                                    select new
+                                                    {
+                                                        AverageJetACost = cost?.AveragePrice ?? 0,
+                                                        AverageJetARetail = retail?.AveragePrice ?? 0,
+                                                        TotalOrders = orders?.TotalOrders ?? 0,
+                                                        Month = m,
+                                                        Year = y,
+                                                        MonthName = new DateTime(y, m, 1).ToString("MMM", CultureInfo.InvariantCulture) + " " + y.ToString(),
+                                                        AverageJetACostFormatted = (cost?.AveragePrice ?? 0).ToString("C", CultureInfo.CurrentCulture),
+                                                        AverageJetARetailFormatted = (retail?.AveragePrice ?? 0).ToString("C", CultureInfo.CurrentCulture)
+                                                    }).OrderBy((x => x.Year)).ThenBy((x => x.Month));
 
-            return Ok(fuelReqsTotalOrdersByMonthVM);
+                return Ok(fuelReqsTotalOrdersByMonthVM);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("analysis/total-orders-by-aircraft-size/fbo/{fboId}")]
@@ -585,22 +599,28 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            if (string.IsNullOrEmpty(request.ICAO))
+            try
             {
-                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
-                Fboairports airport =
-                    await _context.Fboairports.Where(x => x.Fboid == request.FboId).FirstOrDefaultAsync();
+                if (string.IsNullOrEmpty(request.ICAO))
+                {
+                    User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
+                    Fboairports airport =
+                        await _context.Fboairports.Where(x => x.Fboid == request.FboId).FirstOrDefaultAsync();
 
-                if (airport == null)
-                    return NotFound();
+                    if (airport == null)
+                        return NotFound();
 
-                request.ICAO = airport.Icao;
+                    request.ICAO = airport.Icao;
+                }
+
+                FuelerLinxUpliftsByLocationResponseContent result = await _fuelerLinxService.GetOrderCountByLocation(request);
+
+                return Ok(result);
             }
-
-            FuelerLinxUpliftsByLocationResponseContent result = await _fuelerLinxService.GetOrderCountByLocation(request);
-
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("analysis/quotes-orders-over-time/fbo/{fboId}")]
@@ -627,68 +647,70 @@ namespace FBOLinx.Web.Controllers
                 request.ICAO = airport.Icao;
             }
 
-            IEnumerable<int> months = Enumerable.Range(1, 12);
-            IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
+            try
+            {
+                IEnumerable<int> months = Enumerable.Range(1, 12);
+                IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
 
-            List<FuelReqForChart> fuelReqs = await GetFuelRequestsByMonthDateRange(fboId, request.StartDateTime, request.EndDateTime);
+                List<FuelReqForChart> fuelReqs = await GetFuelRequestsByMonthDateRange(fboId, request.StartDateTime, request.EndDateTime);
 
-            List<NgxChartItemType> fuelReqsByMonth = (from month in months
-                                   join year in years on 1 equals 1
-                                   join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
-                                   into leftJoinFuelReqs
-                                   from f in leftJoinFuelReqs.DefaultIfEmpty()
-                                   where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
-                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                   select new NgxChartItemType
-                                   {
-                                       Month = month,
-                                       Year = year,
-                                       Name = month + "/" + year,
-                                       Value = f?.TotalOrders ?? 0
-                                   })
-                                  .OrderBy(x => x.Year)
-                                  .ThenBy(x => x.Month)
-                                  .ToList();
+                List<NgxChartItemType> fuelReqsByMonth = (from month in months
+                                                          join year in years on 1 equals 1
+                                                          join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
+                                                          into leftJoinFuelReqs
+                                                          from f in leftJoinFuelReqs.DefaultIfEmpty()
+                                                          where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                                          && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                          select new NgxChartItemType
+                                                          {
+                                                              Month = month,
+                                                              Year = year,
+                                                              Name = month + "/" + year,
+                                                              Value = f?.TotalOrders ?? 0
+                                                          })
+                                      .OrderBy(x => x.Year)
+                                      .ThenBy(x => x.Month)
+                                      .ToList();
 
-            FuelerLinxUpliftsByLocationResponseContent quotes = await _fuelerLinxService.GetOrderCountByLocation(request);
+                FuelerLinxUpliftsByLocationResponseContent quotes = await _fuelerLinxService.GetOrderCountByLocation(request);
 
-            List<NgxChartItemType> quotesByMonth = (from month in months
-                                 join year in years on 1 equals 1
-                                 join q in quotes.TotalOrdersByMonth on new { Month = month, Year = year } equals new { q.Month, q.Year }
-                                 into leftJoinQuotes
-                                 from q in leftJoinQuotes.DefaultIfEmpty()
-                                 where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
-                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                 select new NgxChartItemType
-                                 {
-                                     Month = month,
-                                     Year = year,
-                                     Name = month + "/" + year,
-                                     Value = q?.Count ?? 0
-                                 })
-                                 .OrderBy(x => x.Year)
-                                 .ThenBy(x => x.Month)
-                                 .ToList();
+                List<NgxChartItemType> quotesByMonth = (from month in months
+                                                        join year in years on 1 equals 1
+                                                        join q in quotes.TotalOrdersByMonth on new { Month = month, Year = year } equals new { q.Month, q.Year }
+                                                        into leftJoinQuotes
+                                                        from q in leftJoinQuotes.DefaultIfEmpty()
+                                                        where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                                          && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                        select new NgxChartItemType
+                                                        {
+                                                            Month = month,
+                                                            Year = year,
+                                                            Name = month + "/" + year,
+                                                            Value = q?.Count ?? 0
+                                                        })
+                                     .OrderBy(x => x.Year)
+                                     .ThenBy(x => x.Month)
+                                     .ToList();
 
-            List<NgxChartItemType> dollarVolumeByMonth = (from month in months
-                                       join year in years on 1 equals 1
-                                       join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
-                                       into leftJoinFuelReqs
-                                       from f in leftJoinFuelReqs.DefaultIfEmpty()
-                                       where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
-                                       && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                       select new NgxChartItemType
-                                       {
-                                           Month = month,
-                                           Year = year,
-                                           Name = month + "/" + year,
-                                           Value = f?.TotalSum ?? 0
-                                       })
-                                       .OrderBy(x => x.Year)
-                                       .ThenBy(x => x.Month)
-                                       .ToList();
+                List<NgxChartItemType> dollarVolumeByMonth = (from month in months
+                                                              join year in years on 1 equals 1
+                                                              join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
+                                                              into leftJoinFuelReqs
+                                                              from f in leftJoinFuelReqs.DefaultIfEmpty()
+                                                              where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                                              && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                              select new NgxChartItemType
+                                                              {
+                                                                  Month = month,
+                                                                  Year = year,
+                                                                  Name = month + "/" + year,
+                                                                  Value = f?.TotalSum ?? 0
+                                                              })
+                                           .OrderBy(x => x.Year)
+                                           .ThenBy(x => x.Month)
+                                           .ToList();
 
-            List<List<NgxChartDataType>> chartData = new List<List<NgxChartDataType>>()
+                List<List<NgxChartDataType>> chartData = new List<List<NgxChartDataType>>()
                             {
                                 new List<NgxChartDataType>(){
                                     new NgxChartDataType
@@ -711,7 +733,12 @@ namespace FBOLinx.Web.Controllers
                                 }
                             };
 
-            return Ok(chartData);
+                return Ok(chartData);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("analysis/orders-won-over-time/fbo/{fboId}")]
@@ -738,30 +765,37 @@ namespace FBOLinx.Web.Controllers
                 request.ICAO = airport.Icao;
             }
 
-            IEnumerable<int> months = Enumerable.Range(1, 12);
-            IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
+            try
+            {
+                IEnumerable<int> months = Enumerable.Range(1, 12);
+                IEnumerable<int> years = Enumerable.Range(request.StartDateTime.Year, request.EndDateTime.Year - request.StartDateTime.Year + 1);
 
-            List<FuelReqForChart> fuelReqs = await GetFuelRequestsByMonthDateRange(fboId, request.StartDateTime, request.EndDateTime);
+                List<FuelReqForChart> fuelReqs = await GetFuelRequestsByMonthDateRange(fboId, request.StartDateTime, request.EndDateTime);
 
-            List<NgxChartItemType> fuelReqsByMonth = (from month in months
-                                   join year in years on 1 equals 1
-                                   join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
-                                   into leftJoinFuelReqs
-                                   from f in leftJoinFuelReqs.DefaultIfEmpty()
-                                   where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
-                                   && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
-                                   select new NgxChartItemType
-                                   {
-                                       Month = month,
-                                       Year = year,
-                                       Name = month + "/" + year,
-                                       Value = f?.TotalOrders ?? 0
-                                   })
-                                  .OrderBy(x => x.Year)
-                                  .ThenBy(x => x.Month)
-                                  .ToList();
+                List<NgxChartItemType> fuelReqsByMonth = (from month in months
+                                                          join year in years on 1 equals 1
+                                                          join f in fuelReqs on new { Month = month, Year = year } equals new { f.Month, f.Year }
+                                                          into leftJoinFuelReqs
+                                                          from f in leftJoinFuelReqs.DefaultIfEmpty()
+                                                          where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
+                                                          && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                          select new NgxChartItemType
+                                                          {
+                                                              Month = month,
+                                                              Year = year,
+                                                              Name = month + "/" + year,
+                                                              Value = f?.TotalOrders ?? 0
+                                                          })
+                                      .OrderBy(x => x.Year)
+                                      .ThenBy(x => x.Month)
+                                      .ToList();
 
-            return Ok(fuelReqsByMonth);
+                return Ok(fuelReqsByMonth);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("analysis/volumes-nearby-airport/fbo/{fboId}")]
@@ -777,16 +811,23 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest("Invalid FBO");
             }
 
-            string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
-            request.Icao = icao;
-
-            List<FBOLinxNearbyAirportsModel> volumes = _fuelerLinxService.GetTransactionsForNearbyAirports(request).Result;
-            IEnumerable<NgxChartBarChartItemType> result = volumes.Select(f => new NgxChartBarChartItemType
+            try
             {
-                Name = f.Icao,
-                Value = f.AirportsCount.GetValueOrDefault()
-            });
-            return Ok(result);
+                string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+                request.Icao = icao;
+
+                List<FBOLinxNearbyAirportsModel> volumes = _fuelerLinxService.GetTransactionsForNearbyAirports(request).Result;
+                IEnumerable<NgxChartBarChartItemType> result = volumes.Select(f => new NgxChartBarChartItemType
+                {
+                    Name = f.Icao,
+                    Value = f.AirportsCount.GetValueOrDefault()
+                });
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("analysis/market-share-airport/fbo/{fboId}")]
@@ -802,20 +843,22 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest("Invalid FBO");
             }
 
-            string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
-            List<int> otherFbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid).ToList();
+            try
+            {
+                string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+                List<int> otherFbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid).ToList();
 
-            request.Icao = icao;
+                request.Icao = icao;
 
-            int airportOrdersCount = _context.FuelReq
-                                        .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime)
-                                        .Count();
+                int airportOrdersCount = _context.FuelReq
+                                            .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime)
+                                            .Count();
 
-            int totalOrdersCount = _fuelerLinxService.GetTransactionsDirectOrdersCount(request).Result.GetValueOrDefault();
+                int totalOrdersCount = _fuelerLinxService.GetTransactionsDirectOrdersCount(request).Result.GetValueOrDefault();
 
-            int fuelerlinxOrdersCount = _fuelerLinxService.GetTransactionsCountForAirport(request).Result.GetValueOrDefault();
+                int fuelerlinxOrdersCount = _fuelerLinxService.GetTransactionsCountForAirport(request).Result.GetValueOrDefault();
 
-            List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>()
+                List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>()
                             {
                                 new NgxChartBarChartItemType
                                 {
@@ -833,7 +876,12 @@ namespace FBOLinx.Web.Controllers
                                     Value = fuelerlinxOrdersCount
                                 }
                             };
-            return Ok(chartData);
+                return Ok(chartData);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("analysis/customers-breakdown/fbo/{fboId}")]
@@ -849,33 +897,40 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest("Invalid FBO");
             }
 
-            var chartData = await (from fr in (
-                                 from fr in _context.FuelReq
-                                 where fr.Fboid.Equals(fboId) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
-                                 group fr by new
-                                 {
-                                     CustomerID = fr.CustomerId
-                                 }
-                                 into groupedFuelReqs
-                                 select new
-                                 {
-                                     groupedFuelReqs.Key.CustomerID,
-                                     Volume = groupedFuelReqs.Sum(fr => fr.ActualVolume.GetValueOrDefault() * fr.ActualPpg.GetValueOrDefault() > 0 ?
-                                             fr.ActualVolume * fr.ActualPpg :
-                                             fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()),
-                                     Orders = groupedFuelReqs.Count()
-                                 }
-                            )
-                            join c in _context.CustomerInfoByGroup on fr.CustomerID.GetValueOrDefault() equals c.CustomerId
-                            select new
-                            {
-                                Name = c.Company,
-                                fr.Volume,
-                                fr.Orders
-                            })
-                            .Distinct()
-                            .ToListAsync();
-            return Ok(chartData);
+            try
+            {
+                var chartData = await (from fr in (
+                                     from fr in _context.FuelReq
+                                     where fr.Fboid.Equals(fboId) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
+                                     group fr by new
+                                     {
+                                         CustomerID = fr.CustomerId
+                                     }
+                                     into groupedFuelReqs
+                                     select new
+                                     {
+                                         groupedFuelReqs.Key.CustomerID,
+                                         Volume = groupedFuelReqs.Sum(fr => fr.ActualVolume.GetValueOrDefault() * fr.ActualPpg.GetValueOrDefault() > 0 ?
+                                                 fr.ActualVolume * fr.ActualPpg :
+                                                 fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()),
+                                         Orders = groupedFuelReqs.Count()
+                                     }
+                                )
+                                       join c in _context.CustomerInfoByGroup on fr.CustomerID.GetValueOrDefault() equals c.CustomerId
+                                       select new
+                                       {
+                                           Name = c.Company,
+                                           fr.Volume,
+                                           fr.Orders
+                                       })
+                                .Distinct()
+                                .ToListAsync();
+                return Ok(chartData);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("analysis/company-quoting-deal-statistics/group/{groupId}/fbo/{fboId}")]
@@ -891,54 +946,61 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest("Invalid FBO");
             }
 
-            string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
-            IQueryable<int> airportfbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid);
-
-            var fuelReqs = (from fr in _context.FuelReq
-                            join afboid in airportfbos on fr.Fboid equals afboid
-                            where fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
-                            group fr by fr.CustomerId
-                            into groupedFuelReqs
-                            select new
-                            {
-                                CustomerId = groupedFuelReqs.Key,
-                                TotalOrders = groupedFuelReqs.Count(),
-                                TotalVolume = groupedFuelReqs.Sum(fr => fr.ActualVolume.GetValueOrDefault() * fr.ActualPpg.GetValueOrDefault() > 0 ?
-                                             fr.ActualVolume * fr.ActualPpg :
-                                             fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()).GetValueOrDefault()
-                            }).ToList();
-
-            var pricingLogs = _context.CompanyPricingLog
-                                        .Include("Customer")
-                                        .OrderByDescending(c => c.CreatedDate)
-                                        .GroupBy(c => c.Customer.Oid)
-                                        .Select(c => c.First())
-                                        .ToList();
-
-            var customers = _context.CustomerInfoByGroup
-                                    .Where(c => c.GroupId.Equals(groupId))
-                                    .Select(c => new
-                                    {
-                                        c.CustomerId,
-                                        Company = c.Company.Trim()
-                                    })
-                                    .Distinct();
-            List<object> tableData = new List<object>();
-            foreach(var customer in customers)
+            try
             {
-                var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
-                var companyPricingLog = pricingLogs.Where(c => c.Customer.Oid.Equals(customer.CustomerId)).FirstOrDefault();
-                tableData.Add(new
-                {
-                    customer.Company,
-                    FBOOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
-                    FBOVolume = selectedCompanyFuelReqs == null ? 0 : Math.Round(selectedCompanyFuelReqs.TotalVolume, 2),
-                    AirportOrders = fuelReqs.Sum(f => f.TotalOrders),
-                    LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString()
-                });
-            }
+                string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+                IQueryable<int> airportfbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid);
 
-            return Ok(tableData);
+                var fuelReqs = (from fr in _context.FuelReq
+                                join afboid in airportfbos on fr.Fboid equals afboid
+                                where fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
+                                group fr by fr.CustomerId
+                                into groupedFuelReqs
+                                select new
+                                {
+                                    CustomerId = groupedFuelReqs.Key,
+                                    TotalOrders = groupedFuelReqs.Count(),
+                                    TotalVolume = groupedFuelReqs.Sum(fr => fr.ActualVolume.GetValueOrDefault() * fr.ActualPpg.GetValueOrDefault() > 0 ?
+                                                 fr.ActualVolume * fr.ActualPpg :
+                                                 fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()).GetValueOrDefault()
+                                }).ToList();
+
+                var pricingLogs = _context.CompanyPricingLog
+                                            .Include("Customer")
+                                            .OrderByDescending(c => c.CreatedDate)
+                                            .GroupBy(c => c.Customer.Oid)
+                                            .Select(c => c.First())
+                                            .ToList();
+
+                var customers = _context.CustomerInfoByGroup
+                                        .Where(c => c.GroupId.Equals(groupId))
+                                        .Select(c => new
+                                        {
+                                            c.CustomerId,
+                                            Company = c.Company.Trim()
+                                        })
+                                        .Distinct();
+                List<object> tableData = new List<object>();
+                foreach (var customer in customers)
+                {
+                    var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
+                    var companyPricingLog = pricingLogs.Where(c => c.Customer.Oid.Equals(customer.CustomerId)).FirstOrDefault();
+                    tableData.Add(new
+                    {
+                        customer.Company,
+                        FBOOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
+                        FBOVolume = selectedCompanyFuelReqs == null ? 0 : Math.Round(selectedCompanyFuelReqs.TotalVolume, 2),
+                        AirportOrders = fuelReqs.Sum(f => f.TotalOrders),
+                        LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString()
+                    });
+                }
+
+                return Ok(tableData);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         #endregion
