@@ -124,7 +124,7 @@ import { AppPipesModule } from "../app-pipes.module";
 
 import { ClickStopPropagationDirective } from "../shared/directives/click-stop-propagation.directive";
 import { RouterModule } from "@angular/router";
-
+import { TailLookupToolComponent } from '../shared/components/tail-lookup-tool/tail-lookup-tool.component';
 
 
 @NgModule({
@@ -251,6 +251,7 @@ import { RouterModule } from "@angular/router";
         FuelReqsExportModalComponent,
         ClickStopPropagationDirective,
         CustomerMatchDialogComponent,
+        TailLookupToolComponent,
     ],
     exports: [
         ClickStopPropagationDirective,
