@@ -40,6 +40,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     public breadcrumb: any[] = BREADCRUMBS;
     public rampFees: any[];
     public requiresUpdate = false;
+    public noData = false;
     public expirationDate: any;
     public locationChangedSubscription: any;
     public aircraftTypes: any[];
@@ -89,14 +90,24 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.rampFeesService
             .getForFbo({ oid: this.sharedService.currentUser.fboId })
             .subscribe((data: any) => {
+                
                 this.rampFees = data;
-                this.expirationDate = data[1].expirationDate;
-                this.messageService.updateMessage(this.expirationDate);
-                this.messageService
-                    .getMessage()
-                    .subscribe(
-                        (mymessage: any) => (this.expirationDate = mymessage)
+                
+                if (data) {
+                    this.noData = false;
+                    this.expirationDate = data[1].expirationDate;                    
+                }
+                else {
+                    this.noData = true;
+                }
+                    this.messageService.updateMessage(this.expirationDate);
+                    this.messageService
+                        .getMessage()
+                        .subscribe(
+                            (mymessage: any) => (this.expirationDate = mymessage)
                     );
+               
+                
             });
 
         FlatfileImporter.setVersion(2);
