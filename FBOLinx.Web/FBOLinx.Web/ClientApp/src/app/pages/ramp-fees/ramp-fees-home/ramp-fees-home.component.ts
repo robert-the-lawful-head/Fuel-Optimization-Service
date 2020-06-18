@@ -90,16 +90,13 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.rampFeesService
             .getForFbo({ oid: this.sharedService.currentUser.fboId })
             .subscribe((data: any) => {
-                
                 this.rampFees = data;
                 
                 if (data) {
-                    this.noData = false;
                     this.expirationDate = data[1].expirationDate;                    
                 }
-                else {
-                    this.noData = true;
-                }
+                
+                this.noData = true;
                     this.messageService.updateMessage(this.expirationDate);
                     this.messageService
                         .getMessage()
