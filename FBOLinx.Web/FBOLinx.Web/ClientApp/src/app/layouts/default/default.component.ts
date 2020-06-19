@@ -22,6 +22,7 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     boxed: boolean;
     compress: boolean;
     menuStyle: string;
+    layoutClasses: any;
     rtl: boolean;
     @Input()
     openedSidebar: boolean;
@@ -61,6 +62,7 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.checkCurrentPrices();
+        this.layoutClasses = this.getClasses();
     }
 
     getClasses() {

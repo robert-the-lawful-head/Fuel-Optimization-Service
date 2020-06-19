@@ -1,4 +1,4 @@
-<div class="site-container" [ngClass]="getClasses()" [attr.dir]="rtl ? 'rtl' : null">
+<div class="site-container" [ngClass]="layoutClasses" [attr.dir]="rtl ? 'rtl' : null">
   <horizontal-navbar [title]="pageTitle" (sidebarState)="sidebarState()"></horizontal-navbar>
 
   <vertical-navbar></vertical-navbar>

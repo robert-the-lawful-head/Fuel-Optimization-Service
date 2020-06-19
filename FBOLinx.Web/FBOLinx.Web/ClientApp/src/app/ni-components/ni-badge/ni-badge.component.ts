@@ -14,9 +14,17 @@ export class NiBadgeComponent implements OnInit {
     @Input() size = "";
     @Input() position = "";
 
+    public badgeClasses: any = {};
+    public arrowClasses: any = {};
+    public badgeStyles: any = {};
+
     constructor() {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.badgeClasses = this.getClasses();
+        this.arrowClasses = this.getArrowClasses();
+        this.badgeStyles = this.getStyles();
+    }
 
     getClasses() {
         return {
