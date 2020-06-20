@@ -11,9 +11,12 @@ export class NiBreadcrumbComponent implements OnInit {
     @Input() separator = "/";
     @Input() style = "default"; // custom1 | custom2
 
+    public breadCrumbClasses: any = {};
+
     constructor() {}
 
     ngOnInit() {
+        this.breadCrumbClasses = this.getClasses();
     }
 
     getClasses() {
