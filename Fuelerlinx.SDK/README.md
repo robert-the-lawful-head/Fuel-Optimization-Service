@@ -230,6 +230,7 @@ Class | Method | HTTP request | Description
 *IntegrationFuelOrderDetailsApi* | [**AddIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#addintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails | Internal use only - associates a fuel order transaction with an integration record.
 *IntegrationFuelOrderDetailsApi* | [**CancelIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#cancelintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails/cancel | Internal use only - cancel an integration record from being tied to a transaction and notify the partner.
 *IntegrationFuelOrderDetailsApi* | [**UpdateIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#updateintegrationfuelorderdetails) | **PUT** /api/IntegrationFuelOrderDetails | Internal use only - update an integration record associated with a fuel order transaction.
+*PaymentsApi* | [**OAuthCodeCallback**](docs/PaymentsApi.md#oauthcodecallback) | **POST** /api/Payments/oauth/code_callback | 
 *RampFeeApi* | [**AddRampFeeByCompany**](docs/RampFeeApi.md#addrampfeebycompany) | **POST** /api/RampFee/company-specific | Add a company-specific ramp fee.
 *RampFeeApi* | [**DeleteRampFeeByCompany**](docs/RampFeeApi.md#deleterampfeebycompany) | **DELETE** /api/RampFee/company-specific/{rampFeeByCompanyId} | Delete a company-specific ramp fee.
 *RampFeeApi* | [**DeleteRampFeeByCompanyNote**](docs/RampFeeApi.md#deleterampfeebycompanynote) | **DELETE** /api/RampFee/company-specific/{rampFeeByCompanyId}/notes/{noteId} | Delete a company-specific note for a ramp fee.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
@@ -364,6 +365,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ChartEvents](docs/ChartEvents.md)
  - [IO.Swagger.Model.ChartOptions](docs/ChartOptions.md)
  - [IO.Swagger.Model.ChartSettings](docs/ChartSettings.md)
+ - [IO.Swagger.Model.CodeCallbackRequest](docs/CodeCallbackRequest.md)
  - [IO.Swagger.Model.ColorSet](docs/ColorSet.md)
  - [IO.Swagger.Model.CompanyAccountSettingsDTO](docs/CompanyAccountSettingsDTO.md)
  - [IO.Swagger.Model.CompanyDTO](docs/CompanyDTO.md)
@@ -774,6 +776,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UserProfile](docs/UserProfile.md)
  - [IO.Swagger.Model.UserResponse](docs/UserResponse.md)
  - [IO.Swagger.Model.UserSettingsDTO](docs/UserSettingsDTO.md)
+ - [IO.Swagger.Model.VeemOAuthTokenResponse](docs/VeemOAuthTokenResponse.md)
  - [IO.Swagger.Model.WeeklyPricingDTO](docs/WeeklyPricingDTO.md)
  - [IO.Swagger.Model.WeeklyPricingListResponse](docs/WeeklyPricingListResponse.md)
  - [IO.Swagger.Model.Weight](docs/Weight.md)
