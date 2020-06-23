@@ -40,7 +40,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     public breadcrumb: any[] = BREADCRUMBS;
     public rampFees: any[];
     public requiresUpdate = false;
-    public noData = false;
     public expirationDate: any;
     public locationChangedSubscription: any;
     public aircraftTypes: any[];
@@ -96,7 +95,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.expirationDate = data[1].expirationDate;                    
                 }
                 
-                this.noData = true;
                     this.messageService.updateMessage(this.expirationDate);
                     this.messageService
                         .getMessage()
