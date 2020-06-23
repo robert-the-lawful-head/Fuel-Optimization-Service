@@ -12,11 +12,11 @@
     "
 ></app-fbo-prices-panel>
 
-<div *ngIf="!rampFees && !noData">
+<div *ngIf="!rampFees">
     <mat-spinner></mat-spinner>
 </div>
 
-<ni-card title="" class="mb-0 ">
+<ni-card title="" class="mb-0 " *ngIf="rampFees">
     <div class="mb-3">
         <div class="">
             <div class="row">

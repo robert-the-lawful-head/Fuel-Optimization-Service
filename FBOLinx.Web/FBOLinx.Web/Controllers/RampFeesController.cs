@@ -51,68 +51,63 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fbo/{fboId}")]
         public async Task<ActionResult<IEnumerable<RampFees>>> GetRampFeesForFbo([FromRoute] int fboId)
         {
-            try
-            {
-                //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
-                IEnumerable<Utilities.Enum.EnumDescriptionValue> sizes = Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
-                List<ViewModels.RampFeesGridViewModel> result = (
-                    from s in sizes
-                    join r in _context.RampFees on new
-                        {
-                            size = (int?) ((short?) ((AirCrafts.AircraftSizes) s.Value)),
-                            fboId = (int?) fboId
-                        }
-                        equals new
-                        {
-                            size = r.CategoryMinValue,
-                            fboId = r.Fboid
-                        }
-                        into leftJoinRampFees
-                    from r in leftJoinRampFees.DefaultIfEmpty()
-                    select new ViewModels.RampFeesGridViewModel()
+            //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
+            IEnumerable<Utilities.Enum.EnumDescriptionValue> sizes =
+                Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+            List<ViewModels.RampFeesGridViewModel> result = (
+                from s in sizes
+                join r in _context.RampFees on new
                     {
-                        Oid = r?.Oid ?? 0,
-                        Price = r?.Price,
-                        Waived = r?.Waived,
-                        Fboid = r?.Fboid,
-                        CategoryType = r?.CategoryType,
-                        CategoryMinValue = r?.CategoryMinValue,
-                        CategoryMaxValue = r?.CategoryMaxValue,
-                        ExpirationDate = r?.ExpirationDate,
-                        Size = (AirCrafts.AircraftSizes)s.Value,
-                        AppliesTo = (from a in _context.Aircrafts
-                                     where a.Size.HasValue && a.Size == (AirCrafts.AircraftSizes)s.Value
-                                     select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList()
+                        size = (int?) ((short?) ((AirCrafts.AircraftSizes) s.Value)),
+                        fboId = (int?) fboId
+                    }
+                    equals new
+                    {
+                        size = r.CategoryMinValue,
+                        fboId = r.Fboid
+                    }
+                    into leftJoinRampFees
+                from r in leftJoinRampFees.DefaultIfEmpty()
+                select new ViewModels.RampFeesGridViewModel()
+                {
+                    Oid = r?.Oid ?? 0,
+                    Price = r?.Price,
+                    Waived = r?.Waived,
+                    Fboid = r?.Fboid,
+                    CategoryType = r?.CategoryType,
+                    CategoryMinValue = r?.CategoryMinValue,
+                    CategoryMaxValue = r?.CategoryMaxValue,
+                    ExpirationDate = r?.ExpirationDate,
+                    Size = (AirCrafts.AircraftSizes) s.Value,
+                    AppliesTo = (from a in _context.Aircrafts
+                        where a.Size.HasValue && a.Size == (AirCrafts.AircraftSizes) s.Value
+                        select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList()
 
-                    }).ToList();
+                }).ToList();
 
-                // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
-                List<ViewModels.RampFeesGridViewModel> customRampFees = await (from r in _context.RampFees
-                                            join a in _context.Aircrafts on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
-                                            from a in leftJoinAircrafts.DefaultIfEmpty()
-                                            where r.Fboid == fboId && r.CategoryType.HasValue && r.CategoryType.Value != RampFees.RampFeeCategories.AircraftSize
-                                            select new ViewModels.RampFeesGridViewModel()
-                                            {
-                                                Oid = r.Oid,
-                                                Price = r.Price,
-                                                Waived = r.Waived,
-                                                Fboid = r.Fboid,
-                                                CategoryType = r.CategoryType,
-                                                CategoryMinValue = r.CategoryMinValue,
-                                                CategoryMaxValue = r.CategoryMaxValue,
-                                                ExpirationDate = r.ExpirationDate,
-                                                AircraftMake = a == null ? "" : a.Make,
-                                                AircraftModel = a == null ? "" : a.Model,
-                                                CategoryStringValue = r.CategoryStringValue
-                                            }).ToListAsync();
+            // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
+            List<ViewModels.RampFeesGridViewModel> customRampFees = await (from r in _context.RampFees
+                join a in _context.Aircrafts on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
+                from a in leftJoinAircrafts.DefaultIfEmpty()
+                where r.Fboid == fboId && r.CategoryType.HasValue &&
+                      r.CategoryType.Value != RampFees.RampFeeCategories.AircraftSize
+                select new ViewModels.RampFeesGridViewModel()
+                {
+                    Oid = r.Oid,
+                    Price = r.Price,
+                    Waived = r.Waived,
+                    Fboid = r.Fboid,
+                    CategoryType = r.CategoryType,
+                    CategoryMinValue = r.CategoryMinValue,
+                    CategoryMaxValue = r.CategoryMaxValue,
+                    ExpirationDate = r.ExpirationDate,
+                    AircraftMake = a == null ? "" : a.Make,
+                    AircraftModel = a == null ? "" : a.Model,
+                    CategoryStringValue = r.CategoryStringValue
+                }).ToListAsync();
 
-                result.AddRange(customRampFees);
-                return Ok(result);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            result.AddRange(customRampFees);
+            return Ok(result);
         }
 
         // PUT: api/RampFees/5
