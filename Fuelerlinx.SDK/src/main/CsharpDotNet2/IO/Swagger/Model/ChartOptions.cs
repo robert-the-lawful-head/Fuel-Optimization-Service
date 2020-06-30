@@ -132,6 +132,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "plotOptions")]
     public PlotOptionsSeries PlotOptions { get; set; }
 
+    /// <summary>
+    /// Gets or Sets MapNavigation
+    /// </summary>
+    [DataMember(Name="mapNavigation", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "mapNavigation")]
+    public MapNavigation MapNavigation { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ColorAxis
+    /// </summary>
+    [DataMember(Name="colorAxis", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "colorAxis")]
+    public ColorAxis ColorAxis { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -157,6 +171,8 @@ namespace IO.Swagger.Model {
       sb.Append("  Theme: ").Append(Theme).Append("\n");
       sb.Append("  AjaxDataSource: ").Append(AjaxDataSource).Append("\n");
       sb.Append("  PlotOptions: ").Append(PlotOptions).Append("\n");
+      sb.Append("  MapNavigation: ").Append(MapNavigation).Append("\n");
+      sb.Append("  ColorAxis: ").Append(ColorAxis).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

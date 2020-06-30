@@ -11,7 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class SerieStateSettings {
+  public class MapNavigation {
     /// <summary>
     /// Gets or Sets Enabled
     /// </summary>
@@ -20,25 +20,11 @@ namespace IO.Swagger.Model {
     public bool? Enabled { get; set; }
 
     /// <summary>
-    /// Gets or Sets LineWidth
+    /// Gets or Sets ButtonOptions
     /// </summary>
-    [DataMember(Name="lineWidth", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "lineWidth")]
-    public int? LineWidth { get; set; }
-
-    /// <summary>
-    /// Gets or Sets Marker
-    /// </summary>
-    [DataMember(Name="marker", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "marker")]
-    public Marker Marker { get; set; }
-
-    /// <summary>
-    /// Gets or Sets Color
-    /// </summary>
-    [DataMember(Name="color", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "color")]
-    public string Color { get; set; }
+    [DataMember(Name="buttonOptions", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "buttonOptions")]
+    public ButtonOptions ButtonOptions { get; set; }
 
 
     /// <summary>
@@ -47,11 +33,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class SerieStateSettings {\n");
+      sb.Append("class MapNavigation {\n");
       sb.Append("  Enabled: ").Append(Enabled).Append("\n");
-      sb.Append("  LineWidth: ").Append(LineWidth).Append("\n");
-      sb.Append("  Marker: ").Append(Marker).Append("\n");
-      sb.Append("  Color: ").Append(Color).Append("\n");
+      sb.Append("  ButtonOptions: ").Append(ButtonOptions).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

@@ -10,6 +10,8 @@ Name | Type | Description | Notes
 **AirportIcao** | **string** |  | [optional] 
 **DateInterval** | **int?** |  | [optional] 
 **Currency** | **string** |  | [optional] 
+**MapRegion** | **string** |  | [optional] 
+**State** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

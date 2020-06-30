@@ -62,6 +62,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "currency")]
     public string Currency { get; set; }
 
+    /// <summary>
+    /// Gets or Sets MapRegion
+    /// </summary>
+    [DataMember(Name="mapRegion", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "mapRegion")]
+    public string MapRegion { get; set; }
+
+    /// <summary>
+    /// Gets or Sets State
+    /// </summary>
+    [DataMember(Name="state", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "state")]
+    public string State { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -77,6 +91,8 @@ namespace IO.Swagger.Model {
       sb.Append("  AirportIcao: ").Append(AirportIcao).Append("\n");
       sb.Append("  DateInterval: ").Append(DateInterval).Append("\n");
       sb.Append("  Currency: ").Append(Currency).Append("\n");
+      sb.Append("  MapRegion: ").Append(MapRegion).Append("\n");
+      sb.Append("  State: ").Append(State).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

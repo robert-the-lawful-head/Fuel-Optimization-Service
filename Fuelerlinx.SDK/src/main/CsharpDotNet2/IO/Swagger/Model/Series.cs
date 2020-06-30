@@ -119,6 +119,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "visible")]
     public bool? Visible { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Animation
+    /// </summary>
+    [DataMember(Name="animation", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "animation")]
+    public Animation Animation { get; set; }
+
+    /// <summary>
+    /// Gets or Sets JoinBy
+    /// </summary>
+    [DataMember(Name="joinBy", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "joinBy")]
+    public List<string> JoinBy { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -142,6 +156,8 @@ namespace IO.Swagger.Model {
       sb.Append("  ShowInLegend: ").Append(ShowInLegend).Append("\n");
       sb.Append("  Selected: ").Append(Selected).Append("\n");
       sb.Append("  Visible: ").Append(Visible).Append("\n");
+      sb.Append("  Animation: ").Append(Animation).Append("\n");
+      sb.Append("  JoinBy: ").Append(JoinBy).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
