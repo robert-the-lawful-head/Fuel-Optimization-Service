@@ -33,6 +33,7 @@ Name | Type | Description | Notes
 **TripKey** | **string** |  | [optional] 
 **TransactionId** | **int?** |  | [optional] 
 **Company** | [**CompanyDTO**](CompanyDTO.md) |  | [optional] 
+**FlightTypeMapping** | [**FlightTypeMappingDTO**](FlightTypeMappingDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

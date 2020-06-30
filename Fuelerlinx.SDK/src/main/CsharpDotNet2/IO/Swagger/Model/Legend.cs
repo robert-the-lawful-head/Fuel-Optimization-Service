@@ -183,6 +183,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "y")]
     public int? Y { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Title
+    /// </summary>
+    [DataMember(Name="title", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "title")]
+    public Title Title { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -215,6 +222,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Width: ").Append(Width).Append("\n");
       sb.Append("  X: ").Append(X).Append("\n");
       sb.Append("  Y: ").Append(Y).Append("\n");
+      sb.Append("  Title: ").Append(Title).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

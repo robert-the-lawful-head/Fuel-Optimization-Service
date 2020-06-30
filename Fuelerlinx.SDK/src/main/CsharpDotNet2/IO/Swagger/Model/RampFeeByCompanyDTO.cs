@@ -146,6 +146,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "categorizationDescription")]
     public string CategorizationDescription { get; set; }
 
+    /// <summary>
+    /// Gets or Sets AddedByName
+    /// </summary>
+    [DataMember(Name="addedByName", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "addedByName")]
+    public string AddedByName { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -173,6 +180,7 @@ namespace IO.Swagger.Model {
       sb.Append("  RampFeeByCompanyNotes: ").Append(RampFeeByCompanyNotes).Append("\n");
       sb.Append("  ApplicableTailNumbers: ").Append(ApplicableTailNumbers).Append("\n");
       sb.Append("  CategorizationDescription: ").Append(CategorizationDescription).Append("\n");
+      sb.Append("  AddedByName: ").Append(AddedByName).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

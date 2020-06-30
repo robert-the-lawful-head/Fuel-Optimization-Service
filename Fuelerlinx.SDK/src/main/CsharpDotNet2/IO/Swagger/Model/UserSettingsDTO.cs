@@ -68,6 +68,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "InternationalSettings")]
     public InternationalSettingsDTO InternationalSettings { get; set; }
 
+    /// <summary>
+    /// Gets or Sets WeightConversions
+    /// </summary>
+    [DataMember(Name="WeightConversions", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "WeightConversions")]
+    public List<WeightConversionDTO> WeightConversions { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -84,6 +91,7 @@ namespace IO.Swagger.Model {
       sb.Append("  FlightPlanningSettings: ").Append(FlightPlanningSettings).Append("\n");
       sb.Append("  AccessibleFeatures: ").Append(AccessibleFeatures).Append("\n");
       sb.Append("  InternationalSettings: ").Append(InternationalSettings).Append("\n");
+      sb.Append("  WeightConversions: ").Append(WeightConversions).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

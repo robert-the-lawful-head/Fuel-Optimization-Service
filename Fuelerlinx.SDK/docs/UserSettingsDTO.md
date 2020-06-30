@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **FlightPlanningSettings** | [**FlightPlanningSettingsDTO**](FlightPlanningSettingsDTO.md) |  | [optional] 
 **AccessibleFeatures** | [**AccessibleFeaturesDTO**](AccessibleFeaturesDTO.md) |  | [optional] 
 **InternationalSettings** | [**InternationalSettingsDTO**](InternationalSettingsDTO.md) |  | [optional] 
+**WeightConversions** | [**List&lt;WeightConversionDTO&gt;**](WeightConversionDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
