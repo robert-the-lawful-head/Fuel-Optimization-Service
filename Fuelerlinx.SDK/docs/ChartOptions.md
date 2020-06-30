@@ -20,6 +20,8 @@ Name | Type | Description | Notes
 **Theme** | **string** |  | [optional] 
 **AjaxDataSource** | [**AJAXSource**](AJAXSource.md) |  | [optional] 
 **PlotOptions** | [**PlotOptionsSeries**](PlotOptionsSeries.md) |  | [optional] 
+**MapNavigation** | [**MapNavigation**](MapNavigation.md) |  | [optional] 
+**ColorAxis** | [**ColorAxis**](ColorAxis.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

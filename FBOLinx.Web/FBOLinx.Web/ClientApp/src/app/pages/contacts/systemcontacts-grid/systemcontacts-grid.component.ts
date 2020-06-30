@@ -14,18 +14,18 @@ import * as _ from "lodash";
 import FlatfileImporter from "flatfile-csv-importer";
 
 // Services
-import { ContactsService } from "../../../services/contacts.service";
-import { CustomercontactsService } from "../../../services/customercontacts.service";
 import { ContactinfobygroupsService } from "../../../services/contactinfobygroups.service";
+import { FbocontactsService } from "../../../services/fbocontacts.service";
+import { ContactsService } from "../../../services/contacts.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { ContactsDialogNewContactComponent } from "../contacts-edit-modal/contacts-edit-modal.component";
 
 @Component({
-    selector: "app-contacts-grid",
-    templateUrl: "./contacts-grid.component.html",
-    styleUrls: ["./contacts-grid.component.scss"],
+    selector: "app-systemcontacts-grid",
+    templateUrl: "./systemcontacts-grid.component.html",
+    styleUrls: ["./systemcontacts-grid.component.scss"],
 })
-export class ContactsGridComponent implements OnInit {
+export class SystemcontactsGridComponent implements OnInit {
     @Output() contactDeleted = new EventEmitter<any>();
     @Output() newContactClicked = new EventEmitter<any>();
     @Output() editContactClicked = new EventEmitter<any>();
@@ -52,12 +52,13 @@ export class ContactsGridComponent implements OnInit {
     private importer: FlatfileImporter;
 
     constructor(
+        private route: ActivatedRoute,
         public deleteUserDialog: MatDialog,
+        private fbocontactsService: FbocontactsService,
+        private contactsService: ContactsService,
         private contactInfoByGroupsService: ContactinfobygroupsService,
         private sharedService: SharedService,
-        private customerContactsService: CustomercontactsService,
-        public newContactDialog: MatDialog,
-        private route: ActivatedRoute
+        public newContactDialog: MatDialog
     ) {}
 
     ngOnInit() {
@@ -69,9 +70,8 @@ export class ContactsGridComponent implements OnInit {
             return !contact.copyAlerts;
         });
         this.copyAll = foundedIndex >= 0 ? false : true;
-        this.sort.sortChange.subscribe(() => {});
-        this.contactsDataSource = new MatTableDataSource(this.contactsData);
-        this.contactsDataSource.sort = this.sort;
+
+        this.refreshTable();
 
         FlatfileImporter.setVersion(2);
         this.initializeImporter();
@@ -82,127 +82,84 @@ export class ContactsGridComponent implements OnInit {
     }
 
     // Public Methods
-    public deleteRecord(record) {
-        this.customerContactsService
-            .remove(record.customerContactId)
-            .subscribe(() => {
-                this.contactInfoByGroupsService
-                    .remove(record.contactInfoByGroupId)
-                    .subscribe(() => {
-                        const index = this.contactsData.findIndex(
-                            (d) =>
-                                d.customerContactId === record.customerContactId
-                        ); // find index in your array
-                        this.contactsData.splice(index, 1); // remove element from array
-                        this.contactsDataSource = new MatTableDataSource(
-                            this.contactsData
-                        );
-                        this.contactsDataSource.sort = this.sort;
-                    });
-            });
+    public refreshTable() {
+        this.sort.sortChange.subscribe(() => {});
+        this.contactsDataSource = new MatTableDataSource(this.contactsData);
+        this.contactsDataSource.sort = this.sort;
     }
 
-    public editRecord(record, $event) {
-        if ($event.target) {
-            if ($event.target.className.indexOf("mat-slide-toggle") > -1) {
-                $event.stopPropagation();
-                return false;
-            } else {
-                const clonedRecord = Object.assign({}, record);
-                this.editContactClicked.emit(clonedRecord);
-            }
-        } else {
-            const clonedRecord = Object.assign({}, record);
-            this.editContactClicked.emit(clonedRecord);
-        }
-    }
-
-    public EditContactPopup(record) {
+    public editRecord(record: any) {
         const dialogRef = this.newContactDialog.open(
             ContactsDialogNewContactComponent,
             {
-                data: record,
+                data: Object.assign({}, record),
             }
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (result !== "cancel") {
-                if (result.toDelete) {
-                    this.customerContactsService
-                        .remove(record.customerContactId)
-                        .subscribe(() => {
-                            this.contactInfoByGroupsService
-                                .remove(record.contactInfoByGroupId)
-                                .subscribe(() => {
-                                    const index = this.contactsData.findIndex(
-                                        (d) =>
-                                            d.customerContactId ===
-                                            record.customerContactId
-                                    ); // find index in your array
-                                    this.contactsData.splice(index, 1); // remove element from array
-                                    this.contactsDataSource = new MatTableDataSource(
-                                        this.contactsData
-                                    );
-                                    this.contactsDataSource.sort = this.sort;
-                                });
-                        });
-                } else {
-                    if (record.firstName) {
-                        this.contactInfoByGroupsService
-                            .get({ oid: record.contactInfoByGroupId })
-                            .subscribe((data: any) => {
-                                if (data) {
-                                    this.currentContactInfoByGroup = data;
-                                    if (this.currentContactInfoByGroup.oid) {
-                                        data.email = record.email;
-                                        data.firstName = record.firstName;
-                                        data.lastName = record.lastName;
-                                        data.title = record.title;
-                                        data.phone = record.phone;
-                                        data.extension = record.extension;
-                                        data.mobile = record.mobile;
-                                        data.fax = record.fax;
-                                        data.address = record.address;
-                                        data.city = record.city;
-                                        data.state = record.state;
-                                        data.country = record.country;
-                                        data.primary = record.primary;
-                                        data.copyAlerts = record.copyAlerts;
+            if (!result) {
+                return;
+            }
+            console.log(result)
+            if (result.toDelete) {
+                this.fbocontactsService
+                    .remove(record)
+                    .subscribe(() => {
+                        this.contactsData = this.contactsData.filter(c => c.oid !== record.oid);
+                        this.refreshTable();
+                        this.fbocontactsService.updateFuelvendor({ fboId: this.sharedService.currentUser.fboId }).subscribe();
+                    });
+            } else if (result !== "cancel" && result.firstName) {
+                const updatedContact = Object.assign({}, result);
+                updatedContact.oid = result.contactId;
 
-                                        this.contactInfoByGroupsService
-                                            .update(
-                                                this.currentContactInfoByGroup
-                                            )
-                                            .subscribe(() => {});
-                                    }
-                                }
-                            });
+                this.contactsService.update(updatedContact).subscribe(() => {
+                    for (let i = 0; i < this.contactsData.length; i++) {
+                        if (this.contactsData[i].oid === result.oid) {
+                            this.contactsData[i] = result;
+                        }
                     }
-                }
+                    this.refreshTable();
+                    this.fbocontactsService.updateFuelvendor({ fboId: this.sharedService.currentUser.fboId }).subscribe();
+                });
             }
         });
     }
 
     public newRecord() {
-        this.newContactClicked.emit();
+        const dialogRef = this.newContactDialog.open(
+            ContactsDialogNewContactComponent,
+            {
+                data: {},
+            }
+        );
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return;
+            }
+            const payload = {
+                ...result,
+                fboId: this.sharedService.currentUser.fboId,
+            };
+            this.fbocontactsService.addnewcontact(payload).subscribe(newFbocontact => {
+                this.contactsData.push(newFbocontact);
+                this.refreshTable();
+                this.fbocontactsService.updateFuelvendor(payload).subscribe();
+            });
+        });
     }
 
-    public UpdateCopyAlertsValue(value) {
-        if (value.copyAlerts) {
-            value.copyAlerts = !value.copyAlerts;
-        } else {
-            value.copyAlerts = true;
-        }
+    public UpdateCopyAlertsValue(value: any) {
         const unselectedIndex = _.findIndex(this.contactsData, (contact) => {
             return !contact.copyAlerts;
         });
         this.copyAll = unselectedIndex >= 0 ? false : true;
         
         value.groupId = this.sharedService.currentUser.groupId;
-    
-        this.contactInfoByGroupsService
-            .update(value)
-            .subscribe((data: any) => {});
+        const updatedContact = Object.assign({}, value);
+        updatedContact.oid = value.contactId;
+
+        this.contactsService.update(updatedContact).subscribe();
     }
 
     public UpdateAllCopyAlertsValues() {
@@ -210,9 +167,10 @@ export class ContactsGridComponent implements OnInit {
         _.forEach(this.contactsData, (contact) => {
             contact.copyAlerts = this.copyAll;
             contact.GroupId = this.sharedService.currentUser.groupId;
-            this.contactInfoByGroupsService
-                .update(contact)
-                .subscribe((data: any) => {});
+            const updatedContact = Object.assign({}, contact);
+            updatedContact.oid = contact.contactId;
+
+            this.contactsService.update(updatedContact).subscribe();
         });
     }
 

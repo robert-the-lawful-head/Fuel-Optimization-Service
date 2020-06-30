@@ -120,11 +120,18 @@ namespace IO.Swagger.Model {
     public bool? Visible { get; set; }
 
     /// <summary>
-    /// Gets or Sets DataJson
+    /// Gets or Sets Animation
     /// </summary>
-    [DataMember(Name="dataJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dataJson")]
-    public string DataJson { get; set; }
+    [DataMember(Name="animation", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "animation")]
+    public Animation Animation { get; set; }
+
+    /// <summary>
+    /// Gets or Sets JoinBy
+    /// </summary>
+    [DataMember(Name="joinBy", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "joinBy")]
+    public List<string> JoinBy { get; set; }
 
 
     /// <summary>
@@ -149,7 +156,8 @@ namespace IO.Swagger.Model {
       sb.Append("  ShowInLegend: ").Append(ShowInLegend).Append("\n");
       sb.Append("  Selected: ").Append(Selected).Append("\n");
       sb.Append("  Visible: ").Append(Visible).Append("\n");
-      sb.Append("  DataJson: ").Append(DataJson).Append("\n");
+      sb.Append("  Animation: ").Append(Animation).Append("\n");
+      sb.Append("  JoinBy: ").Append(JoinBy).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

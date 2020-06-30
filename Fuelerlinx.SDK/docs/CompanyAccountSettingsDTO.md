@@ -20,6 +20,8 @@ Name | Type | Description | Notes
 **IsWebPulledPricingDisabled** | **bool?** |  | [optional] 
 **IsVATRecoveryEnabled** | **bool?** |  | [optional] 
 **DisableCrowdSourcedRampFees** | **bool?** |  | [optional] 
+**ReconcileMatchingInvoicedTransactions** | **bool?** |  | [optional] 
+**KeepManualPriceVendorWhenInvoiced** | **bool?** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -42,4 +42,16 @@ export class FbocontactsService {
             headers: this.headers,
         });
     }
+
+    public addnewcontact(payload) {
+        return this.http.post(this.accessPointUrl + "/fbo/" + payload.fboId +"/newcontact", payload, {
+            headers: this.headers,
+        });
+    }
+
+    public updateFuelvendor(payload) {
+        return this.http.post(this.accessPointUrl + "/fbo/" + payload.fboId + "/update-fuel-vendor", payload, {
+            headers: this.headers,
+        });
+    }
 }
