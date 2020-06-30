@@ -155,6 +155,7 @@ Class | Method | HTTP request | Description
 *FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
 *FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 *FBOLinxApi* | [**GetTransactionsDirectOrdersCount**](docs/FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
+*FBOLinxApi* | [**UpdateFuelVendor**](docs/FBOLinxApi.md#updatefuelvendor) | **POST** /api/FBOLinx/update-fuelvendor-emails | 
 *FeeApi* | [**DeleteServicesAndFeesByCompany**](docs/FeeApi.md#deleteservicesandfeesbycompany) | **DELETE** /api/Fee/company-specific/{feeId} | Delete a company-specific service/fee.
 *FeeApi* | [**GetServicesAndFeesByCompany**](docs/FeeApi.md#getservicesandfeesbycompany) | **GET** /api/Fee/company-specific/{feeId} | Fetch a company-specific service/fee by it's Id.
 *FeeApi* | [**GetServicesAndFeesByCompanyByLocation**](docs/FeeApi.md#getservicesandfeesbycompanybylocation) | **GET** /api/Fee/company-specific/by-location/{icao}/{fboName} | Fetch a company-specific service/fee by the ICAO and FBO.
@@ -447,6 +448,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.Exporting](docs/Exporting.md)
  - [IO.Swagger.Model.FBOContact](docs/FBOContact.md)
  - [IO.Swagger.Model.FBOLinxFBOResponse](docs/FBOLinxFBOResponse.md)
+ - [IO.Swagger.Model.FBOLinxFuelVendorUpdateRequest](docs/FBOLinxFuelVendorUpdateRequest.md)
+ - [IO.Swagger.Model.FBOLinxFuelVendorUpdateResponse](docs/FBOLinxFuelVendorUpdateResponse.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsModel](docs/FBOLinxNearbyAirportsModel.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsRequest](docs/FBOLinxNearbyAirportsRequest.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsResponse](docs/FBOLinxNearbyAirportsResponse.md)
