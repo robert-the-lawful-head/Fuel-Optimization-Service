@@ -74,20 +74,17 @@
                 </div>
             </mat-tab>
 
-            <mat-tab label="Contacts" *ngIf="contactsData">
-
+            <mat-tab label="System Contacts" *ngIf="contactsData">
+                <div class="mt-2 mb-2">Add contacts at your FBO to copy on relevant system emails, such as fuel requests.</div>
                 <!--Contacts Grid-->
-                <div *ngIf="contactsData && !currentContact">
-                    <app-contacts-grid [contactsData]="contactsData" (contactDeleted)="contactDeleted($event)" (newContactClicked)="newContactClicked()" (editContactClicked)="editContactClicked($event)"></app-contacts-grid>
-                </div>
-
-                <!--Contact Information-->
-                <div *ngIf="currentContact">
-                    <app-contacts-edit [contactInfo]="currentContact" (saveEditClicked)="saveEditContactClicked()" (cancelEditClicked)="cancelEditContactClicked()"></app-contacts-edit>
+                <div *ngIf="contactsData">
+                    <app-systemcontacts-grid
+                        [contactsData]="contactsData"
+                        (contactDeleted)="contactDeleted($event)"
+                    ></app-systemcontacts-grid>
                 </div>
             </mat-tab>
 
         </mat-tab-group>
     </div>
 </div>
-    
