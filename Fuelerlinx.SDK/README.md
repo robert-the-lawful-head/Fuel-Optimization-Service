@@ -127,6 +127,12 @@ Class | Method | HTTP request | Description
 *AnalysisApi* | [**PostEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#postemailaddressesformonthlyanalysis) | **POST** /api/Analysis/email-blast/email-addresses | Internal use only - Add a new subscriber-set record to an email blast.
 *AnalysisApi* | [**UpdateCustomReport**](docs/AnalysisApi.md#updatecustomreport) | **PUT** /api/Analysis/custom-reports | Update a custom report.
 *AnalysisApi* | [**UpdateEmailAddressesForEmailedAnalysis**](docs/AnalysisApi.md#updateemailaddressesforemailedanalysis) | **PUT** /api/Analysis/email-blast/email-addresses/{id} | Internal use only - Update an existing record of subscribers for an email blast.
+*ApplicationApi* | [**DeleteDeploymentNotes**](docs/ApplicationApi.md#deletedeploymentnotes) | **DELETE** /api/Application/deployment-notes/{id} | Internal use only - Delete the specific deployment notes.
+*ApplicationApi* | [**GetBuildVersion**](docs/ApplicationApi.md#getbuildversion) | **GET** /api/Application/build-version | Returns the current build version of the API.
+*ApplicationApi* | [**GetDeploymentNotesAll**](docs/ApplicationApi.md#getdeploymentnotesall) | **GET** /api/Application/deployment-notes/list | Internal use only - Returns a list of deployment notes to be used with a range of build versions on each application.
+*ApplicationApi* | [**GetDeploymentNotesByVersionNumber**](docs/ApplicationApi.md#getdeploymentnotesbyversionnumber) | **GET** /api/Application/deployment-notes/by-version-number/{buildVersionNumber} | Internal use only - Fetch deployment notes for a provided {buildVersionNumber}.
+*ApplicationApi* | [**PostDeploymentNotes**](docs/ApplicationApi.md#postdeploymentnotes) | **POST** /api/Application/deployment-notes | Internal use only - Add a new deployment note for the provided build version range.
+*ApplicationApi* | [**UpdateDeploymentNotes**](docs/ApplicationApi.md#updatedeploymentnotes) | **PUT** /api/Application/deployment-notes | Internal use only - Update an existing deployment note for a build version.
 *CompanyApi* | [**DeleteCompany**](docs/CompanyApi.md#deletecompany) | **DELETE** /api/Company/{id} | Internal use only - Delete an existing company.
 *CompanyApi* | [**GetActiveCompanyList**](docs/CompanyApi.md#getactivecompanylist) | **GET** /api/Company/list/active | Internal use only - Fetch all companies (active only).
 *CompanyApi* | [**GetCompanyById**](docs/CompanyApi.md#getcompanybyid) | **GET** /api/Company/{id} | Fetch a company's information by the company {id}.
@@ -358,6 +364,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AviationProfiles](docs/AviationProfiles.md)
  - [IO.Swagger.Model.AviationProfilesResponse](docs/AviationProfilesResponse.md)
  - [IO.Swagger.Model.Background](docs/Background.md)
+ - [IO.Swagger.Model.BuildVersionResponse](docs/BuildVersionResponse.md)
  - [IO.Swagger.Model.ButtonOptions](docs/ButtonOptions.md)
  - [IO.Swagger.Model.CSSObject](docs/CSSObject.md)
  - [IO.Swagger.Model.CalculateTankeringRequest](docs/CalculateTankeringRequest.md)
@@ -405,6 +412,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteCompanyFuelerSettingsResponse](docs/DeleteCompanyFuelerSettingsResponse.md)
  - [IO.Swagger.Model.DeleteCompanyResponse](docs/DeleteCompanyResponse.md)
  - [IO.Swagger.Model.DeleteCompanyUserProfilesResponse](docs/DeleteCompanyUserProfilesResponse.md)
+ - [IO.Swagger.Model.DeleteDeploymentNotesResponse](docs/DeleteDeploymentNotesResponse.md)
  - [IO.Swagger.Model.DeleteEmailBlastEmailAddressesResponse](docs/DeleteEmailBlastEmailAddressesResponse.md)
  - [IO.Swagger.Model.DeleteFboAliasResponse](docs/DeleteFboAliasResponse.md)
  - [IO.Swagger.Model.DeleteFboDetailsByCompanyNotesResponse](docs/DeleteFboDetailsByCompanyNotesResponse.md)
@@ -430,6 +438,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteTransactionFileDataResponse](docs/DeleteTransactionFileDataResponse.md)
  - [IO.Swagger.Model.DeleteTransactionNoteResponse](docs/DeleteTransactionNoteResponse.md)
  - [IO.Swagger.Model.DeleteUserFromIFlightPlannerResponse](docs/DeleteUserFromIFlightPlannerResponse.md)
+ - [IO.Swagger.Model.DeploymentNotesDTO](docs/DeploymentNotesDTO.md)
+ - [IO.Swagger.Model.DeploymentNotesListResponse](docs/DeploymentNotesListResponse.md)
  - [IO.Swagger.Model.DispatchEmailOptions](docs/DispatchEmailOptions.md)
  - [IO.Swagger.Model.DispatchFuelRequest](docs/DispatchFuelRequest.md)
  - [IO.Swagger.Model.DispatchFuelResponse](docs/DispatchFuelResponse.md)
@@ -568,6 +578,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostCompanyResponse](docs/PostCompanyResponse.md)
  - [IO.Swagger.Model.PostCompanyUserProfilesRequest](docs/PostCompanyUserProfilesRequest.md)
  - [IO.Swagger.Model.PostCompanyUserProfilesResponse](docs/PostCompanyUserProfilesResponse.md)
+ - [IO.Swagger.Model.PostDeploymentNotesRequest](docs/PostDeploymentNotesRequest.md)
+ - [IO.Swagger.Model.PostDeploymentNotesResponse](docs/PostDeploymentNotesResponse.md)
  - [IO.Swagger.Model.PostEmailBlastEmailAddressesRequest](docs/PostEmailBlastEmailAddressesRequest.md)
  - [IO.Swagger.Model.PostEmailBlastEmailAddressesResponse](docs/PostEmailBlastEmailAddressesResponse.md)
  - [IO.Swagger.Model.PostFboAliasRequest](docs/PostFboAliasRequest.md)
@@ -728,6 +740,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateCompanyResponse](docs/UpdateCompanyResponse.md)
  - [IO.Swagger.Model.UpdateCompanyUserProfilesRequest](docs/UpdateCompanyUserProfilesRequest.md)
  - [IO.Swagger.Model.UpdateCompanyUserProfilesResponse](docs/UpdateCompanyUserProfilesResponse.md)
+ - [IO.Swagger.Model.UpdateDeploymentNotesRequest](docs/UpdateDeploymentNotesRequest.md)
+ - [IO.Swagger.Model.UpdateDeploymentNotesResponse](docs/UpdateDeploymentNotesResponse.md)
  - [IO.Swagger.Model.UpdateEmailBlastEmailAddressesRequest](docs/UpdateEmailBlastEmailAddressesRequest.md)
  - [IO.Swagger.Model.UpdateEmailBlastEmailAddressesResponse](docs/UpdateEmailBlastEmailAddressesResponse.md)
  - [IO.Swagger.Model.UpdateFboAliasRequest](docs/UpdateFboAliasRequest.md)
