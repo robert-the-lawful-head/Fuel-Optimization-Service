@@ -23,7 +23,7 @@ namespace IO.Swagger.Api
         /// <returns>FBOLinxOrdersResponse</returns>
         FBOLinxOrdersResponse GetTransactionsCount (FBOLinxOrdersRequest body);
         /// <summary>
-        ///  
+        /// FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>FBOLinxNearbyAirportsResponse</returns>
@@ -34,6 +34,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>FBOLinxOrdersResponse</returns>
         FBOLinxOrdersResponse GetTransactionsDirectOrdersCount (FBOLinxOrdersRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>FBOLinxFuelVendorUpdateResponse</returns>
+        FBOLinxFuelVendorUpdateResponse UpdateFuelVendor (FBOLinxFuelVendorUpdateRequest body);
     }
   
     /// <summary>
@@ -156,7 +162,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>FBOLinxNearbyAirportsResponse</returns>            
@@ -221,6 +227,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsDirectOrdersCount: " + response.ErrorMessage, response.ErrorMessage);
     
             return (FBOLinxOrdersResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxOrdersResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>FBOLinxFuelVendorUpdateResponse</returns>            
+        public FBOLinxFuelVendorUpdateResponse UpdateFuelVendor (FBOLinxFuelVendorUpdateRequest body)
+        {
+            
+    
+            var path = "/api/FBOLinx/update-fuelvendor-emails";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateFuelVendor: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateFuelVendor: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FBOLinxFuelVendorUpdateResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxFuelVendorUpdateResponse), response.Headers);
         }
     
     }

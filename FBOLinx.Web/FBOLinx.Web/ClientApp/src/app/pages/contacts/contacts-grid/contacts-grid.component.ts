@@ -6,26 +6,19 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
+import { ActivatedRoute } from "@angular/router";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import * as _ from "lodash";
+import FlatfileImporter from "flatfile-csv-importer";
 
 // Services
 import { ContactsService } from "../../../services/contacts.service";
-import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { CustomercontactsService } from "../../../services/customercontacts.service";
-import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
 import { ContactinfobygroupsService } from "../../../services/contactinfobygroups.service";
 import { SharedService } from "../../../layouts/shared-service";
 import { ContactsDialogNewContactComponent } from "../contacts-edit-modal/contacts-edit-modal.component";
-import FlatfileImporter from "flatfile-csv-importer";
-import { ActivatedRoute } from "@angular/router";
 
 @Component({
     selector: "app-contacts-grid",
@@ -60,7 +53,6 @@ export class ContactsGridComponent implements OnInit {
 
     constructor(
         public deleteUserDialog: MatDialog,
-        private contactsService: ContactsService,
         private contactInfoByGroupsService: ContactinfobygroupsService,
         private sharedService: SharedService,
         private customerContactsService: CustomercontactsService,
@@ -205,8 +197,9 @@ export class ContactsGridComponent implements OnInit {
             return !contact.copyAlerts;
         });
         this.copyAll = unselectedIndex >= 0 ? false : true;
-
-        value.GroupId = this.sharedService.currentUser.groupId;
+        
+        value.groupId = this.sharedService.currentUser.groupId;
+    
         this.contactInfoByGroupsService
             .update(value)
             .subscribe((data: any) => {});

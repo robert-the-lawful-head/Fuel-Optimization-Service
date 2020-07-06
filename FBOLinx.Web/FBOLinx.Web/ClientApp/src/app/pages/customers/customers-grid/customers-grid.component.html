@@ -176,9 +176,7 @@
                     <span *ngIf="!customer.active"
                           style="color: red; font-weight: bold;">Inactive</span>
                     <span *ngIf="!customer.isPricingExpired && customer.active">
-                        {{
-                    customer.allInPrice | currency: "USD"
-                        }}
+                        
                     </span>
                     <span *ngIf="customer.isPricingExpired && customer.active"
                           style="color: red; font-weight: bold;">Expired</span>

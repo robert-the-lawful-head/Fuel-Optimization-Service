@@ -49,6 +49,7 @@ import { ContactsDialogConfirmContactDeleteComponent } from "./contacts/contact-
 import { DialogConfirmAircraftDeleteComponent } from "./customer-aircrafts/customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component";
 import { ContactsGridComponent } from "./contacts/contacts-grid/contacts-grid.component";
 import { ContactsHomeComponent } from "./contacts/contacts-home/contacts-home.component";
+import { SystemcontactsGridComponent } from "./contacts/systemcontacts-grid/systemcontacts-grid.component";
 import { CustomersEditComponent } from "./customers/customers-edit/customers-edit.component";
 import { CustomerAircraftsDialogNewAircraftComponent } from "./customer-aircrafts/customer-aircrafts-dialog-new-aircraft/customer-aircrafts-dialog-new-aircraft.component";
 import { CustomerAircraftsEditComponent } from "./customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component";
@@ -181,6 +182,7 @@ import { TailLookupToolComponent } from '../shared/components/tail-lookup-tool/t
         DialogConfirmAircraftDeleteComponent,
         ContactsGridComponent,
         ContactsHomeComponent,
+        SystemcontactsGridComponent,
         CustomerAircraftsDialogNewAircraftComponent,
         CustomerAircraftSelectModelComponent,
         CustomerAircraftsEditComponent,

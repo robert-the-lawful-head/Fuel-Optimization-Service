@@ -33,6 +33,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "marker")]
     public Marker Marker { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Color
+    /// </summary>
+    [DataMember(Name="color", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "color")]
+    public string Color { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -44,6 +51,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Enabled: ").Append(Enabled).Append("\n");
       sb.Append("  LineWidth: ").Append(LineWidth).Append("\n");
       sb.Append("  Marker: ").Append(Marker).Append("\n");
+      sb.Append("  Color: ").Append(Color).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

@@ -132,6 +132,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "disableCrowdSourcedRampFees")]
     public bool? DisableCrowdSourcedRampFees { get; set; }
 
+    /// <summary>
+    /// Gets or Sets ReconcileMatchingInvoicedTransactions
+    /// </summary>
+    [DataMember(Name="reconcileMatchingInvoicedTransactions", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "reconcileMatchingInvoicedTransactions")]
+    public bool? ReconcileMatchingInvoicedTransactions { get; set; }
+
+    /// <summary>
+    /// Gets or Sets KeepManualPriceVendorWhenInvoiced
+    /// </summary>
+    [DataMember(Name="keepManualPriceVendorWhenInvoiced", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "keepManualPriceVendorWhenInvoiced")]
+    public bool? KeepManualPriceVendorWhenInvoiced { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -157,6 +171,8 @@ namespace IO.Swagger.Model {
       sb.Append("  IsWebPulledPricingDisabled: ").Append(IsWebPulledPricingDisabled).Append("\n");
       sb.Append("  IsVATRecoveryEnabled: ").Append(IsVATRecoveryEnabled).Append("\n");
       sb.Append("  DisableCrowdSourcedRampFees: ").Append(DisableCrowdSourcedRampFees).Append("\n");
+      sb.Append("  ReconcileMatchingInvoicedTransactions: ").Append(ReconcileMatchingInvoicedTransactions).Append("\n");
+      sb.Append("  KeepManualPriceVendorWhenInvoiced: ").Append(KeepManualPriceVendorWhenInvoiced).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

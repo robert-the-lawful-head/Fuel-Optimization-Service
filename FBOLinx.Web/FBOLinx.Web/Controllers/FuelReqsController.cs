@@ -27,7 +27,7 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        private FuelerLinxService _fuelerLinxService;
+        private readonly FuelerLinxService _fuelerLinxService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, Services.FuelerLinxService fuelerLinxService)
         {

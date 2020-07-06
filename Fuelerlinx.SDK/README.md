@@ -153,8 +153,9 @@ Class | Method | HTTP request | Description
 *FBOApi* | [**UpdateFboDetailsByCompanyNotes**](docs/FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
 *FBOLinxApi* | [**GetAircraftTailsGroupedByCompany**](docs/FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
 *FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
-*FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | 
+*FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 *FBOLinxApi* | [**GetTransactionsDirectOrdersCount**](docs/FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
+*FBOLinxApi* | [**UpdateFuelVendor**](docs/FBOLinxApi.md#updatefuelvendor) | **POST** /api/FBOLinx/update-fuelvendor-emails | 
 *FeeApi* | [**DeleteServicesAndFeesByCompany**](docs/FeeApi.md#deleteservicesandfeesbycompany) | **DELETE** /api/Fee/company-specific/{feeId} | Delete a company-specific service/fee.
 *FeeApi* | [**GetServicesAndFeesByCompany**](docs/FeeApi.md#getservicesandfeesbycompany) | **GET** /api/Fee/company-specific/{feeId} | Fetch a company-specific service/fee by it's Id.
 *FeeApi* | [**GetServicesAndFeesByCompanyByLocation**](docs/FeeApi.md#getservicesandfeesbycompanybylocation) | **GET** /api/Fee/company-specific/by-location/{icao}/{fboName} | Fetch a company-specific service/fee by the ICAO and FBO.
@@ -230,6 +231,7 @@ Class | Method | HTTP request | Description
 *IntegrationFuelOrderDetailsApi* | [**AddIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#addintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails | Internal use only - associates a fuel order transaction with an integration record.
 *IntegrationFuelOrderDetailsApi* | [**CancelIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#cancelintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails/cancel | Internal use only - cancel an integration record from being tied to a transaction and notify the partner.
 *IntegrationFuelOrderDetailsApi* | [**UpdateIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#updateintegrationfuelorderdetails) | **PUT** /api/IntegrationFuelOrderDetails | Internal use only - update an integration record associated with a fuel order transaction.
+*PaymentsApi* | [**OAuthCodeCallback**](docs/PaymentsApi.md#oauthcodecallback) | **POST** /api/Payments/oauth/code_callback | 
 *RampFeeApi* | [**AddRampFeeByCompany**](docs/RampFeeApi.md#addrampfeebycompany) | **POST** /api/RampFee/company-specific | Add a company-specific ramp fee.
 *RampFeeApi* | [**DeleteRampFeeByCompany**](docs/RampFeeApi.md#deleterampfeebycompany) | **DELETE** /api/RampFee/company-specific/{rampFeeByCompanyId} | Delete a company-specific ramp fee.
 *RampFeeApi* | [**DeleteRampFeeByCompanyNote**](docs/RampFeeApi.md#deleterampfeebycompanynote) | **DELETE** /api/RampFee/company-specific/{rampFeeByCompanyId}/notes/{noteId} | Delete a company-specific note for a ramp fee.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
@@ -341,6 +343,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AirportDetailsByCompanyResponse](docs/AirportDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.AmstatAircraftDTO](docs/AmstatAircraftDTO.md)
  - [IO.Swagger.Model.AnalysisSettingsDTO](docs/AnalysisSettingsDTO.md)
+ - [IO.Swagger.Model.Animation](docs/Animation.md)
  - [IO.Swagger.Model.Appearance](docs/Appearance.md)
  - [IO.Swagger.Model.ArrayOfRoutesBetweenAirportsExStruct](docs/ArrayOfRoutesBetweenAirportsExStruct.md)
  - [IO.Swagger.Model.AssociatedDetails](docs/AssociatedDetails.md)
@@ -355,6 +358,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AviationProfiles](docs/AviationProfiles.md)
  - [IO.Swagger.Model.AviationProfilesResponse](docs/AviationProfilesResponse.md)
  - [IO.Swagger.Model.Background](docs/Background.md)
+ - [IO.Swagger.Model.ButtonOptions](docs/ButtonOptions.md)
  - [IO.Swagger.Model.CSSObject](docs/CSSObject.md)
  - [IO.Swagger.Model.CalculateTankeringRequest](docs/CalculateTankeringRequest.md)
  - [IO.Swagger.Model.CalculateTankeringResponse](docs/CalculateTankeringResponse.md)
@@ -364,6 +368,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ChartEvents](docs/ChartEvents.md)
  - [IO.Swagger.Model.ChartOptions](docs/ChartOptions.md)
  - [IO.Swagger.Model.ChartSettings](docs/ChartSettings.md)
+ - [IO.Swagger.Model.CodeCallbackRequest](docs/CodeCallbackRequest.md)
+ - [IO.Swagger.Model.ColorAxis](docs/ColorAxis.md)
  - [IO.Swagger.Model.ColorSet](docs/ColorSet.md)
  - [IO.Swagger.Model.CompanyAccountSettingsDTO](docs/CompanyAccountSettingsDTO.md)
  - [IO.Swagger.Model.CompanyDTO](docs/CompanyDTO.md)
@@ -442,6 +448,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.Exporting](docs/Exporting.md)
  - [IO.Swagger.Model.FBOContact](docs/FBOContact.md)
  - [IO.Swagger.Model.FBOLinxFBOResponse](docs/FBOLinxFBOResponse.md)
+ - [IO.Swagger.Model.FBOLinxFuelVendorUpdateRequest](docs/FBOLinxFuelVendorUpdateRequest.md)
+ - [IO.Swagger.Model.FBOLinxFuelVendorUpdateResponse](docs/FBOLinxFuelVendorUpdateResponse.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsModel](docs/FBOLinxNearbyAirportsModel.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsRequest](docs/FBOLinxNearbyAirportsRequest.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsResponse](docs/FBOLinxNearbyAirportsResponse.md)
@@ -518,6 +526,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.MailBoxJobDTO](docs/MailBoxJobDTO.md)
  - [IO.Swagger.Model.MainMenuFeatureDTO](docs/MainMenuFeatureDTO.md)
  - [IO.Swagger.Model.MainMenuFeatureSubFeaturesDTO](docs/MainMenuFeatureSubFeaturesDTO.md)
+ - [IO.Swagger.Model.MapNavigation](docs/MapNavigation.md)
  - [IO.Swagger.Model.Marker](docs/Marker.md)
  - [IO.Swagger.Model.MarkerStateSettings](docs/MarkerStateSettings.md)
  - [IO.Swagger.Model.MarkerStates](docs/MarkerStates.md)
@@ -774,10 +783,12 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UserProfile](docs/UserProfile.md)
  - [IO.Swagger.Model.UserResponse](docs/UserResponse.md)
  - [IO.Swagger.Model.UserSettingsDTO](docs/UserSettingsDTO.md)
+ - [IO.Swagger.Model.VeemOAuthTokenResponse](docs/VeemOAuthTokenResponse.md)
  - [IO.Swagger.Model.WeeklyPricingDTO](docs/WeeklyPricingDTO.md)
  - [IO.Swagger.Model.WeeklyPricingListResponse](docs/WeeklyPricingListResponse.md)
  - [IO.Swagger.Model.Weight](docs/Weight.md)
  - [IO.Swagger.Model.WeightAndBalanceOptions](docs/WeightAndBalanceOptions.md)
+ - [IO.Swagger.Model.WeightConversionDTO](docs/WeightConversionDTO.md)
  - [IO.Swagger.Model.XAxisItem](docs/XAxisItem.md)
  - [IO.Swagger.Model.YAxisItem](docs/YAxisItem.md)
 

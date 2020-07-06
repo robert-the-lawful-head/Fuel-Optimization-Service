@@ -9,6 +9,8 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.Web.Services;
+using IO.Swagger.Model;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -18,10 +20,12 @@ namespace FBOLinx.Web.Controllers
     public class FbocontactsController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly FuelerLinxService _fuelerLinxService;
 
-        public FbocontactsController(FboLinxContext context)
+        public FbocontactsController(FboLinxContext context, FuelerLinxService fuelerLinxService)
         {
             _context = context;
+            _fuelerLinxService = fuelerLinxService;
         }
 
         // GET: api/Fbocontacts/fbo/5
@@ -42,7 +46,8 @@ namespace FBOLinx.Web.Controllers
                 LastName = f.Contact.LastName,
                 Title = f.Contact.Title,
                 Oid = f.Oid,
-                Primary = f.Contact.Primary
+                Primary = f.Contact.Primary,
+                CopyAlerts = f.Contact.CopyAlerts
             }));
         }
 
@@ -113,6 +118,65 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetFbocontacts", new { id = fbocontacts.Oid }, fbocontacts);
+        }
+
+        [HttpPost("fbo/{fboId}/newcontact")]
+        public async Task<ActionResult<FboContactsViewModel>> AddNewFboContacts([FromRoute] int fboId, [FromBody] Contacts contact)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Contacts.Add(contact);
+            await _context.SaveChangesAsync();
+
+            var fbocontacts = new Fbocontacts
+            {
+                Fboid = fboId,
+                ContactId = contact.Oid
+            };
+            _context.Fbocontacts.Add(fbocontacts);
+            await _context.SaveChangesAsync();
+
+            return Ok(new FboContactsViewModel
+            {
+                ContactId = fbocontacts.ContactId,
+                FirstName = contact.FirstName,
+                LastName = contact.LastName,
+                Title = contact.Title,
+                Oid = fbocontacts.Oid,
+                Primary = contact.Primary,
+                CopyAlerts = false
+            });
+        }
+
+        [HttpPost("fbo/{fboId}/update-fuel-vendor")]
+        public IActionResult UpdateFuelVendor([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbo = _context.Fbos.Find(fboId);
+            var emails = _context.Fbocontacts
+                                    .Include("Contact")
+                                    .Where(x => x.Fboid == fboId)
+                                    .Where(c => !string.IsNullOrEmpty(c.Contact.Email))
+                                    .Select(c => c.Contact.Email);
+            var ccemail = string.Join("; ", emails);
+
+            FBOLinxFuelVendorUpdateRequest request = new FBOLinxFuelVendorUpdateRequest
+            {
+                EmailToCC = ccemail,
+                FboId = fboId,
+                Email = fbo.FuelDeskEmail
+            };
+
+            var response = _fuelerLinxService.UpdateFuelVendorEmails(request);
+
+            return Ok(response);
         }
 
         // DELETE: api/Fbocontacts/5

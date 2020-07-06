@@ -63,18 +63,6 @@ export class AccountProfileComponent {
         });
     }
 
-    public newContactClicked() {
-        this.currentContact = {
-            oid: 0,
-        };
-    }
-
-    public editContactClicked(record) {
-        this.contactsService
-            .get({ oid: record.contactId })
-            .subscribe((data: any) => (this.currentContact = data));
-    }
-
     public saveEditContactClicked() {
         this.contactsService.update(this.currentContact).subscribe(() => {
             this.currentContact = null;

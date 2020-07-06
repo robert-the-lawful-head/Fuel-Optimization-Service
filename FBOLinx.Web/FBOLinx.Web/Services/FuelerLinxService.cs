@@ -86,6 +86,13 @@ namespace FBOLinx.Web.Services
             FboLinxAircraftsResponse results = api.GetAircraftTailsGroupedByCompany();
             return results;
         }
+
+        public FuelVendorDTO UpdateFuelVendorEmails(FBOLinxFuelVendorUpdateRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FBOLinxFuelVendorUpdateResponse result = api.UpdateFuelVendor(request);
+            return result.Result;
+        }
         #endregion
 
         #region Private Methods
