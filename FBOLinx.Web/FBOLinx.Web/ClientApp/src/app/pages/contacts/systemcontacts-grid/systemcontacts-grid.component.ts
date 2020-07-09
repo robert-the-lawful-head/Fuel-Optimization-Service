@@ -35,9 +35,7 @@ export class SystemcontactsGridComponent implements OnInit {
     displayedColumns: string[] = [
         "firstName",
         "lastName",
-        "title",
         "email",
-        "phone",
         "copyAlerts",
         "delete",
     ];
@@ -100,7 +98,7 @@ export class SystemcontactsGridComponent implements OnInit {
             if (!result) {
                 return;
             }
-            console.log(result)
+
             if (result.toDelete) {
                 this.fbocontactsService
                     .remove(record)
@@ -134,9 +132,10 @@ export class SystemcontactsGridComponent implements OnInit {
             }
         );
         dialogRef.afterClosed().subscribe(result => {
-            if (!result) {
+            if (!result || result === "cancel") {
                 return;
             }
+
             const payload = {
                 ...result,
                 fboId: this.sharedService.currentUser.fboId,
