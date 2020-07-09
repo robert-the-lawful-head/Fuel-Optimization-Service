@@ -46,6 +46,7 @@ namespace FBOLinx.Web.Controllers
                 LastName = f.Contact.LastName,
                 Title = f.Contact.Title,
                 Oid = f.Oid,
+                Email = f.Contact.Email,
                 Primary = f.Contact.Primary,
                 CopyAlerts = f.Contact.CopyAlerts
             }));
@@ -144,6 +145,7 @@ namespace FBOLinx.Web.Controllers
                 ContactId = fbocontacts.ContactId,
                 FirstName = contact.FirstName,
                 LastName = contact.LastName,
+                Email = contact.Email,
                 Title = contact.Title,
                 Oid = fbocontacts.Oid,
                 Primary = contact.Primary,
