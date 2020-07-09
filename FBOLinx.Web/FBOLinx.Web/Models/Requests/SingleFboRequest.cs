@@ -10,7 +10,6 @@ namespace FBOLinx.Web.Models.Requests
     {
         [Required]
         public string Icao { get; set; }
-        [Required]
         public string Iata { get; set; }
         [Required]
         public string Fbo { get; set; }
