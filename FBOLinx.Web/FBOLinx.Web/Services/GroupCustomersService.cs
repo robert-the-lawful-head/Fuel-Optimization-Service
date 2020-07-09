@@ -31,7 +31,7 @@ namespace FBOLinx.Web.Services
         {
             try
             {
-                var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null && s.GroupID > 1).ToList();
+                var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null && s.GroupId > 1).ToList();
                 var aircrafts = _fuelerLinxService.GetAircraftsFromFuelerinx();
                 foreach (var cust in listWithCustomers)
                 {
