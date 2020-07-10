@@ -31,8 +31,9 @@ namespace IO.Swagger.Api
         /// Internal use only - Fetch deployment notes for a provided {buildVersionNumber}. 
         /// </summary>
         /// <param name="buildVersionNumber"></param>
-        /// <returns>DeploymentNotesListResponse</returns>
-        DeploymentNotesListResponse GetDeploymentNotesByVersionNumber (int? buildVersionNumber);
+        /// <param name="applicationType"></param>
+        /// <returns>DeploymentNotesResponse</returns>
+        DeploymentNotesResponse GetDeploymentNotesByVersionNumber (int? buildVersionNumber, int? applicationType);
         /// <summary>
         /// Internal use only - Add a new deployment note for the provided build version range. 
         /// </summary>
@@ -205,17 +206,22 @@ namespace IO.Swagger.Api
         /// Internal use only - Fetch deployment notes for a provided {buildVersionNumber}. 
         /// </summary>
         /// <param name="buildVersionNumber"></param> 
-        /// <returns>DeploymentNotesListResponse</returns>            
-        public DeploymentNotesListResponse GetDeploymentNotesByVersionNumber (int? buildVersionNumber)
+        /// <param name="applicationType"></param> 
+        /// <returns>DeploymentNotesResponse</returns>            
+        public DeploymentNotesResponse GetDeploymentNotesByVersionNumber (int? buildVersionNumber, int? applicationType)
         {
             
             // verify the required parameter 'buildVersionNumber' is set
             if (buildVersionNumber == null) throw new ApiException(400, "Missing required parameter 'buildVersionNumber' when calling GetDeploymentNotesByVersionNumber");
             
+            // verify the required parameter 'applicationType' is set
+            if (applicationType == null) throw new ApiException(400, "Missing required parameter 'applicationType' when calling GetDeploymentNotesByVersionNumber");
+            
     
-            var path = "/api/Application/deployment-notes/by-version-number/{buildVersionNumber}";
+            var path = "/api/Application/deployment-notes/by-version-number/{buildVersionNumber}/application-type/{applicationType}";
             path = path.Replace("{format}", "json");
             path = path.Replace("{" + "buildVersionNumber" + "}", ApiClient.ParameterToString(buildVersionNumber));
+path = path.Replace("{" + "applicationType" + "}", ApiClient.ParameterToString(applicationType));
     
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
@@ -235,7 +241,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetDeploymentNotesByVersionNumber: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (DeploymentNotesListResponse) ApiClient.Deserialize(response.Content, typeof(DeploymentNotesListResponse), response.Headers);
+            return (DeploymentNotesResponse) ApiClient.Deserialize(response.Content, typeof(DeploymentNotesResponse), response.Headers);
         }
     
         /// <summary>

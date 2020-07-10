@@ -34,15 +34,9 @@ namespace IO.Swagger.Model {
     public string Notes { get; set; }
 
     /// <summary>
-    /// Gets or Sets LastUpdated
+    /// 
     /// </summary>
-    [DataMember(Name="lastUpdated", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "lastUpdated")]
-    public DateTime? LastUpdated { get; set; }
-
-    /// <summary>
-    /// Gets or Sets ApplicationType
-    /// </summary>
+    /// <value></value>
     [DataMember(Name="applicationType", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "applicationType")]
     public int? ApplicationType { get; set; }
@@ -58,7 +52,6 @@ namespace IO.Swagger.Model {
       sb.Append("  MinimumBuildVersion: ").Append(MinimumBuildVersion).Append("\n");
       sb.Append("  MaximumBuildVersion: ").Append(MaximumBuildVersion).Append("\n");
       sb.Append("  Notes: ").Append(Notes).Append("\n");
-      sb.Append("  LastUpdated: ").Append(LastUpdated).Append("\n");
       sb.Append("  ApplicationType: ").Append(ApplicationType).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

@@ -18,6 +18,12 @@ namespace IO.Swagger.Api
         /// <returns>DeleteCompanyUserProfilesResponse</returns>
         DeleteCompanyUserProfilesResponse DeleteCompanyUserProfiles (int? id);
         /// <summary>
+        /// Deletes user credentials based on Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteCredentialsResponse</returns>
+        DeleteCredentialsResponse DeleteCredentials (int? id);
+        /// <summary>
         /// Internal use only - Delete a user from iFlightPlanner to stop the flight planning integration. 
         /// </summary>
         /// <returns>DeleteUserFromIFlightPlannerResponse</returns>
@@ -33,6 +39,12 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <returns>CompanyUserProfileListResponse</returns>
         CompanyUserProfileListResponse GetCompanyUserProfiles ();
+        /// <summary>
+        /// Fetches user credentials by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>CredentialsResponse</returns>
+        CredentialsResponse GetCredentials (int? id);
         /// <summary>
         /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
         /// </summary>
@@ -53,6 +65,12 @@ namespace IO.Swagger.Api
         /// <returns>PostCompanyUserProfilesResponse</returns>
         PostCompanyUserProfilesResponse PostCompanyUserProfiles (PostCompanyUserProfilesRequest body);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostCredentialsResponse</returns>
+        PostCredentialsResponse PostCredentials (PostCredentialsRequest body);
+        /// <summary>
         /// Internal use only - Save a company to IFlightPlanner to use the flight planning integration. 
         /// </summary>
         /// <param name="body"></param>
@@ -70,6 +88,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateCompanyUserProfilesResponse</returns>
         UpdateCompanyUserProfilesResponse UpdateCompanyUserProfiles (UpdateCompanyUserProfilesRequest body);
+        /// <summary>
+        /// Updates user credentials based on Id 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateCredentialsResponse</returns>
+        UpdateCredentialsResponse UpdateCredentials (UpdateCredentialsRequest body);
         /// <summary>
         /// Authenticates a user by username and password. The returned object contains a [AccessToken] (JWT) that can be used to identify the user for other API requests using the [Bearer] authorization header.  The response also contains a [RefreshToken] that can be used in the /api/user/refreshtoken api to receive a new [Token].
         /// </summary>
@@ -181,6 +205,43 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Deletes user credentials based on Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteCredentialsResponse</returns>            
+        public DeleteCredentialsResponse DeleteCredentials (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteCredentials");
+            
+    
+            var path = "/api/User/credentials/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteCredentialsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCredentialsResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Internal use only - Delete a user from iFlightPlanner to stop the flight planning integration. 
         /// </summary>
         /// <returns>DeleteUserFromIFlightPlannerResponse</returns>            
@@ -276,6 +337,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyUserProfiles: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CompanyUserProfileListResponse) ApiClient.Deserialize(response.Content, typeof(CompanyUserProfileListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetches user credentials by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>CredentialsResponse</returns>            
+        public CredentialsResponse GetCredentials (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetCredentials");
+            
+    
+            var path = "/api/User/credentials/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CredentialsResponse) ApiClient.Deserialize(response.Content, typeof(CredentialsResponse), response.Headers);
         }
     
         /// <summary>
@@ -392,6 +490,40 @@ path = path.Replace("{" + "password" + "}", ApiClient.ParameterToString(password
         }
     
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostCredentialsResponse</returns>            
+        public PostCredentialsResponse PostCredentials (PostCredentialsRequest body)
+        {
+            
+    
+            var path = "/api/User/credentials";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostCredentialsResponse) ApiClient.Deserialize(response.Content, typeof(PostCredentialsResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Internal use only - Save a company to IFlightPlanner to use the flight planning integration. 
         /// </summary>
         /// <param name="body"></param> 
@@ -491,6 +623,40 @@ path = path.Replace("{" + "password" + "}", ApiClient.ParameterToString(password
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyUserProfiles: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateCompanyUserProfilesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCompanyUserProfilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates user credentials based on Id 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateCredentialsResponse</returns>            
+        public UpdateCredentialsResponse UpdateCredentials (UpdateCredentialsRequest body)
+        {
+            
+    
+            var path = "/api/User/credentials";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateCredentialsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCredentialsResponse), response.Headers);
         }
     
         /// <summary>

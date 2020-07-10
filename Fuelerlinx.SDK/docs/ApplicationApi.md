@@ -7,7 +7,7 @@ Method | HTTP request | Description
 [**DeleteDeploymentNotes**](ApplicationApi.md#deletedeploymentnotes) | **DELETE** /api/Application/deployment-notes/{id} | Internal use only - Delete the specific deployment notes.
 [**GetBuildVersion**](ApplicationApi.md#getbuildversion) | **GET** /api/Application/build-version | Returns the current build version of the API.
 [**GetDeploymentNotesAll**](ApplicationApi.md#getdeploymentnotesall) | **GET** /api/Application/deployment-notes/list | Internal use only - Returns a list of deployment notes to be used with a range of build versions on each application.
-[**GetDeploymentNotesByVersionNumber**](ApplicationApi.md#getdeploymentnotesbyversionnumber) | **GET** /api/Application/deployment-notes/by-version-number/{buildVersionNumber} | Internal use only - Fetch deployment notes for a provided {buildVersionNumber}.
+[**GetDeploymentNotesByVersionNumber**](ApplicationApi.md#getdeploymentnotesbyversionnumber) | **GET** /api/Application/deployment-notes/by-version-number/{buildVersionNumber}/application-type/{applicationType} | Internal use only - Fetch deployment notes for a provided {buildVersionNumber}.
 [**PostDeploymentNotes**](ApplicationApi.md#postdeploymentnotes) | **POST** /api/Application/deployment-notes | Internal use only - Add a new deployment note for the provided build version range.
 [**UpdateDeploymentNotes**](ApplicationApi.md#updatedeploymentnotes) | **PUT** /api/Application/deployment-notes | Internal use only - Update an existing deployment note for a build version.
 
@@ -213,7 +213,7 @@ This endpoint does not need any parameter.
 
 <a name="getdeploymentnotesbyversionnumber"></a>
 # **GetDeploymentNotesByVersionNumber**
-> DeploymentNotesListResponse GetDeploymentNotesByVersionNumber (int? buildVersionNumber)
+> DeploymentNotesResponse GetDeploymentNotesByVersionNumber (int? buildVersionNumber, int? applicationType)
 
 Internal use only - Fetch deployment notes for a provided {buildVersionNumber}.
 
@@ -243,11 +243,12 @@ namespace Example
 
             var apiInstance = new ApplicationApi();
             var buildVersionNumber = 56;  // int? | 
+            var applicationType = 56;  // int? | 
 
             try
             {
                 // Internal use only - Fetch deployment notes for a provided {buildVersionNumber}.
-                DeploymentNotesListResponse result = apiInstance.GetDeploymentNotesByVersionNumber(buildVersionNumber);
+                DeploymentNotesResponse result = apiInstance.GetDeploymentNotesByVersionNumber(buildVersionNumber, applicationType);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -264,10 +265,11 @@ namespace Example
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **buildVersionNumber** | **int?**|  | 
+ **applicationType** | **int?**|  | 
 
 ### Return type
 
-[**DeploymentNotesListResponse**](DeploymentNotesListResponse.md)
+[**DeploymentNotesResponse**](DeploymentNotesResponse.md)
 
 ### Authorization
 

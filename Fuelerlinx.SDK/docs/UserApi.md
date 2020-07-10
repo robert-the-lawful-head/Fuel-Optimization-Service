@@ -5,15 +5,19 @@ All URIs are relative to *https://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**DeleteCompanyUserProfiles**](UserApi.md#deletecompanyuserprofiles) | **DELETE** /api/User/company-user-profiles/{id} | Deletes company user profile based on Id
+[**DeleteCredentials**](UserApi.md#deletecredentials) | **DELETE** /api/User/credentials/{id} | Deletes user credentials based on Id
 [**DeleteUserFromIFlightPlanner**](UserApi.md#deleteuserfromiflightplanner) | **DELETE** /api/User/iflightplanner/user | Internal use only - Delete a user from iFlightPlanner to stop the flight planning integration.
 [**ExchangeRefreshToken**](UserApi.md#exchangerefreshtoken) | **POST** /api/User/refreshtoken | Exchanges a valid [RefreshToken] and expired [AccessToken] for a new [RefreshToken] and [AccessToken].
 [**GetCompanyUserProfiles**](UserApi.md#getcompanyuserprofiles) | **GET** /api/User/company-user-profiles/by-company/list | Fetches all user profiles by companyId
+[**GetCredentials**](UserApi.md#getcredentials) | **GET** /api/User/credentials/{id} | Fetches user credentials by Id
 [**GetUser**](UserApi.md#getuser) | **GET** /api/User/{id} | Fetch a user by their [id].
 [**GetUserByCredentials**](UserApi.md#getuserbycredentials) | **GET** /api/User/by-credentials/{username}/{password} | 
 [**PostCompanyUserProfiles**](UserApi.md#postcompanyuserprofiles) | **POST** /api/User/company-user-profiles | 
+[**PostCredentials**](UserApi.md#postcredentials) | **POST** /api/User/credentials | 
 [**SaveCompanyToIFlightPlanner**](UserApi.md#savecompanytoiflightplanner) | **POST** /api/User/iflightplanner/company | Internal use only - Save a company to IFlightPlanner to use the flight planning integration.
 [**SaveUserToIFlightPlanner**](UserApi.md#saveusertoiflightplanner) | **POST** /api/User/iflightplanner/user | Internal use only - Save a user to IFlightPlanner to use the flight planning integration.
 [**UpdateCompanyUserProfiles**](UserApi.md#updatecompanyuserprofiles) | **PUT** /api/User/company-user-profiles | Updates company user profile based on companyId
+[**UpdateCredentials**](UserApi.md#updatecredentials) | **PUT** /api/User/credentials | Updates user credentials based on Id
 [**UserAuthToken**](UserApi.md#userauthtoken) | **POST** /api/User/token | Authenticates a user by username and password.
 [**UserAuthTokenFromAccessToken**](UserApi.md#userauthtokenfromaccesstoken) | **POST** /api/User/accesstoken | Authenticates a user from an existing [AccessToken].
 [**UserAuthTokenFromIFlightPlannerGUID**](UserApi.md#userauthtokenfromiflightplannerguid) | **GET** /api/User/iflightplanner/user/{guid} | Authenticate a user via the iFlightPlanner integration
@@ -76,6 +80,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteCompanyUserProfilesResponse**](DeleteCompanyUserProfilesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletecredentials"></a>
+# **DeleteCredentials**
+> DeleteCredentialsResponse DeleteCredentials (int? id)
+
+Deletes user credentials based on Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteCredentialsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Deletes user credentials based on Id
+                DeleteCredentialsResponse result = apiInstance.DeleteCredentials(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.DeleteCredentials: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteCredentialsResponse**](DeleteCredentialsResponse.md)
 
 ### Authorization
 
@@ -277,6 +350,75 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**CompanyUserProfileListResponse**](CompanyUserProfileListResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getcredentials"></a>
+# **GetCredentials**
+> CredentialsResponse GetCredentials (int? id)
+
+Fetches user credentials by Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetCredentialsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Fetches user credentials by Id
+                CredentialsResponse result = apiInstance.GetCredentials(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.GetCredentials: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**CredentialsResponse**](CredentialsResponse.md)
 
 ### Authorization
 
@@ -498,6 +640,74 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="postcredentials"></a>
+# **PostCredentials**
+> PostCredentialsResponse PostCredentials (PostCredentialsRequest body)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostCredentialsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+            var body = new PostCredentialsRequest(); // PostCredentialsRequest |  (optional) 
+
+            try
+            {
+                PostCredentialsResponse result = apiInstance.PostCredentials(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.PostCredentials: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostCredentialsRequest**](PostCredentialsRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostCredentialsResponse**](PostCredentialsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="savecompanytoiflightplanner"></a>
 # **SaveCompanyToIFlightPlanner**
 > SaveCompanyToIFlightPlannerResponse SaveCompanyToIFlightPlanner (SaveCompanyToIFlightPlannerRequest body)
@@ -693,6 +903,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**UpdateCompanyUserProfilesResponse**](UpdateCompanyUserProfilesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatecredentials"></a>
+# **UpdateCredentials**
+> UpdateCredentialsResponse UpdateCredentials (UpdateCredentialsRequest body)
+
+Updates user credentials based on Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateCredentialsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+            var body = new UpdateCredentialsRequest(); // UpdateCredentialsRequest |  (optional) 
+
+            try
+            {
+                // Updates user credentials based on Id
+                UpdateCredentialsResponse result = apiInstance.UpdateCredentials(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.UpdateCredentials: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateCredentialsRequest**](UpdateCredentialsRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateCredentialsResponse**](UpdateCredentialsResponse.md)
 
 ### Authorization
 

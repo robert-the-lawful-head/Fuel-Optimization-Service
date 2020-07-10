@@ -132,6 +132,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "transactionReconciliationComparisonType")]
     public int? TransactionReconciliationComparisonType { get; set; }
 
+    /// <summary>
+    /// Gets or Sets CredentialsLastVerified
+    /// </summary>
+    [DataMember(Name="credentialsLastVerified", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "credentialsLastVerified")]
+    public DateTime? CredentialsLastVerified { get; set; }
+
+    /// <summary>
+    /// Gets or Sets SupplierDetails
+    /// </summary>
+    [DataMember(Name="supplierDetails", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "supplierDetails")]
+    public SupplierDetailsDTO SupplierDetails { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -157,6 +171,8 @@ namespace IO.Swagger.Model {
       sb.Append("  DispatchEmail: ").Append(DispatchEmail).Append("\n");
       sb.Append("  SupplierId: ").Append(SupplierId).Append("\n");
       sb.Append("  TransactionReconciliationComparisonType: ").Append(TransactionReconciliationComparisonType).Append("\n");
+      sb.Append("  CredentialsLastVerified: ").Append(CredentialsLastVerified).Append("\n");
+      sb.Append("  SupplierDetails: ").Append(SupplierDetails).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

@@ -3,11 +3,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**MinimumBuildVersion** | **int?** |  | [optional] 
+**MinimumBuildVersion** | **int?** |  | 
 **MaximumBuildVersion** | **int?** |  | [optional] 
 **Notes** | **string** |  | [optional] 
-**LastUpdated** | **DateTime?** |  | [optional] 
-**ApplicationType** | **int?** |  | [optional] 
+**ApplicationType** | **int?** |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
