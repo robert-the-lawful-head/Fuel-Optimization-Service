@@ -37,19 +37,23 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fbocontacts = await GetAllFboContacts().Include("Contact").Where((x => x.Fboid == fboId)).ToListAsync();
+            var fbocontacts = await GetAllFboContacts()
+                                        .Include("Contact")
+                                        .Where(x => x.Fboid == fboId && !string.IsNullOrEmpty(x.Contact.Email))
+                                        .Select(f => new FboContactsViewModel
+                                        {
+                                            ContactId = f.ContactId,
+                                            FirstName = f.Contact.FirstName,
+                                            LastName = f.Contact.LastName,
+                                            Title = f.Contact.Title,
+                                            Oid = f.Oid,
+                                            Email = f.Contact.Email,
+                                            Primary = f.Contact.Primary,
+                                            CopyAlerts = f.Contact.CopyAlerts
+                                        })
+                                        .ToListAsync();
             
-            return Ok(fbocontacts.Select(f => new FboContactsViewModel
-            {
-                ContactId = f.ContactId,
-                FirstName = f.Contact.FirstName,
-                LastName = f.Contact.LastName,
-                Title = f.Contact.Title,
-                Oid = f.Oid,
-                Email = f.Contact.Email,
-                Primary = f.Contact.Primary,
-                CopyAlerts = f.Contact.CopyAlerts
-            }));
+            return Ok(fbocontacts);
         }
 
         // GET: api/Fbocontacts/5

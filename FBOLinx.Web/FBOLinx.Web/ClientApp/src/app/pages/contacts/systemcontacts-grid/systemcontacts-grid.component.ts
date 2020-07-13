@@ -124,7 +124,9 @@ export class SystemcontactsGridComponent implements OnInit {
         });
     }
 
-    public newRecord() {
+    public newRecord(e: any) {
+        e.preventDefault();
+
         const dialogRef = this.newContactDialog.open(
             ContactsDialogNewContactComponent,
             {
@@ -132,7 +134,7 @@ export class SystemcontactsGridComponent implements OnInit {
             }
         );
         dialogRef.afterClosed().subscribe(result => {
-            if (!result || result === "cancel") {
+            if (!result || result === "cancel" || !result.email) {
                 return;
             }
 

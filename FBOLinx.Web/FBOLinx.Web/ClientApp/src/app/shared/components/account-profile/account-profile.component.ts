@@ -1,9 +1,6 @@
 import { Component, Inject } from "@angular/core";
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 import { ContactsService } from "../../../services/contacts.service";
 import { FbosService } from "../../../services/fbos.service";
@@ -36,6 +33,7 @@ export class AccountProfileComponent {
     public contactsData: any[];
     public currentContact: any;
     public availableroles: any[];
+    public systemContactsForm: FormGroup;
 
     constructor(
         public dialogRef: MatDialogRef<AccountProfileComponent>,
@@ -44,8 +42,12 @@ export class AccountProfileComponent {
         private contactsService: ContactsService,
         private fboContactsService: FbocontactsService,
         private fbosService: FbosService,
-        private usersService: UserService
+        private usersService: UserService,
+        private formBuilder: FormBuilder
     ) {
+        this.systemContactsForm = this.formBuilder.group({
+            fuelDeskEmail: new FormControl(""),
+        });
         this.loadFboInfo();
         this.loadAvailableRoles();
     }
@@ -73,6 +75,17 @@ export class AccountProfileComponent {
         this.currentContact = null;
     }
 
+    public onSaveSystemContacts() {
+        if (this.systemContactsForm.valid) {
+            this.fboInfo.fuelDeskEmail = this.systemContactsForm.value.fuelDeskEmail;
+            this.fbosService.update(this.fboInfo).subscribe(() => {
+                this.fboContactsService.updateFuelvendor({ fboId: this.fboInfo.oid }).subscribe(() => {
+                    this.dialogRef.close();
+                });
+            });
+        }
+    }
+
     // Private Methods
     private loadFboInfo(): void {
         if (
@@ -83,7 +96,10 @@ export class AccountProfileComponent {
         }
         this.fbosService
             .get({ oid: this.sharedService.currentUser.fboId })
-            .subscribe((fboData) => {
+            .subscribe((fboData: any) => {
+                this.systemContactsForm.setValue({
+                    fuelDeskEmail: fboData.fuelDeskEmail,
+                });
                 this.fboInfo = fboData;
                 this.fboContactsService
                     .getForFbo(this.fboInfo)
