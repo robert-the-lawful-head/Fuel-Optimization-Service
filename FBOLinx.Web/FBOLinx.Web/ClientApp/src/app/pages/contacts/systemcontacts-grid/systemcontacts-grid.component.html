@@ -81,7 +81,7 @@
             <th mat-header-cell *matHeaderCellDef>
                 <!--<div class="actions-menu pull-right">-->
                 <div class="pull-right">
-                    <button ni-button class="mr-3" [view]="'accent'" beforeIcon="fa fa-plus" (click)="newRecord()">
+                    <button ni-button class="mr-3" [view]="'accent'" beforeIcon="fa fa-plus" (click)="newRecord($event)">
                         Add New
                     </button>
                     <button mat-icon-button [matMenuTriggerFor]="gridActions">
