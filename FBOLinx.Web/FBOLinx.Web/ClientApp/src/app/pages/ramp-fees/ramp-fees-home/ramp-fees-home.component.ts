@@ -160,6 +160,9 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Private Methods
     private updateRampFee(fee) {
+        if (!fee.fboid) {
+            fee.fboid = this.sharedService.currentUser.fboId;
+        }
         if (fee.oid && fee.oid > 0) {
             this.rampFeesService.update(fee).subscribe((data: any) => {});
         } else {
