@@ -177,19 +177,23 @@ Class | Method | HTTP request | Description
 *FeeApi* | [**UpdateServicesAndFeesByCompany**](docs/FeeApi.md#updateservicesandfeesbycompany) | **PUT** /api/Fee/company-specific | Update a company-specific service/fee.
 *FileDataApi* | [**DeleteImageFileData**](docs/FileDataApi.md#deleteimagefiledata) | **DELETE** /api/FileData/image-file-data/{id} | Internal use only - Delete image file data by {id}.
 *FileDataApi* | [**DeleteImportFileCapture**](docs/FileDataApi.md#deleteimportfilecapture) | **DELETE** /api/FileData/import-file-capture/{id} | Internal use only - Delete a file captured during an import.
+*FileDataApi* | [**DeletePriceSheetFileData**](docs/FileDataApi.md#deletepricesheetfiledata) | **DELETE** /api/FileData/price-sheet-file-data/{id} | Delete price sheet file data by the provided {id}.
 *FileDataApi* | [**DeleteSupportedInvoiceFileDataTemplate**](docs/FileDataApi.md#deletesupportedinvoicefiledatatemplate) | **DELETE** /api/FileData/invoice-file/supported-template/{id} | Internal use only - Delete a supported invoice file template by it's Id.
 *FileDataApi* | [**DeleteTransactionFileData**](docs/FileDataApi.md#deletetransactionfiledata) | **DELETE** /api/FileData/transaction-file-data/{id} | Delete transaction file data by the provided {id}.
 *FileDataApi* | [**GetImageFileDataById**](docs/FileDataApi.md#getimagefiledatabyid) | **GET** /api/FileData/image-file-data/{id} | Internal use only - Fetch image file data by {id}.
 *FileDataApi* | [**GetImportFileCaptureById**](docs/FileDataApi.md#getimportfilecapturebyid) | **GET** /api/FileData/import-file-capture/{id} | Internal use only - Fetch a captured file import by Id.
+*FileDataApi* | [**GetPriceSheetFileData**](docs/FileDataApi.md#getpricesheetfiledata) | **GET** /api/FileData/price-sheet-file-data/{id} | Fetch price sheet file data captured during an upload of pricing info.
 *FileDataApi* | [**GetSupportedInvoiceFileTemplatesByCompany**](docs/FileDataApi.md#getsupportedinvoicefiletemplatesbycompany) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName}/company/{companyId} | Internal use only - Fetch a supported invoice file template by fuel vendor and company.
 *FileDataApi* | [**GetSupportedInvoiceFileTemplatesByFuelVendor**](docs/FileDataApi.md#getsupportedinvoicefiletemplatesbyfuelvendor) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName} | Internal use only - Fetch a supported invoice file template by fuel vendor.
 *FileDataApi* | [**GetTransactionFileData**](docs/FileDataApi.md#gettransactionfiledata) | **GET** /api/FileData/transaction-file-data/{id} | Fetch transaction file data for an invoice, receipt, or fuel release.
 *FileDataApi* | [**PostImageFileData**](docs/FileDataApi.md#postimagefiledata) | **POST** /api/FileData/image-file-data | Internal use only - Post new image file data.
 *FileDataApi* | [**PostImportFileCapture**](docs/FileDataApi.md#postimportfilecapture) | **POST** /api/FileData/import-file-capture | Internal use only - Add a captured file that was recently imported.
+*FileDataApi* | [**PostPriceSheetFileData**](docs/FileDataApi.md#postpricesheetfiledata) | **POST** /api/FileData/price-sheet-file-data | Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing.
 *FileDataApi* | [**PostSupportedInvoiceFileTemplate**](docs/FileDataApi.md#postsupportedinvoicefiletemplate) | **POST** /api/FileData/invoice-file/supported-template | Internal use only - Add a supported invoice file template.
 *FileDataApi* | [**PostTransactionFileData**](docs/FileDataApi.md#posttransactionfiledata) | **POST** /api/FileData/transaction-file-data | Add transaction file data for an invoice, receipt, or fuel release.  The file data should be passed as a base64 string.
 *FileDataApi* | [**UpdateImageFileData**](docs/FileDataApi.md#updateimagefiledata) | **PUT** /api/FileData/image-file-data/{id} | Internal use only - Update an existing record of image file data.
 *FileDataApi* | [**UpdateImportFileCapture**](docs/FileDataApi.md#updateimportfilecapture) | **PUT** /api/FileData/import-file-capture/{id} | Internal use only - Update a file captured during an import.
+*FileDataApi* | [**UpdatePriceSheetFileData**](docs/FileDataApi.md#updatepricesheetfiledata) | **PUT** /api/FileData/price-sheet-file-data | Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
 *FileDataApi* | [**UpdateSupportedInvoiceFileDataTemplate**](docs/FileDataApi.md#updatesupportedinvoicefiledatatemplate) | **PUT** /api/FileData/invoice-file/supported-template | Internal use only - Update a supported invoice file template.
 *FileDataApi* | [**UpdateTransactionFileData**](docs/FileDataApi.md#updatetransactionfiledata) | **PUT** /api/FileData/transaction-file-data | Update transaction file data for an invoice, receipt, or fuel release.
 *FlightPlansByCompanyApi* | [**DeleteIFlightPlannerRouteRequestServiceLog**](docs/FlightPlansByCompanyApi.md#deleteiflightplannerrouterequestservicelog) | **DELETE** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request | Internal use only - Delete an existing service log record for a iFlightPlanner route request.
@@ -219,6 +223,7 @@ Class | Method | HTTP request | Description
 *FuelVendorApi* | [**DeleteCompanyFueler**](docs/FuelVendorApi.md#deletecompanyfueler) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId} | Delete the company-specific details of a fuel vendor based on the provided {companyFuelerId}.
 *FuelVendorApi* | [**DeleteCompanyFuelerNotes**](docs/FuelVendorApi.md#deletecompanyfuelernotes) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId}/notes/{noteId} | Delete a company-specific note for the provided {companyFuelerId} record.
 *FuelVendorApi* | [**DeleteCompanyFuelerPriceAdjustment**](docs/FuelVendorApi.md#deletecompanyfuelerpriceadjustment) | **DELETE** /api/FuelVendor/company-specific/price-adjustment/{id} | Delete a price adjustment for a company fueler.
+*FuelVendorApi* | [**DeleteCompanyFuelerPriceSheetFileCapture**](docs/FuelVendorApi.md#deletecompanyfuelerpricesheetfilecapture) | **DELETE** /api/FuelVendor/company-specific/price-sheet-capture/{id} | Delete a captured price sheet for a company's fuel vendor.
 *FuelVendorApi* | [**DeleteCompanyFuelerSettings**](docs/FuelVendorApi.md#deletecompanyfuelersettings) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId}/settings/{settingsId} | Delete a company-specific settings record for a fuel vendor.
 *FuelVendorApi* | [**DeletePaymentInformationByFuelVendorId**](docs/FuelVendorApi.md#deletepaymentinformationbyfuelvendorid) | **DELETE** /api/FuelVendor/{id}/delete-payment-info | Delete fuel vendor payment information by fuel vendor id
 *FuelVendorApi* | [**GetCompanyFuelerByFuelerId**](docs/FuelVendorApi.md#getcompanyfuelerbyfuelerid) | **GET** /api/FuelVendor/company-specific/by-fueler/{fuelVendorId} | Fetch a company-specific record tied to the fuel vendor for the provided {fuelVendorId}.
@@ -226,16 +231,19 @@ Class | Method | HTTP request | Description
 *FuelVendorApi* | [**GetCompanyFuelerList**](docs/FuelVendorApi.md#getcompanyfuelerlist) | **GET** /api/FuelVendor/company-specific/list | Fetch all company-specific records for the authenticated company.
 *FuelVendorApi* | [**GetCompanyFuelerNotes**](docs/FuelVendorApi.md#getcompanyfuelernotes) | **GET** /api/FuelVendor/company-specific/{companyFuelerId}/notes | Fetch the company-specific notes for a particular fuel vendor based on the provided {companyFuelerId}.
 *FuelVendorApi* | [**GetCompanyFuelerPriceAdjustmentList**](docs/FuelVendorApi.md#getcompanyfuelerpriceadjustmentlist) | **GET** /api/FuelVendor/company-specific/{companyFuelerId}/price-adjustment/list | Get all price adjustments for a company fueler.
+*FuelVendorApi* | [**GetCompanyFuelerPriceSheetFileCapture**](docs/FuelVendorApi.md#getcompanyfuelerpricesheetfilecapture) | **GET** /api/FuelVendor/company-specific/price-sheet-capture/{id} | Get recently captured price sheet by it's {id}
 *FuelVendorApi* | [**GetCompanyFuelerSettings**](docs/FuelVendorApi.md#getcompanyfuelersettings) | **GET** /api/FuelVendor/company-specific/{companyFuelerId}/settings | Fetch the company-specific settings for the specified {companyFuelerId} record.
 *FuelVendorApi* | [**GetPaymentInformationByFuelVendorId**](docs/FuelVendorApi.md#getpaymentinformationbyfuelvendorid) | **GET** /api/FuelVendor/{id}/get-payment-info | Get fuel vendor payment information by fuel vendor id
 *FuelVendorApi* | [**PostCompanyFueler**](docs/FuelVendorApi.md#postcompanyfueler) | **POST** /api/FuelVendor/company-specific | Add a company-specific record for a fuel vendor.  These details are unique for each flight department.
 *FuelVendorApi* | [**PostCompanyFuelerNotes**](docs/FuelVendorApi.md#postcompanyfuelernotes) | **POST** /api/FuelVendor/company-specific/notes | Add a new company-specific note for a fuel vendor.
 *FuelVendorApi* | [**PostCompanyFuelerPriceAdjustment**](docs/FuelVendorApi.md#postcompanyfuelerpriceadjustment) | **POST** /api/FuelVendor/company-specific/price-adjustment | Add a new price adjustment for a company fueler.  This price adjustment will be applied to the user's own adjusted price section when reviewing prices.
+*FuelVendorApi* | [**PostCompanyFuelerPriceSheetFileCapture**](docs/FuelVendorApi.md#postcompanyfuelerpricesheetfilecapture) | **POST** /api/FuelVendor/company-specific/price-sheet-capture | Add a recently captured price sheet for a company's fuel vendor.
 *FuelVendorApi* | [**PostCompanyFuelerSettings**](docs/FuelVendorApi.md#postcompanyfuelersettings) | **POST** /api/FuelVendor/company-specific/settings | Add a company-specific settings record for a fuel vendor.
 *FuelVendorApi* | [**PostPaymentInformation**](docs/FuelVendorApi.md#postpaymentinformation) | **POST** /api/FuelVendor/add-payment-info | Add a fuel vendor payment information
 *FuelVendorApi* | [**PutPaymentInformation**](docs/FuelVendorApi.md#putpaymentinformation) | **PUT** /api/FuelVendor/update-payment-info | Update a fuel vendor payment information
 *FuelVendorApi* | [**UpdateCompanyFueler**](docs/FuelVendorApi.md#updatecompanyfueler) | **PUT** /api/FuelVendor/company-specific | Update the company-specific details of a fuel vendor.  These details are unique for each flight department.
 *FuelVendorApi* | [**UpdateCompanyFuelerNotes**](docs/FuelVendorApi.md#updatecompanyfuelernotes) | **PUT** /api/FuelVendor/company-specific/notes | Update an existing company-specific note for a fuel vendor.
+*FuelVendorApi* | [**UpdateCompanyFuelerPriceSheetFileCapture**](docs/FuelVendorApi.md#updatecompanyfuelerpricesheetfilecapture) | **PUT** /api/FuelVendor/company-specific/price-sheet-capture | Update a captured price sheet for a company's fuel vendor.
 *FuelVendorApi* | [**UpdateCompanyFuelerSettings**](docs/FuelVendorApi.md#updatecompanyfuelersettings) | **PUT** /api/FuelVendor/company-specific/settings | Update a company-specific settings record for a fuel vendor.
 *GroundServicesApi* | [**GetUserInfoForFlightBridge**](docs/GroundServicesApi.md#getuserinfoforflightbridge) | **GET** /api/GroundServices/flightbridge/user-info/from-token/{userAuthenticationToken} | 
 *IntegrationAuthorizationApi* | [**AddIntegrationAuthorization**](docs/IntegrationAuthorizationApi.md#addintegrationauthorization) | **POST** /api/IntegrationAuthorization | Internal use only
@@ -406,6 +414,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CompanyFuelerNotesResponse](docs/CompanyFuelerNotesResponse.md)
  - [IO.Swagger.Model.CompanyFuelerPriceAdjustmentDTO](docs/CompanyFuelerPriceAdjustmentDTO.md)
  - [IO.Swagger.Model.CompanyFuelerPriceAdjustmentListResponse](docs/CompanyFuelerPriceAdjustmentListResponse.md)
+ - [IO.Swagger.Model.CompanyFuelerPriceSheetFileCaptureDTO](docs/CompanyFuelerPriceSheetFileCaptureDTO.md)
  - [IO.Swagger.Model.CompanyFuelerResponse](docs/CompanyFuelerResponse.md)
  - [IO.Swagger.Model.CompanyFuelerSettingsDTO](docs/CompanyFuelerSettingsDTO.md)
  - [IO.Swagger.Model.CompanyFuelerSettingsResponse](docs/CompanyFuelerSettingsResponse.md)
@@ -431,6 +440,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteAutoReconciledFileResponse](docs/DeleteAutoReconciledFileResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerNotesResponse](docs/DeleteCompanyFuelerNotesResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerPriceAdjustmentResponse](docs/DeleteCompanyFuelerPriceAdjustmentResponse.md)
+ - [IO.Swagger.Model.DeleteCompanyFuelerPriceSheetFileCaptureResponse](docs/DeleteCompanyFuelerPriceSheetFileCaptureResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerResponse](docs/DeleteCompanyFuelerResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerSettingsResponse](docs/DeleteCompanyFuelerSettingsResponse.md)
  - [IO.Swagger.Model.DeleteCompanyResponse](docs/DeleteCompanyResponse.md)
@@ -447,6 +457,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteImportFileCaptureResponse](docs/DeleteImportFileCaptureResponse.md)
  - [IO.Swagger.Model.DeleteIntegrationAuthorizationResponse](docs/DeleteIntegrationAuthorizationResponse.md)
  - [IO.Swagger.Model.DeleteIntegrationFuelOrderDetailsResponse](docs/DeleteIntegrationFuelOrderDetailsResponse.md)
+ - [IO.Swagger.Model.DeletePriceSheetFileDataResponse](docs/DeletePriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.DeleteRampFeeByCompanyNotesResponse](docs/DeleteRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.DeleteRampFeeByCompanyResponse](docs/DeleteRampFeeByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteReportResponse](docs/DeleteReportResponse.md)
@@ -601,6 +612,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostCompanyFuelerNotesResponse](docs/PostCompanyFuelerNotesResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerPriceAdjustmentRequest](docs/PostCompanyFuelerPriceAdjustmentRequest.md)
  - [IO.Swagger.Model.PostCompanyFuelerPriceAdjustmentResponse](docs/PostCompanyFuelerPriceAdjustmentResponse.md)
+ - [IO.Swagger.Model.PostCompanyFuelerPriceSheetFileCaptureRequest](docs/PostCompanyFuelerPriceSheetFileCaptureRequest.md)
+ - [IO.Swagger.Model.PostCompanyFuelerPriceSheetFileCaptureResponse](docs/PostCompanyFuelerPriceSheetFileCaptureResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerRequest](docs/PostCompanyFuelerRequest.md)
  - [IO.Swagger.Model.PostCompanyFuelerResponse](docs/PostCompanyFuelerResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerSettingsRequest](docs/PostCompanyFuelerSettingsRequest.md)
@@ -633,6 +646,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostImportFileCaptureResponse](docs/PostImportFileCaptureResponse.md)
  - [IO.Swagger.Model.PostPaymentInformationRequest](docs/PostPaymentInformationRequest.md)
  - [IO.Swagger.Model.PostPaymentInformationResponse](docs/PostPaymentInformationResponse.md)
+ - [IO.Swagger.Model.PostPriceSheetFileDataRequest](docs/PostPriceSheetFileDataRequest.md)
+ - [IO.Swagger.Model.PostPriceSheetFileDataResponse](docs/PostPriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.PostRampFeeByCompanyNotesRequest](docs/PostRampFeeByCompanyNotesRequest.md)
  - [IO.Swagger.Model.PostRampFeeByCompanyNotesResponse](docs/PostRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.PostRampFeeByCompanyRequest](docs/PostRampFeeByCompanyRequest.md)
@@ -666,6 +681,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostTripInfoResponse](docs/PostTripInfoResponse.md)
  - [IO.Swagger.Model.PreferenceDTO](docs/PreferenceDTO.md)
  - [IO.Swagger.Model.PreferencesDTO](docs/PreferencesDTO.md)
+ - [IO.Swagger.Model.PriceSheetFileDataDTO](docs/PriceSheetFileDataDTO.md)
+ - [IO.Swagger.Model.PriceSheetFileDataResponse](docs/PriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.PriceSyncTransactionDTO](docs/PriceSyncTransactionDTO.md)
  - [IO.Swagger.Model.PricingData](docs/PricingData.md)
  - [IO.Swagger.Model.PricingTier](docs/PricingTier.md)
@@ -770,6 +787,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateAutoReconciledFileResponse](docs/UpdateAutoReconciledFileResponse.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerNotesRequest](docs/UpdateCompanyFuelerNotesRequest.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerNotesResponse](docs/UpdateCompanyFuelerNotesResponse.md)
+ - [IO.Swagger.Model.UpdateCompanyFuelerPriceSheetFileCaptureRequest](docs/UpdateCompanyFuelerPriceSheetFileCaptureRequest.md)
+ - [IO.Swagger.Model.UpdateCompanyFuelerPriceSheetFileCaptureResponse](docs/UpdateCompanyFuelerPriceSheetFileCaptureResponse.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerRequest](docs/UpdateCompanyFuelerRequest.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerResponse](docs/UpdateCompanyFuelerResponse.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerSettingsRequest](docs/UpdateCompanyFuelerSettingsRequest.md)
@@ -800,6 +819,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateImageFileDataResponse](docs/UpdateImageFileDataResponse.md)
  - [IO.Swagger.Model.UpdateImportFileCaptureRequest](docs/UpdateImportFileCaptureRequest.md)
  - [IO.Swagger.Model.UpdateImportFileCaptureResponse](docs/UpdateImportFileCaptureResponse.md)
+ - [IO.Swagger.Model.UpdatePriceSheetFileDataResponse](docs/UpdatePriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyNotesRequest](docs/UpdateRampFeeByCompanyNotesRequest.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyNotesResponse](docs/UpdateRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyRequest](docs/UpdateRampFeeByCompanyRequest.md)

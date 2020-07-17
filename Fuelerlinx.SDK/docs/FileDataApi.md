@@ -6,19 +6,23 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**DeleteImageFileData**](FileDataApi.md#deleteimagefiledata) | **DELETE** /api/FileData/image-file-data/{id} | Internal use only - Delete image file data by {id}.
 [**DeleteImportFileCapture**](FileDataApi.md#deleteimportfilecapture) | **DELETE** /api/FileData/import-file-capture/{id} | Internal use only - Delete a file captured during an import.
+[**DeletePriceSheetFileData**](FileDataApi.md#deletepricesheetfiledata) | **DELETE** /api/FileData/price-sheet-file-data/{id} | Delete price sheet file data by the provided {id}.
 [**DeleteSupportedInvoiceFileDataTemplate**](FileDataApi.md#deletesupportedinvoicefiledatatemplate) | **DELETE** /api/FileData/invoice-file/supported-template/{id} | Internal use only - Delete a supported invoice file template by it&#39;s Id.
 [**DeleteTransactionFileData**](FileDataApi.md#deletetransactionfiledata) | **DELETE** /api/FileData/transaction-file-data/{id} | Delete transaction file data by the provided {id}.
 [**GetImageFileDataById**](FileDataApi.md#getimagefiledatabyid) | **GET** /api/FileData/image-file-data/{id} | Internal use only - Fetch image file data by {id}.
 [**GetImportFileCaptureById**](FileDataApi.md#getimportfilecapturebyid) | **GET** /api/FileData/import-file-capture/{id} | Internal use only - Fetch a captured file import by Id.
+[**GetPriceSheetFileData**](FileDataApi.md#getpricesheetfiledata) | **GET** /api/FileData/price-sheet-file-data/{id} | Fetch price sheet file data captured during an upload of pricing info.
 [**GetSupportedInvoiceFileTemplatesByCompany**](FileDataApi.md#getsupportedinvoicefiletemplatesbycompany) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName}/company/{companyId} | Internal use only - Fetch a supported invoice file template by fuel vendor and company.
 [**GetSupportedInvoiceFileTemplatesByFuelVendor**](FileDataApi.md#getsupportedinvoicefiletemplatesbyfuelvendor) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName} | Internal use only - Fetch a supported invoice file template by fuel vendor.
 [**GetTransactionFileData**](FileDataApi.md#gettransactionfiledata) | **GET** /api/FileData/transaction-file-data/{id} | Fetch transaction file data for an invoice, receipt, or fuel release.
 [**PostImageFileData**](FileDataApi.md#postimagefiledata) | **POST** /api/FileData/image-file-data | Internal use only - Post new image file data.
 [**PostImportFileCapture**](FileDataApi.md#postimportfilecapture) | **POST** /api/FileData/import-file-capture | Internal use only - Add a captured file that was recently imported.
+[**PostPriceSheetFileData**](FileDataApi.md#postpricesheetfiledata) | **POST** /api/FileData/price-sheet-file-data | Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing.
 [**PostSupportedInvoiceFileTemplate**](FileDataApi.md#postsupportedinvoicefiletemplate) | **POST** /api/FileData/invoice-file/supported-template | Internal use only - Add a supported invoice file template.
 [**PostTransactionFileData**](FileDataApi.md#posttransactionfiledata) | **POST** /api/FileData/transaction-file-data | Add transaction file data for an invoice, receipt, or fuel release.  The file data should be passed as a base64 string.
 [**UpdateImageFileData**](FileDataApi.md#updateimagefiledata) | **PUT** /api/FileData/image-file-data/{id} | Internal use only - Update an existing record of image file data.
 [**UpdateImportFileCapture**](FileDataApi.md#updateimportfilecapture) | **PUT** /api/FileData/import-file-capture/{id} | Internal use only - Update a file captured during an import.
+[**UpdatePriceSheetFileData**](FileDataApi.md#updatepricesheetfiledata) | **PUT** /api/FileData/price-sheet-file-data | Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
 [**UpdateSupportedInvoiceFileDataTemplate**](FileDataApi.md#updatesupportedinvoicefiledatatemplate) | **PUT** /api/FileData/invoice-file/supported-template | Internal use only - Update a supported invoice file template.
 [**UpdateTransactionFileData**](FileDataApi.md#updatetransactionfiledata) | **PUT** /api/FileData/transaction-file-data | Update transaction file data for an invoice, receipt, or fuel release.
 
@@ -149,6 +153,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteImportFileCaptureResponse**](DeleteImportFileCaptureResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletepricesheetfiledata"></a>
+# **DeletePriceSheetFileData**
+> DeletePriceSheetFileDataResponse DeletePriceSheetFileData (int? id)
+
+Delete price sheet file data by the provided {id}.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeletePriceSheetFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Delete price sheet file data by the provided {id}.
+                DeletePriceSheetFileDataResponse result = apiInstance.DeletePriceSheetFileData(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.DeletePriceSheetFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeletePriceSheetFileDataResponse**](DeletePriceSheetFileDataResponse.md)
 
 ### Authorization
 
@@ -425,6 +498,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ImportFileCaptureResponse**](ImportFileCaptureResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getpricesheetfiledata"></a>
+# **GetPriceSheetFileData**
+> PriceSheetFileDataResponse GetPriceSheetFileData (int? id)
+
+Fetch price sheet file data captured during an upload of pricing info.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetPriceSheetFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Fetch price sheet file data captured during an upload of pricing info.
+                PriceSheetFileDataResponse result = apiInstance.GetPriceSheetFileData(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.GetPriceSheetFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**PriceSheetFileDataResponse**](PriceSheetFileDataResponse.md)
 
 ### Authorization
 
@@ -784,6 +926,75 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="postpricesheetfiledata"></a>
+# **PostPriceSheetFileData**
+> PostPriceSheetFileDataResponse PostPriceSheetFileData (PostPriceSheetFileDataRequest body)
+
+Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostPriceSheetFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new PostPriceSheetFileDataRequest(); // PostPriceSheetFileDataRequest |  (optional) 
+
+            try
+            {
+                // Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing.
+                PostPriceSheetFileDataResponse result = apiInstance.PostPriceSheetFileData(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.PostPriceSheetFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostPriceSheetFileDataRequest**](PostPriceSheetFileDataRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostPriceSheetFileDataResponse**](PostPriceSheetFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="postsupportedinvoicefiletemplate"></a>
 # **PostSupportedInvoiceFileTemplate**
 > PostSupportedInvoiceFileTemplateResponse PostSupportedInvoiceFileTemplate (PostSupportedInvoiceFileTemplateRequest body)
@@ -1060,6 +1271,81 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatepricesheetfiledata"></a>
+# **UpdatePriceSheetFileData**
+> UpdatePriceSheetFileDataResponse UpdatePriceSheetFileData (int? priceSheetFileDataId, string priceSheetFileDataFileName, string priceSheetFileDataContentType, string priceSheetFileDataFileDataAsBase64String)
+
+Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdatePriceSheetFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var priceSheetFileDataId = 56;  // int? | 
+            var priceSheetFileDataFileName = priceSheetFileDataFileName_example;  // string | 
+            var priceSheetFileDataContentType = priceSheetFileDataContentType_example;  // string | 
+            var priceSheetFileDataFileDataAsBase64String = priceSheetFileDataFileDataAsBase64String_example;  // string | 
+
+            try
+            {
+                // Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
+                UpdatePriceSheetFileDataResponse result = apiInstance.UpdatePriceSheetFileData(priceSheetFileDataId, priceSheetFileDataFileName, priceSheetFileDataContentType, priceSheetFileDataFileDataAsBase64String);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.UpdatePriceSheetFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **priceSheetFileDataId** | **int?**|  | 
+ **priceSheetFileDataFileName** | **string**|  | 
+ **priceSheetFileDataContentType** | **string**|  | 
+ **priceSheetFileDataFileDataAsBase64String** | **string**|  | 
+
+### Return type
+
+[**UpdatePriceSheetFileDataResponse**](UpdatePriceSheetFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
