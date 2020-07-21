@@ -42,8 +42,8 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Get Sage GL Account Details 
         /// </summary>
-        /// <returns>SageCreateBillResponse</returns>
-        SageCreateBillResponse GetSageGlAccounts ();
+        /// <returns>SageGeneralLedgerResponse</returns>
+        SageGeneralLedgerResponse GetSageGlAccounts ();
         /// <summary>
         /// Fetch supplier-details for a particular FBO or Vendor based on the provided [ID]. 
         /// </summary>
@@ -312,8 +312,8 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Get Sage GL Account Details 
         /// </summary>
-        /// <returns>SageCreateBillResponse</returns>            
-        public SageCreateBillResponse GetSageGlAccounts ()
+        /// <returns>SageGeneralLedgerResponse</returns>            
+        public SageGeneralLedgerResponse GetSageGlAccounts ()
         {
             
     
@@ -338,7 +338,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetSageGlAccounts: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (SageCreateBillResponse) ApiClient.Deserialize(response.Content, typeof(SageCreateBillResponse), response.Headers);
+            return (SageGeneralLedgerResponse) ApiClient.Deserialize(response.Content, typeof(SageGeneralLedgerResponse), response.Headers);
         }
     
         /// <summary>

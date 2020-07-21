@@ -62,6 +62,27 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "autoReconciledLineItems")]
     public List<AutoReconciledLineItemDTO> AutoReconciledLineItems { get; set; }
 
+    /// <summary>
+    /// Gets or Sets NumberOfTransactionsAffected
+    /// </summary>
+    [DataMember(Name="numberOfTransactionsAffected", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "numberOfTransactionsAffected")]
+    public int? NumberOfTransactionsAffected { get; set; }
+
+    /// <summary>
+    /// Gets or Sets NumberOfDiscrepancies
+    /// </summary>
+    [DataMember(Name="numberOfDiscrepancies", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "numberOfDiscrepancies")]
+    public int? NumberOfDiscrepancies { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ImportedFilePageCount
+    /// </summary>
+    [DataMember(Name="importedFilePageCount", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "importedFilePageCount")]
+    public int? ImportedFilePageCount { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -77,6 +98,9 @@ namespace IO.Swagger.Model {
       sb.Append("  ProcessState: ").Append(ProcessState).Append("\n");
       sb.Append("  AutoReconciledFiles: ").Append(AutoReconciledFiles).Append("\n");
       sb.Append("  AutoReconciledLineItems: ").Append(AutoReconciledLineItems).Append("\n");
+      sb.Append("  NumberOfTransactionsAffected: ").Append(NumberOfTransactionsAffected).Append("\n");
+      sb.Append("  NumberOfDiscrepancies: ").Append(NumberOfDiscrepancies).Append("\n");
+      sb.Append("  ImportedFilePageCount: ").Append(ImportedFilePageCount).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

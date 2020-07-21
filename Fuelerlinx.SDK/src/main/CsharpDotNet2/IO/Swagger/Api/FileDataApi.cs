@@ -125,12 +125,9 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing. 
         /// </summary>
-        /// <param name="priceSheetFileDataId"></param>
-        /// <param name="priceSheetFileDataFileName"></param>
-        /// <param name="priceSheetFileDataContentType"></param>
-        /// <param name="priceSheetFileDataFileDataAsBase64String"></param>
+        /// <param name="body"></param>
         /// <returns>UpdatePriceSheetFileDataResponse</returns>
-        UpdatePriceSheetFileDataResponse UpdatePriceSheetFileData (int? priceSheetFileDataId, string priceSheetFileDataFileName, string priceSheetFileDataContentType, string priceSheetFileDataFileDataAsBase64String);
+        UpdatePriceSheetFileDataResponse UpdatePriceSheetFileData (UpdatePriceSheetFileDataRequest body);
         /// <summary>
         /// Internal use only - Update a supported invoice file template. 
         /// </summary>
@@ -140,12 +137,9 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Update transaction file data for an invoice, receipt, or fuel release. 
         /// </summary>
-        /// <param name="transactionFileDataId"></param>
-        /// <param name="transactionFileDataFileName"></param>
-        /// <param name="transactionFileDataContentType"></param>
-        /// <param name="transactionFileDataFileDataAsBase64String"></param>
+        /// <param name="body"></param>
         /// <returns>UpdateTransactionFileDataResponse</returns>
-        UpdateTransactionFileDataResponse UpdateTransactionFileData (int? transactionFileDataId, string transactionFileDataFileName, string transactionFileDataContentType, string transactionFileDataFileDataAsBase64String);
+        UpdateTransactionFileDataResponse UpdateTransactionFileData (UpdateTransactionFileDataRequest body);
     }
   
     /// <summary>
@@ -864,41 +858,23 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         /// <summary>
         /// Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing. 
         /// </summary>
-        /// <param name="priceSheetFileDataId"></param> 
-        /// <param name="priceSheetFileDataFileName"></param> 
-        /// <param name="priceSheetFileDataContentType"></param> 
-        /// <param name="priceSheetFileDataFileDataAsBase64String"></param> 
+        /// <param name="body"></param> 
         /// <returns>UpdatePriceSheetFileDataResponse</returns>            
-        public UpdatePriceSheetFileDataResponse UpdatePriceSheetFileData (int? priceSheetFileDataId, string priceSheetFileDataFileName, string priceSheetFileDataContentType, string priceSheetFileDataFileDataAsBase64String)
+        public UpdatePriceSheetFileDataResponse UpdatePriceSheetFileData (UpdatePriceSheetFileDataRequest body)
         {
-            
-            // verify the required parameter 'priceSheetFileDataId' is set
-            if (priceSheetFileDataId == null) throw new ApiException(400, "Missing required parameter 'priceSheetFileDataId' when calling UpdatePriceSheetFileData");
-            
-            // verify the required parameter 'priceSheetFileDataFileName' is set
-            if (priceSheetFileDataFileName == null) throw new ApiException(400, "Missing required parameter 'priceSheetFileDataFileName' when calling UpdatePriceSheetFileData");
-            
-            // verify the required parameter 'priceSheetFileDataContentType' is set
-            if (priceSheetFileDataContentType == null) throw new ApiException(400, "Missing required parameter 'priceSheetFileDataContentType' when calling UpdatePriceSheetFileData");
-            
-            // verify the required parameter 'priceSheetFileDataFileDataAsBase64String' is set
-            if (priceSheetFileDataFileDataAsBase64String == null) throw new ApiException(400, "Missing required parameter 'priceSheetFileDataFileDataAsBase64String' when calling UpdatePriceSheetFileData");
             
     
             var path = "/api/FileData/price-sheet-file-data";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "PriceSheetFileData.Id" + "}", ApiClient.ParameterToString(priceSheetFileDataId));
-path = path.Replace("{" + "PriceSheetFileData.FileName" + "}", ApiClient.ParameterToString(priceSheetFileDataFileName));
-path = path.Replace("{" + "PriceSheetFileData.ContentType" + "}", ApiClient.ParameterToString(priceSheetFileDataContentType));
-path = path.Replace("{" + "PriceSheetFileData.FileDataAsBase64String" + "}", ApiClient.ParameterToString(priceSheetFileDataFileDataAsBase64String));
-    
+                
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                                                    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
     
@@ -950,41 +926,23 @@ path = path.Replace("{" + "PriceSheetFileData.FileDataAsBase64String" + "}", Api
         /// <summary>
         /// Update transaction file data for an invoice, receipt, or fuel release. 
         /// </summary>
-        /// <param name="transactionFileDataId"></param> 
-        /// <param name="transactionFileDataFileName"></param> 
-        /// <param name="transactionFileDataContentType"></param> 
-        /// <param name="transactionFileDataFileDataAsBase64String"></param> 
+        /// <param name="body"></param> 
         /// <returns>UpdateTransactionFileDataResponse</returns>            
-        public UpdateTransactionFileDataResponse UpdateTransactionFileData (int? transactionFileDataId, string transactionFileDataFileName, string transactionFileDataContentType, string transactionFileDataFileDataAsBase64String)
+        public UpdateTransactionFileDataResponse UpdateTransactionFileData (UpdateTransactionFileDataRequest body)
         {
-            
-            // verify the required parameter 'transactionFileDataId' is set
-            if (transactionFileDataId == null) throw new ApiException(400, "Missing required parameter 'transactionFileDataId' when calling UpdateTransactionFileData");
-            
-            // verify the required parameter 'transactionFileDataFileName' is set
-            if (transactionFileDataFileName == null) throw new ApiException(400, "Missing required parameter 'transactionFileDataFileName' when calling UpdateTransactionFileData");
-            
-            // verify the required parameter 'transactionFileDataContentType' is set
-            if (transactionFileDataContentType == null) throw new ApiException(400, "Missing required parameter 'transactionFileDataContentType' when calling UpdateTransactionFileData");
-            
-            // verify the required parameter 'transactionFileDataFileDataAsBase64String' is set
-            if (transactionFileDataFileDataAsBase64String == null) throw new ApiException(400, "Missing required parameter 'transactionFileDataFileDataAsBase64String' when calling UpdateTransactionFileData");
             
     
             var path = "/api/FileData/transaction-file-data";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "TransactionFileData.Id" + "}", ApiClient.ParameterToString(transactionFileDataId));
-path = path.Replace("{" + "TransactionFileData.FileName" + "}", ApiClient.ParameterToString(transactionFileDataFileName));
-path = path.Replace("{" + "TransactionFileData.ContentType" + "}", ApiClient.ParameterToString(transactionFileDataContentType));
-path = path.Replace("{" + "TransactionFileData.FileDataAsBase64String" + "}", ApiClient.ParameterToString(transactionFileDataFileDataAsBase64String));
-    
+                
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                                                    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
     

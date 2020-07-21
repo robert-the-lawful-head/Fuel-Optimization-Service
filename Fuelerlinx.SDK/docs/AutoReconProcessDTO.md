@@ -10,6 +10,9 @@ Name | Type | Description | Notes
 **ProcessState** | **int?** |  | [optional] 
 **AutoReconciledFiles** | [**List&lt;AutoReconciledFileDTO&gt;**](AutoReconciledFileDTO.md) |  | [optional] 
 **AutoReconciledLineItems** | [**List&lt;AutoReconciledLineItemDTO&gt;**](AutoReconciledLineItemDTO.md) |  | [optional] 
+**NumberOfTransactionsAffected** | **int?** |  | [optional] 
+**NumberOfDiscrepancies** | **int?** |  | [optional] 
+**ImportedFilePageCount** | **int?** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

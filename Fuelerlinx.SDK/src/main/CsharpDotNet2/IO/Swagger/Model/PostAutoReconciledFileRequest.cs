@@ -40,6 +40,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "fileName")]
     public string FileName { get; set; }
 
+    /// <summary>
+    /// Gets or Sets PageCount
+    /// </summary>
+    [DataMember(Name="pageCount", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "pageCount")]
+    public int? PageCount { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -52,6 +59,7 @@ namespace IO.Swagger.Model {
       sb.Append("  ImportFileCaptureId: ").Append(ImportFileCaptureId).Append("\n");
       sb.Append("  DateCapturedUtc: ").Append(DateCapturedUtc).Append("\n");
       sb.Append("  FileName: ").Append(FileName).Append("\n");
+      sb.Append("  PageCount: ").Append(PageCount).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

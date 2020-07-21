@@ -196,7 +196,7 @@ Class | Method | HTTP request | Description
 *FileDataApi* | [**UpdatePriceSheetFileData**](docs/FileDataApi.md#updatepricesheetfiledata) | **PUT** /api/FileData/price-sheet-file-data | Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
 *FileDataApi* | [**UpdateSupportedInvoiceFileDataTemplate**](docs/FileDataApi.md#updatesupportedinvoicefiledatatemplate) | **PUT** /api/FileData/invoice-file/supported-template | Internal use only - Update a supported invoice file template.
 *FileDataApi* | [**UpdateTransactionFileData**](docs/FileDataApi.md#updatetransactionfiledata) | **PUT** /api/FileData/transaction-file-data | Update transaction file data for an invoice, receipt, or fuel release.
-*FlightPlansByCompanyApi* | [**DeleteIFlightPlannerRouteRequestServiceLog**](docs/FlightPlansByCompanyApi.md#deleteiflightplannerrouterequestservicelog) | **DELETE** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request | Internal use only - Delete an existing service log record for a iFlightPlanner route request.
+*FlightPlansByCompanyApi* | [**DeleteIFlightPlannerRouteRequestServiceLog**](docs/FlightPlansByCompanyApi.md#deleteiflightplannerrouterequestservicelog) | **DELETE** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request/{id} | Internal use only - Delete an existing service log record for a iFlightPlanner route request.
 *FlightPlansByCompanyApi* | [**GetCurrentPlannedFlights**](docs/FlightPlansByCompanyApi.md#getcurrentplannedflights) | **GET** /api/FlightPlansByCompany/current | Fetch upcoming trip info pulled from the user's flight planning provider.
 *FlightPlansByCompanyApi* | [**GetCurrentPlannedFlightsByTail**](docs/FlightPlansByCompanyApi.md#getcurrentplannedflightsbytail) | **GET** /api/FlightPlansByCompany/current/tail/{tailNumber} | Fetch upcoming trip info pulled from the user's flight planning provider by tail number
 *FlightPlansByCompanyApi* | [**GetIFlightPlannerAviationProfiles**](docs/FlightPlansByCompanyApi.md#getiflightplanneraviationprofiles) | **GET** /api/FlightPlansByCompany/iflightplanner/aviationprofiles | Fetching stored aviation profiles from the user's iFlightPlanner account
@@ -260,12 +260,12 @@ Class | Method | HTTP request | Description
 *PaymentsApi* | [**CreatePayment**](docs/PaymentsApi.md#createpayment) | **POST** /api/Payments/createPayment | 
 *PaymentsApi* | [**OAuthCodeCallback**](docs/PaymentsApi.md#oauthcodecallback) | **POST** /api/Payments/oauth/code_callback | 
 *RampFeeApi* | [**AddRampFeeByCompany**](docs/RampFeeApi.md#addrampfeebycompany) | **POST** /api/RampFee/company-specific | Add a company-specific ramp fee.
-*RampFeeApi* | [**DeleteRampFeeByCompany**](docs/RampFeeApi.md#deleterampfeebycompany) | **DELETE** /api/RampFee/company-specific/{rampFeeByCompanyId} | Delete a company-specific ramp fee.
-*RampFeeApi* | [**DeleteRampFeeByCompanyNote**](docs/RampFeeApi.md#deleterampfeebycompanynote) | **DELETE** /api/RampFee/company-specific/{rampFeeByCompanyId}/notes/{noteId} | Delete a company-specific note for a ramp fee.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
+*RampFeeApi* | [**DeleteRampFeeByCompany**](docs/RampFeeApi.md#deleterampfeebycompany) | **DELETE** /api/RampFee/company-specific/{id} | Delete a company-specific ramp fee.
+*RampFeeApi* | [**DeleteRampFeeByCompanyNote**](docs/RampFeeApi.md#deleterampfeebycompanynote) | **DELETE** /api/RampFee/company-specific/{id}/notes/{noteId} | Delete a company-specific note for a ramp fee.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
 *RampFeeApi* | [**GetCrowdSourcedRampFeeByScenario**](docs/RampFeeApi.md#getcrowdsourcedrampfeebyscenario) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a crowd-sourced ramp fee pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
-*RampFeeApi* | [**GetRampFeeByCompany**](docs/RampFeeApi.md#getrampfeebycompany) | **GET** /api/RampFee/company-specific/{rampFeeByCompanyId} | Get a company-specific ramp fee by it's [Id].
+*RampFeeApi* | [**GetRampFeeByCompany**](docs/RampFeeApi.md#getrampfeebycompany) | **GET** /api/RampFee/company-specific/{id} | Get a company-specific ramp fee by it's [id].
 *RampFeeApi* | [**GetRampFeeByCompanyByScenario**](docs/RampFeeApi.md#getrampfeebycompanybyscenario) | **GET** /api/RampFee/company-specific/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}.
-*RampFeeApi* | [**GetRampFeeByCompanyNotes**](docs/RampFeeApi.md#getrampfeebycompanynotes) | **GET** /api/RampFee/company-specific/{rampFeeByCompanyId}/notes | Fetch all company-specific notes for the specified [rampFeeByCompanyId].
+*RampFeeApi* | [**GetRampFeeByCompanyNotes**](docs/RampFeeApi.md#getrampfeebycompanynotes) | **GET** /api/RampFee/company-specific/{id}/notes | Fetch all company-specific notes for the specified [rampFeeByCompanyId].
 *RampFeeApi* | [**GetRampFeesByCompanyForAirport**](docs/RampFeeApi.md#getrampfeesbycompanyforairport) | **GET** /api/RampFee/company-specific/by-airport/{icao} | Get a list of company-specific ramp fees at the the provided [icao].
 *RampFeeApi* | [**GetRampFeesByCompanyForLocation**](docs/RampFeeApi.md#getrampfeesbycompanyforlocation) | **GET** /api/RampFee/company-specific/by-location/{icao}/{fboName} | Get a list of company-specific ramp fees at the the provided [icao] and [fboName].
 *RampFeeApi* | [**PostRampFeeByCompanyNotes**](docs/RampFeeApi.md#postrampfeebycompanynotes) | **POST** /api/RampFee/company-specific/notes | Add a company-specific note to a ramp fee.
@@ -708,6 +708,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)
  - [IO.Swagger.Model.SageBillVM](docs/SageBillVM.md)
  - [IO.Swagger.Model.SageCreateBillResponse](docs/SageCreateBillResponse.md)
+ - [IO.Swagger.Model.SageGeneralLedgerResponse](docs/SageGeneralLedgerResponse.md)
+ - [IO.Swagger.Model.SageGeneralLedgerVM](docs/SageGeneralLedgerVM.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerRequest](docs/SaveCompanyToIFlightPlannerRequest.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerResponse](docs/SaveCompanyToIFlightPlannerResponse.md)
  - [IO.Swagger.Model.SaveUserToIFlightPlannerRequest](docs/SaveUserToIFlightPlannerRequest.md)
@@ -819,6 +821,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateImageFileDataResponse](docs/UpdateImageFileDataResponse.md)
  - [IO.Swagger.Model.UpdateImportFileCaptureRequest](docs/UpdateImportFileCaptureRequest.md)
  - [IO.Swagger.Model.UpdateImportFileCaptureResponse](docs/UpdateImportFileCaptureResponse.md)
+ - [IO.Swagger.Model.UpdatePriceSheetFileDataRequest](docs/UpdatePriceSheetFileDataRequest.md)
  - [IO.Swagger.Model.UpdatePriceSheetFileDataResponse](docs/UpdatePriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyNotesRequest](docs/UpdateRampFeeByCompanyNotesRequest.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyNotesResponse](docs/UpdateRampFeeByCompanyNotesResponse.md)
@@ -828,6 +831,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateReportResponse](docs/UpdateReportResponse.md)
  - [IO.Swagger.Model.UpdateSavedTripLegRequest](docs/UpdateSavedTripLegRequest.md)
  - [IO.Swagger.Model.UpdateSavedTripLegResponse](docs/UpdateSavedTripLegResponse.md)
+ - [IO.Swagger.Model.UpdateSavedTripRequest](docs/UpdateSavedTripRequest.md)
  - [IO.Swagger.Model.UpdateSavedTripResponse](docs/UpdateSavedTripResponse.md)
  - [IO.Swagger.Model.UpdateServicesAndFeesByCompanyRequest](docs/UpdateServicesAndFeesByCompanyRequest.md)
  - [IO.Swagger.Model.UpdateServicesAndFeesByCompanyResponse](docs/UpdateServicesAndFeesByCompanyResponse.md)
@@ -843,6 +847,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateTransactionAccountingTransferResponse](docs/UpdateTransactionAccountingTransferResponse.md)
  - [IO.Swagger.Model.UpdateTransactionAttachmentRequest](docs/UpdateTransactionAttachmentRequest.md)
  - [IO.Swagger.Model.UpdateTransactionAttachmentResponse](docs/UpdateTransactionAttachmentResponse.md)
+ - [IO.Swagger.Model.UpdateTransactionFileDataRequest](docs/UpdateTransactionFileDataRequest.md)
  - [IO.Swagger.Model.UpdateTransactionFileDataResponse](docs/UpdateTransactionFileDataResponse.md)
  - [IO.Swagger.Model.UpdateTransactionNoteRequest](docs/UpdateTransactionNoteRequest.md)
  - [IO.Swagger.Model.UpdateTransactionNoteResponse](docs/UpdateTransactionNoteResponse.md)

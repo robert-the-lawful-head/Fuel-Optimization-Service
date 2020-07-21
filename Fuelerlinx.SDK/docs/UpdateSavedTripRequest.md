@@ -1,13 +1,9 @@
-# IO.Swagger.Model.PostAutoReconciledFileRequest
+# IO.Swagger.Model.UpdateSavedTripRequest
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ProcessId** | **int?** |  | 
-**ImportFileCaptureId** | **int?** |  | 
-**DateCapturedUtc** | **DateTime?** |  | [optional] 
-**FileName** | **string** |  | [optional] 
-**PageCount** | **int?** |  | [optional] 
+**SavedTrip** | [**SavedTripDTO**](SavedTripDTO.md) |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

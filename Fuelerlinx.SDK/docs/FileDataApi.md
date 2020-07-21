@@ -1277,7 +1277,7 @@ Name | Type | Description  | Notes
 
 <a name="updatepricesheetfiledata"></a>
 # **UpdatePriceSheetFileData**
-> UpdatePriceSheetFileDataResponse UpdatePriceSheetFileData (int? priceSheetFileDataId, string priceSheetFileDataFileName, string priceSheetFileDataContentType, string priceSheetFileDataFileDataAsBase64String)
+> UpdatePriceSheetFileDataResponse UpdatePriceSheetFileData (UpdatePriceSheetFileDataRequest body)
 
 Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
 
@@ -1306,15 +1306,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new FileDataApi();
-            var priceSheetFileDataId = 56;  // int? | 
-            var priceSheetFileDataFileName = priceSheetFileDataFileName_example;  // string | 
-            var priceSheetFileDataContentType = priceSheetFileDataContentType_example;  // string | 
-            var priceSheetFileDataFileDataAsBase64String = priceSheetFileDataFileDataAsBase64String_example;  // string | 
+            var body = new UpdatePriceSheetFileDataRequest(); // UpdatePriceSheetFileDataRequest |  (optional) 
 
             try
             {
                 // Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
-                UpdatePriceSheetFileDataResponse result = apiInstance.UpdatePriceSheetFileData(priceSheetFileDataId, priceSheetFileDataFileName, priceSheetFileDataContentType, priceSheetFileDataFileDataAsBase64String);
+                UpdatePriceSheetFileDataResponse result = apiInstance.UpdatePriceSheetFileData(body);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1330,10 +1327,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **priceSheetFileDataId** | **int?**|  | 
- **priceSheetFileDataFileName** | **string**|  | 
- **priceSheetFileDataContentType** | **string**|  | 
- **priceSheetFileDataFileDataAsBase64String** | **string**|  | 
+ **body** | [**UpdatePriceSheetFileDataRequest**](UpdatePriceSheetFileDataRequest.md)|  | [optional] 
 
 ### Return type
 
@@ -1345,7 +1339,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
  - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
@@ -1421,7 +1415,7 @@ Name | Type | Description  | Notes
 
 <a name="updatetransactionfiledata"></a>
 # **UpdateTransactionFileData**
-> UpdateTransactionFileDataResponse UpdateTransactionFileData (int? transactionFileDataId, string transactionFileDataFileName, string transactionFileDataContentType, string transactionFileDataFileDataAsBase64String)
+> UpdateTransactionFileDataResponse UpdateTransactionFileData (UpdateTransactionFileDataRequest body)
 
 Update transaction file data for an invoice, receipt, or fuel release.
 
@@ -1450,15 +1444,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new FileDataApi();
-            var transactionFileDataId = 56;  // int? | 
-            var transactionFileDataFileName = transactionFileDataFileName_example;  // string | 
-            var transactionFileDataContentType = transactionFileDataContentType_example;  // string | 
-            var transactionFileDataFileDataAsBase64String = transactionFileDataFileDataAsBase64String_example;  // string | 
+            var body = new UpdateTransactionFileDataRequest(); // UpdateTransactionFileDataRequest |  (optional) 
 
             try
             {
                 // Update transaction file data for an invoice, receipt, or fuel release.
-                UpdateTransactionFileDataResponse result = apiInstance.UpdateTransactionFileData(transactionFileDataId, transactionFileDataFileName, transactionFileDataContentType, transactionFileDataFileDataAsBase64String);
+                UpdateTransactionFileDataResponse result = apiInstance.UpdateTransactionFileData(body);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1474,10 +1465,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **transactionFileDataId** | **int?**|  | 
- **transactionFileDataFileName** | **string**|  | 
- **transactionFileDataContentType** | **string**|  | 
- **transactionFileDataFileDataAsBase64String** | **string**|  | 
+ **body** | [**UpdateTransactionFileDataRequest**](UpdateTransactionFileDataRequest.md)|  | [optional] 
 
 ### Return type
 
@@ -1489,7 +1477,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
  - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

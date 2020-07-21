@@ -356,7 +356,7 @@ This endpoint does not need any parameter.
 
 <a name="getsageglaccounts"></a>
 # **GetSageGlAccounts**
-> SageCreateBillResponse GetSageGlAccounts ()
+> SageGeneralLedgerResponse GetSageGlAccounts ()
 
 Get Sage GL Account Details
 
@@ -389,7 +389,7 @@ namespace Example
             try
             {
                 // Get Sage GL Account Details
-                SageCreateBillResponse result = apiInstance.GetSageGlAccounts();
+                SageGeneralLedgerResponse result = apiInstance.GetSageGlAccounts();
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -406,7 +406,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**SageCreateBillResponse**](SageCreateBillResponse.md)
+[**SageGeneralLedgerResponse**](SageGeneralLedgerResponse.md)
 
 ### Authorization
 
