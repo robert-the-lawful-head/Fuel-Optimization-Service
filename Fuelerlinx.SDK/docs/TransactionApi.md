@@ -12,6 +12,7 @@ Method | HTTP request | Description
 [**DeleteTransactionNote**](TransactionApi.md#deletetransactionnote) | **DELETE** /api/Transaction/note/{id} | Delete an existing note from a transaction by it&#39;s {id}.  The note will be changed to a \&quot;deleted\&quot; state but will not be removed from the database.
 [**GetAutoReconciledFile**](TransactionApi.md#getautoreconciledfile) | **GET** /api/Transaction/invoice-import/file-capture/process/{processId} | Internal use only - Fetch all files captured during an invoice import by the process ID.
 [**GetInvoiceImportByProcessId**](TransactionApi.md#getinvoiceimportbyprocessid) | **GET** /api/Transaction/invoice-import/process/{processId} | Internal use only - Fetch an invoice import by the process ID.
+[**GetInvoiceImportsByDateRange**](TransactionApi.md#getinvoiceimportsbydaterange) | **GET** /api/Transaction/invoice-import/by-date-range/list | Internal use only - Fetch all invoice imports across a date range.
 [**GetPendingInvoiceImportsByCompany**](TransactionApi.md#getpendinginvoiceimportsbycompany) | **GET** /api/Transaction/invoice-import/pending | Internal use only - Fetch all pending invoice imports for a company.
 [**GetTransactionAccountingDataByTransactionId**](TransactionApi.md#gettransactionaccountingdatabytransactionid) | **GET** /api/Transaction/accounting-data/{transactionId} | Fetch accounting data associated with the provided {transactionId}.
 [**GetTransactionAccountingTransferStatus**](TransactionApi.md#gettransactionaccountingtransferstatus) | **GET** /api/Transaction/accounting-transfer/{transactionId} | Internal use only - Get the accounting transfer status of the specified {transactionId}.
@@ -579,6 +580,77 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**AutoReconProcessResponse**](AutoReconProcessResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getinvoiceimportsbydaterange"></a>
+# **GetInvoiceImportsByDateRange**
+> AutoReconProcessListResponse GetInvoiceImportsByDateRange (DateTime? startDate, DateTime? endDate)
+
+Internal use only - Fetch all invoice imports across a date range.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetInvoiceImportsByDateRangeExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new TransactionApi();
+            var startDate = 2013-10-20T19:20:30+01:00;  // DateTime? |  (optional) 
+            var endDate = 2013-10-20T19:20:30+01:00;  // DateTime? |  (optional) 
+
+            try
+            {
+                // Internal use only - Fetch all invoice imports across a date range.
+                AutoReconProcessListResponse result = apiInstance.GetInvoiceImportsByDateRange(startDate, endDate);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling TransactionApi.GetInvoiceImportsByDateRange: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **startDate** | **DateTime?**|  | [optional] 
+ **endDate** | **DateTime?**|  | [optional] 
+
+### Return type
+
+[**AutoReconProcessListResponse**](AutoReconProcessListResponse.md)
 
 ### Authorization
 
