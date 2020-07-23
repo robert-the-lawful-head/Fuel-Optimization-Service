@@ -11,13 +11,13 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class FeeNamesGetResponse {
+  public class AccountingIntegrationItemCodesListResponse {
     /// <summary>
     /// Gets or Sets Result
     /// </summary>
     [DataMember(Name="result", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "result")]
-    public List<FeeNamesResponse> Result { get; set; }
+    public List<AccountingIntegrationItemCodesDTO> Result { get; set; }
 
     /// <summary>
     /// Gets or Sets Success
@@ -40,7 +40,7 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class FeeNamesGetResponse {\n");
+      sb.Append("class AccountingIntegrationItemCodesListResponse {\n");
       sb.Append("  Result: ").Append(Result).Append("\n");
       sb.Append("  Success: ").Append(Success).Append("\n");
       sb.Append("  Message: ").Append(Message).Append("\n");

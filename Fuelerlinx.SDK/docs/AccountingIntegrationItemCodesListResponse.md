@@ -1,9 +1,9 @@
-# IO.Swagger.Model.FeeNamesGetResponse
+# IO.Swagger.Model.AccountingIntegrationItemCodesListResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**List&lt;FeeNamesResponse&gt;**](FeeNamesResponse.md) |  | [optional] 
+**Result** | [**List&lt;AccountingIntegrationItemCodesDTO&gt;**](AccountingIntegrationItemCodesDTO.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

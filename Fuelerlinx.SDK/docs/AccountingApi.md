@@ -227,7 +227,7 @@ Name | Type | Description  | Notes
 
 <a name="getaccountingitemmappinglist"></a>
 # **GetAccountingItemMappingList**
-> FeeNamesGetResponse GetAccountingItemMappingList ()
+> AccountingIntegrationItemCodesListResponse GetAccountingItemMappingList ()
 
 Gets single accounting integration item code record
 
@@ -260,7 +260,7 @@ namespace Example
             try
             {
                 // Gets single accounting integration item code record
-                FeeNamesGetResponse result = apiInstance.GetAccountingItemMappingList();
+                AccountingIntegrationItemCodesListResponse result = apiInstance.GetAccountingItemMappingList();
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -277,7 +277,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**FeeNamesGetResponse**](FeeNamesGetResponse.md)
+[**AccountingIntegrationItemCodesListResponse**](AccountingIntegrationItemCodesListResponse.md)
 
 ### Authorization
 

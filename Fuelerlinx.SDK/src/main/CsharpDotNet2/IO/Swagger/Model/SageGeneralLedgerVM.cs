@@ -26,6 +26,27 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "generalLedgerItemName")]
     public string GeneralLedgerItemName { get; set; }
 
+    /// <summary>
+    /// Gets or Sets GeneralLedgerItemCategory
+    /// </summary>
+    [DataMember(Name="generalLedgerItemCategory", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "generalLedgerItemCategory")]
+    public string GeneralLedgerItemCategory { get; set; }
+
+    /// <summary>
+    /// Gets or Sets GeneralLedgerLabelValue
+    /// </summary>
+    [DataMember(Name="generalLedgerLabelValue", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "generalLedgerLabelValue")]
+    public string GeneralLedgerLabelValue { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Value
+    /// </summary>
+    [DataMember(Name="value", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "value")]
+    public string Value { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -36,6 +57,9 @@ namespace IO.Swagger.Model {
       sb.Append("class SageGeneralLedgerVM {\n");
       sb.Append("  GeneralLedgerCode: ").Append(GeneralLedgerCode).Append("\n");
       sb.Append("  GeneralLedgerItemName: ").Append(GeneralLedgerItemName).Append("\n");
+      sb.Append("  GeneralLedgerItemCategory: ").Append(GeneralLedgerItemCategory).Append("\n");
+      sb.Append("  GeneralLedgerLabelValue: ").Append(GeneralLedgerLabelValue).Append("\n");
+      sb.Append("  Value: ").Append(Value).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

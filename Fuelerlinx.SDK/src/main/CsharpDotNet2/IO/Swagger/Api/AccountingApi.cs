@@ -32,8 +32,8 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Gets single accounting integration item code record 
         /// </summary>
-        /// <returns>FeeNamesGetResponse</returns>
-        FeeNamesGetResponse GetAccountingItemMappingList ();
+        /// <returns>AccountingIntegrationItemCodesListResponse</returns>
+        AccountingIntegrationItemCodesListResponse GetAccountingItemMappingList ();
         /// <summary>
         ///  
         /// </summary>
@@ -248,8 +248,8 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Gets single accounting integration item code record 
         /// </summary>
-        /// <returns>FeeNamesGetResponse</returns>            
-        public FeeNamesGetResponse GetAccountingItemMappingList ()
+        /// <returns>AccountingIntegrationItemCodesListResponse</returns>            
+        public AccountingIntegrationItemCodesListResponse GetAccountingItemMappingList ()
         {
             
     
@@ -274,7 +274,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetAccountingItemMappingList: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (FeeNamesGetResponse) ApiClient.Deserialize(response.Content, typeof(FeeNamesGetResponse), response.Headers);
+            return (AccountingIntegrationItemCodesListResponse) ApiClient.Deserialize(response.Content, typeof(AccountingIntegrationItemCodesListResponse), response.Headers);
         }
     
         /// <summary>
