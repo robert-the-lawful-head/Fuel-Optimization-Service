@@ -47,6 +47,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "value")]
     public string Value { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Label
+    /// </summary>
+    [DataMember(Name="label", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "label")]
+    public string Label { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -60,6 +67,7 @@ namespace IO.Swagger.Model {
       sb.Append("  GeneralLedgerItemCategory: ").Append(GeneralLedgerItemCategory).Append("\n");
       sb.Append("  GeneralLedgerLabelValue: ").Append(GeneralLedgerLabelValue).Append("\n");
       sb.Append("  Value: ").Append(Value).Append("\n");
+      sb.Append("  Label: ").Append(Label).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
