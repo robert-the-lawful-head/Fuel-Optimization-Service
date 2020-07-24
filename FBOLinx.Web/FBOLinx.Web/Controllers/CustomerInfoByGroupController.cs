@@ -466,7 +466,7 @@ namespace FBOLinx.Web.Controllers
                                                     join ai in pricingTemplates on new { Name = (string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name) } equals new { ai.Name}
                                                     into leftJoinAi
                                                     from ai in leftJoinAi.DefaultIfEmpty()
-                                                    where cg.GroupId == groupId
+                                                    where cg.GroupId == groupId && !c.Suspended.GetValueOrDefault()
                                                     orderby cibg.CopyAlerts descending
                                                     group cg by new
                                                     {

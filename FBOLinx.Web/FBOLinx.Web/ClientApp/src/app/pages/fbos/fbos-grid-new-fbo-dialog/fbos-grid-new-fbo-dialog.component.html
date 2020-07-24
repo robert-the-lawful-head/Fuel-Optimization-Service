@@ -1,40 +1,32 @@
 <h1 mat-dialog-title>New FBO</h1>
 <div mat-dialog-content>
-    <app-airport-autocomplete
-        [airportContainerModel]="data"
-        (valueChange)="airportValueChanged($event)"
-    ></app-airport-autocomplete>
+    <app-airport-autocomplete [airportContainerModel]="data"
+                              (valueChange)="airportValueChanged($event)"></app-airport-autocomplete>
     <mat-form-field *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0">
-        <mat-select
-            placeholder="FBO"
-            [(ngModel)]="data.acukwikFbo"
-            (ngModelChange)="fboSelectionChange()"
-        >
-            <mat-option
-                *ngFor="let acukwikFbo of dataSources.acukwikFbos"
-                [value]="acukwikFbo"
-                >{{ acukwikFbo.handlerLongName }}</mat-option
-            >
+        <mat-select placeholder="FBO"
+                    [(ngModel)]="data.acukwikFbo"
+                    (ngModelChange)="fboSelectionChange()">
+            <mat-option *ngFor="let acukwikFbo of dataSources.acukwikFbos"
+                        [value]="acukwikFbo">{{ acukwikFbo.handlerLongName }}</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field *ngIf="data.acukwikFbo">
         <mat-label>Group</mat-label>
-        <input
-            matInput
-            [value]="data.group"
-            [(ngModel)]="data.group"
-        >
-      </mat-form-field>
+        <input matInput
+               [value]="data.group"
+               [(ngModel)]="data.group">
+    </mat-form-field>
+</div>
+<div class="mt-2 text-center" style="color:red;" *ngIf="errorHappened">
+    <p>FBO not saved, please contact us to investigate the issue.</p>
 </div>
 <div class="mt-2 text-right">
-    <button
-        mat-flat-button
-        color="accent"
-        [mat-dialog-close]="data"
-        class="mr-1"
-        *ngIf="data.group"
-    >
-        Save
+    <button mat-flat-button
+            color="accent"
+            (click)="onSaveClick(data)"
+            class="mr-1"
+            [disabled]="!data.acukwikFboHandlerId">
+        Add FBO
     </button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
 </div>

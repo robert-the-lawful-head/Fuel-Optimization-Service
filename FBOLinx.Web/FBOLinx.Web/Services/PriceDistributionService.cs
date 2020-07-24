@@ -117,6 +117,7 @@ namespace FBOLinx.Web.Services
                           join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
                           join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
                           where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid && c.FuelerlinxId.GetValueOrDefault() == 0
+                          && !c.Suspended.GetValueOrDefault()
                           select cg).ToList();
 
             return result;

@@ -204,6 +204,7 @@ export class FbosGridComponent implements OnInit {
             dialogRef.afterClosed().subscribe((result) => {
                 if (result) {
                     result.groupId = this.groupInfo.oid;
+              
                     this.fboService.add(result).subscribe((newFbo: any) => {
                         this.fbosData.push(newFbo);
                         this.refreshTable();
@@ -224,15 +225,14 @@ export class FbosGridComponent implements OnInit {
 
             dialogRef.afterClosed().subscribe((result) => {
                 if (result) {
-                    this.fboService.addSingleFbo(result).subscribe((newFbo: any) => {
-                        this.fbosData.push(newFbo);
-                        this.refreshTable();
-                        this.snackBar.open(newFbo.fbo + " is created", "", {
-                            duration: 3000,
-                            panelClass: ["blue-snackbar"],
-                        });
-                        this.router.navigate(["/default-layout/fbos/" + newFbo.oid]);
+                    this.fbosData.push(result);
+                    this.refreshTable();
+                    this.snackBar.open(result.fbo + " is created", "", {
+                        duration: 3000,
+                        panelClass: ["blue-snackbar"],
                     });
+                    sessionStorage.setItem("isNewFbo", "yes");
+                    this.router.navigate(["/default-layout/fbos/" + result.oid]);                   
                 }
             });
         }

@@ -1,4 +1,10 @@
-<h1 mat-dialog-title>Account Profile</h1>
+<h1 mat-dialog-title>
+    Account Profile
+    <a class="float-right close-btn" (click)="onCancelClick()">
+        <mat-icon>close</mat-icon>
+    </a>
+</h1>
+
 <div mat-dialog-content>
     <div *ngIf="!availableroles">
         <mat-spinner></mat-spinner>
@@ -75,16 +81,35 @@
             </mat-tab>
 
             <mat-tab label="System Contacts" *ngIf="contactsData">
-                <div class="mt-2 mb-2">Add contacts at your FBO to copy on relevant system emails, such as fuel requests.</div>
-                <!--Contacts Grid-->
-                <div *ngIf="contactsData">
-                    <app-systemcontacts-grid
-                        [contactsData]="contactsData"
-                        (contactDeleted)="contactDeleted($event)"
-                    ></app-systemcontacts-grid>
-                </div>
-            </mat-tab>
+                <form [formGroup]="systemContactsForm" (ngSubmit)="onSaveSystemContacts()">
+                    <div class="mt-4 mb-2 pl-4">
+                        <p>Add contacts at your FBO to copy on relevant system emails, such as fuel requests.</p>
+                        <mat-form-field style="max-width: 240px;">
+                            <input matInput required placeholder="FuelDesk Email" aria-label="FuelDesk Email" formControlName="fuelDeskEmail">
+                        </mat-form-field>
+                    </div>
+                    <!--Contacts Grid-->
+                    <div *ngIf="contactsData">
+                        <app-systemcontacts-grid
+                            [contactsData]="contactsData"
+                            (contactDeleted)="contactDeleted($event)"
+                        ></app-systemcontacts-grid>
+                    </div>
 
+                    <div class="text-center mt-4 mb-4">
+                        <button
+                            mat-raised-button
+                            color="accent"
+                            class="mr-1"
+                            type="submit"
+                            [disabled]="!systemContactsForm.valid"
+                        >
+                            Save
+                        </button>
+                        <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+                    </div>
+                </form>
+            </mat-tab>
         </mat-tab-group>
     </div>
 </div>
