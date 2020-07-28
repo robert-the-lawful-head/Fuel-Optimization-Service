@@ -1,16 +1,17 @@
-# IO.Swagger.Model.ReportDTO
+# IO.Swagger.Model.ReportScheduledDistributionDTO
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Id** | **int?** |  | [optional] 
-**Name** | **string** |  | 
-**Description** | **string** |  | [optional] 
-**IsFavorite** | **bool?** |  | [optional] 
+**EmailRecipients** | **List&lt;string&gt;** |  | [optional] 
+**ReportPeriod** | **int?** |  | [optional] 
+**StartDateUtc** | **DateTime?** |  | [optional] 
+**SendFrequency** | **int?** |  | [optional] 
+**LastSentUtc** | **DateTime?** |  | [optional] 
 **CompanyId** | **int?** |  | [optional] 
-**DataOptions** | [**ReportDataOptions**](ReportDataOptions.md) |  | [optional] 
-**CreationDateUtc** | **DateTime?** |  | [optional] 
-**ChartSettings** | [**ChartSettings**](ChartSettings.md) |  | [optional] 
+**Name** | **string** |  | [optional] 
+**Filter** | [**ReportFilter**](ReportFilter.md) |  | [optional] 
 **ReportDistributionAssociations** | [**List&lt;ReportDistributionAssociationDTO&gt;**](ReportDistributionAssociationDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

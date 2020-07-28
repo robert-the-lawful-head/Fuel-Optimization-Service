@@ -125,15 +125,24 @@ Class | Method | HTTP request | Description
 *AirportApi* | [**UpdateAirportDetailsByCompanyNotes**](docs/AirportApi.md#updateairportdetailsbycompanynotes) | **PUT** /api/Airport/company-specific-details/notes | Update an existing company-specific note for an airport.
 *AnalysisApi* | [**DeleteCustomReport**](docs/AnalysisApi.md#deletecustomreport) | **DELETE** /api/Analysis/custom-reports/{id} | Delete a custom report by the provided {id}.
 *AnalysisApi* | [**DeleteEmailAddressesForEmailedAnalysis**](docs/AnalysisApi.md#deleteemailaddressesforemailedanalysis) | **DELETE** /api/Analysis/email-blast/email-addresses/{id} | Internal use only - Delete the subscriber record for an email blast.  This will reset the subscriber list to a company-default for the blast.
+*AnalysisApi* | [**DeleteReportDistributionAssociation**](docs/AnalysisApi.md#deletereportdistributionassociation) | **DELETE** /api/Analysis/custom-reports/distribution-association/{id} | 
+*AnalysisApi* | [**DeleteReportScheduledDistribution**](docs/AnalysisApi.md#deletereportscheduleddistribution) | **DELETE** /api/Analysis/custom-reports/distribution/{id} | Internal use only - Delete a scheduled report distribution record.
 *AnalysisApi* | [**GetCustomReportById**](docs/AnalysisApi.md#getcustomreportbyid) | **GET** /api/Analysis/custom-reports/{id} | Fetch a custom report by it's {id}.
 *AnalysisApi* | [**GetEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#getemailaddressesformonthlyanalysis) | **GET** /api/Analysis/email-blast/{emailBlastId}/email-addresses | Internal use only - Fetch all subscribers for a particular email blast.
 *AnalysisApi* | [**GetIndustryAveragePriceByTransaction**](docs/AnalysisApi.md#getindustryaveragepricebytransaction) | **GET** /api/Analysis/industry-average/by-transaction/{transactionId} | 
 *AnalysisApi* | [**GetReportData**](docs/AnalysisApi.md#getreportdata) | **POST** /api/Analysis/custom-reports/data | 
+*AnalysisApi* | [**GetReportDataForDistribution**](docs/AnalysisApi.md#getreportdatafordistribution) | **GET** /api/Analysis/custom-reports/data/{reportId}/distribution/{distributionId} | 
 *AnalysisApi* | [**GetReportList**](docs/AnalysisApi.md#getreportlist) | **GET** /api/Analysis/custom-reports/list | Fetch a list of reports for the authenticated company.
+*AnalysisApi* | [**GetReportScheduledDistributionById**](docs/AnalysisApi.md#getreportscheduleddistributionbyid) | **GET** /api/Analysis/custom-reports/distribution/{id} | Internal use only - Fetch reports scheduled for distribution by the scheduled distribution {id}.
+*AnalysisApi* | [**GetReportScheduledDistributionList**](docs/AnalysisApi.md#getreportscheduleddistributionlist) | **GET** /api/Analysis/custom-reports/distribution/list | Internal use only - Fetch reports that are scheduled for distribution.
+*AnalysisApi* | [**GetReportScheduledDistributionListAllRequiringSending**](docs/AnalysisApi.md#getreportscheduleddistributionlistallrequiringsending) | **GET** /api/Analysis/custom-reports/distribution/list/all/require-sending | Internal use only - Fetch all reports that are scheduled for distribution and need to be sent.
 *AnalysisApi* | [**PostCustomReport**](docs/AnalysisApi.md#postcustomreport) | **POST** /api/Analysis/custom-reports | Add a new custom report for the authenticated company.
 *AnalysisApi* | [**PostEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#postemailaddressesformonthlyanalysis) | **POST** /api/Analysis/email-blast/email-addresses | Internal use only - Add a new subscriber-set record to an email blast.
+*AnalysisApi* | [**PostReportDistributionAssociation**](docs/AnalysisApi.md#postreportdistributionassociation) | **POST** /api/Analysis/custom-reports/distribution-association | 
+*AnalysisApi* | [**PostReportScheduledDistribution**](docs/AnalysisApi.md#postreportscheduleddistribution) | **POST** /api/Analysis/custom-reports/distribution | Internal use only - Post a new scheduled report distribution record.
 *AnalysisApi* | [**UpdateCustomReport**](docs/AnalysisApi.md#updatecustomreport) | **PUT** /api/Analysis/custom-reports | Update a custom report.
 *AnalysisApi* | [**UpdateEmailAddressesForEmailedAnalysis**](docs/AnalysisApi.md#updateemailaddressesforemailedanalysis) | **PUT** /api/Analysis/email-blast/email-addresses/{id} | Internal use only - Update an existing record of subscribers for an email blast.
+*AnalysisApi* | [**UpdateReportScheduledDistribution**](docs/AnalysisApi.md#updatereportscheduleddistribution) | **PUT** /api/Analysis/custom-reports/distribution | Internal use only - Update a scheduled report distribution record.
 *ApplicationApi* | [**DeleteDeploymentNotes**](docs/ApplicationApi.md#deletedeploymentnotes) | **DELETE** /api/Application/deployment-notes/{id} | Internal use only - Delete the specific deployment notes.
 *ApplicationApi* | [**GetBuildVersion**](docs/ApplicationApi.md#getbuildversion) | **GET** /api/Application/build-version | Returns the current build version of the API.
 *ApplicationApi* | [**GetDeploymentNotesAll**](docs/ApplicationApi.md#getdeploymentnotesall) | **GET** /api/Application/deployment-notes/list | Internal use only - Returns a list of deployment notes to be used with a range of build versions on each application.
@@ -462,7 +471,9 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeletePriceSheetFileDataResponse](docs/DeletePriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.DeleteRampFeeByCompanyNotesResponse](docs/DeleteRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.DeleteRampFeeByCompanyResponse](docs/DeleteRampFeeByCompanyResponse.md)
+ - [IO.Swagger.Model.DeleteReportDistributionAssociationResponse](docs/DeleteReportDistributionAssociationResponse.md)
  - [IO.Swagger.Model.DeleteReportResponse](docs/DeleteReportResponse.md)
+ - [IO.Swagger.Model.DeleteReportScheduledDistributionResponse](docs/DeleteReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.DeleteSavedTripLegResponse](docs/DeleteSavedTripLegResponse.md)
  - [IO.Swagger.Model.DeleteSavedTripResponse](docs/DeleteSavedTripResponse.md)
  - [IO.Swagger.Model.DeleteServicesAndFeesByCompanyResponse](docs/DeleteServicesAndFeesByCompanyResponse.md)
@@ -651,8 +662,12 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostRampFeeByCompanyNotesRequest](docs/PostRampFeeByCompanyNotesRequest.md)
  - [IO.Swagger.Model.PostRampFeeByCompanyNotesResponse](docs/PostRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.PostRampFeeByCompanyRequest](docs/PostRampFeeByCompanyRequest.md)
+ - [IO.Swagger.Model.PostReportDistributionAssociationRequest](docs/PostReportDistributionAssociationRequest.md)
+ - [IO.Swagger.Model.PostReportDistributionAssociationResponse](docs/PostReportDistributionAssociationResponse.md)
  - [IO.Swagger.Model.PostReportRequest](docs/PostReportRequest.md)
  - [IO.Swagger.Model.PostReportResponse](docs/PostReportResponse.md)
+ - [IO.Swagger.Model.PostReportScheduledDistributionRequest](docs/PostReportScheduledDistributionRequest.md)
+ - [IO.Swagger.Model.PostReportScheduledDistributionResponse](docs/PostReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.PostSavedTripLegRequest](docs/PostSavedTripLegRequest.md)
  - [IO.Swagger.Model.PostSavedTripLegResponse](docs/PostSavedTripLegResponse.md)
  - [IO.Swagger.Model.PostSavedTripRequest](docs/PostSavedTripRequest.md)
@@ -699,9 +714,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ReportDataJsonRequest](docs/ReportDataJsonRequest.md)
  - [IO.Swagger.Model.ReportDataOptions](docs/ReportDataOptions.md)
  - [IO.Swagger.Model.ReportDataResponse](docs/ReportDataResponse.md)
+ - [IO.Swagger.Model.ReportDistributionAssociationDTO](docs/ReportDistributionAssociationDTO.md)
  - [IO.Swagger.Model.ReportFilter](docs/ReportFilter.md)
  - [IO.Swagger.Model.ReportListResponse](docs/ReportListResponse.md)
  - [IO.Swagger.Model.ReportResponse](docs/ReportResponse.md)
+ - [IO.Swagger.Model.ReportScheduledDistributionDTO](docs/ReportScheduledDistributionDTO.md)
+ - [IO.Swagger.Model.ReportScheduledDistributionListResponse](docs/ReportScheduledDistributionListResponse.md)
+ - [IO.Swagger.Model.ReportScheduledDistributionResponse](docs/ReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.ResultItem](docs/ResultItem.md)
  - [IO.Swagger.Model.RouteDetailsCalculation](docs/RouteDetailsCalculation.md)
  - [IO.Swagger.Model.RouteDetailsCalculationAircraftData](docs/RouteDetailsCalculationAircraftData.md)
@@ -829,6 +848,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateRampFeeByCompanyResponse](docs/UpdateRampFeeByCompanyResponse.md)
  - [IO.Swagger.Model.UpdateReportRequest](docs/UpdateReportRequest.md)
  - [IO.Swagger.Model.UpdateReportResponse](docs/UpdateReportResponse.md)
+ - [IO.Swagger.Model.UpdateReportScheduledDistributionRequest](docs/UpdateReportScheduledDistributionRequest.md)
+ - [IO.Swagger.Model.UpdateReportScheduledDistributionResponse](docs/UpdateReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.UpdateSavedTripLegRequest](docs/UpdateSavedTripLegRequest.md)
  - [IO.Swagger.Model.UpdateSavedTripLegResponse](docs/UpdateSavedTripLegResponse.md)
  - [IO.Swagger.Model.UpdateSavedTripRequest](docs/UpdateSavedTripRequest.md)
