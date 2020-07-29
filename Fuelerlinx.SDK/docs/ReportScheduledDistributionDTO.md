@@ -12,6 +12,7 @@ Name | Type | Description | Notes
 **CompanyId** | **int?** |  | [optional] 
 **Name** | **string** |  | [optional] 
 **Filter** | [**ReportFilter**](ReportFilter.md) |  | [optional] 
+**EmailSubject** | **string** |  | [optional] 
 **ReportDistributionAssociations** | [**List&lt;ReportDistributionAssociationDTO&gt;**](ReportDistributionAssociationDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

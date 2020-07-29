@@ -70,6 +70,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "filter")]
     public ReportFilter Filter { get; set; }
 
+    /// <summary>
+    /// Gets or Sets EmailSubject
+    /// </summary>
+    [DataMember(Name="emailSubject", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "emailSubject")]
+    public string EmailSubject { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -86,6 +93,7 @@ namespace IO.Swagger.Model {
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  Name: ").Append(Name).Append("\n");
       sb.Append("  Filter: ").Append(Filter).Append("\n");
+      sb.Append("  EmailSubject: ").Append(EmailSubject).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

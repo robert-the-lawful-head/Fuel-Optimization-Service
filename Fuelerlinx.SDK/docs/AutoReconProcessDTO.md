@@ -10,6 +10,8 @@ Name | Type | Description | Notes
 **ProcessState** | **int?** |  | [optional] 
 **AutoReconciledFiles** | [**List&lt;AutoReconciledFileDTO&gt;**](AutoReconciledFileDTO.md) |  | [optional] 
 **AutoReconciledLineItems** | [**List&lt;AutoReconciledLineItemDTO&gt;**](AutoReconciledLineItemDTO.md) |  | [optional] 
+**Company** | [**CompanyDTO**](CompanyDTO.md) |  | [optional] 
+**FuelVendor** | [**FuelVendorDTO**](FuelVendorDTO.md) |  | [optional] 
 **NumberOfTransactionsAffected** | **int?** |  | [optional] 
 **NumberOfDiscrepancies** | **int?** |  | [optional] 
 **ImportedFilePageCount** | **int?** |  | [optional] 

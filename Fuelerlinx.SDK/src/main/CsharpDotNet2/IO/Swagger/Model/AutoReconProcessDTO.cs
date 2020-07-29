@@ -63,6 +63,20 @@ namespace IO.Swagger.Model {
     public List<AutoReconciledLineItemDTO> AutoReconciledLineItems { get; set; }
 
     /// <summary>
+    /// Gets or Sets Company
+    /// </summary>
+    [DataMember(Name="company", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "company")]
+    public CompanyDTO Company { get; set; }
+
+    /// <summary>
+    /// Gets or Sets FuelVendor
+    /// </summary>
+    [DataMember(Name="fuelVendor", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fuelVendor")]
+    public FuelVendorDTO FuelVendor { get; set; }
+
+    /// <summary>
     /// Gets or Sets NumberOfTransactionsAffected
     /// </summary>
     [DataMember(Name="numberOfTransactionsAffected", EmitDefaultValue=false)]
@@ -98,6 +112,8 @@ namespace IO.Swagger.Model {
       sb.Append("  ProcessState: ").Append(ProcessState).Append("\n");
       sb.Append("  AutoReconciledFiles: ").Append(AutoReconciledFiles).Append("\n");
       sb.Append("  AutoReconciledLineItems: ").Append(AutoReconciledLineItems).Append("\n");
+      sb.Append("  Company: ").Append(Company).Append("\n");
+      sb.Append("  FuelVendor: ").Append(FuelVendor).Append("\n");
       sb.Append("  NumberOfTransactionsAffected: ").Append(NumberOfTransactionsAffected).Append("\n");
       sb.Append("  NumberOfDiscrepancies: ").Append(NumberOfDiscrepancies).Append("\n");
       sb.Append("  ImportedFilePageCount: ").Append(ImportedFilePageCount).Append("\n");
