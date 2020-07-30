@@ -13,6 +13,8 @@ Name | Type | Description | Notes
 **Name** | **string** |  | [optional] 
 **Filter** | [**ReportFilter**](ReportFilter.md) |  | [optional] 
 **EmailSubject** | **string** |  | [optional] 
+**ReportPeriodDescription** | **string** |  | [optional] 
+**SendFrequencyDescription** | **string** |  | [optional] 
 **ReportDistributionAssociations** | [**List&lt;ReportDistributionAssociationDTO&gt;**](ReportDistributionAssociationDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

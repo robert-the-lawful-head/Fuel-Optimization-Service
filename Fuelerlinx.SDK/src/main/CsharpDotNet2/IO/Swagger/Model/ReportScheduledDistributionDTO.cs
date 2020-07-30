@@ -85,6 +85,20 @@ namespace IO.Swagger.Model {
     public string EmailSubject { get; set; }
 
     /// <summary>
+    /// Gets or Sets ReportPeriodDescription
+    /// </summary>
+    [DataMember(Name="reportPeriodDescription", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "reportPeriodDescription")]
+    public string ReportPeriodDescription { get; set; }
+
+    /// <summary>
+    /// Gets or Sets SendFrequencyDescription
+    /// </summary>
+    [DataMember(Name="sendFrequencyDescription", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "sendFrequencyDescription")]
+    public string SendFrequencyDescription { get; set; }
+
+    /// <summary>
     /// Gets or Sets ReportDistributionAssociations
     /// </summary>
     [DataMember(Name="reportDistributionAssociations", EmitDefaultValue=false)]
@@ -109,6 +123,8 @@ namespace IO.Swagger.Model {
       sb.Append("  Name: ").Append(Name).Append("\n");
       sb.Append("  Filter: ").Append(Filter).Append("\n");
       sb.Append("  EmailSubject: ").Append(EmailSubject).Append("\n");
+      sb.Append("  ReportPeriodDescription: ").Append(ReportPeriodDescription).Append("\n");
+      sb.Append("  SendFrequencyDescription: ").Append(SendFrequencyDescription).Append("\n");
       sb.Append("  ReportDistributionAssociations: ").Append(ReportDistributionAssociations).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
