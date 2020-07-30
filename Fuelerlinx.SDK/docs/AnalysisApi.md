@@ -21,6 +21,7 @@ Method | HTTP request | Description
 [**PostEmailAddressesForMonthlyAnalysis**](AnalysisApi.md#postemailaddressesformonthlyanalysis) | **POST** /api/Analysis/email-blast/email-addresses | Internal use only - Add a new subscriber-set record to an email blast.
 [**PostReportDistributionAssociation**](AnalysisApi.md#postreportdistributionassociation) | **POST** /api/Analysis/custom-reports/distribution-association | 
 [**PostReportScheduledDistribution**](AnalysisApi.md#postreportscheduleddistribution) | **POST** /api/Analysis/custom-reports/distribution | Internal use only - Post a new scheduled report distribution record.
+[**SendReportScheduledDistribution**](AnalysisApi.md#sendreportscheduleddistribution) | **POST** /api/Analysis/custom-reports/distribution/send | 
 [**UpdateCustomReport**](AnalysisApi.md#updatecustomreport) | **PUT** /api/Analysis/custom-reports | Update a custom report.
 [**UpdateEmailAddressesForEmailedAnalysis**](AnalysisApi.md#updateemailaddressesforemailedanalysis) | **PUT** /api/Analysis/email-blast/email-addresses/{id} | Internal use only - Update an existing record of subscribers for an email blast.
 [**UpdateReportScheduledDistribution**](AnalysisApi.md#updatereportscheduleddistribution) | **PUT** /api/Analysis/custom-reports/distribution | Internal use only - Update a scheduled report distribution record.
@@ -1172,6 +1173,74 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PostReportScheduledDistributionResponse**](PostReportScheduledDistributionResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="sendreportscheduleddistribution"></a>
+# **SendReportScheduledDistribution**
+> SendReportScheduledDistributionResponse SendReportScheduledDistribution (SendReportScheduledDistributionRequest body)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class SendReportScheduledDistributionExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AnalysisApi();
+            var body = new SendReportScheduledDistributionRequest(); // SendReportScheduledDistributionRequest |  (optional) 
+
+            try
+            {
+                SendReportScheduledDistributionResponse result = apiInstance.SendReportScheduledDistribution(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AnalysisApi.SendReportScheduledDistribution: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**SendReportScheduledDistributionRequest**](SendReportScheduledDistributionRequest.md)|  | [optional] 
+
+### Return type
+
+[**SendReportScheduledDistributionResponse**](SendReportScheduledDistributionResponse.md)
 
 ### Authorization
 

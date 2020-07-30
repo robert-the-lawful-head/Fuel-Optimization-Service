@@ -140,6 +140,7 @@ Class | Method | HTTP request | Description
 *AnalysisApi* | [**PostEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#postemailaddressesformonthlyanalysis) | **POST** /api/Analysis/email-blast/email-addresses | Internal use only - Add a new subscriber-set record to an email blast.
 *AnalysisApi* | [**PostReportDistributionAssociation**](docs/AnalysisApi.md#postreportdistributionassociation) | **POST** /api/Analysis/custom-reports/distribution-association | 
 *AnalysisApi* | [**PostReportScheduledDistribution**](docs/AnalysisApi.md#postreportscheduleddistribution) | **POST** /api/Analysis/custom-reports/distribution | Internal use only - Post a new scheduled report distribution record.
+*AnalysisApi* | [**SendReportScheduledDistribution**](docs/AnalysisApi.md#sendreportscheduleddistribution) | **POST** /api/Analysis/custom-reports/distribution/send | 
 *AnalysisApi* | [**UpdateCustomReport**](docs/AnalysisApi.md#updatecustomreport) | **PUT** /api/Analysis/custom-reports | Update a custom report.
 *AnalysisApi* | [**UpdateEmailAddressesForEmailedAnalysis**](docs/AnalysisApi.md#updateemailaddressesforemailedanalysis) | **PUT** /api/Analysis/email-blast/email-addresses/{id} | Internal use only - Update an existing record of subscribers for an email blast.
 *AnalysisApi* | [**UpdateReportScheduledDistribution**](docs/AnalysisApi.md#updatereportscheduleddistribution) | **PUT** /api/Analysis/custom-reports/distribution | Internal use only - Update a scheduled report distribution record.
@@ -742,6 +743,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ScheduledTripDeleteResponse](docs/ScheduledTripDeleteResponse.md)
  - [IO.Swagger.Model.Segment](docs/Segment.md)
  - [IO.Swagger.Model.SegmentItem](docs/SegmentItem.md)
+ - [IO.Swagger.Model.SendReportScheduledDistributionRequest](docs/SendReportScheduledDistributionRequest.md)
+ - [IO.Swagger.Model.SendReportScheduledDistributionResponse](docs/SendReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.SerieStateSettings](docs/SerieStateSettings.md)
  - [IO.Swagger.Model.SerieStates](docs/SerieStates.md)
  - [IO.Swagger.Model.Series](docs/Series.md)

@@ -112,6 +112,12 @@ namespace IO.Swagger.Api
         /// <returns>PostReportScheduledDistributionResponse</returns>
         PostReportScheduledDistributionResponse PostReportScheduledDistribution (PostReportScheduledDistributionRequest body);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>SendReportScheduledDistributionResponse</returns>
+        SendReportScheduledDistributionResponse SendReportScheduledDistribution (SendReportScheduledDistributionRequest body);
+        /// <summary>
         /// Update a custom report. 
         /// </summary>
         /// <param name="body"></param>
@@ -787,6 +793,40 @@ path = path.Replace("{" + "distributionId" + "}", ApiClient.ParameterToString(di
                 throw new ApiException ((int)response.StatusCode, "Error calling PostReportScheduledDistribution: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostReportScheduledDistributionResponse) ApiClient.Deserialize(response.Content, typeof(PostReportScheduledDistributionResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>SendReportScheduledDistributionResponse</returns>            
+        public SendReportScheduledDistributionResponse SendReportScheduledDistribution (SendReportScheduledDistributionRequest body)
+        {
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution/send";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling SendReportScheduledDistribution: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling SendReportScheduledDistribution: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SendReportScheduledDistributionResponse) ApiClient.Deserialize(response.Content, typeof(SendReportScheduledDistributionResponse), response.Headers);
         }
     
         /// <summary>
