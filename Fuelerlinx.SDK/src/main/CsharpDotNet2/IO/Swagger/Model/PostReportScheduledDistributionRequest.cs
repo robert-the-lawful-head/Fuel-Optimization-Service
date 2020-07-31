@@ -77,6 +77,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "emailSubject")]
     public string EmailSubject { get; set; }
 
+    /// <summary>
+    /// Gets or Sets IsEnabled
+    /// </summary>
+    [DataMember(Name="isEnabled", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "isEnabled")]
+    public bool? IsEnabled { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -94,6 +101,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Name: ").Append(Name).Append("\n");
       sb.Append("  Filter: ").Append(Filter).Append("\n");
       sb.Append("  EmailSubject: ").Append(EmailSubject).Append("\n");
+      sb.Append("  IsEnabled: ").Append(IsEnabled).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

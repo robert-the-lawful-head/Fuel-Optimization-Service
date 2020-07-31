@@ -41,13 +41,6 @@ namespace IO.Swagger.Model {
     public DateTime? DateAddedUtc { get; set; }
 
     /// <summary>
-    /// Gets or Sets ReportScheduledDistribution
-    /// </summary>
-    [DataMember(Name="reportScheduledDistribution", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "reportScheduledDistribution")]
-    public ReportScheduledDistributionDTO ReportScheduledDistribution { get; set; }
-
-    /// <summary>
     /// Gets or Sets Report
     /// </summary>
     [DataMember(Name="report", EmitDefaultValue=false)]
@@ -66,7 +59,6 @@ namespace IO.Swagger.Model {
       sb.Append("  ReportId: ").Append(ReportId).Append("\n");
       sb.Append("  ScheduledDistributionId: ").Append(ScheduledDistributionId).Append("\n");
       sb.Append("  DateAddedUtc: ").Append(DateAddedUtc).Append("\n");
-      sb.Append("  ReportScheduledDistribution: ").Append(ReportScheduledDistribution).Append("\n");
       sb.Append("  Report: ").Append(Report).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

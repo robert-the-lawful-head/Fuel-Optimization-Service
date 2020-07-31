@@ -85,6 +85,13 @@ namespace IO.Swagger.Model {
     public string EmailSubject { get; set; }
 
     /// <summary>
+    /// Gets or Sets IsEnabled
+    /// </summary>
+    [DataMember(Name="isEnabled", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "isEnabled")]
+    public bool? IsEnabled { get; set; }
+
+    /// <summary>
     /// Gets or Sets ReportPeriodDescription
     /// </summary>
     [DataMember(Name="reportPeriodDescription", EmitDefaultValue=false)]
@@ -123,6 +130,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Name: ").Append(Name).Append("\n");
       sb.Append("  Filter: ").Append(Filter).Append("\n");
       sb.Append("  EmailSubject: ").Append(EmailSubject).Append("\n");
+      sb.Append("  IsEnabled: ").Append(IsEnabled).Append("\n");
       sb.Append("  ReportPeriodDescription: ").Append(ReportPeriodDescription).Append("\n");
       sb.Append("  SendFrequencyDescription: ").Append(SendFrequencyDescription).Append("\n");
       sb.Append("  ReportDistributionAssociations: ").Append(ReportDistributionAssociations).Append("\n");

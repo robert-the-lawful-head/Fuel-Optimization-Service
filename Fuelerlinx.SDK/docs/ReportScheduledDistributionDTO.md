@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **Name** | **string** |  | [optional] 
 **Filter** | [**ReportFilter**](ReportFilter.md) |  | [optional] 
 **EmailSubject** | **string** |  | [optional] 
+**IsEnabled** | **bool?** |  | [optional] 
 **ReportPeriodDescription** | **string** |  | [optional] 
 **SendFrequencyDescription** | **string** |  | [optional] 
 **ReportDistributionAssociations** | [**List&lt;ReportDistributionAssociationDTO&gt;**](ReportDistributionAssociationDTO.md) |  | [optional] 
