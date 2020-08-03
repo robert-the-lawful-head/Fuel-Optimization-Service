@@ -153,7 +153,7 @@ namespace FBOLinx.Web.Controllers
                 Title = contact.Title,
                 Oid = fbocontacts.Oid,
                 Primary = contact.Primary,
-                CopyAlerts = false
+                CopyAlerts = contact.CopyAlerts
             });
         }
 
