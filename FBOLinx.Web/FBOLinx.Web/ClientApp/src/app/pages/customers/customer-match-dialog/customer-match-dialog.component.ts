@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject } from "@angular/core";
 import {
     MatDialog,
     MatDialogRef,
@@ -26,9 +26,9 @@ export interface CustomerMatchDialogComponent {
 }
 
 @Component({
-  selector: 'customer-match-dialog',
-  templateUrl: './customer-match-dialog.component.html',
-  styleUrls: ['./customer-match-dialog.component.scss']
+  selector: "customer-match-dialog",
+  templateUrl: "./customer-match-dialog.component.html",
+  styleUrls: ["./customer-match-dialog.component.scss"],
 })
 export class CustomerMatchDialogComponent implements OnInit {
 
@@ -38,7 +38,7 @@ export class CustomerMatchDialogComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        console.log('in modal');
+        console.log("in modal");
         console.log(this.data);
   }
 
@@ -48,12 +48,12 @@ export class CustomerMatchDialogComponent implements OnInit {
     }
 
     public keepSeparate(): void {
-        this.data.result = 'KeepSeparate';
-        this.dialogRef.close('KeepSeparate');
-    };
+        this.data.result = "KeepSeparate";
+        this.dialogRef.close("KeepSeparate");
+    }
 
     public mergeCustomers(): void {
-        this.data.result = 'Merge';
+        this.data.result = "Merge";
         this.dialogRef.close(this.data);
     }
 }

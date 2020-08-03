@@ -18,7 +18,7 @@ import { ContactinfobygroupsService } from "../../../services/contactinfobygroup
 import { FbocontactsService } from "../../../services/fbocontacts.service";
 import { ContactsService } from "../../../services/contacts.service";
 import { SharedService } from "../../../layouts/shared-service";
-import { ContactsDialogNewContactComponent } from "../contacts-edit-modal/contacts-edit-modal.component";
+import { SystemcontactsNewContactModalComponent } from "../systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component";
 
 @Component({
     selector: "app-systemcontacts-grid",
@@ -64,11 +64,6 @@ export class SystemcontactsGridComponent implements OnInit {
             return;
         }
 
-        const foundedIndex = _.findIndex(this.contactsData, (contact) => {
-            return !contact.copyAlerts;
-        });
-        this.copyAll = foundedIndex >= 0 ? false : true;
-
         this.refreshTable();
 
         FlatfileImporter.setVersion(2);
@@ -84,11 +79,15 @@ export class SystemcontactsGridComponent implements OnInit {
         this.sort.sortChange.subscribe(() => {});
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
+        const unselectedIndex = _.findIndex(this.contactsData, (contact) => {
+            return !contact.copyAlerts;
+        });
+        this.copyAll = this.contactsData.length && unselectedIndex === -1 ? true : false;
     }
 
     public editRecord(record: any) {
         const dialogRef = this.newContactDialog.open(
-            ContactsDialogNewContactComponent,
+            SystemcontactsNewContactModalComponent,
             {
                 data: Object.assign({}, record),
             }
@@ -99,7 +98,7 @@ export class SystemcontactsGridComponent implements OnInit {
                 return;
             }
 
-            if (result.toDelete) {
+            if (result === "delete") {
                 this.fbocontactsService
                     .remove(record)
                     .subscribe(() => {
@@ -107,9 +106,12 @@ export class SystemcontactsGridComponent implements OnInit {
                         this.refreshTable();
                         this.fbocontactsService.updateFuelvendor({ fboId: this.sharedService.currentUser.fboId }).subscribe();
                     });
-            } else if (result !== "cancel" && result.firstName) {
-                const updatedContact = Object.assign({}, result);
-                updatedContact.oid = result.contactId;
+            } else {
+                const updatedContact = {
+                    ...record,
+                    ...result,
+                    oid: result.contactId,
+                };
 
                 this.contactsService.update(updatedContact).subscribe(() => {
                     for (let i = 0; i < this.contactsData.length; i++) {
@@ -128,13 +130,14 @@ export class SystemcontactsGridComponent implements OnInit {
         e.preventDefault();
 
         const dialogRef = this.newContactDialog.open(
-            ContactsDialogNewContactComponent,
+            SystemcontactsNewContactModalComponent,
             {
                 data: {},
+                height: "300px",
             }
         );
         dialogRef.afterClosed().subscribe(result => {
-            if (!result || result === "cancel" || !result.email) {
+            if (!result) {
                 return;
             }
 
@@ -150,7 +153,7 @@ export class SystemcontactsGridComponent implements OnInit {
         });
     }
 
-    public UpdateCopyAlertsValue(value: any) {
+    public updateCopyAlertsValue(value: any) {
         const unselectedIndex = _.findIndex(this.contactsData, (contact) => {
             return !contact.copyAlerts;
         });
@@ -163,7 +166,7 @@ export class SystemcontactsGridComponent implements OnInit {
         this.contactsService.update(updatedContact).subscribe();
     }
 
-    public UpdateAllCopyAlertsValues() {
+    public updateAllCopyAlertsValues() {
         this.copyAll = !this.copyAll;
         _.forEach(this.contactsData, (contact) => {
             contact.copyAlerts = this.copyAll;
