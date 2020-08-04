@@ -75,6 +75,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "priceAdjustments")]
     public List<CompanyFuelerPriceAdjustmentDTO> PriceAdjustments { get; set; }
 
+    /// <summary>
+    /// Gets or Sets PriceSheetFileCaptures
+    /// </summary>
+    [DataMember(Name="priceSheetFileCaptures", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "priceSheetFileCaptures")]
+    public List<CompanyFuelerPriceSheetFileCaptureDTO> PriceSheetFileCaptures { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -92,6 +99,7 @@ namespace IO.Swagger.Model {
       sb.Append("  FuelVendor: ").Append(FuelVendor).Append("\n");
       sb.Append("  CompanyFuelerNotes: ").Append(CompanyFuelerNotes).Append("\n");
       sb.Append("  PriceAdjustments: ").Append(PriceAdjustments).Append("\n");
+      sb.Append("  PriceSheetFileCaptures: ").Append(PriceSheetFileCaptures).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

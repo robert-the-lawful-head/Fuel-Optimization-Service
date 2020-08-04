@@ -24,6 +24,12 @@ namespace IO.Swagger.Api
         /// <returns>DeleteImportFileCaptureResponse</returns>
         DeleteImportFileCaptureResponse DeleteImportFileCapture (int? id);
         /// <summary>
+        /// Delete price sheet file data by the provided {id}. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeletePriceSheetFileDataResponse</returns>
+        DeletePriceSheetFileDataResponse DeletePriceSheetFileData (int? id);
+        /// <summary>
         /// Internal use only - Delete a supported invoice file template by it&#39;s Id. 
         /// </summary>
         /// <param name="id"></param>
@@ -47,6 +53,12 @@ namespace IO.Swagger.Api
         /// <param name="id"></param>
         /// <returns>ImportFileCaptureResponse</returns>
         ImportFileCaptureResponse GetImportFileCaptureById (int? id);
+        /// <summary>
+        /// Fetch price sheet file data captured during an upload of pricing info. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>PriceSheetFileDataResponse</returns>
+        PriceSheetFileDataResponse GetPriceSheetFileData (int? id);
         /// <summary>
         /// Internal use only - Fetch a supported invoice file template by fuel vendor and company. 
         /// </summary>
@@ -79,6 +91,12 @@ namespace IO.Swagger.Api
         /// <returns>PostImportFileCaptureResponse</returns>
         PostImportFileCaptureResponse PostImportFileCapture (PostImportFileCaptureRequest body);
         /// <summary>
+        /// Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostPriceSheetFileDataResponse</returns>
+        PostPriceSheetFileDataResponse PostPriceSheetFileData (PostPriceSheetFileDataRequest body);
+        /// <summary>
         /// Internal use only - Add a supported invoice file template. 
         /// </summary>
         /// <param name="body"></param>
@@ -105,6 +123,12 @@ namespace IO.Swagger.Api
         /// <returns>UpdateImportFileCaptureResponse</returns>
         UpdateImportFileCaptureResponse UpdateImportFileCapture (int? id, UpdateImportFileCaptureRequest body);
         /// <summary>
+        /// Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdatePriceSheetFileDataResponse</returns>
+        UpdatePriceSheetFileDataResponse UpdatePriceSheetFileData (UpdatePriceSheetFileDataRequest body);
+        /// <summary>
         /// Internal use only - Update a supported invoice file template. 
         /// </summary>
         /// <param name="body"></param>
@@ -113,12 +137,9 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Update transaction file data for an invoice, receipt, or fuel release. 
         /// </summary>
-        /// <param name="transactionFileDataId"></param>
-        /// <param name="transactionFileDataFileName"></param>
-        /// <param name="transactionFileDataContentType"></param>
-        /// <param name="transactionFileDataFileDataAsBase64String"></param>
+        /// <param name="body"></param>
         /// <returns>UpdateTransactionFileDataResponse</returns>
-        UpdateTransactionFileDataResponse UpdateTransactionFileData (int? transactionFileDataId, string transactionFileDataFileName, string transactionFileDataContentType, string transactionFileDataFileDataAsBase64String);
+        UpdateTransactionFileDataResponse UpdateTransactionFileData (UpdateTransactionFileDataRequest body);
     }
   
     /// <summary>
@@ -246,6 +267,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteImportFileCapture: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteImportFileCaptureResponse) ApiClient.Deserialize(response.Content, typeof(DeleteImportFileCaptureResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Delete price sheet file data by the provided {id}. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeletePriceSheetFileDataResponse</returns>            
+        public DeletePriceSheetFileDataResponse DeletePriceSheetFileData (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeletePriceSheetFileData");
+            
+    
+            var path = "/api/FileData/price-sheet-file-data/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeletePriceSheetFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeletePriceSheetFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeletePriceSheetFileDataResponse) ApiClient.Deserialize(response.Content, typeof(DeletePriceSheetFileDataResponse), response.Headers);
         }
     
         /// <summary>
@@ -394,6 +452,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetImportFileCaptureById: " + response.ErrorMessage, response.ErrorMessage);
     
             return (ImportFileCaptureResponse) ApiClient.Deserialize(response.Content, typeof(ImportFileCaptureResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch price sheet file data captured during an upload of pricing info. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>PriceSheetFileDataResponse</returns>            
+        public PriceSheetFileDataResponse GetPriceSheetFileData (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetPriceSheetFileData");
+            
+    
+            var path = "/api/FileData/price-sheet-file-data/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetPriceSheetFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetPriceSheetFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PriceSheetFileDataResponse) ApiClient.Deserialize(response.Content, typeof(PriceSheetFileDataResponse), response.Headers);
         }
     
         /// <summary>
@@ -581,6 +676,40 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         }
     
         /// <summary>
+        /// Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostPriceSheetFileDataResponse</returns>            
+        public PostPriceSheetFileDataResponse PostPriceSheetFileData (PostPriceSheetFileDataRequest body)
+        {
+            
+    
+            var path = "/api/FileData/price-sheet-file-data";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostPriceSheetFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostPriceSheetFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostPriceSheetFileDataResponse) ApiClient.Deserialize(response.Content, typeof(PostPriceSheetFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Internal use only - Add a supported invoice file template. 
         /// </summary>
         /// <param name="body"></param> 
@@ -727,6 +856,40 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         }
     
         /// <summary>
+        /// Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdatePriceSheetFileDataResponse</returns>            
+        public UpdatePriceSheetFileDataResponse UpdatePriceSheetFileData (UpdatePriceSheetFileDataRequest body)
+        {
+            
+    
+            var path = "/api/FileData/price-sheet-file-data";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdatePriceSheetFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdatePriceSheetFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdatePriceSheetFileDataResponse) ApiClient.Deserialize(response.Content, typeof(UpdatePriceSheetFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Internal use only - Update a supported invoice file template. 
         /// </summary>
         /// <param name="body"></param> 
@@ -763,41 +926,23 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         /// <summary>
         /// Update transaction file data for an invoice, receipt, or fuel release. 
         /// </summary>
-        /// <param name="transactionFileDataId"></param> 
-        /// <param name="transactionFileDataFileName"></param> 
-        /// <param name="transactionFileDataContentType"></param> 
-        /// <param name="transactionFileDataFileDataAsBase64String"></param> 
+        /// <param name="body"></param> 
         /// <returns>UpdateTransactionFileDataResponse</returns>            
-        public UpdateTransactionFileDataResponse UpdateTransactionFileData (int? transactionFileDataId, string transactionFileDataFileName, string transactionFileDataContentType, string transactionFileDataFileDataAsBase64String)
+        public UpdateTransactionFileDataResponse UpdateTransactionFileData (UpdateTransactionFileDataRequest body)
         {
-            
-            // verify the required parameter 'transactionFileDataId' is set
-            if (transactionFileDataId == null) throw new ApiException(400, "Missing required parameter 'transactionFileDataId' when calling UpdateTransactionFileData");
-            
-            // verify the required parameter 'transactionFileDataFileName' is set
-            if (transactionFileDataFileName == null) throw new ApiException(400, "Missing required parameter 'transactionFileDataFileName' when calling UpdateTransactionFileData");
-            
-            // verify the required parameter 'transactionFileDataContentType' is set
-            if (transactionFileDataContentType == null) throw new ApiException(400, "Missing required parameter 'transactionFileDataContentType' when calling UpdateTransactionFileData");
-            
-            // verify the required parameter 'transactionFileDataFileDataAsBase64String' is set
-            if (transactionFileDataFileDataAsBase64String == null) throw new ApiException(400, "Missing required parameter 'transactionFileDataFileDataAsBase64String' when calling UpdateTransactionFileData");
             
     
             var path = "/api/FileData/transaction-file-data";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "TransactionFileData.Id" + "}", ApiClient.ParameterToString(transactionFileDataId));
-path = path.Replace("{" + "TransactionFileData.FileName" + "}", ApiClient.ParameterToString(transactionFileDataFileName));
-path = path.Replace("{" + "TransactionFileData.ContentType" + "}", ApiClient.ParameterToString(transactionFileDataContentType));
-path = path.Replace("{" + "TransactionFileData.FileDataAsBase64String" + "}", ApiClient.ParameterToString(transactionFileDataFileDataAsBase64String));
-    
+                
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                                                    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
     

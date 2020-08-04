@@ -24,6 +24,18 @@ namespace IO.Swagger.Api
         /// <returns>DeleteEmailBlastEmailAddressesResponse</returns>
         DeleteEmailBlastEmailAddressesResponse DeleteEmailAddressesForEmailedAnalysis (int? id);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteReportDistributionAssociationResponse</returns>
+        DeleteReportDistributionAssociationResponse DeleteReportDistributionAssociation (int? id);
+        /// <summary>
+        /// Internal use only - Delete a scheduled report distribution record. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteReportScheduledDistributionResponse</returns>
+        DeleteReportScheduledDistributionResponse DeleteReportScheduledDistribution (int? id);
+        /// <summary>
         /// Fetch a custom report by it&#39;s {id}. 
         /// </summary>
         /// <param name="id"></param>
@@ -48,10 +60,33 @@ namespace IO.Swagger.Api
         /// <returns>ReportDataResponse</returns>
         ReportDataResponse GetReportData (ReportDataJsonRequest body);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="reportId"></param>
+        /// <param name="distributionId"></param>
+        /// <returns>ReportDataResponse</returns>
+        ReportDataResponse GetReportDataForDistribution (int? reportId, int? distributionId);
+        /// <summary>
         /// Fetch a list of reports for the authenticated company. 
         /// </summary>
         /// <returns>ReportListResponse</returns>
         ReportListResponse GetReportList ();
+        /// <summary>
+        /// Internal use only - Fetch reports scheduled for distribution by the scheduled distribution {id}. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>ReportScheduledDistributionResponse</returns>
+        ReportScheduledDistributionResponse GetReportScheduledDistributionById (int? id);
+        /// <summary>
+        /// Internal use only - Fetch reports that are scheduled for distribution. 
+        /// </summary>
+        /// <returns>ReportScheduledDistributionListResponse</returns>
+        ReportScheduledDistributionListResponse GetReportScheduledDistributionList ();
+        /// <summary>
+        /// Internal use only - Fetch all reports that are scheduled for distribution and need to be sent. 
+        /// </summary>
+        /// <returns>ReportScheduledDistributionListResponse</returns>
+        ReportScheduledDistributionListResponse GetReportScheduledDistributionListAllRequiringSending ();
         /// <summary>
         /// Add a new custom report for the authenticated company. 
         /// </summary>
@@ -65,6 +100,24 @@ namespace IO.Swagger.Api
         /// <returns>PostEmailBlastEmailAddressesResponse</returns>
         PostEmailBlastEmailAddressesResponse PostEmailAddressesForMonthlyAnalysis (PostEmailBlastEmailAddressesRequest body);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostReportDistributionAssociationResponse</returns>
+        PostReportDistributionAssociationResponse PostReportDistributionAssociation (PostReportDistributionAssociationRequest body);
+        /// <summary>
+        /// Internal use only - Post a new scheduled report distribution record. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostReportScheduledDistributionResponse</returns>
+        PostReportScheduledDistributionResponse PostReportScheduledDistribution (PostReportScheduledDistributionRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>SendReportScheduledDistributionResponse</returns>
+        SendReportScheduledDistributionResponse SendReportScheduledDistribution (SendReportScheduledDistributionRequest body);
+        /// <summary>
         /// Update a custom report. 
         /// </summary>
         /// <param name="body"></param>
@@ -77,6 +130,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateEmailBlastEmailAddressesResponse</returns>
         UpdateEmailBlastEmailAddressesResponse UpdateEmailAddressesForEmailedAnalysis (int? id, UpdateEmailBlastEmailAddressesRequest body);
+        /// <summary>
+        /// Internal use only - Update a scheduled report distribution record. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateReportScheduledDistributionResponse</returns>
+        UpdateReportScheduledDistributionResponse UpdateReportScheduledDistribution (UpdateReportScheduledDistributionRequest body);
     }
   
     /// <summary>
@@ -204,6 +263,80 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteEmailAddressesForEmailedAnalysis: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteEmailBlastEmailAddressesResponse) ApiClient.Deserialize(response.Content, typeof(DeleteEmailBlastEmailAddressesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteReportDistributionAssociationResponse</returns>            
+        public DeleteReportDistributionAssociationResponse DeleteReportDistributionAssociation (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteReportDistributionAssociation");
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution-association/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteReportDistributionAssociation: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteReportDistributionAssociation: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteReportDistributionAssociationResponse) ApiClient.Deserialize(response.Content, typeof(DeleteReportDistributionAssociationResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Delete a scheduled report distribution record. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteReportScheduledDistributionResponse</returns>            
+        public DeleteReportScheduledDistributionResponse DeleteReportScheduledDistribution (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteReportScheduledDistribution");
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteReportScheduledDistribution: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteReportScheduledDistribution: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteReportScheduledDistributionResponse) ApiClient.Deserialize(response.Content, typeof(DeleteReportScheduledDistributionResponse), response.Headers);
         }
     
         /// <summary>
@@ -352,6 +485,48 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="reportId"></param> 
+        /// <param name="distributionId"></param> 
+        /// <returns>ReportDataResponse</returns>            
+        public ReportDataResponse GetReportDataForDistribution (int? reportId, int? distributionId)
+        {
+            
+            // verify the required parameter 'reportId' is set
+            if (reportId == null) throw new ApiException(400, "Missing required parameter 'reportId' when calling GetReportDataForDistribution");
+            
+            // verify the required parameter 'distributionId' is set
+            if (distributionId == null) throw new ApiException(400, "Missing required parameter 'distributionId' when calling GetReportDataForDistribution");
+            
+    
+            var path = "/api/Analysis/custom-reports/data/{reportId}/distribution/{distributionId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "reportId" + "}", ApiClient.ParameterToString(reportId));
+path = path.Replace("{" + "distributionId" + "}", ApiClient.ParameterToString(distributionId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportDataForDistribution: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportDataForDistribution: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (ReportDataResponse) ApiClient.Deserialize(response.Content, typeof(ReportDataResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Fetch a list of reports for the authenticated company. 
         /// </summary>
         /// <returns>ReportListResponse</returns>            
@@ -381,6 +556,107 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetReportList: " + response.ErrorMessage, response.ErrorMessage);
     
             return (ReportListResponse) ApiClient.Deserialize(response.Content, typeof(ReportListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Fetch reports scheduled for distribution by the scheduled distribution {id}. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>ReportScheduledDistributionResponse</returns>            
+        public ReportScheduledDistributionResponse GetReportScheduledDistributionById (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetReportScheduledDistributionById");
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportScheduledDistributionById: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportScheduledDistributionById: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (ReportScheduledDistributionResponse) ApiClient.Deserialize(response.Content, typeof(ReportScheduledDistributionResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Fetch reports that are scheduled for distribution. 
+        /// </summary>
+        /// <returns>ReportScheduledDistributionListResponse</returns>            
+        public ReportScheduledDistributionListResponse GetReportScheduledDistributionList ()
+        {
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution/list";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportScheduledDistributionList: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportScheduledDistributionList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (ReportScheduledDistributionListResponse) ApiClient.Deserialize(response.Content, typeof(ReportScheduledDistributionListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Fetch all reports that are scheduled for distribution and need to be sent. 
+        /// </summary>
+        /// <returns>ReportScheduledDistributionListResponse</returns>            
+        public ReportScheduledDistributionListResponse GetReportScheduledDistributionListAllRequiringSending ()
+        {
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution/list/all/require-sending";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportScheduledDistributionListAllRequiringSending: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetReportScheduledDistributionListAllRequiringSending: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (ReportScheduledDistributionListResponse) ApiClient.Deserialize(response.Content, typeof(ReportScheduledDistributionListResponse), response.Headers);
         }
     
         /// <summary>
@@ -449,6 +725,108 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling PostEmailAddressesForMonthlyAnalysis: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostEmailBlastEmailAddressesResponse) ApiClient.Deserialize(response.Content, typeof(PostEmailBlastEmailAddressesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostReportDistributionAssociationResponse</returns>            
+        public PostReportDistributionAssociationResponse PostReportDistributionAssociation (PostReportDistributionAssociationRequest body)
+        {
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution-association";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostReportDistributionAssociation: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostReportDistributionAssociation: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostReportDistributionAssociationResponse) ApiClient.Deserialize(response.Content, typeof(PostReportDistributionAssociationResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Post a new scheduled report distribution record. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostReportScheduledDistributionResponse</returns>            
+        public PostReportScheduledDistributionResponse PostReportScheduledDistribution (PostReportScheduledDistributionRequest body)
+        {
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostReportScheduledDistribution: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostReportScheduledDistribution: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostReportScheduledDistributionResponse) ApiClient.Deserialize(response.Content, typeof(PostReportScheduledDistributionResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>SendReportScheduledDistributionResponse</returns>            
+        public SendReportScheduledDistributionResponse SendReportScheduledDistribution (SendReportScheduledDistributionRequest body)
+        {
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution/send";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling SendReportScheduledDistribution: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling SendReportScheduledDistribution: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SendReportScheduledDistributionResponse) ApiClient.Deserialize(response.Content, typeof(SendReportScheduledDistributionResponse), response.Headers);
         }
     
         /// <summary>
@@ -522,6 +900,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateEmailAddressesForEmailedAnalysis: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateEmailBlastEmailAddressesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateEmailBlastEmailAddressesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Update a scheduled report distribution record. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateReportScheduledDistributionResponse</returns>            
+        public UpdateReportScheduledDistributionResponse UpdateReportScheduledDistribution (UpdateReportScheduledDistributionRequest body)
+        {
+            
+    
+            var path = "/api/Analysis/custom-reports/distribution";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateReportScheduledDistribution: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateReportScheduledDistribution: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateReportScheduledDistributionResponse) ApiClient.Deserialize(response.Content, typeof(UpdateReportScheduledDistributionResponse), response.Headers);
         }
     
     }

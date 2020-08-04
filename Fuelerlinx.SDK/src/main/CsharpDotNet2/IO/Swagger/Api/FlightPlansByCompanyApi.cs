@@ -142,7 +142,7 @@ namespace IO.Swagger.Api
             if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteIFlightPlannerRouteRequestServiceLog");
             
     
-            var path = "/api/FlightPlansByCompany/service-logs/iflightplanner-route-request";
+            var path = "/api/FlightPlansByCompany/service-logs/iflightplanner-route-request/{id}";
             path = path.Replace("{format}", "json");
             path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
     

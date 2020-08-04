@@ -97,6 +97,20 @@ namespace IO.Swagger.Model {
     public string AirportNameShort { get; set; }
 
     /// <summary>
+    /// Gets or Sets Latitude
+    /// </summary>
+    [DataMember(Name="latitude", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "latitude")]
+    public string Latitude { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Longitude
+    /// </summary>
+    [DataMember(Name="longitude", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "longitude")]
+    public string Longitude { get; set; }
+
+    /// <summary>
     /// Gets or Sets IsUnitedStatesAirport
     /// </summary>
     [DataMember(Name="isUnitedStatesAirport", EmitDefaultValue=false)]
@@ -130,6 +144,8 @@ namespace IO.Swagger.Model {
       sb.Append("  RunwayLength: ").Append(RunwayLength).Append("\n");
       sb.Append("  RunwayWidth: ").Append(RunwayWidth).Append("\n");
       sb.Append("  AirportNameShort: ").Append(AirportNameShort).Append("\n");
+      sb.Append("  Latitude: ").Append(Latitude).Append("\n");
+      sb.Append("  Longitude: ").Append(Longitude).Append("\n");
       sb.Append("  IsUnitedStatesAirport: ").Append(IsUnitedStatesAirport).Append("\n");
       sb.Append("  ProperAirportIdentifier: ").Append(ProperAirportIdentifier).Append("\n");
       sb.Append("}\n");

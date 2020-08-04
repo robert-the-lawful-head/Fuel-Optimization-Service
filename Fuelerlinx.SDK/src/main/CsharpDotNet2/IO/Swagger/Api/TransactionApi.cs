@@ -60,6 +60,13 @@ namespace IO.Swagger.Api
         /// <returns>AutoReconProcessResponse</returns>
         AutoReconProcessResponse GetInvoiceImportByProcessId (int? processId);
         /// <summary>
+        /// Internal use only - Fetch all invoice imports across a date range. 
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns>AutoReconProcessListResponse</returns>
+        AutoReconProcessListResponse GetInvoiceImportsByDateRange (DateTime? startDate, DateTime? endDate);
+        /// <summary>
         /// Internal use only - Fetch all pending invoice imports for a company. 
         /// </summary>
         /// <returns>AutoReconProcessListResponse</returns>
@@ -191,6 +198,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateAutoReconProcessResponse</returns>
         UpdateAutoReconProcessResponse UpdateInvoiceImport (UpdateAutoReconProcessRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateTransactionResponse</returns>
+        UpdateTransactionResponse UpdateTransaction (UpdateTransactionRequest body);
         /// <summary>
         /// Update the accounting data record for a particular transaction. 
         /// </summary>
@@ -564,6 +577,42 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetInvoiceImportByProcessId: " + response.ErrorMessage, response.ErrorMessage);
     
             return (AutoReconProcessResponse) ApiClient.Deserialize(response.Content, typeof(AutoReconProcessResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Fetch all invoice imports across a date range. 
+        /// </summary>
+        /// <param name="startDate"></param> 
+        /// <param name="endDate"></param> 
+        /// <returns>AutoReconProcessListResponse</returns>            
+        public AutoReconProcessListResponse GetInvoiceImportsByDateRange (DateTime? startDate, DateTime? endDate)
+        {
+            
+    
+            var path = "/api/Transaction/invoice-import/by-date-range/list";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+             if (startDate != null) queryParams.Add("startDate", ApiClient.ParameterToString(startDate)); // query parameter
+ if (endDate != null) queryParams.Add("endDate", ApiClient.ParameterToString(endDate)); // query parameter
+                                        
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetInvoiceImportsByDateRange: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetInvoiceImportsByDateRange: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (AutoReconProcessListResponse) ApiClient.Deserialize(response.Content, typeof(AutoReconProcessListResponse), response.Headers);
         }
     
         /// <summary>
@@ -1326,6 +1375,40 @@ path = path.Replace("{" + "fuelerId" + "}", ApiClient.ParameterToString(fuelerId
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateInvoiceImport: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateAutoReconProcessResponse) ApiClient.Deserialize(response.Content, typeof(UpdateAutoReconProcessResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateTransactionResponse</returns>            
+        public UpdateTransactionResponse UpdateTransaction (UpdateTransactionRequest body)
+        {
+            
+    
+            var path = "/api/Transaction";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateTransaction: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateTransaction: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateTransactionResponse) ApiClient.Deserialize(response.Content, typeof(UpdateTransactionResponse), response.Headers);
         }
     
         /// <summary>

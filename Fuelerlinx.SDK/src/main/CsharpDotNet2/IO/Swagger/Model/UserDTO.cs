@@ -48,6 +48,13 @@ namespace IO.Swagger.Model {
     public string Username { get; set; }
 
     /// <summary>
+    /// Gets or Sets Password
+    /// </summary>
+    [DataMember(Name="password", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "password")]
+    public string Password { get; set; }
+
+    /// <summary>
     /// Gets or Sets Token
     /// </summary>
     [DataMember(Name="token", EmitDefaultValue=false)]
@@ -98,6 +105,13 @@ namespace IO.Swagger.Model {
     public int? CompanyUserProfileId { get; set; }
 
     /// <summary>
+    /// Gets or Sets CredentialsId
+    /// </summary>
+    [DataMember(Name="credentialsId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "credentialsId")]
+    public int? CredentialsId { get; set; }
+
+    /// <summary>
     /// Gets or Sets Company
     /// </summary>
     [DataMember(Name="company", EmitDefaultValue=false)]
@@ -125,6 +139,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "companyUserProfile")]
     public CompanyUserProfileDTO CompanyUserProfile { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Credentials
+    /// </summary>
+    [DataMember(Name="credentials", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "credentials")]
+    public CredentialsDTO Credentials { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -138,6 +159,7 @@ namespace IO.Swagger.Model {
       sb.Append("  FirstName: ").Append(FirstName).Append("\n");
       sb.Append("  LastName: ").Append(LastName).Append("\n");
       sb.Append("  Username: ").Append(Username).Append("\n");
+      sb.Append("  Password: ").Append(Password).Append("\n");
       sb.Append("  Token: ").Append(Token).Append("\n");
       sb.Append("  PrimaryAccount: ").Append(PrimaryAccount).Append("\n");
       sb.Append("  DemoMode: ").Append(DemoMode).Append("\n");
@@ -145,10 +167,12 @@ namespace IO.Swagger.Model {
       sb.Append("  FullName: ").Append(FullName).Append("\n");
       sb.Append("  Role: ").Append(Role).Append("\n");
       sb.Append("  CompanyUserProfileId: ").Append(CompanyUserProfileId).Append("\n");
+      sb.Append("  CredentialsId: ").Append(CredentialsId).Append("\n");
       sb.Append("  Company: ").Append(Company).Append("\n");
       sb.Append("  Preferences: ").Append(Preferences).Append("\n");
       sb.Append("  EmailAddresses: ").Append(EmailAddresses).Append("\n");
       sb.Append("  CompanyUserProfile: ").Append(CompanyUserProfile).Append("\n");
+      sb.Append("  Credentials: ").Append(Credentials).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

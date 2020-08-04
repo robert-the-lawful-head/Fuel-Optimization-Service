@@ -41,13 +41,6 @@ namespace IO.Swagger.Model {
     public List<int?> AllowedInvoiceStatusesList { get; set; }
 
     /// <summary>
-    /// Gets or Sets AirportIcao
-    /// </summary>
-    [DataMember(Name="airportIcao", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "airportIcao")]
-    public string AirportIcao { get; set; }
-
-    /// <summary>
     /// 
     /// </summary>
     /// <value></value>
@@ -76,6 +69,34 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "state")]
     public string State { get; set; }
 
+    /// <summary>
+    /// Gets or Sets IncludedAirports
+    /// </summary>
+    [DataMember(Name="includedAirports", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "includedAirports")]
+    public List<string> IncludedAirports { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ExcludedAirports
+    /// </summary>
+    [DataMember(Name="excludedAirports", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "excludedAirports")]
+    public List<string> ExcludedAirports { get; set; }
+
+    /// <summary>
+    /// Gets or Sets IncludedFuelVendors
+    /// </summary>
+    [DataMember(Name="includedFuelVendors", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "includedFuelVendors")]
+    public List<int?> IncludedFuelVendors { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ExcludedFuelVendors
+    /// </summary>
+    [DataMember(Name="excludedFuelVendors", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "excludedFuelVendors")]
+    public List<int?> ExcludedFuelVendors { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -88,11 +109,14 @@ namespace IO.Swagger.Model {
       sb.Append("  EndDate: ").Append(EndDate).Append("\n");
       sb.Append("  TailNumberList: ").Append(TailNumberList).Append("\n");
       sb.Append("  AllowedInvoiceStatusesList: ").Append(AllowedInvoiceStatusesList).Append("\n");
-      sb.Append("  AirportIcao: ").Append(AirportIcao).Append("\n");
       sb.Append("  DateInterval: ").Append(DateInterval).Append("\n");
       sb.Append("  Currency: ").Append(Currency).Append("\n");
       sb.Append("  MapRegion: ").Append(MapRegion).Append("\n");
       sb.Append("  State: ").Append(State).Append("\n");
+      sb.Append("  IncludedAirports: ").Append(IncludedAirports).Append("\n");
+      sb.Append("  ExcludedAirports: ").Append(ExcludedAirports).Append("\n");
+      sb.Append("  IncludedFuelVendors: ").Append(IncludedFuelVendors).Append("\n");
+      sb.Append("  ExcludedFuelVendors: ").Append(ExcludedFuelVendors).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
