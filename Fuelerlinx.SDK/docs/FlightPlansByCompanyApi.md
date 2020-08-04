@@ -4,7 +4,7 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**DeleteIFlightPlannerRouteRequestServiceLog**](FlightPlansByCompanyApi.md#deleteiflightplannerrouterequestservicelog) | **DELETE** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request | Internal use only - Delete an existing service log record for a iFlightPlanner route request.
+[**DeleteIFlightPlannerRouteRequestServiceLog**](FlightPlansByCompanyApi.md#deleteiflightplannerrouterequestservicelog) | **DELETE** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request/{id} | Internal use only - Delete an existing service log record for a iFlightPlanner route request.
 [**GetCurrentPlannedFlights**](FlightPlansByCompanyApi.md#getcurrentplannedflights) | **GET** /api/FlightPlansByCompany/current | Fetch upcoming trip info pulled from the user&#39;s flight planning provider.
 [**GetCurrentPlannedFlightsByTail**](FlightPlansByCompanyApi.md#getcurrentplannedflightsbytail) | **GET** /api/FlightPlansByCompany/current/tail/{tailNumber} | Fetch upcoming trip info pulled from the user&#39;s flight planning provider by tail number
 [**GetIFlightPlannerAviationProfiles**](FlightPlansByCompanyApi.md#getiflightplanneraviationprofiles) | **GET** /api/FlightPlansByCompany/iflightplanner/aviationprofiles | Fetching stored aviation profiles from the user&#39;s iFlightPlanner account

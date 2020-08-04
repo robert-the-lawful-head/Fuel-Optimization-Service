@@ -15,6 +15,8 @@ Name | Type | Description | Notes
 **RunwayLength** | **double?** |  | [optional] 
 **RunwayWidth** | **double?** |  | [optional] 
 **AirportNameShort** | **string** |  | [optional] 
+**Latitude** | **string** |  | [optional] 
+**Longitude** | **string** |  | [optional] 
 **IsUnitedStatesAirport** | **bool?** |  | [optional] 
 **ProperAirportIdentifier** | **string** |  | [optional] 
 

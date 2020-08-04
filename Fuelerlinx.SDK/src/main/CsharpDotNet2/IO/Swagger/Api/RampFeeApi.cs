@@ -20,16 +20,16 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Delete a company-specific ramp fee. 
         /// </summary>
-        /// <param name="rampFeeByCompanyId"></param>
+        /// <param name="id"></param>
         /// <returns>DeleteRampFeeByCompanyResponse</returns>
-        DeleteRampFeeByCompanyResponse DeleteRampFeeByCompany (int? rampFeeByCompanyId);
+        DeleteRampFeeByCompanyResponse DeleteRampFeeByCompany (int? id);
         /// <summary>
         /// Delete a company-specific note for a ramp fee.  The note will be changed to a \&quot;deleted\&quot; state but will not be removed from the database to allow for change-tracking. 
         /// </summary>
-        /// <param name="rampFeeByCompanyId"></param>
+        /// <param name="id"></param>
         /// <param name="noteId"></param>
         /// <returns>DeleteRampFeeByCompanyNotesResponse</returns>
-        DeleteRampFeeByCompanyNotesResponse DeleteRampFeeByCompanyNote (int? rampFeeByCompanyId, int? noteId);
+        DeleteRampFeeByCompanyNotesResponse DeleteRampFeeByCompanyNote (int? id, int? noteId);
         /// <summary>
         /// Fetch a crowd-sourced ramp fee pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName]. 
         /// </summary>
@@ -39,12 +39,11 @@ namespace IO.Swagger.Api
         /// <returns>CrowdSourcedRampFeeResponse</returns>
         CrowdSourcedRampFeeResponse GetCrowdSourcedRampFeeByScenario (string tailNumber, string icao, string fboName);
         /// <summary>
-        /// Get a company-specific ramp fee by it&#39;s [Id]. The request will fail if the authorized user is not part of the company that the record is attached to.
+        /// Get a company-specific ramp fee by it&#39;s [id]. The request will fail if the authorized user is not part of the company that the record is attached to.
         /// </summary>
-        /// <param name="rampFeeId"></param>
-        /// <param name="rampFeeByCompanyId"></param>
+        /// <param name="id"></param>
         /// <returns>RampFeeByCompanyResponse</returns>
-        RampFeeByCompanyResponse GetRampFeeByCompany (int? rampFeeId, string rampFeeByCompanyId);
+        RampFeeByCompanyResponse GetRampFeeByCompany (int? id);
         /// <summary>
         /// Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}. 
         /// </summary>
@@ -56,9 +55,9 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Fetch all company-specific notes for the specified [rampFeeByCompanyId]. 
         /// </summary>
-        /// <param name="rampFeeByCompanyId"></param>
+        /// <param name="id"></param>
         /// <returns>RampFeeByCompanyNotesResponse</returns>
-        RampFeeByCompanyNotesResponse GetRampFeeByCompanyNotes (int? rampFeeByCompanyId);
+        RampFeeByCompanyNotesResponse GetRampFeeByCompanyNotes (int? id);
         /// <summary>
         /// Get a list of company-specific ramp fees at the the provided [icao]. The returned ramp fees will be for all FBOs at that [icao].  Ramp fees will be categorized by size, weight range, tail, etc.
         /// </summary>
@@ -182,18 +181,18 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Delete a company-specific ramp fee. 
         /// </summary>
-        /// <param name="rampFeeByCompanyId"></param> 
+        /// <param name="id"></param> 
         /// <returns>DeleteRampFeeByCompanyResponse</returns>            
-        public DeleteRampFeeByCompanyResponse DeleteRampFeeByCompany (int? rampFeeByCompanyId)
+        public DeleteRampFeeByCompanyResponse DeleteRampFeeByCompany (int? id)
         {
             
-            // verify the required parameter 'rampFeeByCompanyId' is set
-            if (rampFeeByCompanyId == null) throw new ApiException(400, "Missing required parameter 'rampFeeByCompanyId' when calling DeleteRampFeeByCompany");
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteRampFeeByCompany");
             
     
-            var path = "/api/RampFee/company-specific/{rampFeeByCompanyId}";
+            var path = "/api/RampFee/company-specific/{id}";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "rampFeeByCompanyId" + "}", ApiClient.ParameterToString(rampFeeByCompanyId));
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
     
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
@@ -219,22 +218,22 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Delete a company-specific note for a ramp fee.  The note will be changed to a \&quot;deleted\&quot; state but will not be removed from the database to allow for change-tracking. 
         /// </summary>
-        /// <param name="rampFeeByCompanyId"></param> 
+        /// <param name="id"></param> 
         /// <param name="noteId"></param> 
         /// <returns>DeleteRampFeeByCompanyNotesResponse</returns>            
-        public DeleteRampFeeByCompanyNotesResponse DeleteRampFeeByCompanyNote (int? rampFeeByCompanyId, int? noteId)
+        public DeleteRampFeeByCompanyNotesResponse DeleteRampFeeByCompanyNote (int? id, int? noteId)
         {
             
-            // verify the required parameter 'rampFeeByCompanyId' is set
-            if (rampFeeByCompanyId == null) throw new ApiException(400, "Missing required parameter 'rampFeeByCompanyId' when calling DeleteRampFeeByCompanyNote");
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteRampFeeByCompanyNote");
             
             // verify the required parameter 'noteId' is set
             if (noteId == null) throw new ApiException(400, "Missing required parameter 'noteId' when calling DeleteRampFeeByCompanyNote");
             
     
-            var path = "/api/RampFee/company-specific/{rampFeeByCompanyId}/notes/{noteId}";
+            var path = "/api/RampFee/company-specific/{id}/notes/{noteId}";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "rampFeeByCompanyId" + "}", ApiClient.ParameterToString(rampFeeByCompanyId));
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
 path = path.Replace("{" + "noteId" + "}", ApiClient.ParameterToString(noteId));
     
             var queryParams = new Dictionary<String, String>();
@@ -306,25 +305,20 @@ path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName))
         }
     
         /// <summary>
-        /// Get a company-specific ramp fee by it&#39;s [Id]. The request will fail if the authorized user is not part of the company that the record is attached to.
+        /// Get a company-specific ramp fee by it&#39;s [id]. The request will fail if the authorized user is not part of the company that the record is attached to.
         /// </summary>
-        /// <param name="rampFeeId"></param> 
-        /// <param name="rampFeeByCompanyId"></param> 
+        /// <param name="id"></param> 
         /// <returns>RampFeeByCompanyResponse</returns>            
-        public RampFeeByCompanyResponse GetRampFeeByCompany (int? rampFeeId, string rampFeeByCompanyId)
+        public RampFeeByCompanyResponse GetRampFeeByCompany (int? id)
         {
             
-            // verify the required parameter 'rampFeeId' is set
-            if (rampFeeId == null) throw new ApiException(400, "Missing required parameter 'rampFeeId' when calling GetRampFeeByCompany");
-            
-            // verify the required parameter 'rampFeeByCompanyId' is set
-            if (rampFeeByCompanyId == null) throw new ApiException(400, "Missing required parameter 'rampFeeByCompanyId' when calling GetRampFeeByCompany");
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetRampFeeByCompany");
             
     
-            var path = "/api/RampFee/company-specific/{rampFeeByCompanyId}";
+            var path = "/api/RampFee/company-specific/{id}";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "rampFeeId" + "}", ApiClient.ParameterToString(rampFeeId));
-path = path.Replace("{" + "rampFeeByCompanyId" + "}", ApiClient.ParameterToString(rampFeeByCompanyId));
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
     
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
@@ -397,18 +391,18 @@ path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName))
         /// <summary>
         /// Fetch all company-specific notes for the specified [rampFeeByCompanyId]. 
         /// </summary>
-        /// <param name="rampFeeByCompanyId"></param> 
+        /// <param name="id"></param> 
         /// <returns>RampFeeByCompanyNotesResponse</returns>            
-        public RampFeeByCompanyNotesResponse GetRampFeeByCompanyNotes (int? rampFeeByCompanyId)
+        public RampFeeByCompanyNotesResponse GetRampFeeByCompanyNotes (int? id)
         {
             
-            // verify the required parameter 'rampFeeByCompanyId' is set
-            if (rampFeeByCompanyId == null) throw new ApiException(400, "Missing required parameter 'rampFeeByCompanyId' when calling GetRampFeeByCompanyNotes");
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetRampFeeByCompanyNotes");
             
     
-            var path = "/api/RampFee/company-specific/{rampFeeByCompanyId}/notes";
+            var path = "/api/RampFee/company-specific/{id}/notes";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "rampFeeByCompanyId" + "}", ApiClient.ParameterToString(rampFeeByCompanyId));
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
     
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
