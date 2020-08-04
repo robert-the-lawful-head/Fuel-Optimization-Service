@@ -11,7 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class PostIFlightPlannerRouteRequestServiceLogRequest {
+  public class PostDispatchEmailLogRequest {
     /// <summary>
     /// Gets or Sets Id
     /// </summary>
@@ -20,18 +20,18 @@ namespace IO.Swagger.Model {
     public int? Id { get; set; }
 
     /// <summary>
-    /// Gets or Sets RequestDate
+    /// Gets or Sets TransactionId
     /// </summary>
-    [DataMember(Name="requestDate", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "requestDate")]
-    public DateTime? RequestDate { get; set; }
+    [DataMember(Name="transactionId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "transactionId")]
+    public int? TransactionId { get; set; }
 
     /// <summary>
-    /// Gets or Sets Apikey
+    /// Gets or Sets DateAndTime
     /// </summary>
-    [DataMember(Name="apikey", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "apikey")]
-    public string Apikey { get; set; }
+    [DataMember(Name="dateAndTime", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "dateAndTime")]
+    public DateTime? DateAndTime { get; set; }
 
     /// <summary>
     /// Gets or Sets CompanyId
@@ -55,32 +55,32 @@ namespace IO.Swagger.Model {
     public string TailNumber { get; set; }
 
     /// <summary>
-    /// Gets or Sets DepartureAirport
+    /// Gets or Sets EmailSent
     /// </summary>
-    [DataMember(Name="departureAirport", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "departureAirport")]
-    public string DepartureAirport { get; set; }
+    [DataMember(Name="emailSent", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "emailSent")]
+    public bool? EmailSent { get; set; }
 
     /// <summary>
-    /// Gets or Sets ArrivalAirport
+    /// Gets or Sets EmailAddressesIncluded
     /// </summary>
-    [DataMember(Name="arrivalAirport", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "arrivalAirport")]
-    public string ArrivalAirport { get; set; }
+    [DataMember(Name="emailAddressesIncluded", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "emailAddressesIncluded")]
+    public string EmailAddressesIncluded { get; set; }
 
     /// <summary>
-    /// Gets or Sets Request
+    /// Gets or Sets EmailError
     /// </summary>
-    [DataMember(Name="request", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "request")]
-    public string Request { get; set; }
+    [DataMember(Name="emailError", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "emailError")]
+    public string EmailError { get; set; }
 
     /// <summary>
-    /// Gets or Sets Response
+    /// Gets or Sets DispatchMailType
     /// </summary>
-    [DataMember(Name="response", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "response")]
-    public string Response { get; set; }
+    [DataMember(Name="dispatchMailType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "dispatchMailType")]
+    public int? DispatchMailType { get; set; }
 
 
     /// <summary>
@@ -89,17 +89,17 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class PostIFlightPlannerRouteRequestServiceLogRequest {\n");
+      sb.Append("class PostDispatchEmailLogRequest {\n");
       sb.Append("  Id: ").Append(Id).Append("\n");
-      sb.Append("  RequestDate: ").Append(RequestDate).Append("\n");
-      sb.Append("  Apikey: ").Append(Apikey).Append("\n");
+      sb.Append("  TransactionId: ").Append(TransactionId).Append("\n");
+      sb.Append("  DateAndTime: ").Append(DateAndTime).Append("\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  UserId: ").Append(UserId).Append("\n");
       sb.Append("  TailNumber: ").Append(TailNumber).Append("\n");
-      sb.Append("  DepartureAirport: ").Append(DepartureAirport).Append("\n");
-      sb.Append("  ArrivalAirport: ").Append(ArrivalAirport).Append("\n");
-      sb.Append("  Request: ").Append(Request).Append("\n");
-      sb.Append("  Response: ").Append(Response).Append("\n");
+      sb.Append("  EmailSent: ").Append(EmailSent).Append("\n");
+      sb.Append("  EmailAddressesIncluded: ").Append(EmailAddressesIncluded).Append("\n");
+      sb.Append("  EmailError: ").Append(EmailError).Append("\n");
+      sb.Append("  DispatchMailType: ").Append(DispatchMailType).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

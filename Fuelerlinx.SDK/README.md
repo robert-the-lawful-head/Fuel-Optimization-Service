@@ -297,6 +297,49 @@ Class | Method | HTTP request | Description
 *ScheduledTripApi* | [**GetCurrentScheduledTrips**](docs/ScheduledTripApi.md#getcurrentscheduledtrips) | **GET** /api/ScheduledTrip/current | Fetch upcoming scheduled trip info pulled from the user's scheduling system.
 *ScheduledTripApi* | [**GetFuelOrderDetailsForScheduledLeg**](docs/ScheduledTripApi.md#getfuelorderdetailsforscheduledleg) | **GET** /api/ScheduledTrip/integration/fuelorderdetails/{legIdentifier} | Fetch the [transaction] and [generatedFuelComment] associated with the fuel order that was placed for the specified leg tied to the [legIdentifier].
 *ScheduledTripApi* | [**PostScheduledLegData**](docs/ScheduledTripApi.md#postscheduledlegdata) | **POST** /api/ScheduledTrip/integration/leg | Post a leg from the user's scheduling system as an object [ScheduledLegData] and it's corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner's side.
+*ServiceLogsApi* | [**DeleteCompanyAircraftChangeLog**](docs/ServiceLogsApi.md#deletecompanyaircraftchangelog) | **DELETE** /api/ServiceLogs/companyAircraftChangeLog/{id} | 
+*ServiceLogsApi* | [**DeleteCompanyFuelerChangeLog**](docs/ServiceLogsApi.md#deletecompanyfuelerchangelog) | **DELETE** /api/ServiceLogs/companyFuelerChangeLog/{id} | 
+*ServiceLogsApi* | [**DeleteDispatchEmailLog**](docs/ServiceLogsApi.md#deletedispatchemaillog) | **DELETE** /api/ServiceLogs/dispatchEmailLog/{id} | 
+*ServiceLogsApi* | [**DeleteFuelOrderServiceLog**](docs/ServiceLogsApi.md#deletefuelorderservicelog) | **DELETE** /api/ServiceLogs/fuelOrderServiceLog/{id} | 
+*ServiceLogsApi* | [**DeleteFuelPriceServiceLog**](docs/ServiceLogsApi.md#deletefuelpriceservicelog) | **DELETE** /api/ServiceLogs/fuelPriceServiceLog/{id} | 
+*ServiceLogsApi* | [**DeleteIFlightPlannerRouteServiceLog**](docs/ServiceLogsApi.md#deleteiflightplannerrouteservicelog) | **DELETE** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog/{id} | 
+*ServiceLogsApi* | [**DeleteSchedulingIntegrationDispatchServiceLog**](docs/ServiceLogsApi.md#deleteschedulingintegrationdispatchservicelog) | **DELETE** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog/{id} | 
+*ServiceLogsApi* | [**DeleteSchedulingIntegrationServiceLog**](docs/ServiceLogsApi.md#deleteschedulingintegrationservicelog) | **DELETE** /api/ServiceLogs/schedulingIntegrationServiceLog/{id} | 
+*ServiceLogsApi* | [**DeleteTankeringApiCalculationLog**](docs/ServiceLogsApi.md#deletetankeringapicalculationlog) | **DELETE** /api/ServiceLogs/tankeringApiCalculationLog/{id} | 
+*ServiceLogsApi* | [**GetCompanyAircraftChangeLogByTailNumber**](docs/ServiceLogsApi.md#getcompanyaircraftchangelogbytailnumber) | **GET** /api/ServiceLogs/companyAircraftChangeLog/by-tailNumber/{tailNumber} | Fetch company aircraft change log by tailNumber.
+*ServiceLogsApi* | [**GetCompanyAircraftChangeLogByUserId**](docs/ServiceLogsApi.md#getcompanyaircraftchangelogbyuserid) | **GET** /api/ServiceLogs/companyAircraftChangeLog/by-userId/{userId} | Fetch company aircraft change log by userId.
+*ServiceLogsApi* | [**GetCompanyFuelerChangeLogByCompanyId**](docs/ServiceLogsApi.md#getcompanyfuelerchangelogbycompanyid) | **GET** /api/ServiceLogs/companyFuelerChangeLog/by-companyId/{companyId} | Fetch company fueler change log by companyId.
+*ServiceLogsApi* | [**GetCompanyFuelerChangeLogByFuelerId**](docs/ServiceLogsApi.md#getcompanyfuelerchangelogbyfuelerid) | **GET** /api/ServiceLogs/companyFuelerChangeLog/by-fuelerId/{companyId}/{fuelerId} | Fetch company fueler change log by fuelerId.
+*ServiceLogsApi* | [**GetDispatchEmailLogByTailNumber**](docs/ServiceLogsApi.md#getdispatchemaillogbytailnumber) | **GET** /api/ServiceLogs/dispatchEmailLog/by-tailNumber/{tailNumber} | Fetch dispatch email log by tailNumber.
+*ServiceLogsApi* | [**GetDispatchEmailLogByTransactionId**](docs/ServiceLogsApi.md#getdispatchemaillogbytransactionid) | **GET** /api/ServiceLogs/dispatchEmailLog/by-userId/{userId}/{transactionId} | Fetch dispatch email log by transactionId.
+*ServiceLogsApi* | [**GetDispatchEmailLogByUserId**](docs/ServiceLogsApi.md#getdispatchemaillogbyuserid) | **GET** /api/ServiceLogs/dispatchEmailLog/by-userId/{userId} | Fetch dispatch email log by userId.
+*ServiceLogsApi* | [**GetFuelOrderServiceLogByTransactionId**](docs/ServiceLogsApi.md#getfuelorderservicelogbytransactionid) | **GET** /api/ServiceLogs/fuelOrderServiceLog/by-transactionId/{transactionId} | Fetch fuel order service log by transactionId.
+*ServiceLogsApi* | [**GetFuelPriceServiceLogByLocation**](docs/ServiceLogsApi.md#getfuelpriceservicelogbylocation) | **GET** /api/ServiceLogs/fuelPriceServiceLog/by-location/{userId}/{icaos} | Fetch fuel price service log by location.
+*ServiceLogsApi* | [**GetFuelPriceServiceLogByUserId**](docs/ServiceLogsApi.md#getfuelpriceservicelogbyuserid) | **GET** /api/ServiceLogs/fuelPriceServiceLog/by-userId/{userId} | /// <summary>  Fetch fuel price service log by userId.  </summary>
+*ServiceLogsApi* | [**GetIFlightPlannerRouteServiceLog**](docs/ServiceLogsApi.md#getiflightplannerrouteservicelog) | **GET** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog/{companyId}/{tailNumber}/{departureAirport}/{arrivalAirport} | Fetch iFlightPlanner route request service log'
+*ServiceLogsApi* | [**GetSchedulingIntegrationDispatchServiceLogByCompanyId**](docs/ServiceLogsApi.md#getschedulingintegrationdispatchservicelogbycompanyid) | **GET** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog/by-companyId/{companyId} | Fetch scheduling integration dispatch service log by companyId.
+*ServiceLogsApi* | [**GetSchedulingIntegrationDispatchServiceLogByDate**](docs/ServiceLogsApi.md#getschedulingintegrationdispatchservicelogbydate) | **GET** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog/by-date/{companyId} | Fetch scheduling integration dispatch service log by Date.
+*ServiceLogsApi* | [**GetSchedulingIntegrationServiceLogByCompanyId**](docs/ServiceLogsApi.md#getschedulingintegrationservicelogbycompanyid) | **GET** /api/ServiceLogs/schedulingIntegrationServiceLog/by-companyId/{companyId} | Fetch scheduling integration service log by companyId.
+*ServiceLogsApi* | [**GetSchedulingIntegrationServiceLogByDate**](docs/ServiceLogsApi.md#getschedulingintegrationservicelogbydate) | **GET** /api/ServiceLogs/schedulingIntegrationServiceLog/by-date/{companyId}/{dateTimeRecorded} | Fetch scheduling integration service log by date.
+*ServiceLogsApi* | [**GetTankeringApiCalculationLog**](docs/ServiceLogsApi.md#gettankeringapicalculationlog) | **GET** /api/ServiceLogs/tankeringApiCalculationLog/{companyId}/{startDateTime}/{endDateTime} | Fetch tankering api calculation log.
+*ServiceLogsApi* | [**PostCompanyAircraftChangeLogAsync**](docs/ServiceLogsApi.md#postcompanyaircraftchangelogasync) | **POST** /api/ServiceLogs/companyAircraftChangeLog | 
+*ServiceLogsApi* | [**PostCompanyFuelerChangeLogAsync**](docs/ServiceLogsApi.md#postcompanyfuelerchangelogasync) | **POST** /api/ServiceLogs/companyFuelerChangeLog | 
+*ServiceLogsApi* | [**PostDispatchEmailLogAsync**](docs/ServiceLogsApi.md#postdispatchemaillogasync) | **POST** /api/ServiceLogs/dispatchEmailLog | 
+*ServiceLogsApi* | [**PostFuelOrderServiceLogAsync**](docs/ServiceLogsApi.md#postfuelorderservicelogasync) | **POST** /api/ServiceLogs/fuelOrderServiceLog | 
+*ServiceLogsApi* | [**PostFuelPriceServiceLogAsync**](docs/ServiceLogsApi.md#postfuelpriceservicelogasync) | **POST** /api/ServiceLogs/fuelPriceServiceLog | 
+*ServiceLogsApi* | [**PostIFlightPlannerRouteServiceLogAsync**](docs/ServiceLogsApi.md#postiflightplannerrouteservicelogasync) | **POST** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog | 
+*ServiceLogsApi* | [**PostSchedulingIntegrationDispatchServiceLogAsync**](docs/ServiceLogsApi.md#postschedulingintegrationdispatchservicelogasync) | **POST** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog | 
+*ServiceLogsApi* | [**PostSchedulingIntegrationServiceLogAsync**](docs/ServiceLogsApi.md#postschedulingintegrationservicelogasync) | **POST** /api/ServiceLogs/schedulingIntegrationServiceLog | 
+*ServiceLogsApi* | [**PostTankeringApiCalculationLogAsync**](docs/ServiceLogsApi.md#posttankeringapicalculationlogasync) | **POST** /api/ServiceLogs/tankeringApiCalculationLog | 
+*ServiceLogsApi* | [**UpdateCompanyAircraftChangeLog**](docs/ServiceLogsApi.md#updatecompanyaircraftchangelog) | **PUT** /api/ServiceLogs/companyAircraftChangeLog | 
+*ServiceLogsApi* | [**UpdateCompanyFuelerChangeLog**](docs/ServiceLogsApi.md#updatecompanyfuelerchangelog) | **PUT** /api/ServiceLogs/companyFuelerChangeLog | 
+*ServiceLogsApi* | [**UpdateDispatchEmailLog**](docs/ServiceLogsApi.md#updatedispatchemaillog) | **PUT** /api/ServiceLogs/dispatchEmailLog | 
+*ServiceLogsApi* | [**UpdateFuelOrderServiceLog**](docs/ServiceLogsApi.md#updatefuelorderservicelog) | **PUT** /api/ServiceLogs/fuelOrderServiceLog | 
+*ServiceLogsApi* | [**UpdateFuelPriceServiceLog**](docs/ServiceLogsApi.md#updatefuelpriceservicelog) | **PUT** /api/ServiceLogs/fuelPriceServiceLog | 
+*ServiceLogsApi* | [**UpdateIFlightPlannerRouteServiceLog**](docs/ServiceLogsApi.md#updateiflightplannerrouteservicelog) | **PUT** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog | 
+*ServiceLogsApi* | [**UpdateSchedulingIntegrationDispatchServiceLog**](docs/ServiceLogsApi.md#updateschedulingintegrationdispatchservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog | 
+*ServiceLogsApi* | [**UpdateSchedulingIntegrationServiceLog**](docs/ServiceLogsApi.md#updateschedulingintegrationservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationServiceLog | 
+*ServiceLogsApi* | [**UpdateTankeringApiCalculationLog**](docs/ServiceLogsApi.md#updatetankeringapicalculationlog) | **PUT** /api/ServiceLogs/tankeringApiCalculationLog | 
 *TankeringApi* | [**CalculateTankering**](docs/TankeringApi.md#calculatetankering) | **POST** /api/Tankering/calculate | 
 *TaxesApi* | [**DeleteTaxByCountry**](docs/TaxesApi.md#deletetaxbycountry) | **DELETE** /api/Taxes/by-country/{id} | Internal use only - Delete a tax-by-country record.
 *TaxesApi* | [**GetTaxByCountryById**](docs/TaxesApi.md#gettaxbycountrybyid) | **GET** /api/Taxes/by-country/id/{id} | Fetch taxes by country by it's [id].  These taxes include MOT/VAT and under what circumstances they are applicable.
@@ -426,7 +469,11 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ColorAxis](docs/ColorAxis.md)
  - [IO.Swagger.Model.ColorSet](docs/ColorSet.md)
  - [IO.Swagger.Model.CompanyAccountSettingsDTO](docs/CompanyAccountSettingsDTO.md)
+ - [IO.Swagger.Model.CompanyAircraftChangeLogDTO](docs/CompanyAircraftChangeLogDTO.md)
+ - [IO.Swagger.Model.CompanyAircraftChangeLogResponse](docs/CompanyAircraftChangeLogResponse.md)
  - [IO.Swagger.Model.CompanyDTO](docs/CompanyDTO.md)
+ - [IO.Swagger.Model.CompanyFuelerChangeLogDTO](docs/CompanyFuelerChangeLogDTO.md)
+ - [IO.Swagger.Model.CompanyFuelerChangeLogResponse](docs/CompanyFuelerChangeLogResponse.md)
  - [IO.Swagger.Model.CompanyFuelerDTO](docs/CompanyFuelerDTO.md)
  - [IO.Swagger.Model.CompanyFuelerListResponse](docs/CompanyFuelerListResponse.md)
  - [IO.Swagger.Model.CompanyFuelerNotesDTO](docs/CompanyFuelerNotesDTO.md)
@@ -458,6 +505,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyResponse](docs/DeleteAirportDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconProcessResponse](docs/DeleteAutoReconProcessResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconciledFileResponse](docs/DeleteAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.DeleteCompanyAircraftChangeLogResponse](docs/DeleteCompanyAircraftChangeLogResponse.md)
+ - [IO.Swagger.Model.DeleteCompanyFuelerChangeLogResponse](docs/DeleteCompanyFuelerChangeLogResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerNotesResponse](docs/DeleteCompanyFuelerNotesResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerPriceAdjustmentResponse](docs/DeleteCompanyFuelerPriceAdjustmentResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerPriceSheetFileCaptureResponse](docs/DeleteCompanyFuelerPriceSheetFileCaptureResponse.md)
@@ -467,11 +516,14 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteCompanyUserProfilesResponse](docs/DeleteCompanyUserProfilesResponse.md)
  - [IO.Swagger.Model.DeleteCredentialsResponse](docs/DeleteCredentialsResponse.md)
  - [IO.Swagger.Model.DeleteDeploymentNotesResponse](docs/DeleteDeploymentNotesResponse.md)
+ - [IO.Swagger.Model.DeleteDispatchEmailLogResponse](docs/DeleteDispatchEmailLogResponse.md)
  - [IO.Swagger.Model.DeleteEmailBlastEmailAddressesResponse](docs/DeleteEmailBlastEmailAddressesResponse.md)
  - [IO.Swagger.Model.DeleteFboAliasResponse](docs/DeleteFboAliasResponse.md)
  - [IO.Swagger.Model.DeleteFboDetailsByCompanyNotesResponse](docs/DeleteFboDetailsByCompanyNotesResponse.md)
  - [IO.Swagger.Model.DeleteFboDetailsByCompanyResponse](docs/DeleteFboDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteFlightTypeMappingResponse](docs/DeleteFlightTypeMappingResponse.md)
+ - [IO.Swagger.Model.DeleteFuelOrderServiceLogResponse](docs/DeleteFuelOrderServiceLogResponse.md)
+ - [IO.Swagger.Model.DeleteFuelPriceServiceLogResponse](docs/DeleteFuelPriceServiceLogResponse.md)
  - [IO.Swagger.Model.DeleteIFlightPlannerRouteRequestServiceLogResponse](docs/DeleteIFlightPlannerRouteRequestServiceLogResponse.md)
  - [IO.Swagger.Model.DeleteImageFileDataResponse](docs/DeleteImageFileDataResponse.md)
  - [IO.Swagger.Model.DeleteImportFileCaptureResponse](docs/DeleteImportFileCaptureResponse.md)
@@ -485,9 +537,12 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteReportScheduledDistributionResponse](docs/DeleteReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.DeleteSavedTripLegResponse](docs/DeleteSavedTripLegResponse.md)
  - [IO.Swagger.Model.DeleteSavedTripResponse](docs/DeleteSavedTripResponse.md)
+ - [IO.Swagger.Model.DeleteSchedulingIntegrationDispatchServiceLogResponse](docs/DeleteSchedulingIntegrationDispatchServiceLogResponse.md)
+ - [IO.Swagger.Model.DeleteSchedulingIntegrationServiceLogResponse](docs/DeleteSchedulingIntegrationServiceLogResponse.md)
  - [IO.Swagger.Model.DeleteServicesAndFeesByCompanyResponse](docs/DeleteServicesAndFeesByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteSupplierDetailsResponse](docs/DeleteSupplierDetailsResponse.md)
  - [IO.Swagger.Model.DeleteSupportedInvoiceFileTemplateResponse](docs/DeleteSupportedInvoiceFileTemplateResponse.md)
+ - [IO.Swagger.Model.DeleteTankeringApiCalculationLogResponse](docs/DeleteTankeringApiCalculationLogResponse.md)
  - [IO.Swagger.Model.DeleteTaxesByCountryResponse](docs/DeleteTaxesByCountryResponse.md)
  - [IO.Swagger.Model.DeleteTransactionAccountingDataResponse](docs/DeleteTransactionAccountingDataResponse.md)
  - [IO.Swagger.Model.DeleteTransactionAccountingTransferResponse](docs/DeleteTransactionAccountingTransferResponse.md)
@@ -498,6 +553,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeploymentNotesDTO](docs/DeploymentNotesDTO.md)
  - [IO.Swagger.Model.DeploymentNotesListResponse](docs/DeploymentNotesListResponse.md)
  - [IO.Swagger.Model.DeploymentNotesResponse](docs/DeploymentNotesResponse.md)
+ - [IO.Swagger.Model.DispatchEmailLogDTO](docs/DispatchEmailLogDTO.md)
+ - [IO.Swagger.Model.DispatchEmailLogResponse](docs/DispatchEmailLogResponse.md)
  - [IO.Swagger.Model.DispatchEmailOptions](docs/DispatchEmailOptions.md)
  - [IO.Swagger.Model.DispatchFuelRequest](docs/DispatchFuelRequest.md)
  - [IO.Swagger.Model.DispatchFuelResponse](docs/DispatchFuelResponse.md)
@@ -548,9 +605,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FuelOrderCancellationOptions](docs/FuelOrderCancellationOptions.md)
  - [IO.Swagger.Model.FuelOrderDetailsForScheduledLegResponse](docs/FuelOrderDetailsForScheduledLegResponse.md)
  - [IO.Swagger.Model.FuelOrderResult](docs/FuelOrderResult.md)
+ - [IO.Swagger.Model.FuelOrderServiceLogDTO](docs/FuelOrderServiceLogDTO.md)
+ - [IO.Swagger.Model.FuelOrderServiceLogResponse](docs/FuelOrderServiceLogResponse.md)
  - [IO.Swagger.Model.FuelPriceOption](docs/FuelPriceOption.md)
  - [IO.Swagger.Model.FuelPriceOptionsByAirport](docs/FuelPriceOptionsByAirport.md)
  - [IO.Swagger.Model.FuelPriceResponse](docs/FuelPriceResponse.md)
+ - [IO.Swagger.Model.FuelPriceServiceLogDTO](docs/FuelPriceServiceLogDTO.md)
+ - [IO.Swagger.Model.FuelPriceServiceLogResponse](docs/FuelPriceServiceLogResponse.md)
  - [IO.Swagger.Model.FuelPricingManagementDTO](docs/FuelPricingManagementDTO.md)
  - [IO.Swagger.Model.FuelPricingManagementSubFeaturesDTO](docs/FuelPricingManagementSubFeaturesDTO.md)
  - [IO.Swagger.Model.FuelRequestDetails](docs/FuelRequestDetails.md)
@@ -570,6 +631,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.IFlightPlannerModelsByTypeResponse](docs/IFlightPlannerModelsByTypeResponse.md)
  - [IO.Swagger.Model.IFlightPlannerRouteDetailsCalculation](docs/IFlightPlannerRouteDetailsCalculation.md)
  - [IO.Swagger.Model.IFlightPlannerRouteRequestServiceLogDTO](docs/IFlightPlannerRouteRequestServiceLogDTO.md)
+ - [IO.Swagger.Model.IFlightPlannerRouteRequestServiceLogResponse](docs/IFlightPlannerRouteRequestServiceLogResponse.md)
  - [IO.Swagger.Model.IFlightPlannerRouteResponseData](docs/IFlightPlannerRouteResponseData.md)
  - [IO.Swagger.Model.ImageFileDataDTO](docs/ImageFileDataDTO.md)
  - [IO.Swagger.Model.ImageFileDataResponse](docs/ImageFileDataResponse.md)
@@ -628,6 +690,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostAutoReconProcessResponse](docs/PostAutoReconProcessResponse.md)
  - [IO.Swagger.Model.PostAutoReconciledFileRequest](docs/PostAutoReconciledFileRequest.md)
  - [IO.Swagger.Model.PostAutoReconciledFileResponse](docs/PostAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.PostCompanyAircraftChangeLogRequest](docs/PostCompanyAircraftChangeLogRequest.md)
+ - [IO.Swagger.Model.PostCompanyAircraftChangeLogResponse](docs/PostCompanyAircraftChangeLogResponse.md)
+ - [IO.Swagger.Model.PostCompanyFuelerChangeLogRequest](docs/PostCompanyFuelerChangeLogRequest.md)
+ - [IO.Swagger.Model.PostCompanyFuelerChangeLogResponse](docs/PostCompanyFuelerChangeLogResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerNotesRequest](docs/PostCompanyFuelerNotesRequest.md)
  - [IO.Swagger.Model.PostCompanyFuelerNotesResponse](docs/PostCompanyFuelerNotesResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerPriceAdjustmentRequest](docs/PostCompanyFuelerPriceAdjustmentRequest.md)
@@ -646,6 +712,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostCredentialsResponse](docs/PostCredentialsResponse.md)
  - [IO.Swagger.Model.PostDeploymentNotesRequest](docs/PostDeploymentNotesRequest.md)
  - [IO.Swagger.Model.PostDeploymentNotesResponse](docs/PostDeploymentNotesResponse.md)
+ - [IO.Swagger.Model.PostDispatchEmailLogRequest](docs/PostDispatchEmailLogRequest.md)
+ - [IO.Swagger.Model.PostDispatchEmailLogResponse](docs/PostDispatchEmailLogResponse.md)
  - [IO.Swagger.Model.PostEmailBlastEmailAddressesRequest](docs/PostEmailBlastEmailAddressesRequest.md)
  - [IO.Swagger.Model.PostEmailBlastEmailAddressesResponse](docs/PostEmailBlastEmailAddressesResponse.md)
  - [IO.Swagger.Model.PostFboAliasRequest](docs/PostFboAliasRequest.md)
@@ -658,6 +726,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostFlightTypeMappingResponse](docs/PostFlightTypeMappingResponse.md)
  - [IO.Swagger.Model.PostFuelOrderRequest](docs/PostFuelOrderRequest.md)
  - [IO.Swagger.Model.PostFuelOrderResponse](docs/PostFuelOrderResponse.md)
+ - [IO.Swagger.Model.PostFuelOrderServiceLogRequest](docs/PostFuelOrderServiceLogRequest.md)
+ - [IO.Swagger.Model.PostFuelOrderServiceLogResponse](docs/PostFuelOrderServiceLogResponse.md)
+ - [IO.Swagger.Model.PostFuelPriceServiceLogRequest](docs/PostFuelPriceServiceLogRequest.md)
+ - [IO.Swagger.Model.PostFuelPriceServiceLogResponse](docs/PostFuelPriceServiceLogResponse.md)
  - [IO.Swagger.Model.PostIFlightPlannerRouteRequestServiceLogRequest](docs/PostIFlightPlannerRouteRequestServiceLogRequest.md)
  - [IO.Swagger.Model.PostIFlightPlannerRouteRequestServiceLogResponse](docs/PostIFlightPlannerRouteRequestServiceLogResponse.md)
  - [IO.Swagger.Model.PostImageFileDataRequest](docs/PostImageFileDataRequest.md)
@@ -683,12 +755,18 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostSavedTripResponse](docs/PostSavedTripResponse.md)
  - [IO.Swagger.Model.PostScheduledLegFromIntegrationRequest](docs/PostScheduledLegFromIntegrationRequest.md)
  - [IO.Swagger.Model.PostScheduledLegFromIntegrationResponse](docs/PostScheduledLegFromIntegrationResponse.md)
+ - [IO.Swagger.Model.PostSchedulingIntegrationDispatchServiceLogRequest](docs/PostSchedulingIntegrationDispatchServiceLogRequest.md)
+ - [IO.Swagger.Model.PostSchedulingIntegrationDispatchServiceLogResponse](docs/PostSchedulingIntegrationDispatchServiceLogResponse.md)
+ - [IO.Swagger.Model.PostSchedulingIntegrationServiceLogRequest](docs/PostSchedulingIntegrationServiceLogRequest.md)
+ - [IO.Swagger.Model.PostSchedulingIntegrationServiceLogResponse](docs/PostSchedulingIntegrationServiceLogResponse.md)
  - [IO.Swagger.Model.PostServicesAndFeesByCompanyRequest](docs/PostServicesAndFeesByCompanyRequest.md)
  - [IO.Swagger.Model.PostServicesAndFeesByCompanyResponse](docs/PostServicesAndFeesByCompanyResponse.md)
  - [IO.Swagger.Model.PostSupplierDetailsRequest](docs/PostSupplierDetailsRequest.md)
  - [IO.Swagger.Model.PostSupplierDetailsResponse](docs/PostSupplierDetailsResponse.md)
  - [IO.Swagger.Model.PostSupportedInvoiceFileTemplateRequest](docs/PostSupportedInvoiceFileTemplateRequest.md)
  - [IO.Swagger.Model.PostSupportedInvoiceFileTemplateResponse](docs/PostSupportedInvoiceFileTemplateResponse.md)
+ - [IO.Swagger.Model.PostTankeringApiCalculationLogRequest](docs/PostTankeringApiCalculationLogRequest.md)
+ - [IO.Swagger.Model.PostTankeringApiCalculationLogResponse](docs/PostTankeringApiCalculationLogResponse.md)
  - [IO.Swagger.Model.PostTaxesByCountryRequest](docs/PostTaxesByCountryRequest.md)
  - [IO.Swagger.Model.PostTaxesByCountryResponse](docs/PostTaxesByCountryResponse.md)
  - [IO.Swagger.Model.PostTransactionAccountingDataRequest](docs/PostTransactionAccountingDataRequest.md)
@@ -752,6 +830,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.SavedTripResponse](docs/SavedTripResponse.md)
  - [IO.Swagger.Model.ScheduledTripDTO](docs/ScheduledTripDTO.md)
  - [IO.Swagger.Model.ScheduledTripDeleteResponse](docs/ScheduledTripDeleteResponse.md)
+ - [IO.Swagger.Model.SchedulingIntegrationDispatchServiceLogDTO](docs/SchedulingIntegrationDispatchServiceLogDTO.md)
+ - [IO.Swagger.Model.SchedulingIntegrationDispatchServiceLogResponse](docs/SchedulingIntegrationDispatchServiceLogResponse.md)
+ - [IO.Swagger.Model.SchedulingIntegrationServiceLogDTO](docs/SchedulingIntegrationServiceLogDTO.md)
+ - [IO.Swagger.Model.SchedulingIntegrationServiceLogResponse](docs/SchedulingIntegrationServiceLogResponse.md)
  - [IO.Swagger.Model.Segment](docs/Segment.md)
  - [IO.Swagger.Model.SegmentItem](docs/SegmentItem.md)
  - [IO.Swagger.Model.SendReportScheduledDistributionRequest](docs/SendReportScheduledDistributionRequest.md)
@@ -773,6 +855,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.SupplierDetailsResponse](docs/SupplierDetailsResponse.md)
  - [IO.Swagger.Model.SupportedInvoiceFileTemplateDTO](docs/SupportedInvoiceFileTemplateDTO.md)
  - [IO.Swagger.Model.SupportedInvoiceFileTemplateResponse](docs/SupportedInvoiceFileTemplateResponse.md)
+ - [IO.Swagger.Model.TankeringApiCalculationLogDTO](docs/TankeringApiCalculationLogDTO.md)
+ - [IO.Swagger.Model.TankeringApiCalculationLogResponse](docs/TankeringApiCalculationLogResponse.md)
  - [IO.Swagger.Model.TankeringDTO](docs/TankeringDTO.md)
  - [IO.Swagger.Model.TankeringSettingsDTO](docs/TankeringSettingsDTO.md)
  - [IO.Swagger.Model.TaxesByCountryDTO](docs/TaxesByCountryDTO.md)
@@ -820,6 +904,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateAutoReconProcessResponse](docs/UpdateAutoReconProcessResponse.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileRequest](docs/UpdateAutoReconciledFileRequest.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileResponse](docs/UpdateAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.UpdateCompanyAircraftChangeLogRequest](docs/UpdateCompanyAircraftChangeLogRequest.md)
+ - [IO.Swagger.Model.UpdateCompanyAircraftChangeLogResponse](docs/UpdateCompanyAircraftChangeLogResponse.md)
+ - [IO.Swagger.Model.UpdateCompanyFuelerChangeLogRequest](docs/UpdateCompanyFuelerChangeLogRequest.md)
+ - [IO.Swagger.Model.UpdateCompanyFuelerChangeLogResponse](docs/UpdateCompanyFuelerChangeLogResponse.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerNotesRequest](docs/UpdateCompanyFuelerNotesRequest.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerNotesResponse](docs/UpdateCompanyFuelerNotesResponse.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerPriceSheetFileCaptureRequest](docs/UpdateCompanyFuelerPriceSheetFileCaptureRequest.md)
@@ -836,6 +924,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateCredentialsResponse](docs/UpdateCredentialsResponse.md)
  - [IO.Swagger.Model.UpdateDeploymentNotesRequest](docs/UpdateDeploymentNotesRequest.md)
  - [IO.Swagger.Model.UpdateDeploymentNotesResponse](docs/UpdateDeploymentNotesResponse.md)
+ - [IO.Swagger.Model.UpdateDispatchEmailLogRequest](docs/UpdateDispatchEmailLogRequest.md)
+ - [IO.Swagger.Model.UpdateDispatchEmailLogResponse](docs/UpdateDispatchEmailLogResponse.md)
  - [IO.Swagger.Model.UpdateEmailBlastEmailAddressesRequest](docs/UpdateEmailBlastEmailAddressesRequest.md)
  - [IO.Swagger.Model.UpdateEmailBlastEmailAddressesResponse](docs/UpdateEmailBlastEmailAddressesResponse.md)
  - [IO.Swagger.Model.UpdateFboAliasRequest](docs/UpdateFboAliasRequest.md)
@@ -846,6 +936,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateFboDetailsByCompanyResponse](docs/UpdateFboDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.UpdateFlightTypeMappingRequest](docs/UpdateFlightTypeMappingRequest.md)
  - [IO.Swagger.Model.UpdateFlightTypeMappingResponse](docs/UpdateFlightTypeMappingResponse.md)
+ - [IO.Swagger.Model.UpdateFuelOrderServiceLogRequest](docs/UpdateFuelOrderServiceLogRequest.md)
+ - [IO.Swagger.Model.UpdateFuelOrderServiceLogResponse](docs/UpdateFuelOrderServiceLogResponse.md)
+ - [IO.Swagger.Model.UpdateFuelPriceServiceLogRequest](docs/UpdateFuelPriceServiceLogRequest.md)
+ - [IO.Swagger.Model.UpdateFuelPriceServiceLogResponse](docs/UpdateFuelPriceServiceLogResponse.md)
  - [IO.Swagger.Model.UpdateFuelPurchaseInfoRequest](docs/UpdateFuelPurchaseInfoRequest.md)
  - [IO.Swagger.Model.UpdateFuelPurchaseInfoResponse](docs/UpdateFuelPurchaseInfoResponse.md)
  - [IO.Swagger.Model.UpdateIFlightPlannerRouteRequestServiceLogRequest](docs/UpdateIFlightPlannerRouteRequestServiceLogRequest.md)
@@ -868,12 +962,18 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateSavedTripLegResponse](docs/UpdateSavedTripLegResponse.md)
  - [IO.Swagger.Model.UpdateSavedTripRequest](docs/UpdateSavedTripRequest.md)
  - [IO.Swagger.Model.UpdateSavedTripResponse](docs/UpdateSavedTripResponse.md)
+ - [IO.Swagger.Model.UpdateSchedulingIntegrationDispatchServiceLogRequest](docs/UpdateSchedulingIntegrationDispatchServiceLogRequest.md)
+ - [IO.Swagger.Model.UpdateSchedulingIntegrationDispatchServiceLogResponse](docs/UpdateSchedulingIntegrationDispatchServiceLogResponse.md)
+ - [IO.Swagger.Model.UpdateSchedulingIntegrationServiceLogRequest](docs/UpdateSchedulingIntegrationServiceLogRequest.md)
+ - [IO.Swagger.Model.UpdateSchedulingIntegrationServiceLogResponse](docs/UpdateSchedulingIntegrationServiceLogResponse.md)
  - [IO.Swagger.Model.UpdateServicesAndFeesByCompanyRequest](docs/UpdateServicesAndFeesByCompanyRequest.md)
  - [IO.Swagger.Model.UpdateServicesAndFeesByCompanyResponse](docs/UpdateServicesAndFeesByCompanyResponse.md)
  - [IO.Swagger.Model.UpdateSupplierDetailsRequest](docs/UpdateSupplierDetailsRequest.md)
  - [IO.Swagger.Model.UpdateSupplierDetailsResponse](docs/UpdateSupplierDetailsResponse.md)
  - [IO.Swagger.Model.UpdateSupportedFileTemplateRequest](docs/UpdateSupportedFileTemplateRequest.md)
  - [IO.Swagger.Model.UpdateSupportedInvoiceFileTemplateResponse](docs/UpdateSupportedInvoiceFileTemplateResponse.md)
+ - [IO.Swagger.Model.UpdateTankeringApiCalculationLogRequest](docs/UpdateTankeringApiCalculationLogRequest.md)
+ - [IO.Swagger.Model.UpdateTankeringApiCalculationLogResponse](docs/UpdateTankeringApiCalculationLogResponse.md)
  - [IO.Swagger.Model.UpdateTaxesByCountryRequest](docs/UpdateTaxesByCountryRequest.md)
  - [IO.Swagger.Model.UpdateTaxesByCountryResponse](docs/UpdateTaxesByCountryResponse.md)
  - [IO.Swagger.Model.UpdateTransactionAccountingDataRequest](docs/UpdateTransactionAccountingDataRequest.md)
