@@ -46,6 +46,11 @@ namespace IO.Swagger.Api
         /// <returns>CredentialsResponse</returns>
         CredentialsResponse GetCredentials (int? id);
         /// <summary>
+        /// Fetches all user credentials 
+        /// </summary>
+        /// <returns>CredentialsListResponse</returns>
+        CredentialsListResponse GetCredentialsList ();
+        /// <summary>
         /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
         /// </summary>
         /// <param name="id"></param>
@@ -374,6 +379,38 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCredentials: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CredentialsResponse) ApiClient.Deserialize(response.Content, typeof(CredentialsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetches all user credentials 
+        /// </summary>
+        /// <returns>CredentialsListResponse</returns>            
+        public CredentialsListResponse GetCredentialsList ()
+        {
+            
+    
+            var path = "/api/User/credentials/list";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCredentialsList: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCredentialsList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CredentialsListResponse) ApiClient.Deserialize(response.Content, typeof(CredentialsListResponse), response.Headers);
         }
     
         /// <summary>

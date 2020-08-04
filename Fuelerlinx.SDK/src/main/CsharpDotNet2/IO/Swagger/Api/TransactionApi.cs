@@ -199,6 +199,12 @@ namespace IO.Swagger.Api
         /// <returns>UpdateAutoReconProcessResponse</returns>
         UpdateAutoReconProcessResponse UpdateInvoiceImport (UpdateAutoReconProcessRequest body);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateTransactionResponse</returns>
+        UpdateTransactionResponse UpdateTransaction (UpdateTransactionRequest body);
+        /// <summary>
         /// Update the accounting data record for a particular transaction. 
         /// </summary>
         /// <param name="body"></param>
@@ -1369,6 +1375,40 @@ path = path.Replace("{" + "fuelerId" + "}", ApiClient.ParameterToString(fuelerId
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateInvoiceImport: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateAutoReconProcessResponse) ApiClient.Deserialize(response.Content, typeof(UpdateAutoReconProcessResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateTransactionResponse</returns>            
+        public UpdateTransactionResponse UpdateTransaction (UpdateTransactionRequest body)
+        {
+            
+    
+            var path = "/api/Transaction";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateTransaction: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateTransaction: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateTransactionResponse) ApiClient.Deserialize(response.Content, typeof(UpdateTransactionResponse), response.Headers);
         }
     
         /// <summary>

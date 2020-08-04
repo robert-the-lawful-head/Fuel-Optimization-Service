@@ -48,6 +48,13 @@ namespace IO.Swagger.Model {
     public string Username { get; set; }
 
     /// <summary>
+    /// Gets or Sets Password
+    /// </summary>
+    [DataMember(Name="password", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "password")]
+    public string Password { get; set; }
+
+    /// <summary>
     /// Gets or Sets Token
     /// </summary>
     [DataMember(Name="token", EmitDefaultValue=false)]
@@ -152,6 +159,7 @@ namespace IO.Swagger.Model {
       sb.Append("  FirstName: ").Append(FirstName).Append("\n");
       sb.Append("  LastName: ").Append(LastName).Append("\n");
       sb.Append("  Username: ").Append(Username).Append("\n");
+      sb.Append("  Password: ").Append(Password).Append("\n");
       sb.Append("  Token: ").Append(Token).Append("\n");
       sb.Append("  PrimaryAccount: ").Append(PrimaryAccount).Append("\n");
       sb.Append("  DemoMode: ").Append(DemoMode).Append("\n");

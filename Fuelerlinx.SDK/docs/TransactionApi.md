@@ -34,6 +34,7 @@ Method | HTTP request | Description
 [**PostTransactionNote**](TransactionApi.md#posttransactionnote) | **POST** /api/Transaction/note | Add a new note to a transaction.
 [**UpdateAutoReconciledFile**](TransactionApi.md#updateautoreconciledfile) | **PUT** /api/Transaction/invoice-import/file-capture | Internal use only - Update a file captured by an invoice import.
 [**UpdateInvoiceImport**](TransactionApi.md#updateinvoiceimport) | **PUT** /api/Transaction/invoice-import | Internal use only - Update an invoice import.
+[**UpdateTransaction**](TransactionApi.md#updatetransaction) | **PUT** /api/Transaction | 
 [**UpdateTransactionAccountData**](TransactionApi.md#updatetransactionaccountdata) | **PUT** /api/Transaction/accounting-data | Update the accounting data record for a particular transaction.
 [**UpdateTransactionAccountingTransferStatus**](TransactionApi.md#updatetransactionaccountingtransferstatus) | **PUT** /api/Transaction/accounting-transfer | Internal use only - Update the accounting transfer status of a particular transaction.
 [**UpdateTransactionAttachment**](TransactionApi.md#updatetransactionattachment) | **PUT** /api/Transaction/attachment | Update an existing attachment record for a transaction.
@@ -2117,6 +2118,74 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**UpdateAutoReconProcessResponse**](UpdateAutoReconProcessResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatetransaction"></a>
+# **UpdateTransaction**
+> UpdateTransactionResponse UpdateTransaction (UpdateTransactionRequest body)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateTransactionExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new TransactionApi();
+            var body = new UpdateTransactionRequest(); // UpdateTransactionRequest |  (optional) 
+
+            try
+            {
+                UpdateTransactionResponse result = apiInstance.UpdateTransaction(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling TransactionApi.UpdateTransaction: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateTransactionRequest**](UpdateTransactionRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateTransactionResponse**](UpdateTransactionResponse.md)
 
 ### Authorization
 

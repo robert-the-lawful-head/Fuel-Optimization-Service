@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **FirstName** | **string** |  | [optional] 
 **LastName** | **string** |  | [optional] 
 **Username** | **string** |  | [optional] 
+**Password** | **string** |  | [optional] 
 **Token** | **string** |  | [optional] 
 **PrimaryAccount** | **bool?** |  | [optional] 
 **DemoMode** | **bool?** |  | [optional] 

@@ -40,10 +40,20 @@ namespace IO.Swagger.Api
         /// <returns>OracleAccountingExportResponse</returns>
         OracleAccountingExportResponse GetPendingAccountingExport ();
         /// <summary>
+        /// Get Sage Credentials 
+        /// </summary>
+        /// <returns>AuthorizationInfoResponse</returns>
+        AuthorizationInfoResponse GetSageCredentials ();
+        /// <summary>
         /// Get Sage GL Account Details 
         /// </summary>
         /// <returns>SageGeneralLedgerResponse</returns>
         SageGeneralLedgerResponse GetSageGlAccounts ();
+        /// <summary>
+        /// Get Sage GL Account Details 
+        /// </summary>
+        /// <returns>SageVendorResponse</returns>
+        SageVendorResponse GetSageVendorAccounts ();
         /// <summary>
         /// Fetch supplier-details for a particular FBO or Vendor based on the provided [ID]. 
         /// </summary>
@@ -59,8 +69,9 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Insert new bill in Sage 
         /// </summary>
+        /// <param name="transactionid"></param>
         /// <returns>SageCreateBillResponse</returns>
-        SageCreateBillResponse PostSageBill ();
+        SageCreateBillResponse PostSageBill (int? transactionid);
         /// <summary>
         /// Adds a new record for supplier-details of an FBO or Vendor. 
         /// </summary>
@@ -73,6 +84,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostAccountingIntegrationItemCodesResponse</returns>
         PostAccountingIntegrationItemCodesResponse UpdateAccountingIntegrationItemCodesDetails (UpdateAccountingIntegrationItemCodesDetailsRequest body);
+        /// <summary>
+        /// Get Sage Credentials 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>AuthorizationInfoResponse</returns>
+        AuthorizationInfoResponse UpdateSageCredentials (SageCredentialsRequest body);
         /// <summary>
         /// Updates current supplier detail record 
         /// </summary>
@@ -310,6 +327,38 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Get Sage Credentials 
+        /// </summary>
+        /// <returns>AuthorizationInfoResponse</returns>            
+        public AuthorizationInfoResponse GetSageCredentials ()
+        {
+            
+    
+            var path = "/api/Accounting/sage/credentials";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSageCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSageCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (AuthorizationInfoResponse) ApiClient.Deserialize(response.Content, typeof(AuthorizationInfoResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Get Sage GL Account Details 
         /// </summary>
         /// <returns>SageGeneralLedgerResponse</returns>            
@@ -339,6 +388,38 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetSageGlAccounts: " + response.ErrorMessage, response.ErrorMessage);
     
             return (SageGeneralLedgerResponse) ApiClient.Deserialize(response.Content, typeof(SageGeneralLedgerResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Get Sage GL Account Details 
+        /// </summary>
+        /// <returns>SageVendorResponse</returns>            
+        public SageVendorResponse GetSageVendorAccounts ()
+        {
+            
+    
+            var path = "/api/Accounting/sage/vendor-accounts";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSageVendorAccounts: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSageVendorAccounts: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SageVendorResponse) ApiClient.Deserialize(response.Content, typeof(SageVendorResponse), response.Headers);
         }
     
         /// <summary>
@@ -415,14 +496,19 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Insert new bill in Sage 
         /// </summary>
+        /// <param name="transactionid"></param> 
         /// <returns>SageCreateBillResponse</returns>            
-        public SageCreateBillResponse PostSageBill ()
+        public SageCreateBillResponse PostSageBill (int? transactionid)
         {
             
+            // verify the required parameter 'transactionid' is set
+            if (transactionid == null) throw new ApiException(400, "Missing required parameter 'transactionid' when calling PostSageBill");
+            
     
-            var path = "/api/Accounting/sage/bill";
+            var path = "/api/Accounting/sage/bill/{transactionid}";
             path = path.Replace("{format}", "json");
-                
+            path = path.Replace("{" + "transactionid" + "}", ApiClient.ParameterToString(transactionid));
+    
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();
@@ -510,6 +596,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateAccountingIntegrationItemCodesDetails: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostAccountingIntegrationItemCodesResponse) ApiClient.Deserialize(response.Content, typeof(PostAccountingIntegrationItemCodesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Get Sage Credentials 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>AuthorizationInfoResponse</returns>            
+        public AuthorizationInfoResponse UpdateSageCredentials (SageCredentialsRequest body)
+        {
+            
+    
+            var path = "/api/Accounting/sage/update-credentials";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSageCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSageCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (AuthorizationInfoResponse) ApiClient.Deserialize(response.Content, typeof(AuthorizationInfoResponse), response.Headers);
         }
     
         /// <summary>

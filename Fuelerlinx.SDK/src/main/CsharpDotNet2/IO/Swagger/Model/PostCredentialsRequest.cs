@@ -41,8 +41,9 @@ namespace IO.Swagger.Model {
     public string PasswordPlainText { get; set; }
 
     /// <summary>
-    /// Gets or Sets Role
+    /// 
     /// </summary>
+    /// <value></value>
     [DataMember(Name="role", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "role")]
     public int? Role { get; set; }

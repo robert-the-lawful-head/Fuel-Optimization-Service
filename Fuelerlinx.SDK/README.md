@@ -88,12 +88,15 @@ Class | Method | HTTP request | Description
 *AccountingApi* | [**GetAccountingIntegrationItemCodesById**](docs/AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
 *AccountingApi* | [**GetAccountingItemMappingList**](docs/AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets single accounting integration item code record
 *AccountingApi* | [**GetPendingAccountingExport**](docs/AccountingApi.md#getpendingaccountingexport) | **GET** /api/Accounting/oracle/accounting-export/pending | 
+*AccountingApi* | [**GetSageCredentials**](docs/AccountingApi.md#getsagecredentials) | **GET** /api/Accounting/sage/credentials | Get Sage Credentials
 *AccountingApi* | [**GetSageGlAccounts**](docs/AccountingApi.md#getsageglaccounts) | **GET** /api/Accounting/sage/gl-accounts | Get Sage GL Account Details
+*AccountingApi* | [**GetSageVendorAccounts**](docs/AccountingApi.md#getsagevendoraccounts) | **GET** /api/Accounting/sage/vendor-accounts | Get Sage GL Account Details
 *AccountingApi* | [**GetSupplierDetailsById**](docs/AccountingApi.md#getsupplierdetailsbyid) | **GET** /api/Accounting/supplier-details/{id} | Fetch supplier-details for a particular FBO or Vendor based on the provided [ID].
 *AccountingApi* | [**PostAccountingIntegrationItemCodesDetails**](docs/AccountingApi.md#postaccountingintegrationitemcodesdetails) | **POST** /api/Accounting/integration-item-codes | Adds new accounting integration item code record
-*AccountingApi* | [**PostSageBill**](docs/AccountingApi.md#postsagebill) | **POST** /api/Accounting/sage/bill | Insert new bill in Sage
+*AccountingApi* | [**PostSageBill**](docs/AccountingApi.md#postsagebill) | **POST** /api/Accounting/sage/bill/{transactionid} | Insert new bill in Sage
 *AccountingApi* | [**PostSupplierDetails**](docs/AccountingApi.md#postsupplierdetails) | **POST** /api/Accounting/supplier-details | Adds a new record for supplier-details of an FBO or Vendor.
 *AccountingApi* | [**UpdateAccountingIntegrationItemCodesDetails**](docs/AccountingApi.md#updateaccountingintegrationitemcodesdetails) | **PUT** /api/Accounting/integration-item-codes | Updates accounting integration item code record
+*AccountingApi* | [**UpdateSageCredentials**](docs/AccountingApi.md#updatesagecredentials) | **POST** /api/Accounting/sage/update-credentials | Get Sage Credentials
 *AccountingApi* | [**UpdateSupplierDetails**](docs/AccountingApi.md#updatesupplierdetails) | **PUT** /api/Accounting/supplier-details | Updates current supplier detail record
 *AircraftApi* | [**AddAircraftForCompany**](docs/AircraftApi.md#addaircraftforcompany) | **POST** /api/Aircraft/company | Add an aircraft to the authorized company.
 *AircraftApi* | [**AddAircraftForUser**](docs/AircraftApi.md#addaircraftforuser) | **POST** /api/Aircraft/user | Add an existing aircraft to the user's account.
@@ -331,6 +334,7 @@ Class | Method | HTTP request | Description
 *TransactionApi* | [**PostTransactionNote**](docs/TransactionApi.md#posttransactionnote) | **POST** /api/Transaction/note | Add a new note to a transaction.
 *TransactionApi* | [**UpdateAutoReconciledFile**](docs/TransactionApi.md#updateautoreconciledfile) | **PUT** /api/Transaction/invoice-import/file-capture | Internal use only - Update a file captured by an invoice import.
 *TransactionApi* | [**UpdateInvoiceImport**](docs/TransactionApi.md#updateinvoiceimport) | **PUT** /api/Transaction/invoice-import | Internal use only - Update an invoice import.
+*TransactionApi* | [**UpdateTransaction**](docs/TransactionApi.md#updatetransaction) | **PUT** /api/Transaction | 
 *TransactionApi* | [**UpdateTransactionAccountData**](docs/TransactionApi.md#updatetransactionaccountdata) | **PUT** /api/Transaction/accounting-data | Update the accounting data record for a particular transaction.
 *TransactionApi* | [**UpdateTransactionAccountingTransferStatus**](docs/TransactionApi.md#updatetransactionaccountingtransferstatus) | **PUT** /api/Transaction/accounting-transfer | Internal use only - Update the accounting transfer status of a particular transaction.
 *TransactionApi* | [**UpdateTransactionAttachment**](docs/TransactionApi.md#updatetransactionattachment) | **PUT** /api/Transaction/attachment | Update an existing attachment record for a transaction.
@@ -341,6 +345,7 @@ Class | Method | HTTP request | Description
 *UserApi* | [**ExchangeRefreshToken**](docs/UserApi.md#exchangerefreshtoken) | **POST** /api/User/refreshtoken | Exchanges a valid [RefreshToken] and expired [AccessToken] for a new [RefreshToken] and [AccessToken].
 *UserApi* | [**GetCompanyUserProfiles**](docs/UserApi.md#getcompanyuserprofiles) | **GET** /api/User/company-user-profiles/by-company/list | Fetches all user profiles by companyId
 *UserApi* | [**GetCredentials**](docs/UserApi.md#getcredentials) | **GET** /api/User/credentials/{id} | Fetches user credentials by Id
+*UserApi* | [**GetCredentialsList**](docs/UserApi.md#getcredentialslist) | **GET** /api/User/credentials/list | Fetches all user credentials
 *UserApi* | [**GetUser**](docs/UserApi.md#getuser) | **GET** /api/User/{id} | Fetch a user by their [id].
 *UserApi* | [**GetUserByCredentials**](docs/UserApi.md#getuserbycredentials) | **GET** /api/User/by-credentials/{username}/{password} | 
 *UserApi* | [**PostCompanyUserProfiles**](docs/UserApi.md#postcompanyuserprofiles) | **POST** /api/User/company-user-profiles | 
@@ -395,6 +400,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AssociatedDetails](docs/AssociatedDetails.md)
  - [IO.Swagger.Model.AssociatedDetailsRequest](docs/AssociatedDetailsRequest.md)
  - [IO.Swagger.Model.AssociatedDetailsResponse](docs/AssociatedDetailsResponse.md)
+ - [IO.Swagger.Model.AuthorizationInfo](docs/AuthorizationInfo.md)
+ - [IO.Swagger.Model.AuthorizationInfoResponse](docs/AuthorizationInfoResponse.md)
  - [IO.Swagger.Model.AutoReconProcessDTO](docs/AutoReconProcessDTO.md)
  - [IO.Swagger.Model.AutoReconProcessListResponse](docs/AutoReconProcessListResponse.md)
  - [IO.Swagger.Model.AutoReconProcessResponse](docs/AutoReconProcessResponse.md)
@@ -436,6 +443,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CompanyUserProfileDTO](docs/CompanyUserProfileDTO.md)
  - [IO.Swagger.Model.CompanyUserProfileListResponse](docs/CompanyUserProfileListResponse.md)
  - [IO.Swagger.Model.CredentialsDTO](docs/CredentialsDTO.md)
+ - [IO.Swagger.Model.CredentialsListResponse](docs/CredentialsListResponse.md)
  - [IO.Swagger.Model.CredentialsResponse](docs/CredentialsResponse.md)
  - [IO.Swagger.Model.CrowdSourcedRampFeeResponse](docs/CrowdSourcedRampFeeResponse.md)
  - [IO.Swagger.Model.CurrencyConversionDTO](docs/CurrencyConversionDTO.md)
@@ -728,8 +736,11 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)
  - [IO.Swagger.Model.SageBillVM](docs/SageBillVM.md)
  - [IO.Swagger.Model.SageCreateBillResponse](docs/SageCreateBillResponse.md)
+ - [IO.Swagger.Model.SageCredentialsRequest](docs/SageCredentialsRequest.md)
  - [IO.Swagger.Model.SageGeneralLedgerResponse](docs/SageGeneralLedgerResponse.md)
  - [IO.Swagger.Model.SageGeneralLedgerVM](docs/SageGeneralLedgerVM.md)
+ - [IO.Swagger.Model.SageVendorResponse](docs/SageVendorResponse.md)
+ - [IO.Swagger.Model.SageVendorVM](docs/SageVendorVM.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerRequest](docs/SaveCompanyToIFlightPlannerRequest.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerResponse](docs/SaveCompanyToIFlightPlannerResponse.md)
  - [IO.Swagger.Model.SaveUserToIFlightPlannerRequest](docs/SaveUserToIFlightPlannerRequest.md)
@@ -875,6 +886,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateTransactionFileDataResponse](docs/UpdateTransactionFileDataResponse.md)
  - [IO.Swagger.Model.UpdateTransactionNoteRequest](docs/UpdateTransactionNoteRequest.md)
  - [IO.Swagger.Model.UpdateTransactionNoteResponse](docs/UpdateTransactionNoteResponse.md)
+ - [IO.Swagger.Model.UpdateTransactionRequest](docs/UpdateTransactionRequest.md)
+ - [IO.Swagger.Model.UpdateTransactionResponse](docs/UpdateTransactionResponse.md)
  - [IO.Swagger.Model.UserAircraftDTO](docs/UserAircraftDTO.md)
  - [IO.Swagger.Model.UserAircraftListResponse](docs/UserAircraftListResponse.md)
  - [IO.Swagger.Model.UserAircraftResponse](docs/UserAircraftResponse.md)
