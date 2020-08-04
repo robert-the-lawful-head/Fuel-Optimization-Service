@@ -13,11 +13,11 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class FBOLinxFuelVendorUpdateRequest {
     /// <summary>
-    /// Gets or Sets FboId
+    /// Gets or Sets GroupId
     /// </summary>
-    [DataMember(Name="fboId", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "fboId")]
-    public int? FboId { get; set; }
+    [DataMember(Name="groupId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "groupId")]
+    public int? GroupId { get; set; }
 
     /// <summary>
     /// Gets or Sets Email
@@ -41,7 +41,7 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class FBOLinxFuelVendorUpdateRequest {\n");
-      sb.Append("  FboId: ").Append(FboId).Append("\n");
+      sb.Append("  GroupId: ").Append(GroupId).Append("\n");
       sb.Append("  Email: ").Append(Email).Append("\n");
       sb.Append("  EmailToCC: ").Append(EmailToCC).Append("\n");
       sb.Append("}\n");
