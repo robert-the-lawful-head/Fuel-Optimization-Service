@@ -4,15 +4,15 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**DeleteCompanyAircraftChangeLog**](ServiceLogsApi.md#deletecompanyaircraftchangelog) | **DELETE** /api/ServiceLogs/companyAircraftChangeLog/{id} | 
-[**DeleteCompanyFuelerChangeLog**](ServiceLogsApi.md#deletecompanyfuelerchangelog) | **DELETE** /api/ServiceLogs/companyFuelerChangeLog/{id} | 
-[**DeleteDispatchEmailLog**](ServiceLogsApi.md#deletedispatchemaillog) | **DELETE** /api/ServiceLogs/dispatchEmailLog/{id} | 
-[**DeleteFuelOrderServiceLog**](ServiceLogsApi.md#deletefuelorderservicelog) | **DELETE** /api/ServiceLogs/fuelOrderServiceLog/{id} | 
-[**DeleteFuelPriceServiceLog**](ServiceLogsApi.md#deletefuelpriceservicelog) | **DELETE** /api/ServiceLogs/fuelPriceServiceLog/{id} | 
-[**DeleteIFlightPlannerRouteServiceLog**](ServiceLogsApi.md#deleteiflightplannerrouteservicelog) | **DELETE** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog/{id} | 
-[**DeleteSchedulingIntegrationDispatchServiceLog**](ServiceLogsApi.md#deleteschedulingintegrationdispatchservicelog) | **DELETE** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog/{id} | 
-[**DeleteSchedulingIntegrationServiceLog**](ServiceLogsApi.md#deleteschedulingintegrationservicelog) | **DELETE** /api/ServiceLogs/schedulingIntegrationServiceLog/{id} | 
-[**DeleteTankeringApiCalculationLog**](ServiceLogsApi.md#deletetankeringapicalculationlog) | **DELETE** /api/ServiceLogs/tankeringApiCalculationLog/{id} | 
+[**DeleteCompanyAircraftChangeLog**](ServiceLogsApi.md#deletecompanyaircraftchangelog) | **DELETE** /api/ServiceLogs/companyAircraftChangeLog/{id} | Delete a company aircraft change log record by the record id.
+[**DeleteCompanyFuelerChangeLog**](ServiceLogsApi.md#deletecompanyfuelerchangelog) | **DELETE** /api/ServiceLogs/companyFuelerChangeLog/{id} | Delete a company fueler change log record by the record id.
+[**DeleteDispatchEmailLog**](ServiceLogsApi.md#deletedispatchemaillog) | **DELETE** /api/ServiceLogs/dispatchEmailLog/{id} | Delete a dispatch email log record by the record id.
+[**DeleteFuelOrderServiceLog**](ServiceLogsApi.md#deletefuelorderservicelog) | **DELETE** /api/ServiceLogs/fuelOrderServiceLog/{id} | Delete a fuel order service log record by the record id.
+[**DeleteFuelPriceServiceLog**](ServiceLogsApi.md#deletefuelpriceservicelog) | **DELETE** /api/ServiceLogs/fuelPriceServiceLog/{id} | Delete a fuel price service log record by the record id.
+[**DeleteIFlightPlannerRouteServiceLog**](ServiceLogsApi.md#deleteiflightplannerrouteservicelog) | **DELETE** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog/{id} | Delete a iFlightPlanner route request service log record by the record id.
+[**DeleteSchedulingIntegrationDispatchServiceLog**](ServiceLogsApi.md#deleteschedulingintegrationdispatchservicelog) | **DELETE** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog/{id} | Delete a scheduling integration dispatch service log record by record id.
+[**DeleteSchedulingIntegrationServiceLog**](ServiceLogsApi.md#deleteschedulingintegrationservicelog) | **DELETE** /api/ServiceLogs/schedulingIntegrationServiceLog/{id} | Delete a scheduling integration service log record by the record id.
+[**DeleteTankeringApiCalculationLog**](ServiceLogsApi.md#deletetankeringapicalculationlog) | **DELETE** /api/ServiceLogs/tankeringApiCalculationLog/{id} | Delete a tankering api calculation log record by the record id.
 [**GetCompanyAircraftChangeLogByTailNumber**](ServiceLogsApi.md#getcompanyaircraftchangelogbytailnumber) | **GET** /api/ServiceLogs/companyAircraftChangeLog/by-tailNumber/{tailNumber} | Fetch company aircraft change log by tailNumber.
 [**GetCompanyAircraftChangeLogByUserId**](ServiceLogsApi.md#getcompanyaircraftchangelogbyuserid) | **GET** /api/ServiceLogs/companyAircraftChangeLog/by-userId/{userId} | Fetch company aircraft change log by userId.
 [**GetCompanyFuelerChangeLogByCompanyId**](ServiceLogsApi.md#getcompanyfuelerchangelogbycompanyid) | **GET** /api/ServiceLogs/companyFuelerChangeLog/by-companyId/{companyId} | Fetch company fueler change log by companyId.
@@ -29,31 +29,31 @@ Method | HTTP request | Description
 [**GetSchedulingIntegrationServiceLogByCompanyId**](ServiceLogsApi.md#getschedulingintegrationservicelogbycompanyid) | **GET** /api/ServiceLogs/schedulingIntegrationServiceLog/by-companyId/{companyId} | Fetch scheduling integration service log by companyId.
 [**GetSchedulingIntegrationServiceLogByDate**](ServiceLogsApi.md#getschedulingintegrationservicelogbydate) | **GET** /api/ServiceLogs/schedulingIntegrationServiceLog/by-date/{companyId}/{dateTimeRecorded} | Fetch scheduling integration service log by date.
 [**GetTankeringApiCalculationLog**](ServiceLogsApi.md#gettankeringapicalculationlog) | **GET** /api/ServiceLogs/tankeringApiCalculationLog/{companyId}/{startDateTime}/{endDateTime} | Fetch tankering api calculation log.
-[**PostCompanyAircraftChangeLogAsync**](ServiceLogsApi.md#postcompanyaircraftchangelogasync) | **POST** /api/ServiceLogs/companyAircraftChangeLog | 
-[**PostCompanyFuelerChangeLogAsync**](ServiceLogsApi.md#postcompanyfuelerchangelogasync) | **POST** /api/ServiceLogs/companyFuelerChangeLog | 
-[**PostDispatchEmailLogAsync**](ServiceLogsApi.md#postdispatchemaillogasync) | **POST** /api/ServiceLogs/dispatchEmailLog | 
-[**PostFuelOrderServiceLogAsync**](ServiceLogsApi.md#postfuelorderservicelogasync) | **POST** /api/ServiceLogs/fuelOrderServiceLog | 
-[**PostFuelPriceServiceLogAsync**](ServiceLogsApi.md#postfuelpriceservicelogasync) | **POST** /api/ServiceLogs/fuelPriceServiceLog | 
-[**PostIFlightPlannerRouteServiceLogAsync**](ServiceLogsApi.md#postiflightplannerrouteservicelogasync) | **POST** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog | 
-[**PostSchedulingIntegrationDispatchServiceLogAsync**](ServiceLogsApi.md#postschedulingintegrationdispatchservicelogasync) | **POST** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog | 
-[**PostSchedulingIntegrationServiceLogAsync**](ServiceLogsApi.md#postschedulingintegrationservicelogasync) | **POST** /api/ServiceLogs/schedulingIntegrationServiceLog | 
-[**PostTankeringApiCalculationLogAsync**](ServiceLogsApi.md#posttankeringapicalculationlogasync) | **POST** /api/ServiceLogs/tankeringApiCalculationLog | 
-[**UpdateCompanyAircraftChangeLog**](ServiceLogsApi.md#updatecompanyaircraftchangelog) | **PUT** /api/ServiceLogs/companyAircraftChangeLog | 
-[**UpdateCompanyFuelerChangeLog**](ServiceLogsApi.md#updatecompanyfuelerchangelog) | **PUT** /api/ServiceLogs/companyFuelerChangeLog | 
-[**UpdateDispatchEmailLog**](ServiceLogsApi.md#updatedispatchemaillog) | **PUT** /api/ServiceLogs/dispatchEmailLog | 
-[**UpdateFuelOrderServiceLog**](ServiceLogsApi.md#updatefuelorderservicelog) | **PUT** /api/ServiceLogs/fuelOrderServiceLog | 
-[**UpdateFuelPriceServiceLog**](ServiceLogsApi.md#updatefuelpriceservicelog) | **PUT** /api/ServiceLogs/fuelPriceServiceLog | 
-[**UpdateIFlightPlannerRouteServiceLog**](ServiceLogsApi.md#updateiflightplannerrouteservicelog) | **PUT** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog | 
-[**UpdateSchedulingIntegrationDispatchServiceLog**](ServiceLogsApi.md#updateschedulingintegrationdispatchservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog | 
-[**UpdateSchedulingIntegrationServiceLog**](ServiceLogsApi.md#updateschedulingintegrationservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationServiceLog | 
-[**UpdateTankeringApiCalculationLog**](ServiceLogsApi.md#updatetankeringapicalculationlog) | **PUT** /api/ServiceLogs/tankeringApiCalculationLog | 
+[**PostCompanyAircraftChangeLogAsync**](ServiceLogsApi.md#postcompanyaircraftchangelogasync) | **POST** /api/ServiceLogs/companyAircraftChangeLog | Post company aircraft change log.
+[**PostCompanyFuelerChangeLogAsync**](ServiceLogsApi.md#postcompanyfuelerchangelogasync) | **POST** /api/ServiceLogs/companyFuelerChangeLog | Post company fueler change log.
+[**PostDispatchEmailLogAsync**](ServiceLogsApi.md#postdispatchemaillogasync) | **POST** /api/ServiceLogs/dispatchEmailLog | Post dispatch email log.
+[**PostFuelOrderServiceLogAsync**](ServiceLogsApi.md#postfuelorderservicelogasync) | **POST** /api/ServiceLogs/fuelOrderServiceLog | Post fuel order service log.
+[**PostFuelPriceServiceLogAsync**](ServiceLogsApi.md#postfuelpriceservicelogasync) | **POST** /api/ServiceLogs/fuelPriceServiceLog | Post fuel price service log.
+[**PostIFlightPlannerRouteServiceLogAsync**](ServiceLogsApi.md#postiflightplannerrouteservicelogasync) | **POST** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog | Post iFlightPlanner route request service log.
+[**PostSchedulingIntegrationDispatchServiceLogAsync**](ServiceLogsApi.md#postschedulingintegrationdispatchservicelogasync) | **POST** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog | Post scheduling integration dispatch service log.
+[**PostSchedulingIntegrationServiceLogAsync**](ServiceLogsApi.md#postschedulingintegrationservicelogasync) | **POST** /api/ServiceLogs/schedulingIntegrationServiceLog | Post scheduling integration service log.
+[**PostTankeringApiCalculationLogAsync**](ServiceLogsApi.md#posttankeringapicalculationlogasync) | **POST** /api/ServiceLogs/tankeringApiCalculationLog | Post tankering api calculation log.
+[**UpdateCompanyAircraftChangeLog**](ServiceLogsApi.md#updatecompanyaircraftchangelog) | **PUT** /api/ServiceLogs/companyAircraftChangeLog | Update the company aircraft change log.
+[**UpdateCompanyFuelerChangeLog**](ServiceLogsApi.md#updatecompanyfuelerchangelog) | **PUT** /api/ServiceLogs/companyFuelerChangeLog | Update the company fueler change log.
+[**UpdateDispatchEmailLog**](ServiceLogsApi.md#updatedispatchemaillog) | **PUT** /api/ServiceLogs/dispatchEmailLog | Update the dispatch email log.
+[**UpdateFuelOrderServiceLog**](ServiceLogsApi.md#updatefuelorderservicelog) | **PUT** /api/ServiceLogs/fuelOrderServiceLog | Update the fuel order service log.
+[**UpdateFuelPriceServiceLog**](ServiceLogsApi.md#updatefuelpriceservicelog) | **PUT** /api/ServiceLogs/fuelPriceServiceLog | Update the fuel price service log.
+[**UpdateIFlightPlannerRouteServiceLog**](ServiceLogsApi.md#updateiflightplannerrouteservicelog) | **PUT** /api/ServiceLogs/iFlightPlannerRouteRequestServiceLog | Update the iFlightPlanner route request service log.
+[**UpdateSchedulingIntegrationDispatchServiceLog**](ServiceLogsApi.md#updateschedulingintegrationdispatchservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog | Update the scheduling integration dispatch service log.
+[**UpdateSchedulingIntegrationServiceLog**](ServiceLogsApi.md#updateschedulingintegrationservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationServiceLog | Update the scheduling integration service log.
+[**UpdateTankeringApiCalculationLog**](ServiceLogsApi.md#updatetankeringapicalculationlog) | **PUT** /api/ServiceLogs/tankeringApiCalculationLog | Update the tankering api calculation log.
 
 
 <a name="deletecompanyaircraftchangelog"></a>
 # **DeleteCompanyAircraftChangeLog**
 > DeleteCompanyAircraftChangeLogResponse DeleteCompanyAircraftChangeLog (int? id)
 
-
+Delete a company aircraft change log record by the record id.
 
 ### Example
 ```csharp
@@ -84,6 +84,7 @@ namespace Example
 
             try
             {
+                // Delete a company aircraft change log record by the record id.
                 DeleteCompanyAircraftChangeLogResponse result = apiInstance.DeleteCompanyAircraftChangeLog(id);
                 Debug.WriteLine(result);
             }
@@ -121,7 +122,7 @@ Name | Type | Description  | Notes
 # **DeleteCompanyFuelerChangeLog**
 > DeleteCompanyFuelerChangeLogResponse DeleteCompanyFuelerChangeLog (int? id)
 
-
+Delete a company fueler change log record by the record id.
 
 ### Example
 ```csharp
@@ -152,6 +153,7 @@ namespace Example
 
             try
             {
+                // Delete a company fueler change log record by the record id.
                 DeleteCompanyFuelerChangeLogResponse result = apiInstance.DeleteCompanyFuelerChangeLog(id);
                 Debug.WriteLine(result);
             }
@@ -189,7 +191,7 @@ Name | Type | Description  | Notes
 # **DeleteDispatchEmailLog**
 > DeleteDispatchEmailLogResponse DeleteDispatchEmailLog (int? id)
 
-
+Delete a dispatch email log record by the record id.
 
 ### Example
 ```csharp
@@ -220,6 +222,7 @@ namespace Example
 
             try
             {
+                // Delete a dispatch email log record by the record id.
                 DeleteDispatchEmailLogResponse result = apiInstance.DeleteDispatchEmailLog(id);
                 Debug.WriteLine(result);
             }
@@ -257,7 +260,7 @@ Name | Type | Description  | Notes
 # **DeleteFuelOrderServiceLog**
 > DeleteFuelOrderServiceLogResponse DeleteFuelOrderServiceLog (int? id)
 
-
+Delete a fuel order service log record by the record id.
 
 ### Example
 ```csharp
@@ -288,6 +291,7 @@ namespace Example
 
             try
             {
+                // Delete a fuel order service log record by the record id.
                 DeleteFuelOrderServiceLogResponse result = apiInstance.DeleteFuelOrderServiceLog(id);
                 Debug.WriteLine(result);
             }
@@ -325,7 +329,7 @@ Name | Type | Description  | Notes
 # **DeleteFuelPriceServiceLog**
 > DeleteFuelPriceServiceLogResponse DeleteFuelPriceServiceLog (int? id)
 
-
+Delete a fuel price service log record by the record id.
 
 ### Example
 ```csharp
@@ -356,6 +360,7 @@ namespace Example
 
             try
             {
+                // Delete a fuel price service log record by the record id.
                 DeleteFuelPriceServiceLogResponse result = apiInstance.DeleteFuelPriceServiceLog(id);
                 Debug.WriteLine(result);
             }
@@ -393,7 +398,7 @@ Name | Type | Description  | Notes
 # **DeleteIFlightPlannerRouteServiceLog**
 > DeleteIFlightPlannerRouteRequestServiceLogResponse DeleteIFlightPlannerRouteServiceLog (int? id)
 
-
+Delete a iFlightPlanner route request service log record by the record id.
 
 ### Example
 ```csharp
@@ -424,6 +429,7 @@ namespace Example
 
             try
             {
+                // Delete a iFlightPlanner route request service log record by the record id.
                 DeleteIFlightPlannerRouteRequestServiceLogResponse result = apiInstance.DeleteIFlightPlannerRouteServiceLog(id);
                 Debug.WriteLine(result);
             }
@@ -461,7 +467,7 @@ Name | Type | Description  | Notes
 # **DeleteSchedulingIntegrationDispatchServiceLog**
 > DeleteSchedulingIntegrationDispatchServiceLogResponse DeleteSchedulingIntegrationDispatchServiceLog (int? id)
 
-
+Delete a scheduling integration dispatch service log record by record id.
 
 ### Example
 ```csharp
@@ -492,6 +498,7 @@ namespace Example
 
             try
             {
+                // Delete a scheduling integration dispatch service log record by record id.
                 DeleteSchedulingIntegrationDispatchServiceLogResponse result = apiInstance.DeleteSchedulingIntegrationDispatchServiceLog(id);
                 Debug.WriteLine(result);
             }
@@ -529,7 +536,7 @@ Name | Type | Description  | Notes
 # **DeleteSchedulingIntegrationServiceLog**
 > DeleteSchedulingIntegrationServiceLogResponse DeleteSchedulingIntegrationServiceLog (int? id)
 
-
+Delete a scheduling integration service log record by the record id.
 
 ### Example
 ```csharp
@@ -560,6 +567,7 @@ namespace Example
 
             try
             {
+                // Delete a scheduling integration service log record by the record id.
                 DeleteSchedulingIntegrationServiceLogResponse result = apiInstance.DeleteSchedulingIntegrationServiceLog(id);
                 Debug.WriteLine(result);
             }
@@ -597,7 +605,7 @@ Name | Type | Description  | Notes
 # **DeleteTankeringApiCalculationLog**
 > DeleteTankeringApiCalculationLogResponse DeleteTankeringApiCalculationLog (int? id)
 
-
+Delete a tankering api calculation log record by the record id.
 
 ### Example
 ```csharp
@@ -628,6 +636,7 @@ namespace Example
 
             try
             {
+                // Delete a tankering api calculation log record by the record id.
                 DeleteTankeringApiCalculationLogResponse result = apiInstance.DeleteTankeringApiCalculationLog(id);
                 Debug.WriteLine(result);
             }
@@ -1793,7 +1802,7 @@ Name | Type | Description  | Notes
 # **PostCompanyAircraftChangeLogAsync**
 > PostCompanyAircraftChangeLogResponse PostCompanyAircraftChangeLogAsync (PostCompanyAircraftChangeLogRequest body)
 
-
+Post company aircraft change log.
 
 ### Example
 ```csharp
@@ -1824,6 +1833,7 @@ namespace Example
 
             try
             {
+                // Post company aircraft change log.
                 PostCompanyAircraftChangeLogResponse result = apiInstance.PostCompanyAircraftChangeLogAsync(body);
                 Debug.WriteLine(result);
             }
@@ -1861,7 +1871,7 @@ Name | Type | Description  | Notes
 # **PostCompanyFuelerChangeLogAsync**
 > PostCompanyFuelerChangeLogResponse PostCompanyFuelerChangeLogAsync (PostCompanyFuelerChangeLogRequest body)
 
-
+Post company fueler change log.
 
 ### Example
 ```csharp
@@ -1892,6 +1902,7 @@ namespace Example
 
             try
             {
+                // Post company fueler change log.
                 PostCompanyFuelerChangeLogResponse result = apiInstance.PostCompanyFuelerChangeLogAsync(body);
                 Debug.WriteLine(result);
             }
@@ -1929,7 +1940,7 @@ Name | Type | Description  | Notes
 # **PostDispatchEmailLogAsync**
 > PostDispatchEmailLogResponse PostDispatchEmailLogAsync (PostDispatchEmailLogRequest body)
 
-
+Post dispatch email log.
 
 ### Example
 ```csharp
@@ -1960,6 +1971,7 @@ namespace Example
 
             try
             {
+                // Post dispatch email log.
                 PostDispatchEmailLogResponse result = apiInstance.PostDispatchEmailLogAsync(body);
                 Debug.WriteLine(result);
             }
@@ -1997,7 +2009,7 @@ Name | Type | Description  | Notes
 # **PostFuelOrderServiceLogAsync**
 > PostFuelOrderServiceLogResponse PostFuelOrderServiceLogAsync (PostFuelOrderServiceLogRequest body)
 
-
+Post fuel order service log.
 
 ### Example
 ```csharp
@@ -2028,6 +2040,7 @@ namespace Example
 
             try
             {
+                // Post fuel order service log.
                 PostFuelOrderServiceLogResponse result = apiInstance.PostFuelOrderServiceLogAsync(body);
                 Debug.WriteLine(result);
             }
@@ -2065,7 +2078,7 @@ Name | Type | Description  | Notes
 # **PostFuelPriceServiceLogAsync**
 > PostFuelPriceServiceLogResponse PostFuelPriceServiceLogAsync (PostFuelPriceServiceLogRequest body)
 
-
+Post fuel price service log.
 
 ### Example
 ```csharp
@@ -2096,6 +2109,7 @@ namespace Example
 
             try
             {
+                // Post fuel price service log.
                 PostFuelPriceServiceLogResponse result = apiInstance.PostFuelPriceServiceLogAsync(body);
                 Debug.WriteLine(result);
             }
@@ -2133,7 +2147,7 @@ Name | Type | Description  | Notes
 # **PostIFlightPlannerRouteServiceLogAsync**
 > PostIFlightPlannerRouteRequestServiceLogResponse PostIFlightPlannerRouteServiceLogAsync (PostIFlightPlannerRouteRequestServiceLogRequest body)
 
-
+Post iFlightPlanner route request service log.
 
 ### Example
 ```csharp
@@ -2164,6 +2178,7 @@ namespace Example
 
             try
             {
+                // Post iFlightPlanner route request service log.
                 PostIFlightPlannerRouteRequestServiceLogResponse result = apiInstance.PostIFlightPlannerRouteServiceLogAsync(body);
                 Debug.WriteLine(result);
             }
@@ -2201,7 +2216,7 @@ Name | Type | Description  | Notes
 # **PostSchedulingIntegrationDispatchServiceLogAsync**
 > PostSchedulingIntegrationDispatchServiceLogResponse PostSchedulingIntegrationDispatchServiceLogAsync (PostSchedulingIntegrationDispatchServiceLogRequest body)
 
-
+Post scheduling integration dispatch service log.
 
 ### Example
 ```csharp
@@ -2232,6 +2247,7 @@ namespace Example
 
             try
             {
+                // Post scheduling integration dispatch service log.
                 PostSchedulingIntegrationDispatchServiceLogResponse result = apiInstance.PostSchedulingIntegrationDispatchServiceLogAsync(body);
                 Debug.WriteLine(result);
             }
@@ -2269,7 +2285,7 @@ Name | Type | Description  | Notes
 # **PostSchedulingIntegrationServiceLogAsync**
 > PostSchedulingIntegrationServiceLogResponse PostSchedulingIntegrationServiceLogAsync (PostSchedulingIntegrationServiceLogRequest body)
 
-
+Post scheduling integration service log.
 
 ### Example
 ```csharp
@@ -2300,6 +2316,7 @@ namespace Example
 
             try
             {
+                // Post scheduling integration service log.
                 PostSchedulingIntegrationServiceLogResponse result = apiInstance.PostSchedulingIntegrationServiceLogAsync(body);
                 Debug.WriteLine(result);
             }
@@ -2337,7 +2354,7 @@ Name | Type | Description  | Notes
 # **PostTankeringApiCalculationLogAsync**
 > PostTankeringApiCalculationLogResponse PostTankeringApiCalculationLogAsync (PostTankeringApiCalculationLogRequest body)
 
-
+Post tankering api calculation log.
 
 ### Example
 ```csharp
@@ -2368,6 +2385,7 @@ namespace Example
 
             try
             {
+                // Post tankering api calculation log.
                 PostTankeringApiCalculationLogResponse result = apiInstance.PostTankeringApiCalculationLogAsync(body);
                 Debug.WriteLine(result);
             }
@@ -2405,7 +2423,7 @@ Name | Type | Description  | Notes
 # **UpdateCompanyAircraftChangeLog**
 > UpdateCompanyAircraftChangeLogResponse UpdateCompanyAircraftChangeLog (UpdateCompanyAircraftChangeLogRequest body)
 
-
+Update the company aircraft change log.
 
 ### Example
 ```csharp
@@ -2436,6 +2454,7 @@ namespace Example
 
             try
             {
+                // Update the company aircraft change log.
                 UpdateCompanyAircraftChangeLogResponse result = apiInstance.UpdateCompanyAircraftChangeLog(body);
                 Debug.WriteLine(result);
             }
@@ -2473,7 +2492,7 @@ Name | Type | Description  | Notes
 # **UpdateCompanyFuelerChangeLog**
 > UpdateCompanyFuelerChangeLogResponse UpdateCompanyFuelerChangeLog (UpdateCompanyFuelerChangeLogRequest body)
 
-
+Update the company fueler change log.
 
 ### Example
 ```csharp
@@ -2504,6 +2523,7 @@ namespace Example
 
             try
             {
+                // Update the company fueler change log.
                 UpdateCompanyFuelerChangeLogResponse result = apiInstance.UpdateCompanyFuelerChangeLog(body);
                 Debug.WriteLine(result);
             }
@@ -2541,7 +2561,7 @@ Name | Type | Description  | Notes
 # **UpdateDispatchEmailLog**
 > UpdateDispatchEmailLogResponse UpdateDispatchEmailLog (UpdateDispatchEmailLogRequest body)
 
-
+Update the dispatch email log.
 
 ### Example
 ```csharp
@@ -2572,6 +2592,7 @@ namespace Example
 
             try
             {
+                // Update the dispatch email log.
                 UpdateDispatchEmailLogResponse result = apiInstance.UpdateDispatchEmailLog(body);
                 Debug.WriteLine(result);
             }
@@ -2609,7 +2630,7 @@ Name | Type | Description  | Notes
 # **UpdateFuelOrderServiceLog**
 > UpdateFuelOrderServiceLogResponse UpdateFuelOrderServiceLog (UpdateFuelOrderServiceLogRequest body)
 
-
+Update the fuel order service log.
 
 ### Example
 ```csharp
@@ -2640,6 +2661,7 @@ namespace Example
 
             try
             {
+                // Update the fuel order service log.
                 UpdateFuelOrderServiceLogResponse result = apiInstance.UpdateFuelOrderServiceLog(body);
                 Debug.WriteLine(result);
             }
@@ -2677,7 +2699,7 @@ Name | Type | Description  | Notes
 # **UpdateFuelPriceServiceLog**
 > UpdateFuelPriceServiceLogResponse UpdateFuelPriceServiceLog (UpdateFuelPriceServiceLogRequest body)
 
-
+Update the fuel price service log.
 
 ### Example
 ```csharp
@@ -2708,6 +2730,7 @@ namespace Example
 
             try
             {
+                // Update the fuel price service log.
                 UpdateFuelPriceServiceLogResponse result = apiInstance.UpdateFuelPriceServiceLog(body);
                 Debug.WriteLine(result);
             }
@@ -2745,7 +2768,7 @@ Name | Type | Description  | Notes
 # **UpdateIFlightPlannerRouteServiceLog**
 > UpdateIFlightPlannerRouteRequestServiceLogResponse UpdateIFlightPlannerRouteServiceLog (UpdateIFlightPlannerRouteRequestServiceLogRequest body)
 
-
+Update the iFlightPlanner route request service log.
 
 ### Example
 ```csharp
@@ -2776,6 +2799,7 @@ namespace Example
 
             try
             {
+                // Update the iFlightPlanner route request service log.
                 UpdateIFlightPlannerRouteRequestServiceLogResponse result = apiInstance.UpdateIFlightPlannerRouteServiceLog(body);
                 Debug.WriteLine(result);
             }
@@ -2813,7 +2837,7 @@ Name | Type | Description  | Notes
 # **UpdateSchedulingIntegrationDispatchServiceLog**
 > UpdateSchedulingIntegrationDispatchServiceLogResponse UpdateSchedulingIntegrationDispatchServiceLog (UpdateSchedulingIntegrationDispatchServiceLogRequest body)
 
-
+Update the scheduling integration dispatch service log.
 
 ### Example
 ```csharp
@@ -2844,6 +2868,7 @@ namespace Example
 
             try
             {
+                // Update the scheduling integration dispatch service log.
                 UpdateSchedulingIntegrationDispatchServiceLogResponse result = apiInstance.UpdateSchedulingIntegrationDispatchServiceLog(body);
                 Debug.WriteLine(result);
             }
@@ -2881,7 +2906,7 @@ Name | Type | Description  | Notes
 # **UpdateSchedulingIntegrationServiceLog**
 > UpdateSchedulingIntegrationServiceLogResponse UpdateSchedulingIntegrationServiceLog (UpdateSchedulingIntegrationServiceLogRequest body)
 
-
+Update the scheduling integration service log.
 
 ### Example
 ```csharp
@@ -2912,6 +2937,7 @@ namespace Example
 
             try
             {
+                // Update the scheduling integration service log.
                 UpdateSchedulingIntegrationServiceLogResponse result = apiInstance.UpdateSchedulingIntegrationServiceLog(body);
                 Debug.WriteLine(result);
             }
@@ -2949,7 +2975,7 @@ Name | Type | Description  | Notes
 # **UpdateTankeringApiCalculationLog**
 > UpdateTankeringApiCalculationLogResponse UpdateTankeringApiCalculationLog (UpdateTankeringApiCalculationLogRequest body)
 
-
+Update the tankering api calculation log.
 
 ### Example
 ```csharp
@@ -2980,6 +3006,7 @@ namespace Example
 
             try
             {
+                // Update the tankering api calculation log.
                 UpdateTankeringApiCalculationLogResponse result = apiInstance.UpdateTankeringApiCalculationLog(body);
                 Debug.WriteLine(result);
             }

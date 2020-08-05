@@ -12,55 +12,55 @@ namespace IO.Swagger.Api
     public interface IServiceLogsApi
     {
         /// <summary>
-        ///  
+        /// Delete a company aircraft change log record by the record id. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>DeleteCompanyAircraftChangeLogResponse</returns>
         DeleteCompanyAircraftChangeLogResponse DeleteCompanyAircraftChangeLog (int? id);
         /// <summary>
-        ///  
+        /// Delete a company fueler change log record by the record id. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>DeleteCompanyFuelerChangeLogResponse</returns>
         DeleteCompanyFuelerChangeLogResponse DeleteCompanyFuelerChangeLog (int? id);
         /// <summary>
-        ///  
+        /// Delete a dispatch email log record by the record id. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>DeleteDispatchEmailLogResponse</returns>
         DeleteDispatchEmailLogResponse DeleteDispatchEmailLog (int? id);
         /// <summary>
-        ///  
+        /// Delete a fuel order service log record by the record id. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>DeleteFuelOrderServiceLogResponse</returns>
         DeleteFuelOrderServiceLogResponse DeleteFuelOrderServiceLog (int? id);
         /// <summary>
-        ///  
+        /// Delete a fuel price service log record by the record id. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>DeleteFuelPriceServiceLogResponse</returns>
         DeleteFuelPriceServiceLogResponse DeleteFuelPriceServiceLog (int? id);
         /// <summary>
-        ///  
+        /// Delete a iFlightPlanner route request service log record by the record id. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>DeleteIFlightPlannerRouteRequestServiceLogResponse</returns>
         DeleteIFlightPlannerRouteRequestServiceLogResponse DeleteIFlightPlannerRouteServiceLog (int? id);
         /// <summary>
-        ///  
+        /// Delete a scheduling integration dispatch service log record by record id. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>DeleteSchedulingIntegrationDispatchServiceLogResponse</returns>
         DeleteSchedulingIntegrationDispatchServiceLogResponse DeleteSchedulingIntegrationDispatchServiceLog (int? id);
         /// <summary>
-        ///  
+        /// Delete a scheduling integration service log record by the record id. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>DeleteSchedulingIntegrationServiceLogResponse</returns>
         DeleteSchedulingIntegrationServiceLogResponse DeleteSchedulingIntegrationServiceLog (int? id);
         /// <summary>
-        ///  
+        /// Delete a tankering api calculation log record by the record id. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>DeleteTankeringApiCalculationLogResponse</returns>
@@ -174,109 +174,109 @@ namespace IO.Swagger.Api
         /// <returns>TankeringApiCalculationLogResponse</returns>
         TankeringApiCalculationLogResponse GetTankeringApiCalculationLog (int? companyId, DateTime? startDateTime, DateTime? endDateTime);
         /// <summary>
-        ///  
+        /// Post company aircraft change log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostCompanyAircraftChangeLogResponse</returns>
         PostCompanyAircraftChangeLogResponse PostCompanyAircraftChangeLogAsync (PostCompanyAircraftChangeLogRequest body);
         /// <summary>
-        ///  
+        /// Post company fueler change log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostCompanyFuelerChangeLogResponse</returns>
         PostCompanyFuelerChangeLogResponse PostCompanyFuelerChangeLogAsync (PostCompanyFuelerChangeLogRequest body);
         /// <summary>
-        ///  
+        /// Post dispatch email log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostDispatchEmailLogResponse</returns>
         PostDispatchEmailLogResponse PostDispatchEmailLogAsync (PostDispatchEmailLogRequest body);
         /// <summary>
-        ///  
+        /// Post fuel order service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostFuelOrderServiceLogResponse</returns>
         PostFuelOrderServiceLogResponse PostFuelOrderServiceLogAsync (PostFuelOrderServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Post fuel price service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostFuelPriceServiceLogResponse</returns>
         PostFuelPriceServiceLogResponse PostFuelPriceServiceLogAsync (PostFuelPriceServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Post iFlightPlanner route request service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostIFlightPlannerRouteRequestServiceLogResponse</returns>
         PostIFlightPlannerRouteRequestServiceLogResponse PostIFlightPlannerRouteServiceLogAsync (PostIFlightPlannerRouteRequestServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Post scheduling integration dispatch service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostSchedulingIntegrationDispatchServiceLogResponse</returns>
         PostSchedulingIntegrationDispatchServiceLogResponse PostSchedulingIntegrationDispatchServiceLogAsync (PostSchedulingIntegrationDispatchServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Post scheduling integration service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostSchedulingIntegrationServiceLogResponse</returns>
         PostSchedulingIntegrationServiceLogResponse PostSchedulingIntegrationServiceLogAsync (PostSchedulingIntegrationServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Post tankering api calculation log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostTankeringApiCalculationLogResponse</returns>
         PostTankeringApiCalculationLogResponse PostTankeringApiCalculationLogAsync (PostTankeringApiCalculationLogRequest body);
         /// <summary>
-        ///  
+        /// Update the company aircraft change log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>UpdateCompanyAircraftChangeLogResponse</returns>
         UpdateCompanyAircraftChangeLogResponse UpdateCompanyAircraftChangeLog (UpdateCompanyAircraftChangeLogRequest body);
         /// <summary>
-        ///  
+        /// Update the company fueler change log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>UpdateCompanyFuelerChangeLogResponse</returns>
         UpdateCompanyFuelerChangeLogResponse UpdateCompanyFuelerChangeLog (UpdateCompanyFuelerChangeLogRequest body);
         /// <summary>
-        ///  
+        /// Update the dispatch email log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>UpdateDispatchEmailLogResponse</returns>
         UpdateDispatchEmailLogResponse UpdateDispatchEmailLog (UpdateDispatchEmailLogRequest body);
         /// <summary>
-        ///  
+        /// Update the fuel order service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>UpdateFuelOrderServiceLogResponse</returns>
         UpdateFuelOrderServiceLogResponse UpdateFuelOrderServiceLog (UpdateFuelOrderServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Update the fuel price service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>UpdateFuelPriceServiceLogResponse</returns>
         UpdateFuelPriceServiceLogResponse UpdateFuelPriceServiceLog (UpdateFuelPriceServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Update the iFlightPlanner route request service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>UpdateIFlightPlannerRouteRequestServiceLogResponse</returns>
         UpdateIFlightPlannerRouteRequestServiceLogResponse UpdateIFlightPlannerRouteServiceLog (UpdateIFlightPlannerRouteRequestServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Update the scheduling integration dispatch service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>UpdateSchedulingIntegrationDispatchServiceLogResponse</returns>
         UpdateSchedulingIntegrationDispatchServiceLogResponse UpdateSchedulingIntegrationDispatchServiceLog (UpdateSchedulingIntegrationDispatchServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Update the scheduling integration service log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>UpdateSchedulingIntegrationServiceLogResponse</returns>
         UpdateSchedulingIntegrationServiceLogResponse UpdateSchedulingIntegrationServiceLog (UpdateSchedulingIntegrationServiceLogRequest body);
         /// <summary>
-        ///  
+        /// Update the tankering api calculation log. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>UpdateTankeringApiCalculationLogResponse</returns>
@@ -337,7 +337,7 @@ namespace IO.Swagger.Api
         public ApiClient ApiClient {get; set;}
     
         /// <summary>
-        ///  
+        /// Delete a company aircraft change log record by the record id. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>DeleteCompanyAircraftChangeLogResponse</returns>            
@@ -374,7 +374,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// Delete a company fueler change log record by the record id. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>DeleteCompanyFuelerChangeLogResponse</returns>            
@@ -411,7 +411,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// Delete a dispatch email log record by the record id. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>DeleteDispatchEmailLogResponse</returns>            
@@ -448,7 +448,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// Delete a fuel order service log record by the record id. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>DeleteFuelOrderServiceLogResponse</returns>            
@@ -485,7 +485,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// Delete a fuel price service log record by the record id. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>DeleteFuelPriceServiceLogResponse</returns>            
@@ -522,7 +522,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// Delete a iFlightPlanner route request service log record by the record id. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>DeleteIFlightPlannerRouteRequestServiceLogResponse</returns>            
@@ -559,7 +559,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// Delete a scheduling integration dispatch service log record by record id. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>DeleteSchedulingIntegrationDispatchServiceLogResponse</returns>            
@@ -596,7 +596,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// Delete a scheduling integration service log record by the record id. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>DeleteSchedulingIntegrationServiceLogResponse</returns>            
@@ -633,7 +633,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// Delete a tankering api calculation log record by the record id. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>DeleteTankeringApiCalculationLogResponse</returns>            
@@ -1313,7 +1313,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Post company aircraft change log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostCompanyAircraftChangeLogResponse</returns>            
@@ -1347,7 +1347,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Post company fueler change log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostCompanyFuelerChangeLogResponse</returns>            
@@ -1381,7 +1381,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Post dispatch email log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostDispatchEmailLogResponse</returns>            
@@ -1415,7 +1415,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Post fuel order service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostFuelOrderServiceLogResponse</returns>            
@@ -1449,7 +1449,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Post fuel price service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostFuelPriceServiceLogResponse</returns>            
@@ -1483,7 +1483,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Post iFlightPlanner route request service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostIFlightPlannerRouteRequestServiceLogResponse</returns>            
@@ -1517,7 +1517,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Post scheduling integration dispatch service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostSchedulingIntegrationDispatchServiceLogResponse</returns>            
@@ -1551,7 +1551,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Post scheduling integration service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostSchedulingIntegrationServiceLogResponse</returns>            
@@ -1585,7 +1585,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Post tankering api calculation log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostTankeringApiCalculationLogResponse</returns>            
@@ -1619,7 +1619,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Update the company aircraft change log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>UpdateCompanyAircraftChangeLogResponse</returns>            
@@ -1653,7 +1653,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Update the company fueler change log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>UpdateCompanyFuelerChangeLogResponse</returns>            
@@ -1687,7 +1687,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Update the dispatch email log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>UpdateDispatchEmailLogResponse</returns>            
@@ -1721,7 +1721,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Update the fuel order service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>UpdateFuelOrderServiceLogResponse</returns>            
@@ -1755,7 +1755,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Update the fuel price service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>UpdateFuelPriceServiceLogResponse</returns>            
@@ -1789,7 +1789,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Update the iFlightPlanner route request service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>UpdateIFlightPlannerRouteRequestServiceLogResponse</returns>            
@@ -1823,7 +1823,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Update the scheduling integration dispatch service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>UpdateSchedulingIntegrationDispatchServiceLogResponse</returns>            
@@ -1857,7 +1857,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Update the scheduling integration service log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>UpdateSchedulingIntegrationServiceLogResponse</returns>            
@@ -1891,7 +1891,7 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
-        ///  
+        /// Update the tankering api calculation log. 
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>UpdateTankeringApiCalculationLogResponse</returns>            
