@@ -8,7 +8,7 @@ import { PricingtemplatesService } from "../../services/pricingtemplates.service
 // Components
 import { PricingExpiredNotificationComponent } from "../../shared/components/pricing-expired-notification/pricing-expired-notification.component";
 import * as moment from "moment";
-import { fboChangedEvent } from "../../models/sharedEvents";
+import { fboChangedEvent, locationChangedEvent } from "../../models/sharedEvents";
 
 @Component({
     moduleId: module.id,
@@ -27,7 +27,6 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     @Input()
     openedSidebar: boolean;
     public pricingTemplatesData: any[];
-    public subscription: any;
 
     constructor(
         private sharedService: SharedService,
@@ -51,8 +50,8 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
         }
     }
     ngAfterViewInit() {
-        this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === fboChangedEvent && this.sharedService.currentUser.fboId) {
+        this.sharedService.changeEmitted$.subscribe((message) => {
+            if ((message === fboChangedEvent || message === locationChangedEvent) && this.sharedService.currentUser.fboId) {
                 this.pricingTemplatesService
                     .getByFbo(this.sharedService.currentUser.fboId)
                     .subscribe((data: any) => (this.pricingTemplatesData = data));

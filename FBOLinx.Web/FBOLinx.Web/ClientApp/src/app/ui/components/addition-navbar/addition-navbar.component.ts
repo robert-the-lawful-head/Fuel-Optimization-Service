@@ -6,16 +6,21 @@ import {
     ElementRef,
     HostListener,
     AfterViewInit,
+    OnChanges,
+    SimpleChanges,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
+import * as moment from "moment";
+import { isEqual} from "lodash";
+
 import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
 import { SharedService } from "../../../layouts/shared-service";
-import { DistributionWizardReviewComponent } from "../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component";
 import { DistributionService } from "../../../services/distribution.service";
-import * as moment from "moment";
+
+import { DistributionWizardReviewComponent } from "../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component";
 
 @Component({
     selector: "addition-navbar",
@@ -26,7 +31,7 @@ import * as moment from "moment";
         "[class.open]": "open",
     },
 })
-export class AdditionNavbarComponent implements OnInit, AfterViewInit {
+export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges {
     title: string;
     open: boolean;
     // Public Members
@@ -61,6 +66,38 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
+        this.refresh();
+    }
+
+    ngAfterViewInit() {
+        this.sharedService.currentMessage.subscribe((message) => {
+            this.message = message;
+            this.pricingTemplatesService
+                .getByFbo(
+                    this.sharedService.currentUser.fboId,
+                    this.sharedService.currentUser.groupId
+                )
+                .subscribe((data: any) => {
+                    this.pricingTemplatesData = [];
+                    if (data) {
+                        this.pricingTemplatesData = data;
+                    }
+                    this.marginTemplateDataSource = new MatTableDataSource(
+                        this.pricingTemplatesData
+                    );
+                    this.resultsLength = this.pricingTemplatesData.length;
+                });
+        });
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.templatelst && !isEqual(changes.templatelst.currentValue, changes.templatelst.previousValue)) {
+            console.log("refresh distributions");
+            this.refresh();
+        }
+    }
+
+    public refresh() {
         this.distributionService
             .getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50)
             .subscribe((data: any) => {
@@ -109,28 +146,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit {
         this.resultsLength = this.pricingTemplatesData.length;
     }
 
-    ngAfterViewInit() {
-        this.sharedService.currentMessage.subscribe((message) => {
-            this.message = message;
-            this.pricingTemplatesService
-                .getByFbo(
-                    this.sharedService.currentUser.fboId,
-                    this.sharedService.currentUser.groupId
-                )
-                .subscribe((data: any) => {
-                    this.pricingTemplatesData = [];
-                    if (data) {
-                        this.pricingTemplatesData = data;
-                    }
-                    this.marginTemplateDataSource = new MatTableDataSource(
-                        this.pricingTemplatesData
-                    );
-                    this.resultsLength = this.pricingTemplatesData.length;
-                });
-        });
-    }
-
-    openNavbar(event) {
+    public openNavbar(event) {
         event.preventDefault();
 
         this.open = !this.open;

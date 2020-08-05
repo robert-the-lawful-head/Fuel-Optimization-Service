@@ -31,12 +31,24 @@ namespace IO.Swagger.Api
         /// <returns>DeleteCompanyFuelerPriceAdjustmentResponse</returns>
         DeleteCompanyFuelerPriceAdjustmentResponse DeleteCompanyFuelerPriceAdjustment (int? id);
         /// <summary>
+        /// Delete a captured price sheet for a company&#39;s fuel vendor. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteCompanyFuelerPriceSheetFileCaptureResponse</returns>
+        DeleteCompanyFuelerPriceSheetFileCaptureResponse DeleteCompanyFuelerPriceSheetFileCapture (int? id);
+        /// <summary>
         /// Delete a company-specific settings record for a fuel vendor. 
         /// </summary>
         /// <param name="companyFuelerId"></param>
         /// <param name="settingsId"></param>
         /// <returns>DeleteCompanyFuelerSettingsResponse</returns>
         DeleteCompanyFuelerSettingsResponse DeleteCompanyFuelerSettings (int? companyFuelerId, int? settingsId);
+        /// <summary>
+        /// Delete fuel vendor payment information by fuel vendor id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>FuelVendorPaymentInformationDTO</returns>
+        FuelVendorPaymentInformationDTO DeletePaymentInformationByFuelVendorId (int? id);
         /// <summary>
         /// Fetch a company-specific record tied to the fuel vendor for the provided {fuelVendorId}. 
         /// </summary>
@@ -67,11 +79,23 @@ namespace IO.Swagger.Api
         /// <returns>CompanyFuelerPriceAdjustmentListResponse</returns>
         CompanyFuelerPriceAdjustmentListResponse GetCompanyFuelerPriceAdjustmentList (int? companyFuelerId);
         /// <summary>
+        /// Get recently captured price sheet by it&#39;s {id} 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>PostCompanyFuelerPriceSheetFileCaptureResponse</returns>
+        PostCompanyFuelerPriceSheetFileCaptureResponse GetCompanyFuelerPriceSheetFileCapture (int? id);
+        /// <summary>
         /// Fetch the company-specific settings for the specified {companyFuelerId} record. 
         /// </summary>
         /// <param name="companyFuelerId"></param>
         /// <returns>CompanyFuelerSettingsResponse</returns>
         CompanyFuelerSettingsResponse GetCompanyFuelerSettings (int? companyFuelerId);
+        /// <summary>
+        /// Get fuel vendor payment information by fuel vendor id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>FuelVendorPaymentInformationDTO</returns>
+        FuelVendorPaymentInformationDTO GetPaymentInformationByFuelVendorId (int? id);
         /// <summary>
         /// Add a company-specific record for a fuel vendor.  These details are unique for each flight department. 
         /// </summary>
@@ -91,11 +115,29 @@ namespace IO.Swagger.Api
         /// <returns>PostCompanyFuelerPriceAdjustmentResponse</returns>
         PostCompanyFuelerPriceAdjustmentResponse PostCompanyFuelerPriceAdjustment (PostCompanyFuelerPriceAdjustmentRequest body);
         /// <summary>
+        /// Add a recently captured price sheet for a company&#39;s fuel vendor. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostCompanyFuelerPriceSheetFileCaptureResponse</returns>
+        PostCompanyFuelerPriceSheetFileCaptureResponse PostCompanyFuelerPriceSheetFileCapture (PostCompanyFuelerPriceSheetFileCaptureRequest body);
+        /// <summary>
         /// Add a company-specific settings record for a fuel vendor. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostCompanyFuelerSettingsResponse</returns>
         PostCompanyFuelerSettingsResponse PostCompanyFuelerSettings (PostCompanyFuelerSettingsRequest body);
+        /// <summary>
+        /// Add a fuel vendor payment information 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostPaymentInformationResponse</returns>
+        PostPaymentInformationResponse PostPaymentInformation (PostPaymentInformationRequest body);
+        /// <summary>
+        /// Update a fuel vendor payment information 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>FuelVendorPaymentInformationDTO</returns>
+        FuelVendorPaymentInformationDTO PutPaymentInformation (FuelVendorPaymentInformationDTO body);
         /// <summary>
         /// Update the company-specific details of a fuel vendor.  These details are unique for each flight department. 
         /// </summary>
@@ -108,6 +150,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateCompanyFuelerNotesResponse</returns>
         UpdateCompanyFuelerNotesResponse UpdateCompanyFuelerNotes (UpdateCompanyFuelerNotesRequest body);
+        /// <summary>
+        /// Update a captured price sheet for a company&#39;s fuel vendor. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateCompanyFuelerPriceSheetFileCaptureResponse</returns>
+        UpdateCompanyFuelerPriceSheetFileCaptureResponse UpdateCompanyFuelerPriceSheetFileCapture (UpdateCompanyFuelerPriceSheetFileCaptureRequest body);
         /// <summary>
         /// Update a company-specific settings record for a fuel vendor. 
         /// </summary>
@@ -286,6 +334,43 @@ path = path.Replace("{" + "noteId" + "}", ApiClient.ParameterToString(noteId));
         }
     
         /// <summary>
+        /// Delete a captured price sheet for a company&#39;s fuel vendor. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteCompanyFuelerPriceSheetFileCaptureResponse</returns>            
+        public DeleteCompanyFuelerPriceSheetFileCaptureResponse DeleteCompanyFuelerPriceSheetFileCapture (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteCompanyFuelerPriceSheetFileCapture");
+            
+    
+            var path = "/api/FuelVendor/company-specific/price-sheet-capture/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyFuelerPriceSheetFileCapture: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyFuelerPriceSheetFileCapture: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteCompanyFuelerPriceSheetFileCaptureResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCompanyFuelerPriceSheetFileCaptureResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Delete a company-specific settings record for a fuel vendor. 
         /// </summary>
         /// <param name="companyFuelerId"></param> 
@@ -325,6 +410,43 @@ path = path.Replace("{" + "settingsId" + "}", ApiClient.ParameterToString(settin
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyFuelerSettings: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteCompanyFuelerSettingsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCompanyFuelerSettingsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Delete fuel vendor payment information by fuel vendor id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>FuelVendorPaymentInformationDTO</returns>            
+        public FuelVendorPaymentInformationDTO DeletePaymentInformationByFuelVendorId (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeletePaymentInformationByFuelVendorId");
+            
+    
+            var path = "/api/FuelVendor/{id}/delete-payment-info";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeletePaymentInformationByFuelVendorId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeletePaymentInformationByFuelVendorId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FuelVendorPaymentInformationDTO) ApiClient.Deserialize(response.Content, typeof(FuelVendorPaymentInformationDTO), response.Headers);
         }
     
         /// <summary>
@@ -508,6 +630,43 @@ path = path.Replace("{" + "settingsId" + "}", ApiClient.ParameterToString(settin
         }
     
         /// <summary>
+        /// Get recently captured price sheet by it&#39;s {id} 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>PostCompanyFuelerPriceSheetFileCaptureResponse</returns>            
+        public PostCompanyFuelerPriceSheetFileCaptureResponse GetCompanyFuelerPriceSheetFileCapture (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetCompanyFuelerPriceSheetFileCapture");
+            
+    
+            var path = "/api/FuelVendor/company-specific/price-sheet-capture/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyFuelerPriceSheetFileCapture: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyFuelerPriceSheetFileCapture: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostCompanyFuelerPriceSheetFileCaptureResponse) ApiClient.Deserialize(response.Content, typeof(PostCompanyFuelerPriceSheetFileCaptureResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Fetch the company-specific settings for the specified {companyFuelerId} record. 
         /// </summary>
         /// <param name="companyFuelerId"></param> 
@@ -542,6 +701,43 @@ path = path.Replace("{" + "settingsId" + "}", ApiClient.ParameterToString(settin
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyFuelerSettings: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CompanyFuelerSettingsResponse) ApiClient.Deserialize(response.Content, typeof(CompanyFuelerSettingsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Get fuel vendor payment information by fuel vendor id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>FuelVendorPaymentInformationDTO</returns>            
+        public FuelVendorPaymentInformationDTO GetPaymentInformationByFuelVendorId (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetPaymentInformationByFuelVendorId");
+            
+    
+            var path = "/api/FuelVendor/{id}/get-payment-info";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetPaymentInformationByFuelVendorId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetPaymentInformationByFuelVendorId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FuelVendorPaymentInformationDTO) ApiClient.Deserialize(response.Content, typeof(FuelVendorPaymentInformationDTO), response.Headers);
         }
     
         /// <summary>
@@ -647,6 +843,40 @@ path = path.Replace("{" + "settingsId" + "}", ApiClient.ParameterToString(settin
         }
     
         /// <summary>
+        /// Add a recently captured price sheet for a company&#39;s fuel vendor. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostCompanyFuelerPriceSheetFileCaptureResponse</returns>            
+        public PostCompanyFuelerPriceSheetFileCaptureResponse PostCompanyFuelerPriceSheetFileCapture (PostCompanyFuelerPriceSheetFileCaptureRequest body)
+        {
+            
+    
+            var path = "/api/FuelVendor/company-specific/price-sheet-capture";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyFuelerPriceSheetFileCapture: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyFuelerPriceSheetFileCapture: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostCompanyFuelerPriceSheetFileCaptureResponse) ApiClient.Deserialize(response.Content, typeof(PostCompanyFuelerPriceSheetFileCaptureResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Add a company-specific settings record for a fuel vendor. 
         /// </summary>
         /// <param name="body"></param> 
@@ -678,6 +908,74 @@ path = path.Replace("{" + "settingsId" + "}", ApiClient.ParameterToString(settin
                 throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyFuelerSettings: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostCompanyFuelerSettingsResponse) ApiClient.Deserialize(response.Content, typeof(PostCompanyFuelerSettingsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Add a fuel vendor payment information 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostPaymentInformationResponse</returns>            
+        public PostPaymentInformationResponse PostPaymentInformation (PostPaymentInformationRequest body)
+        {
+            
+    
+            var path = "/api/FuelVendor/add-payment-info";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostPaymentInformation: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostPaymentInformation: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostPaymentInformationResponse) ApiClient.Deserialize(response.Content, typeof(PostPaymentInformationResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Update a fuel vendor payment information 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>FuelVendorPaymentInformationDTO</returns>            
+        public FuelVendorPaymentInformationDTO PutPaymentInformation (FuelVendorPaymentInformationDTO body)
+        {
+            
+    
+            var path = "/api/FuelVendor/update-payment-info";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PutPaymentInformation: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PutPaymentInformation: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FuelVendorPaymentInformationDTO) ApiClient.Deserialize(response.Content, typeof(FuelVendorPaymentInformationDTO), response.Headers);
         }
     
         /// <summary>
@@ -746,6 +1044,40 @@ path = path.Replace("{" + "settingsId" + "}", ApiClient.ParameterToString(settin
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyFuelerNotes: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateCompanyFuelerNotesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCompanyFuelerNotesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Update a captured price sheet for a company&#39;s fuel vendor. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateCompanyFuelerPriceSheetFileCaptureResponse</returns>            
+        public UpdateCompanyFuelerPriceSheetFileCaptureResponse UpdateCompanyFuelerPriceSheetFileCapture (UpdateCompanyFuelerPriceSheetFileCaptureRequest body)
+        {
+            
+    
+            var path = "/api/FuelVendor/company-specific/price-sheet-capture";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyFuelerPriceSheetFileCapture: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyFuelerPriceSheetFileCapture: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateCompanyFuelerPriceSheetFileCaptureResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCompanyFuelerPriceSheetFileCaptureResponse), response.Headers);
         }
     
         /// <summary>

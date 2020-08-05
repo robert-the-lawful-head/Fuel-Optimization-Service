@@ -153,7 +153,7 @@ namespace FBOLinx.Web.Controllers
                 Title = contact.Title,
                 Oid = fbocontacts.Oid,
                 Primary = contact.Primary,
-                CopyAlerts = false
+                CopyAlerts = contact.CopyAlerts
             });
         }
 
@@ -176,7 +176,7 @@ namespace FBOLinx.Web.Controllers
             FBOLinxFuelVendorUpdateRequest request = new FBOLinxFuelVendorUpdateRequest
             {
                 EmailToCC = ccemail,
-                FboId = fboId,
+                GroupId = fbo.GroupId,
                 Email = fbo.FuelDeskEmail
             };
 

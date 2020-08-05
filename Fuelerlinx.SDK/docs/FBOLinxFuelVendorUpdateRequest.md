@@ -3,7 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**FboId** | **int?** |  | 
+**GroupId** | **int?** |  | 
 **Email** | **string** |  | [optional] 
 **EmailToCC** | **string** |  | [optional] 
 

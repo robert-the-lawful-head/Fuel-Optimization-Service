@@ -5,12 +5,12 @@ All URIs are relative to *https://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**AddRampFeeByCompany**](RampFeeApi.md#addrampfeebycompany) | **POST** /api/RampFee/company-specific | Add a company-specific ramp fee.
-[**DeleteRampFeeByCompany**](RampFeeApi.md#deleterampfeebycompany) | **DELETE** /api/RampFee/company-specific/{rampFeeByCompanyId} | Delete a company-specific ramp fee.
-[**DeleteRampFeeByCompanyNote**](RampFeeApi.md#deleterampfeebycompanynote) | **DELETE** /api/RampFee/company-specific/{rampFeeByCompanyId}/notes/{noteId} | Delete a company-specific note for a ramp fee.  The note will be changed to a \&quot;deleted\&quot; state but will not be removed from the database to allow for change-tracking.
+[**DeleteRampFeeByCompany**](RampFeeApi.md#deleterampfeebycompany) | **DELETE** /api/RampFee/company-specific/{id} | Delete a company-specific ramp fee.
+[**DeleteRampFeeByCompanyNote**](RampFeeApi.md#deleterampfeebycompanynote) | **DELETE** /api/RampFee/company-specific/{id}/notes/{noteId} | Delete a company-specific note for a ramp fee.  The note will be changed to a \&quot;deleted\&quot; state but will not be removed from the database to allow for change-tracking.
 [**GetCrowdSourcedRampFeeByScenario**](RampFeeApi.md#getcrowdsourcedrampfeebyscenario) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a crowd-sourced ramp fee pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
-[**GetRampFeeByCompany**](RampFeeApi.md#getrampfeebycompany) | **GET** /api/RampFee/company-specific/{rampFeeByCompanyId} | Get a company-specific ramp fee by it&#39;s [Id].
+[**GetRampFeeByCompany**](RampFeeApi.md#getrampfeebycompany) | **GET** /api/RampFee/company-specific/{id} | Get a company-specific ramp fee by it&#39;s [id].
 [**GetRampFeeByCompanyByScenario**](RampFeeApi.md#getrampfeebycompanybyscenario) | **GET** /api/RampFee/company-specific/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}.
-[**GetRampFeeByCompanyNotes**](RampFeeApi.md#getrampfeebycompanynotes) | **GET** /api/RampFee/company-specific/{rampFeeByCompanyId}/notes | Fetch all company-specific notes for the specified [rampFeeByCompanyId].
+[**GetRampFeeByCompanyNotes**](RampFeeApi.md#getrampfeebycompanynotes) | **GET** /api/RampFee/company-specific/{id}/notes | Fetch all company-specific notes for the specified [rampFeeByCompanyId].
 [**GetRampFeesByCompanyForAirport**](RampFeeApi.md#getrampfeesbycompanyforairport) | **GET** /api/RampFee/company-specific/by-airport/{icao} | Get a list of company-specific ramp fees at the the provided [icao].
 [**GetRampFeesByCompanyForLocation**](RampFeeApi.md#getrampfeesbycompanyforlocation) | **GET** /api/RampFee/company-specific/by-location/{icao}/{fboName} | Get a list of company-specific ramp fees at the the provided [icao] and [fboName].
 [**PostRampFeeByCompanyNotes**](RampFeeApi.md#postrampfeebycompanynotes) | **POST** /api/RampFee/company-specific/notes | Add a company-specific note to a ramp fee.
@@ -91,7 +91,7 @@ Name | Type | Description  | Notes
 
 <a name="deleterampfeebycompany"></a>
 # **DeleteRampFeeByCompany**
-> DeleteRampFeeByCompanyResponse DeleteRampFeeByCompany (int? rampFeeByCompanyId)
+> DeleteRampFeeByCompanyResponse DeleteRampFeeByCompany (int? id)
 
 Delete a company-specific ramp fee.
 
@@ -120,12 +120,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new RampFeeApi();
-            var rampFeeByCompanyId = 56;  // int? | 
+            var id = 56;  // int? | 
 
             try
             {
                 // Delete a company-specific ramp fee.
-                DeleteRampFeeByCompanyResponse result = apiInstance.DeleteRampFeeByCompany(rampFeeByCompanyId);
+                DeleteRampFeeByCompanyResponse result = apiInstance.DeleteRampFeeByCompany(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -141,7 +141,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **rampFeeByCompanyId** | **int?**|  | 
+ **id** | **int?**|  | 
 
 ### Return type
 
@@ -160,7 +160,7 @@ Name | Type | Description  | Notes
 
 <a name="deleterampfeebycompanynote"></a>
 # **DeleteRampFeeByCompanyNote**
-> DeleteRampFeeByCompanyNotesResponse DeleteRampFeeByCompanyNote (int? rampFeeByCompanyId, int? noteId)
+> DeleteRampFeeByCompanyNotesResponse DeleteRampFeeByCompanyNote (int? id, int? noteId)
 
 Delete a company-specific note for a ramp fee.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
 
@@ -189,13 +189,13 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new RampFeeApi();
-            var rampFeeByCompanyId = 56;  // int? | 
+            var id = 56;  // int? | 
             var noteId = 56;  // int? | 
 
             try
             {
                 // Delete a company-specific note for a ramp fee.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
-                DeleteRampFeeByCompanyNotesResponse result = apiInstance.DeleteRampFeeByCompanyNote(rampFeeByCompanyId, noteId);
+                DeleteRampFeeByCompanyNotesResponse result = apiInstance.DeleteRampFeeByCompanyNote(id, noteId);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -211,7 +211,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **rampFeeByCompanyId** | **int?**|  | 
+ **id** | **int?**|  | 
  **noteId** | **int?**|  | 
 
 ### Return type
@@ -304,9 +304,9 @@ Name | Type | Description  | Notes
 
 <a name="getrampfeebycompany"></a>
 # **GetRampFeeByCompany**
-> RampFeeByCompanyResponse GetRampFeeByCompany (int? rampFeeId, string rampFeeByCompanyId)
+> RampFeeByCompanyResponse GetRampFeeByCompany (int? id)
 
-Get a company-specific ramp fee by it's [Id].
+Get a company-specific ramp fee by it's [id].
 
 The request will fail if the authorized user is not part of the company that the record is attached to.
 
@@ -335,13 +335,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new RampFeeApi();
-            var rampFeeId = 56;  // int? | 
-            var rampFeeByCompanyId = rampFeeByCompanyId_example;  // string | 
+            var id = 56;  // int? | 
 
             try
             {
-                // Get a company-specific ramp fee by it's [Id].
-                RampFeeByCompanyResponse result = apiInstance.GetRampFeeByCompany(rampFeeId, rampFeeByCompanyId);
+                // Get a company-specific ramp fee by it's [id].
+                RampFeeByCompanyResponse result = apiInstance.GetRampFeeByCompany(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -357,8 +356,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **rampFeeId** | **int?**|  | 
- **rampFeeByCompanyId** | **string**|  | 
+ **id** | **int?**|  | 
 
 ### Return type
 
@@ -450,7 +448,7 @@ Name | Type | Description  | Notes
 
 <a name="getrampfeebycompanynotes"></a>
 # **GetRampFeeByCompanyNotes**
-> RampFeeByCompanyNotesResponse GetRampFeeByCompanyNotes (int? rampFeeByCompanyId)
+> RampFeeByCompanyNotesResponse GetRampFeeByCompanyNotes (int? id)
 
 Fetch all company-specific notes for the specified [rampFeeByCompanyId].
 
@@ -479,12 +477,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new RampFeeApi();
-            var rampFeeByCompanyId = 56;  // int? | 
+            var id = 56;  // int? | 
 
             try
             {
                 // Fetch all company-specific notes for the specified [rampFeeByCompanyId].
-                RampFeeByCompanyNotesResponse result = apiInstance.GetRampFeeByCompanyNotes(rampFeeByCompanyId);
+                RampFeeByCompanyNotesResponse result = apiInstance.GetRampFeeByCompanyNotes(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -500,7 +498,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **rampFeeByCompanyId** | **int?**|  | 
+ **id** | **int?**|  | 
 
 ### Return type
 

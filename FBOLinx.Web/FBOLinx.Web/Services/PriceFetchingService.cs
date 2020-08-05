@@ -25,11 +25,12 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId)
         {
+            List<string> airports = icao.Split(',').Select(x => x.Trim()).ToList();
             List<CustomerWithPricing> result = new List<CustomerWithPricing>();
             List<Fboairports> fboAirports = await _context.Fboairports
                                                             .Include(x => x.Fbo)
                                                             .ThenInclude(x => x.Group)
-                                                            .Where(x => x.Icao == icao && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true)
+                                                            .Where(x => airports.Any(a => a == x.Icao) && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true)
                                                             .ToListAsync();
             if (fboAirports == null)
                 return result;
@@ -55,11 +56,17 @@ namespace FBOLinx.Web.Services
 
                 List<CustomerWithPricing> pricing =
                     await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList());
+
+                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyAlerts.HasValue && x.Contact.CopyAlerts.Value).Select(x => x.Contact.Email).ToListAsync();
+
                 foreach(var price in pricing)
                 {
                     var template = templates.FirstOrDefault(x => x.Oid == price.PricingTemplateId);
                     if (template != null && template.TailNumbers != null)
                         price.TailNumbers = string.Join(",", template.TailNumbers);
+                    if (alertEmailAddresses != null)
+                        price.CopyEmails = string.Join(";", alertEmailAddresses);
+                    price.FuelDeskEmail = fbo.FuelDeskEmail;
                 }
 
                 if (pricing != null)

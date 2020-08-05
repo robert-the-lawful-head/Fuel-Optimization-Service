@@ -562,7 +562,9 @@ namespace FBOLinx.Web.Controllers
                         TailNumberList = p.TailNumbers,
                         ExpirationDate = p.ExpirationDate,
                         PricingTemplateId = p.PricingTemplateId.GetValueOrDefault() == 0 ? ct.CustomerType : p.PricingTemplateId.GetValueOrDefault(),
-                        PricingTemplateName = p.PricingTemplateId.GetValueOrDefault() == 0 ? ct.PricingTemplateName : p.PricingTemplateName
+                        PricingTemplateName = p.PricingTemplateId.GetValueOrDefault() == 0 ? ct.PricingTemplateName : p.PricingTemplateName,
+                        FuelDeskEmail = p.FuelDeskEmail,
+                        CopyEmails = p.CopyEmails
                     }).Distinct();
 
                 return Ok(result);
