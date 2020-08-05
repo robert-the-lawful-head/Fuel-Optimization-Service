@@ -39,6 +39,8 @@ namespace FBOLinx.Web.DTO
         public string Notes { get; set; }
         public string Fbo { get; set; }
         public string Group { get; set; }
+        public string FuelDeskEmail { get; set; }
+        public string CopyEmails { get; set; }
 
         public double? AllInPrice
         {

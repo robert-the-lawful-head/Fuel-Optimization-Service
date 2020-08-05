@@ -55,11 +55,17 @@ namespace FBOLinx.Web.Services
 
                 List<CustomerWithPricing> pricing =
                     await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList());
+
+                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyAlerts.HasValue && x.Contact.CopyAlerts.Value).Select(x => x.Contact.Email).ToListAsync();
+
                 foreach(var price in pricing)
                 {
                     var template = templates.FirstOrDefault(x => x.Oid == price.PricingTemplateId);
                     if (template != null && template.TailNumbers != null)
                         price.TailNumbers = string.Join(",", template.TailNumbers);
+                    if (alertEmailAddresses != null)
+                        price.CopyEmails = string.Join(";", alertEmailAddresses);
+                    price.FuelDeskEmail = fbo.FuelDeskEmail;
                 }
 
                 if (pricing != null)
