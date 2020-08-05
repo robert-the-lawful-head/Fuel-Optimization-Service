@@ -25,11 +25,12 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId)
         {
+            List<string> airports = icao.Split(',').Select(x => x.Trim()).ToList();
             List<CustomerWithPricing> result = new List<CustomerWithPricing>();
             List<Fboairports> fboAirports = await _context.Fboairports
                                                             .Include(x => x.Fbo)
                                                             .ThenInclude(x => x.Group)
-                                                            .Where(x => x.Icao == icao && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true)
+                                                            .Where(x => airports.Any(a => a == x.Icao) && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true)
                                                             .ToListAsync();
             if (fboAirports == null)
                 return result;
