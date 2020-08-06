@@ -22,9 +22,9 @@ namespace FBOLinx.Web.Controllers
     public class CustomerAircraftsController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private IHttpContextAccessor _HttpContextAccessor;
+        private IHttpContextAccessor _HttpContextAccessor;      
 
-        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor)
+        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, RampFeesService rampFeesService)
         {
             _HttpContextAccessor = httpContextAccessor;
             _context = context;

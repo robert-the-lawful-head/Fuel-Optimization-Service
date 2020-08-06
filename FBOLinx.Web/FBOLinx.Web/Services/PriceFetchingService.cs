@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models;
+using FBOLinx.Web.Models.Responses;
 using FBOLinx.Web.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace FBOLinx.Web.Services
 {
@@ -67,6 +69,53 @@ namespace FBOLinx.Web.Services
             }
 
             return result;
+        }
+
+        public async Task<TailNumberLoadResponse> GetCustomerPricingByLocationAndTailNumberAsync(string icao, int customerId, string tailNumber, int fboId, int fuelVolume)
+        {
+            TailNumberLoadResponse newTailNumberLoadResponse = new TailNumberLoadResponse();
+            List<CustomerWithPricing> result = new List<CustomerWithPricing>();
+            Fboairports fboAirport = await _context.Fboairports
+                                                            .Include(x => x.Fbo)
+                                                            .ThenInclude(x => x.Group)
+                                                            .FirstOrDefaultAsync(x => x.Icao == icao && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true && x.Fboid == fboId);
+                                                            
+            if (fboAirport == null)
+                return null;
+
+            if (fboAirport.Fbo.Group.Isfbonetwork.GetValueOrDefault() || fboAirport.Fbo.Group.IsLegacyAccount.GetValueOrDefault())
+                return null;
+            Fbos fbo = await _context.Fbos
+                                        .Include(x => x.Group)
+                                        .Where(x => x.Oid == fboAirport.Fboid)
+                                        .FirstOrDefaultAsync();
+            CustomerInfoByGroup customerInfoByGroup = await _context.CustomerInfoByGroup
+                                                                        .Where(x => x.CustomerId == customerId && x.GroupId == fbo.GroupId)
+                                                                        .FirstOrDefaultAsync();
+            if (customerInfoByGroup == null)
+                return null;
+
+            List<PricingTemplate> templates = await GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault());
+            if (templates == null)
+                return null;
+
+            templates = templates.Where(s => s.TailNumbers.Contains(tailNumber)).ToList();
+
+
+            List<CustomerWithPricing> pricing =
+                await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList());
+
+            var priceFuelVolume = pricing.FirstOrDefault(s => s.MinGallons > fuelVolume && s.MaxGallons < fuelVolume);
+
+            if(priceFuelVolume != null)
+            {
+                newTailNumberLoadResponse.Template = templates.FirstOrDefault().Name;
+                newTailNumberLoadResponse.PricePerGallon = priceFuelVolume.AllInPrice;
+            }
+
+            
+            
+            return newTailNumberLoadResponse;
         }
 
         public async Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId, int customerInfoByGroupId, List<int> pricingTemplateIds)

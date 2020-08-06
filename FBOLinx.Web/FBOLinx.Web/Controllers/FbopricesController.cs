@@ -27,7 +27,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JwtManager _jwtManager;
-
+        private RampFeesService _rampFeesService;
 
         public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
         {
@@ -566,6 +566,71 @@ namespace FBOLinx.Web.Controllers
                     }).Distinct();
 
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [AllowAnonymous]
+     //   [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [HttpPost("volume-discounts-for-customer")]
+        public async Task<IActionResult> GetFuelPricesForCustomer([FromBody] TailNumberLoadRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                CompanyPricingLog companyPricingLog = new CompanyPricingLog
+                {
+                    CompanyId = request.CompanyID,
+                    ICAO = request.ICAO
+                };
+                _context.CompanyPricingLog.Add(companyPricingLog);
+
+                _context.SaveChanges();
+
+                var customerObj = _context.CustomerAircrafts.FirstOrDefault(s => s.TailNumber == request.TailNumber);
+
+                var customer =
+                    await _context.Customers.FirstOrDefaultAsync(x =>
+                        x.Oid == customerObj.CustomerId);
+                if (customer == null)
+                    return Ok(null);
+
+                PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
+                var validPricing =
+                    await priceFetchingService.GetCustomerPricingByLocationAndTailNumberAsync(request.ICAO, customer.Oid, request.TailNumber, request.CompanyID, request.FuelVolume);
+                if (validPricing == null)
+                    return Ok(null);
+
+                var custAircraftMakeModel = _context.Aircrafts.FirstOrDefault(s => s.AircraftId == customerObj.AircraftId);
+
+                if(custAircraftMakeModel != null)
+                {
+                    _rampFeesService = new RampFeesService(_context);
+                    validPricing.Fees = await _rampFeesService.GetRampFeesForFbo(request.CompanyID, custAircraftMakeModel.Size);
+                    validPricing.MakeModel = custAircraftMakeModel.Make + " " + custAircraftMakeModel.Model;
+                }
+
+                var aircraftCompany = await (from ca in _context.CustomerAircrafts
+                                               join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
+                                               from ac in leftJoinAircrafts.DefaultIfEmpty()
+                                               join c in _context.CustomerInfoByGroup
+                                               on ca.CustomerId equals c.CustomerId into leftJoinCustomers
+                                               from c in leftJoinCustomers.DefaultIfEmpty()
+                                               where ca.TailNumber == request.TailNumber
+                                               select new
+                                               {
+                                                   c.Customer
+                                               }).FirstOrDefaultAsync();
+
+                validPricing.Company = aircraftCompany.Customer.Company;
+
+                return Ok(validPricing);
             }
             catch (Exception ex)
             {

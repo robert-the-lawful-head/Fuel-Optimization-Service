@@ -16,6 +16,24 @@
                     <button ni-button class="mr-3" [view]="'accent'" (click)="LookupItem()">Check Pricing</button>
                 </div>
             </div>
+            <div *ngIf="tailLookupResponse">
+                <div class="row">
+                    <p>Price Per Gallon:&nbsp;{{tailLookupResponse.pricePerGallon | currency}}</p>
+                </div>
+                <div class="row">
+                    <p>Ramp Fees:&nbsp;{{tailLookupResponse.fees | currency}}</p>
+                </div>
+                <div class="row">
+                    <p>Pricing Template:&nbsp;{{tailLookupResponse.template}}</p>
+                </div>
+                <div class="row">
+                    <p>Company:&nbsp;{{tailLookupResponse.company}}</p>
+                </div>
+                <div class="row">
+                    <p>Make / Model:&nbsp;{{tailLookupResponse.makeModel}}</p>
+                </div>
+            </div>
+            
         </ni-card>
     </div>
 </div>
