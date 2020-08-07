@@ -1,8 +1,9 @@
-# IO.Swagger.Model.RouteDetailsCalculation
+# IO.Swagger.Model.RouteDetailsCaclulationWithNavLog
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**NavigationLog** | [**NavigationLog**](NavigationLog.md) |  | [optional] 
 **AlternateAirportICAO** | **string** |  | [optional] 
 **RequiredReserve** | [**Weight**](Weight.md) |  | [optional] 
 **Airspeed** | **string** |  | [optional] 

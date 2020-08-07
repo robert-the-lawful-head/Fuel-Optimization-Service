@@ -11,7 +11,14 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class RouteDetailsCalculation {
+  public class RouteDetailsCaclulationWithNavLog {
+    /// <summary>
+    /// Gets or Sets NavigationLog
+    /// </summary>
+    [DataMember(Name="navigationLog", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "navigationLog")]
+    public NavigationLog NavigationLog { get; set; }
+
     /// <summary>
     /// Gets or Sets AlternateAirportICAO
     /// </summary>
@@ -156,7 +163,8 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class RouteDetailsCalculation {\n");
+      sb.Append("class RouteDetailsCaclulationWithNavLog {\n");
+      sb.Append("  NavigationLog: ").Append(NavigationLog).Append("\n");
       sb.Append("  AlternateAirportICAO: ").Append(AlternateAirportICAO).Append("\n");
       sb.Append("  RequiredReserve: ").Append(RequiredReserve).Append("\n");
       sb.Append("  Airspeed: ").Append(Airspeed).Append("\n");

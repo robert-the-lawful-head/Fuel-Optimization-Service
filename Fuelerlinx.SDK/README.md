@@ -340,6 +340,7 @@ Class | Method | HTTP request | Description
 *ServiceLogsApi* | [**UpdateSchedulingIntegrationDispatchServiceLog**](docs/ServiceLogsApi.md#updateschedulingintegrationdispatchservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog | Update the scheduling integration dispatch service log.
 *ServiceLogsApi* | [**UpdateSchedulingIntegrationServiceLog**](docs/ServiceLogsApi.md#updateschedulingintegrationservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationServiceLog | Update the scheduling integration service log.
 *ServiceLogsApi* | [**UpdateTankeringApiCalculationLog**](docs/ServiceLogsApi.md#updatetankeringapicalculationlog) | **PUT** /api/ServiceLogs/tankeringApiCalculationLog | Update the tankering api calculation log.
+*TankeringApi* | [**CalculateRouteDetails**](docs/TankeringApi.md#calculateroutedetails) | **POST** /api/Tankering/calculate-route-details | 
 *TankeringApi* | [**CalculateTankering**](docs/TankeringApi.md#calculatetankering) | **POST** /api/Tankering/calculate | 
 *TaxesApi* | [**DeleteTaxByCountry**](docs/TaxesApi.md#deletetaxbycountry) | **DELETE** /api/Taxes/by-country/{id} | Internal use only - Delete a tax-by-country record.
 *TaxesApi* | [**GetTaxByCountryById**](docs/TaxesApi.md#gettaxbycountrybyid) | **GET** /api/Taxes/by-country/id/{id} | Fetch taxes by country by it's [id].  These taxes include MOT/VAT and under what circumstances they are applicable.
@@ -457,6 +458,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.BuildVersionResponse](docs/BuildVersionResponse.md)
  - [IO.Swagger.Model.ButtonOptions](docs/ButtonOptions.md)
  - [IO.Swagger.Model.CSSObject](docs/CSSObject.md)
+ - [IO.Swagger.Model.CalculateRouteDetailsRequest](docs/CalculateRouteDetailsRequest.md)
+ - [IO.Swagger.Model.CalculateRouteDetailsResponse](docs/CalculateRouteDetailsResponse.md)
  - [IO.Swagger.Model.CalculateTankeringRequest](docs/CalculateTankeringRequest.md)
  - [IO.Swagger.Model.CalculateTankeringResponse](docs/CalculateTankeringResponse.md)
  - [IO.Swagger.Model.CalculationResult](docs/CalculationResult.md)
@@ -809,6 +812,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ReportScheduledDistributionListResponse](docs/ReportScheduledDistributionListResponse.md)
  - [IO.Swagger.Model.ReportScheduledDistributionResponse](docs/ReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.ResultItem](docs/ResultItem.md)
+ - [IO.Swagger.Model.RouteDetailsCaclulationWithNavLog](docs/RouteDetailsCaclulationWithNavLog.md)
  - [IO.Swagger.Model.RouteDetailsCalculation](docs/RouteDetailsCalculation.md)
  - [IO.Swagger.Model.RouteDetailsCalculationAircraftData](docs/RouteDetailsCalculationAircraftData.md)
  - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)
