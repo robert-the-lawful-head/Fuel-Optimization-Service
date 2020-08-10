@@ -59,17 +59,17 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new AccountingApi();
-            var id = 56;  // int? | 
+            var body = new SageCredentialsRequest(); // SageCredentialsRequest |  (optional) 
 
             try
             {
-                // Deletes accounting integration item code record based on ID
-                DeleteAccountingIntegrationItemCodesDetailsResponse result = apiInstance.DeleteAccountingIntegrationItemCodes(id);
+                // Get Sage Credentials
+                CheckAuthorizationInfoResponse result = apiInstance.CheckSageCredentials(body);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling AccountingApi.DeleteAccountingIntegrationItemCodes: " + e.Message );
+                Debug.Print("Exception when calling AccountingApi.CheckSageCredentials: " + e.Message );
             }
         }
     }
@@ -83,6 +83,7 @@ All URIs are relative to *https://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*AccountingApi* | [**CheckSageCredentials**](docs/AccountingApi.md#checksagecredentials) | **POST** /api/Accounting/sage/check-credentials | Get Sage Credentials
 *AccountingApi* | [**DeleteAccountingIntegrationItemCodes**](docs/AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 *AccountingApi* | [**DeleteSupplierDetails**](docs/AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
 *AccountingApi* | [**GetAccountingIntegrationItemCodesById**](docs/AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
@@ -468,6 +469,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ChartEvents](docs/ChartEvents.md)
  - [IO.Swagger.Model.ChartOptions](docs/ChartOptions.md)
  - [IO.Swagger.Model.ChartSettings](docs/ChartSettings.md)
+ - [IO.Swagger.Model.CheckAuthorizationInfoResponse](docs/CheckAuthorizationInfoResponse.md)
  - [IO.Swagger.Model.CodeCallbackRequest](docs/CodeCallbackRequest.md)
  - [IO.Swagger.Model.ColorAxis](docs/ColorAxis.md)
  - [IO.Swagger.Model.ColorSet](docs/ColorSet.md)
@@ -495,6 +497,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CredentialsDTO](docs/CredentialsDTO.md)
  - [IO.Swagger.Model.CredentialsListResponse](docs/CredentialsListResponse.md)
  - [IO.Swagger.Model.CredentialsResponse](docs/CredentialsResponse.md)
+ - [IO.Swagger.Model.CredentialsResponseVM](docs/CredentialsResponseVM.md)
  - [IO.Swagger.Model.CrowdSourcedRampFeeResponse](docs/CrowdSourcedRampFeeResponse.md)
  - [IO.Swagger.Model.CurrencyConversionDTO](docs/CurrencyConversionDTO.md)
  - [IO.Swagger.Model.CurrencyListResponse](docs/CurrencyListResponse.md)

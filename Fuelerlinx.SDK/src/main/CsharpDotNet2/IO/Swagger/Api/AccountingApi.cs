@@ -12,6 +12,12 @@ namespace IO.Swagger.Api
     public interface IAccountingApi
     {
         /// <summary>
+        /// Get Sage Credentials 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>CheckAuthorizationInfoResponse</returns>
+        CheckAuthorizationInfoResponse CheckSageCredentials (SageCredentialsRequest body);
+        /// <summary>
         /// Deletes accounting integration item code record based on ID 
         /// </summary>
         /// <param name="id"></param>
@@ -150,6 +156,40 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        /// Get Sage Credentials 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>CheckAuthorizationInfoResponse</returns>            
+        public CheckAuthorizationInfoResponse CheckSageCredentials (SageCredentialsRequest body)
+        {
+            
+    
+            var path = "/api/Accounting/sage/check-credentials";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling CheckSageCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling CheckSageCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CheckAuthorizationInfoResponse) ApiClient.Deserialize(response.Content, typeof(CheckAuthorizationInfoResponse), response.Headers);
+        }
     
         /// <summary>
         /// Deletes accounting integration item code record based on ID 
