@@ -116,6 +116,15 @@ export class FbopricesService {
         );
     }
 
+    public getFuelPricesForCompany(payload) {
+        return this.http.post(
+            this.accessPointUrl + "/volume-discounts-for-customer/", payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public add(payload) {
         return this.http.post(this.accessPointUrl, payload, {
             headers: this.headers,

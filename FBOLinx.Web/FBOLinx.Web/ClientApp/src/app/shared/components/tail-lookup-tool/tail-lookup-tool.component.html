@@ -1,0 +1,39 @@
+<div class="container-fluid" style="display: block; border: 1px solid #e5e6e9; margin-top:25px; margin-bottom:20px; position:relative; padding-top:10px; padding-bottom:10px;">
+    <div class="col-md-4 d-flex pricing-page justify-content-between" style="padding-left: 0px !important;">
+        <ni-card class="mb-0 info-card" title="Tail Lookup" bgColor="dead" [outline]="true" headerBgColor="dead" theme="small" outline="true" customStyle="min-height: 160px;">
+            <div class="row">
+                <div class="col-md-4">
+                    <mat-form-field>
+                        <input matInput placeholder="Tail Number" [(ngModel)]="aircraftTailNumber" aria-label="Aircraft Tail Number">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                    <mat-form-field>
+                        <input matInput placeholder="Fuel Volume" [(ngModel)]="fuelVolume" aria-label="Fuel Volume">
+                    </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                    <button ni-button class="mr-3" [view]="'accent'" (click)="LookupItem()">Check Pricing</button>
+                </div>
+            </div>
+            <div *ngIf="tailLookupResponse">
+                <div class="row">
+                    <p>Price Per Gallon:&nbsp;{{tailLookupResponse.pricePerGallon | currency}}</p>
+                </div>
+                <div class="row">
+                    <p>Ramp Fees:&nbsp;{{tailLookupResponse.fees | currency}}</p>
+                </div>
+                <div class="row">
+                    <p>Pricing Template:&nbsp;{{tailLookupResponse.template}}</p>
+                </div>
+                <div class="row">
+                    <p>Company:&nbsp;{{tailLookupResponse.company}}</p>
+                </div>
+                <div class="row">
+                    <p>Make / Model:&nbsp;{{tailLookupResponse.makeModel}}</p>
+                </div>
+            </div>
+            
+        </ni-card>
+    </div>
+</div>
