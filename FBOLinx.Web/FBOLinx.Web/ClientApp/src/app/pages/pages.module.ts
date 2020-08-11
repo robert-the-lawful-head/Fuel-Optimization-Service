@@ -91,6 +91,7 @@ import { UsersDialogNewUserComponent } from "./users/users-dialog-new-user/users
 import { UsersEditComponent } from "./users/users-edit/users-edit.component";
 import { UsersGridComponent } from "./users/users-grid/users-grid.component";
 import { UsersHomeComponent } from "./users/users-home/users-home.component";
+import { SystemcontactsNewContactModalComponent } from "./contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component";
 
 // Shared
 import { FboPricesPanelComponent } from "../shared/components/fbo-prices-panel/fbo-prices-panel.component";
@@ -119,7 +120,7 @@ import { AnalyticsMarketShareAirportChartComponent } from "../shared/components/
 import { AnalyticsCustomerBreakdownChartComponent } from "../shared/components/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component";
 import { AnalyticsCompaniesQuotesDealTableComponent } from "../shared/components/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component";
 import { FuelReqsExportModalComponent } from "../shared/components/fuelreqs-export/fuelreqs-export.component";
-import { CustomerMatchDialogComponent } from './customers/customer-match-dialog/customer-match-dialog.component';
+import { CustomerMatchDialogComponent } from "./customers/customer-match-dialog/customer-match-dialog.component";
 // Pipes
 import { AppPipesModule } from "../app-pipes.module";
 
@@ -254,6 +255,8 @@ import { TailLookupToolComponent } from '../shared/components/tail-lookup-tool/t
         ClickStopPropagationDirective,
         CustomerMatchDialogComponent,
         TailLookupToolComponent,
+        SystemcontactsNewContactModalComponent,
+
     ],
     exports: [
         ClickStopPropagationDirective,
@@ -290,7 +293,8 @@ import { TailLookupToolComponent } from '../shared/components/tail-lookup-tool/t
         RampFeesImportInformationComponent,
         UsersDialogNewUserComponent,
         FuelReqsExportModalComponent,
-        CustomerMatchDialogComponent
+        CustomerMatchDialogComponent,
+        SystemcontactsNewContactModalComponent,
     ],
 })
 export class PagesModule {}

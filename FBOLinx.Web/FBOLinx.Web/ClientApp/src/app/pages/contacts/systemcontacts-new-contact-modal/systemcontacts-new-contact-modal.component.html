@@ -1,0 +1,41 @@
+<h1 mat-dialog-title>Contact Information&nbsp;&nbsp;
+    <a *ngIf="data.firstName" class="btn btn-danger btn-sm" style="color:white; cursor:pointer;" (click)="confirmDelete(data)">Delete Contact</a>
+</h1>
+<form [formGroup]="contactForm" (ngSubmit)="onSave()">
+    <div mat-dialog-content *ngIf="data">
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="First Name" formControlName="firstName" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Last Name" formControlName="lastName" />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <mat-form-field>
+                    <input matInput placeholder="Email" formControlName="email" required />
+                </mat-form-field>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div class="copyAlerts">
+                    <mat-slide-toggle color="accent" formControlName="copyAlerts">Copy on Distribution</mat-slide-toggle>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button
+            mat-stroked-button
+            color="green"
+            type="submit"
+            class="mr-1"
+        >
+            <mat-icon>save</mat-icon>
+            Save Contact
+        </button>
+        <button mat-stroked-button mat-dialog-close>Cancel</button>
+    </div>
+</form>

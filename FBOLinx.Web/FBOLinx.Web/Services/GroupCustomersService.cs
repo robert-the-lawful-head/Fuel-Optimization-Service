@@ -31,7 +31,7 @@ namespace FBOLinx.Web.Services
         {
             try
             {
-                var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null && s.GroupId > 1).ToList();
+                var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null && s.GroupId == null).ToList();
                 var aircrafts = _fuelerLinxService.GetAircraftsFromFuelerinx();
                 foreach (var cust in listWithCustomers)
                 {
@@ -39,22 +39,22 @@ namespace FBOLinx.Web.Services
                     cibg.GroupId = groupId;
                     cibg.CustomerId = cust.Oid;
                     cibg.Company = cust.Company;
-                    cibg.Username = cust.Username;
-                    cibg.Password = cust.Password;
-                    cibg.Joined = cust.Joined;
+                    cibg.Username = "";
+                    cibg.Password = "";
+                    cibg.Joined = DateTime.Today;
                     cibg.Active = true;
-                    cibg.Distribute = cust.Distribute;
-                    cibg.Network = cust.Network;
-                    cibg.MainPhone = cust.MainPhone;
-                    cibg.Address = cust.Address;
-                    cibg.City = cust.City;
-                    cibg.State = cust.State;
-                    cibg.ZipCode = cust.ZipCode;
-                    cibg.Country = cust.Country;
-                    cibg.Website = cust.Website;
-                    cibg.ShowJetA = cust.ShowJetA;
-                    cibg.Show100Ll = cust.Show100Ll;
-                    cibg.Suspended = cust.Suspended;
+                    cibg.Distribute = false;
+                    cibg.Network = false;
+                    cibg.MainPhone = "";
+                    cibg.Address = "";
+                    cibg.City = "";
+                    cibg.State = "";
+                    cibg.ZipCode = "";
+                    cibg.Country = "";
+                    cibg.Website = "";
+                    cibg.ShowJetA = true;
+                    cibg.Show100Ll = false;
+                    cibg.Suspended = false;
 
                     _context.CustomerInfoByGroup.Add(cibg);
                     _context.SaveChanges();

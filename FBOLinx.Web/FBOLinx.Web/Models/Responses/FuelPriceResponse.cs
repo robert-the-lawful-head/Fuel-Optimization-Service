@@ -23,5 +23,7 @@ namespace FBOLinx.Web.Models.Responses
         public int CustomerId { get; set; }
         public int PricingTemplateId { get; set; }
         public string PricingTemplateName { get; set; }
+        public string FuelDeskEmail { get; set; }
+        public string CopyEmails { get; set; }
     }
 }

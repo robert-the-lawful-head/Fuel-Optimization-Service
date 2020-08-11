@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
+import { FormBuilder, FormGroup, FormControl, Validators } from "@angular/forms";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 import { ContactsService } from "../../../services/contacts.service";
@@ -46,7 +46,10 @@ export class AccountProfileComponent {
         private formBuilder: FormBuilder
     ) {
         this.systemContactsForm = this.formBuilder.group({
-            fuelDeskEmail: new FormControl(""),
+            fuelDeskEmail: new FormControl("", [
+                Validators.email,
+                Validators.required,
+            ]),
         });
         this.loadFboInfo();
         this.loadAvailableRoles();

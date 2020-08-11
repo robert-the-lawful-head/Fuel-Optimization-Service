@@ -15,6 +15,18 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param>
+        /// <returns>VeemCancelPaymentResponse</returns>
+        VeemCancelPaymentResponse CancelPayment (VeemCancelPaymentRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>VeemCreatePaymentResponse</returns>
+        VeemCreatePaymentResponse CreatePayment (VeemCreatePaymentRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
         /// <returns>VeemOAuthTokenResponse</returns>
         VeemOAuthTokenResponse OAuthCodeCallback (CodeCallbackRequest body);
     }
@@ -71,6 +83,74 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>VeemCancelPaymentResponse</returns>            
+        public VeemCancelPaymentResponse CancelPayment (VeemCancelPaymentRequest body)
+        {
+            
+    
+            var path = "/api/Payments/cancelPayment";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling CancelPayment: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling CancelPayment: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (VeemCancelPaymentResponse) ApiClient.Deserialize(response.Content, typeof(VeemCancelPaymentResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>VeemCreatePaymentResponse</returns>            
+        public VeemCreatePaymentResponse CreatePayment (VeemCreatePaymentRequest body)
+        {
+            
+    
+            var path = "/api/Payments/createPayment";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling CreatePayment: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling CreatePayment: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (VeemCreatePaymentResponse) ApiClient.Deserialize(response.Content, typeof(VeemCreatePaymentResponse), response.Headers);
+        }
     
         /// <summary>
         ///  
