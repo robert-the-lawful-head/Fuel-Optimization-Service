@@ -334,9 +334,10 @@ namespace FBOLinx.Web.Services
                 from tc in
                 (
                     from cig in _context.CustomerInfoByGroup
+                    join c in _context.Customers on cig.CustomerId equals c.Oid
                     join cct in _context.CustomCustomerTypes on cig.CustomerId equals cct.CustomerId
                     join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
-                    where cig.GroupId == groupId && pt.Fboid == fboId && !string.IsNullOrEmpty(cct.CustomerType.ToString())
+                    where cig.GroupId == groupId && pt.Fboid == fboId && !string.IsNullOrEmpty(cct.CustomerType.ToString()) && !c.Suspended.GetValueOrDefault()
                     select new
                     {
                         pt.Oid,
