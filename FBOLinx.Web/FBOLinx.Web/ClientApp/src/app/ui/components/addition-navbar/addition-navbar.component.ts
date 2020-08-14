@@ -92,7 +92,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.templatelst && !isEqual(changes.templatelst.currentValue, changes.templatelst.previousValue)) {
-            console.log("refresh distributions");
             this.refresh();
         }
     }
