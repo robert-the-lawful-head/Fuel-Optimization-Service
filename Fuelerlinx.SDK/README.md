@@ -59,17 +59,17 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new AccountingApi();
-            var body = new SageCredentialsRequest(); // SageCredentialsRequest |  (optional) 
+            var id = 56;  // int? | 
 
             try
             {
-                // Get Sage Credentials
-                CheckAuthorizationInfoResponse result = apiInstance.CheckSageCredentials(body);
+                // Deletes accounting integration item code record based on ID
+                DeleteAccountingIntegrationItemCodesDetailsResponse result = apiInstance.DeleteAccountingIntegrationItemCodes(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling AccountingApi.CheckSageCredentials: " + e.Message );
+                Debug.Print("Exception when calling AccountingApi.DeleteAccountingIntegrationItemCodes: " + e.Message );
             }
         }
     }
@@ -83,7 +83,6 @@ All URIs are relative to *https://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*AccountingApi* | [**CheckSageCredentials**](docs/AccountingApi.md#checksagecredentials) | **POST** /api/Accounting/sage/check-credentials | Get Sage Credentials
 *AccountingApi* | [**DeleteAccountingIntegrationItemCodes**](docs/AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 *AccountingApi* | [**DeleteSupplierDetails**](docs/AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
 *AccountingApi* | [**GetAccountingIntegrationItemCodesById**](docs/AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
@@ -271,7 +270,6 @@ Class | Method | HTTP request | Description
 *IntegrationFuelOrderDetailsApi* | [**CancelIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#cancelintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails/cancel | Internal use only - cancel an integration record from being tied to a transaction and notify the partner.
 *IntegrationFuelOrderDetailsApi* | [**UpdateIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#updateintegrationfuelorderdetails) | **PUT** /api/IntegrationFuelOrderDetails | Internal use only - update an integration record associated with a fuel order transaction.
 *PaymentsApi* | [**CancelPayment**](docs/PaymentsApi.md#cancelpayment) | **POST** /api/Payments/cancelPayment | 
-*PaymentsApi* | [**CheckAuthenticate**](docs/PaymentsApi.md#checkauthenticate) | **GET** /api/Payments/checkAuth | 
 *PaymentsApi* | [**CreatePayment**](docs/PaymentsApi.md#createpayment) | **POST** /api/Payments/createPayment | 
 *PaymentsApi* | [**OAuthCodeCallback**](docs/PaymentsApi.md#oauthcodecallback) | **POST** /api/Payments/oauth/code_callback | 
 *RampFeeApi* | [**AddRampFeeByCompany**](docs/RampFeeApi.md#addrampfeebycompany) | **POST** /api/RampFee/company-specific | Add a company-specific ramp fee.
@@ -342,7 +340,6 @@ Class | Method | HTTP request | Description
 *ServiceLogsApi* | [**UpdateSchedulingIntegrationDispatchServiceLog**](docs/ServiceLogsApi.md#updateschedulingintegrationdispatchservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationDispatchServiceLog | Update the scheduling integration dispatch service log.
 *ServiceLogsApi* | [**UpdateSchedulingIntegrationServiceLog**](docs/ServiceLogsApi.md#updateschedulingintegrationservicelog) | **PUT** /api/ServiceLogs/schedulingIntegrationServiceLog | Update the scheduling integration service log.
 *ServiceLogsApi* | [**UpdateTankeringApiCalculationLog**](docs/ServiceLogsApi.md#updatetankeringapicalculationlog) | **PUT** /api/ServiceLogs/tankeringApiCalculationLog | Update the tankering api calculation log.
-*TankeringApi* | [**CalculateRouteDetails**](docs/TankeringApi.md#calculateroutedetails) | **POST** /api/Tankering/calculate-route-details | 
 *TankeringApi* | [**CalculateTankering**](docs/TankeringApi.md#calculatetankering) | **POST** /api/Tankering/calculate | 
 *TaxesApi* | [**DeleteTaxByCountry**](docs/TaxesApi.md#deletetaxbycountry) | **DELETE** /api/Taxes/by-country/{id} | Internal use only - Delete a tax-by-country record.
 *TaxesApi* | [**GetTaxByCountryById**](docs/TaxesApi.md#gettaxbycountrybyid) | **GET** /api/Taxes/by-country/id/{id} | Fetch taxes by country by it's [id].  These taxes include MOT/VAT and under what circumstances they are applicable.
@@ -460,8 +457,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.BuildVersionResponse](docs/BuildVersionResponse.md)
  - [IO.Swagger.Model.ButtonOptions](docs/ButtonOptions.md)
  - [IO.Swagger.Model.CSSObject](docs/CSSObject.md)
- - [IO.Swagger.Model.CalculateRouteDetailsRequest](docs/CalculateRouteDetailsRequest.md)
- - [IO.Swagger.Model.CalculateRouteDetailsResponse](docs/CalculateRouteDetailsResponse.md)
  - [IO.Swagger.Model.CalculateTankeringRequest](docs/CalculateTankeringRequest.md)
  - [IO.Swagger.Model.CalculateTankeringResponse](docs/CalculateTankeringResponse.md)
  - [IO.Swagger.Model.CalculationResult](docs/CalculationResult.md)
@@ -470,7 +465,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ChartEvents](docs/ChartEvents.md)
  - [IO.Swagger.Model.ChartOptions](docs/ChartOptions.md)
  - [IO.Swagger.Model.ChartSettings](docs/ChartSettings.md)
- - [IO.Swagger.Model.CheckAuthorizationInfoResponse](docs/CheckAuthorizationInfoResponse.md)
  - [IO.Swagger.Model.CodeCallbackRequest](docs/CodeCallbackRequest.md)
  - [IO.Swagger.Model.ColorAxis](docs/ColorAxis.md)
  - [IO.Swagger.Model.ColorSet](docs/ColorSet.md)
@@ -498,7 +492,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CredentialsDTO](docs/CredentialsDTO.md)
  - [IO.Swagger.Model.CredentialsListResponse](docs/CredentialsListResponse.md)
  - [IO.Swagger.Model.CredentialsResponse](docs/CredentialsResponse.md)
- - [IO.Swagger.Model.CredentialsResponseVM](docs/CredentialsResponseVM.md)
  - [IO.Swagger.Model.CrowdSourcedRampFeeResponse](docs/CrowdSourcedRampFeeResponse.md)
  - [IO.Swagger.Model.CurrencyConversionDTO](docs/CurrencyConversionDTO.md)
  - [IO.Swagger.Model.CurrencyListResponse](docs/CurrencyListResponse.md)
@@ -816,7 +809,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ReportScheduledDistributionListResponse](docs/ReportScheduledDistributionListResponse.md)
  - [IO.Swagger.Model.ReportScheduledDistributionResponse](docs/ReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.ResultItem](docs/ResultItem.md)
- - [IO.Swagger.Model.RouteDetailsCaclulationWithNavLog](docs/RouteDetailsCaclulationWithNavLog.md)
  - [IO.Swagger.Model.RouteDetailsCalculation](docs/RouteDetailsCalculation.md)
  - [IO.Swagger.Model.RouteDetailsCalculationAircraftData](docs/RouteDetailsCalculationAircraftData.md)
  - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)

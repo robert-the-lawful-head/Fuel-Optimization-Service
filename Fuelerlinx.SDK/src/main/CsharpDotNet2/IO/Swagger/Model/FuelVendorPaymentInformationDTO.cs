@@ -20,6 +20,13 @@ namespace IO.Swagger.Model {
     public int? Id { get; set; }
 
     /// <summary>
+    /// Gets or Sets Email
+    /// </summary>
+    [DataMember(Name="email", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "email")]
+    public string Email { get; set; }
+
+    /// <summary>
     /// Gets or Sets FirstName
     /// </summary>
     [DataMember(Name="firstName", EmitDefaultValue=false)]
@@ -70,6 +77,7 @@ namespace IO.Swagger.Model {
       var sb = new StringBuilder();
       sb.Append("class FuelVendorPaymentInformationDTO {\n");
       sb.Append("  Id: ").Append(Id).Append("\n");
+      sb.Append("  Email: ").Append(Email).Append("\n");
       sb.Append("  FirstName: ").Append(FirstName).Append("\n");
       sb.Append("  LastName: ").Append(LastName).Append("\n");
       sb.Append("  Phone: ").Append(Phone).Append("\n");

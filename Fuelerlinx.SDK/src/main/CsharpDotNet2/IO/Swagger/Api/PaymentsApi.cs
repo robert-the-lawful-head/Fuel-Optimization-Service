@@ -20,11 +20,6 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <returns>bool?</returns>
-        bool? CheckAuthenticate ();
-        /// <summary>
-        ///  
-        /// </summary>
         /// <param name="body"></param>
         /// <returns>VeemCreatePaymentResponse</returns>
         VeemCreatePaymentResponse CreatePayment (VeemCreatePaymentRequest body);
@@ -121,38 +116,6 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling CancelPayment: " + response.ErrorMessage, response.ErrorMessage);
     
             return (VeemCancelPaymentResponse) ApiClient.Deserialize(response.Content, typeof(VeemCancelPaymentResponse), response.Headers);
-        }
-    
-        /// <summary>
-        ///  
-        /// </summary>
-        /// <returns>bool?</returns>            
-        public bool? CheckAuthenticate ()
-        {
-            
-    
-            var path = "/api/Payments/checkAuth";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling CheckAuthenticate: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling CheckAuthenticate: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (bool?) ApiClient.Deserialize(response.Content, typeof(bool?), response.Headers);
         }
     
         /// <summary>
