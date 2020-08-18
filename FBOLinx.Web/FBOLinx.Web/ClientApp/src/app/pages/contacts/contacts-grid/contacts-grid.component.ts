@@ -197,9 +197,9 @@ export class ContactsGridComponent implements OnInit {
             return !contact.copyAlerts;
         });
         this.copyAll = unselectedIndex >= 0 ? false : true;
-        
+
         value.groupId = this.sharedService.currentUser.groupId;
-    
+
         this.contactInfoByGroupsService
             .update(value)
             .subscribe((data: any) => {});

@@ -166,7 +166,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     public updateCustomerMargin(margin) {
-        
+
         const index = this.data.customerMargins.findIndex(x => x.min === margin.min);
 
         if (index) {

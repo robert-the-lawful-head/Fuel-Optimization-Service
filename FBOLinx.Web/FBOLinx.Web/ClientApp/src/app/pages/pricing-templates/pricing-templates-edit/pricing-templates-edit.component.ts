@@ -182,7 +182,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             });
         }
 
-        
+
     }
 
     public addCustomerMargin() {

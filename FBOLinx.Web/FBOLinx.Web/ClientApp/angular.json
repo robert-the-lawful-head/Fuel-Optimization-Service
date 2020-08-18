@@ -35,6 +35,11 @@
                             "node_modules/amcharts3/amcharts/serial.js",
                             "node_modules/amcharts3/amcharts/themes/light.js",
                             "node_modules/moment/min/moment.min.js"
+                        ],
+                        "allowedCommonJsDependencies": [
+                            "lodash",
+                            "xlsx",
+                            "angular2-text-mask"
                         ]
                     },
                     "configurations": {

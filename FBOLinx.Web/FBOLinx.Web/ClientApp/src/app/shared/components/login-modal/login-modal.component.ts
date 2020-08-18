@@ -12,7 +12,7 @@ import { Router } from "@angular/router";
 export class LoginModalComponent {
     loginForm: FormGroup;
     error: "";
-    
+
     constructor(
         public dialogRef: MatDialogRef<LoginModalComponent>,
         private formBuilder: FormBuilder,

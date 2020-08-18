@@ -35,7 +35,7 @@ export class FuelreqsGridComponent implements OnInit {
     public pageIndex = 0;
     public pageSize = 100;
 
-    
+
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
     displayedColumns: string[] = [
@@ -47,7 +47,7 @@ export class FuelreqsGridComponent implements OnInit {
         "quotedPpg",
         "tailNumber",
         "email",
-        "phoneNumber",        
+        "phoneNumber",
         "source",
     ];
     public dashboardSettings: any;

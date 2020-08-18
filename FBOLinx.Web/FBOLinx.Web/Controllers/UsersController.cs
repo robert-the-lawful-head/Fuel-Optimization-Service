@@ -49,7 +49,7 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody]User userParam)
+        public async Task<IActionResult> AuthenticateAsync([FromBody] User userParam)
         {
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
@@ -57,7 +57,25 @@ namespace FBOLinx.Web.Controllers
             var user = _userService.Authenticate(userParam.Username, userParam.Password, false);
 
             if (user == null)
+            {
                 return BadRequest(new { message = "Username or password is incorrect" });
+            }
+
+            try
+            {
+                var group = _context.Group.Find(user.GroupId);
+
+                if (group.IsLegacyAccount == true)
+                {
+                    await DoLegacyGroupTransition(group.Oid);
+
+                    group.IsLegacyAccount = false;
+                    await _context.SaveChangesAsync();
+                }
+            } catch (DbUpdateConcurrencyException ex)
+            {
+                throw ex;
+            }
 
             return Ok(user);
         }
@@ -99,7 +117,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/users/group/5
         [HttpGet("group/{groupId}")]
-        [UserRole(new User.UserRoles[] {Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin})]
+        [UserRole(new User.UserRoles[] { Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin })]
         public async Task<IActionResult> GetUsersByGroupId([FromRoute] int groupId)
         {
             if (!ModelState.IsValid)
@@ -113,7 +131,7 @@ namespace FBOLinx.Web.Controllers
                 _userService.CreateGroupLoginIfNeeded(group);
 
             var users = await _context.User.Where((x => x.GroupId == groupId && x.FboId == 0)).ToListAsync();
-            
+
             return Ok(users);
         }
 
@@ -139,7 +157,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/users/roles
         [HttpGet("roles")]
-        public async Task<IActionResult> GetUserRoles()
+        public IActionResult GetUserRoles()
         {
             if (!ModelState.IsValid)
             {
@@ -224,7 +242,7 @@ namespace FBOLinx.Web.Controllers
 
             var user = _userService.Authenticate(request.username, "", true);
             if (user == null)
-                return BadRequest(new {message = "There are no records of that username in the system"});
+                return BadRequest(new { message = "There are no records of that username in the system" });
 
             string emailAddress = "";
             if (user.Username.Contains("@"))
@@ -278,7 +296,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            return Ok(new {password = request.User.Password});
+            return Ok(new { password = request.User.Password });
         }
 
         // POST: api/users
@@ -334,7 +352,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("checkemailexists/{emailAddress}")]
-        public IActionResult CheckEmailExists([FromRoute]string emailAddress)
+        public IActionResult CheckEmailExists([FromRoute] string emailAddress)
         {
             if (string.IsNullOrEmpty(emailAddress) || string.IsNullOrEmpty(emailAddress))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
@@ -352,21 +370,26 @@ namespace FBOLinx.Web.Controllers
             return _context.Group.Any(e => e.Oid == id);
         }
 
-        private async Task AddDefaultCustomerMargins(int priceTemplateId, double min, double max)
+        private async Task DoLegacyGroupTransition(int groupId)
         {
-            var newPriceTier = new PriceTiers() { Min = min, Max = max, MaxEntered = max};
-            await _context.PriceTiers.AddAsync(newPriceTier);
-            await _context.SaveChangesAsync();
-
-            var newCustomerMargin = new CustomerMargins()
+            var customerMargins = await (from cm in _context.CustomerMargins
+                                         join pt in _context.PricingTemplate on new { cm.TemplateId, marginType = (short)1 } equals new { TemplateId = pt.Oid, marginType = (short)pt.MarginType }
+                                         where cm.Amount < 0
+                                         select cm).ToListAsync();
+            foreach (var cm in customerMargins)
             {
-                Amount = 0,
-                TemplateId = priceTemplateId,
-                PriceTierId = newPriceTier.Oid
-            };
-            await _context.CustomerMargins.AddAsync(newCustomerMargin);
-            await _context.SaveChangesAsync();
+                cm.Amount = -cm.Amount;
+            }
+            _context.CustomerMargins.UpdateRange(customerMargins);
 
+            var oldAircraftPrices = await (from ap in _context.AircraftPrices
+                                           join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
+                                           join f in _context.Fbos on new { fboId = pt.Fboid, groupId } equals new { fboId = f.Oid, groupId = f.GroupId ?? 0 }
+                                           select ap)
+                                           .ToListAsync();
+            _context.AircraftPrices.RemoveRange(oldAircraftPrices);
+
+            await _context.SaveChangesAsync();
         }
     }
 }

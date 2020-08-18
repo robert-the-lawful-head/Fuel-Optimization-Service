@@ -39,7 +39,7 @@ export class CustomerAircraftSelectModelComponent implements OnInit {
 
 
     public onCancelClick(): void {
-       
+
         this.dialogRef.close();
     }
 
@@ -53,6 +53,6 @@ export class CustomerAircraftSelectModelComponent implements OnInit {
         this.customerAircraftsService.import(this.data.aircrafts).subscribe((data: any) => {
             this.dialogRef.close();
         });
-        
+
     }
 }

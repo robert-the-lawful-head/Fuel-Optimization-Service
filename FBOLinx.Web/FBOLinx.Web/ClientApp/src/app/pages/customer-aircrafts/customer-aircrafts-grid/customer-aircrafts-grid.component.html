@@ -45,8 +45,8 @@
                     <mat-form-field floatLabel="never">
                         <mat-label>Company Pricing</mat-label>
                         <mat-select
-                            [(ngModel)]="customerAircraft.pricingTemplateId"
-                            (ngModelChange)="
+                            [value]="customerAircraft.pricingTemplateId"
+                            (selectionChange)="
                                 onMarginChange($event, customerAircraft)
                             "
                         >

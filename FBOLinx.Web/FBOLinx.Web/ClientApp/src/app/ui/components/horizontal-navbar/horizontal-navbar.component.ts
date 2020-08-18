@@ -348,7 +348,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     hideWidget() {
-        if (this.window) { 
+        if (this.window) {
             this.window.$zoho.salesiq.floatwindow.visible("hide");
         }
     }

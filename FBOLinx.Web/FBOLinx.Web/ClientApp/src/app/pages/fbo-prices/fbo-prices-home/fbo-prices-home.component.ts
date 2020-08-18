@@ -39,6 +39,14 @@ export interface TemporaryAddOnMargin {
     MarginJet?: any;
 }
 
+export interface TailLookupResponse {
+    pricePerGallon?: number;
+    fees?: number;
+    template?: string;
+    company?: string;
+    makeModel?: string;
+}
+
 @Component({
     selector: "app-fbo-prices-home",
     templateUrl: "./fbo-prices-home.component.html",
@@ -48,6 +56,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     @ViewChildren("tooltip") priceTooltips: QueryList<any>;
     // Public Members
     public pricingLoader = "pricing-loader";
+    public tailLoader = "tail-loader";
 
     public currentPrices: any[];
     public currentPricingEffectiveFrom = new Date();
@@ -57,6 +66,11 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public jtRetail: any;
     public isLoadingRetail = false;
     public isLoadingCost = false;
+    public tailNumber: string;
+    public fuelVolume: string;
+
+    public tailLookupInfo: TailLookupResponse;
+    public tailLookupError: boolean;
 
     public TempValueJet: number;
     public TempValueId = 0;
@@ -291,6 +305,29 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         }
     }
 
+    public lookupTail() {
+        const tailLookupData = {
+            companyId: this.sharedService.currentUser.fboId,
+            icao: this.sharedService.currentUser.icao,
+            tailNumber: this.tailNumber,
+            fuelVolume: this.fuelVolume,
+        };
+        this.tailLookupError = false;
+        this.tailLookupInfo = undefined;
+        this.NgxUiLoader.startLoader(this.tailLoader);
+        this.fboPricesService.getFuelPricesForCompany(tailLookupData).subscribe((data: TailLookupResponse) => {
+            if (data) {
+                this.tailLookupInfo = data;
+                this.tailLookupError =false;
+            } else {
+                this.tailLookupError = true;
+            }
+            this.NgxUiLoader.stopLoader(this.tailLoader);
+        }, (err) => {
+            this.tailLookupError = true;
+            this.NgxUiLoader.stopLoader(this.tailLoader);
+        });
+    }
     // Private Methods
     private loadFboPrices() {
         return new Observable((observer) => {
@@ -304,12 +341,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.currentFboPriceJetARetail = this.getCurrentPriceByProduct("JetA Retail");
 
                     if (this.currentFboPriceJetARetail.effectiveTo) {
-                        this.currentFboPriceJetARetail.effectiveTo = 
+                        this.currentFboPriceJetARetail.effectiveTo =
                             moment(this.currentFboPriceJetARetail.effectiveTo).format("MM/DD/YYYY");
                     }
-                    
+
                     if (this.currentFboPriceJetACost.effectiveTo) {
-                        this.currentFboPriceJetACost.effectiveTo = 
+                        this.currentFboPriceJetACost.effectiveTo =
                             moment(this.currentFboPriceJetACost.effectiveTo).format("MM/DD/YYYY");
                     }
 

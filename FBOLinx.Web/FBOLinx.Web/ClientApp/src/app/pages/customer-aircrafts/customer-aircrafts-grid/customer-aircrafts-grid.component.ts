@@ -10,6 +10,8 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
+import { MatSelectChange } from "@angular/material/select";
+import FlatfileImporter from "flatfile-csv-importer";
 
 // Services
 import { AircraftsService } from "../../../services/aircrafts.service";
@@ -22,7 +24,6 @@ import { SharedService } from "../../../layouts/shared-service";
 import { CustomerAircraftsDialogNewAircraftComponent } from "../customer-aircrafts-dialog-new-aircraft/customer-aircrafts-dialog-new-aircraft.component";
 import { CustomerAircraftsEditComponent } from "../customer-aircrafts-edit/customer-aircrafts-edit.component";
 import { CustomerAircraftSelectModelComponent } from "../customer-aircrafts-select-model-dialog/customer-aircrafts-select-model-dialog.component";
-import FlatfileImporter from "flatfile-csv-importer";
 
 @Component({
     selector: "app-customer-aircrafts-grid",
@@ -188,7 +189,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                         this.customerAircraftsDataSource.sort = this.sort;
                         this.customerAircraftsDataSource.paginator = this.paginator;
                     });
-               
+
             });
         });
     }
@@ -199,8 +200,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 CustomerAircraftsEditComponent,
                 {
                     width: "450px",
-                    data: { 
-                        oid: customerAircraft.oid, 
+                    data: {
+                        oid: customerAircraft.oid,
                         disableDelete: customerAircraft.isFuelerlinxNetwork && customerAircraft.addedFrom,
                     },
                 }
@@ -270,7 +271,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
         sessionStorage.setItem("pageIndex", e.pageIndex);
     }
 
-    public onMarginChange(newValue: any, customerAircraft: any) {
+    public onMarginChange(event: MatSelectChange, customerAircraft: any) {
         const {
             oid,
             aircraftId,
@@ -292,9 +293,11 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 make,
                 model,
                 size,
-                pricingTemplateId,
+                pricingTemplateId: event.value,
+                oldPricingTemplateId: pricingTemplateId,
             })
             .subscribe(() => {
+                customerAircraft.pricingTemplateId = event.value;
                 const pricingTemplateIds = this.customerAircraftsDataSource.data.map(d => d.pricingTemplateId );
                 if (pricingTemplateIds.every(v => v === pricingTemplateId)) {
                     this.customCustomerTypeService
@@ -405,14 +408,14 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                                     this.customerAircraftsDataSource.paginator = this.paginator;
                                                 });
                                         }
-                                     
+
                                     });
                                 }
-                                
+
                             });
                         }
                     });
-               
+
             }
         } catch (e) { }
     }

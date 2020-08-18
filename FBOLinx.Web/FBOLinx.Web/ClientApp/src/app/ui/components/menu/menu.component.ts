@@ -59,7 +59,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
             // role = this.sharedService.currentUser.impersonatedRole;
             role = 1;
         }
-        
+
         const hidden = item.roles && item.roles.indexOf(role) === -1;
         return {
             "has-sub": item.sub,
