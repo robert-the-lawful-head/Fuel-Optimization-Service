@@ -52,6 +52,7 @@ Name | Type | Description | Notes
 **ReportedRampFeeWaivedAt** | [**Weight**](Weight.md) |  | [optional] 
 **RampFeeCallFbo** | **bool?** |  | [optional] 
 **ReportedRampFee** | **double?** |  | [optional] 
+**PaymentEmail** | **string** |  | [optional] 
 **DepartureDateYearFirstFormat** | **string** |  | [optional] 
 **ArrivalDateYearFirstFormat** | **string** |  | [optional] 
 **ServiceDateYearFirstFormat** | **string** |  | [optional] 
