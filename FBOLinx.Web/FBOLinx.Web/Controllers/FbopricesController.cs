@@ -575,8 +575,6 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        [AllowAnonymous]
-     //   [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
         [HttpPost("volume-discounts-for-customer")]
         public async Task<IActionResult> GetFuelPricesForCustomer([FromBody] TailNumberLoadRequest request)
         {
@@ -586,16 +584,9 @@ namespace FBOLinx.Web.Controllers
             }
             try
             {
-                CompanyPricingLog companyPricingLog = new CompanyPricingLog
-                {
-                    CompanyId = request.CompanyID,
-                    ICAO = request.ICAO
-                };
-                _context.CompanyPricingLog.Add(companyPricingLog);
-
-                _context.SaveChanges();
-
                 var customerObj = _context.CustomerAircrafts.FirstOrDefault(s => s.TailNumber == request.TailNumber);
+                if (customerObj == null)
+                    return Ok(null);
 
                 var customer =
                     await _context.Customers.FirstOrDefaultAsync(x =>
@@ -608,6 +599,15 @@ namespace FBOLinx.Web.Controllers
                     await priceFetchingService.GetCustomerPricingByLocationAndTailNumberAsync(request.ICAO, customer.Oid, request.TailNumber, request.CompanyID, request.FuelVolume);
                 if (validPricing == null)
                     return Ok(null);
+
+                CompanyPricingLog companyPricingLog = new CompanyPricingLog
+                {
+                    CompanyId = request.CompanyID,
+                    ICAO = request.ICAO
+                };
+                _context.CompanyPricingLog.Add(companyPricingLog);
+
+                _context.SaveChanges();
 
                 var custAircraftMakeModel = _context.Aircrafts.FirstOrDefault(s => s.AircraftId == customerObj.AircraftId);
 
