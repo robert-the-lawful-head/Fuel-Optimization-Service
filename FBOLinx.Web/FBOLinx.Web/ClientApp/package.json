@@ -1,5 +1,5 @@
 {
-  "name": "FBOLinx.Web",
+  "name": "fbolinx.web",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -23,12 +23,6 @@
     "@angular/platform-browser-dynamic": "~10.0.10",
     "@angular/router": "~10.0.10",
     "@ng-bootstrap/ng-bootstrap": "^6.1.0",
-    "@ngrx/data": "^9.1.0",
-    "@ngrx/effects": "^9.1.0",
-    "@ngrx/entity": "^9.1.0",
-    "@ngrx/store": "^9.1.0",
-    "@ngrx/store-devtools": "^9.1.0",
-    "@nguniversal/module-map-ngfactory-loader": "^8.2.6",
     "@swimlane/ngx-charts": "^14.0.0",
     "@syncfusion/ej2-angular-richtexteditor": "^18.1.45",
     "@types/date-fns": "2.6.0",
@@ -55,7 +49,6 @@
     "@angular/cli": "~10.0.6",
     "@angular/compiler-cli": "~10.0.10",
     "@angular/language-service": "~10.0.10",
-    "@ngrx/schematics": "^9.1.0",
     "@types/lodash": "^4.14.150",
     "@types/node": "^13.13.4",
     "codelyzer": "^6.0.0",
