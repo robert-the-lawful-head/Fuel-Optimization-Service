@@ -187,9 +187,6 @@ namespace FBOLinx.Web.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
-
-            // remove password before returning
-            user.Password = null;
         }
 
         private void UpdateLoginCount(User user)
