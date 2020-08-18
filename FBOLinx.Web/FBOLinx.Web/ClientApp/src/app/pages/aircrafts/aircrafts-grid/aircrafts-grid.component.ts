@@ -10,6 +10,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
+import { MatSelectChange } from '@angular/material/select';
 
 // Services
 import { AircraftsService } from "../../../services/aircrafts.service";
@@ -213,7 +214,7 @@ export class AircraftsGridComponent implements OnInit {
         this.aircraftsDataSource.filter = filterValue.trim().toLowerCase();
     }
 
-    public onMarginChange(newValue: any, customerAircraft: any) {
+    public onMarginChange(event: MatSelectChange, customerAircraft: any) {
         const {
             oid,
             aircraftId,
@@ -223,7 +224,7 @@ export class AircraftsGridComponent implements OnInit {
             make,
             model,
             size,
-            pricingTemplateName,
+            pricingTemplateId,
         } = customerAircraft;
         this.customerAircraftsService
             .updateTemplate(this.sharedService.currentUser.fboId, {
@@ -235,9 +236,12 @@ export class AircraftsGridComponent implements OnInit {
                 make,
                 model,
                 size,
-                pricingTemplateName,
+                pricingTemplateId: event.value,
+                oldPricingTemplateId: pricingTemplateId
             })
-            .subscribe((data: any) => {});
+            .subscribe((data: any) => {
+                customerAircraft.pricingTemplateId = event.value;
+            });
     }
 
     onPageChanged(e: any) {

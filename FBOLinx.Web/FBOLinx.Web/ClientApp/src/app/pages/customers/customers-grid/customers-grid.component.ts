@@ -11,7 +11,9 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
-import * as _ from "lodash";
+import { MatSelectChange } from "@angular/material/select";
+import { forEach, map, sortBy, find, forOwn } from "lodash";
+import FlatfileImporter from "flatfile-csv-importer";
 
 // Services
 import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
@@ -26,8 +28,6 @@ import { DeleteConfirmationComponent } from "../../../shared/components/delete-c
 import * as XLSX from "xlsx";
 import { CustomermarginsService } from "../../../services/customermargins.service";
 import { CustomersviewedbyfboService } from "../../../services/customersviewedbyfbo.service";
-import FlatfileImporter from "flatfile-csv-importer";
-import { MatSelectChange } from "@angular/material/select";
 
 @Component({
     selector: "app-customers-grid",
@@ -128,7 +128,7 @@ export class CustomersGridComponent implements OnInit {
             this.paginator.pageSize.toString()
         );
         this.selectAll = false;
-        _.forEach(this.customersData, (customer) => {
+        forEach(this.customersData, (customer) => {
             customer.selectAll = false;
         });
     }
@@ -174,7 +174,7 @@ export class CustomersGridComponent implements OnInit {
 
     public selectAction() {
         const pageCustomersData = this.customersDataSource.connect().value;
-        _.forEach(pageCustomersData, (customer) => {
+        forEach(pageCustomersData, (customer) => {
             customer.selectAll = this.selectAll ? true : false;
         });
         this.selectedRows = this.selectAll ? pageCustomersData.length : 0;
@@ -239,7 +239,7 @@ export class CustomersGridComponent implements OnInit {
         } else {
             exportData = this.customersDataSource.filteredData;
         }
-        exportData = _.map(exportData, (item) => {
+        exportData = map(exportData, (item) => {
             return {
                 Company: item.company,
                 Source:
@@ -250,7 +250,7 @@ export class CustomersGridComponent implements OnInit {
                 Price: item.allInPrice,
             };
         });
-        exportData = _.sortBy(exportData, [
+        exportData = sortBy(exportData, [
             (item) => {
                 return item.Company.toLowerCase();
             },
@@ -278,17 +278,17 @@ export class CustomersGridComponent implements OnInit {
 
     public exportCustomerAircraftToExcel() {
         // Export the filtered results to an excel spreadsheet
-        let exportData = _.map(this.aircraftsData, (item) => {
+        let exportData = map(this.aircraftsData, (item) => {
             let pricingTemplateName = item.pricingTemplateName;
             if (!pricingTemplateName) {
-                const customer = _.find(this.customersData, (c) => {
+                const customer = find(this.customersData, (c) => {
                     return c.customerId === item.customerId;
                 });
                 if (customer) {
                     pricingTemplateName = customer.pricingTemplateName;
                 }
             }
-            const matchingPricingTemplate = _.find(
+            const matchingPricingTemplate = find(
                 this.pricingTemplatesData,
                 (pricing) => {
                     return pricing.name === pricingTemplateName;
@@ -306,7 +306,7 @@ export class CustomersGridComponent implements OnInit {
                     : "",
             };
         });
-        exportData = _.sortBy(exportData, [
+        exportData = sortBy(exportData, [
             (item) => {
                 return item.Company.toLowerCase();
             },
@@ -345,7 +345,7 @@ export class CustomersGridComponent implements OnInit {
                 return data.needsAttention === true;
             } else {
                 let found = false;
-                _.forOwn(data, (value) => {
+                forOwn(data, (value) => {
                     if (value && value.toString().toLowerCase().includes(filter)) {
                         found = true;
                         return false;
@@ -357,7 +357,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     public onMarginChange(newValue: any, customer: any) {
-        const changedPricingTemplate = _.find(this.pricingTemplatesData, (p) => {
+        const changedPricingTemplate = find(this.pricingTemplatesData, (p) => {
             return customer.pricingTemplateName === p.name;
         });
 
@@ -382,7 +382,7 @@ export class CustomersGridComponent implements OnInit {
     public bulkMarginTemplateUpdate(event: MatSelectChange) {
         const listCustomers = [];
 
-        _.forEach(this.customersData, (customer) => {
+        forEach(this.customersData, (customer) => {
             if (customer.selectAll === true) {
                 customer.needsAttention = event.value.default ||
                     (customer.customerCompanyTypeName !== "FuelerLinx" && !customer.contactExists);

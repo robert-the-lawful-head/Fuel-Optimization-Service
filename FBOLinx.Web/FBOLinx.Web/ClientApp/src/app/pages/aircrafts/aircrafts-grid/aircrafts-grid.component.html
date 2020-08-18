@@ -71,15 +71,17 @@
                     <mat-form-field floatLabel="never">
                         <mat-label>Company Pricing</mat-label>
                         <mat-select
-                            [(ngModel)]="aircraft.pricingTemplateName"
-                            (ngModelChange)="onMarginChange($event, aircraft)"
+                            [value]="aircraft.pricingTemplateId"
+                            (selectionChange)="
+                                onMarginChange($event, aircraft)
+                            "
                         >
                             <mat-option>None</mat-option>
                             <mat-option
                                 *ngFor="
                                     let pricingTemplate of pricingTemplatesData
                                 "
-                                [value]="pricingTemplate.name"
+                                [value]="pricingTemplate.oid"
                                 >{{ pricingTemplate.name }}</mat-option
                             >
                         </mat-select>
