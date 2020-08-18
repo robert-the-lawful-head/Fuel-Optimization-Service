@@ -252,7 +252,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         FuelReqsExportModalComponent,
         ClickStopPropagationDirective,
         CustomerMatchDialogComponent,
-        SystemcontactsNewContactModalComponent
+        SystemcontactsNewContactModalComponent,
     ],
     exports: [
         ClickStopPropagationDirective,
