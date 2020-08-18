@@ -62,7 +62,7 @@ export class FbosGridNewFboDialogComponent {
 
     public onSaveClick(data): void {
         this.errorHappened = false;
-      
+
         this.fboService.addSingleFbo(data).subscribe((newFbo: any) =>
         { this.dialogRef.close(newFbo); },
             err => {

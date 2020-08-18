@@ -2,7 +2,7 @@ import {
     Component,
 } from "@angular/core";
 import { SharedService } from "../../../layouts/shared-service";
-import { FbopricesService } from '../../../services/fboprices.service';
+import { FbopricesService } from "../../../services/fboprices.service";
 
 export interface TailLookupData {
     tailNumber: string;
@@ -35,15 +35,15 @@ export class TailLookupToolComponent {
     LookupItem() {
         this.tailLookupData = {
             companyId: 0,
-            icao: '',
-            tailNumber: '',
-            fuelVolume: 0
+            icao: "",
+            tailNumber: "",
+            fuelVolume: 0,
         };
         this.tailLookupData.companyId = this.sharedService.currentUser.fboId;
         this.tailLookupData.icao = this.sharedService.currentUser.icao;
         this.tailLookupData.tailNumber = this.aircraftTailNumber;
         this.tailLookupData.fuelVolume = this.fuelVolume;
-        
+
         this.fbopricesService.getFuelPricesForCompany(this.tailLookupData).subscribe((data: TailLookupResponse) => {
             if (data) {
                 this.tailLookupResponse = {
@@ -51,11 +51,11 @@ export class TailLookupToolComponent {
                     fees: data.fees,
                     company: data.company,
                     makeModel: data.makeModel,
-                    template: data.template
-                }
-                
+                    template: data.template,
+                };
+
             }
         });
-        
+
     }
 }

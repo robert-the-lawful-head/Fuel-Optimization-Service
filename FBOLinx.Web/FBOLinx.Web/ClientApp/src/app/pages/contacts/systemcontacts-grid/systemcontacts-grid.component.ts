@@ -158,7 +158,7 @@ export class SystemcontactsGridComponent implements OnInit {
             return !contact.copyAlerts;
         });
         this.copyAll = unselectedIndex >= 0 ? false : true;
-        
+
         value.groupId = this.sharedService.currentUser.groupId;
         const updatedContact = Object.assign({}, value);
         updatedContact.oid = value.contactId;

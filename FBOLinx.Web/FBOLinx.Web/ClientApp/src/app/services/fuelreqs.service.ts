@@ -74,7 +74,7 @@ export class FuelreqsService {
             headers: this.headers,
         });
     }
-    
+
     // Analysis Services
 
     public topCustomersForFbo(fboId, payload) {

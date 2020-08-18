@@ -140,7 +140,7 @@ export class UsersGridComponent implements OnInit {
             if (this.fboInfo) {
                 result.active = this.fboInfo.active;
             }
-            
+
             this.userService.add(result).subscribe((data: any) => {
                 const savedUser = data;
                 const userArray = this.usersDataSource.data;

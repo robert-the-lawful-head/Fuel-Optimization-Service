@@ -112,7 +112,7 @@ export class CustomersEditComponent {
                 .get({ oid: id })
                 .subscribe((data: any) => {
                     this.customerInfoByGroup = data;
-                    
+
                     this.loadCustomerContacts();
                     this.loadPricingTemplates();
                     this.loadCustomerAircrafts();
@@ -385,7 +385,7 @@ export class CustomersEditComponent {
                 this.customerInfoByGroup.customerId
             )
             .subscribe((data: any) => {
-                this.customerAircraftsData = data;                
+                this.customerAircraftsData = data;
             });
     }
 

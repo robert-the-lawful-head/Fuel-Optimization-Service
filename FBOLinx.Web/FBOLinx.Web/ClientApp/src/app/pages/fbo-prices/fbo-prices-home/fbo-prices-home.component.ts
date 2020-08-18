@@ -304,12 +304,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.currentFboPriceJetARetail = this.getCurrentPriceByProduct("JetA Retail");
 
                     if (this.currentFboPriceJetARetail.effectiveTo) {
-                        this.currentFboPriceJetARetail.effectiveTo = 
+                        this.currentFboPriceJetARetail.effectiveTo =
                             moment(this.currentFboPriceJetARetail.effectiveTo).format("MM/DD/YYYY");
                     }
-                    
+
                     if (this.currentFboPriceJetACost.effectiveTo) {
-                        this.currentFboPriceJetACost.effectiveTo = 
+                        this.currentFboPriceJetACost.effectiveTo =
                             moment(this.currentFboPriceJetACost.effectiveTo).format("MM/DD/YYYY");
                     }
 

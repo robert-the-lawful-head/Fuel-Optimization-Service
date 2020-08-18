@@ -188,7 +188,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                         this.customerAircraftsDataSource.sort = this.sort;
                         this.customerAircraftsDataSource.paginator = this.paginator;
                     });
-               
+
             });
         });
     }
@@ -199,8 +199,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 CustomerAircraftsEditComponent,
                 {
                     width: "450px",
-                    data: { 
-                        oid: customerAircraft.oid, 
+                    data: {
+                        oid: customerAircraft.oid,
                         disableDelete: customerAircraft.isFuelerlinxNetwork && customerAircraft.addedFrom,
                     },
                 }
@@ -405,14 +405,14 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                                     this.customerAircraftsDataSource.paginator = this.paginator;
                                                 });
                                         }
-                                     
+
                                     });
                                 }
-                                
+
                             });
                         }
                     });
-               
+
             }
         } catch (e) { }
     }
