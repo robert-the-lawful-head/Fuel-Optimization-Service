@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="d-flex pricing-page justify-content-between">
-        <div class="mt-3 pricing-display-board">
+        <div class="pricing-display-board mt-3">
             <ni-card
                 title="Live Pricing"
                 subtitle="Costs are always kept confidential"
@@ -102,22 +102,6 @@
             </ni-card>
         </div>
 
-        <ng-container *ngIf="!layoutChanged; then pricingUpdate else addOnMargin"></ng-container>
-    </div>
-    <div class="d-flex" [ngClass]="{ 'mt-3': !layoutChanged }">
-        <ng-container *ngIf="layoutChanged; then pricingUpdate else addOnMargin"></ng-container>
-            <!-- <ni-card
-                title="Stage Future Prices"
-                bgColor="dark"
-                headerBgColor="dark"
-                outline="true"
-                theme="small"
-                [collapsible]="'true'"
-            >
-            </ni-card> -->
-    </div>
-
-    <ng-template #pricingUpdate>
         <div class="pricing-update-board" [ngClass]="{ 'mt-3': !layoutChanged, 'mb-3': layoutChanged }">
             <ni-card
                 class="mb-0"
@@ -254,9 +238,8 @@
                 </div>
             </ni-card>
         </div>
-    </ng-template>
-
-    <ng-template #addOnMargin>
+    </div>
+    <div class="d-flex pricing-page justify-content-between" [ngClass]="{ 'mt-3': !layoutChanged }">
         <div class="add-on-margin-board" [ngClass]="{ 'mt-3': layoutChanged }">
             <ni-card
                 title="Add On Margin"
@@ -367,5 +350,90 @@
                 </div>
             </ni-card>
         </div>
-    </ng-template>
+        <div class="pricing-update-board">
+            <ni-card
+                title="Lookup Price by Tail"
+                bgColor="dead"
+                headerBgColor="dead"
+                theme="small"
+                outline="true"
+                [collapsible]="'true'"
+            >
+                <div class="d-flex justify-content-around">
+                    <div class="pr-2">
+                        <mat-form-field>
+                            <input
+                                matInput
+                                placeholder="Tail Number*"
+                                [(ngModel)]="tailNumber"
+                                aria-label="Aircraft Tail Number"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <div class="pr-2">
+                        <mat-form-field>
+                            <input
+                                matInput
+                                placeholder="Fuel Volume"
+                                [(ngModel)]="fuelVolume"
+                                aria-label="Fuel Volume"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <div class="pr-2 invisible">
+                        <mat-form-field>
+                            <input matInput/>
+                        </mat-form-field>
+                    </div>
+                    <div class="pt-2">
+                        <div class="text-center">
+                            <button
+                                mat-raised-button
+                                color="accent"
+                                class="mr-1 updateBtn"
+                                [disabled]="!tailNumber"
+                                (click)="lookupTail()"
+                            >
+                                Check Pricing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="tailLookupError" class="h6 mt-0 mb-0 text-danger pl-5">No Tail Price Found!</div>
+
+                <div *ngIf="tailLookupInfo && !tailLookupError">
+                    <div class="tailLookupInfo">
+                        <div class="h6 text-muted mt-0 mb-0">Price Per Gallon: </div>
+                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.pricePerGallon ? tailLookupInfo.pricePerGallon : 'N/A' }}</div>
+                    </div>
+                    <div class="tailLookupInfo">
+                        <div class="h6 text-muted mt-0 mb-0">Ramp Fees: </div>
+                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.fees ? tailLookupInfo.fees : 'N/A' }}</div>
+                    </div>
+                    <div class="tailLookupInfo">
+                        <div class="h6 text-muted mt-0 mb-0">Pricing Template: </div>
+                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.template ? tailLookupInfo.template : 'N/A' }}</div>
+                    </div>
+                    <div class="tailLookupInfo">
+                        <div class="h6 text-muted mt-0 mb-0">Company: </div>
+                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.company ? tailLookupInfo.company: 'N/A' }}</div>
+                    </div>
+                    <div class="tailLookupInfo">
+                        <div class="h6 text-muted mt-0 mb-0">Make/Model: </div>
+                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.makeModel ? tailLookupInfo.makeModel : 'N/A' }}</div>
+                    </div>
+                </div>
+
+                <ngx-ui-loader
+                    [loaderId]="tailLoader"
+                    bgsPosition="center-center"
+                    fgsType="fading-circle"
+                    fgsColor="#252d47"
+                    pbColor="#252d47"
+                    overlayColor="rgba(0, 0, 0, 0.06)"
+                ></ngx-ui-loader>
+            </ni-card>
+        </div>
+    </div>
 </div>

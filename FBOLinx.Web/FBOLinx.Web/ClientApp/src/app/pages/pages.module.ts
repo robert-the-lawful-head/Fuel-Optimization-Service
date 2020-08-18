@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 
 import { NiComponentsModule } from "../ni-components/ni-components.module";
 
@@ -125,9 +126,6 @@ import { CustomerMatchDialogComponent } from "./customers/customer-match-dialog/
 import { AppPipesModule } from "../app-pipes.module";
 
 import { ClickStopPropagationDirective } from "../shared/directives/click-stop-propagation.directive";
-import { RouterModule } from "@angular/router";
-import { TailLookupToolComponent } from "../shared/components/tail-lookup-tool/tail-lookup-tool.component";
-
 
 @NgModule({
     imports: [
@@ -254,9 +252,7 @@ import { TailLookupToolComponent } from "../shared/components/tail-lookup-tool/t
         FuelReqsExportModalComponent,
         ClickStopPropagationDirective,
         CustomerMatchDialogComponent,
-        TailLookupToolComponent,
         SystemcontactsNewContactModalComponent,
-
     ],
     exports: [
         ClickStopPropagationDirective,

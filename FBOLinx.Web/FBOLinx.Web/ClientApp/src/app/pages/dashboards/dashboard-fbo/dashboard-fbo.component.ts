@@ -12,8 +12,6 @@ import { StatisticsTotalOrdersComponent } from "../../../shared/components/stati
 import { StatisticsTotalCustomersComponent } from "../../../shared/components/statistics-total-customers/statistics-total-customers.component";
 import { StatisticsTotalAircraftComponent } from "../../../shared/components/statistics-total-aircraft/statistics-total-aircraft.component";
 import { StatisticsOrdersByLocationComponent } from "../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component";
-import { TailLookupToolComponent } from "../../../shared/components/tail-lookup-tool/tail-lookup-tool.component";
-
 
 const BREADCRUMBS: any[] = [
     {
@@ -49,8 +47,6 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     private statisticsTotalAircraft: StatisticsTotalAircraftComponent;
     @ViewChild("statisticsOrdersByLocation")
     private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
-    @ViewChild("tailLookupComponent")
-    private tailLookupComponent: StatisticsOrdersByLocationComponent;
 
     constructor(private sharedService: SharedService) {
         this.filterStartDate = new Date(moment().add(-12, "M").format("MM/DD/YYYY"));

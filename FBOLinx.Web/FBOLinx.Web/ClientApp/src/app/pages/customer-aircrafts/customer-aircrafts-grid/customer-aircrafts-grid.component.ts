@@ -10,7 +10,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
-import { MatSelectChange } from '@angular/material/select';
+import { MatSelectChange } from "@angular/material/select";
 import FlatfileImporter from "flatfile-csv-importer";
 
 // Services
@@ -294,7 +294,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 model,
                 size,
                 pricingTemplateId: event.value,
-                oldPricingTemplateId: pricingTemplateId
+                oldPricingTemplateId: pricingTemplateId,
             })
             .subscribe(() => {
                 customerAircraft.pricingTemplateId = event.value;
