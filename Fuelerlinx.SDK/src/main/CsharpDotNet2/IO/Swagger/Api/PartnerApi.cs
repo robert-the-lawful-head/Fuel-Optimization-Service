@@ -18,16 +18,16 @@ namespace IO.Swagger.Api
         /// <returns>PostIntegrationPartnerCredentialsResponse</returns>
         PostIntegrationPartnerCredentialsResponse ApplyPartnerCredentialsByTypeAndAffiliation (PostIntegrationPartnerCredentialsRequest body);
         /// <summary>
+        /// Fetch all integration partners. 
+        /// </summary>
+        /// <returns>IntegrationPartnerListResponse</returns>
+        IntegrationPartnerListResponse GetAvailablePartners ();
+        /// <summary>
         /// Fetch all integration partners of a certain type. 
         /// </summary>
         /// <param name="partnerType"></param>
         /// <returns>IntegrationPartnerListResponse</returns>
-        IntegrationPartnerListResponse GetAvailablePartners (int? partnerType);
-        /// <summary>
-        /// Fetch all integration partners. 
-        /// </summary>
-        /// <returns>IntegrationPartnerListResponse</returns>
-        IntegrationPartnerListResponse GetAvailablePartnersByType ();
+        IntegrationPartnerListResponse GetAvailablePartnersByType (int? partnerType);
         /// <summary>
         /// Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user&#39;s data. 
         /// </summary>
@@ -130,21 +130,16 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Fetch all integration partners of a certain type. 
+        /// Fetch all integration partners. 
         /// </summary>
-        /// <param name="partnerType"></param> 
         /// <returns>IntegrationPartnerListResponse</returns>            
-        public IntegrationPartnerListResponse GetAvailablePartners (int? partnerType)
+        public IntegrationPartnerListResponse GetAvailablePartners ()
         {
             
-            // verify the required parameter 'partnerType' is set
-            if (partnerType == null) throw new ApiException(400, "Missing required parameter 'partnerType' when calling GetAvailablePartners");
-            
     
-            var path = "/api/Partner/list/type/{partnerType}";
+            var path = "/api/Partner/list";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "partnerType" + "}", ApiClient.ParameterToString(partnerType));
-    
+                
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();
@@ -167,16 +162,21 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Fetch all integration partners. 
+        /// Fetch all integration partners of a certain type. 
         /// </summary>
+        /// <param name="partnerType"></param> 
         /// <returns>IntegrationPartnerListResponse</returns>            
-        public IntegrationPartnerListResponse GetAvailablePartnersByType ()
+        public IntegrationPartnerListResponse GetAvailablePartnersByType (int? partnerType)
         {
             
+            // verify the required parameter 'partnerType' is set
+            if (partnerType == null) throw new ApiException(400, "Missing required parameter 'partnerType' when calling GetAvailablePartnersByType");
+            
     
-            var path = "/api/Partner/list";
+            var path = "/api/Partner/list/type/{partnerType}";
             path = path.Replace("{format}", "json");
-                
+            path = path.Replace("{" + "partnerType" + "}", ApiClient.ParameterToString(partnerType));
+    
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();

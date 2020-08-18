@@ -5,8 +5,8 @@ All URIs are relative to *https://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**ApplyPartnerCredentialsByTypeAndAffiliation**](PartnerApi.md#applypartnercredentialsbytypeandaffiliation) | **POST** /api/Partner/credentials | Apply credential changes for a certain type/afiiliation of integration partner.
-[**GetAvailablePartners**](PartnerApi.md#getavailablepartners) | **GET** /api/Partner/list/type/{partnerType} | Fetch all integration partners of a certain type.
-[**GetAvailablePartnersByType**](PartnerApi.md#getavailablepartnersbytype) | **GET** /api/Partner/list | Fetch all integration partners.
+[**GetAvailablePartners**](PartnerApi.md#getavailablepartners) | **GET** /api/Partner/list | Fetch all integration partners.
+[**GetAvailablePartnersByType**](PartnerApi.md#getavailablepartnersbytype) | **GET** /api/Partner/list/type/{partnerType} | Fetch all integration partners of a certain type.
 [**GetPartnerCredentialsByTypeAndAffiliation**](PartnerApi.md#getpartnercredentialsbytypeandaffiliation) | **GET** /api/Partner/credentials/type/{partnerType}/affiliation/{affiliation} | Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user&#39;s data.
 [**GetPartnerInfo**](PartnerApi.md#getpartnerinfo) | **GET** /api/Partner | Fetch the integration partner by the provided API key.
 
@@ -82,9 +82,9 @@ Name | Type | Description  | Notes
 
 <a name="getavailablepartners"></a>
 # **GetAvailablePartners**
-> IntegrationPartnerListResponse GetAvailablePartners (int? partnerType)
+> IntegrationPartnerListResponse GetAvailablePartners ()
 
-Fetch all integration partners of a certain type.
+Fetch all integration partners.
 
 ### Example
 ```csharp
@@ -111,12 +111,11 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new PartnerApi();
-            var partnerType = 56;  // int? | 
 
             try
             {
-                // Fetch all integration partners of a certain type.
-                IntegrationPartnerListResponse result = apiInstance.GetAvailablePartners(partnerType);
+                // Fetch all integration partners.
+                IntegrationPartnerListResponse result = apiInstance.GetAvailablePartners();
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -129,10 +128,7 @@ namespace Example
 ```
 
 ### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **partnerType** | **int?**|  | 
+This endpoint does not need any parameter.
 
 ### Return type
 
@@ -151,9 +147,9 @@ Name | Type | Description  | Notes
 
 <a name="getavailablepartnersbytype"></a>
 # **GetAvailablePartnersByType**
-> IntegrationPartnerListResponse GetAvailablePartnersByType ()
+> IntegrationPartnerListResponse GetAvailablePartnersByType (int? partnerType)
 
-Fetch all integration partners.
+Fetch all integration partners of a certain type.
 
 ### Example
 ```csharp
@@ -180,11 +176,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new PartnerApi();
+            var partnerType = 56;  // int? | 
 
             try
             {
-                // Fetch all integration partners.
-                IntegrationPartnerListResponse result = apiInstance.GetAvailablePartnersByType();
+                // Fetch all integration partners of a certain type.
+                IntegrationPartnerListResponse result = apiInstance.GetAvailablePartnersByType(partnerType);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -197,7 +194,10 @@ namespace Example
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **partnerType** | **int?**|  | 
 
 ### Return type
 
