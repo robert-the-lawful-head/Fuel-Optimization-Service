@@ -112,7 +112,7 @@ export class FbosGridComponent implements OnInit {
             if (noThanksFlag) {
                 return;
             }
-            
+
             if (remindMeLaterFlag && (moment(moment().format("L")) !== moment(remindMeLaterFlag))) {
                 return;
             }
@@ -204,7 +204,7 @@ export class FbosGridComponent implements OnInit {
             dialogRef.afterClosed().subscribe((result) => {
                 if (result) {
                     result.groupId = this.groupInfo.oid;
-              
+
                     this.fboService.add(result).subscribe((newFbo: any) => {
                         this.fbosData.push(newFbo);
                         this.refreshTable();
@@ -232,7 +232,7 @@ export class FbosGridComponent implements OnInit {
                         panelClass: ["blue-snackbar"],
                     });
                     sessionStorage.setItem("isNewFbo", "yes");
-                    this.router.navigate(["/default-layout/fbos/" + result.oid]);                   
+                    this.router.navigate(["/default-layout/fbos/" + result.oid]);
                 }
             });
         }

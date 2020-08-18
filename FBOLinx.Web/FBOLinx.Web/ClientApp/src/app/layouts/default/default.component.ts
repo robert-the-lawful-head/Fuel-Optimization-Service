@@ -114,6 +114,6 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
                 });
         }
 
-        
+
     }
 }

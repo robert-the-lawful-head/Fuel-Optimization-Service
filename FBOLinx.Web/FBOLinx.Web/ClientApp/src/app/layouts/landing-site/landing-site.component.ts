@@ -98,7 +98,7 @@ export class LandingSiteLayoutComponent {
     public rememberMe: any;
     public isLoggingIn = false;
     public error = "";
-    public isSticky = false;    
+    public isSticky = false;
 
     constructor(
         private snackBar: MatSnackBar,
@@ -262,7 +262,7 @@ export class LandingSiteLayoutComponent {
                 break;
         }
     }
-    
+
     @HostListener("window:scroll", ["$event"])
     public checkScroll(): void {
         this.isSticky = window.pageYOffset >= 171;

@@ -361,7 +361,7 @@ export class CustomersGridComponent implements OnInit {
             return customer.pricingTemplateName === p.name;
         });
 
-        customer.needsAttention = changedPricingTemplate.default || 
+        customer.needsAttention = changedPricingTemplate.default ||
             (customer.customerCompanyTypeName !== "FuelerLinx" && !customer.contactExists);
         customer.allInPrice = changedPricingTemplate.intoPlanePrice;
 

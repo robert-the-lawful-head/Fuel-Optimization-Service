@@ -10,11 +10,11 @@ import {
     styleUrls: ["./ramp-fees-import-information-dialog.component.scss"],
 })
 export class RampFeesImportInformationComponent {
-    
+
     constructor(
         public dialogRef: MatDialogRef<RampFeesImportInformationComponent>
     ) {
-        
+
     }
 
     public onOkClick(): void {

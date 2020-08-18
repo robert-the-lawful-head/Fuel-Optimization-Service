@@ -25,7 +25,7 @@ export class RequestDemoModalComponent {
             this.dialogRef.close(this.data);
         }
     }
-    
+
     onCancelClick(): void {
         this.dialogRef.close();
     }
