@@ -67,7 +67,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public isLoadingRetail = false;
     public isLoadingCost = false;
     public tailNumber: string;
-    public fuelVolume: string;
+    public fuelVolume: number = 1;
 
     public tailLookupInfo: TailLookupResponse;
     public tailLookupError: boolean;
@@ -307,10 +307,11 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     public lookupTail() {
         const tailLookupData = {
-            companyId: this.sharedService.currentUser.fboId,
             icao: this.sharedService.currentUser.icao,
             tailNumber: this.tailNumber,
             fuelVolume: this.fuelVolume,
+            fboId: this.sharedService.currentUser.fboId,
+            groupId: this.sharedService.currentUser.groupId
         };
         this.tailLookupError = false;
         this.tailLookupInfo = undefined;

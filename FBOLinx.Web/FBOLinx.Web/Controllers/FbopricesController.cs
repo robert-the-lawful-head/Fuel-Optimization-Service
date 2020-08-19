@@ -584,53 +584,34 @@ namespace FBOLinx.Web.Controllers
             }
             try
             {
-                var customerObj = _context.CustomerAircrafts.FirstOrDefault(s => s.TailNumber == request.TailNumber);
-                if (customerObj == null)
-                    return Ok(null);
-
-                var customer =
-                    await _context.Customers.FirstOrDefaultAsync(x =>
-                        x.Oid == customerObj.CustomerId);
-                if (customer == null)
+                var customerAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID);
+                if (customerAircraft == null)
                     return Ok(null);
 
                 PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-                var validPricing =
-                    await priceFetchingService.GetCustomerPricingByLocationAndTailNumberAsync(request.ICAO, customer.Oid, request.TailNumber, request.CompanyID, request.FuelVolume);
-                if (validPricing == null)
+                var validPricingList =
+                    await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customerAircraft.CustomerId);
+                if (validPricingList == null)
                     return Ok(null);
 
-                CompanyPricingLog companyPricingLog = new CompanyPricingLog
-                {
-                    CompanyId = request.CompanyID,
-                    ICAO = request.ICAO
-                };
-                _context.CompanyPricingLog.Add(companyPricingLog);
+                var priceResult = validPricingList.FirstOrDefault(x =>
+                    !string.IsNullOrEmpty(x.TailNumbers) &&
+                    x.TailNumbers.ToUpper().Split(',').Contains(request.TailNumber.ToUpper()) && x.MinGallons <= request.FuelVolume && x.MaxGallons >= request.FuelVolume && x.FboId == request.FBOID);
 
-                _context.SaveChanges();
+                if (priceResult == null)
+                    return Ok(null);
 
-                var custAircraftMakeModel = _context.Aircrafts.FirstOrDefault(s => s.AircraftId == customerObj.AircraftId);
+                TailNumberLoadResponse validPricing = new TailNumberLoadResponse();
+                validPricing.PricePerGallon = priceResult.AllInPrice;
+                validPricing.Template = priceResult.PricingTemplateName;
+                validPricing.Company = priceResult.Company;
+
+                var custAircraftMakeModel = _context.Aircrafts.FirstOrDefault(s => s.AircraftId == customerAircraft.AircraftId);
 
                 if(custAircraftMakeModel != null)
                 {
-                    _rampFeesService = new RampFeesService(_context);
-                    validPricing.Fees = await _rampFeesService.GetRampFeesForFbo(request.CompanyID, custAircraftMakeModel.Size);
                     validPricing.MakeModel = custAircraftMakeModel.Make + " " + custAircraftMakeModel.Model;
                 }
-
-                var aircraftCompany = await (from ca in _context.CustomerAircrafts
-                                               join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
-                                               from ac in leftJoinAircrafts.DefaultIfEmpty()
-                                               join c in _context.CustomerInfoByGroup
-                                               on ca.CustomerId equals c.CustomerId into leftJoinCustomers
-                                               from c in leftJoinCustomers.DefaultIfEmpty()
-                                               where ca.TailNumber == request.TailNumber
-                                               select new
-                                               {
-                                                   c.Customer
-                                               }).FirstOrDefaultAsync();
-
-                validPricing.Company = aircraftCompany.Customer.Company;
 
                 return Ok(validPricing);
             }
