@@ -18,6 +18,12 @@ namespace IO.Swagger.Api
         /// <returns>PostIntegrationPartnerCredentialsResponse</returns>
         PostIntegrationPartnerCredentialsResponse ApplyPartnerCredentialsByTypeAndAffiliation (PostIntegrationPartnerCredentialsRequest body);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteCompanyActiveIntegrationResponse</returns>
+        DeleteCompanyActiveIntegrationResponse DeleteCompanyActiveIntegration (int? id);
+        /// <summary>
         /// Fetch all integration partners. 
         /// </summary>
         /// <returns>IntegrationPartnerListResponse</returns>
@@ -28,6 +34,17 @@ namespace IO.Swagger.Api
         /// <param name="partnerType"></param>
         /// <returns>IntegrationPartnerListResponse</returns>
         IntegrationPartnerListResponse GetAvailablePartnersByType (int? partnerType);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>CompanyActiveIntegrationResponse</returns>
+        CompanyActiveIntegrationResponse GetCompanyActiveIntegrationById (int? id);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>CompanyActiveIntegrationListResponse</returns>
+        CompanyActiveIntegrationListResponse GetCompanyActiveIntegrations ();
         /// <summary>
         /// Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user&#39;s data. 
         /// </summary>
@@ -40,6 +57,18 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <returns></returns>
         void GetPartnerInfo ();
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostCompanyActiveIntegrationResponse</returns>
+        PostCompanyActiveIntegrationResponse PostCompanyActiveIntegration (PostCompanyActiveIntegrationRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateCompanyActiveIntegrationResponse</returns>
+        UpdateCompanyActiveIntegrationResponse UpdateCompanyActiveIntegration (UpdateCompanyActiveIntegrationRequest body);
     }
   
     /// <summary>
@@ -130,6 +159,43 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteCompanyActiveIntegrationResponse</returns>            
+        public DeleteCompanyActiveIntegrationResponse DeleteCompanyActiveIntegration (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteCompanyActiveIntegration");
+            
+    
+            var path = "/api/Partner/active-integration/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyActiveIntegration: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyActiveIntegration: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteCompanyActiveIntegrationResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCompanyActiveIntegrationResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Fetch all integration partners. 
         /// </summary>
         /// <returns>IntegrationPartnerListResponse</returns>            
@@ -196,6 +262,75 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetAvailablePartnersByType: " + response.ErrorMessage, response.ErrorMessage);
     
             return (IntegrationPartnerListResponse) ApiClient.Deserialize(response.Content, typeof(IntegrationPartnerListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>CompanyActiveIntegrationResponse</returns>            
+        public CompanyActiveIntegrationResponse GetCompanyActiveIntegrationById (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetCompanyActiveIntegrationById");
+            
+    
+            var path = "/api/Partner/active-integration/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyActiveIntegrationById: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyActiveIntegrationById: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CompanyActiveIntegrationResponse) ApiClient.Deserialize(response.Content, typeof(CompanyActiveIntegrationResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>CompanyActiveIntegrationListResponse</returns>            
+        public CompanyActiveIntegrationListResponse GetCompanyActiveIntegrations ()
+        {
+            
+    
+            var path = "/api/Partner/active-integration/list";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyActiveIntegrations: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyActiveIntegrations: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CompanyActiveIntegrationListResponse) ApiClient.Deserialize(response.Content, typeof(CompanyActiveIntegrationListResponse), response.Headers);
         }
     
         /// <summary>
@@ -270,6 +405,74 @@ path = path.Replace("{" + "affiliation" + "}", ApiClient.ParameterToString(affil
                 throw new ApiException ((int)response.StatusCode, "Error calling GetPartnerInfo: " + response.ErrorMessage, response.ErrorMessage);
     
             return;
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostCompanyActiveIntegrationResponse</returns>            
+        public PostCompanyActiveIntegrationResponse PostCompanyActiveIntegration (PostCompanyActiveIntegrationRequest body)
+        {
+            
+    
+            var path = "/api/Partner/active-integration";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyActiveIntegration: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyActiveIntegration: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostCompanyActiveIntegrationResponse) ApiClient.Deserialize(response.Content, typeof(PostCompanyActiveIntegrationResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateCompanyActiveIntegrationResponse</returns>            
+        public UpdateCompanyActiveIntegrationResponse UpdateCompanyActiveIntegration (UpdateCompanyActiveIntegrationRequest body)
+        {
+            
+    
+            var path = "/api/Partner/active-integration";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyActiveIntegration: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyActiveIntegration: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateCompanyActiveIntegrationResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCompanyActiveIntegrationResponse), response.Headers);
         }
     
     }

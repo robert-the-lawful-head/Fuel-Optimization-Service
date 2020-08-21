@@ -271,10 +271,15 @@ Class | Method | HTTP request | Description
 *IntegrationFuelOrderDetailsApi* | [**CancelIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#cancelintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails/cancel | Internal use only - cancel an integration record from being tied to a transaction and notify the partner.
 *IntegrationFuelOrderDetailsApi* | [**UpdateIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#updateintegrationfuelorderdetails) | **PUT** /api/IntegrationFuelOrderDetails | Internal use only - update an integration record associated with a fuel order transaction.
 *PartnerApi* | [**ApplyPartnerCredentialsByTypeAndAffiliation**](docs/PartnerApi.md#applypartnercredentialsbytypeandaffiliation) | **POST** /api/Partner/credentials | Apply credential changes for a certain type/afiiliation of integration partner.
+*PartnerApi* | [**DeleteCompanyActiveIntegration**](docs/PartnerApi.md#deletecompanyactiveintegration) | **DELETE** /api/Partner/active-integration/{id} | 
 *PartnerApi* | [**GetAvailablePartners**](docs/PartnerApi.md#getavailablepartners) | **GET** /api/Partner/list | Fetch all integration partners.
 *PartnerApi* | [**GetAvailablePartnersByType**](docs/PartnerApi.md#getavailablepartnersbytype) | **GET** /api/Partner/list/type/{partnerType} | Fetch all integration partners of a certain type.
+*PartnerApi* | [**GetCompanyActiveIntegrationById**](docs/PartnerApi.md#getcompanyactiveintegrationbyid) | **GET** /api/Partner/active-integration/{id} | 
+*PartnerApi* | [**GetCompanyActiveIntegrations**](docs/PartnerApi.md#getcompanyactiveintegrations) | **GET** /api/Partner/active-integration/list | 
 *PartnerApi* | [**GetPartnerCredentialsByTypeAndAffiliation**](docs/PartnerApi.md#getpartnercredentialsbytypeandaffiliation) | **GET** /api/Partner/credentials/type/{partnerType}/affiliation/{affiliation} | Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user's data.
 *PartnerApi* | [**GetPartnerInfo**](docs/PartnerApi.md#getpartnerinfo) | **GET** /api/Partner | Fetch the integration partner by the provided API key.
+*PartnerApi* | [**PostCompanyActiveIntegration**](docs/PartnerApi.md#postcompanyactiveintegration) | **POST** /api/Partner/active-integration | 
+*PartnerApi* | [**UpdateCompanyActiveIntegration**](docs/PartnerApi.md#updatecompanyactiveintegration) | **PUT** /api/Partner/active-integration | 
 *PaymentsApi* | [**CancelPayment**](docs/PaymentsApi.md#cancelpayment) | **POST** /api/Payments/cancelPayment | 
 *PaymentsApi* | [**CheckAuthenticate**](docs/PaymentsApi.md#checkauthenticate) | **GET** /api/Payments/checkAuth | 
 *PaymentsApi* | [**CreatePayment**](docs/PaymentsApi.md#createpayment) | **POST** /api/Payments/createPayment | 
@@ -480,6 +485,9 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ColorAxis](docs/ColorAxis.md)
  - [IO.Swagger.Model.ColorSet](docs/ColorSet.md)
  - [IO.Swagger.Model.CompanyAccountSettingsDTO](docs/CompanyAccountSettingsDTO.md)
+ - [IO.Swagger.Model.CompanyActiveIntegrationDTO](docs/CompanyActiveIntegrationDTO.md)
+ - [IO.Swagger.Model.CompanyActiveIntegrationListResponse](docs/CompanyActiveIntegrationListResponse.md)
+ - [IO.Swagger.Model.CompanyActiveIntegrationResponse](docs/CompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.CompanyAircraftChangeLogDTO](docs/CompanyAircraftChangeLogDTO.md)
  - [IO.Swagger.Model.CompanyAircraftChangeLogResponse](docs/CompanyAircraftChangeLogResponse.md)
  - [IO.Swagger.Model.CompanyDTO](docs/CompanyDTO.md)
@@ -517,6 +525,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyResponse](docs/DeleteAirportDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconProcessResponse](docs/DeleteAutoReconProcessResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconciledFileResponse](docs/DeleteAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.DeleteCompanyActiveIntegrationResponse](docs/DeleteCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.DeleteCompanyAircraftChangeLogResponse](docs/DeleteCompanyAircraftChangeLogResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerChangeLogResponse](docs/DeleteCompanyFuelerChangeLogResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerNotesResponse](docs/DeleteCompanyFuelerNotesResponse.md)
@@ -708,6 +717,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostAutoReconProcessResponse](docs/PostAutoReconProcessResponse.md)
  - [IO.Swagger.Model.PostAutoReconciledFileRequest](docs/PostAutoReconciledFileRequest.md)
  - [IO.Swagger.Model.PostAutoReconciledFileResponse](docs/PostAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.PostCompanyActiveIntegrationRequest](docs/PostCompanyActiveIntegrationRequest.md)
+ - [IO.Swagger.Model.PostCompanyActiveIntegrationResponse](docs/PostCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.PostCompanyAircraftChangeLogRequest](docs/PostCompanyAircraftChangeLogRequest.md)
  - [IO.Swagger.Model.PostCompanyAircraftChangeLogResponse](docs/PostCompanyAircraftChangeLogResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerChangeLogRequest](docs/PostCompanyFuelerChangeLogRequest.md)
@@ -925,6 +936,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateAutoReconProcessResponse](docs/UpdateAutoReconProcessResponse.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileRequest](docs/UpdateAutoReconciledFileRequest.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileResponse](docs/UpdateAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.UpdateCompanyActiveIntegrationRequest](docs/UpdateCompanyActiveIntegrationRequest.md)
+ - [IO.Swagger.Model.UpdateCompanyActiveIntegrationResponse](docs/UpdateCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.UpdateCompanyAircraftChangeLogRequest](docs/UpdateCompanyAircraftChangeLogRequest.md)
  - [IO.Swagger.Model.UpdateCompanyAircraftChangeLogResponse](docs/UpdateCompanyAircraftChangeLogResponse.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerChangeLogRequest](docs/UpdateCompanyFuelerChangeLogRequest.md)
