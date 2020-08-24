@@ -35,6 +35,13 @@ namespace IO.Swagger.Model {
     public int? PartnerType { get; set; }
 
     /// <summary>
+    /// Gets or Sets PartnerTypeDescription
+    /// </summary>
+    [DataMember(Name="partnerTypeDescription", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "partnerTypeDescription")]
+    public string PartnerTypeDescription { get; set; }
+
+    /// <summary>
     /// Gets or Sets Affiliation
     /// </summary>
     [DataMember(Name="affiliation", EmitDefaultValue=false)]
@@ -102,6 +109,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  PartnerName: ").Append(PartnerName).Append("\n");
       sb.Append("  PartnerType: ").Append(PartnerType).Append("\n");
+      sb.Append("  PartnerTypeDescription: ").Append(PartnerTypeDescription).Append("\n");
       sb.Append("  Affiliation: ").Append(Affiliation).Append("\n");
       sb.Append("  Apikey: ").Append(Apikey).Append("\n");
       sb.Append("  CreationDate: ").Append(CreationDate).Append("\n");

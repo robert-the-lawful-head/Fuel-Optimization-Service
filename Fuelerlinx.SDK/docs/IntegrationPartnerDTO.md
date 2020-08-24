@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 **Id** | **int?** |  | [optional] 
 **PartnerName** | **string** |  | 
 **PartnerType** | **int?** |  | [optional] 
+**PartnerTypeDescription** | **string** |  | [optional] 
 **Affiliation** | **int?** |  | [optional] 
 **Apikey** | **Guid?** |  | [optional] 
 **CreationDate** | **DateTime?** |  | [optional] 

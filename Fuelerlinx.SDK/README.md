@@ -306,9 +306,13 @@ Class | Method | HTTP request | Description
 *SavedTripApi* | [**UpdateSavedTrip**](docs/SavedTripApi.md#updatesavedtrip) | **PUT** /api/SavedTrip | 
 *SavedTripApi* | [**UpdateSavedTripLeg**](docs/SavedTripApi.md#updatesavedtripleg) | **PUT** /api/SavedTrip/legs | 
 *ScheduledTripApi* | [**DeleteScheduledLegData**](docs/ScheduledTripApi.md#deletescheduledlegdata) | **DELETE** /api/ScheduledTrip/integration/leg/{legIdentifier} | Delete a previously POSTed leg with a matching [legIdentifier].
+*ScheduledTripApi* | [**DeleteScheduledTripSettings**](docs/ScheduledTripApi.md#deletescheduledtripsettings) | **DELETE** /api/ScheduledTrip/settings/{id} | 
 *ScheduledTripApi* | [**GetCurrentScheduledTrips**](docs/ScheduledTripApi.md#getcurrentscheduledtrips) | **GET** /api/ScheduledTrip/current | Fetch upcoming scheduled trip info pulled from the user's scheduling system.
 *ScheduledTripApi* | [**GetFuelOrderDetailsForScheduledLeg**](docs/ScheduledTripApi.md#getfuelorderdetailsforscheduledleg) | **GET** /api/ScheduledTrip/integration/fuelorderdetails/{legIdentifier} | Fetch the [transaction] and [generatedFuelComment] associated with the fuel order that was placed for the specified leg tied to the [legIdentifier].
+*ScheduledTripApi* | [**GetScheduledTripSettingsByCompanyId**](docs/ScheduledTripApi.md#getscheduledtripsettingsbycompanyid) | **GET** /api/ScheduledTrip/settings/by-company/{companyId} | 
 *ScheduledTripApi* | [**PostScheduledLegData**](docs/ScheduledTripApi.md#postscheduledlegdata) | **POST** /api/ScheduledTrip/integration/leg | Post a leg from the user's scheduling system as an object [ScheduledLegData] and it's corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner's side.
+*ScheduledTripApi* | [**PostScheduledTripSettings**](docs/ScheduledTripApi.md#postscheduledtripsettings) | **POST** /api/ScheduledTrip/settings | 
+*ScheduledTripApi* | [**UpdateScheduledTripSettings**](docs/ScheduledTripApi.md#updatescheduledtripsettings) | **PUT** /api/ScheduledTrip/settings | 
 *ServiceLogsApi* | [**DeleteCompanyAircraftChangeLog**](docs/ServiceLogsApi.md#deletecompanyaircraftchangelog) | **DELETE** /api/ServiceLogs/companyAircraftChangeLog/{id} | Delete a company aircraft change log record by the record id.
 *ServiceLogsApi* | [**DeleteCompanyFuelerChangeLog**](docs/ServiceLogsApi.md#deletecompanyfuelerchangelog) | **DELETE** /api/ServiceLogs/companyFuelerChangeLog/{id} | Delete a company fueler change log record by the record id.
 *ServiceLogsApi* | [**DeleteDispatchEmailLog**](docs/ServiceLogsApi.md#deletedispatchemaillog) | **DELETE** /api/ServiceLogs/dispatchEmailLog/{id} | Delete a dispatch email log record by the record id.
@@ -558,6 +562,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteReportScheduledDistributionResponse](docs/DeleteReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.DeleteSavedTripLegResponse](docs/DeleteSavedTripLegResponse.md)
  - [IO.Swagger.Model.DeleteSavedTripResponse](docs/DeleteSavedTripResponse.md)
+ - [IO.Swagger.Model.DeleteScheduledTripSettingsResponse](docs/DeleteScheduledTripSettingsResponse.md)
  - [IO.Swagger.Model.DeleteSchedulingIntegrationDispatchServiceLogResponse](docs/DeleteSchedulingIntegrationDispatchServiceLogResponse.md)
  - [IO.Swagger.Model.DeleteSchedulingIntegrationServiceLogResponse](docs/DeleteSchedulingIntegrationServiceLogResponse.md)
  - [IO.Swagger.Model.DeleteServicesAndFeesByCompanyResponse](docs/DeleteServicesAndFeesByCompanyResponse.md)
@@ -786,6 +791,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostSavedTripResponse](docs/PostSavedTripResponse.md)
  - [IO.Swagger.Model.PostScheduledLegFromIntegrationRequest](docs/PostScheduledLegFromIntegrationRequest.md)
  - [IO.Swagger.Model.PostScheduledLegFromIntegrationResponse](docs/PostScheduledLegFromIntegrationResponse.md)
+ - [IO.Swagger.Model.PostScheduledTripSettingsRequest](docs/PostScheduledTripSettingsRequest.md)
+ - [IO.Swagger.Model.PostScheduledTripSettingsResponse](docs/PostScheduledTripSettingsResponse.md)
  - [IO.Swagger.Model.PostSchedulingIntegrationDispatchServiceLogRequest](docs/PostSchedulingIntegrationDispatchServiceLogRequest.md)
  - [IO.Swagger.Model.PostSchedulingIntegrationDispatchServiceLogResponse](docs/PostSchedulingIntegrationDispatchServiceLogResponse.md)
  - [IO.Swagger.Model.PostSchedulingIntegrationServiceLogRequest](docs/PostSchedulingIntegrationServiceLogRequest.md)
@@ -862,6 +869,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.SavedTripResponse](docs/SavedTripResponse.md)
  - [IO.Swagger.Model.ScheduledTripDTO](docs/ScheduledTripDTO.md)
  - [IO.Swagger.Model.ScheduledTripDeleteResponse](docs/ScheduledTripDeleteResponse.md)
+ - [IO.Swagger.Model.ScheduledTripSettingsDTO](docs/ScheduledTripSettingsDTO.md)
+ - [IO.Swagger.Model.ScheduledTripSettingsResponse](docs/ScheduledTripSettingsResponse.md)
  - [IO.Swagger.Model.SchedulingIntegrationDispatchServiceLogDTO](docs/SchedulingIntegrationDispatchServiceLogDTO.md)
  - [IO.Swagger.Model.SchedulingIntegrationDispatchServiceLogResponse](docs/SchedulingIntegrationDispatchServiceLogResponse.md)
  - [IO.Swagger.Model.SchedulingIntegrationServiceLogDTO](docs/SchedulingIntegrationServiceLogDTO.md)
@@ -996,6 +1005,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateSavedTripLegResponse](docs/UpdateSavedTripLegResponse.md)
  - [IO.Swagger.Model.UpdateSavedTripRequest](docs/UpdateSavedTripRequest.md)
  - [IO.Swagger.Model.UpdateSavedTripResponse](docs/UpdateSavedTripResponse.md)
+ - [IO.Swagger.Model.UpdateScheduledTripSettingsRequest](docs/UpdateScheduledTripSettingsRequest.md)
+ - [IO.Swagger.Model.UpdateScheduledTripSettingsResponse](docs/UpdateScheduledTripSettingsResponse.md)
  - [IO.Swagger.Model.UpdateSchedulingIntegrationDispatchServiceLogRequest](docs/UpdateSchedulingIntegrationDispatchServiceLogRequest.md)
  - [IO.Swagger.Model.UpdateSchedulingIntegrationDispatchServiceLogResponse](docs/UpdateSchedulingIntegrationDispatchServiceLogResponse.md)
  - [IO.Swagger.Model.UpdateSchedulingIntegrationServiceLogRequest](docs/UpdateSchedulingIntegrationServiceLogRequest.md)

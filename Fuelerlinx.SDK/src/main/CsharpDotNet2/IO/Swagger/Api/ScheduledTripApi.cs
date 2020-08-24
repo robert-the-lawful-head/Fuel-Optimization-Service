@@ -18,6 +18,12 @@ namespace IO.Swagger.Api
         /// <returns>ScheduledTripDeleteResponse</returns>
         ScheduledTripDeleteResponse DeleteScheduledLegData (string legIdentifier);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteScheduledTripSettingsResponse</returns>
+        DeleteScheduledTripSettingsResponse DeleteScheduledTripSettings (int? id);
+        /// <summary>
         /// Fetch upcoming scheduled trip info pulled from the user&#39;s scheduling system. Only records that are scheduled to depart after the current time will be returned.
         /// </summary>
         /// <returns>CurrentScheduledTripsResponse</returns>
@@ -29,11 +35,29 @@ namespace IO.Swagger.Api
         /// <returns>FuelOrderDetailsForScheduledLegResponse</returns>
         FuelOrderDetailsForScheduledLegResponse GetFuelOrderDetailsForScheduledLeg (string legIdentifier);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns>ScheduledTripSettingsResponse</returns>
+        ScheduledTripSettingsResponse GetScheduledTripSettingsByCompanyId (int? companyId);
+        /// <summary>
         /// Post a leg from the user&#39;s scheduling system as an object [ScheduledLegData] and it&#39;s corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner&#39;s side. It is recommended to include the tail number, departure airport, arrival airport, and date/time of the departure/arrival as a minimum when sending information.  Additional information (i.e. pax count, cargo, altitude, fuel on board, etc.) is recommended to help enhance the integration.
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostScheduledLegFromIntegrationResponse</returns>
         PostScheduledLegFromIntegrationResponse PostScheduledLegData (PostScheduledLegFromIntegrationRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostScheduledTripSettingsResponse</returns>
+        PostScheduledTripSettingsResponse PostScheduledTripSettings (PostScheduledTripSettingsRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateScheduledTripSettingsResponse</returns>
+        UpdateScheduledTripSettingsResponse UpdateScheduledTripSettings (UpdateScheduledTripSettingsRequest body);
     }
   
     /// <summary>
@@ -127,6 +151,43 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteScheduledTripSettingsResponse</returns>            
+        public DeleteScheduledTripSettingsResponse DeleteScheduledTripSettings (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteScheduledTripSettings");
+            
+    
+            var path = "/api/ScheduledTrip/settings/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteScheduledTripSettings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteScheduledTripSettings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteScheduledTripSettingsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteScheduledTripSettingsResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Fetch upcoming scheduled trip info pulled from the user&#39;s scheduling system. Only records that are scheduled to depart after the current time will be returned.
         /// </summary>
         /// <returns>CurrentScheduledTripsResponse</returns>            
@@ -196,6 +257,43 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="companyId"></param> 
+        /// <returns>ScheduledTripSettingsResponse</returns>            
+        public ScheduledTripSettingsResponse GetScheduledTripSettingsByCompanyId (int? companyId)
+        {
+            
+            // verify the required parameter 'companyId' is set
+            if (companyId == null) throw new ApiException(400, "Missing required parameter 'companyId' when calling GetScheduledTripSettingsByCompanyId");
+            
+    
+            var path = "/api/ScheduledTrip/settings/by-company/{companyId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(companyId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetScheduledTripSettingsByCompanyId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetScheduledTripSettingsByCompanyId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (ScheduledTripSettingsResponse) ApiClient.Deserialize(response.Content, typeof(ScheduledTripSettingsResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Post a leg from the user&#39;s scheduling system as an object [ScheduledLegData] and it&#39;s corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner&#39;s side. It is recommended to include the tail number, departure airport, arrival airport, and date/time of the departure/arrival as a minimum when sending information.  Additional information (i.e. pax count, cargo, altitude, fuel on board, etc.) is recommended to help enhance the integration.
         /// </summary>
         /// <param name="body"></param> 
@@ -227,6 +325,74 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling PostScheduledLegData: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostScheduledLegFromIntegrationResponse) ApiClient.Deserialize(response.Content, typeof(PostScheduledLegFromIntegrationResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostScheduledTripSettingsResponse</returns>            
+        public PostScheduledTripSettingsResponse PostScheduledTripSettings (PostScheduledTripSettingsRequest body)
+        {
+            
+    
+            var path = "/api/ScheduledTrip/settings";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostScheduledTripSettings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostScheduledTripSettings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostScheduledTripSettingsResponse) ApiClient.Deserialize(response.Content, typeof(PostScheduledTripSettingsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateScheduledTripSettingsResponse</returns>            
+        public UpdateScheduledTripSettingsResponse UpdateScheduledTripSettings (UpdateScheduledTripSettingsRequest body)
+        {
+            
+    
+            var path = "/api/ScheduledTrip/settings";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateScheduledTripSettings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateScheduledTripSettings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateScheduledTripSettingsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateScheduledTripSettingsResponse), response.Headers);
         }
     
     }
