@@ -16,6 +16,11 @@ Name | Type | Description | Notes
 **AddTimeStampToFuelComment** | **bool?** |  | [optional] 
 **AddFillerLegs** | **bool?** |  | [optional] 
 **IncludeTimeStampOfUserNotes** | **bool?** |  | [optional] 
+**PushSkippedLegsToTripSheet** | **bool?** |  | [optional] 
+**LegSortType** | **int?** |  | [optional] 
+**UseScheduledEteDomestic** | **bool?** |  | [optional] 
+**UseScheduledEteInternational** | **bool?** |  | [optional] 
+**UserPreferredFbo** | **bool?** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

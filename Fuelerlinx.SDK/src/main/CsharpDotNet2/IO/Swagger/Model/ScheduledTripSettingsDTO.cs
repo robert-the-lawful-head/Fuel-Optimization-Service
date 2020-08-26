@@ -103,6 +103,42 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "includeTimeStampOfUserNotes")]
     public bool? IncludeTimeStampOfUserNotes { get; set; }
 
+    /// <summary>
+    /// Gets or Sets PushSkippedLegsToTripSheet
+    /// </summary>
+    [DataMember(Name="pushSkippedLegsToTripSheet", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "pushSkippedLegsToTripSheet")]
+    public bool? PushSkippedLegsToTripSheet { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    [DataMember(Name="legSortType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "legSortType")]
+    public int? LegSortType { get; set; }
+
+    /// <summary>
+    /// Gets or Sets UseScheduledEteDomestic
+    /// </summary>
+    [DataMember(Name="useScheduledEteDomestic", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "useScheduledEteDomestic")]
+    public bool? UseScheduledEteDomestic { get; set; }
+
+    /// <summary>
+    /// Gets or Sets UseScheduledEteInternational
+    /// </summary>
+    [DataMember(Name="useScheduledEteInternational", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "useScheduledEteInternational")]
+    public bool? UseScheduledEteInternational { get; set; }
+
+    /// <summary>
+    /// Gets or Sets UserPreferredFbo
+    /// </summary>
+    [DataMember(Name="userPreferredFbo", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "userPreferredFbo")]
+    public bool? UserPreferredFbo { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -124,6 +160,11 @@ namespace IO.Swagger.Model {
       sb.Append("  AddTimeStampToFuelComment: ").Append(AddTimeStampToFuelComment).Append("\n");
       sb.Append("  AddFillerLegs: ").Append(AddFillerLegs).Append("\n");
       sb.Append("  IncludeTimeStampOfUserNotes: ").Append(IncludeTimeStampOfUserNotes).Append("\n");
+      sb.Append("  PushSkippedLegsToTripSheet: ").Append(PushSkippedLegsToTripSheet).Append("\n");
+      sb.Append("  LegSortType: ").Append(LegSortType).Append("\n");
+      sb.Append("  UseScheduledEteDomestic: ").Append(UseScheduledEteDomestic).Append("\n");
+      sb.Append("  UseScheduledEteInternational: ").Append(UseScheduledEteInternational).Append("\n");
+      sb.Append("  UserPreferredFbo: ").Append(UserPreferredFbo).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
