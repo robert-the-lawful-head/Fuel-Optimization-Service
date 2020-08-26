@@ -8,7 +8,7 @@ Method | HTTP request | Description
 [**DeleteScheduledTripSettings**](ScheduledTripApi.md#deletescheduledtripsettings) | **DELETE** /api/ScheduledTrip/settings/{id} | 
 [**GetCurrentScheduledTrips**](ScheduledTripApi.md#getcurrentscheduledtrips) | **GET** /api/ScheduledTrip/current | Fetch upcoming scheduled trip info pulled from the user&#39;s scheduling system.
 [**GetFuelOrderDetailsForScheduledLeg**](ScheduledTripApi.md#getfuelorderdetailsforscheduledleg) | **GET** /api/ScheduledTrip/integration/fuelorderdetails/{legIdentifier} | Fetch the [transaction] and [generatedFuelComment] associated with the fuel order that was placed for the specified leg tied to the [legIdentifier].
-[**GetScheduledTripSettingsByCompanyId**](ScheduledTripApi.md#getscheduledtripsettingsbycompanyid) | **GET** /api/ScheduledTrip/settings/by-company/{companyId} | 
+[**GetScheduledTripSettings**](ScheduledTripApi.md#getscheduledtripsettings) | **GET** /api/ScheduledTrip/settings | 
 [**PostScheduledLegData**](ScheduledTripApi.md#postscheduledlegdata) | **POST** /api/ScheduledTrip/integration/leg | Post a leg from the user&#39;s scheduling system as an object [ScheduledLegData] and it&#39;s corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner&#39;s side.
 [**PostScheduledTripSettings**](ScheduledTripApi.md#postscheduledtripsettings) | **POST** /api/ScheduledTrip/settings | 
 [**UpdateScheduledTripSettings**](ScheduledTripApi.md#updatescheduledtripsettings) | **PUT** /api/ScheduledTrip/settings | 
@@ -289,9 +289,9 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-<a name="getscheduledtripsettingsbycompanyid"></a>
-# **GetScheduledTripSettingsByCompanyId**
-> ScheduledTripSettingsResponse GetScheduledTripSettingsByCompanyId (int? companyId)
+<a name="getscheduledtripsettings"></a>
+# **GetScheduledTripSettings**
+> ScheduledTripSettingsResponse GetScheduledTripSettings ()
 
 
 
@@ -305,7 +305,7 @@ using IO.Swagger.Model;
 
 namespace Example
 {
-    public class GetScheduledTripSettingsByCompanyIdExample
+    public class GetScheduledTripSettingsExample
     {
         public void main()
         {
@@ -320,16 +320,15 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new ScheduledTripApi();
-            var companyId = 56;  // int? | 
 
             try
             {
-                ScheduledTripSettingsResponse result = apiInstance.GetScheduledTripSettingsByCompanyId(companyId);
+                ScheduledTripSettingsResponse result = apiInstance.GetScheduledTripSettings();
                 Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling ScheduledTripApi.GetScheduledTripSettingsByCompanyId: " + e.Message );
+                Debug.Print("Exception when calling ScheduledTripApi.GetScheduledTripSettings: " + e.Message );
             }
         }
     }
@@ -337,10 +336,7 @@ namespace Example
 ```
 
 ### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **companyId** | **int?**|  | 
+This endpoint does not need any parameter.
 
 ### Return type
 

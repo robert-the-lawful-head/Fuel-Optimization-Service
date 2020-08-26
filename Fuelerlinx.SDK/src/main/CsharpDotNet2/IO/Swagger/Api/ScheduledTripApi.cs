@@ -37,9 +37,8 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <param name="companyId"></param>
         /// <returns>ScheduledTripSettingsResponse</returns>
-        ScheduledTripSettingsResponse GetScheduledTripSettingsByCompanyId (int? companyId);
+        ScheduledTripSettingsResponse GetScheduledTripSettings ();
         /// <summary>
         /// Post a leg from the user&#39;s scheduling system as an object [ScheduledLegData] and it&#39;s corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner&#39;s side. It is recommended to include the tail number, departure airport, arrival airport, and date/time of the departure/arrival as a minimum when sending information.  Additional information (i.e. pax count, cargo, altitude, fuel on board, etc.) is recommended to help enhance the integration.
         /// </summary>
@@ -259,19 +258,14 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <param name="companyId"></param> 
         /// <returns>ScheduledTripSettingsResponse</returns>            
-        public ScheduledTripSettingsResponse GetScheduledTripSettingsByCompanyId (int? companyId)
+        public ScheduledTripSettingsResponse GetScheduledTripSettings ()
         {
             
-            // verify the required parameter 'companyId' is set
-            if (companyId == null) throw new ApiException(400, "Missing required parameter 'companyId' when calling GetScheduledTripSettingsByCompanyId");
-            
     
-            var path = "/api/ScheduledTrip/settings/by-company/{companyId}";
+            var path = "/api/ScheduledTrip/settings";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(companyId));
-    
+                
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();
@@ -286,9 +280,9 @@ namespace IO.Swagger.Api
             IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
     
             if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetScheduledTripSettingsByCompanyId: " + response.Content, response.Content);
+                throw new ApiException ((int)response.StatusCode, "Error calling GetScheduledTripSettings: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetScheduledTripSettingsByCompanyId: " + response.ErrorMessage, response.ErrorMessage);
+                throw new ApiException ((int)response.StatusCode, "Error calling GetScheduledTripSettings: " + response.ErrorMessage, response.ErrorMessage);
     
             return (ScheduledTripSettingsResponse) ApiClient.Deserialize(response.Content, typeof(ScheduledTripSettingsResponse), response.Headers);
         }
