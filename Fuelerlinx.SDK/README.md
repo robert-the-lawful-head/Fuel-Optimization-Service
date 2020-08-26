@@ -156,10 +156,12 @@ Class | Method | HTTP request | Description
 *ApplicationApi* | [**UpdateDeploymentNotes**](docs/ApplicationApi.md#updatedeploymentnotes) | **PUT** /api/Application/deployment-notes | Internal use only - Update an existing deployment note for a build version.
 *CompanyApi* | [**DeleteCompany**](docs/CompanyApi.md#deletecompany) | **DELETE** /api/Company/{id} | Internal use only - Delete an existing company.
 *CompanyApi* | [**GetActiveCompanyList**](docs/CompanyApi.md#getactivecompanylist) | **GET** /api/Company/list/active | Internal use only - Fetch all companies (active only).
+*CompanyApi* | [**GetCompanyAccountSettingsByCompanyId**](docs/CompanyApi.md#getcompanyaccountsettingsbycompanyid) | **GET** /api/Company/account-settings/{companyId} | 
 *CompanyApi* | [**GetCompanyById**](docs/CompanyApi.md#getcompanybyid) | **GET** /api/Company/{id} | Fetch a company's information by the company {id}.
 *CompanyApi* | [**GetCompanyList**](docs/CompanyApi.md#getcompanylist) | **GET** /api/Company/list | Internal use only - Fetch all companies (both active and inactive).
 *CompanyApi* | [**PostCompany**](docs/CompanyApi.md#postcompany) | **POST** /api/Company | Internal use only - Add a new company.
 *CompanyApi* | [**UpdateCompany**](docs/CompanyApi.md#updatecompany) | **PUT** /api/Company/{id} | Internal use only - Update an existing company with the provided information.
+*CompanyApi* | [**UpdateCompanyAccountSettings**](docs/CompanyApi.md#updatecompanyaccountsettings) | **PUT** /api/Company/account-settings | 
 *CurrencyApi* | [**GetCurrencyList**](docs/CurrencyApi.md#getcurrencylist) | **GET** /api/Currency/list | Fetch a list of currencies with their current rate-to-dollar conversion value.
 *DispatchingApi* | [**CancelFuelOrder**](docs/DispatchingApi.md#cancelfuelorder) | **POST** /api/Dispatching/cancel-fuel-order | Cancel a previously dispatched fuel order by it's transaction id.
 *DispatchingApi* | [**OrderFuel**](docs/DispatchingApi.md#orderfuel) | **POST** /api/Dispatching/orderfuel | Places a fuel order based on the requested details.  This will notify the fuel vendor and any additional integrations the customer has enabled.
@@ -489,6 +491,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ColorAxis](docs/ColorAxis.md)
  - [IO.Swagger.Model.ColorSet](docs/ColorSet.md)
  - [IO.Swagger.Model.CompanyAccountSettingsDTO](docs/CompanyAccountSettingsDTO.md)
+ - [IO.Swagger.Model.CompanyAccountSettingsResponse](docs/CompanyAccountSettingsResponse.md)
  - [IO.Swagger.Model.CompanyActiveIntegrationDTO](docs/CompanyActiveIntegrationDTO.md)
  - [IO.Swagger.Model.CompanyActiveIntegrationListResponse](docs/CompanyActiveIntegrationListResponse.md)
  - [IO.Swagger.Model.CompanyActiveIntegrationResponse](docs/CompanyActiveIntegrationResponse.md)
@@ -945,6 +948,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateAutoReconProcessResponse](docs/UpdateAutoReconProcessResponse.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileRequest](docs/UpdateAutoReconciledFileRequest.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileResponse](docs/UpdateAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.UpdateCompanyAccountSettingsRequest](docs/UpdateCompanyAccountSettingsRequest.md)
+ - [IO.Swagger.Model.UpdateCompanyAccountSettingsResponse](docs/UpdateCompanyAccountSettingsResponse.md)
  - [IO.Swagger.Model.UpdateCompanyActiveIntegrationRequest](docs/UpdateCompanyActiveIntegrationRequest.md)
  - [IO.Swagger.Model.UpdateCompanyActiveIntegrationResponse](docs/UpdateCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.UpdateCompanyAircraftChangeLogRequest](docs/UpdateCompanyAircraftChangeLogRequest.md)

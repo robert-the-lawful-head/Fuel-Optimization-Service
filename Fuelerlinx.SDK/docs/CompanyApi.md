@@ -6,10 +6,12 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**DeleteCompany**](CompanyApi.md#deletecompany) | **DELETE** /api/Company/{id} | Internal use only - Delete an existing company.
 [**GetActiveCompanyList**](CompanyApi.md#getactivecompanylist) | **GET** /api/Company/list/active | Internal use only - Fetch all companies (active only).
+[**GetCompanyAccountSettingsByCompanyId**](CompanyApi.md#getcompanyaccountsettingsbycompanyid) | **GET** /api/Company/account-settings/{companyId} | 
 [**GetCompanyById**](CompanyApi.md#getcompanybyid) | **GET** /api/Company/{id} | Fetch a company&#39;s information by the company {id}.
 [**GetCompanyList**](CompanyApi.md#getcompanylist) | **GET** /api/Company/list | Internal use only - Fetch all companies (both active and inactive).
 [**PostCompany**](CompanyApi.md#postcompany) | **POST** /api/Company | Internal use only - Add a new company.
 [**UpdateCompany**](CompanyApi.md#updatecompany) | **PUT** /api/Company/{id} | Internal use only - Update an existing company with the provided information.
+[**UpdateCompanyAccountSettings**](CompanyApi.md#updatecompanyaccountsettings) | **PUT** /api/Company/account-settings | 
 
 
 <a name="deletecompany"></a>
@@ -136,6 +138,74 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**CompanyListResponse**](CompanyListResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getcompanyaccountsettingsbycompanyid"></a>
+# **GetCompanyAccountSettingsByCompanyId**
+> CompanyAccountSettingsResponse GetCompanyAccountSettingsByCompanyId (int? companyId)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetCompanyAccountSettingsByCompanyIdExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new CompanyApi();
+            var companyId = 56;  // int? | 
+
+            try
+            {
+                CompanyAccountSettingsResponse result = apiInstance.GetCompanyAccountSettingsByCompanyId(companyId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling CompanyApi.GetCompanyAccountSettingsByCompanyId: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **companyId** | **int?**|  | 
+
+### Return type
+
+[**CompanyAccountSettingsResponse**](CompanyAccountSettingsResponse.md)
 
 ### Authorization
 
@@ -412,6 +482,74 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**UpdateCompanyResponse**](UpdateCompanyResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatecompanyaccountsettings"></a>
+# **UpdateCompanyAccountSettings**
+> UpdateCompanyAccountSettingsResponse UpdateCompanyAccountSettings (UpdateCompanyAccountSettingsRequest body)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateCompanyAccountSettingsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new CompanyApi();
+            var body = new UpdateCompanyAccountSettingsRequest(); // UpdateCompanyAccountSettingsRequest |  (optional) 
+
+            try
+            {
+                UpdateCompanyAccountSettingsResponse result = apiInstance.UpdateCompanyAccountSettings(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling CompanyApi.UpdateCompanyAccountSettings: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateCompanyAccountSettingsRequest**](UpdateCompanyAccountSettingsRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateCompanyAccountSettingsResponse**](UpdateCompanyAccountSettingsResponse.md)
 
 ### Authorization
 
