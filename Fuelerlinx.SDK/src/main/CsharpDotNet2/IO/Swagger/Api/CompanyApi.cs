@@ -26,9 +26,8 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <param name="companyId"></param>
         /// <returns>CompanyAccountSettingsResponse</returns>
-        CompanyAccountSettingsResponse GetCompanyAccountSettingsByCompanyId (int? companyId);
+        CompanyAccountSettingsResponse GetCompanyAccountSettings ();
         /// <summary>
         /// Fetch a company&#39;s information by the company {id}. 
         /// </summary>
@@ -189,19 +188,14 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <param name="companyId"></param> 
         /// <returns>CompanyAccountSettingsResponse</returns>            
-        public CompanyAccountSettingsResponse GetCompanyAccountSettingsByCompanyId (int? companyId)
+        public CompanyAccountSettingsResponse GetCompanyAccountSettings ()
         {
             
-            // verify the required parameter 'companyId' is set
-            if (companyId == null) throw new ApiException(400, "Missing required parameter 'companyId' when calling GetCompanyAccountSettingsByCompanyId");
-            
     
-            var path = "/api/Company/account-settings/{companyId}";
+            var path = "/api/Company/account-settings";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(companyId));
-    
+                
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();
@@ -216,9 +210,9 @@ namespace IO.Swagger.Api
             IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
     
             if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyAccountSettingsByCompanyId: " + response.Content, response.Content);
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyAccountSettings: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyAccountSettingsByCompanyId: " + response.ErrorMessage, response.ErrorMessage);
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyAccountSettings: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CompanyAccountSettingsResponse) ApiClient.Deserialize(response.Content, typeof(CompanyAccountSettingsResponse), response.Headers);
         }

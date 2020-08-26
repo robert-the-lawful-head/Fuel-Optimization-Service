@@ -156,7 +156,7 @@ Class | Method | HTTP request | Description
 *ApplicationApi* | [**UpdateDeploymentNotes**](docs/ApplicationApi.md#updatedeploymentnotes) | **PUT** /api/Application/deployment-notes | Internal use only - Update an existing deployment note for a build version.
 *CompanyApi* | [**DeleteCompany**](docs/CompanyApi.md#deletecompany) | **DELETE** /api/Company/{id} | Internal use only - Delete an existing company.
 *CompanyApi* | [**GetActiveCompanyList**](docs/CompanyApi.md#getactivecompanylist) | **GET** /api/Company/list/active | Internal use only - Fetch all companies (active only).
-*CompanyApi* | [**GetCompanyAccountSettingsByCompanyId**](docs/CompanyApi.md#getcompanyaccountsettingsbycompanyid) | **GET** /api/Company/account-settings/{companyId} | 
+*CompanyApi* | [**GetCompanyAccountSettings**](docs/CompanyApi.md#getcompanyaccountsettings) | **GET** /api/Company/account-settings | 
 *CompanyApi* | [**GetCompanyById**](docs/CompanyApi.md#getcompanybyid) | **GET** /api/Company/{id} | Fetch a company's information by the company {id}.
 *CompanyApi* | [**GetCompanyList**](docs/CompanyApi.md#getcompanylist) | **GET** /api/Company/list | Internal use only - Fetch all companies (both active and inactive).
 *CompanyApi* | [**PostCompany**](docs/CompanyApi.md#postcompany) | **POST** /api/Company | Internal use only - Add a new company.

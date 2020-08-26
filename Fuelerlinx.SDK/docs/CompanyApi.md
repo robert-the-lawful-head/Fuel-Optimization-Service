@@ -6,7 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**DeleteCompany**](CompanyApi.md#deletecompany) | **DELETE** /api/Company/{id} | Internal use only - Delete an existing company.
 [**GetActiveCompanyList**](CompanyApi.md#getactivecompanylist) | **GET** /api/Company/list/active | Internal use only - Fetch all companies (active only).
-[**GetCompanyAccountSettingsByCompanyId**](CompanyApi.md#getcompanyaccountsettingsbycompanyid) | **GET** /api/Company/account-settings/{companyId} | 
+[**GetCompanyAccountSettings**](CompanyApi.md#getcompanyaccountsettings) | **GET** /api/Company/account-settings | 
 [**GetCompanyById**](CompanyApi.md#getcompanybyid) | **GET** /api/Company/{id} | Fetch a company&#39;s information by the company {id}.
 [**GetCompanyList**](CompanyApi.md#getcompanylist) | **GET** /api/Company/list | Internal use only - Fetch all companies (both active and inactive).
 [**PostCompany**](CompanyApi.md#postcompany) | **POST** /api/Company | Internal use only - Add a new company.
@@ -150,9 +150,9 @@ This endpoint does not need any parameter.
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-<a name="getcompanyaccountsettingsbycompanyid"></a>
-# **GetCompanyAccountSettingsByCompanyId**
-> CompanyAccountSettingsResponse GetCompanyAccountSettingsByCompanyId (int? companyId)
+<a name="getcompanyaccountsettings"></a>
+# **GetCompanyAccountSettings**
+> CompanyAccountSettingsResponse GetCompanyAccountSettings ()
 
 
 
@@ -166,7 +166,7 @@ using IO.Swagger.Model;
 
 namespace Example
 {
-    public class GetCompanyAccountSettingsByCompanyIdExample
+    public class GetCompanyAccountSettingsExample
     {
         public void main()
         {
@@ -181,16 +181,15 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new CompanyApi();
-            var companyId = 56;  // int? | 
 
             try
             {
-                CompanyAccountSettingsResponse result = apiInstance.GetCompanyAccountSettingsByCompanyId(companyId);
+                CompanyAccountSettingsResponse result = apiInstance.GetCompanyAccountSettings();
                 Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling CompanyApi.GetCompanyAccountSettingsByCompanyId: " + e.Message );
+                Debug.Print("Exception when calling CompanyApi.GetCompanyAccountSettings: " + e.Message );
             }
         }
     }
@@ -198,10 +197,7 @@ namespace Example
 ```
 
 ### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **companyId** | **int?**|  | 
+This endpoint does not need any parameter.
 
 ### Return type
 
