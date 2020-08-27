@@ -65,3 +65,211 @@
         line-height: 24px;
     }
 }
+
+.card-wrap {
+    background-color: #fff;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: 1px solid $card-header-bg;
+    border-radius: 3px;
+    box-shadow: 1px 1px 5px 0px rgba(main-color(500),.25);
+    position: relative;
+
+    &:not(.outline-card) {
+        border: 0 !important;
+    }
+
+    .card-header {
+        background: $card-header-bg;
+        border-radius: 3px 3px 0 0;
+        color: $card-header-color;
+        display: block;
+        margin: 0;
+        padding: $module-rem $module-rem * 2;
+        position: relative;
+
+        &-title {
+            display: inline-flex;
+            height: 100%;
+            align-items: center;
+        }
+
+        &.success-card-header {
+            background: $success-color;
+            color: white;
+        }
+
+        &.info-card-header {
+            background: $info-color;
+        }
+
+        &.gray-card-header {
+            background: $gray-color;
+        }
+
+        &.warning-card-header {
+            background: $warning-color;
+        }
+
+        &.danger-card-header {
+            background: $accent-color;
+            color: white;
+        }
+
+        &.dead-card-header {
+            background-color: main-color(500);
+            color: white;
+        }
+
+        &.dark-card-header {
+            background-color: main-color(200);
+            color: white;
+        }
+
+        &.small-header {
+            padding: 0.3rem 1.5rem;
+            font-size: 1.1571429rem;
+            font-weight: normal;
+
+            .card-subtitle {
+                font-size: 0.8rem;
+                font-weight: bold;
+                color: #a50202;
+            }
+        }
+
+        &.tiny-header {
+            padding: 0.3rem 1.5rem;
+            font-size: 1rem;
+            font-weight: normal;
+        }
+
+        + .card-content {
+            border-radius: 0 0 3px 3px;
+        }
+
+        .card-subtitle {
+            position: absolute;
+            right: 15px;
+            bottom: 0;
+            margin: 0;
+            line-height: normal;
+        }
+    }
+
+
+    .card-content {
+        border-radius: 3px;
+        display: block;
+        padding: $module-rem * 2;
+        position: relative;
+
+        &.tiny-content {
+            padding: 0.3rem 1rem !important;
+        }
+    }
+
+    &.success-card {
+        background: $success-color;
+        border-color: $success-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.gray-card {
+        background: $gray-color;
+        border-color: $gray-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.dark-card {
+        background: main-color(200);
+        border-color: main-color(200);
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.info-card {
+        background: $info-color;
+        border-color: $info-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.warning-card {
+        background: $warning-color;
+        border-color: $warning-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.danger-card {
+        background: $accent-color;
+        border-color: $accent-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.dead-card {
+        background-color: main-color(500);
+        border-color: main-color(500);
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.success-color-card {
+        color: $success-color;
+    }
+
+    &.info-color-card {
+        color: $info-color;
+    }
+
+    &.gray-color-card {
+        color: $gray-color;
+    }
+
+    &.warning-color-card {
+        color: $warning-color;
+    }
+
+    &.danger-color-card {
+        color: $accent-color;
+    }
+
+    &.outline-card {
+        background: white !important;
+        box-shadow: none !important;
+    }
+
+    &.bg-image-card {
+        border: none !important;
+
+        &:before {
+            background-color: inherit;
+            border-radius: 3px;
+            content: '';
+            display: block;
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+    }
+}

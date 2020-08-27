@@ -91,6 +91,11 @@ import { AppService } from "./services/app.service";
 // Helpers
 import { JwtInterceptor, ErrorInterceptor } from "./helpers";
 
+import { StoreModule } from "@ngrx/store";
+import { metaReducers, reducers } from "./store/reducers";
+import { StoreDevtoolsModule } from "@ngrx/store-devtools";
+import { environment } from "../environments/environment";
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -145,6 +150,11 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         MatTooltipModule,
         TextMaskModule,
         RouterModule.forRoot(routes),
+        StoreModule.forRoot(reducers, {
+            metaReducers,
+        }),
+        !environment.production ? StoreDevtoolsModule.instrument() : [],
+        // EffectsModule.forRoot(effects),
     ],
     exports: [],
     entryComponents: [

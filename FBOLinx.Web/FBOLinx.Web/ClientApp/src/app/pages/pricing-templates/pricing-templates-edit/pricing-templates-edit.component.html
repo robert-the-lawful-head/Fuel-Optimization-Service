@@ -6,39 +6,37 @@
 
 <app-fbo-prices-panel class="fbo-prices-panel"></app-fbo-prices-panel>
 
-<div *ngIf="!pricingTemplate || isSaving">
+<div *ngIf="!pricingTemplate">
     <mat-spinner></mat-spinner>
 </div>
 
-<ng-container *ngIf="pricingTemplateForm && !isSaving">
-
-    <div class="row sticky-top stickyStyle">
-        <div class="col-md-12">
-            <button
-                mat-stroked-button
-                (click)="cancelPricingTemplateEdit()"
-                class="float-right"
-            >
-                Cancel
-            </button>
-            <button
-                mat-stroked-button
-                color="green"
-                (click)="savePricingTemplate()"
-                class="mr-1 float-right"
-                [disabled]="!canSave"
-            >
-                <mat-icon>save</mat-icon>
-                Save Changes
-            </button>
-        </div>
-    </div>
-
-    <div [formGroup]="pricingTemplateForm">
-        <ni-card
-            title="{{ pricingTemplateForm.value.name }}"
-            class="mb-0"
-        >
+<div *ngIf="pricingTemplateForm" [formGroup]="pricingTemplateForm">
+    <div class="card-wrap" >
+        <h3 class="card-header h5">
+            <div class="row">
+                <div class="col-12">
+                    <span class="card-header-title">{{ pricingTemplateForm.value.name }}</span>
+                    <button
+                        mat-stroked-button
+                        (click)="cancelPricingTemplateEdit()"
+                        class="float-right"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        mat-stroked-button
+                        color="green"
+                        (click)="savePricingTemplate()"
+                        class="mr-1 float-right"
+                        [disabled]="!canSave"
+                    >
+                        <mat-icon>save</mat-icon>
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </h3>
+        <div class="card-content">
             <div>
                 <div class="container-fluid">
                     <div class="row">
@@ -85,100 +83,99 @@
                     <div class="row">
                         <table class="mat-table table-responsive volume-tiers-table">
                             <thead>
-                                <tr class="mat-header-row">
-                                    <th>
-                                        <div class="">Min. (gal)</div>
-                                    </th>
-                                    <th>
-                                        <div class="">Max. (gal)</div>
-                                    </th>
-                                    <th *ngIf="pricingTemplateForm.value.marginType == 1">
-                                        <div class="">Discount</div> 
-                                    </th>
-                                    <th>
-                                        <div class="volume-tiers-header">Your ITP <br /> <span style="margin-left:4px;">Margin</span></div>
-                                    </th>
-                                    <th>
-                                        <div class="">All-in</div>
-                                    </th>
-                                    <th>
-                                        <div class="ml-4">
-                                            <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">
-                                                Add New
-                                            </button>
-                                        </div>
-                                    </th>
-                                </tr>
+                            <tr class="mat-header-row">
+                                <th>
+                                    <div class="">Min. (gal)</div>
+                                </th>
+                                <th>
+                                    <div class="">Max. (gal)</div>
+                                </th>
+                                <th *ngIf="pricingTemplateForm.value.marginType == 1">
+                                    <div class="">Discount</div>
+                                </th>
+                                <th>
+                                    <div class="volume-tiers-header">Your ITP <br /> <span style="margin-left:4px;">Margin</span></div>
+                                </th>
+                                <th>
+                                    <div class="">All-in</div>
+                                </th>
+                                <th>
+                                    <div class="ml-4">
+                                        <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">
+                                            Add New
+                                        </button>
+                                    </div>
+                                </th>
+                            </tr>
                             </thead>
                             <tbody formArrayName="customerMargins">
-                                <tr class="mat-row" *ngFor="let customerMargin of customerMarginsFormArray.controls; let i = index">
-                                    <td class="" [formGroupName]="i">
-                                        <div class="volume-tiers-width">
-                                            <mat-form-field class="">
-                                                <input matInput formControlName="min"/>
-                                            </mat-form-field>
+                            <tr class="mat-row" *ngFor="let customerMargin of customerMarginsFormArray.controls; let i = index">
+                                <td class="" [formGroupName]="i">
+                                    <div class="volume-tiers-width">
+                                        <mat-form-field class="">
+                                            <input matInput formControlName="min"/>
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td class="">
+                                    <div class="volume-tiers-width">
+                                        <mat-form-field class="">
+                                            <input
+                                                matInput
+                                                disabled="disabled"
+                                                value="{{customerMargin.value.max == 0 ? 99999 : customerMargin.value.max }}"
+                                            />
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td class="" *ngIf="pricingTemplateForm.value.marginType == 1" [formGroupName]="i">
+                                    <div class="volume-tiers-width">
+                                        <mat-form-field class="">
+                                            <input
+                                                matInput
+                                                type="number"
+                                                step="0.01"
+                                                formControlName="amount"
+                                            />
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td class="font-weight-bold font-italic" [formGroupName]="i">
+                                    <div>
+                                        <div *ngIf="pricingTemplateForm.value.marginType == 1">
+                                            ${{ customerMargin.value.itp | number: "1.4-4" }}
                                         </div>
-                                    </td>
-                                    <td class="">
                                         <div class="volume-tiers-width">
-                                            <mat-form-field class="">
-                                                <input
-                                                    matInput
-                                                    disabled="disabled"
-                                                    value="{{customerMargin.value.max == 0 ? 99999 : customerMargin.value.max }}"
+                                            <mat-form-field class="" *ngIf="pricingTemplateForm.value.marginType == 0">
+                                                <input matInput
+                                                       type="number"
+                                                       step="0.01"
+                                                       formControlName="amount"
                                                 />
                                             </mat-form-field>
                                         </div>
-                                    </td>
-                                    <td class="" *ngIf="pricingTemplateForm.value.marginType == 1" [formGroupName]="i">
-                                        <div class="volume-tiers-width">
-                                            <mat-form-field class="">
-                                                <input
-                                                    matInput
-                                                    type="number"
-                                                    step="0.01"
-                                                    formControlName="amount"
-                                                />
-                                            </mat-form-field>
-                                        </div>
-                                    </td>
-                                    <td class="font-weight-bold font-italic" [formGroupName]="i">
-                                        <div>
-                                            <div *ngIf="pricingTemplateForm.value.marginType == 1">
-                                                ${{ customerMargin.value.itp | number: "1.4-4" }}
-                                            </div>
-                                            <div class="volume-tiers-width">
-                                                <mat-form-field class="" *ngIf="pricingTemplateForm.value.marginType == 0">
-                                                    <input matInput
-                                                        type="number"
-                                                        step="0.01"
-                                                        (click)="$event.target.select()"
-                                                        formControlName="amount"
-                                                    />
-                                                </mat-form-field>
-                                            </div>
-                                            
-                                        </div>
-                                    </td>
-                                    <td class="font-weight-bold font-italic">
-                                        <div class="">
-                                            ${{
-                                                customerMargin.value.allin | number: "1.4-4"
-                                            }}
-                                        </div>
-                                    </td>
-                                    <td class="">
-                                        <div class="ml-4">
-                                            <button ni-button
-                                                    [view]="'error'"
-                                                    size="small"
-                                                    beforeIcon="fa fa-trash"
-                                                    (click)="deleteCustomerMargin(i)">
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+
+                                    </div>
+                                </td>
+                                <td class="font-weight-bold font-italic">
+                                    <div class="">
+                                        ${{
+                                        customerMargin.value.allin | number: "1.4-4"
+                                        }}
+                                    </div>
+                                </td>
+                                <td class="">
+                                    <div class="ml-4">
+                                        <button ni-button
+                                                [view]="'error'"
+                                                size="small"
+                                                beforeIcon="fa fa-trash"
+                                                (click)="deleteCustomerMargin(i)">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -226,30 +223,8 @@
                     <div class="row">
                         <br />
                     </div>
-                    <div class="row">
-                        <div class="col-md-12" style="padding-right: 0 !important;">
-                            <button
-                                mat-stroked-button
-                                (click)="cancelPricingTemplateEdit()"
-                                class="float-right"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                mat-stroked-button
-                                color="green"
-                                (click)="savePricingTemplate()"
-                                class="mr-1 float-right"
-                                [disabled]="!canSave"
-                            >
-                                <mat-icon>save</mat-icon>
-                                Save Changes
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
-        </ni-card>
+        </div>
     </div>
-
-</ng-container>
+</div>

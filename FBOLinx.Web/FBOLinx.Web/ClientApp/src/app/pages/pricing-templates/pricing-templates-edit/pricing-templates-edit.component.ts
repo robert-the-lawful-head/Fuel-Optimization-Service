@@ -57,8 +57,6 @@ export class PricingTemplatesEditComponent implements OnInit {
         { text: "Cost +", value: 0 },
         { text: "Retail -", value: 1 },
     ];
-    isSaving = false;
-
     canSave: boolean;
     jetACost: number;
     jetARetail: number;
@@ -136,8 +134,6 @@ export class PricingTemplatesEditComponent implements OnInit {
     }
 
     savePricingTemplate() {
-        this.isSaving = true;
-
         const removedCustomerMargins =
             differenceBy(this.pricingTemplate.customerMargins, this.pricingTemplateForm.value.customerMargins, "oid");
 
@@ -149,11 +145,9 @@ export class PricingTemplatesEditComponent implements OnInit {
                 ...this.pricingTemplateForm.value,
             }),
         ]).subscribe(() => {
-            this.isSaving = false;
+            this.canSave = false;
 
             this.sharedService.NotifyPricingTemplateComponent("updateComponent");
-
-            this.router.navigate(["/default-layout/pricing-templates/"]).then(() => {});
         });
     }
 
