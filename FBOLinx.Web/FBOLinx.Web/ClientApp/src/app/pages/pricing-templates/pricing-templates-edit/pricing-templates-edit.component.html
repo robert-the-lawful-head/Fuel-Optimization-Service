@@ -4,299 +4,252 @@
     class="mb-5"
 ></ni-breadcrumb>
 
-<app-fbo-prices-panel
-    style="
-        position: absolute;
-        top: -14px;
-        right: 62px;
-    "
-></app-fbo-prices-panel>
+<app-fbo-prices-panel class="fbo-prices-panel"></app-fbo-prices-panel>
 
 <div *ngIf="!pricingTemplate || isSaving">
     <mat-spinner></mat-spinner>
 </div>
 
-<div class="row sticky-top stickyStyle">
-    <div class="col-md-12">
-        <button
-            mat-stroked-button
-            (click)="cancelPricingTemplateEdit()"
-            class="float-right"
-        >
-            Cancel
-        </button>
-        <button
-            mat-stroked-button
-            color="green"
-            (click)="savePricingTemplate()"
-            class="mr-1 float-right"
-        >
-            <mat-icon>save</mat-icon>
-            Save Changes
-        </button>
-    </div>
-</div>
+<ng-container *ngIf="pricingTemplateForm && !isSaving">
 
-<ni-card
-    title="{{ pricingTemplate.name }}"
-    class="mb-0"
-    *ngIf="pricingTemplate && !isSaving"
->
-    <div>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <h5>General Information</h5>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <mat-slide-toggle
-                        color="accent"
-                        [(ngModel)]="pricingTemplate.default"
-                        >Default</mat-slide-toggle
-                    >
-                </div>
-            </div>
-            <div class="row">
-                <div class="d-inline-block pr-2" style="width:300px;">
-                    <mat-form-field>
-                        <input
-                            matInput
-                            placeholder="Name"
-                            [(ngModel)]="pricingTemplate.name"
-                        />
-                    </mat-form-field>
-                </div>
-                <div class="d-block pl-3" style="width:300px;">
-                    <mat-form-field>
-                        <mat-select
-                            placeholder="Type"
-                            [(ngModel)]="pricingTemplate.marginType"
-                            (selectionChange)="marginTypeChange()"
-                        >
-                            <mat-option
-                                *ngFor="let marginType of marginTypeDataSource"
-                                [value]="marginType.value"
-                            >
-                                {{ marginType.text }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-4">
-                    <h5>Volume Tiers</h5>
-                </div>
-            </div>
-            <div class="row">
-                <table class="mat-table table-responsive volume-tiers-table">
-                    <thead>
-                        <tr class="mat-header-row">
-                            <th>
-                                <div class="">Min. (gal)</div>
-                            </th>
-                            <th>
-                                <div class="">Max. (gal)</div>
-                            </th>
-                            <th *ngIf="pricingTemplate.marginType == 1">
-                                <div class="">Discount</div> 
-                            </th>
-                            <th *ngIf="pricingTemplate.marginType == 0">
-                                <div class="volume-tiers-header">Your ITP <br /> <span style="margin-left:4px;">Margin</span></div>
-                            </th>
-                            <th *ngIf="pricingTemplate.marginType > 0">
-                                <div class="volume-tiers-header">Your ITP <br /> <span style="margin-left:4px;">Margin</span> </div>
-                            </th>
-                            <th>
-                                <div class="">All-in</div>
-                            </th>
-                            <th>
-                                <div class="ml-4">
-                                    <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">
-                                        Add New
-                                    </button>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="mat-row" *ngFor="let customerMargin of pricingTemplate.customerMargins;let i = index">
-                            <td class="">
-                                <div class="volume-tiers-width">
-                                    <mat-form-field class="">
-                                        <input matInput
-                                               (keyup.enter)="
-                                            updateCustomerMargin(
-                                                customerMargin,
-                                                i
-                                            )
-                                        "
-                                               (blur)="
-                                            updateCustomerMargin(
-                                                customerMargin,
-                                                i
-                                            )
-                                        "
-                                               [(ngModel)]="customerMargin.min" />
-                                    </mat-form-field>
-                                </div>
-                            </td>
-                            <td class="">
-                                <div class="volume-tiers-width">
-                                    <mat-form-field class="">
-                                        <input matInput
-                                               disabled="disabled"
-                                               value="{{
-                                            customerMargin.max == 0
-                                                ? 99999
-                                                : customerMargin.max
-                                        }}" />
-                                    </mat-form-field>
-                                </div>
-                            </td>
-                            <td class="" *ngIf="pricingTemplate.marginType > 0">
-                                <div class="volume-tiers-width">
-                                    <mat-form-field class="">
-                                        <input matInput
-                                               type="number"
-                                               step="0.01"
-                                               [ngModelOptions]="{ standalone: true }"
-                                               (focusout)="outFocus()"
-                                               (keyup)="onType(customerMargin, $event)"
-                                               (blur)="
-                                            customerMarginAmountChanged(
-                                                customerMargin
-                                            )
-                                        "
-                                               [(ngModel)]="customerMargin.amount" />
-                                    </mat-form-field>
-                                </div>
-                            </td>
-                            <td class="font-weight-bold font-italic">
-                                <div>
-                                    <div *ngIf="pricingTemplate.marginType == 1">
-                                        ${{ customerMargin.itp | number: "1.4-4" }}
-                                    </div>
-                                    <div class="volume-tiers-width">
-                                        <mat-form-field class=""
-                                                        *ngIf="pricingTemplate.marginType == 0">
-                                            <input matInput
-                                                   type="number"
-                                                   step="0.01"
-                                                   [ngModelOptions]="{ standalone: true }"
-                                                   (click)="$event.target.select()"
-                                                   (keyup.enter)="
-                                            updateCustomerMargin(
-                                                customerMargin,
-                                                i
-                                            )
-                                        "
-                                                   (blur)="
-                                            updateCustomerMargin(
-                                                customerMargin,
-                                                i
-                                            )
-                                        "
-                                                   [(ngModel)]="customerMargin.amount" />
-                                        </mat-form-field>
-                                    </div>
-                                    
-                                </div>
-                            </td>
-                            <td class="font-weight-bold font-italic">
-                                <div class="">
-                                    ${{
-                                        customerMargin.allin | number: "1.4-4"
-                                    }}
-                                </div>
-                            </td>
-                            <td class="">
-                                <div class="ml-4">
-                                    <button ni-button
-                                            [view]="'error'"
-                                            size="small"
-                                            beforeIcon="fa fa-trash"
-                                            (click)="
-                                        deleteCustomerMargin(customerMargin)
-                                    ">
-                                        Delete
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="row mt-2">
-                <div class="sub-title">
-                    <h5 class="mb-0 mt-0">Fuel Uplift Notes</h5>
-                </div>
-            </div>
-            <div class="row">
-                <ejs-richtexteditor
-                    #typeRTE
-                    id="rteNotes"
-                    (focusout)="enableToolbarNote()"
-                    (focus)="disableToolbarNote()"
-                    [(ngModel)]="pricingTemplate.notes"
-                ></ejs-richtexteditor>
-            </div>
-            <div class="row">
-                <br />
-            </div>
-
-            <div class="row mt-2">
-                <div class="sub-title">
-                    <h5 class="mb-0 mt-0">Price Distribution Email</h5>
-                    <span class="flavor-label">Email subject and greeting</span>
-                </div>
-            </div>
-            <div class="row">
-                <mat-form-field style="max-width: 600px;">
-                    <input
-                        matInput
-                        placeholder="Subject"
-                        [(ngModel)]="pricingTemplate.subject"
-                        aria-label="Subject"
-                    />
-                </mat-form-field>
-            </div>
-            <div class="row">
-                <ejs-richtexteditor
-                    #typeEmail
-                    placeholder="Enter email body here..."
-                    id="rteEmail"
-                    (focusout)="enableToolbarEmail()"
-                    (focus)="disableToolbarEmail()"
-                    [(ngModel)]="pricingTemplate.email"
-                ></ejs-richtexteditor>
-            </div>
-            <div class="row">
-                <br />
-            </div>
-            <div class="row">
-                <div class="col-md-12" style="padding-right: 0 !important;">
-                    <button
-                        mat-stroked-button
-                        (click)="cancelPricingTemplateEdit()"
-                        class="float-right"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        mat-stroked-button
-                        color="green"
-                        (click)="savePricingTemplate()"
-                        class="mr-1 float-right"
-                    >
-                        <mat-icon>save</mat-icon>
-                        Save Changes
-                    </button>
-                </div>
-            </div>
+    <div class="row sticky-top stickyStyle">
+        <div class="col-md-12">
+            <button
+                mat-stroked-button
+                (click)="cancelPricingTemplateEdit()"
+                class="float-right"
+            >
+                Cancel
+            </button>
+            <button
+                mat-stroked-button
+                color="green"
+                (click)="savePricingTemplate()"
+                class="mr-1 float-right"
+                [disabled]="!canSave"
+            >
+                <mat-icon>save</mat-icon>
+                Save Changes
+            </button>
         </div>
     </div>
-</ni-card>
+
+    <div [formGroup]="pricingTemplateForm">
+        <ni-card
+            title="{{ pricingTemplateForm.value.name }}"
+            class="mb-0"
+        >
+            <div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <h5>General Information</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <mat-slide-toggle color="accent" formControlName="default">Default</mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-inline-block pr-2" style="width:300px;">
+                            <mat-form-field>
+                                <input
+                                    matInput
+                                    placeholder="Name"
+                                    formControlName="name"
+                                />
+                            </mat-form-field>
+                        </div>
+                        <div class="d-block pl-3" style="width:300px;">
+                            <mat-form-field>
+                                <mat-select
+                                    placeholder="Type"
+                                    formControlName="marginType"
+                                >
+                                    <mat-option
+                                        *ngFor="let marginType of marginTypeDataSource"
+                                        [value]="marginType.value"
+                                    >
+                                        {{ marginType.text }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-4">
+                            <h5>Volume Tiers</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table class="mat-table table-responsive volume-tiers-table">
+                            <thead>
+                                <tr class="mat-header-row">
+                                    <th>
+                                        <div class="">Min. (gal)</div>
+                                    </th>
+                                    <th>
+                                        <div class="">Max. (gal)</div>
+                                    </th>
+                                    <th *ngIf="pricingTemplateForm.value.marginType == 1">
+                                        <div class="">Discount</div> 
+                                    </th>
+                                    <th>
+                                        <div class="volume-tiers-header">Your ITP <br /> <span style="margin-left:4px;">Margin</span></div>
+                                    </th>
+                                    <th>
+                                        <div class="">All-in</div>
+                                    </th>
+                                    <th>
+                                        <div class="ml-4">
+                                            <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">
+                                                Add New
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="customerMargins">
+                                <tr class="mat-row" *ngFor="let customerMargin of customerMarginsFormArray.controls; let i = index">
+                                    <td class="" [formGroupName]="i">
+                                        <div class="volume-tiers-width">
+                                            <mat-form-field class="">
+                                                <input matInput formControlName="min"/>
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td class="">
+                                        <div class="volume-tiers-width">
+                                            <mat-form-field class="">
+                                                <input
+                                                    matInput
+                                                    disabled="disabled"
+                                                    value="{{customerMargin.value.max == 0 ? 99999 : customerMargin.value.max }}"
+                                                />
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td class="" *ngIf="pricingTemplateForm.value.marginType == 1" [formGroupName]="i">
+                                        <div class="volume-tiers-width">
+                                            <mat-form-field class="">
+                                                <input
+                                                    matInput
+                                                    type="number"
+                                                    step="0.01"
+                                                    formControlName="amount"
+                                                />
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td class="font-weight-bold font-italic" [formGroupName]="i">
+                                        <div>
+                                            <div *ngIf="pricingTemplateForm.value.marginType == 1">
+                                                ${{ customerMargin.value.itp | number: "1.4-4" }}
+                                            </div>
+                                            <div class="volume-tiers-width">
+                                                <mat-form-field class="" *ngIf="pricingTemplateForm.value.marginType == 0">
+                                                    <input matInput
+                                                        type="number"
+                                                        step="0.01"
+                                                        (click)="$event.target.select()"
+                                                        formControlName="amount"
+                                                    />
+                                                </mat-form-field>
+                                            </div>
+                                            
+                                        </div>
+                                    </td>
+                                    <td class="font-weight-bold font-italic">
+                                        <div class="">
+                                            ${{
+                                                customerMargin.value.allin | number: "1.4-4"
+                                            }}
+                                        </div>
+                                    </td>
+                                    <td class="">
+                                        <div class="ml-4">
+                                            <button ni-button
+                                                    [view]="'error'"
+                                                    size="small"
+                                                    beforeIcon="fa fa-trash"
+                                                    (click)="deleteCustomerMargin(i)">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="sub-title">
+                            <h5 class="mb-0 mt-0">Fuel Uplift Notes</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <ejs-richtexteditor
+                            #typeRTE
+                            id="rteNotes"
+                            formControlName="notes"
+                        ></ejs-richtexteditor>
+                    </div>
+                    <div class="row">
+                        <br />
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="sub-title">
+                            <h5 class="mb-0 mt-0">Price Distribution Email</h5>
+                            <span class="flavor-label">Email subject and greeting</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <mat-form-field style="max-width: 600px;">
+                            <input
+                                matInput
+                                placeholder="Subject"
+                                formControlName="subject"
+                                aria-label="Subject"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <div class="row">
+                        <ejs-richtexteditor
+                            #typeEmail
+                            placeholder="Enter email body here..."
+                            id="rteEmail"
+                            formControlName="email"
+                        ></ejs-richtexteditor>
+                    </div>
+                    <div class="row">
+                        <br />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="padding-right: 0 !important;">
+                            <button
+                                mat-stroked-button
+                                (click)="cancelPricingTemplateEdit()"
+                                class="float-right"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                mat-stroked-button
+                                color="green"
+                                (click)="savePricingTemplate()"
+                                class="mr-1 float-right"
+                                [disabled]="!canSave"
+                            >
+                                <mat-icon>save</mat-icon>
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ni-card>
+    </div>
+
+</ng-container>

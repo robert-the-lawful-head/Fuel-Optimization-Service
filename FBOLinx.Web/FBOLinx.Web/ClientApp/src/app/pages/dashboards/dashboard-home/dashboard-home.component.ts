@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router } from "@angular/router";
 
 // Services
 import { SharedService } from "../../../layouts/shared-service";
@@ -11,7 +11,6 @@ import { SharedService } from "../../../layouts/shared-service";
 })
 export class DashboardHomeComponent {
     constructor(
-        private route: ActivatedRoute,
         private router: Router,
         private sharedService: SharedService
     ) {

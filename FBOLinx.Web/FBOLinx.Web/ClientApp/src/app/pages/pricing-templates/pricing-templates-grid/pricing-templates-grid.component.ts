@@ -135,7 +135,7 @@ export class PricingTemplatesGridComponent implements OnInit {
             }
             this.newPricingTemplateAdded.emit();
             this.sharedService.NotifyPricingTemplateComponent(
-                "updatecomponent"
+                "updateComponent"
             );
         });
     }

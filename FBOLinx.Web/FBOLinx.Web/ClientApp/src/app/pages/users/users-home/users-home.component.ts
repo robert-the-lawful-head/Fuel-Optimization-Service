@@ -1,14 +1,10 @@
-import { Component, Input, Output, OnInit, Inject } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import {
     MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 
 // Services
 import { UserService } from "../../../services/user.service";
-import { SharedService } from "../../../layouts/shared-service";
 
 @Component({
     selector: "app-users-home",
@@ -39,7 +35,7 @@ export class UsersHomeComponent implements OnInit {
             .subscribe((data: any) => (this.currentUser = data));
     }
 
-    public deleteUserClicked(record) {
+    public deleteUserClicked() {
         this.loadInitialData();
     }
 

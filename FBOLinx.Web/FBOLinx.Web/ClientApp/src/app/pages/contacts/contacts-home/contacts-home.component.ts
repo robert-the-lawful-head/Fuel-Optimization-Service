@@ -1,14 +1,7 @@
 import {
     Component,
-    EventEmitter,
     Input,
-    Output,
-    OnInit,
-    ViewChild,
 } from "@angular/core";
-
-// Services
-import { ContactsService } from "../../../services/contacts.service";
 
 @Component({
     selector: "app-contacts-home",
@@ -18,5 +11,5 @@ import { ContactsService } from "../../../services/contacts.service";
 export class ContactsHomeComponent {
     @Input() contactsData: Array<any>;
 
-    constructor(private contactsService: ContactsService) {}
+    constructor() {}
 }

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 
 // Services
 import { FbosService } from "../../../services/fbos.service";
@@ -44,7 +44,6 @@ export class FbosEditComponent implements OnInit {
     public groups: Array<any>;
 
     // Private Members
-    private selectedContactRecord: any;
     private requiresRouting = false;
 
     constructor(
@@ -125,7 +124,6 @@ export class FbosEditComponent implements OnInit {
     }
 
     public editContactClicked(record) {
-        this.selectedContactRecord = record;
         this.contactsService
             .get({ oid: record.contactId })
             .subscribe((data: any) => (this.currentContact = data));

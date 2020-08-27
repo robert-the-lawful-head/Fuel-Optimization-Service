@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from "@angular/core";
+import { Component, AfterViewInit, OnDestroy } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 
@@ -108,7 +108,7 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
                 });
 
             this.sharedService.NotifyPricingTemplateComponent(
-                "updatecomponent"
+                "updateComponent"
             );
         });
     }

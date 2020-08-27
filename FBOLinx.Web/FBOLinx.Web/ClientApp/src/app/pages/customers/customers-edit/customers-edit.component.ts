@@ -1,7 +1,6 @@
 import {
     Component,
     EventEmitter,
-    Input,
     Output,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
@@ -20,11 +19,8 @@ import { PricingtemplatesService } from "../../../services/pricingtemplates.serv
 import { SharedService } from "../../../layouts/shared-service";
 
 // Components
-import { DistributionWizardMainComponent } from "../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component";
 import { CustomerCompanyTypeDialogComponent } from "../customer-company-type-dialog/customer-company-type-dialog.component";
-import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { ContactsDialogNewContactComponent } from "../../contacts/contacts-edit-modal/contacts-edit-modal.component";
-import { CustomerMatchDialogComponent } from "../customer-match-dialog/customer-match-dialog.component";
 
 const BREADCRUMBS: any[] = [
     {

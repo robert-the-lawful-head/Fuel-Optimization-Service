@@ -9,6 +9,7 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -166,6 +167,19 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(customerMargins);
+        }
+
+        [HttpPost("bulkremove")]
+        public async Task<IActionResult> DeleteBulkCustomerMargins([FromBody] List<CustomerMargins> margins)
+        {
+            var pricetierIds = margins.Select(margin => margin.PriceTierId).Where(id => id > 0).ToList();
+
+            _context.CustomerMargins.RemoveRange(margins);
+            _context.PriceTiers.RemoveRange(_context.PriceTiers.Where(pricetier => pricetierIds.Contains(pricetier.Oid)));
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         private bool CustomerMarginsExists(int id)

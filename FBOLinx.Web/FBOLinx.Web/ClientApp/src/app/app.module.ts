@@ -6,7 +6,7 @@ import { RouterModule } from "@angular/router";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 // NgBootstrap
-import { NgbCarouselModule, NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 
 // 3rd Party Modules
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
@@ -118,7 +118,6 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         NgxUiLoaderModule,
 
         // NgBoostrap Modules
-        NgbCarouselModule,
         NgbPopoverModule,
         MatIconModule,
         MatAutocompleteModule,

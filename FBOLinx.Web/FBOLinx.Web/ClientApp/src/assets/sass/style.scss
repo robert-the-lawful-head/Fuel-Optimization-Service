@@ -36,11 +36,19 @@
 .mat-green {
     background-color: #81C784;
     color: #000000 !important;
+
+    &:disabled {
+        color: rgba(0, 0, 0, 0.26) !important;
+    }
 }
 
 .mat-orange {
     background-color: #FFB74D;
     color: #000000 !important;
+
+    &:disabled {
+        color: rgba(0, 0, 0, 0.26) !important;
+    }
 }
 
 .mat-button-wrapper {

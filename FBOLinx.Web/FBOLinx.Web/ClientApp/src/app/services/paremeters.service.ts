@@ -1,5 +1,5 @@
-import { Injectable, Inject } from "@angular/core";
-import { Subject, Observable, BehaviorSubject } from "rxjs";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable()
 export class Parametri {

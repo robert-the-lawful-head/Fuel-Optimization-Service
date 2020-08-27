@@ -14,7 +14,6 @@ import * as _ from "lodash";
 import FlatfileImporter from "flatfile-csv-importer";
 
 // Services
-import { ContactsService } from "../../../services/contacts.service";
 import { CustomercontactsService } from "../../../services/customercontacts.service";
 import { ContactinfobygroupsService } from "../../../services/contactinfobygroups.service";
 import { SharedService } from "../../../layouts/shared-service";
