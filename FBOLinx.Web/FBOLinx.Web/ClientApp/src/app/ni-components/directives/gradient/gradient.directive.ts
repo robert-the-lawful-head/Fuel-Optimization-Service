@@ -3,7 +3,6 @@ import {
     OnInit,
     Input,
     HostBinding,
-    HostListener,
 } from "@angular/core";
 
 @Directive({

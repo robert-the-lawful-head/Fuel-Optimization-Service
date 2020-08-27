@@ -1,12 +1,10 @@
 import { Component, Inject } from "@angular/core";
 import {
-    MatDialog,
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
 
 // Services
-import { AuthenticationService } from "../../../../services/authentication.service";
 
 // Interfaces
 export interface ForgotPasswordDialogData {

@@ -184,15 +184,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
 
     @HostListener("document:click", ["$event"])
     public onClick(targetElement) {
-        /* console.log(targetElement);
-        const clickedInside = this.insideElement.nativeElement.contains(targetElement);
-        console.log("test");
-        if (!clickedInside) {
-            console.log('outside clicked');
-        }*/
-        // console.log(targetElement.path.toString());
-        const term = "addition-navbar";
-        // targetElement.path.forEach(element => element[1].nodeName);
         if (
             this.open &&
             targetElement.target.nodeName !== "svg" &&

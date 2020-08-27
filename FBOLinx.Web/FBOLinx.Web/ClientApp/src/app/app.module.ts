@@ -6,7 +6,7 @@ import { RouterModule } from "@angular/router";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 // NgBootstrap
-import { NgbCarouselModule, NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 
 // 3rd Party Modules
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
@@ -91,6 +91,11 @@ import { AppService } from "./services/app.service";
 // Helpers
 import { JwtInterceptor, ErrorInterceptor } from "./helpers";
 
+import { StoreModule } from "@ngrx/store";
+import { metaReducers, reducers } from "./store/reducers";
+import { StoreDevtoolsModule } from "@ngrx/store-devtools";
+import { environment } from "../environments/environment";
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -118,7 +123,6 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         NgxUiLoaderModule,
 
         // NgBoostrap Modules
-        NgbCarouselModule,
         NgbPopoverModule,
         MatIconModule,
         MatAutocompleteModule,
@@ -146,6 +150,11 @@ import { JwtInterceptor, ErrorInterceptor } from "./helpers";
         MatTooltipModule,
         TextMaskModule,
         RouterModule.forRoot(routes),
+        StoreModule.forRoot(reducers, {
+            metaReducers,
+        }),
+        !environment.production ? StoreDevtoolsModule.instrument() : [],
+        // EffectsModule.forRoot(effects),
     ],
     exports: [],
     entryComponents: [

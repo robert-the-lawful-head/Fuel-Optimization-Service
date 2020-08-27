@@ -1,10 +1,8 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import {
-    MatDialog,
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 import { MatTableDataSource } from "@angular/material/table";
 import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
 
@@ -50,7 +48,7 @@ export class CustomerAircraftSelectModelComponent implements OnInit {
                 result.model = result.selectedModel;
             }
         });
-        this.customerAircraftsService.import(this.data.aircrafts).subscribe((data: any) => {
+        this.customerAircraftsService.import(this.data.aircrafts).subscribe(() => {
             this.dialogRef.close();
         });
 

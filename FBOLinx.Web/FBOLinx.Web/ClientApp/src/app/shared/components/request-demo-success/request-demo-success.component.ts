@@ -1,7 +1,5 @@
-import { Component, Inject, HostListener } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { Router } from "@angular/router";
-import { NgxUiLoaderService } from "ngx-ui-loader";
 
 @Component({
     selector: "app-request-demo-success",

@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Component, Input, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 
 // Services
 import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
@@ -43,7 +43,7 @@ export class StatisticsTotalAircraftComponent implements OnInit {
             )
             .subscribe((data: any) => {
                 this.totalAircraft = data;
-            }, (error: any) => {
+            }, () => {
             });
     }
 }

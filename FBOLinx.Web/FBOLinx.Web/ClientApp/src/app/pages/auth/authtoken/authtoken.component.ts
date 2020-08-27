@@ -1,9 +1,8 @@
 import { Component } from "@angular/core";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 
 // Services
 import { AuthenticationService } from "../../../services/authentication.service";
-import { UserService } from "../../../services/user.service";
 
 @Component({
     selector: "app-authtoken",
@@ -14,8 +13,7 @@ export class AuthtokenComponent {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private authenticationService: AuthenticationService,
-        private userService: UserService
+        private authenticationService: AuthenticationService
     ) {
         // Check for passed in id
         const token = this.route.snapshot.paramMap.get("token");
@@ -35,7 +33,7 @@ export class AuthtokenComponent {
                             ]);
                         }
                     },
-                    (error) => {
+                    () => {
                         this.router.navigate(["/landing-site"]);
                     }
                 );

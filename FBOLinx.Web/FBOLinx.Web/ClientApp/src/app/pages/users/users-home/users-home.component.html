@@ -4,7 +4,7 @@
             <app-users-edit [userInfo]="currentUser" [groupInfo]="groupInfo" [fboInfo]="fboInfo" (saveClicked)="saveUserEditClicked()" (cancelClicked)="cancelUserEditClicked()"></app-users-edit>
         </div>
         <div *ngIf="!currentUser && usersData">
-            <app-users-grid [usersData]="usersData" [groupInfo]="groupInfo" [fboInfo]="fboInfo" (editUserClicked)="editUserClicked($event)" (recordDeleted)="deleteUserClicked($event)"></app-users-grid>
+            <app-users-grid [usersData]="usersData" [groupInfo]="groupInfo" [fboInfo]="fboInfo" (editUserClicked)="editUserClicked($event)"></app-users-grid>
         </div>
     </div>
     <div *ngIf="!(usersData || currentUser)">

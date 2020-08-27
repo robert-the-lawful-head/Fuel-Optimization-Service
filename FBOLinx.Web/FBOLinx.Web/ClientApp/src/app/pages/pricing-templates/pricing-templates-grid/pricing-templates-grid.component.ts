@@ -7,7 +7,7 @@ import {
     ViewChild,
 } from "@angular/core";
 import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
+import {MatSort, SortDirection} from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
 
@@ -19,6 +19,9 @@ import { CustomcustomertypesService } from "../../../services/customcustomertype
 import { PricingTemplatesDialogNewTemplateComponent } from "../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component";
 import { PricingTemplatesDialogCopyTemplateComponent } from "../pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component";
 import { PricingTemplatesDialogDeleteWarningComponent } from "../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component";
+import {getPricingTemplateState} from "../../../store/selectors/pricing-template";
+import {Store} from "@ngrx/store";
+import {State} from "../../../store/reducers";
 
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
@@ -66,6 +69,7 @@ export class PricingTemplatesGridComponent implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(
+        private store: Store<State>,
         public newTemplateDialog: MatDialog,
         public copyTemplateDialog: MatDialog,
         public deleteTemplateWarningDialog: MatDialog,
@@ -99,20 +103,32 @@ export class PricingTemplatesGridComponent implements OnInit {
         this.resultsLength = this.pricingTemplatesData.length;
 
         this.updateModel.currenttemplate = 0;
+
+        this.store.select(getPricingTemplateState).subscribe(state => {
+            console.log(state);
+            if (state.filter) {
+                this.pricingTemplatesDataSource.filter = state.filter;
+            }
+            if (state.page) {
+                this.paginator.pageIndex = state.page;
+            }
+            if (state.order) {
+                this.sort.active = state.order;
+            }
+            if (state.orderBy) {
+                this.sort.direction = state.orderBy as SortDirection;
+            }
+        });
     }
 
-    public editPricingTemplate(pricingTemplate, $event) {
-        if (
-            $event.srcElement.nodeName.toLowerCase() === "button" ||
-            $event.srcElement.nodeName.toLowerCase() === "select" ||
-            ($event.srcElement.nodeName.toLowerCase() === "input" &&
-                $event.srcElement.getAttribute("type") === "checkbox")
-        ) {
-            $event.stopPropagation();
-            return;
-        }
-        const clonedRecord = Object.assign({}, pricingTemplate);
-        this.editPricingTemplateClicked.emit(clonedRecord);
+    public editPricingTemplate(pricingTemplate) {
+        this.editPricingTemplateClicked.emit({
+            pricingTemplateId: pricingTemplate.oid,
+            filter: this.pricingTemplatesDataSource.filter,
+            page: this.pricingTemplatesDataSource.paginator.pageIndex,
+            order: this.pricingTemplatesDataSource.sort.active,
+            orderBy: this.pricingTemplatesDataSource.sort.direction,
+        });
     }
 
     public addNewPricingTemplate() {
@@ -135,7 +151,7 @@ export class PricingTemplatesGridComponent implements OnInit {
             }
             this.newPricingTemplateAdded.emit();
             this.sharedService.NotifyPricingTemplateComponent(
-                "updatecomponent"
+                "updateComponent"
             );
         });
     }

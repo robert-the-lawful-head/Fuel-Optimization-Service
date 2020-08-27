@@ -1,6 +1,5 @@
 import { Component, Inject } from "@angular/core";
 import {
-    MatDialog,
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
@@ -35,11 +34,11 @@ export class EmailContentEditComponent {
         if (this.emailContent.oid > 0) {
             this.emailContentService
                 .update(this.emailContent)
-                .subscribe((data: any) => this.completeSave());
+                .subscribe(() => this.completeSave());
         } else {
             this.emailContentService
                 .add(this.emailContent)
-                .subscribe((data: any) => this.completeSave());
+                .subscribe(() => this.completeSave());
         }
     }
 

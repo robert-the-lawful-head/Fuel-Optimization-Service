@@ -1,17 +1,9 @@
-import { Component, OnInit, HostListener } from "@angular/core";
-import { NgbCarouselConfig } from "@ng-bootstrap/ng-bootstrap";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+import { Component, HostListener } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
 // Services
-import { LandingsiteService } from "../../services/landingsite.service";
 import { SharedService } from "../shared-service";
-import { AuthenticationService } from "../../services/authentication.service";
 import { UserService } from "../../services/user.service";
 
 // Components
@@ -20,8 +12,6 @@ import { MatButtonToggleChange } from "@angular/material/button-toggle";
 import { LoginModalComponent } from "../../shared/components/login-modal/login-modal.component";
 import { RequestDemoModalComponent } from "../../shared/components/request-demo-modal/request-demo-modal.component";
 import { RequestDemoSuccessComponent } from "../../shared/components/request-demo-success/request-demo-success.component";
-
-// import * as jqueryFancyBox from "jquery.fancybox";
 
 export interface ContactUsMessage {
     name: string;

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 
 // Services
 import { GroupsService } from "../../../services/groups.service";

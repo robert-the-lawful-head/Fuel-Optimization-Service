@@ -42,6 +42,12 @@ export class CustomermarginsService {
         });
     }
 
+    public bulkRemove(payload) {
+        return this.http.post(this.accessPointUrl + "/bulkremove", payload, {
+            headers: this.headers,
+        });
+    }
+
     public update(payload) {
         return this.http.put(this.accessPointUrl + "/" + payload.oid, payload, {
             headers: this.headers,
