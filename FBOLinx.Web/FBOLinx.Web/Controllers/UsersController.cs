@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using FBOLinx.Web.Models.Responses;
 using System.Security.Cryptography;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -29,14 +30,16 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFileProvider _fileProvider;
         private readonly MailSettings _MailSettings;
+        private IServiceProvider _Services;
 
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings)
+        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services)
         {
             _userService = userService;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _MailSettings = mailSettings.Value;
             _fileProvider = fileProvider;
+            _Services = services;
         }
 
         [HttpGet("current")]
@@ -381,15 +384,16 @@ namespace FBOLinx.Web.Controllers
                 cm.Amount = -cm.Amount;
             }
             _context.CustomerMargins.UpdateRange(customerMargins);
-
-            var oldAircraftPrices = await (from ap in _context.AircraftPrices
-                                           join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
-                                           join f in _context.Fbos on new { fboId = pt.Fboid, groupId } equals new { fboId = f.Oid, groupId = f.GroupId ?? 0 }
-                                           select ap)
-                                           .ToListAsync();
-            _context.AircraftPrices.RemoveRange(oldAircraftPrices);
-
             await _context.SaveChangesAsync();
+
+            var deleteAircraftPricesTask = Task.Run(async () =>
+            {
+                using (var scope = _Services.CreateScope())
+                {
+                    var groupTransitionService = scope.ServiceProvider.GetRequiredService<GroupTransitionService>();
+                    await groupTransitionService.PerformLegacyGroupTransition(groupId);                    
+                }
+            });
         }
     }
 }

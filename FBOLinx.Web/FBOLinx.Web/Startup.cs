@@ -86,6 +86,7 @@ namespace FBOLinx.Web
             services.AddScoped<FuelerLinxService, FuelerLinxService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<UserRoleAttribute>();
+            services.AddScoped<GroupTransitionService, GroupTransitionService>();
 
             services.AddTransient<GroupFboService, GroupFboService>();
 
