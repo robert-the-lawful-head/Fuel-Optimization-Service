@@ -18,6 +18,12 @@ namespace IO.Swagger.Api
         /// <returns>PostIntegrationPartnerCredentialsResponse</returns>
         PostIntegrationPartnerCredentialsResponse ApplyPartnerCredentialsByTypeAndAffiliation (PostIntegrationPartnerCredentialsRequest body);
         /// <summary>
+        /// Check integration credentials for validity with the partner&#39;s service. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>CheckIntegrationPartnerCredentialsResponse</returns>
+        CheckIntegrationPartnerCredentialsResponse CheckCredentials (CheckIntegrationPartnerCredentialsRequest body);
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="id"></param>
@@ -35,7 +41,7 @@ namespace IO.Swagger.Api
         /// <returns>IntegrationPartnerListResponse</returns>
         IntegrationPartnerListResponse GetAvailablePartnersByType (int? partnerType);
         /// <summary>
-        ///  
+        /// Fetch an active integration for the authenticated company by it&#39;s {id}. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>CompanyActiveIntegrationResponse</returns>
@@ -159,6 +165,40 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Check integration credentials for validity with the partner&#39;s service. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>CheckIntegrationPartnerCredentialsResponse</returns>            
+        public CheckIntegrationPartnerCredentialsResponse CheckCredentials (CheckIntegrationPartnerCredentialsRequest body)
+        {
+            
+    
+            var path = "/api/Partner/check-credentials";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling CheckCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling CheckCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CheckIntegrationPartnerCredentialsResponse) ApiClient.Deserialize(response.Content, typeof(CheckIntegrationPartnerCredentialsResponse), response.Headers);
+        }
+    
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="id"></param> 
@@ -265,7 +305,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        ///  
+        /// Fetch an active integration for the authenticated company by it&#39;s {id}. 
         /// </summary>
         /// <param name="id"></param> 
         /// <returns>CompanyActiveIntegrationResponse</returns>            

@@ -273,10 +273,11 @@ Class | Method | HTTP request | Description
 *IntegrationFuelOrderDetailsApi* | [**CancelIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#cancelintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails/cancel | Internal use only - cancel an integration record from being tied to a transaction and notify the partner.
 *IntegrationFuelOrderDetailsApi* | [**UpdateIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#updateintegrationfuelorderdetails) | **PUT** /api/IntegrationFuelOrderDetails | Internal use only - update an integration record associated with a fuel order transaction.
 *PartnerApi* | [**ApplyPartnerCredentialsByTypeAndAffiliation**](docs/PartnerApi.md#applypartnercredentialsbytypeandaffiliation) | **POST** /api/Partner/credentials | Apply credential changes for a certain type/afiiliation of integration partner.
+*PartnerApi* | [**CheckCredentials**](docs/PartnerApi.md#checkcredentials) | **POST** /api/Partner/check-credentials | Check integration credentials for validity with the partner's service.
 *PartnerApi* | [**DeleteCompanyActiveIntegration**](docs/PartnerApi.md#deletecompanyactiveintegration) | **DELETE** /api/Partner/active-integration/{id} | 
 *PartnerApi* | [**GetAvailablePartners**](docs/PartnerApi.md#getavailablepartners) | **GET** /api/Partner/list | Fetch all integration partners.
 *PartnerApi* | [**GetAvailablePartnersByType**](docs/PartnerApi.md#getavailablepartnersbytype) | **GET** /api/Partner/list/type/{partnerType} | Fetch all integration partners of a certain type.
-*PartnerApi* | [**GetCompanyActiveIntegrationById**](docs/PartnerApi.md#getcompanyactiveintegrationbyid) | **GET** /api/Partner/active-integration/{id} | 
+*PartnerApi* | [**GetCompanyActiveIntegrationById**](docs/PartnerApi.md#getcompanyactiveintegrationbyid) | **GET** /api/Partner/active-integration/{id} | Fetch an active integration for the authenticated company by it's {id}.
 *PartnerApi* | [**GetCompanyActiveIntegrations**](docs/PartnerApi.md#getcompanyactiveintegrations) | **GET** /api/Partner/active-integration/list | 
 *PartnerApi* | [**GetPartnerCredentialsByTypeAndAffiliation**](docs/PartnerApi.md#getpartnercredentialsbytypeandaffiliation) | **GET** /api/Partner/credentials/type/{partnerType}/affiliation/{affiliation} | Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user's data.
 *PartnerApi* | [**GetPartnerInfo**](docs/PartnerApi.md#getpartnerinfo) | **GET** /api/Partner | Fetch the integration partner by the provided API key.
@@ -487,6 +488,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ChartOptions](docs/ChartOptions.md)
  - [IO.Swagger.Model.ChartSettings](docs/ChartSettings.md)
  - [IO.Swagger.Model.CheckAuthorizationInfoResponse](docs/CheckAuthorizationInfoResponse.md)
+ - [IO.Swagger.Model.CheckIntegrationPartnerCredentialsRequest](docs/CheckIntegrationPartnerCredentialsRequest.md)
+ - [IO.Swagger.Model.CheckIntegrationPartnerCredentialsResponse](docs/CheckIntegrationPartnerCredentialsResponse.md)
  - [IO.Swagger.Model.CodeCallbackRequest](docs/CodeCallbackRequest.md)
  - [IO.Swagger.Model.ColorAxis](docs/ColorAxis.md)
  - [IO.Swagger.Model.ColorSet](docs/ColorSet.md)
@@ -515,6 +518,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CompanyResponse](docs/CompanyResponse.md)
  - [IO.Swagger.Model.CompanyUserProfileDTO](docs/CompanyUserProfileDTO.md)
  - [IO.Swagger.Model.CompanyUserProfileListResponse](docs/CompanyUserProfileListResponse.md)
+ - [IO.Swagger.Model.CredentialVerificationResult](docs/CredentialVerificationResult.md)
  - [IO.Swagger.Model.CredentialsDTO](docs/CredentialsDTO.md)
  - [IO.Swagger.Model.CredentialsListResponse](docs/CredentialsListResponse.md)
  - [IO.Swagger.Model.CredentialsResponse](docs/CredentialsResponse.md)

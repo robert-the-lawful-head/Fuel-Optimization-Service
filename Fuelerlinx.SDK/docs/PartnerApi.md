@@ -5,10 +5,11 @@ All URIs are relative to *https://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**ApplyPartnerCredentialsByTypeAndAffiliation**](PartnerApi.md#applypartnercredentialsbytypeandaffiliation) | **POST** /api/Partner/credentials | Apply credential changes for a certain type/afiiliation of integration partner.
+[**CheckCredentials**](PartnerApi.md#checkcredentials) | **POST** /api/Partner/check-credentials | Check integration credentials for validity with the partner&#39;s service.
 [**DeleteCompanyActiveIntegration**](PartnerApi.md#deletecompanyactiveintegration) | **DELETE** /api/Partner/active-integration/{id} | 
 [**GetAvailablePartners**](PartnerApi.md#getavailablepartners) | **GET** /api/Partner/list | Fetch all integration partners.
 [**GetAvailablePartnersByType**](PartnerApi.md#getavailablepartnersbytype) | **GET** /api/Partner/list/type/{partnerType} | Fetch all integration partners of a certain type.
-[**GetCompanyActiveIntegrationById**](PartnerApi.md#getcompanyactiveintegrationbyid) | **GET** /api/Partner/active-integration/{id} | 
+[**GetCompanyActiveIntegrationById**](PartnerApi.md#getcompanyactiveintegrationbyid) | **GET** /api/Partner/active-integration/{id} | Fetch an active integration for the authenticated company by it&#39;s {id}.
 [**GetCompanyActiveIntegrations**](PartnerApi.md#getcompanyactiveintegrations) | **GET** /api/Partner/active-integration/list | 
 [**GetPartnerCredentialsByTypeAndAffiliation**](PartnerApi.md#getpartnercredentialsbytypeandaffiliation) | **GET** /api/Partner/credentials/type/{partnerType}/affiliation/{affiliation} | Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user&#39;s data.
 [**GetPartnerInfo**](PartnerApi.md#getpartnerinfo) | **GET** /api/Partner | Fetch the integration partner by the provided API key.
@@ -73,6 +74,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PostIntegrationPartnerCredentialsResponse**](PostIntegrationPartnerCredentialsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="checkcredentials"></a>
+# **CheckCredentials**
+> CheckIntegrationPartnerCredentialsResponse CheckCredentials (CheckIntegrationPartnerCredentialsRequest body)
+
+Check integration credentials for validity with the partner's service.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class CheckCredentialsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new PartnerApi();
+            var body = new CheckIntegrationPartnerCredentialsRequest(); // CheckIntegrationPartnerCredentialsRequest |  (optional) 
+
+            try
+            {
+                // Check integration credentials for validity with the partner's service.
+                CheckIntegrationPartnerCredentialsResponse result = apiInstance.CheckCredentials(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling PartnerApi.CheckCredentials: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**CheckIntegrationPartnerCredentialsRequest**](CheckIntegrationPartnerCredentialsRequest.md)|  | [optional] 
+
+### Return type
+
+[**CheckIntegrationPartnerCredentialsResponse**](CheckIntegrationPartnerCredentialsResponse.md)
 
 ### Authorization
 
@@ -291,7 +361,7 @@ Name | Type | Description  | Notes
 # **GetCompanyActiveIntegrationById**
 > CompanyActiveIntegrationResponse GetCompanyActiveIntegrationById (int? id)
 
-
+Fetch an active integration for the authenticated company by it's {id}.
 
 ### Example
 ```csharp
@@ -322,6 +392,7 @@ namespace Example
 
             try
             {
+                // Fetch an active integration for the authenticated company by it's {id}.
                 CompanyActiveIntegrationResponse result = apiInstance.GetCompanyActiveIntegrationById(id);
                 Debug.WriteLine(result);
             }
