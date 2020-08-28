@@ -87,7 +87,8 @@ Class | Method | HTTP request | Description
 *AccountingApi* | [**DeleteAccountingIntegrationItemCodes**](docs/AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 *AccountingApi* | [**DeleteSupplierDetails**](docs/AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
 *AccountingApi* | [**GetAccountingIntegrationItemCodesById**](docs/AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
-*AccountingApi* | [**GetAccountingItemMappingList**](docs/AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets single accounting integration item code record
+*AccountingApi* | [**GetAccountingItemMappingList**](docs/AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets accounting integration mappings for line items
+*AccountingApi* | [**GetAccountingItemMappingListForTransactions**](docs/AccountingApi.md#getaccountingitemmappinglistfortransactions) | **GET** /api/Accounting/mapping/items/list/{transactionIds} | Gets accounting integration mappings for line items by comma-delimited {transactionIds}
 *AccountingApi* | [**GetPendingAccountingExport**](docs/AccountingApi.md#getpendingaccountingexport) | **GET** /api/Accounting/oracle/accounting-export/pending | 
 *AccountingApi* | [**GetSageCredentials**](docs/AccountingApi.md#getsagecredentials) | **GET** /api/Accounting/sage/credentials | Get Sage Credentials
 *AccountingApi* | [**GetSageGlAccounts**](docs/AccountingApi.md#getsageglaccounts) | **GET** /api/Accounting/sage/gl-accounts | Get Sage GL Account Details

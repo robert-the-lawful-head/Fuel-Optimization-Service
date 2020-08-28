@@ -8,7 +8,8 @@ Method | HTTP request | Description
 [**DeleteAccountingIntegrationItemCodes**](AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 [**DeleteSupplierDetails**](AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
 [**GetAccountingIntegrationItemCodesById**](AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
-[**GetAccountingItemMappingList**](AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets single accounting integration item code record
+[**GetAccountingItemMappingList**](AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets accounting integration mappings for line items
+[**GetAccountingItemMappingListForTransactions**](AccountingApi.md#getaccountingitemmappinglistfortransactions) | **GET** /api/Accounting/mapping/items/list/{transactionIds} | Gets accounting integration mappings for line items by comma-delimited {transactionIds}
 [**GetPendingAccountingExport**](AccountingApi.md#getpendingaccountingexport) | **GET** /api/Accounting/oracle/accounting-export/pending | 
 [**GetSageCredentials**](AccountingApi.md#getsagecredentials) | **GET** /api/Accounting/sage/credentials | Get Sage Credentials
 [**GetSageGlAccounts**](AccountingApi.md#getsageglaccounts) | **GET** /api/Accounting/sage/gl-accounts | Get Sage GL Account Details
@@ -302,7 +303,7 @@ Name | Type | Description  | Notes
 # **GetAccountingItemMappingList**
 > AccountingIntegrationItemCodesListResponse GetAccountingItemMappingList ()
 
-Gets single accounting integration item code record
+Gets accounting integration mappings for line items
 
 ### Example
 ```csharp
@@ -332,7 +333,7 @@ namespace Example
 
             try
             {
-                // Gets single accounting integration item code record
+                // Gets accounting integration mappings for line items
                 AccountingIntegrationItemCodesListResponse result = apiInstance.GetAccountingItemMappingList();
                 Debug.WriteLine(result);
             }
@@ -347,6 +348,75 @@ namespace Example
 
 ### Parameters
 This endpoint does not need any parameter.
+
+### Return type
+
+[**AccountingIntegrationItemCodesListResponse**](AccountingIntegrationItemCodesListResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getaccountingitemmappinglistfortransactions"></a>
+# **GetAccountingItemMappingListForTransactions**
+> AccountingIntegrationItemCodesListResponse GetAccountingItemMappingListForTransactions (string transactionIds)
+
+Gets accounting integration mappings for line items by comma-delimited {transactionIds}
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetAccountingItemMappingListForTransactionsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AccountingApi();
+            var transactionIds = transactionIds_example;  // string | 
+
+            try
+            {
+                // Gets accounting integration mappings for line items by comma-delimited {transactionIds}
+                AccountingIntegrationItemCodesListResponse result = apiInstance.GetAccountingItemMappingListForTransactions(transactionIds);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AccountingApi.GetAccountingItemMappingListForTransactions: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **transactionIds** | **string**|  | 
 
 ### Return type
 
