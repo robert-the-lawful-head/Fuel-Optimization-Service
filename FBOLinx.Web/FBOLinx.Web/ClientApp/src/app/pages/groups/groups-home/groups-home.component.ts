@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from "@angular/core";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 
 // Services
 import { GroupsService } from "../../../services/groups.service";
@@ -34,7 +34,7 @@ export class GroupsHomeComponent implements OnInit {
         this.router.navigate(["/default-layout/groups/" + record.oid]);
     }
 
-    public deleteFboClicked(record) {}
+    public deleteFboClicked() {}
 
     public saveGroupEditClicked() {
         if (this.sharedService.currentUser.role === 3) {

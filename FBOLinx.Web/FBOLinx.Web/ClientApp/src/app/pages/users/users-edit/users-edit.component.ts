@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 
 // Services
 import { UserService } from "../../../services/user.service";
-import { SharedService } from "../../../layouts/shared-service";
 
 @Component({
     selector: "app-users-edit",
@@ -26,8 +25,7 @@ export class UsersEditComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private userService: UserService,
-        private sharedService: SharedService
+        private userService: UserService
     ) {}
 
     ngOnInit() {

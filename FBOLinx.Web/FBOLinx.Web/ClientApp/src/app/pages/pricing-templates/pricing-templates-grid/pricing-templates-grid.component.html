@@ -5,6 +5,7 @@
                 matInput
                 (keyup)="applyFilter($event.target.value)"
                 placeholder="Search by Name or Type"
+                [value]="pricingTemplatesDataSource.filter"
             />
             <span matPrefix><i class="fa fa-search"></i></span>
         </mat-form-field>
@@ -150,7 +151,7 @@
             <tr
                 mat-row
                 *matRowDef="let row; columns: displayedColumns"
-                (click)="editPricingTemplate(row, $event)"
+                (click)="editPricingTemplate(row)"
             ></tr>
         </table>
     </div>

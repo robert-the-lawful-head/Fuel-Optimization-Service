@@ -1,6 +1,10 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from "@angular/core";
+import { Component, AfterViewInit, OnDestroy } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
+import { Store } from "@ngrx/store";
+
+import { State } from "../../../store/reducers";
+import { pricingTemplateGridSet } from "../../../store/actions";
 
 // Services
 import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
@@ -36,8 +40,8 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
 
     constructor(
         private router: Router,
+        private store: Store<State>,
         private pricingTemplatesService: PricingtemplatesService,
-        public newPricingTemplateDialog: MatDialog,
         private sharedService: SharedService,
         public deleteFBODialog: MatDialog
     ) {
@@ -71,10 +75,16 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
             .subscribe((data: any) => (this.pricingTemplatesData = data));
     }
 
-    public editPricingTemplateClicked(pricingTemplate) {
+    public editPricingTemplateClicked($event) {
+        this.store.dispatch(pricingTemplateGridSet({
+            filter: $event.filter,
+            page: $event.page,
+            order: $event.order,
+            orderBy: $event.orderBy,
+        }));
         this.router.navigate([
-            "/default-layout/pricing-templates/" + pricingTemplate.oid,
-        ]);
+            "/default-layout/pricing-templates/" + $event.pricingTemplateId,
+        ]).then(() => {});
     }
 
     public deletePricingTemplateClicked(pricingTemplate) {
@@ -108,12 +118,12 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
                 });
 
             this.sharedService.NotifyPricingTemplateComponent(
-                "updatecomponent"
+                "updateComponent"
             );
         });
     }
 
-    public newPricingTemplateAdded(event) {
+    public newPricingTemplateAdded() {
         this.pricingTemplatesData = null;
         this.pricingTemplatesService
             .getByFbo(

@@ -11,7 +11,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { PricingtemplatesService } from "../../../../services/pricingtemplates.service";
 import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor";
 import { CustomermarginsService } from "../../../../services/customermargins.service";
-import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
+import { Router, NavigationEnd } from "@angular/router";
 import { FbopricesService } from "../../../../services/fboprices.service";
 import { SharedService } from "../../../../layouts/shared-service";
 
@@ -38,8 +38,7 @@ export class DistributionWizardReviewComponent implements OnInit {
         private customerMarginsService: CustomermarginsService,
         private router: Router,
         private fbopricesService: FbopricesService,
-        private sharedService: SharedService,
-        private route: ActivatedRoute
+        private sharedService: SharedService
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => {
             return false;
@@ -74,10 +73,6 @@ export class DistributionWizardReviewComponent implements OnInit {
                         }
                     });
             });
-
-        this.route.params.subscribe((params) => {
-            const id = +params.id;
-        });
     }
     public updateCustomerMargin(margin) {
         const jetACost = this.currentPrice.filter(

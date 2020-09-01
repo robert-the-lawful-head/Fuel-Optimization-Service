@@ -8,10 +8,13 @@ namespace FBOLinx.Web.Models.Requests
 {
     public class TailNumberLoadRequest
     {
-        [Required]
-        public int CompanyID { get; set; }
         public int FuelVolume { get; set; }
+        [Required]
         public string TailNumber { get; set; }
         public string ICAO { get; set; }
+        [Required]
+        public int FBOID { get; set; }
+        [Required]
+        public int GroupID { get; set; }
     }
 }

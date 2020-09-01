@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Component, Input, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 
 // Services
 import { FuelreqsService } from "../../../services/fuelreqs.service";
@@ -49,7 +49,7 @@ export class StatisticsTotalOrdersComponent implements OnInit {
             .getForFboCount(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
                 this.totalOrders = data;
-            }, (error: any) => {
+            }, () => {
             });
     }
 }

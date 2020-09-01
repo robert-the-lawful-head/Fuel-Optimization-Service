@@ -374,9 +374,9 @@
                         <mat-form-field>
                             <input
                                 matInput
-                                placeholder="Fuel Volume"
+                                placeholder="Fuel Volume (gal)"
                                 [(ngModel)]="fuelVolume"
-                                aria-label="Fuel Volume"
+                                aria-label="Fuel Volume (gal)"
                             />
                         </mat-form-field>
                     </div>
@@ -405,11 +405,8 @@
                 <div *ngIf="tailLookupInfo && !tailLookupError">
                     <div class="tailLookupInfo">
                         <div class="h6 text-muted mt-0 mb-0">Price Per Gallon: </div>
-                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.pricePerGallon ? tailLookupInfo.pricePerGallon : 'N/A' }}</div>
-                    </div>
-                    <div class="tailLookupInfo">
-                        <div class="h6 text-muted mt-0 mb-0">Ramp Fees: </div>
-                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.fees ? tailLookupInfo.fees : 'N/A' }}</div>
+                        <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo && tailLookupInfo.pricePerGallon > 0">${{ tailLookupInfo.pricePerGallon | number: "1.4-4" }}</div>
+                        <div class="h6 mt-0 mb-0" *ngIf="!tailLookupInfo || tailLookupInfo.pricePerGallon <= 0">N/A</div>
                     </div>
                     <div class="tailLookupInfo">
                         <div class="h6 text-muted mt-0 mb-0">Pricing Template: </div>

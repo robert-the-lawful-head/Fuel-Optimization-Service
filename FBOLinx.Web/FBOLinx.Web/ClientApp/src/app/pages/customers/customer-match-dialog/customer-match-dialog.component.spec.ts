@@ -1,14 +1,14 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { CustomerMatchDialogComponent } from './customer-match-dialog.component';
+import { CustomerMatchDialogComponent } from "./customer-match-dialog.component";
 
-describe('CustomerMatchDialogComponent', () => {
+describe("CustomerMatchDialogComponent", () => {
   let component: CustomerMatchDialogComponent;
   let fixture: ComponentFixture<CustomerMatchDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomerMatchDialogComponent ]
+      declarations: [ CustomerMatchDialogComponent ],
     })
     .compileComponents();
   }));
@@ -19,7 +19,7 @@ describe('CustomerMatchDialogComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

@@ -28,12 +28,6 @@
                             "src/assets/sass/style.scss"
                         ],
                         "scripts": [
-                            "node_modules/amcharts3/amcharts/amcharts.js",
-                            "node_modules/amcharts3/amcharts/pie.js",
-                            "node_modules/amcharts3/amcharts/radar.js",
-                            "node_modules/amcharts3/amcharts/xy.js",
-                            "node_modules/amcharts3/amcharts/serial.js",
-                            "node_modules/amcharts3/amcharts/themes/light.js",
                             "node_modules/moment/min/moment.min.js"
                         ],
                         "allowedCommonJsDependencies": [

@@ -1,7 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
-
-// Services
-import { ContactsService } from "../../../services/contacts.service";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 
 @Component({
     selector: "app-contacts-edit",
@@ -34,7 +31,7 @@ export class ContactsEditComponent {
         /\d/,
     ];
 
-    constructor(private contactsService: ContactsService) {}
+    constructor() {}
 
     public saveEdit() {
         this.saveEditClicked.emit();

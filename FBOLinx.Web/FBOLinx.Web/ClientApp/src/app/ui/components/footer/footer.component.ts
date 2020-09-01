@@ -1,4 +1,4 @@
-import { Component, OnInit, HostBinding } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { AppService } from "../../../services/app.service";
 import * as moment from "moment";
 

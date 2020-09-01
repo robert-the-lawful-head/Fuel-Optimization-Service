@@ -1,10 +1,9 @@
 import { Component, Inject } from "@angular/core";
 import {
-    MatDialog,
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router } from "@angular/router";
 
 // Components
 import * as moment from "moment";
@@ -32,10 +31,6 @@ export class PricingExpiredNotificationGroupComponent {
     }
 
     public onCancelClick() {
-        // sessionStorage.setItem(
-        //    "pricingExpiredNotification",
-        //    moment().format("L")
-        // );
         this.dialogRef.close();
     }
 

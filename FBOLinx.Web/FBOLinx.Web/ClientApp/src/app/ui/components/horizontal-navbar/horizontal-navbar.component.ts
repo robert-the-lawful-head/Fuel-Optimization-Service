@@ -85,7 +85,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.currentUser = this.sharedService.currentUser;
 
         // getting the native window obj
-        this.window = winRef.nativeWindow;
+        this.window = this.winRef.nativeWindow;
 
         if (!this.currentUser) {
             return;

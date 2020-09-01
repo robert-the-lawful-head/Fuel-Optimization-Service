@@ -11,7 +11,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import { Observable } from "rxjs";
 import * as moment from "moment";
-import * as _ from "lodash";
 
 // Services
 import { FbopricesService } from "../../../services/fboprices.service";
@@ -67,7 +66,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public isLoadingRetail = false;
     public isLoadingCost = false;
     public tailNumber: string;
-    public fuelVolume: string;
+    public fuelVolume = 1;
 
     public tailLookupInfo: TailLookupResponse;
     public tailLookupError: boolean;
@@ -207,8 +206,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         const effectiveTo = moment(this.currentPricingEffectiveTo).format("MM/DD/YYYY");
         const newPrices = [];
         for (const price of this.currentPrices) {
-            const priceFrom = moment(price.effectiveFrom).format("MM/DD/YYYY");
-            const priceTo = moment(price.effectiveTo).format("MM/DD/YYYY");
             if (price.product === "JetA Retail" && this.jtRetail > 0) {
                 price.oid = 0;
                 price.price = this.jtRetail;
@@ -307,10 +304,11 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     public lookupTail() {
         const tailLookupData = {
-            companyId: this.sharedService.currentUser.fboId,
             icao: this.sharedService.currentUser.icao,
             tailNumber: this.tailNumber,
             fuelVolume: this.fuelVolume,
+            fboId: this.sharedService.currentUser.fboId,
+            groupId: this.sharedService.currentUser.groupId,
         };
         this.tailLookupError = false;
         this.tailLookupInfo = undefined;
