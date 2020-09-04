@@ -403,7 +403,9 @@ export class CustomersGridComponent implements OnInit {
 
         this.customerMarginsService
             .updatemultiplecustomermargin(listCustomers)
-            .subscribe();
+            .subscribe(() => {
+                this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
+            });
     }
 
     public anySelected() {
