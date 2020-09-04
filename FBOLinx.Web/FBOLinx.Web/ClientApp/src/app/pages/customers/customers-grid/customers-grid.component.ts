@@ -29,6 +29,8 @@ import * as XLSX from "xlsx";
 import { CustomermarginsService } from "../../../services/customermargins.service";
 import { CustomersviewedbyfboService } from "../../../services/customersviewedbyfbo.service";
 
+import * as SharedEvents from "../../../models/sharedEvents";
+
 @Component({
     selector: "app-customers-grid",
     templateUrl: "./customers-grid.component.html",
@@ -377,7 +379,9 @@ export class CustomersGridComponent implements OnInit {
         };
         this.customerMarginsService
             .updatecustomermargin(vm)
-            .subscribe();
+            .subscribe(() => {
+                this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
+            });
     }
 
     public bulkMarginTemplateUpdate(event: MatSelectChange) {
