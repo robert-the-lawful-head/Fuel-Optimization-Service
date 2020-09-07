@@ -13,7 +13,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSelectChange } from "@angular/material/select";
 import { forEach, map, sortBy, find, forOwn } from "lodash";
-import FlatfileImporter from "flatfile-csv-importer";
+import FlatFileImporter from "flatfile-csv-importer";
 
 // Services
 import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
@@ -63,7 +63,6 @@ export class CustomersGridComponent implements OnInit {
 
     public selectAll = false;
     public selectedRows: number;
-    public globalMargin: any;
     public pageIndex = 0;
     public pageSize = 100;
     public tableSort = "needsAttention";
@@ -76,7 +75,7 @@ export class CustomersGridComponent implements OnInit {
 
     results = "[]";
 
-    private importer: FlatfileImporter;
+    private importer: FlatFileImporter;
 
     constructor(
         public newCustomerDialog: MatDialog,
@@ -85,14 +84,14 @@ export class CustomersGridComponent implements OnInit {
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customersViewedByFboService: CustomersviewedbyfboService,
         public deleteCustomerDialog: MatDialog,
-        public customeraircraftsService: CustomeraircraftsService,
+        public customerAircraftsService: CustomeraircraftsService,
         public customerMarginsService: CustomermarginsService
     ) {}
 
     ngOnInit() {
         this.refreshCustomerDataSource();
 
-        FlatfileImporter.setVersion(2);
+        FlatFileImporter.setVersion(2);
         this.initializeImporter();
         this.importer.setCustomer({
             userId: "1",
@@ -156,19 +155,7 @@ export class CustomersGridComponent implements OnInit {
         });
     }
 
-    public editCustomer(customer, $event) {
-        if ($event.srcElement) {
-            if (
-                $event.srcElement.nodeName.toLowerCase() === "button" ||
-                $event.srcElement.nodeName.toLowerCase() === "select" ||
-                ($event.srcElement.nodeName.toLowerCase() === "input" &&
-                    $event.srcElement.getAttribute("type") === "checkbox")
-            ) {
-                $event.stopPropagation();
-                return;
-            }
-        }
-
+    public editCustomer(customer) {
         const clonedCustomer = Object.assign({}, customer);
         this.editCustomerClicked.emit(clonedCustomer);
     }
@@ -176,7 +163,7 @@ export class CustomersGridComponent implements OnInit {
     public selectAction() {
         const pageCustomersData = this.customersDataSource.connect().value;
         forEach(pageCustomersData, (customer) => {
-            customer.selectAll = this.selectAll ? true : false;
+            customer.selectAll = this.selectAll;
         });
         this.selectedRows = this.selectAll ? pageCustomersData.length : 0;
     }
@@ -219,7 +206,7 @@ export class CustomersGridComponent implements OnInit {
                     .subscribe((customerInfoByGroupData: any) => {
                         result.customerInfoByGroupId =
                             customerInfoByGroupData.oid;
-                        this.editCustomer(result, Event);
+                        this.editCustomer(result);
                     });
             });
         });
@@ -234,7 +221,7 @@ export class CustomersGridComponent implements OnInit {
         const filteredList = this.customersDataSource.filteredData.filter((item) => {
             return item.selectAll === true;
         });
-        let exportData = [];
+        let exportData;
         if (filteredList.length > 0) {
             exportData = filteredList;
         } else {
@@ -323,7 +310,7 @@ export class CustomersGridComponent implements OnInit {
         XLSX.writeFile(wb, "Aircraft.xlsx");
     }
 
-    public customerFilterTypeChanged(event) {
+    public customerFilterTypeChanged() {
         this.refreshCustomerDataSource();
     }
 
@@ -439,7 +426,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     public initializeImporter() {
-        this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+        this.importer = new FlatFileImporter(this.LICENSE_KEY, {
             fields: [
                 {
                     label: "Company Id",
