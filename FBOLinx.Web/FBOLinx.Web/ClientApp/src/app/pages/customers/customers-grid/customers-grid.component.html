@@ -31,7 +31,7 @@
                     <mat-select
                         placeholder="Search Within"
                         [(ngModel)]="customerFilterType"
-                        (selectionChange)="customerFilterTypeChanged($event)"
+                        (selectionChange)="customerFilterTypeChanged()"
                     >
                         <mat-option [value]="0">
                             All Customers
@@ -188,7 +188,7 @@
                     <span *ngIf="!customer.active"
                           style="color: red; font-weight: bold;">Inactive</span>
                     <span *ngIf="!customer.isPricingExpired && customer.active">
-
+                        {{ customer.allInPrice | currency: "USD" }}
                     </span>
                     <span *ngIf="customer.isPricingExpired && customer.active"
                           style="color: red; font-weight: bold;">Expired</span>
@@ -251,14 +251,14 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row
                 *matRowDef="let row; columns: displayedColumns"
-                (click)="editCustomer(row, $event)"></tr>
+                (click)="editCustomer(row)"></tr>
         </table>
         <mat-paginator [length]="customersData.length"
                        [pageSize]="pageSize"
                        [pageSizeOptions]="[10, 25, 50, 100]"
                        (page)="(pageIndex); onPageChanged($event)"></mat-paginator>
     </div>
-    
+
 </div>
 
 
