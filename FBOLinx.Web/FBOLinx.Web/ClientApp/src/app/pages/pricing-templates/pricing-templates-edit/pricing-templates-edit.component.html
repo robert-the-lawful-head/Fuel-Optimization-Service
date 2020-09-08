@@ -11,24 +11,24 @@
 </div>
 
 <div *ngIf="pricingTemplateForm" [formGroup]="pricingTemplateForm">
-    <div class="card-wrap" >
+    <div class="card-wrap">
         <h3 class="card-header h5">
             <div class="row">
                 <div class="col-12">
                     <span class="card-header-title">{{ pricingTemplateForm.value.name }}</span>
                     <button
-                        mat-stroked-button
                         (click)="cancelPricingTemplateEdit()"
                         class="float-right"
+                        mat-stroked-button
                     >
                         Cancel
                     </button>
                     <button
-                        mat-stroked-button
-                        color="green"
                         (click)="savePricingTemplate()"
-                        class="mr-1 float-right"
                         [disabled]="!canSave"
+                        class="mr-1 float-right"
+                        color="green"
+                        mat-stroked-button
                     >
                         <mat-icon>save</mat-icon>
                         Save Changes
@@ -53,17 +53,17 @@
                         <div class="d-inline-block pr-2" style="width:300px;">
                             <mat-form-field>
                                 <input
+                                    formControlName="name"
                                     matInput
                                     placeholder="Name"
-                                    formControlName="name"
                                 />
                             </mat-form-field>
                         </div>
                         <div class="d-block pl-3" style="width:300px;">
                             <mat-form-field>
                                 <mat-select
-                                    placeholder="Type"
                                     formControlName="marginType"
+                                    placeholder="Type"
                                 >
                                     <mat-option
                                         *ngFor="let marginType of marginTypeDataSource"
@@ -94,14 +94,16 @@
                                     <div class="">Discount</div>
                                 </th>
                                 <th>
-                                    <div class="volume-tiers-header">Your ITP <br /> <span style="margin-left:4px;">Margin</span></div>
+                                    <div class="volume-tiers-header">Your ITP <br/> <span style="margin-left:4px;">Margin</span>
+                                    </div>
                                 </th>
                                 <th>
                                     <div class="">All-in</div>
                                 </th>
                                 <th>
                                     <div class="ml-4">
-                                        <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">
+                                        <button (click)="addCustomerMargin()" [view]="'accent'" beforeIcon="fa fa-plus"
+                                                ni-button>
                                             Add New
                                         </button>
                                     </div>
@@ -109,11 +111,12 @@
                             </tr>
                             </thead>
                             <tbody formArrayName="customerMargins">
-                            <tr class="mat-row" *ngFor="let customerMargin of customerMarginsFormArray.controls; let i = index">
-                                <td class="" [formGroupName]="i">
+                            <tr *ngFor="let customerMargin of customerMarginsFormArray.controls; let i = index"
+                                class="mat-row">
+                                <td [formGroupName]="i" class="">
                                     <div class="volume-tiers-width">
                                         <mat-form-field class="">
-                                            <input matInput formControlName="min"/>
+                                            <input formControlName="min" matInput/>
                                         </mat-form-field>
                                     </div>
                                 </td>
@@ -121,36 +124,36 @@
                                     <div class="volume-tiers-width">
                                         <mat-form-field class="">
                                             <input
-                                                matInput
                                                 disabled="disabled"
+                                                matInput
                                                 value="{{customerMargin.value.max == 0 ? 99999 : customerMargin.value.max }}"
                                             />
                                         </mat-form-field>
                                     </div>
                                 </td>
-                                <td class="" *ngIf="pricingTemplateForm.value.marginType == 1" [formGroupName]="i">
+                                <td *ngIf="pricingTemplateForm.value.marginType == 1" [formGroupName]="i" class="">
                                     <div class="volume-tiers-width">
                                         <mat-form-field class="">
                                             <input
-                                                matInput
-                                                type="number"
-                                                step="0.01"
                                                 formControlName="amount"
+                                                matInput
+                                                step="0.01"
+                                                type="number"
                                             />
                                         </mat-form-field>
                                     </div>
                                 </td>
-                                <td class="font-weight-bold font-italic" [formGroupName]="i">
+                                <td [formGroupName]="i" class="font-weight-bold font-italic">
                                     <div>
                                         <div *ngIf="pricingTemplateForm.value.marginType == 1">
                                             ${{ customerMargin.value.itp | number: "1.4-4" }}
                                         </div>
                                         <div class="volume-tiers-width">
-                                            <mat-form-field class="" *ngIf="pricingTemplateForm.value.marginType == 0">
-                                                <input matInput
-                                                       type="number"
+                                            <mat-form-field *ngIf="pricingTemplateForm.value.marginType == 0" class="">
+                                                <input formControlName="amount"
+                                                       matInput
                                                        step="0.01"
-                                                       formControlName="amount"
+                                                       type="number"
                                                 />
                                             </mat-form-field>
                                         </div>
@@ -166,11 +169,11 @@
                                 </td>
                                 <td class="">
                                     <div class="ml-4">
-                                        <button ni-button
+                                        <button (click)="deleteCustomerMargin(i)"
                                                 [view]="'error'"
-                                                size="small"
                                                 beforeIcon="fa fa-trash"
-                                                (click)="deleteCustomerMargin(i)">
+                                                ni-button
+                                                size="small">
                                             Delete
                                         </button>
                                     </div>
@@ -188,12 +191,12 @@
                     <div class="row">
                         <ejs-richtexteditor
                             #typeRTE
-                            id="rteNotes"
                             formControlName="notes"
+                            id="rteNotes"
                         ></ejs-richtexteditor>
                     </div>
                     <div class="row">
-                        <br />
+                        <br/>
                     </div>
 
                     <div class="row mt-2">
@@ -205,23 +208,23 @@
                     <div class="row">
                         <mat-form-field style="max-width: 600px;">
                             <input
+                                aria-label="Subject"
+                                formControlName="subject"
                                 matInput
                                 placeholder="Subject"
-                                formControlName="subject"
-                                aria-label="Subject"
                             />
                         </mat-form-field>
                     </div>
                     <div class="row">
                         <ejs-richtexteditor
                             #typeEmail
-                            placeholder="Enter email body here..."
-                            id="rteEmail"
                             formControlName="email"
+                            id="rteEmail"
+                            placeholder="Enter email body here..."
                         ></ejs-richtexteditor>
                     </div>
                     <div class="row">
-                        <br />
+                        <br/>
                     </div>
                 </div>
             </div>

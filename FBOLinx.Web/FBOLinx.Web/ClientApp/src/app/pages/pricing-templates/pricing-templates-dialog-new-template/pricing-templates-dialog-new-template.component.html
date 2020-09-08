@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ title }}</h1>
 
-<div mat-dialog-content>
+<div mat-dialog-content [formGroup]="form">
     <div class="container-fluid" *ngIf="isSaving">
         <div class="row">
             <div class="col">
@@ -9,341 +9,248 @@
         </div>
     </div>
     <mat-horizontal-stepper [linear]="true" #stepper *ngIf="!isSaving">
-        <mat-step [stepControl]="firstFormGroup">
-            <form [formGroup]="firstFormGroup">
-                <ng-template matStepLabel>Margin Name</ng-template>
-                <div class="container-fluid inner-content">
-                    <div class="row mt-2 mb-2">
-                        <div class="col-8">
-                            <mat-form-field>
-                                <input
-                                    matInput
-                                    autocomplete="off"
-                                    placeholder="Margin Name"
-                                    aria-label="Margin Name"
-                                    formControlName="templateName"
-                                />
-                            </mat-form-field>
-                        </div>
-                        <div class="col-4 mt-3">
-                            <mat-slide-toggle
-                                color="accent"
-                                formControlName="templateDefault"
-                                >Default</mat-slide-toggle
-                            >
-                        </div>
+        <mat-step formGroupName="firstStep">
+            <ng-template matStepLabel>Margin Name</ng-template>
+            <div class="container-fluid inner-content">
+                <div class="row mt-2 mb-2">
+                    <div class="col-8">
+                        <mat-form-field>
+                            <input
+                                matInput
+                                autocomplete="off"
+                                placeholder="Margin Name"
+                                aria-label="Margin Name"
+                                formControlName="templateName"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-4 mt-3">
+                        <mat-slide-toggle
+                            color="accent"
+                            formControlName="templateDefault"
+                            >Default</mat-slide-toggle
+                        >
                     </div>
                 </div>
-                <div class="text-right mt-2">
-                    <button mat-stroked-button [mat-dialog-close]="" class="mr-1">Cancel</button>
-                    <button mat-stroked-button color="green" matStepperNext>Next</button>
-                </div>
-            </form>
+            </div>
+            <div class="text-right mt-2">
+                <button mat-stroked-button [mat-dialog-close]="" class="mr-1">Cancel</button>
+                <button mat-stroked-button color="green" matStepperNext>Next</button>
+            </div>
         </mat-step>
-        <mat-step [stepControl]="secondFormGroup">
-            <form [formGroup]="secondFormGroup">
-                <ng-template matStepLabel> Edit Tiers</ng-template>
-                <div class="container-fluid inner-content">
-                    <div class="row mb-4 mt-2">
-                        <div class="col-3">
-                            <mat-form-field class="col-8">
-                                <mat-select
-                                    placeholder="Type"
-                                    (selectionChange)="marginTypeChange()"
-                                    formControlName="marginType"
+        <mat-step formGroupName="secondStep">
+            <ng-template matStepLabel> Edit Tiers</ng-template>
+            <div class="container-fluid inner-content">
+                <div class="row mb-4 mt-2">
+                    <div class="col-3">
+                        <mat-form-field class="col-8">
+                            <mat-select
+                                placeholder="Type"
+                                (selectionChange)="marginTypeChange()"
+                                formControlName="marginType"
+                            >
+                                <mat-option
+                                    *ngFor="
+                                        let marginType of marginTypeDataSource
+                                    "
+                                    [value]="marginType.value"
                                 >
-                                    <mat-option
-                                        *ngFor="
-                                            let marginType of marginTypeDataSource
-                                        "
-                                        [value]="marginType.value"
-                                    >
-                                        {{ marginType.text }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
+                                    {{ marginType.text }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
-                    <div
-                        class="row mt-2"
-                        style="border-top: 1px solid; border-top-style: outset;">
-                        <div class="col">
-                            <h5>Volume Tiers</h5>
-                        </div>
+                </div>
+                <div
+                    class="row mt-2"
+                    style="border-top: 1px solid; border-top-style: outset;">
+                    <div class="col">
+                        <h5>Volume Tiers</h5>
                     </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <table class="mat-table" style="max-width: 75%;">
-                                <thead>
-                                    <tr class="mat-header-row">
-                                        <th
-                                            class="text-center mat-header-cell text-lg-center"
-                                        >
-                                            Min. (gal)
-                                        </th>
-                                        <th
-                                            class="text-center mat-header-cell text-lg-center"
-                                        >
-                                            Max. (gal)
-                                        </th>
-                                        <th
-                                            class="text-center mat-header-cell text-lg-center"
-                                            *ngIf="data.marginType > 0"
-                                        >
-                                            Discount
-                                        </th>
-                                        <th
-                                            class="text-center mat-header-cell text-lg-center"
-                                        >
-                                            <span *ngIf="data.marginType < 2"
-                                                >Your ITP Margin</span
-                                            >
-                                            <span *ngIf="data.marginType > 1"
-                                                >All-in</span
-                                            >
-                                        </th>
-                                        <th class="text-center mat-header-cell">
-                                            All-in
-                                        </th>
-                                        <th class="text-center mat-header-cell">
-                                            <button
-                                                ni-button
-                                                size="small"
-                                                [view]="'accent'"
-                                                beforeIcon="fa fa-plus"
-                                                (click)="addCustomerMargin()"
-                                            >
-                                                Add New
-                                            </button>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr
-                                        *ngFor="
-                                            let customerMargin of data.customerMargins
-                                        "
-                                        class="mat-row mat-row-not-hover"
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <table class="mat-table" style="max-width: 75%;">
+                            <thead>
+                                <tr class="mat-header-row">
+                                    <th
+                                        class="text-center mat-header-cell text-lg-center"
                                     >
-                                        <td class="mat-cell text-center">
+                                        Min. (gal)
+                                    </th>
+                                    <th
+                                        class="text-center mat-header-cell text-lg-center"
+                                    >
+                                        Max. (gal)
+                                    </th>
+                                    <th
+                                        class="text-center mat-header-cell text-lg-center"
+                                        *ngIf="marginType === 1"
+                                    >
+                                        Discount
+                                    </th>
+                                    <th class="text-center mat-header-cell text-lg-center">
+                                        <span>Your ITP Margin</span>
+                                    </th>
+                                    <th class="text-center mat-header-cell">
+                                        All-in
+                                    </th>
+                                    <th class="text-center mat-header-cell">
+                                        <button
+                                            ni-button
+                                            size="small"
+                                            [view]="'accent'"
+                                            beforeIcon="fa fa-plus"
+                                            (click)="addCustomerMargin()"
+                                        >
+                                            Add New
+                                        </button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="customerMargins">
+                                <tr
+                                    *ngFor="let customerMargin of customerMarginsFormArray.controls; let i = index"
+                                    class="mat-row mat-row-not-hover"
+                                >
+                                    <td class="mat-cell text-center" [formGroupName]="i">
+                                        <mat-form-field class="col-6">
+                                            <input
+                                                matInput
+                                                class="text-lg-right"
+                                                formControlName="min"
+                                            />
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="mat-cell text-center" [formGroupName]="i">
+                                        <mat-form-field class="col-6">
+                                            <input matInput
+                                                   class="text-lg-right"
+                                                   formControlName="max"
+                                            />
+                                        </mat-form-field>
+                                    </td>
+                                    <td *ngIf="marginType === 1" class="mat-cell text-center" [formGroupName]="i">
+                                        <div>
                                             <mat-form-field class="col-6">
                                                 <input
                                                     matInput
                                                     class="text-lg-right"
-                                                    (keyup.enter)="
-                                                        updateCustomerMargin(
-                                                            customerMargin
-                                                        )
-                                                    "
-                                                    (blur)="
-                                                        updateCustomerMargin(
-                                                            customerMargin
-                                                        )
-                                                    "
-                                                    [(ngModel)]="
-                                                        customerMargin.min
-                                                    "
-                                                    [ngModelOptions]="{
-                                                        standalone: true
-                                                    }"
+                                                    type="number"
+                                                    step="0.01"
+                                                    formControlName="amount"
                                                 />
                                             </mat-form-field>
-                                        </td>
-                                        <td class="mat-cell text-center">
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="mat-cell text-center font-weight-bold font-italic text-right"
+                                        *ngIf="marginType === 0"
+                                        [formGroupName]="i"
+                                    >
+                                        <div>
                                             <mat-form-field class="col-6">
-                                                <input matInput
-                                                       class="text-lg-right"
-                                                       disabled="disabled"
-                                                       [(ngModel)]="customerMargin.max"
-                                                    [ngModelOptions]="{standalone: true}"/>
+                                                <input
+                                                    matInput
+                                                    class="text-lg-right"
+                                                    type="number"
+                                                    step="0.01"
+                                                    formControlName="amount"
+                                                />
                                             </mat-form-field>
-                                        </td>
-                                        <td
-                                            class="mat-cell text-center"
-                                            *ngIf="data.marginType > 0"
-                                        >
-                                            <div>
-                                                <mat-form-field class="col-6">
-                                                    <input
-                                                        matInput
-                                                        class="text-lg-right"
-                                                        type="number"
-                                                        step="0.01"
-                                                        [ngModelOptions]="{
-                                                            standalone: true
-                                                        }"
-                                                        (click)="
-                                                            $event.target.select()
-                                                        "
-                                                        [(ngModel)]="
-                                                            customerMargin.amount
-                                                        "
-                                                        (keyup.enter)="
-                                                            updateCustomerMargin(
-                                                                customerMargin
-                                                            )
-                                                        "
-                                                        (blur)="
-                                                            updateCustomerMargin(
-                                                                customerMargin
-                                                            )
-                                                        "
-                                                    />
-                                                </mat-form-field>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="mat-cell text-center font-weight-bold font-italic text-right"
-                                            *ngIf="data.marginType == 0"
-                                        >
-                                            <div>
-                                                <mat-form-field class="col-6">
-                                                    <input
-                                                        matInput
-                                                        class="text-lg-right"
-                                                        type="number"
-                                                        step="0.01"
-                                                        [ngModelOptions]="{
-                                                            standalone: true
-                                                        }"
-                                                        (click)="
-                                                            $event.target.select()
-                                                        "
-                                                        [(ngModel)]="
-                                                            customerMargin.amount
-                                                        "
-                                                        (focus)="onFocus()"
-                                                        (focusout)="outFocus()"
-                                                        (keyup.enter)="
-                                                            updateCustomerMargin(
-                                                                customerMargin
-                                                            )
-                                                        "
-                                                        (blur)="
-                                                            updateCustomerMargin(
-                                                                customerMargin
-                                                            )
-                                                        "
-                                                    />
-                                                </mat-form-field>
-                                            </div>
-                                        </td>
-                                        <td
-                                            class="mat-cell text-center font-weight-bold font-italic text-right"
-                                            *ngIf="data.marginType > 0"
-                                        >
-                                            <div>
-                                                ${{
-                                                    customerMargin.itp
-                                                        | number: "1.4-4"
-                                                }}
-                                            </div>
-                                        </td>
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="mat-cell text-center font-weight-bold font-italic text-right"
+                                        *ngIf="marginType === 1"
+                                    >
+                                        <div>${{ customerMargin.value.itp | number: "1.4-4" }}</div>
+                                    </td>
 
-                                        <td
-                                            class="mat-cell text-center font-weight-bold font-italic text-right"
-                                            *ngIf="data.marginType < 2"
-                                        >
-                                            <div>
-                                                ${{
-                                                    customerMargin.allin
-                                                        | number: "1.4-4"
-                                                }}
-                                            </div>
-                                        </td>
+                                    <td class="mat-cell text-center font-weight-bold font-italic text-right">
+                                        <div>${{ customerMargin.value.allin | number: "1.4-4" }}</div>
+                                    </td>
 
-                                        <td class="text-right mat-cell">
-                                            <button
-                                                ni-button
-                                                [view]="'error'"
-                                                size="small"
-                                                beforeIcon="fa fa-trash"
-                                                (click)="
-                                                    deleteCustomerMargin(
-                                                        customerMargin
-                                                    )
-                                                "
-                                            >
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                    <td class="text-right mat-cell">
+                                        <button
+                                            ni-button
+                                            [view]="'error'"
+                                            size="small"
+                                            beforeIcon="fa fa-trash"
+                                            (click)="deleteCustomerMargin(i)"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="text-right mt-2">
-                    <button mat-stroked-button [mat-dialog-close]="" class="mr-1">Cancel</button>
-                    <button mat-stroked-button (click)="stepper.reset()" class="mr-1">Reset</button>
-                    <button mat-stroked-button matStepperPrevious class="mr-1">Back</button>
-                    <button mat-stroked-button color="green" matStepperNext>Next</button>
-                </div>
-            </form>
+            </div>
+            <div class="text-right mt-2">
+                <button mat-stroked-button [mat-dialog-close]="" class="mr-1">Cancel</button>
+                <button mat-stroked-button (click)="resetWizard()" class="mr-1">Reset</button>
+                <button mat-stroked-button matStepperPrevious class="mr-1">Back</button>
+                <button mat-stroked-button color="green" matStepperNext>Next</button>
+            </div>
         </mat-step>
-        <mat-step [stepControl]="thirdFormGroup">
-            <form [formGroup]="thirdFormGroup">
-                <ng-template matStepLabel>Create Email</ng-template>
-                <div class="container-fluid inner-content">
-                    <div class="row mt-2 mb-2">
-                        <div class="col">
-                            <mat-form-field>
-                                <input
-                                    matInput
-                                    placeholder="Email Subject"
-                                    formControlName="subject"
-                                    [(ngModel)]="data.subject"
-                                    aria-label="Email Subject"
-                                    autocomplete="off"
-                                />
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="row mt-2 mb-2" style="font-size: 0.8rem;">
-                        <span class="font-weight-bold" style="font-size: 1rem;">
-                            Email Greeting
-                        </span>
-                        &nbsp;&nbsp;&nbsp; The body of the email to accompany
-                        your distribution emails
-                    </div>
-                    <div class="row mt-2 mb-2">
-                        <div class="col">
-                            <ejs-richtexteditor
-                                #typeEmail
-                                id="rteEmail"
-                                placeholder="Greetings from our FBO! Here are our latest prices..."
-                                (focusout)="enableToolbarEmail()"
-                                (focus)="disableToolbarEmail()"
-                                [(value)]="data.email"
-                            ></ejs-richtexteditor>
-                        </div>
-                    </div>
-                    <div class="row mt-2 mb-2" style="font-size: 0.8rem;">
-                        <span class="font-weight-bold" style="font-size: 1rem;">
-                            Fuel Notes
-                        </span>
-                        &nbsp;&nbsp;&nbsp; To show to all FuelerLinx customers
-                    </div>
-                    <div class="row mt-2 mb-2">
-                        <div class="col">
-                            <ejs-richtexteditor
-                                #typeNotes
-                                id="rteNotes"
-                                placeholder="Hours of operation are from 7:00am-6:00pm..."
-                                [toolbarSettings]="{ enable: false }"
-                                [(value)]="data.notes"
-                            ></ejs-richtexteditor>
-                        </div>
+        <mat-step formGroupName="thirdStep">
+            <ng-template matStepLabel>Create Email</ng-template>
+            <div class="container-fluid inner-content">
+                <div class="row mt-2 mb-2">
+                    <div class="col">
+                        <mat-form-field>
+                            <input
+                                matInput
+                                placeholder="Email Subject"
+                                formControlName="subject"
+                                aria-label="Email Subject"
+                                autocomplete="off"
+                            />
+                        </mat-form-field>
                     </div>
                 </div>
-                <div class="text-right mt-2">
-                    <button mat-stroked-button [mat-dialog-close]="" class="mr-1">Cancel</button>
-                    <button mat-stroked-button matStepperPrevious class="mr-1">Back</button>
-                    <button mat-stroked-button color="green" (click)="addTemplateClicked()" class="mr-1">
-                        Save Template
-                    </button>
+                <div class="row mt-2 mb-2" style="font-size: 0.8rem;">
+                    <span class="font-weight-bold" style="font-size: 1rem;">
+                        Email Greeting
+                    </span>
+                    &nbsp;&nbsp;&nbsp; The body of the email to accompany
+                    your distribution emails
                 </div>
-            </form>
+                <div class="row mt-2 mb-2">
+                    <div class="col">
+                        <ejs-richtexteditor
+                            #typeEmail
+                            placeholder="Greetings from our FBO! Here are our latest prices..."
+                            formControlName="email"
+                        ></ejs-richtexteditor>
+                    </div>
+                </div>
+                <div class="row mt-2 mb-2" style="font-size: 0.8rem;">
+                    <span class="font-weight-bold" style="font-size: 1rem;">
+                        Fuel Notes
+                    </span>
+                    &nbsp;&nbsp;&nbsp; To show to all FuelerLinx customers
+                </div>
+                <div class="row mt-2 mb-2">
+                    <div class="col">
+                        <ejs-richtexteditor
+                            #typeNotes
+                            placeholder="Hours of operation are from 7:00am-6:00pm..."
+                            [toolbarSettings]="{ enable: false }"
+                            formControlName="notes"
+                        ></ejs-richtexteditor>
+                    </div>
+                </div>
+            </div>
+            <div class="text-right mt-2">
+                <button mat-stroked-button [mat-dialog-close]="" class="mr-1">Cancel</button>
+                <button mat-stroked-button matStepperPrevious class="mr-1">Back</button>
+                <button mat-stroked-button color="green" (click)="addTemplateClicked()" class="mr-1">
+                    Save Template
+                </button>
+            </div>
         </mat-step>
     </mat-horizontal-stepper>
 </div>
