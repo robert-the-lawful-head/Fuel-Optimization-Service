@@ -26,7 +26,7 @@ import * as SharedEvents from "../../../models/sharedEvents";
 // Components
 import { AccountProfileComponent } from "../../../shared/components/account-profile/account-profile.component";
 import { WindowRef } from "../../../shared/components/zoho-chat/WindowRef";
-import { fboChangedEvent } from "../../../models/sharedEvents";
+import { fboChangedEvent, customerUpdatedEvent } from "../../../models/sharedEvents";
 
 @Component({
     moduleId: module.id,
@@ -110,6 +110,9 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
             if (message === fboChangedEvent) {
                 this.loadLocations();
                 this.loadFboInfo();
+            }
+            if (message === customerUpdatedEvent) {
+                this.loadNeedsAttentionCustomers();
             }
         });
     }

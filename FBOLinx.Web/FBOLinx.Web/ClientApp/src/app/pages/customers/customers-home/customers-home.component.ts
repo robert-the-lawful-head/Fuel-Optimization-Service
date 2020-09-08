@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy } from "@angular/core";
+import { Component, AfterViewInit, OnDestroy, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 import * as _ from "lodash";
@@ -27,7 +27,7 @@ const BREADCRUMBS: any[] = [
     templateUrl: "./customers-home.component.html",
     styleUrls: ["./customers-home.component.scss"],
 })
-export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
+export class CustomersHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     // Public Members
     public pageTitle = "Customers";
     public breadcrumb: any[] = BREADCRUMBS;
@@ -47,6 +47,10 @@ export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
         this.loadCustomers();
         this.loadPricingTemplates();
         this.loadCustomerAircrafts();
+    }
+
+    ngOnInit(): void {
+        this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
     }
 
     ngAfterViewInit() {
