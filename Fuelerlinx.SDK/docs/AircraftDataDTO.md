@@ -29,6 +29,7 @@ Name | Type | Description | Notes
 **AircraftTypeEngineName** | **string** |  | [optional] 
 **FleetGroup** | **string** |  | [optional] 
 **FactorySpecifications** | [**AircraftDTO**](AircraftDTO.md) |  | [optional] 
+**TankeringSettings** | [**UserAircraftTankeringSettingsDTO**](UserAircraftTankeringSettingsDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

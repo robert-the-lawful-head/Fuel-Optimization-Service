@@ -30,6 +30,12 @@ namespace IO.Swagger.Api
         /// <returns>AircraftDataResponse</returns>
         AircraftDataResponse AddTail (AircraftDataDTO body);
         /// <summary>
+        /// Delete tankering settings for an aircraft. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteUserAircraftTankeringSettingsResponse</returns>
+        DeleteUserAircraftTankeringSettingsResponse DeleteUsereAircraftTankeringSettings (int? id);
+        /// <summary>
         /// Get an aircraft by [companyId] and [tailNumber]. The request will fail if the authorized user is not part of the company that the record is attached to.
         /// </summary>
         /// <param name="companyId"></param>
@@ -89,6 +95,12 @@ namespace IO.Swagger.Api
         /// <returns>IFlightPlannerAircraftProfileResponse</returns>
         IFlightPlannerAircraftProfileResponse GetIFlightPlannerProfileByTailNumber (string tailNumber);
         /// <summary>
+        /// Add tankering settings for an aircraft. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostUserAircraftTankeringSettingsResponse</returns>
+        PostUserAircraftTankeringSettingsResponse PostUserAircraftTankeringSettings (PostUserAircraftTankeringSettingsRequest body);
+        /// <summary>
         /// Internal use only - Register an aircraft with iFlightPlanner. 
         /// </summary>
         /// <param name="body"></param>
@@ -101,6 +113,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>AircraftDataResponse</returns>
         AircraftDataResponse UpdateTail (int? tailNumberId, AircraftDataDTO body);
+        /// <summary>
+        /// Update tankering settings for an aircraft. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateUserAircraftTankeringSettingsResponse</returns>
+        UpdateUserAircraftTankeringSettingsResponse UpdateUserAircraftTankeringSettings (UpdateUserAircraftTankeringSettingsRequest body);
     }
   
     /// <summary>
@@ -256,6 +274,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling AddTail: " + response.ErrorMessage, response.ErrorMessage);
     
             return (AircraftDataResponse) ApiClient.Deserialize(response.Content, typeof(AircraftDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Delete tankering settings for an aircraft. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteUserAircraftTankeringSettingsResponse</returns>            
+        public DeleteUserAircraftTankeringSettingsResponse DeleteUsereAircraftTankeringSettings (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteUsereAircraftTankeringSettings");
+            
+    
+            var path = "/api/Aircraft/tankering-settings/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteUsereAircraftTankeringSettings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteUsereAircraftTankeringSettings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteUserAircraftTankeringSettingsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteUserAircraftTankeringSettingsResponse), response.Headers);
         }
     
         /// <summary>
@@ -624,6 +679,40 @@ path = path.Replace("{" + "tailNumber" + "}", ApiClient.ParameterToString(tailNu
         }
     
         /// <summary>
+        /// Add tankering settings for an aircraft. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostUserAircraftTankeringSettingsResponse</returns>            
+        public PostUserAircraftTankeringSettingsResponse PostUserAircraftTankeringSettings (PostUserAircraftTankeringSettingsRequest body)
+        {
+            
+    
+            var path = "/api/Aircraft/tankering-settings";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostUserAircraftTankeringSettings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostUserAircraftTankeringSettings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostUserAircraftTankeringSettingsResponse) ApiClient.Deserialize(response.Content, typeof(PostUserAircraftTankeringSettingsResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Internal use only - Register an aircraft with iFlightPlanner. 
         /// </summary>
         /// <param name="body"></param> 
@@ -694,6 +783,40 @@ path = path.Replace("{" + "tailNumber" + "}", ApiClient.ParameterToString(tailNu
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateTail: " + response.ErrorMessage, response.ErrorMessage);
     
             return (AircraftDataResponse) ApiClient.Deserialize(response.Content, typeof(AircraftDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Update tankering settings for an aircraft. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateUserAircraftTankeringSettingsResponse</returns>            
+        public UpdateUserAircraftTankeringSettingsResponse UpdateUserAircraftTankeringSettings (UpdateUserAircraftTankeringSettingsRequest body)
+        {
+            
+    
+            var path = "/api/Aircraft/tankering-settings";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateUserAircraftTankeringSettings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateUserAircraftTankeringSettings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateUserAircraftTankeringSettingsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateUserAircraftTankeringSettingsResponse), response.Headers);
         }
     
     }

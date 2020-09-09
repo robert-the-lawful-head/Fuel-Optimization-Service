@@ -62,6 +62,13 @@ namespace IO.Swagger.Model {
     public int? UserId { get; set; }
 
     /// <summary>
+    /// Gets or Sets CompanyId
+    /// </summary>
+    [DataMember(Name="companyId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyId")]
+    public int? CompanyId { get; set; }
+
+    /// <summary>
     /// Gets or Sets Success
     /// </summary>
     [DataMember(Name="success", EmitDefaultValue=false)]
@@ -90,6 +97,7 @@ namespace IO.Swagger.Model {
       sb.Append("  RefreshTokenExpiration: ").Append(RefreshTokenExpiration).Append("\n");
       sb.Append("  Username: ").Append(Username).Append("\n");
       sb.Append("  UserId: ").Append(UserId).Append("\n");
+      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  Success: ").Append(Success).Append("\n");
       sb.Append("  Message: ").Append(Message).Append("\n");
       sb.Append("}\n");

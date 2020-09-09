@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **RefreshTokenExpiration** | **DateTime?** |  | [optional] 
 **Username** | **string** |  | [optional] 
 **UserId** | **int?** |  | [optional] 
+**CompanyId** | **int?** |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

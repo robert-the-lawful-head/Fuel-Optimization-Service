@@ -4,7 +4,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **TransactionID** | **int?** |  | [optional] 
-**Amount** | **int?** |  | [optional] 
+**Amount** | **double?** |  | [optional] 
 **PaymentDate** | **DateTime?** |  | [optional] 
 **PaymentEmail** | **string** |  | [optional] 
 **Invoice** | **bool?** |  | [optional] 

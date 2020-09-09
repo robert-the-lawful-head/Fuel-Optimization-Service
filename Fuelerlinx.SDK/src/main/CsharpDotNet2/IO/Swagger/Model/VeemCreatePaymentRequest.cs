@@ -24,7 +24,7 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="amount", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "amount")]
-    public int? Amount { get; set; }
+    public double? Amount { get; set; }
 
     /// <summary>
     /// Gets or Sets PaymentDate

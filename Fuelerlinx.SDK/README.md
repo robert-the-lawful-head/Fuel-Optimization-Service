@@ -103,6 +103,7 @@ Class | Method | HTTP request | Description
 *AircraftApi* | [**AddAircraftForCompany**](docs/AircraftApi.md#addaircraftforcompany) | **POST** /api/Aircraft/company | Add an aircraft to the authorized company.
 *AircraftApi* | [**AddAircraftForUser**](docs/AircraftApi.md#addaircraftforuser) | **POST** /api/Aircraft/user | Add an existing aircraft to the user's account.
 *AircraftApi* | [**AddTail**](docs/AircraftApi.md#addtail) | **POST** /api/Aircraft/tail | Add a new aircraft with a corresponding tail number to be used by a specific company/user.
+*AircraftApi* | [**DeleteUsereAircraftTankeringSettings**](docs/AircraftApi.md#deleteusereaircrafttankeringsettings) | **DELETE** /api/Aircraft/tankering-settings/{id} | Delete tankering settings for an aircraft.
 *AircraftApi* | [**GetAircraftByTailNumber**](docs/AircraftApi.md#getaircraftbytailnumber) | **GET** /api/Aircraft/company/{companyId}/tail/{tailNumber} | Get an aircraft by [companyId] and [tailNumber].
 *AircraftApi* | [**GetAircraftByTailNumberId**](docs/AircraftApi.md#getaircraftbytailnumberid) | **GET** /api/Aircraft/tail/{tailNumberId} | Get an aircraft by the provided [tailNumberId].
 *AircraftApi* | [**GetAircraftDataForCompany**](docs/AircraftApi.md#getaircraftdataforcompany) | **GET** /api/Aircraft/company | Get all aircraft assigned to the authorized company.
@@ -113,8 +114,10 @@ Class | Method | HTTP request | Description
 *AircraftApi* | [**GetIFlightPlannerModel**](docs/AircraftApi.md#getiflightplannermodel) | **GET** /api/Aircraft/iflightplanner/model/{aircraftModelId} | Internal use only - Get a specific iFlightPlanner model by it's Id.
 *AircraftApi* | [**GetIFlightPlannerModelsByType**](docs/AircraftApi.md#getiflightplannermodelsbytype) | **GET** /api/Aircraft/iflightplanner/modelsbytype/{aircraftType} | Internal use only - Get a list of iFlightPlanner aircraft models by the aircraft type (ICAO) code.
 *AircraftApi* | [**GetIFlightPlannerProfileByTailNumber**](docs/AircraftApi.md#getiflightplannerprofilebytailnumber) | **GET** /api/Aircraft/iflightplanner/aircraftprofile/{tailNumber} | Internal use only - Fetch an aircraft profile from iFlightPlanner.
+*AircraftApi* | [**PostUserAircraftTankeringSettings**](docs/AircraftApi.md#postuseraircrafttankeringsettings) | **POST** /api/Aircraft/tankering-settings | Add tankering settings for an aircraft.
 *AircraftApi* | [**RegisterAircraftWithIFlightPlanner**](docs/AircraftApi.md#registeraircraftwithiflightplanner) | **POST** /api/Aircraft/iflightplanner/register | Internal use only - Register an aircraft with iFlightPlanner.
 *AircraftApi* | [**UpdateTail**](docs/AircraftApi.md#updatetail) | **PUT** /api/Aircraft/tail/{tailNumberId} | Update an existing aircraft with the corresponding [tailNumberId].
+*AircraftApi* | [**UpdateUserAircraftTankeringSettings**](docs/AircraftApi.md#updateuseraircrafttankeringsettings) | **PUT** /api/Aircraft/tankering-settings | Update tankering settings for an aircraft.
 *AirportApi* | [**DeleteAirportDetailsByCompany**](docs/AirportApi.md#deleteairportdetailsbycompany) | **DELETE** /api/Airport/company-specific-details/{airportDetailsByCompanyId} | Delete the company-specific details of an airport based on the provided {airportDetailsByCompanyId}.
 *AirportApi* | [**DeleteAirportDetailsByCompanyNotes**](docs/AirportApi.md#deleteairportdetailsbycompanynotes) | **DELETE** /api/Airport/company-specific-details/{airportDetailsByCompanyId}/notes/{noteId} | Delete a company-specific note for a particular airport.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
 *AirportApi* | [**GetAcukwikAirport**](docs/AirportApi.md#getacukwikairport) | **GET** /api/Airport/airport/{airportIdentifier} | Fetch information specifically for the airport with the designated {airportIdentifier}.  The identifier should be the ICAO, IATA, or FAA ID of the airport.
@@ -583,6 +586,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteTransactionAttachmentResponse](docs/DeleteTransactionAttachmentResponse.md)
  - [IO.Swagger.Model.DeleteTransactionFileDataResponse](docs/DeleteTransactionFileDataResponse.md)
  - [IO.Swagger.Model.DeleteTransactionNoteResponse](docs/DeleteTransactionNoteResponse.md)
+ - [IO.Swagger.Model.DeleteUserAircraftTankeringSettingsResponse](docs/DeleteUserAircraftTankeringSettingsResponse.md)
  - [IO.Swagger.Model.DeleteUserFromIFlightPlannerResponse](docs/DeleteUserFromIFlightPlannerResponse.md)
  - [IO.Swagger.Model.DeploymentNotesDTO](docs/DeploymentNotesDTO.md)
  - [IO.Swagger.Model.DeploymentNotesListResponse](docs/DeploymentNotesListResponse.md)
@@ -827,6 +831,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostTransactionNoteResponse](docs/PostTransactionNoteResponse.md)
  - [IO.Swagger.Model.PostTripInfoRequest](docs/PostTripInfoRequest.md)
  - [IO.Swagger.Model.PostTripInfoResponse](docs/PostTripInfoResponse.md)
+ - [IO.Swagger.Model.PostUserAircraftTankeringSettingsRequest](docs/PostUserAircraftTankeringSettingsRequest.md)
+ - [IO.Swagger.Model.PostUserAircraftTankeringSettingsResponse](docs/PostUserAircraftTankeringSettingsResponse.md)
  - [IO.Swagger.Model.PreferenceDTO](docs/PreferenceDTO.md)
  - [IO.Swagger.Model.PreferencesDTO](docs/PreferencesDTO.md)
  - [IO.Swagger.Model.PriceSheetFileDataDTO](docs/PriceSheetFileDataDTO.md)
@@ -1043,9 +1049,12 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateTransactionNoteResponse](docs/UpdateTransactionNoteResponse.md)
  - [IO.Swagger.Model.UpdateTransactionRequest](docs/UpdateTransactionRequest.md)
  - [IO.Swagger.Model.UpdateTransactionResponse](docs/UpdateTransactionResponse.md)
+ - [IO.Swagger.Model.UpdateUserAircraftTankeringSettingsRequest](docs/UpdateUserAircraftTankeringSettingsRequest.md)
+ - [IO.Swagger.Model.UpdateUserAircraftTankeringSettingsResponse](docs/UpdateUserAircraftTankeringSettingsResponse.md)
  - [IO.Swagger.Model.UserAircraftDTO](docs/UserAircraftDTO.md)
  - [IO.Swagger.Model.UserAircraftListResponse](docs/UserAircraftListResponse.md)
  - [IO.Swagger.Model.UserAircraftResponse](docs/UserAircraftResponse.md)
+ - [IO.Swagger.Model.UserAircraftTankeringSettingsDTO](docs/UserAircraftTankeringSettingsDTO.md)
  - [IO.Swagger.Model.UserAuthTokenFromAccessTokenRequest](docs/UserAuthTokenFromAccessTokenRequest.md)
  - [IO.Swagger.Model.UserAuthTokenFromCredentialsRequest](docs/UserAuthTokenFromCredentialsRequest.md)
  - [IO.Swagger.Model.UserAuthTokenResponse](docs/UserAuthTokenResponse.md)
