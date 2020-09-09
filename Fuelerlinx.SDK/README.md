@@ -231,6 +231,7 @@ Class | Method | HTTP request | Description
 *FlightTypeApi* | [**GetFlightTypeMappingList**](docs/FlightTypeApi.md#getflighttypemappinglist) | **GET** /api/FlightType/list/mapping | Internal use only - Fetch all flight type mappings.
 *FlightTypeApi* | [**PostFlightTypeMapping**](docs/FlightTypeApi.md#postflighttypemapping) | **POST** /api/FlightType/mapping | Internal use only - Add a flight type mapping record.
 *FlightTypeApi* | [**UpdateFlightTypeMapping**](docs/FlightTypeApi.md#updateflighttypemapping) | **PUT** /api/FlightType/mapping | Internal use only - Update a flight type mapping record.
+*FuelPricingApi* | [**DeleteWeeklyPricingForFuelVendor**](docs/FuelPricingApi.md#deleteweeklypricingforfuelvendor) | **DELETE** /api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId} | Internal use only - delete all weekly pricing records for a particular fuel vendor.
 *FuelPricingApi* | [**GetAssociatedDetailsForFuelOption**](docs/FuelPricingApi.md#getassociateddetailsforfueloption) | **POST** /api/FuelPricing/associated-details | 
 *FuelPricingApi* | [**GetCurrentPricingForLocation**](docs/FuelPricingApi.md#getcurrentpricingforlocation) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
 *FuelPricingApi* | [**GetCurrentPricingForLocationAndFlightType**](docs/FuelPricingApi.md#getcurrentpricingforlocationandflighttype) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos}/flight-type/{flightType} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
@@ -588,6 +589,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteTransactionNoteResponse](docs/DeleteTransactionNoteResponse.md)
  - [IO.Swagger.Model.DeleteUserAircraftTankeringSettingsResponse](docs/DeleteUserAircraftTankeringSettingsResponse.md)
  - [IO.Swagger.Model.DeleteUserFromIFlightPlannerResponse](docs/DeleteUserFromIFlightPlannerResponse.md)
+ - [IO.Swagger.Model.DeleteWeeklyPricingResponse](docs/DeleteWeeklyPricingResponse.md)
  - [IO.Swagger.Model.DeploymentNotesDTO](docs/DeploymentNotesDTO.md)
  - [IO.Swagger.Model.DeploymentNotesListResponse](docs/DeploymentNotesListResponse.md)
  - [IO.Swagger.Model.DeploymentNotesResponse](docs/DeploymentNotesResponse.md)
