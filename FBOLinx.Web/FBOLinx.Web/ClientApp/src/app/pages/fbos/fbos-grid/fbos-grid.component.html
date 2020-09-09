@@ -66,6 +66,7 @@
                         [view]="'accent'"
                         beforeIcon="fa fa-plus"
                         (click)="newRecord(); $event.stopPropagation()"
+                        *ngIf="canManageFbo"
                     >
                         Add New
                     </button>
