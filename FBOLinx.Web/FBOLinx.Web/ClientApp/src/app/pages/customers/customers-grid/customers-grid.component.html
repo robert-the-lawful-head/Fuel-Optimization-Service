@@ -145,6 +145,18 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="certificateTypeDescription">
+                <th mat-header-cell
+                    *matHeaderCellDef
+                    mat-sort-header
+                    (click)="alertHeader('certificateTypeDescription')">
+                    Certificate Type
+                </th>
+                <td mat-cell *matCellDef="let customer">
+                    {{ customer.certificateTypeDescription }}
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="pricingTemplateName">
                 <th mat-header-cell
                     *matHeaderCellDef
@@ -177,7 +189,7 @@
                     <span *ngIf="!customer.active"
                           style="color: red; font-weight: bold;">Inactive</span>
                     <span *ngIf="!customer.isPricingExpired && customer.active">
-
+                        {{ customer.allInPrice | currency: "USD" }}
                     </span>
                     <span *ngIf="customer.isPricingExpired && customer.active"
                           style="color: red; font-weight: bold;">Expired</span>

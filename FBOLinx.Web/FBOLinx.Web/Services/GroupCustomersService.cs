@@ -55,6 +55,7 @@ namespace FBOLinx.Web.Services
                     cibg.ShowJetA = true;
                     cibg.Show100Ll = false;
                     cibg.Suspended = false;
+                    cibg.CertificateType = cust.CertificateType;
 
                     _context.CustomerInfoByGroup.Add(cibg);
                     _context.SaveChanges();

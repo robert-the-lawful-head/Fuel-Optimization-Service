@@ -19,7 +19,7 @@
             <span matSuffix>Gal.</span>
         </mat-form-field>
     </div>
-    <div *ngIf="data.expirationDate==null">
+    <div>
         <mat-form-field>
             <input matInput [(ngModel)]="data.expirationDate" [matDatepicker]="categoryDatePicker" placeholder="Expiration Date" disabled>
             <mat-datepicker-toggle matSuffix [for]="categoryDatePicker"></mat-datepicker-toggle>
@@ -57,6 +57,11 @@
         <mat-form-field>
             <input matInput type="number" placeholder="Max. Wingspan" aria-label="Max. Wingspan" [(ngModel)]="data.categoryMaxValue">
             <span matSuffix>Feet</span>
+        </mat-form-field>
+    </div>
+    <div *ngIf="data.categoryType == 5">
+        <mat-form-field>
+            <input matInput type="text" placeholder="Tail Number" aria-label="Tail Number" [(ngModel)]="data.categoryStringValue">
         </mat-form-field>
     </div>
 </div>

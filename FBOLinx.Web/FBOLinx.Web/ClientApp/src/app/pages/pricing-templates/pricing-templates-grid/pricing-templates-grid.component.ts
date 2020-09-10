@@ -118,18 +118,11 @@ export class PricingTemplatesGridComponent implements OnInit {
     }
 
     public addNewPricingTemplate() {
-        const dialogRef = this.newTemplateDialog.open(
-            PricingTemplatesDialogNewTemplateComponent,
-            {
-                data: {
-                    fboId: this.sharedService.currentUser.fboId,
-                    marginType: 1,
-                    customerMargins: [
-                        { min: 1, max: 99999, amount: 0, itp: 0, allin: 0 },
-                    ],
-                },
-            }
-        );
+        const dialogRef = this.newTemplateDialog.open(PricingTemplatesDialogNewTemplateComponent,{
+            data: {
+                fboId: this.sharedService.currentUser.fboId,
+            },
+        });
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {

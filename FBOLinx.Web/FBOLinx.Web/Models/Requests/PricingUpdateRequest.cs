@@ -9,6 +9,7 @@ namespace FBOLinx.Web.Models.Requests
     {
         public double? Retail { get; set; }
         public double? Cost { get; set; }
-        public DateTime ExpirationDate { get; set; }
+        public DateTime? EffectiveDate { get; set; }
+        public DateTime? ExpirationDate { get; set; }
     }
 }

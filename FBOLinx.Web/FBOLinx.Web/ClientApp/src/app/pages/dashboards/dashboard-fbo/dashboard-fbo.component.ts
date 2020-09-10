@@ -38,6 +38,7 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     public locationChangedSubscription: any;
     public filterStartDate: Date;
     public filterEndDate: Date;
+    public pastThirtyDaysStartDate: Date;
 
     @ViewChild("statisticsTotalOrders")
     private statisticsTotalOrders: StatisticsTotalOrdersComponent;
@@ -51,6 +52,7 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     constructor(private sharedService: SharedService) {
         this.filterStartDate = new Date(moment().add(-12, "M").format("MM/DD/YYYY"));
         this.filterEndDate = new Date(moment().format("MM/DD/YYYY"));
+        this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
         this.fboid = this.sharedService.currentUser.fboId;
         this.groupid = this.sharedService.currentUser.groupId;
         this.sharedService.titleChange(this.pageTitle);

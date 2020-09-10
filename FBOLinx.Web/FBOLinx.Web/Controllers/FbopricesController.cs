@@ -290,7 +290,7 @@ namespace FBOLinx.Web.Controllers
         [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
         public async Task<IActionResult> UpdatePricing([FromBody] PricingUpdateRequest request)
         {
-            if ((request.Retail == null && request.Cost == null) || request.ExpirationDate == null)
+            if (request.Retail == null && request.Cost == null)
             {
                 return BadRequest(new { message = "Invalid body request!" });
             }
@@ -302,12 +302,15 @@ namespace FBOLinx.Web.Controllers
 
                 var user = await _context.User.FindAsync(claimedId);
 
+                var effectiveFrom = request.EffectiveDate != null ? request.EffectiveDate : DateTime.UtcNow;
+                var effectiveTo = request.ExpirationDate != null ? request.ExpirationDate : DateTime.MaxValue;
+
                 if (request.Retail != null)
                 {
                     var retailPrice = new Fboprices
                     {
-                        EffectiveFrom = DateTime.UtcNow,
-                        EffectiveTo = request.ExpirationDate,
+                        EffectiveFrom = effectiveFrom,
+                        EffectiveTo = effectiveTo,
                         Product = "JetA Retail",
                         Price = request.Retail,
                         Fboid = user.FboId
@@ -317,6 +320,10 @@ namespace FBOLinx.Web.Controllers
                                                    .ToList();
                     foreach (Fboprices oldPrice in oldPrices)
                     {
+                        if (oldPrice.Expired != true && oldPrice.EffectiveTo > effectiveTo)
+                        {
+                            oldPrice.EffectiveTo = effectiveTo;
+                        }
                         oldPrice.Expired = true;
                         _context.Fboprices.Update(oldPrice);
                     }
@@ -326,8 +333,8 @@ namespace FBOLinx.Web.Controllers
                 {
                     var costPrice = new Fboprices
                     {
-                        EffectiveFrom = DateTime.UtcNow,
-                        EffectiveTo = request.ExpirationDate,
+                        EffectiveFrom = effectiveFrom,
+                        EffectiveTo = effectiveTo,
                         Product = "JetA Cost",
                         Price = request.Cost,
                         Fboid = user.FboId
@@ -337,6 +344,10 @@ namespace FBOLinx.Web.Controllers
                                                    .ToList();
                     foreach (Fboprices oldPrice in oldPrices)
                     {
+                        if (oldPrice.Expired != true && oldPrice.EffectiveTo > effectiveTo)
+                        {
+                            oldPrice.EffectiveTo = effectiveTo;
+                        }
                         oldPrice.Expired = true;
                         _context.Fboprices.Update(oldPrice);
                     }

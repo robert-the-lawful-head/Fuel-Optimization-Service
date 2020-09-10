@@ -60,6 +60,7 @@ export class AnalyticsHomeComponent implements OnInit {
     public breadcrumb: any[] = BREADCRUMBS;
     public filterStartDate: Date;
     public filterEndDate: Date;
+    public pastThirtyDaysStartDate: Date;
 
     constructor(
         private sharedService: SharedService,
@@ -67,6 +68,7 @@ export class AnalyticsHomeComponent implements OnInit {
     ) {
         this.filterStartDate = new Date(moment().add(-12, "M").format("MM/DD/YYYY"));
         this.filterEndDate = new Date(moment().format("MM/DD/YYYY"));
+        this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
         this.sharedService.titleChange(this.pageTitle);
     }
 

@@ -613,7 +613,8 @@ namespace FBOLinx.Web.Controllers
                     request.ICAO = airport.Icao;
                 }
 
-                FuelerLinxUpliftsByLocationResponseContent result = await _fuelerLinxService.GetOrderCountByLocation(request);
+                var result = _fuelerLinxService.GetTransactionsCountForAirport(new FBOLinxOrdersRequest()
+                    {EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = request.ICAO});
 
                 return Ok(result);
             }
@@ -850,11 +851,11 @@ namespace FBOLinx.Web.Controllers
 
                 request.Icao = icao;
 
-                int airportOrdersCount = _context.FuelReq
-                                            .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime)
+                int fboOrderCount = _context.FuelReq
+                                            .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd < request.EndDateTime.GetValueOrDefault().AddDays(1))
                                             .Count();
 
-                int totalOrdersCount = _fuelerLinxService.GetTransactionsDirectOrdersCount(request).Result.GetValueOrDefault();
+                int directOrdersCount = _fuelerLinxService.GetTransactionsDirectOrdersCount(request).Result.GetValueOrDefault();
 
                 int fuelerlinxOrdersCount = _fuelerLinxService.GetTransactionsCountForAirport(request).Result.GetValueOrDefault();
 
@@ -863,17 +864,17 @@ namespace FBOLinx.Web.Controllers
                                 new NgxChartBarChartItemType
                                 {
                                     Name = "My Total Orders",
-                                    Value = airportOrdersCount
+                                    Value = fboOrderCount
                                 },
                                 new NgxChartBarChartItemType
                                 {
                                     Name = "Other FBO's Orders",
-                                    Value = totalOrdersCount
+                                    Value = (directOrdersCount - fboOrderCount)
                                 },
                                 new NgxChartBarChartItemType
                                 {
                                     Name = "Contract/Reseller Orders",
-                                    Value = fuelerlinxOrdersCount
+                                    Value = (fuelerlinxOrdersCount - directOrdersCount)
                                 }
                             };
                 return Ok(chartData);

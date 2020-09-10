@@ -70,7 +70,8 @@ namespace FBOLinx.Web.Models
         [Column("Show100LL")]
         public bool? Show100Ll { get; set; }
         public bool? Suspended { get; set; }
-        
+        public CustomerInfoByGroup.CertificateTypes? CertificateType { get; set; }
+
         [InverseProperty("Customer")]
         public CompaniesByGroup CompanyByGroup { get; set; }
 

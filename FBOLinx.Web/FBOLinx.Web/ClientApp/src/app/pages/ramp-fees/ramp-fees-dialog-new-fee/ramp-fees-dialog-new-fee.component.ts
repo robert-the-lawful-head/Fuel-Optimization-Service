@@ -18,6 +18,7 @@ export interface NewRampFeeDialogData {
     categoryType: number;
     categoryMinValue: number;
     categoryMaxValue: number;
+    categoryStringValue: string;
 }
 
 @Component({
@@ -27,9 +28,10 @@ export interface NewRampFeeDialogData {
 })
 export class RampFeesDialogNewFeeComponent {
     public categoryTypes: any[] = [
-        { text: "Aircraft Type", value: 2 },
+        { text: "Aircraft Make/Model", value: 2 },
         { text: "Weight Range", value: 3 },
         { text: "Wingspan", value: 4 },
+        { text: "Tail Number", value: 5 },
     ];
     public aircraftTypes: any[];
     subscription: Subscription;
