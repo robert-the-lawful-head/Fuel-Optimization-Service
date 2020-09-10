@@ -13,7 +13,7 @@ namespace FBOLinx.Web.DTO
         public int? CompanyByGroupId { get; set; }
         public string Company { get; set; }
         public int? PricingTemplateId { get; set; }
-        public Customers.CustomerSources? DefaultCustomerType { get; set; }
+        public int? DefaultCustomerType { get; set; }
         public bool? Suspended { get; set; }
         public int? FuelerLinxId { get; set; }
         public bool? Network { get; set; } = false;
@@ -55,14 +55,6 @@ namespace FBOLinx.Web.DTO
                 if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
                     return Math.Abs(CustomerMarginAmount.GetValueOrDefault());
                 return 0;
-            }
-        }
-
-        public string DefaultCustomerTypeDescription
-        {
-            get
-            {
-                return Utilities.Enum.GetDescription(DefaultCustomerType ?? Customers.CustomerSources.NotSpecified);
             }
         }
 

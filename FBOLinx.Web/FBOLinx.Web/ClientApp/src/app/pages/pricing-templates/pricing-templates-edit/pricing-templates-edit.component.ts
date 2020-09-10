@@ -115,7 +115,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             });
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
-                this.canSave= true;
+                this.canSave = true;
             });
 
             this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(type => {

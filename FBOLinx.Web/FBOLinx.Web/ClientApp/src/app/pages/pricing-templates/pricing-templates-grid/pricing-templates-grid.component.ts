@@ -10,6 +10,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import {MatSort, SortDirection} from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
+import {Store} from "@ngrx/store";
 
 // Services
 import { SharedService } from "../../../layouts/shared-service";
@@ -19,9 +20,9 @@ import { CustomcustomertypesService } from "../../../services/customcustomertype
 import { PricingTemplatesDialogNewTemplateComponent } from "../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component";
 import { PricingTemplatesDialogCopyTemplateComponent } from "../pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component";
 import { PricingTemplatesDialogDeleteWarningComponent } from "../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component";
-import {getPricingTemplateState} from "../../../store/selectors/pricing-template";
-import {Store} from "@ngrx/store";
-import {State} from "../../../store/reducers";
+
+import { getPricingTemplateState } from "../../../store/selectors/pricing-template";
+import { State } from "../../../store/reducers";
 
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
@@ -54,7 +55,6 @@ export class PricingTemplatesGridComponent implements OnInit {
         "copy",
         "delete",
     ];
-    public resultsLength = 0;
 
     public pageIndexTemplate = 0;
     public pageSizeTemplate = 50;
@@ -82,25 +82,12 @@ export class PricingTemplatesGridComponent implements OnInit {
             return;
         }
 
-        if (localStorage.getItem("pageIndexTemplate")) {
-            this.paginator.pageIndex = localStorage.getItem("pageIndexTemplate") as any;
-        } else {
-            this.paginator.pageIndex = 0;
-        }
-
-        if (sessionStorage.getItem("pageSizeValueTemplate")) {
-            this.pageSizeTemplate = sessionStorage.getItem("pageSizeValueTemplate") as any;
-        } else {
-            this.pageSizeTemplate = 50;
-        }
-
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.pricingTemplatesDataSource = new MatTableDataSource(
             this.pricingTemplatesData
         );
         this.pricingTemplatesDataSource.sort = this.sort;
         this.pricingTemplatesDataSource.paginator = this.paginator;
-        this.resultsLength = this.pricingTemplatesData.length;
 
         this.updateModel.currenttemplate = 0;
 

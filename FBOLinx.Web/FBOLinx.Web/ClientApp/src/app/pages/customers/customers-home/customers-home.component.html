@@ -20,7 +20,8 @@
                     <app-customers-grid
                         [customersData]="customersData"
                         [pricingTemplatesData]="pricingTemplatesData"
-                        [aircraftsData]="aircraftsData"
+                        [aircraftData]="aircraftData"
+                        [customerGridState]="customerGridState"
                         (editCustomerClicked)="editCustomerClicked($event)"
                         (customerDeleted)="customerDeleted()"
                     ></app-customers-grid>
@@ -32,13 +33,13 @@
         </mat-tab>
         <mat-tab label="Aircraft">
             <div class="table-container">
-                <div *ngIf="pricingTemplatesData && aircraftsData">
+                <div *ngIf="pricingTemplatesData && aircraftData">
                     <app-aircrafts-grid
                         [pricingTemplatesData]="pricingTemplatesData"
-                        [aircraftsData]="aircraftsData"
+                        [aircraftsData]="aircraftData"
                     ></app-aircrafts-grid>
                 </div>
-                <div *ngIf="!pricingTemplatesData || !aircraftsData">
+                <div *ngIf="!pricingTemplatesData || !aircraftData">
                     <mat-spinner></mat-spinner>
                 </div>
             </div>
