@@ -72,12 +72,7 @@ export class ContactsGridComponent implements OnInit {
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
 
-        FlatfileImporter.setVersion(2);
         this.initializeImporter();
-        this.importer.setCustomer({
-            userId: "1",
-            name: "WebsiteImport",
-        });
     }
 
     // Public Methods
@@ -116,7 +111,7 @@ export class ContactsGridComponent implements OnInit {
         }
     }
 
-    public EditContactPopup(record) {
+    public editContactPopup(record) {
         const dialogRef = this.newContactDialog.open(
             ContactsDialogNewContactComponent,
             {
@@ -251,6 +246,7 @@ export class ContactsGridComponent implements OnInit {
     }
 
     initializeImporter() {
+        FlatfileImporter.setVersion(2);
         this.importer = new FlatfileImporter(this.LICENSE_KEY, {
             fields: [
                 {
@@ -355,6 +351,10 @@ export class ContactsGridComponent implements OnInit {
             managed: true,
             allowCustom: true,
             disableManualInput: false,
+        });
+        this.importer.setCustomer({
+            userId: "1",
+            name: "WebsiteImport",
         });
     }
 }

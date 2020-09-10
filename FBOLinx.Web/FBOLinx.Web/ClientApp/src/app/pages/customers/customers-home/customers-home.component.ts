@@ -1,15 +1,19 @@
-import { Component, AfterViewInit, OnDestroy } from "@angular/core";
-import { Router } from "@angular/router";
-
-import * as _ from "lodash";
+import {Component, OnDestroy, OnInit} from "@angular/core";
+import {Router} from "@angular/router";
+import {Store} from "@ngrx/store";
 
 // Services
-import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
-import { SharedService } from "../../../layouts/shared-service";
-import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
-import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
+import {CustomerinfobygroupService} from "../../../services/customerinfobygroup.service";
+import {SharedService} from "../../../layouts/shared-service";
+import {PricingtemplatesService} from "../../../services/pricingtemplates.service";
+import {CustomeraircraftsService} from "../../../services/customeraircrafts.service";
 
-import * as SharedEvents from "../../../models/sharedEvents";
+import {locationChangedEvent} from "../../../models/sharedEvents";
+
+import {getCustomerGridState} from "../../../store/selectors/customer";
+import {State} from "../../../store/reducers";
+import {customerGridSet} from "../../../store/actions/customer";
+import {CustomerGridState} from "../../../store/reducers/customer";
 
 const BREADCRUMBS: any[] = [
     {
@@ -27,32 +31,37 @@ const BREADCRUMBS: any[] = [
     templateUrl: "./customers-home.component.html",
     styleUrls: ["./customers-home.component.scss"],
 })
-export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
+export class CustomersHomeComponent implements OnInit, OnDestroy {
     // Public Members
-    public pageTitle = "Customers";
-    public breadcrumb: any[] = BREADCRUMBS;
-    public customersData: any[];
-    public aircraftsData: any[];
-    public pricingTemplatesData: any[];
-    public locationChangedSubscription: any;
+    pageTitle = "Customers";
+    breadcrumb: any[] = BREADCRUMBS;
+    customersData: any[];
+    aircraftData: any[];
+    pricingTemplatesData: any[];
+    locationChangedSubscription: any;
+    customerGridState: CustomerGridState;
 
     constructor(
+        private store: Store<State>,
         private router: Router,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
-        private customerAircraftsService: CustomeraircraftsService
+        private customerAircraftService: CustomeraircraftsService
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.loadCustomers();
         this.loadPricingTemplates();
-        this.loadCustomerAircrafts();
+        this.loadCustomerAircraft();
     }
 
-    ngAfterViewInit() {
+    ngOnInit(): void {
+        this.store.select(getCustomerGridState).subscribe(state => {
+            this.customerGridState = state;
+        });
         this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
-                if (message === SharedEvents.locationChangedEvent) {
+                if (message === locationChangedEvent) {
                     this.loadCustomers();
                     this.loadPricingTemplates();
                 }
@@ -66,13 +75,21 @@ export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    public editCustomerClicked(record) {
+    editCustomerClicked(event) {
+        this.store.dispatch(customerGridSet({
+            filter: event.filter,
+            page: event.page,
+            order: event.order,
+            orderBy: event.orderBy,
+            filterType: event.filterType,
+        }));
+
         this.router.navigate([
-            "/default-layout/customers/" + record.customerInfoByGroupId,
-        ]);
+            "/default-layout/customers/" + event.customerInfoByGroupId,
+        ]).then();
     }
 
-    public customerDeleted() {
+    customerDeleted() {
         this.loadCustomers();
     }
 
@@ -98,12 +115,12 @@ export class CustomersHomeComponent implements AfterViewInit, OnDestroy {
             });
     }
 
-    private loadCustomerAircrafts() {
-        this.aircraftsData = null;
-        this.customerAircraftsService
+    private loadCustomerAircraft() {
+        this.aircraftData = null;
+        this.customerAircraftService
             .getCustomerAircraftsByGroupAndFbo(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
-                this.aircraftsData = data;
+                this.aircraftData = data;
             });
     }
 }
