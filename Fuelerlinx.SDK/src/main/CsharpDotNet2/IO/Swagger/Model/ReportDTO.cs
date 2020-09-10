@@ -68,6 +68,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "chartSettings")]
     public ChartSettings ChartSettings { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Filter
+    /// </summary>
+    [DataMember(Name="filter", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "filter")]
+    public ReportFilter Filter { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -84,6 +91,7 @@ namespace IO.Swagger.Model {
       sb.Append("  DataOptions: ").Append(DataOptions).Append("\n");
       sb.Append("  CreationDateUtc: ").Append(CreationDateUtc).Append("\n");
       sb.Append("  ChartSettings: ").Append(ChartSettings).Append("\n");
+      sb.Append("  Filter: ").Append(Filter).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
