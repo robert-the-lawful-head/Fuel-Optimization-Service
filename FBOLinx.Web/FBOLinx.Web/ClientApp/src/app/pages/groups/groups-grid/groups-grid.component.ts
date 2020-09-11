@@ -20,17 +20,6 @@ import { SharedService } from "../../../layouts/shared-service";
 import { GroupsDialogNewGroupComponent } from "../groups-dialog-new-group/groups-dialog-new-group.component";
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 
-const BREADCRUMBS: any[] = [
-    {
-        title: "Main",
-        link: "/default-layout",
-    },
-    {
-        title: "Groups",
-        link: "",
-    },
-];
-
 @Component({
     selector: "app-groups-grid",
     templateUrl: "./groups-grid.component.html",
@@ -45,7 +34,6 @@ export class GroupsGridComponent implements OnInit {
 
     // Public Members
     public pageTitle = "Groups";
-    public breadcrumb: any[] = BREADCRUMBS;
     public groupsDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = ["group", "active", "delete"];
     public resultsLength = 0;
@@ -70,6 +58,7 @@ export class GroupsGridComponent implements OnInit {
 
     ngOnInit() {
         this.sharedService.titleChange(this.pageTitle);
+
         if (!this.groupsData) {
             return;
         }
@@ -78,7 +67,6 @@ export class GroupsGridComponent implements OnInit {
         this.groupsDataSource.sort = this.sort;
         this.groupsDataSource.paginator = this.paginator;
         this.resultsLength = this.groupsData.length;
-
 
         if (localStorage.getItem("pageIndexGroups")) {
             this.paginator.pageIndex = localStorage.getItem("pageIndexGroups") as any;

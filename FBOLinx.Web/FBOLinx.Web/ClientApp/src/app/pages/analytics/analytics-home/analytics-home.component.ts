@@ -3,6 +3,11 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { NgxUiLoaderService } from "ngx-ui-loader";
 
 import * as moment from "moment";
+import { Store } from "@ngrx/store";
+
+import { State } from "../../../store/reducers";
+import { breadcrumbSet } from "../../../store/actions";
+
 // Services
 import { SharedService } from "../../../layouts/shared-service";
 
@@ -63,17 +68,20 @@ export class AnalyticsHomeComponent implements OnInit {
     public pastThirtyDaysStartDate: Date;
 
     constructor(
+        private store: Store<State>,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
         this.filterStartDate = new Date(moment().add(-12, "M").format("MM/DD/YYYY"));
         this.filterEndDate = new Date(moment().format("MM/DD/YYYY"));
-        this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
+        this.pastThirtyDaysStartDate = new Date(moment().add(-30, "days").format("MM/DD/YYYY"));
         this.sharedService.titleChange(this.pageTitle);
     }
 
     ngOnInit() {
         this.ngxLoader.startLoader("loader-01");
+
+        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
     }
 
     public applyDateFilterChange() {

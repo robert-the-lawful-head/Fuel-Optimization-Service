@@ -42,11 +42,11 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
                 if (data && data.result) {
                     this.totalOrders = data.result;
                 }
-                //if (data.totalOrdersByMonth) {
+                // if (data.totalOrdersByMonth) {
                 //    for (const orders of data.totalOrdersByMonth) {
                 //        this.totalOrders = orders.count;
                 //    }
-                //}
+                // }
                 this.icao = data.icao;
             }, (error: any) => {
             });

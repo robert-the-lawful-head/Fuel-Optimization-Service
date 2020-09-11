@@ -1,5 +1,3 @@
-<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
-
 <div *ngIf="!groupInfo">
     <mat-spinner></mat-spinner>
 </div>
@@ -11,7 +9,7 @@
             <!--FBOs Tab-->
             <mat-tab label="FBOs">
                 <div class="mt-2">
-                    <app-fbos-home [groupInfo]="groupInfo"></app-fbos-home>
+                    <app-fbos-home [embed]="true" [groupInfo]="groupInfo"></app-fbos-home>
                 </div>
                 
             </mat-tab>

@@ -5,6 +5,10 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 
 import {combineLatest} from "rxjs";
 import {find} from "lodash";
+import { Store } from "@ngrx/store";
+
+import { State } from "../../../store/reducers";
+import { breadcrumbSet } from "../../../store/actions";
 
 // Services
 import {CustomcustomertypesService} from "../../../services/customcustomertypes.service";
@@ -45,7 +49,6 @@ const BREADCRUMBS: any[] = [
 export class CustomersEditComponent implements OnInit {
     // Members
     pageTitle = "Edit Customer";
-    breadcrumb: any[] = BREADCRUMBS;
 
     customerInfoByGroup: any;
     contactsData: any[];
@@ -63,6 +66,7 @@ export class CustomersEditComponent implements OnInit {
     canSave: boolean;
 
     constructor(
+        private store: Store<State>,
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
@@ -81,6 +85,7 @@ export class CustomersEditComponent implements OnInit {
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
+        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
     }
 
     async ngOnInit() {

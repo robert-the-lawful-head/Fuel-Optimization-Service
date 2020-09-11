@@ -13,6 +13,10 @@ import { combineLatest } from "rxjs";
 import { forOwn, differenceBy } from "lodash";
 
 import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor";
+import { Store } from "@ngrx/store";
+
+import { State } from "../../../store/reducers";
+import { breadcrumbSet } from "../../../store/actions";
 
 // Services
 import { CustomermarginsService } from "../../../services/customermargins.service";
@@ -62,6 +66,7 @@ export class PricingTemplatesEditComponent implements OnInit {
     jetARetail: number;
 
     constructor(
+        private store: Store<State>,
         private route: ActivatedRoute,
         private router: Router,
         private formBuilder: FormBuilder,
@@ -79,6 +84,8 @@ export class PricingTemplatesEditComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
+
         // Check for passed in id
         const id = this.route.snapshot.paramMap.get("id");
 
