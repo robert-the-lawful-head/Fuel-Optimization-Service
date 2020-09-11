@@ -125,7 +125,8 @@ Class | Method | HTTP request | Description
 *AirportApi* | [**GetAirportDetailsByCompanyByIcao**](docs/AirportApi.md#getairportdetailsbycompanybyicao) | **GET** /api/Airport/company-specific-details/icao/{airportIdentifier} | Fetch company-specific details for an airport based on the provided {airportIdentifier}.  The identifier should be the ICAO, IATA, or FAA ID of the airport.  These details are unique for each flight department.
 *AirportApi* | [**GetAirportDetailsByCompanyNotes**](docs/AirportApi.md#getairportdetailsbycompanynotes) | **GET** /api/Airport/company-specific-details/{airportDetailsByCompanyId}/notes | Fetch the company-specific notes for a particular airport based on the provided {airportDetailsByCompanyId}.
 *AirportApi* | [**GetAllAirports**](docs/AirportApi.md#getallairports) | **GET** /api/Airport/airports | Internal use only - Fetch all airports in the Acukwik database.  This will included FBO/Handler information as well.
-*AirportApi* | [**GetDistinctAirportCountries**](docs/AirportApi.md#getdistinctairportcountries) | **GET** /api/Airport/countries/distinct | 
+*AirportApi* | [**GetAverageAndMinPriceByAirportList**](docs/AirportApi.md#getaverageandminpricebyairportlist) | **GET** /api/Airport/average-and-min-price/list | Fetches the min. and avg. prices at each airport for the authenticated company.
+*AirportApi* | [**GetDistinctAirportCountries**](docs/AirportApi.md#getdistinctairportcountries) | **GET** /api/Airport/countries/distinct | Fetch the unique countries found in the airport DB.
 *AirportApi* | [**GetGeneralAirportInfoList**](docs/AirportApi.md#getgeneralairportinfolist) | **GET** /api/Airport/general-info/list | 
 *AirportApi* | [**PostAirportDetailsByCompany**](docs/AirportApi.md#postairportdetailsbycompany) | **POST** /api/Airport/company-specific-details | Add a new record for company-specific details of an airport.  These details are unique for each flight department.
 *AirportApi* | [**PostAirportDetailsByCompanyNotes**](docs/AirportApi.md#postairportdetailsbycompanynotes) | **POST** /api/Airport/company-specific-details/notes | Add a new company-specific note for an airport.
@@ -476,6 +477,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AutoReconciledFileDTO](docs/AutoReconciledFileDTO.md)
  - [IO.Swagger.Model.AutoReconciledFileResponse](docs/AutoReconciledFileResponse.md)
  - [IO.Swagger.Model.AutoReconciledLineItemDTO](docs/AutoReconciledLineItemDTO.md)
+ - [IO.Swagger.Model.AveragePriceByAirportDTO](docs/AveragePriceByAirportDTO.md)
+ - [IO.Swagger.Model.AveragePriceByAirportListResponse](docs/AveragePriceByAirportListResponse.md)
  - [IO.Swagger.Model.AviationProfiles](docs/AviationProfiles.md)
  - [IO.Swagger.Model.AviationProfilesResponse](docs/AviationProfilesResponse.md)
  - [IO.Swagger.Model.Background](docs/Background.md)
