@@ -1,48 +1,32 @@
-<ni-breadcrumb
-    [menu]="breadcrumb"
-    [style]="'custom1'"
-    class="mb-4"
-></ni-breadcrumb>
-
-<app-fbo-prices-panel
-    style="
-        position: absolute;
-        top: -14px;
-        right: 62px;
-    "
-></app-fbo-prices-panel>
-
-<div>
-    <mat-tab-group>
-        <mat-tab label="Customers">
-            <div class="table-container">
-                <div *ngIf="customersData && pricingTemplatesData">
-                    <app-customers-grid
-                        [customersData]="customersData"
-                        [pricingTemplatesData]="pricingTemplatesData"
-                        [aircraftData]="aircraftData"
-                        [customerGridState]="customerGridState"
-                        (editCustomerClicked)="editCustomerClicked($event)"
-                        (customerDeleted)="customerDeleted()"
-                    ></app-customers-grid>
-                </div>
-                <div *ngIf="!customersData || !pricingTemplatesData">
-                    <mat-spinner></mat-spinner>
-                </div>
+<mat-tab-group>
+    <mat-tab label="Customers">
+        <div class="table-container">
+            <div *ngIf="customersData && pricingTemplatesData">
+                <app-customers-grid
+                    [customersData]="customersData"
+                    [pricingTemplatesData]="pricingTemplatesData"
+                    [aircraftData]="aircraftData"
+                    [customerGridState]="customerGridState"
+                    (editCustomerClicked)="editCustomerClicked($event)"
+                    (customerDeleted)="customerDeleted()"
+                ></app-customers-grid>
             </div>
-        </mat-tab>
-        <mat-tab label="Aircraft">
-            <div class="table-container">
-                <div *ngIf="pricingTemplatesData && aircraftData">
-                    <app-aircrafts-grid
-                        [pricingTemplatesData]="pricingTemplatesData"
-                        [aircraftsData]="aircraftData"
-                    ></app-aircrafts-grid>
-                </div>
-                <div *ngIf="!pricingTemplatesData || !aircraftData">
-                    <mat-spinner></mat-spinner>
-                </div>
+            <div *ngIf="!customersData || !pricingTemplatesData">
+                <mat-spinner></mat-spinner>
             </div>
-        </mat-tab>
-    </mat-tab-group>
-</div>
+        </div>
+    </mat-tab>
+    <mat-tab label="Aircraft">
+        <div class="table-container">
+            <div *ngIf="pricingTemplatesData && aircraftData">
+                <app-aircrafts-grid
+                    [pricingTemplatesData]="pricingTemplatesData"
+                    [aircraftsData]="aircraftData"
+                ></app-aircrafts-grid>
+            </div>
+            <div *ngIf="!pricingTemplatesData || !aircraftData">
+                <mat-spinner></mat-spinner>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

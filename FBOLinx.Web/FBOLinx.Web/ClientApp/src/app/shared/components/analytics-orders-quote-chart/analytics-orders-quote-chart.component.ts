@@ -44,7 +44,6 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
     }
 
     public refreshData() {
-        console.log(this.startDate);
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
             .getQuotesAndOrders(

@@ -1,5 +1,9 @@
 import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
+import { Store } from "@ngrx/store";
+
+import { State } from "../../../store/reducers";
+import { breadcrumbSet } from "../../../store/actions";
 
 // Services
 import { FbosService } from "../../../services/fbos.service";
@@ -47,6 +51,7 @@ export class FbosEditComponent implements OnInit {
     private requiresRouting = false;
 
     constructor(
+        private store: Store<State>,
         private route: ActivatedRoute,
         private router: Router,
         private fboService: FbosService,
@@ -60,6 +65,7 @@ export class FbosEditComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
         if (this.fboInfo) {
             this.loadAdditionalFboInfo();
         } else {
