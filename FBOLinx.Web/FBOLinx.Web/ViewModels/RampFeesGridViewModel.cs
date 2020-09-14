@@ -67,5 +67,6 @@ namespace FBOLinx.Web.ViewModels
         public string AircraftMake { get; set; }
         public string AircraftModel { get; set; }
         public List<Models.AirCrafts> AppliesTo { get; set; }
+        public DateTime? LastUpdated { get; set; }
     }
 }
