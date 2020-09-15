@@ -140,7 +140,7 @@ export class CustomersEditComponent implements OnInit {
             distribute: [this.customerInfoByGroup.distribute],
             showJetA: [this.customerInfoByGroup.showJetA],
             show100Ll: [this.customerInfoByGroup.show100Ll],
-            customerType: [this.customerInfoByGroup.customerType],
+            customerMarginTemplate: [this.customCustomerType.customerType],
         });
         this.customerForm.valueChanges.subscribe(() => {
             this.canSave = true;
@@ -158,11 +158,24 @@ export class CustomersEditComponent implements OnInit {
             ...this.customerInfoByGroup,
             ...this.customerForm.value,
         };
+        this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
 
         this.customerInfoByGroupService
             .update(customerInfoByGroup)
             .subscribe(() => {
-                this.router.navigate(["/default-layout/customers/"]).then();
+                if (!this.customCustomerType.oid || this.customCustomerType.oid === 0) {
+                    this.customCustomerTypesService
+                        .add(this.customCustomerType)
+                        .subscribe(() => {
+                            this.router.navigate(["/default-layout/customers/"]).then();
+                        });
+                } else {
+                    this.customCustomerTypesService
+                        .update(this.customCustomerType)
+                        .subscribe(() => {
+                            this.router.navigate(["/default-layout/customers/"]).then();
+                        });
+                }
             });
     }
 
