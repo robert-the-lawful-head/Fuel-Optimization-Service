@@ -153,7 +153,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 ...this.pricingTemplateForm.value,
             }),
         ]).subscribe(() => {
-            this.canSave = false;
+            this.router.navigate(["/default-layout/pricing-templates/"]).then(() => {});
 
             this.sharedService.NotifyPricingTemplateComponent("updateComponent");
         });

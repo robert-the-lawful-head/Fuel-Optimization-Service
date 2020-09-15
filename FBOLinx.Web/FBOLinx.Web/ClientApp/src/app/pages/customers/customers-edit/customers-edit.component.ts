@@ -162,7 +162,7 @@ export class CustomersEditComponent implements OnInit {
         this.customerInfoByGroupService
             .update(customerInfoByGroup)
             .subscribe(() => {
-                this.canSave = false;
+                this.router.navigate(["/default-layout/customers/"]).then();
             });
     }
 
