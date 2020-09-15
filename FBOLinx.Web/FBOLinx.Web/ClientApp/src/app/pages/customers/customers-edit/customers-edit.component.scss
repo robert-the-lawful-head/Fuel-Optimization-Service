@@ -19,18 +19,22 @@
         display: inline;
     }
 
-    ::ng-deep .mat-card-header-text {
-        padding-bottom: 10px;
-        padding-top: 5px;
-        background-color: white;
-        position: sticky;
-        top: 0;
-        z-index: 800;
-    }
-
-    .template-dropdown {
-        ::ng-deep .mat-form-field-infix {
-            width: 260px;
+    ::ng-deep {
+        .mat-card-header-text {
+            padding-bottom: 10px;
+            padding-top: 5px;
+            background-color: white;
+            position: sticky;
+            top: 0;
+            z-index: 800;
+        }
+        .template-dropdown {
+            .mat-form-field-infix {
+                width: 260px;
+            }
+        }
+        .mat-tab-body-content {
+            height: calc(100vh - 375px);
         }
     }
 }
