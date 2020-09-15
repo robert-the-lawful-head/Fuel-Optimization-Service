@@ -366,6 +366,13 @@ namespace IO.Swagger.Model {
     public string PaymentEmail { get; set; }
 
     /// <summary>
+    /// Gets or Sets IsPlaceholder
+    /// </summary>
+    [DataMember(Name="isPlaceholder", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "isPlaceholder")]
+    public bool? IsPlaceholder { get; set; }
+
+    /// <summary>
     /// Gets or Sets HasPaid
     /// </summary>
     [DataMember(Name="hasPaid", EmitDefaultValue=false)]
@@ -570,6 +577,7 @@ namespace IO.Swagger.Model {
       sb.Append("  RampFeeCallFbo: ").Append(RampFeeCallFbo).Append("\n");
       sb.Append("  ReportedRampFee: ").Append(ReportedRampFee).Append("\n");
       sb.Append("  PaymentEmail: ").Append(PaymentEmail).Append("\n");
+      sb.Append("  IsPlaceholder: ").Append(IsPlaceholder).Append("\n");
       sb.Append("  HasPaid: ").Append(HasPaid).Append("\n");
       sb.Append("  DepartureDateYearFirstFormat: ").Append(DepartureDateYearFirstFormat).Append("\n");
       sb.Append("  ArrivalDateYearFirstFormat: ").Append(ArrivalDateYearFirstFormat).Append("\n");

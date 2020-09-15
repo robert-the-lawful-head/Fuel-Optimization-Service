@@ -53,6 +53,7 @@ Name | Type | Description | Notes
 **RampFeeCallFbo** | **bool?** |  | [optional] 
 **ReportedRampFee** | **double?** |  | [optional] 
 **PaymentEmail** | **string** |  | [optional] 
+**IsPlaceholder** | **bool?** |  | [optional] 
 **HasPaid** | **bool?** |  | [optional] 
 **DepartureDateYearFirstFormat** | **string** |  | [optional] 
 **ArrivalDateYearFirstFormat** | **string** |  | [optional] 

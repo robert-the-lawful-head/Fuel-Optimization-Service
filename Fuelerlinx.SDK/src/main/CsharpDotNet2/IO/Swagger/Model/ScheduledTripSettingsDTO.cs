@@ -139,6 +139,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "userPreferredFbo")]
     public bool? UserPreferredFbo { get; set; }
 
+    /// <summary>
+    /// Gets or Sets NonDispatchTripSheetNotesPreText
+    /// </summary>
+    [DataMember(Name="nonDispatchTripSheetNotesPreText", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "nonDispatchTripSheetNotesPreText")]
+    public string NonDispatchTripSheetNotesPreText { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -165,6 +172,7 @@ namespace IO.Swagger.Model {
       sb.Append("  UseScheduledEteDomestic: ").Append(UseScheduledEteDomestic).Append("\n");
       sb.Append("  UseScheduledEteInternational: ").Append(UseScheduledEteInternational).Append("\n");
       sb.Append("  UserPreferredFbo: ").Append(UserPreferredFbo).Append("\n");
+      sb.Append("  NonDispatchTripSheetNotesPreText: ").Append(NonDispatchTripSheetNotesPreText).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
