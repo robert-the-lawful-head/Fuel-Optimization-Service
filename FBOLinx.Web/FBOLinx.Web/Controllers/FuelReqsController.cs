@@ -616,7 +616,9 @@ namespace FBOLinx.Web.Controllers
                 var result = _fuelerLinxService.GetTransactionsCountForAirport(new FBOLinxOrdersRequest()
                     {EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = request.ICAO});
 
-                return Ok(result);
+                var response = new { totalOrders = result.Result, icao = request.ICAO };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -880,6 +882,57 @@ namespace FBOLinx.Web.Controllers
                 return Ok(chartData);
             }
             catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("analysis/fbo-fuel-vendor-sources/fbo/{fboId}")]
+        public IActionResult FBOFuelVendorSources([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            try
+            {
+                string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+                List<int> otherFbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid).ToList();
+
+                request.Icao = icao;
+
+                int fboOrderCount = _context.FuelReq
+                                            .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd < request.EndDateTime.GetValueOrDefault().AddDays(1))
+                                            .Count();
+
+                List<int> fuelerlinxContractFuelVendorOrdersCount = _fuelerLinxService.GetContractFuelVendorsTransactionsCountForAirport(request);
+
+                List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>()
+                            {
+                                new NgxChartBarChartItemType
+                                {
+                                    Name = "Directs",
+                                    Value = fboOrderCount
+                                }
+                            };
+
+                foreach(int vendor in fuelerlinxContractFuelVendorOrdersCount)
+                {
+                    //NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
+                    //chartItemType.Name = vendor.Name;
+                    //chartItemType.Value = vendor.Count;
+                    //chartData.Add(chartItemType);
+                }
+
+                return Ok(chartData);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
