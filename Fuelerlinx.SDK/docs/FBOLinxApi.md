@@ -78,7 +78,7 @@ This endpoint does not need any parameter.
 
 <a name="getcontractfuelvendorstransactionscount"></a>
 # **GetContractFuelVendorsTransactionsCount**
-> FBOLinxOrdersResponse GetContractFuelVendorsTransactionsCount (FBOLinxOrdersRequest body)
+> FboLinxContractFuelVendorsCountResponse GetContractFuelVendorsTransactionsCount (FBOLinxOrdersRequest body)
 
 
 
@@ -111,7 +111,7 @@ namespace Example
 
             try
             {
-                FBOLinxOrdersResponse result = apiInstance.GetContractFuelVendorsTransactionsCount(body);
+                FboLinxContractFuelVendorsCountResponse result = apiInstance.GetContractFuelVendorsTransactionsCount(body);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -131,7 +131,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**FBOLinxOrdersResponse**](FBOLinxOrdersResponse.md)
+[**FboLinxContractFuelVendorsCountResponse**](FboLinxContractFuelVendorsCountResponse.md)
 
 ### Authorization
 
