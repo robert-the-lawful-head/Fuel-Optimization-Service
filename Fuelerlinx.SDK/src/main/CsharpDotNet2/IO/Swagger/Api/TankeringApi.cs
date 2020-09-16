@@ -15,6 +15,12 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param>
+        /// <returns>CalculateRouteDetailsResponse</returns>
+        CalculateRouteDetailsResponse CalculateRouteDetails (CalculateRouteDetailsRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
         /// <returns>CalculateTankeringResponse</returns>
         CalculateTankeringResponse CalculateTankering (CalculateTankeringRequest body);
     }
@@ -71,6 +77,40 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>CalculateRouteDetailsResponse</returns>            
+        public CalculateRouteDetailsResponse CalculateRouteDetails (CalculateRouteDetailsRequest body)
+        {
+            
+    
+            var path = "/api/Tankering/calculate-route-details";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling CalculateRouteDetails: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling CalculateRouteDetails: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CalculateRouteDetailsResponse) ApiClient.Deserialize(response.Content, typeof(CalculateRouteDetailsResponse), response.Headers);
+        }
     
         /// <summary>
         ///  

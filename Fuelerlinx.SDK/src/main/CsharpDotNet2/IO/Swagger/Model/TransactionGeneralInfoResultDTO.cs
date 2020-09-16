@@ -285,6 +285,14 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "CreditCardMerchantProfileID")]
     public string CreditCardMerchantProfileID { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    [DataMember(Name="AccountingTransferStatus", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "AccountingTransferStatus")]
+    public int? AccountingTransferStatus { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -332,6 +340,7 @@ namespace IO.Swagger.Model {
       sb.Append("  CanPay: ").Append(CanPay).Append("\n");
       sb.Append("  ACHMerchantProfileID: ").Append(ACHMerchantProfileID).Append("\n");
       sb.Append("  CreditCardMerchantProfileID: ").Append(CreditCardMerchantProfileID).Append("\n");
+      sb.Append("  AccountingTransferStatus: ").Append(AccountingTransferStatus).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

@@ -187,6 +187,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "isVendorLinxEnabled")]
     public bool? IsVendorLinxEnabled { get; set; }
 
+    /// <summary>
+    /// Gets or Sets PaymentEmail
+    /// </summary>
+    [DataMember(Name="paymentEmail", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "paymentEmail")]
+    public string PaymentEmail { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -220,6 +227,7 @@ namespace IO.Swagger.Model {
       sb.Append("  ServiceUrl: ").Append(ServiceUrl).Append("\n");
       sb.Append("  IsMessagesEnabled: ").Append(IsMessagesEnabled).Append("\n");
       sb.Append("  IsVendorLinxEnabled: ").Append(IsVendorLinxEnabled).Append("\n");
+      sb.Append("  PaymentEmail: ").Append(PaymentEmail).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

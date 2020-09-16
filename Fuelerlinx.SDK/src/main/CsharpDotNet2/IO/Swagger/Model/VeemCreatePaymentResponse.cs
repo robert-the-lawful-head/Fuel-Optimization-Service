@@ -73,14 +73,14 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="timeCreated", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "timeCreated")]
-    public DateTime? TimeCreated { get; set; }
+    public string TimeCreated { get; set; }
 
     /// <summary>
     /// Gets or Sets TimeUpdated
     /// </summary>
     [DataMember(Name="timeUpdated", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "timeUpdated")]
-    public DateTime? TimeUpdated { get; set; }
+    public string TimeUpdated { get; set; }
 
 
     /// <summary>

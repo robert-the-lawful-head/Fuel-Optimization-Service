@@ -118,11 +118,25 @@ namespace IO.Swagger.Model {
     public string DeparturePreferredFbo { get; set; }
 
     /// <summary>
+    /// Gets or Sets DeparturePreferredAcukwikFboHandlerId
+    /// </summary>
+    [DataMember(Name="departurePreferredAcukwikFboHandlerId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "departurePreferredAcukwikFboHandlerId")]
+    public int? DeparturePreferredAcukwikFboHandlerId { get; set; }
+
+    /// <summary>
     /// Gets or Sets ArrivalPreferredFbo
     /// </summary>
     [DataMember(Name="arrivalPreferredFbo", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "arrivalPreferredFbo")]
     public string ArrivalPreferredFbo { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ArrivalPreferredAcukwikFboHandlerId
+    /// </summary>
+    [DataMember(Name="arrivalPreferredAcukwikFboHandlerId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "arrivalPreferredAcukwikFboHandlerId")]
+    public int? ArrivalPreferredAcukwikFboHandlerId { get; set; }
 
     /// <summary>
     /// Gets or Sets TripType
@@ -252,7 +266,9 @@ namespace IO.Swagger.Model {
       sb.Append("  CargoLbs: ").Append(CargoLbs).Append("\n");
       sb.Append("  PaxWeight: ").Append(PaxWeight).Append("\n");
       sb.Append("  DeparturePreferredFbo: ").Append(DeparturePreferredFbo).Append("\n");
+      sb.Append("  DeparturePreferredAcukwikFboHandlerId: ").Append(DeparturePreferredAcukwikFboHandlerId).Append("\n");
       sb.Append("  ArrivalPreferredFbo: ").Append(ArrivalPreferredFbo).Append("\n");
+      sb.Append("  ArrivalPreferredAcukwikFboHandlerId: ").Append(ArrivalPreferredAcukwikFboHandlerId).Append("\n");
       sb.Append("  TripType: ").Append(TripType).Append("\n");
       sb.Append("  FlightId: ").Append(FlightId).Append("\n");
       sb.Append("  CustomerName: ").Append(CustomerName).Append("\n");

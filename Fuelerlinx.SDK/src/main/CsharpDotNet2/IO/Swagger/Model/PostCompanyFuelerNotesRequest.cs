@@ -20,20 +20,6 @@ namespace IO.Swagger.Model {
     public int? CompanyFuelerId { get; set; }
 
     /// <summary>
-    /// Gets or Sets DateStamp
-    /// </summary>
-    [DataMember(Name="dateStamp", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dateStamp")]
-    public string DateStamp { get; set; }
-
-    /// <summary>
-    /// Gets or Sets TimeStamp
-    /// </summary>
-    [DataMember(Name="timeStamp", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "timeStamp")]
-    public string TimeStamp { get; set; }
-
-    /// <summary>
     /// Gets or Sets Note
     /// </summary>
     [DataMember(Name="note", EmitDefaultValue=false)]
@@ -62,6 +48,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "timeZone")]
     public string TimeZone { get; set; }
 
+    /// <summary>
+    /// Gets or Sets DateStamp
+    /// </summary>
+    [DataMember(Name="dateStamp", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "dateStamp")]
+    public string DateStamp { get; set; }
+
+    /// <summary>
+    /// Gets or Sets TimeStamp
+    /// </summary>
+    [DataMember(Name="timeStamp", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "timeStamp")]
+    public string TimeStamp { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -71,12 +71,12 @@ namespace IO.Swagger.Model {
       var sb = new StringBuilder();
       sb.Append("class PostCompanyFuelerNotesRequest {\n");
       sb.Append("  CompanyFuelerId: ").Append(CompanyFuelerId).Append("\n");
-      sb.Append("  DateStamp: ").Append(DateStamp).Append("\n");
-      sb.Append("  TimeStamp: ").Append(TimeStamp).Append("\n");
       sb.Append("  Note: ").Append(Note).Append("\n");
       sb.Append("  State: ").Append(State).Append("\n");
       sb.Append("  AssociatedWithNoteId: ").Append(AssociatedWithNoteId).Append("\n");
       sb.Append("  TimeZone: ").Append(TimeZone).Append("\n");
+      sb.Append("  DateStamp: ").Append(DateStamp).Append("\n");
+      sb.Append("  TimeStamp: ").Append(TimeStamp).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

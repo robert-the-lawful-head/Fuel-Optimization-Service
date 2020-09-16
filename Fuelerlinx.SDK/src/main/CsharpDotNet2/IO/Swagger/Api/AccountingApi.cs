@@ -12,6 +12,12 @@ namespace IO.Swagger.Api
     public interface IAccountingApi
     {
         /// <summary>
+        /// Get Sage Credentials 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>CheckAuthorizationInfoResponse</returns>
+        CheckAuthorizationInfoResponse CheckSageCredentials (SageCredentialsRequest body);
+        /// <summary>
         /// Deletes accounting integration item code record based on ID 
         /// </summary>
         /// <param name="id"></param>
@@ -30,10 +36,16 @@ namespace IO.Swagger.Api
         /// <returns>AccountingIntegrationItemCodesDetailsResponse</returns>
         AccountingIntegrationItemCodesDetailsResponse GetAccountingIntegrationItemCodesById (int? id);
         /// <summary>
-        /// Gets single accounting integration item code record 
+        /// Gets accounting integration mappings for line items 
         /// </summary>
         /// <returns>AccountingIntegrationItemCodesListResponse</returns>
         AccountingIntegrationItemCodesListResponse GetAccountingItemMappingList ();
+        /// <summary>
+        /// Gets accounting integration mappings for line items by comma-delimited {transactionIds} 
+        /// </summary>
+        /// <param name="transactionIds"></param>
+        /// <returns>AccountingIntegrationItemCodesListResponse</returns>
+        AccountingIntegrationItemCodesListResponse GetAccountingItemMappingListForTransactions (string transactionIds);
         /// <summary>
         ///  
         /// </summary>
@@ -152,6 +164,40 @@ namespace IO.Swagger.Api
         public ApiClient ApiClient {get; set;}
     
         /// <summary>
+        /// Get Sage Credentials 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>CheckAuthorizationInfoResponse</returns>            
+        public CheckAuthorizationInfoResponse CheckSageCredentials (SageCredentialsRequest body)
+        {
+            
+    
+            var path = "/api/Accounting/sage/check-credentials";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling CheckSageCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling CheckSageCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CheckAuthorizationInfoResponse) ApiClient.Deserialize(response.Content, typeof(CheckAuthorizationInfoResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Deletes accounting integration item code record based on ID 
         /// </summary>
         /// <param name="id"></param> 
@@ -263,7 +309,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Gets single accounting integration item code record 
+        /// Gets accounting integration mappings for line items 
         /// </summary>
         /// <returns>AccountingIntegrationItemCodesListResponse</returns>            
         public AccountingIntegrationItemCodesListResponse GetAccountingItemMappingList ()
@@ -290,6 +336,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetAccountingItemMappingList: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetAccountingItemMappingList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (AccountingIntegrationItemCodesListResponse) ApiClient.Deserialize(response.Content, typeof(AccountingIntegrationItemCodesListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Gets accounting integration mappings for line items by comma-delimited {transactionIds} 
+        /// </summary>
+        /// <param name="transactionIds"></param> 
+        /// <returns>AccountingIntegrationItemCodesListResponse</returns>            
+        public AccountingIntegrationItemCodesListResponse GetAccountingItemMappingListForTransactions (string transactionIds)
+        {
+            
+            // verify the required parameter 'transactionIds' is set
+            if (transactionIds == null) throw new ApiException(400, "Missing required parameter 'transactionIds' when calling GetAccountingItemMappingListForTransactions");
+            
+    
+            var path = "/api/Accounting/mapping/items/list/{transactionIds}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "transactionIds" + "}", ApiClient.ParameterToString(transactionIds));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAccountingItemMappingListForTransactions: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAccountingItemMappingListForTransactions: " + response.ErrorMessage, response.ErrorMessage);
     
             return (AccountingIntegrationItemCodesListResponse) ApiClient.Deserialize(response.Content, typeof(AccountingIntegrationItemCodesListResponse), response.Headers);
         }

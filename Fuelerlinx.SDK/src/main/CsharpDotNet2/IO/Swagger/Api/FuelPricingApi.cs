@@ -12,6 +12,12 @@ namespace IO.Swagger.Api
     public interface IFuelPricingApi
     {
         /// <summary>
+        /// Internal use only - delete all weekly pricing records for a particular fuel vendor. 
+        /// </summary>
+        /// <param name="fuelVendorId"></param>
+        /// <returns>DeleteWeeklyPricingResponse</returns>
+        DeleteWeeklyPricingResponse DeleteWeeklyPricingForFuelVendor (int? fuelVendorId);
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="body"></param>
@@ -122,6 +128,43 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        /// Internal use only - delete all weekly pricing records for a particular fuel vendor. 
+        /// </summary>
+        /// <param name="fuelVendorId"></param> 
+        /// <returns>DeleteWeeklyPricingResponse</returns>            
+        public DeleteWeeklyPricingResponse DeleteWeeklyPricingForFuelVendor (int? fuelVendorId)
+        {
+            
+            // verify the required parameter 'fuelVendorId' is set
+            if (fuelVendorId == null) throw new ApiException(400, "Missing required parameter 'fuelVendorId' when calling DeleteWeeklyPricingForFuelVendor");
+            
+    
+            var path = "/api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "fuelVendorId" + "}", ApiClient.ParameterToString(fuelVendorId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteWeeklyPricingForFuelVendor: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteWeeklyPricingForFuelVendor: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteWeeklyPricingResponse) ApiClient.Deserialize(response.Content, typeof(DeleteWeeklyPricingResponse), response.Headers);
+        }
     
         /// <summary>
         ///  

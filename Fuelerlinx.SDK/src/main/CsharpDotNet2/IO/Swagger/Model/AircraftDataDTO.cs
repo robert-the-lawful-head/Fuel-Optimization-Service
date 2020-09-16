@@ -195,6 +195,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "factorySpecifications")]
     public AircraftDTO FactorySpecifications { get; set; }
 
+    /// <summary>
+    /// Gets or Sets TankeringSettings
+    /// </summary>
+    [DataMember(Name="tankeringSettings", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "tankeringSettings")]
+    public UserAircraftTankeringSettingsDTO TankeringSettings { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -229,6 +236,7 @@ namespace IO.Swagger.Model {
       sb.Append("  AircraftTypeEngineName: ").Append(AircraftTypeEngineName).Append("\n");
       sb.Append("  FleetGroup: ").Append(FleetGroup).Append("\n");
       sb.Append("  FactorySpecifications: ").Append(FactorySpecifications).Append("\n");
+      sb.Append("  TankeringSettings: ").Append(TankeringSettings).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

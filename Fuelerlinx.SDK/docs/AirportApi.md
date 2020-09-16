@@ -11,7 +11,8 @@ Method | HTTP request | Description
 [**GetAirportDetailsByCompanyByIcao**](AirportApi.md#getairportdetailsbycompanybyicao) | **GET** /api/Airport/company-specific-details/icao/{airportIdentifier} | Fetch company-specific details for an airport based on the provided {airportIdentifier}.  The identifier should be the ICAO, IATA, or FAA ID of the airport.  These details are unique for each flight department.
 [**GetAirportDetailsByCompanyNotes**](AirportApi.md#getairportdetailsbycompanynotes) | **GET** /api/Airport/company-specific-details/{airportDetailsByCompanyId}/notes | Fetch the company-specific notes for a particular airport based on the provided {airportDetailsByCompanyId}.
 [**GetAllAirports**](AirportApi.md#getallairports) | **GET** /api/Airport/airports | Internal use only - Fetch all airports in the Acukwik database.  This will included FBO/Handler information as well.
-[**GetDistinctAirportCountries**](AirportApi.md#getdistinctairportcountries) | **GET** /api/Airport/countries/distinct | 
+[**GetAverageAndMinPriceByAirportList**](AirportApi.md#getaverageandminpricebyairportlist) | **GET** /api/Airport/average-and-min-price/list | Fetches the min. and avg. prices at each airport for the authenticated company.
+[**GetDistinctAirportCountries**](AirportApi.md#getdistinctairportcountries) | **GET** /api/Airport/countries/distinct | Fetch the unique countries found in the airport DB.
 [**GetGeneralAirportInfoList**](AirportApi.md#getgeneralairportinfolist) | **GET** /api/Airport/general-info/list | 
 [**PostAirportDetailsByCompany**](AirportApi.md#postairportdetailsbycompany) | **POST** /api/Airport/company-specific-details | Add a new record for company-specific details of an airport.  These details are unique for each flight department.
 [**PostAirportDetailsByCompanyNotes**](AirportApi.md#postairportdetailsbycompanynotes) | **POST** /api/Airport/company-specific-details/notes | Add a new company-specific note for an airport.
@@ -500,11 +501,76 @@ This endpoint does not need any parameter.
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="getaverageandminpricebyairportlist"></a>
+# **GetAverageAndMinPriceByAirportList**
+> AveragePriceByAirportListResponse GetAverageAndMinPriceByAirportList ()
+
+Fetches the min. and avg. prices at each airport for the authenticated company.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetAverageAndMinPriceByAirportListExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AirportApi();
+
+            try
+            {
+                // Fetches the min. and avg. prices at each airport for the authenticated company.
+                AveragePriceByAirportListResponse result = apiInstance.GetAverageAndMinPriceByAirportList();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AirportApi.GetAverageAndMinPriceByAirportList: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**AveragePriceByAirportListResponse**](AveragePriceByAirportListResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="getdistinctairportcountries"></a>
 # **GetDistinctAirportCountries**
 > DistinctCountryListResponse GetDistinctAirportCountries ()
 
-
+Fetch the unique countries found in the airport DB.
 
 ### Example
 ```csharp
@@ -534,6 +600,7 @@ namespace Example
 
             try
             {
+                // Fetch the unique countries found in the airport DB.
                 DistinctCountryListResponse result = apiInstance.GetDistinctAirportCountries();
                 Debug.WriteLine(result);
             }

@@ -13,6 +13,13 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class PostIFlightPlannerRouteRequestServiceLogRequest {
     /// <summary>
+    /// Gets or Sets Id
+    /// </summary>
+    [DataMember(Name="id", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "id")]
+    public int? Id { get; set; }
+
+    /// <summary>
     /// Gets or Sets RequestDate
     /// </summary>
     [DataMember(Name="requestDate", EmitDefaultValue=false)]
@@ -83,6 +90,7 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class PostIFlightPlannerRouteRequestServiceLogRequest {\n");
+      sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  RequestDate: ").Append(RequestDate).Append("\n");
       sb.Append("  Apikey: ").Append(Apikey).Append("\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");

@@ -24,6 +24,11 @@ namespace IO.Swagger.Api
         /// <returns>CompanyListResponse</returns>
         CompanyListResponse GetActiveCompanyList ();
         /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>CompanyAccountSettingsResponse</returns>
+        CompanyAccountSettingsResponse GetCompanyAccountSettings ();
+        /// <summary>
         /// Fetch a company&#39;s information by the company {id}. 
         /// </summary>
         /// <param name="id"></param>
@@ -48,6 +53,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateCompanyResponse</returns>
         UpdateCompanyResponse UpdateCompany (string id2, int? id, UpdateCompanyRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateCompanyAccountSettingsResponse</returns>
+        UpdateCompanyAccountSettingsResponse UpdateCompanyAccountSettings (UpdateCompanyAccountSettingsRequest body);
     }
   
     /// <summary>
@@ -172,6 +183,38 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetActiveCompanyList: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CompanyListResponse) ApiClient.Deserialize(response.Content, typeof(CompanyListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>CompanyAccountSettingsResponse</returns>            
+        public CompanyAccountSettingsResponse GetCompanyAccountSettings ()
+        {
+            
+    
+            var path = "/api/Company/account-settings";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyAccountSettings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyAccountSettings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CompanyAccountSettingsResponse) ApiClient.Deserialize(response.Content, typeof(CompanyAccountSettingsResponse), response.Headers);
         }
     
         /// <summary>
@@ -316,6 +359,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompany: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateCompanyResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCompanyResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateCompanyAccountSettingsResponse</returns>            
+        public UpdateCompanyAccountSettingsResponse UpdateCompanyAccountSettings (UpdateCompanyAccountSettingsRequest body)
+        {
+            
+    
+            var path = "/api/Company/account-settings";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyAccountSettings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyAccountSettings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateCompanyAccountSettingsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCompanyAccountSettingsResponse), response.Headers);
         }
     
     }
