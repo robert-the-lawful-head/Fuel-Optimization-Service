@@ -21,6 +21,12 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <param name="body"></param>
         /// <returns>FBOLinxOrdersResponse</returns>
+        FBOLinxOrdersResponse GetContractFuelVendorsTransactionsCount (FBOLinxOrdersRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>FBOLinxOrdersResponse</returns>
         FBOLinxOrdersResponse GetTransactionsCount (FBOLinxOrdersRequest body);
         /// <summary>
         /// FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport. 
@@ -125,6 +131,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetAircraftTailsGroupedByCompany: " + response.ErrorMessage, response.ErrorMessage);
     
             return (FboLinxAircraftsResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxAircraftsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>FBOLinxOrdersResponse</returns>            
+        public FBOLinxOrdersResponse GetContractFuelVendorsTransactionsCount (FBOLinxOrdersRequest body)
+        {
+            
+    
+            var path = "/api/FBOLinx/get-contract-fuel-vendors-orders-count-at-airport";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetContractFuelVendorsTransactionsCount: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetContractFuelVendorsTransactionsCount: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FBOLinxOrdersResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxOrdersResponse), response.Headers);
         }
     
         /// <summary>
