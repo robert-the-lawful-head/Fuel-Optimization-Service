@@ -20,8 +20,8 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param>
-        /// <returns>FBOLinxOrdersResponse</returns>
-        FBOLinxOrdersResponse GetContractFuelVendorsTransactionsCount (FBOLinxOrdersRequest body);
+        /// <returns>FboLinxContractFuelVendorsCountResponse</returns>
+        FboLinxContractFuelVendorsCountResponse GetContractFuelVendorsTransactionsCount (FBOLinxOrdersRequest body);
         /// <summary>
         ///  
         /// </summary>
@@ -137,8 +137,8 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param> 
-        /// <returns>FBOLinxOrdersResponse</returns>            
-        public FBOLinxOrdersResponse GetContractFuelVendorsTransactionsCount (FBOLinxOrdersRequest body)
+        /// <returns>FboLinxContractFuelVendorsCountResponse</returns>            
+        public FboLinxContractFuelVendorsCountResponse GetContractFuelVendorsTransactionsCount (FBOLinxOrdersRequest body)
         {
             
     
@@ -164,7 +164,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetContractFuelVendorsTransactionsCount: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (FBOLinxOrdersResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxOrdersResponse), response.Headers);
+            return (FboLinxContractFuelVendorsCountResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxContractFuelVendorsCountResponse), response.Headers);
         }
     
         /// <summary>
