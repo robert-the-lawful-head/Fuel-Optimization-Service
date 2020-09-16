@@ -73,12 +73,11 @@ namespace FBOLinx.Web.Services
             return results;
         }
 
-        public List<int> GetContractFuelVendorsTransactionsCountForAirport(FBOLinxOrdersRequest request)
+        public FBOLinxOrdersResponse GetContractFuelVendorsTransactionsCountForAirport(FBOLinxOrdersRequest request)
         {
-            List<int> list = new List<int>();
             var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FBOLinxOrdersResponse results = api.GetTransactionsCount(request);
-            return list;
+            FBOLinxOrdersResponse results = api.GetContractFuelVendorsTransactionsCount(request);
+            return results;
         }
 
         public FBOLinxOrdersResponse GetTransactionsDirectOrdersCount(FBOLinxOrdersRequest request)
