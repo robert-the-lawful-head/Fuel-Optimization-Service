@@ -6,6 +6,8 @@ import {
     OnInit,
     ViewChild,
     ChangeDetectionStrategy,
+    OnChanges,
+    SimpleChanges
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatPaginator } from "@angular/material/paginator";
@@ -24,7 +26,7 @@ import { FuelReqsExportModalComponent } from "../../../shared/components/fuelreq
     styleUrls: ["./fuelreqs-grid.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FuelreqsGridComponent implements OnInit {
+export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Output() exportTriggered = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
@@ -59,6 +61,11 @@ export class FuelreqsGridComponent implements OnInit {
         public exportDialog: MatDialog
     ) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
+    }
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.fuelreqsData) {
+            this.refreshTable();
+        }
     }
 
     ngOnInit() {

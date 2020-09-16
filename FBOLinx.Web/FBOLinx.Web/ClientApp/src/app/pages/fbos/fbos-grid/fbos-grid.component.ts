@@ -29,17 +29,6 @@ import { PricingExpiredNotificationGroupComponent } from "../../../shared/compon
 import { fboChangedEvent } from "../../../models/sharedEvents";
 import { NotificationComponent } from "../../../shared/components/notification/notification.component";
 
-const BREADCRUMBS: any[] = [
-    {
-        title: "Main",
-        link: "/default-layout",
-    },
-    {
-        title: "FBOs",
-        link: "",
-    },
-];
-
 @Component({
     selector: "app-fbos-grid",
     templateUrl: "./fbos-grid.component.html",
@@ -53,7 +42,6 @@ export class FbosGridComponent implements OnInit {
 
     // Public Members
     public pageTitle = "FBOs";
-    public breadcrumb: any[] = BREADCRUMBS;
     public fbosDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = ["icao", "fbo", "active", "delete"];
     public airportData: Array<any>;
@@ -84,7 +72,7 @@ export class FbosGridComponent implements OnInit {
         private notification: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
-        this.canManageFbo = this.sharedService.currentUser.role === 2;
+        this.canManageFbo = this.sharedService.currentUser.role === 3;
         if (this.canManageFbo) {
             this.displayedColumns = [
                 "icao",

@@ -13,6 +13,10 @@ import { combineLatest } from "rxjs";
 import { forOwn, differenceBy } from "lodash";
 
 import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor";
+import { Store } from "@ngrx/store";
+
+import { State } from "../../../store/reducers";
+import { breadcrumbSet } from "../../../store/actions";
 
 // Services
 import { CustomermarginsService } from "../../../services/customermargins.service";
@@ -62,6 +66,7 @@ export class PricingTemplatesEditComponent implements OnInit {
     jetARetail: number;
 
     constructor(
+        private store: Store<State>,
         private route: ActivatedRoute,
         private router: Router,
         private formBuilder: FormBuilder,
@@ -79,6 +84,8 @@ export class PricingTemplatesEditComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
+
         // Check for passed in id
         const id = this.route.snapshot.paramMap.get("id");
 
@@ -87,6 +94,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(id),
             this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId),
         ]).subscribe(([pricingTemplateData, customerMarginsData, fboPricesData]) => {
+            console.log(pricingTemplateData);
             this.jetACost = (fboPricesData as any).filter(item => item.product === "JetA Cost")[0].price;
             this.jetARetail = (fboPricesData as any).filter(item => item.product === "JetA Retail")[0].price;
 
@@ -114,7 +122,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             });
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
-                this.canSave= true;
+                this.canSave = true;
             });
 
             this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(type => {
@@ -145,7 +153,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 ...this.pricingTemplateForm.value,
             }),
         ]).subscribe(() => {
-            this.canSave = false;
+            this.router.navigate(["/default-layout/pricing-templates/"]).then(() => {});
 
             this.sharedService.NotifyPricingTemplateComponent("updateComponent");
         });

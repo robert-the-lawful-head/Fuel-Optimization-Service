@@ -1,33 +1,35 @@
 import {
     Component,
+    ElementRef,
     EventEmitter,
     Input,
-    Output,
     OnInit,
+    Output,
     ViewChild,
-    ElementRef,
 } from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSelectChange } from "@angular/material/select";
-import { forEach, map, sortBy, find, forOwn } from "lodash";
-import FlatfileImporter from "flatfile-csv-importer";
+import {MatPaginator} from "@angular/material/paginator";
+import {MatSort, SortDirection} from "@angular/material/sort";
+import {MatTableDataSource} from "@angular/material/table";
+import {MatDialog} from "@angular/material/dialog";
+import {MatSelectChange} from "@angular/material/select";
+import {find, forEach, forOwn, map, sortBy} from "lodash";
+import FlatFileImporter from "flatfile-csv-importer";
+import * as XLSX from "xlsx";
 
 // Services
-import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
-import { CustomersService } from "../../../services/customers.service";
-import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
-import { SharedService } from "../../../layouts/shared-service";
+import {CustomersService} from "../../../services/customers.service";
+import {CustomerinfobygroupService} from "../../../services/customerinfobygroup.service";
+import {SharedService} from "../../../layouts/shared-service";
 
 // Components
-import { CustomersDialogNewCustomerComponent } from "../customers-dialog-new-customer/customers-dialog-new-customer.component";
-import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
+import {CustomersDialogNewCustomerComponent} from "../customers-dialog-new-customer/customers-dialog-new-customer.component";
+import {DeleteConfirmationComponent} from "../../../shared/components/delete-confirmation/delete-confirmation.component";
 
-import * as XLSX from "xlsx";
-import { CustomermarginsService } from "../../../services/customermargins.service";
-import { CustomersviewedbyfboService } from "../../../services/customersviewedbyfbo.service";
+import {CustomermarginsService} from "../../../services/customermargins.service";
+import {CustomersviewedbyfboService} from "../../../services/customersviewedbyfbo.service";
+import {CustomerGridState} from "../../../store/reducers/customer";
+
+import * as SharedEvents from "../../../models/sharedEvents";
 
 @Component({
     selector: "app-customers-grid",
@@ -36,17 +38,21 @@ import { CustomersviewedbyfboService } from "../../../services/customersviewedby
 })
 export class CustomersGridComponent implements OnInit {
     // Input/Output Bindings
+    @Input() customersData: any[];
+    @Input() pricingTemplatesData: any[];
+    @Input() aircraftData: any[];
+    @Input() customerGridState: CustomerGridState;
+
     @Output() editCustomerClicked = new EventEmitter<any>();
     @Output() customerDeleted = new EventEmitter<any>();
 
-    @Input() customersData: any[];
-    @Input() pricingTemplatesData: any[];
-    @Input() aircraftsData: any[];
-
-    // Public Members
+    // Members
     @ViewChild("customerTableContainer") table: ElementRef;
-    public customersDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = [
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
+
+    customersDataSource: MatTableDataSource<any> = null;
+    displayedColumns: string[] = [
         "selectAll",
         "needsAttention",
         "company",
@@ -58,67 +64,51 @@ export class CustomersGridComponent implements OnInit {
         "fleetSize",
         "delete",
     ];
-
-    public customerFilterType = 0;
-
-    public selectAll = false;
-    public selectedRows: number;
-    public globalMargin: any;
-    public pageIndex = 0;
-    public pageSize = 100;
-    public tableSort = "needsAttention";
-    public tableSortOrder = "asc";
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    customerFilterType = 0;
+    selectAll = false;
+    selectedRows: number;
+    pageIndex = 0;
+    pageSize = 100;
+    tableSort = "needsAttention";
+    tableSortOrder = "asc";
 
     LICENSE_KEY = "9eef62bd-4c20-452c-98fd-aa781f5ac111";
 
     results = "[]";
 
-    private importer: FlatfileImporter;
+    private importer: FlatFileImporter;
 
     constructor(
-        public newCustomerDialog: MatDialog,
+        private newCustomerDialog: MatDialog,
+        private deleteCustomerDialog: MatDialog,
         private customersService: CustomersService,
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customersViewedByFboService: CustomersviewedbyfboService,
-        public deleteCustomerDialog: MatDialog,
-        public customeraircraftsService: CustomeraircraftsService,
-        public customerMarginsService: CustomermarginsService
-    ) {}
+        private customerMarginsService: CustomermarginsService
+    ) {
+    }
 
     ngOnInit() {
+        this.initializeImporter();
+
+        if (this.customerGridState.filterType) {
+            this.customerFilterType = this.customerGridState.filterType;
+        }
+
         this.refreshCustomerDataSource();
 
-        FlatfileImporter.setVersion(2);
-        this.initializeImporter();
-        this.importer.setCustomer({
-            userId: "1",
-            name: "WebsiteImport",
-        });
-
-        if (localStorage.getItem("pageIndex")) {
-            this.paginator.pageIndex = localStorage.getItem("pageIndex") as any;
-        } else {
-            this.paginator.pageIndex = 0;
+        if (this.customerGridState.filter) {
+            this.customersDataSource.filter = this.customerGridState.filter;
         }
-
-        if (sessionStorage.getItem("pageSizeValue")) {
-            this.pageSize = sessionStorage.getItem("pageSizeValue") as any;
-        } else {
-            this.pageSize = 100;
+        if (this.customerGridState.page) {
+            this.paginator.pageIndex = this.customerGridState.page;
         }
-
-        if (sessionStorage.getItem("tableSortValue")) {
-            this.tableSort = sessionStorage.getItem("tableSortValue") as any;
+        if (this.customerGridState.order) {
+            this.sort.active = this.customerGridState.order;
         }
-
-        if (sessionStorage.getItem("tableSortValueDirection")) {
-            this.tableSortOrder = sessionStorage.getItem(
-                "tableSortValueDirection"
-            ) as any;
+        if (this.customerGridState.orderBy) {
+            this.sort.direction = this.customerGridState.orderBy as SortDirection;
         }
     }
 
@@ -134,12 +124,12 @@ export class CustomersGridComponent implements OnInit {
         });
     }
 
-    // Public Methods
-    public deleteCustomer(customer) {
+    // Methods
+    deleteCustomer(customer) {
         const dialogRef = this.deleteCustomerDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: customer, description: "customer" },
+                data: {item: customer, description: "customer"},
                 autoFocus: false,
             }
         );
@@ -149,47 +139,41 @@ export class CustomersGridComponent implements OnInit {
                 return;
             }
             this.customerInfoByGroupService
-                .remove({ oid: result.item.customerInfoByGroupId })
+                .remove({oid: result.item.customerInfoByGroupId})
                 .subscribe(() => {
                     this.customerDeleted.emit();
                 });
         });
     }
 
-    public editCustomer(customer, $event) {
-        if ($event.srcElement) {
-            if (
-                $event.srcElement.nodeName.toLowerCase() === "button" ||
-                $event.srcElement.nodeName.toLowerCase() === "select" ||
-                ($event.srcElement.nodeName.toLowerCase() === "input" &&
-                    $event.srcElement.getAttribute("type") === "checkbox")
-            ) {
-                $event.stopPropagation();
-                return;
-            }
-        }
-
-        const clonedCustomer = Object.assign({}, customer);
-        this.editCustomerClicked.emit(clonedCustomer);
+    editCustomer(customer) {
+        this.editCustomerClicked.emit({
+            customerInfoByGroupId: customer.customerInfoByGroupId,
+            filter: this.customersDataSource.filter,
+            page: this.customersDataSource.paginator.pageIndex,
+            order: this.customersDataSource.sort.active,
+            orderBy: this.customersDataSource.sort.direction,
+            filterType: this.customerFilterType,
+        });
     }
 
-    public selectAction() {
+    selectAction() {
         const pageCustomersData = this.customersDataSource.connect().value;
         forEach(pageCustomersData, (customer) => {
-            customer.selectAll = this.selectAll ? true : false;
+            customer.selectAll = this.selectAll;
         });
         this.selectedRows = this.selectAll ? pageCustomersData.length : 0;
     }
 
-    public selectUnique() {
+    selectUnique() {
         if (this.selectedRows === this.customersData.length) {
             this.selectAll = false;
             this.selectedRows = this.selectedRows - 1;
         }
     }
 
-    public newCustomer() {
-        const customerInfo = { oid: 0 };
+    newCustomer() {
+        const customerInfo = {oid: 0};
         const dialogRef = this.newCustomerDialog.open(
             CustomersDialogNewCustomerComponent,
             {
@@ -212,29 +196,30 @@ export class CustomersGridComponent implements OnInit {
                         groupId: this.sharedService.currentUser.groupId,
                         customerId: result.customerId,
                     })
-                    .subscribe(() => {});
+                    .subscribe(() => {
+                    });
 
                 this.customerInfoByGroupService
                     .add(result)
                     .subscribe((customerInfoByGroupData: any) => {
                         result.customerInfoByGroupId =
                             customerInfoByGroupData.oid;
-                        this.editCustomer(result, Event);
+                        this.editCustomer(result);
                     });
             });
         });
     }
 
-    public applyFilter(filterValue: string) {
-        this.customersDataSource.filter = filterValue.trim().toLowerCase();
+    applyFilter(event: any) {
+        this.customersDataSource.filter = event.target.value.trim().toLowerCase();
     }
 
-    public exportCustomersToExcel() {
+    exportCustomersToExcel() {
         // Export the filtered results to an excel spreadsheet
         const filteredList = this.customersDataSource.filteredData.filter((item) => {
             return item.selectAll === true;
         });
-        let exportData = [];
+        let exportData;
         if (filteredList.length > 0) {
             exportData = filteredList;
         } else {
@@ -264,7 +249,7 @@ export class CustomersGridComponent implements OnInit {
         XLSX.writeFile(wb, "Customers.xlsx");
     }
 
-    public alertHeader(value) {
+    alertHeader(value) {
         if (value) {
             sessionStorage.setItem("tableSortValue", value);
         }
@@ -277,9 +262,9 @@ export class CustomersGridComponent implements OnInit {
         }
     }
 
-    public exportCustomerAircraftToExcel() {
+    exportCustomerAircraftToExcel() {
         // Export the filtered results to an excel spreadsheet
-        let exportData = map(this.aircraftsData, (item) => {
+        let exportData = map(this.aircraftData, (item) => {
             let pricingTemplateName = item.pricingTemplateName;
             if (!pricingTemplateName) {
                 const customer = find(this.customersData, (c) => {
@@ -323,41 +308,11 @@ export class CustomersGridComponent implements OnInit {
         XLSX.writeFile(wb, "Aircraft.xlsx");
     }
 
-    public customerFilterTypeChanged(event) {
+    customerFilterTypeChanged() {
         this.refreshCustomerDataSource();
     }
 
-    private refreshCustomerDataSource() {
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.customersDataSource = new MatTableDataSource(
-            this.customersData.filter((element: any) => {
-                    if (this.customerFilterType === 0) {
-                        return true;
-                    }
-                    return element.needsAttention;
-                }
-            )
-        );
-        this.sort.active = "allInPrice";
-        this.customersDataSource.sort = this.sort;
-        this.customersDataSource.paginator = this.paginator;
-        this.customersDataSource.filterPredicate = (data: any, filter: string) => {
-            if (filter === "needs attention") {
-                return data.needsAttention === true;
-            } else {
-                let found = false;
-                forOwn(data, (value) => {
-                    if (value && value.toString().toLowerCase().includes(filter)) {
-                        found = true;
-                        return false;
-                    }
-                });
-                return found;
-            }
-        };
-    }
-
-    public onMarginChange(newValue: any, customer: any) {
+    onMarginChange(newValue: any, customer: any) {
         const changedPricingTemplate = find(this.pricingTemplatesData, (p) => {
             return customer.pricingTemplateName === p.name;
         });
@@ -377,10 +332,12 @@ export class CustomersGridComponent implements OnInit {
         };
         this.customerMarginsService
             .updatecustomermargin(vm)
-            .subscribe();
+            .subscribe(() => {
+                this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
+            });
     }
 
-    public bulkMarginTemplateUpdate(event: MatSelectChange) {
+    bulkMarginTemplateUpdate(event: MatSelectChange) {
         const listCustomers = [];
 
         forEach(this.customersData, (customer) => {
@@ -399,17 +356,19 @@ export class CustomersGridComponent implements OnInit {
 
         this.customerMarginsService
             .updatemultiplecustomermargin(listCustomers)
-            .subscribe();
+            .subscribe(() => {
+                this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
+            });
     }
 
-    public anySelected() {
+    anySelected() {
         const filteredList = this.customersData.filter((item) => {
             return item.selectAll === true;
         });
         return filteredList.length > 0;
     }
 
-    public async launchImporter() {
+    async launchImporter() {
         if (!this.LICENSE_KEY) {
             return alert("Set LICENSE_KEY on Line 13 before continuing.");
         }
@@ -435,11 +394,13 @@ export class CustomersGridComponent implements OnInit {
                         }
                     });
             }
-        } catch (e) {}
+        } catch (e) {
+        }
     }
 
-    public initializeImporter() {
-        this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+    initializeImporter() {
+        FlatFileImporter.setVersion(2);
+        this.importer = new FlatFileImporter(this.LICENSE_KEY, {
             fields: [
                 {
                     label: "Company Id",
@@ -545,5 +506,39 @@ export class CustomersGridComponent implements OnInit {
             allowCustom: true,
             disableManualInput: false,
         });
+        this.importer.setCustomer({
+            userId: "1",
+            name: "WebsiteImport",
+        });
+    }
+
+    private refreshCustomerDataSource() {
+        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.customersDataSource = new MatTableDataSource(
+            this.customersData.filter((element: any) => {
+                    if (this.customerFilterType === 0) {
+                        return true;
+                    }
+                    return element.needsAttention;
+                }
+            )
+        );
+        this.sort.active = "allInPrice";
+        this.customersDataSource.sort = this.sort;
+        this.customersDataSource.paginator = this.paginator;
+        this.customersDataSource.filterPredicate = (data: any, filter: string) => {
+            if (filter === "needs attention") {
+                return data.needsAttention === true;
+            } else {
+                let found = false;
+                forOwn(data, (value) => {
+                    if (value && value.toString().toLowerCase().includes(filter)) {
+                        found = true;
+                        return false;
+                    }
+                });
+                return found;
+            }
+        };
     }
 }

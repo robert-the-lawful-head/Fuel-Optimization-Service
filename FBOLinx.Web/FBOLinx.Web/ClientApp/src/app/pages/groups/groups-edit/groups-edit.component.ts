@@ -1,9 +1,14 @@
 import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Store } from "@ngrx/store";
+
+import { State } from "../../../store/reducers";
+import { breadcrumbSet } from "../../../store/actions";
 
 // Services
 import { GroupsService } from "../../../services/groups.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
+
 
 const BREADCRUMBS: any[] = [
     {
@@ -36,11 +41,14 @@ export class GroupsEditComponent implements OnInit {
     public contactsData: any;
 
     constructor(
+        private store: Store<State>,
         private route: ActivatedRoute,
         private router: Router,
         private groupsService: GroupsService,
         private snackBar: MatSnackBar
-    ) {}
+    ) {
+        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
+    }
 
     ngOnInit() {
         const id = this.route.snapshot.paramMap.get("id");

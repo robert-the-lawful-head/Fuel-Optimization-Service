@@ -64,11 +64,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
-            }
-
             var fuelReq = await GetAllFuelRequests().Include("Customer").Include("CustomerAircraft").Include("Fbo").Where((x => x.Fboid == fboId)).ToListAsync();
 
             var fuelReqVM = fuelReq.Select(f => new FuelReqsGridViewModel
@@ -105,11 +100,6 @@ namespace FBOLinx.Web.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
             }
 
             List<FuelReq> fuelReq = await GetAllFuelRequests()
@@ -155,11 +145,6 @@ namespace FBOLinx.Web.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
             }
 
             List<FuelReqsGridViewModel> fuelReqVM = await
@@ -294,11 +279,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
-            }
-
             int fuelReqCount = await GetAllFuelRequests().Include("Fbo").Where((x => x.Fboid == fboId)).CountAsync();
 
             return Ok(fuelReqCount);
@@ -385,11 +365,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
-            }
-
             try
             {
                 var customerFuelReqsByCustomer = await (from orders in (from fr in _context.FuelReq
@@ -427,11 +402,6 @@ namespace FBOLinx.Web.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
             }
 
             try
@@ -552,11 +522,6 @@ namespace FBOLinx.Web.Controllers
                     return BadRequest(ModelState);
                 }
 
-                if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-                {
-                    return BadRequest("Invalid FBO");
-                }
-
                 //Total orders by aircraft size
                 var fuelReqsByAircraftSizeVM = await (from f in _context.FuelReq
                                                       join ca in
@@ -613,7 +578,8 @@ namespace FBOLinx.Web.Controllers
                     request.ICAO = airport.Icao;
                 }
 
-                FuelerLinxUpliftsByLocationResponseContent result = await _fuelerLinxService.GetOrderCountByLocation(request);
+                var result = _fuelerLinxService.GetTransactionsCountForAirport(new FBOLinxOrdersRequest()
+                    {EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = request.ICAO});
 
                 return Ok(result);
             }
@@ -629,11 +595,6 @@ namespace FBOLinx.Web.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
             }
 
             if (string.IsNullOrEmpty(request.ICAO))
@@ -749,10 +710,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
-            }
 
             if (string.IsNullOrEmpty(request.ICAO))
             {
@@ -806,11 +763,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
-            }
-
             try
             {
                 string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
@@ -838,11 +790,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
-            }
-
             try
             {
                 string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
@@ -850,11 +797,11 @@ namespace FBOLinx.Web.Controllers
 
                 request.Icao = icao;
 
-                int airportOrdersCount = _context.FuelReq
-                                            .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd <= request.EndDateTime)
+                int fboOrderCount = _context.FuelReq
+                                            .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd < request.EndDateTime.GetValueOrDefault().AddDays(1))
                                             .Count();
 
-                int totalOrdersCount = _fuelerLinxService.GetTransactionsDirectOrdersCount(request).Result.GetValueOrDefault();
+                int directOrdersCount = _fuelerLinxService.GetTransactionsDirectOrdersCount(request).Result.GetValueOrDefault();
 
                 int fuelerlinxOrdersCount = _fuelerLinxService.GetTransactionsCountForAirport(request).Result.GetValueOrDefault();
 
@@ -863,17 +810,17 @@ namespace FBOLinx.Web.Controllers
                                 new NgxChartBarChartItemType
                                 {
                                     Name = "My Total Orders",
-                                    Value = airportOrdersCount
+                                    Value = fboOrderCount
                                 },
                                 new NgxChartBarChartItemType
                                 {
                                     Name = "Other FBO's Orders",
-                                    Value = totalOrdersCount
+                                    Value = (directOrdersCount - fboOrderCount)
                                 },
                                 new NgxChartBarChartItemType
                                 {
                                     Name = "Contract/Reseller Orders",
-                                    Value = fuelerlinxOrdersCount
+                                    Value = (fuelerlinxOrdersCount - directOrdersCount)
                                 }
                             };
                 return Ok(chartData);
@@ -890,11 +837,6 @@ namespace FBOLinx.Web.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
             }
 
             try
@@ -939,11 +881,6 @@ namespace FBOLinx.Web.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
             }
 
             try

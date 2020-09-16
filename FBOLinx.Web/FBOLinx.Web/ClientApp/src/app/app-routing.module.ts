@@ -10,7 +10,6 @@ import { AuthtokenComponent } from "./pages/auth/authtoken/authtoken.component";
 import { LoginComponent } from "./pages/auth/login/login.component";
 import { CustomersEditComponent } from "./pages/customers/customers-edit/customers-edit.component";
 import { CustomersHomeComponent } from "./pages/customers/customers-home/customers-home.component";
-import { DashboardAdminComponent } from "./pages/dashboards/dashboard-admin/dashboard-admin.component";
 import { DashboardFboComponent } from "./pages/dashboards/dashboard-fbo/dashboard-fbo.component";
 import { DashboardHomeComponent } from "./pages/dashboards/dashboard-home/dashboard-home.component";
 import { FboPricesHomeComponent } from "./pages/fbo-prices/fbo-prices-home/fbo-prices-home.component";
@@ -39,14 +38,6 @@ const defaultRoutes: Routes = [
         path: "customers/:id",
         component: CustomersEditComponent,
         canActivate: [AuthGuard],
-    },
-    {
-        path: "dashboard-admin",
-        component: DashboardAdminComponent,
-        canActivate: [AuthGuard],
-        data: {
-            expectedRoles: [3],
-        },
     },
     {
         path: "dashboard",

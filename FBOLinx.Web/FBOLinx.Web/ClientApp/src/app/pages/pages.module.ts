@@ -60,7 +60,6 @@ import { CustomerCompanyTypeDialogComponent } from "./customers/customer-company
 import { CustomersDialogNewCustomerComponent } from "./customers/customers-dialog-new-customer/customers-dialog-new-customer.component";
 import { CustomersGridComponent } from "./customers/customers-grid/customers-grid.component";
 import { CustomersHomeComponent } from "./customers/customers-home/customers-home.component";
-import { DashboardAdminComponent } from "./dashboards/dashboard-admin/dashboard-admin.component";
 import { DashboardFboComponent } from "./dashboards/dashboard-fbo/dashboard-fbo.component";
 import { DashboardHomeComponent } from "./dashboards/dashboard-home/dashboard-home.component";
 import { FbosContactsComponent } from "./fbos/fbos-contacts/fbos-contacts.component";
@@ -191,7 +190,6 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         CustomersEditComponent,
         CustomersGridComponent,
         CustomersHomeComponent,
-        DashboardAdminComponent,
         DashboardFboComponent,
         DashboardHomeComponent,
         FbosContactsComponent,
@@ -256,6 +254,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
     ],
     exports: [
         ClickStopPropagationDirective,
+        FboPricesPanelComponent,
     ],
     entryComponents: [
         DeleteConfirmationComponent,

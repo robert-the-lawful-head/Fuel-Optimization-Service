@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 
 import { State } from "../../../store/reducers";
-import { pricingTemplateGridSet } from "../../../store/actions";
+import { pricingTemplateGridSet, breadcrumbSet } from "../../../store/actions";
 
 // Services
 import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
@@ -50,6 +50,8 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
+        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
+
         this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
                 if (message === SharedEvents.locationChangedEvent) {
