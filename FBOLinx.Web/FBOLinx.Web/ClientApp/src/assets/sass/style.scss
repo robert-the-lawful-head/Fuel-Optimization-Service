@@ -275,3 +275,13 @@ button.mat-icon-button {
         }
     }
 }
+
+.close-btn {
+    .mat-button-wrapper {
+        .mat-icon {
+            font-size: 30px;
+            width: auto;
+            height: auto;
+        }
+    }
+}
