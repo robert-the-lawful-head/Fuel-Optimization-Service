@@ -12,5 +12,6 @@ namespace FBOLinx.Web.ViewModels
         public bool? Active { get; set; }
         public string Icao { get; set; }
         public string Iata { get; set; }
+        public int GroupId { get; set; }
     }
 }

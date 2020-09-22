@@ -75,7 +75,8 @@ namespace FBOLinx.Web.Controllers
                 Active = f.Active,
                 Fbo = f.Fbo,
                 Icao = f.fboAirport?.Icao,
-                Oid = f.Oid
+                Oid = f.Oid,
+                GroupId = f.GroupId ?? 0
             }).ToList();
             return Ok(fbosVM);
         }

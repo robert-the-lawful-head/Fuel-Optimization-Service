@@ -10,12 +10,6 @@
                         [value]="acukwikFbo">{{ acukwikFbo.handlerLongName }}</mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field *ngIf="data.acukwikFbo">
-        <mat-label>Group</mat-label>
-        <input matInput
-               [value]="data.group"
-               [(ngModel)]="data.group">
-    </mat-form-field>
 </div>
 <div class="mt-2 text-center" style="color:red;" *ngIf="errorHappened">
     <p>FBO not saved, please contact us to investigate the issue.</p>

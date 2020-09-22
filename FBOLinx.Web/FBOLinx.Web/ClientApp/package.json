@@ -27,6 +27,7 @@
     "@ngrx/store": "^10.0.0",
     "@ngrx/store-devtools": "^10.0.0",
     "@swimlane/ngx-charts": "^14.0.0",
+    "@syncfusion/ej2-angular-grids": "^18.2.59",
     "@syncfusion/ej2-angular-richtexteditor": "^18.2.48",
     "angular2-text-mask": "^9.0.0",
     "aspnet-prerendering": "^3.0.1",
