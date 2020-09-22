@@ -8,36 +8,36 @@ import {
     ViewContainerRef,
     AfterViewInit
 } from "@angular/core";
-import { Router } from '@angular/router';
+import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog } from "@angular/material/dialog";
-import { DetailRowService, GridComponent, GridModel, RecordClickEventArgs } from '@syncfusion/ej2-angular-grids';
+import { DetailRowService, GridComponent, GridModel, RecordClickEventArgs } from "@syncfusion/ej2-angular-grids";
 
 // Services
 import { GroupsService } from "../../../services/groups.service";
-import { FbosService } from '../../../services/fbos.service';
+import { FbosService } from "../../../services/fbos.service";
 import { SharedService } from "../../../layouts/shared-service";
 
 // Components
 import { GroupsDialogNewGroupComponent } from "../groups-dialog-new-group/groups-dialog-new-group.component";
 import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
-import { FbosGridNewFboDialogComponent } from '../../fbos/fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
-import { NotificationComponent } from '../../../shared/components/notification/notification.component';
-import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
-import { fboChangedEvent } from '../../../models/sharedEvents';
+import { FbosGridNewFboDialogComponent } from "../../fbos/fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component";
+import { NotificationComponent } from "../../../shared/components/notification/notification.component";
+import { ManageConfirmationComponent } from "../../../shared/components/manage-confirmation/manage-confirmation.component";
+import { fboChangedEvent } from "../../../models/sharedEvents";
 
 @Component({
     selector: "app-groups-grid-new",
     templateUrl: "./groups-grid-new.component.html",
     styleUrls: ["./groups-grid-new.component.scss"],
-    providers: [DetailRowService]
+    providers: [DetailRowService],
 })
 export class GroupsGridNewComponent implements OnInit, AfterViewInit {
-    @ViewChild('grid') public grid: GridComponent;
-    @ViewChild('fboAddNewTemplate', { static: true }) public fboAddNewTemplate: any;
-    @ViewChild('fboManageTemplate', { static: true }) public fboManageTemplate: any;
-    @ViewChild('fboDeleteTemplate', { static: true }) public fboDeleteTemplate: any;
-    
+    @ViewChild("grid") public grid: GridComponent;
+    @ViewChild("fboAddNewTemplate", { static: true }) public fboAddNewTemplate: any;
+    @ViewChild("fboManageTemplate", { static: true }) public fboManageTemplate: any;
+    @ViewChild("fboDeleteTemplate", { static: true }) public fboDeleteTemplate: any;
+
     // Input/Output Bindings
     @Input() groupsData: Array<any>;
     @Input() fbosData: Array<any>;
@@ -49,9 +49,9 @@ export class GroupsGridNewComponent implements OnInit, AfterViewInit {
     // Members
     pageTitle = "Groups";
     searchValue = "";
-    pageSettings: Object = {
-        pageSizes: [25, 50, 100, 'All'],
-        pageSize: 25
+    pageSettings: object = {
+        pageSizes: [25, 50, 100, "All"],
+        pageSize: 25,
     };
 
     constructor(
@@ -74,32 +74,33 @@ export class GroupsGridNewComponent implements OnInit, AfterViewInit {
         const self = this;
         this.childGrid = {
             dataSource: this.fbosData,
-            queryString: 'groupId',
+            queryString: "groupId",
             columns: [
-                { field: 'oid', headerText: 'Oid', isPrimaryKey: true, visible: false },
-                { field: 'icao', headerText: 'ICAO' },
-                { field: 'fbo', headerText: 'FBO' },
-                { field: 'active', headerText: 'Status', width: 100 },
+                { field: "oid", headerText: "Oid", isPrimaryKey: true, visible: false },
+                { field: "icao", headerText: "ICAO" },
+                { field: "fbo", headerText: "FBO" },
+                { field: "active", headerText: "Status", width: 100 },
                 { template: this.fboManageTemplate, width: 150 },
-                { template: this.fboDeleteTemplate, headerTemplate: this.fboAddNewTemplate, width: 150 }
+                { template: this.fboDeleteTemplate, headerTemplate: this.fboAddNewTemplate, width: 150 },
             ],
             load() {
                 this.registeredTemplate = {};   // set registertemplate value as empty in load event
-                (this as GridComponent).parentDetails.parentKeyFieldValue = (<{ oid?: string}>(this as GridComponent).parentDetails.parentRowData)['oid'];
+                (this as GridComponent).parentDetails.parentKeyFieldValue
+                    = ((this as GridComponent).parentDetails.parentRowData as { oid?: string}).oid;
             },
             recordClick(args: RecordClickEventArgs) {
                 self.editFboClicked.emit(args.rowData);
-            }
+            },
         };
     }
 
     ngAfterViewInit() {
         this.fboAddNewTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
-        this.fboAddNewTemplate.elementRef.nativeElement.propName = 'headerTemplate';
+        this.fboAddNewTemplate.elementRef.nativeElement.propName = "headerTemplate";
         this.fboManageTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
-        this.fboManageTemplate.elementRef.nativeElement.propName = 'template';
+        this.fboManageTemplate.elementRef.nativeElement.propName = "template";
         this.fboDeleteTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
-        this.fboDeleteTemplate.elementRef.nativeElement.propName = 'template';
+        this.fboDeleteTemplate.elementRef.nativeElement.propName = "template";
     }
 
     deleteGroup(record) {
@@ -178,10 +179,11 @@ export class GroupsGridNewComponent implements OnInit, AfterViewInit {
     }
 
     newFbo(event) {
-        const parentRow = this.getParentUntil(event.currentTarget, 'e-detailrow');
+        const parentRow = this.getParentUntil(event.currentTarget, "e-detailrow");
         const groupRow = parentRow.previousSibling;
-        const rowIndex = groupRow.getAttribute('aria-rowindex');
-        const rowData = this.grid.dataSource[this.grid.pageSettings.pageSize * (this.grid.pageSettings.currentPage - 1) + parseInt(rowIndex)];
+        const rowIndex = groupRow.getAttribute("aria-rowindex");
+        const dataIndex = this.grid.pageSettings.pageSize * (this.grid.pageSettings.currentPage - 1) + parseInt(rowIndex, 10);
+        const rowData = this.grid.dataSource[dataIndex];
 
         const dialogRef = this.newFboDialog.open(FbosGridNewFboDialogComponent, {
             width: "450px",
@@ -190,7 +192,6 @@ export class GroupsGridNewComponent implements OnInit, AfterViewInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(rowData);
                 result.groupId = rowData.oid;
 
                 this.fbosService.add(result).subscribe((newFbo: any) => {
@@ -242,11 +243,11 @@ export class GroupsGridNewComponent implements OnInit, AfterViewInit {
 
     getParentUntil(element, className) {
         if (element.classList.contains(className)) {
-            return element
+            return element;
         }
-        return this.getParentUntil(element.parentElement, className)
+        return this.getParentUntil(element.parentElement, className);
     }
- 
+
     applyFilter(filterValue: string) {
         // this.groupsDataSource.filter = filterValue.trim().toLowerCase();
     }

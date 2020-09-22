@@ -6,7 +6,7 @@ import { State } from "../../../store/reducers";
 import { breadcrumbSet } from "../../../store/actions";
 // Services
 import { GroupsService } from "../../../services/groups.service";
-import { FbosService } from '../../../services/fbos.service';
+import { FbosService } from "../../../services/fbos.service";
 import { SharedService } from "../../../layouts/shared-service";
 
 const BREADCRUMBS: any[] = [
