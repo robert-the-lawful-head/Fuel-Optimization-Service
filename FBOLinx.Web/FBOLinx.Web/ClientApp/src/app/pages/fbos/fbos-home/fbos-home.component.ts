@@ -35,7 +35,6 @@ export class FbosHomeComponent implements OnInit {
     public fbosData: Array<any>;
     public currentFbo: any;
     public currentFboAirport: any;
-    public airportData: Array<any>;
 
     constructor(
         private store: Store<State>,

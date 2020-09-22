@@ -7,11 +7,13 @@
                 (cancelClicked)="cancelGroupEditClicked()"
             ></app-groups-edit>
         </div>
-        <div *ngIf="!currentGroup && groupsData">
-            <app-groups-grid
+        <div *ngIf="!currentGroup && groupsData && fbosData">
+            <app-groups-grid-new
                 [groupsData]="groupsData"
+                [fbosData]="fbosData"
                 (editGroupClicked)="editGroupClicked($event)"
-            ></app-groups-grid>
+                (editFboClicked)="editFboClicked($event)"
+            ></app-groups-grid-new>
         </div>
     </div>
     <div *ngIf="!(groupsData || currentGroup)">
