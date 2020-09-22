@@ -1,18 +1,18 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
-import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
-import { FormControl } from "@angular/forms";
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { FormControl } from '@angular/forms';
 import {
     startWith,
     map,
     debounceTime,
     switchMap,
     catchError,
-} from "rxjs/operators";
-import { Observable } from "rxjs";
-import { of } from "rxjs";
+} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 // Services
-import { AcukwikairportsService } from "../../../services/acukwikairports.service";
+import { AcukwikairportsService } from '../../../services/acukwikairports.service';
 
 export interface AirportAutoCompleteData {
     icao: string;
@@ -23,9 +23,9 @@ export interface AirportAutoCompleteData {
 export declare type AirportAutoCompleteDataSource = AirportAutoCompleteData[];
 
 @Component({
-    selector: "app-airport-autocomplete",
-    templateUrl: "./airport-autocomplete.component.html",
-    styleUrls: ["./airport-autocomplete.component.scss"],
+    selector: 'app-airport-autocomplete',
+    templateUrl: './airport-autocomplete.component.html',
+    styleUrls: ['./airport-autocomplete.component.scss'],
 })
 export class AirportAutocompleteComponent implements OnInit {
     @Input() airportContainerModel: any;
@@ -41,14 +41,14 @@ export class AirportAutocompleteComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.searchControl.setValue(this.airportModel ? this.airportModel : "");
+        this.searchControl.setValue(this.airportModel ? this.airportModel : '');
         this.filteredAirports = this.searchControl.valueChanges.pipe(
-            startWith(""),
+            startWith(''),
             // delay emits
             debounceTime(300),
             // use switch map so as to cancel previous subscribed events, before creating new once
             switchMap((value) => {
-                if (value !== "") {
+                if (value !== '') {
                     // lookup from github
                     return this.lookup(value);
                 } else {
@@ -60,7 +60,7 @@ export class AirportAutocompleteComponent implements OnInit {
     }
 
     lookup(value: any): Observable<AirportAutoCompleteDataSource> {
-        if (typeof value === "object") {
+        if (typeof value === 'object') {
             return of(null);
         }
         return this.acukwikAirportsService.search(value).pipe(
@@ -75,7 +75,7 @@ export class AirportAutocompleteComponent implements OnInit {
 
     public displayFn(airport?: AirportAutoCompleteData): string | undefined {
         return airport
-            ? airport.icao + " - " + airport.fullAirportName
+            ? airport.icao + ' - ' + airport.fullAirportName
             : undefined;
     }
 

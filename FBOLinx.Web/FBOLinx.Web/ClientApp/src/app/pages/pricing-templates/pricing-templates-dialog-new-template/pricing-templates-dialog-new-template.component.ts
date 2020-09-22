@@ -1,19 +1,19 @@
-import { Component, OnInit, Inject, ViewChild } from "@angular/core";
-import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {
     MatDialog,
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
-import { MatStepper } from "@angular/material/stepper";
-import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor";
+} from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
 // Services
-import { FbopricesService } from "../../../services/fboprices.service";
-import { PricetiersService } from "../../../services/pricetiers.service";
-import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
+import { FbopricesService } from '../../../services/fboprices.service';
+import { PricetiersService } from '../../../services/pricetiers.service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 
-import { CloseConfirmationComponent } from "../../../shared/components/close-confirmation/close-confirmation.component";
+import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 
 export interface NewPricingTemplateMargin {
     min?: number;
@@ -25,14 +25,14 @@ export interface NewPricingTemplateMargin {
 }
 
 @Component({
-    selector: "app-pricing-templates-dialog-new-template",
-    templateUrl: "./pricing-templates-dialog-new-template.component.html",
-    styleUrls: ["./pricing-templates-dialog-new-template.component.scss"],
+    selector: 'app-pricing-templates-dialog-new-template',
+    templateUrl: './pricing-templates-dialog-new-template.component.html',
+    styleUrls: ['./pricing-templates-dialog-new-template.component.scss'],
 })
 export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
-    @ViewChild("typeEmail") rteEmail: RichTextEditorComponent;
-    @ViewChild("typeNotes") rteObj: RichTextEditorComponent;
-    @ViewChild("stepper") stepper: MatStepper;
+    @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
+    @ViewChild('typeNotes') rteObj: RichTextEditorComponent;
+    @ViewChild('stepper') stepper: MatStepper;
 
     form: FormGroup;
 
@@ -42,8 +42,8 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     title: string;
     isSaving: boolean;
     marginTypeDataSource: Array<any> = [
-        { text: "Cost +", value: 0 },
-        { text: "Retail -", value: 1 },
+        { text: 'Cost +', value: 0 },
+        { text: 'Retail -', value: 1 },
     ];
 
     constructor(
@@ -56,7 +56,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         private fboPricesService: FbopricesService
     ) {
         this.loadCurrentPrice();
-        this.title = "New Margin Template";
+        this.title = 'New Margin Template';
 
         // Prevent modal close on outside click
         this.dialogRef.disableClose = true;
@@ -69,11 +69,11 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                     CloseConfirmationComponent,
                     {
                         data: {
-                            customTitle: "Discard Changes?",
+                            customTitle: 'Discard Changes?',
                             customText:
-                                "You have unsaved changes. Are you sure?",
-                            ok: "Discard",
-                            cancel: "Cancel",
+                                'You have unsaved changes. Are you sure?',
+                            ok: 'Discard',
+                            cancel: 'Cancel',
                         },
                         autoFocus: false,
                     }
@@ -94,7 +94,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     initForm() {
         this.form = this.formBuilder.group({
             firstStep: this.formBuilder.group({
-                templateName: ["", Validators.required],
+                templateName: ['', Validators.required],
                 templateDefault: [false],
             }),
             secondStep: this.formBuilder.group({
@@ -110,9 +110,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 ]),
             }),
             thirdStep: this.formBuilder.group({
-                subject: ["", Validators.required],
-                email: ["", Validators.required],
-                notes: ["", Validators.required],
+                subject: ['', Validators.required],
+                email: ['', Validators.required],
+                notes: ['', Validators.required],
             }),
         });
 
@@ -136,7 +136,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     marginTypeChange() {
         const secondStep = this.form.controls.secondStep as FormGroup;
-        secondStep.setControl("customerMargins", this.formBuilder.array([
+        secondStep.setControl('customerMargins', this.formBuilder.array([
             this.formBuilder.group({
                 min: [1],
                 max: [99999],
@@ -148,7 +148,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     addCustomerMargin() {
-        const customerMargin:NewPricingTemplateMargin = {
+        const customerMargin: NewPricingTemplateMargin = {
             min: 1,
             max: 99999,
             amount: 0,
@@ -209,8 +209,8 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.fboPricesService
             .getFbopricesByFboIdCurrent(this.data.fboId)
             .subscribe((data: any) => {
-                this.jetACost = data.find(item => item.product === "JetA Cost").price;
-                this.jetARetail = data.find(item => item.product === "JetA Retail").price;
+                this.jetACost = data.find(item => item.product === 'JetA Cost').price;
+                this.jetARetail = data.find(item => item.product === 'JetA Retail').price;
             });
     }
 
@@ -221,7 +221,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     private updateMargins(oldMargins, marginType) {
         const margins = [...oldMargins];
-        for(let i = 0; i < margins?.length; i++) {
+        for (let i = 0; i < margins?.length; i++) {
             if ( i > 0) {
                 margins[i - 1].max = Math.abs(margins[i].min - 1);
             }

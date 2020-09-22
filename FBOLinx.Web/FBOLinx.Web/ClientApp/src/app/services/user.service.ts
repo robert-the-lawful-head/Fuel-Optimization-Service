@@ -1,26 +1,26 @@
-import { Injectable, Inject } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class UserService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
 
-    constructor(private http: HttpClient, @Inject("BASE_URL") baseUrl: string) {
+    constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         this.headers = new HttpHeaders({
-            "Content-Type": "application/json; charset=utf-8",
+            'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + "api/users";
+        this.accessPointUrl = baseUrl + 'api/users';
     }
 
     public getCurrentUser() {
-        return this.http.get(this.accessPointUrl + "/current", {
+        return this.http.get(this.accessPointUrl + '/current', {
             headers: this.headers,
         });
     }
 
     public get(payload) {
-        return this.http.get(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.get(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
@@ -32,50 +32,50 @@ export class UserService {
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.delete(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
 
     public update(payload) {
-        return this.http.put(this.accessPointUrl + "/" + payload.oid, payload, {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
     }
 
     public getForGroupId(groupId) {
-        return this.http.get(this.accessPointUrl + "/group/" + groupId, {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId, {
             headers: this.headers,
         });
     }
 
     public getForFboId(fboId) {
-        return this.http.get(this.accessPointUrl + "/fbo/" + fboId, {
+        return this.http.get(this.accessPointUrl + '/fbo/' + fboId, {
             headers: this.headers,
         });
     }
 
     public getRoles() {
-        return this.http.get(this.accessPointUrl + "/roles", {
+        return this.http.get(this.accessPointUrl + '/roles', {
             headers: this.headers,
         });
     }
 
     public resetPassword(payload) {
-        return this.http.post(this.accessPointUrl + "/resetpassword", payload, {
+        return this.http.post(this.accessPointUrl + '/resetpassword', payload, {
             headers: this.headers,
         });
     }
 
     public updatePassword(payload) {
-        return this.http.post(this.accessPointUrl + "/newpassword", payload, {
+        return this.http.post(this.accessPointUrl + '/newpassword', payload, {
             headers: this.headers,
         });
     }
 
     public checkemailexists(payload) {
         return this.http.get(
-            this.accessPointUrl + "/checkemailexists/" + payload,
+            this.accessPointUrl + '/checkemailexists/' + payload,
             {
                 headers: this.headers,
             }

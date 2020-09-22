@@ -1,12 +1,12 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 import {
     MatDialogRef,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 @Component({
-    selector: "app-ramp-fees-import-informatino-dialog",
-    templateUrl: "./ramp-fees-import-information-dialog.component.html",
-    styleUrls: ["./ramp-fees-import-information-dialog.component.scss"],
+    selector: 'app-ramp-fees-import-informatino-dialog',
+    templateUrl: './ramp-fees-import-information-dialog.component.html',
+    styleUrls: ['./ramp-fees-import-information-dialog.component.scss'],
 })
 export class RampFeesImportInformationComponent {
 
@@ -17,7 +17,7 @@ export class RampFeesImportInformationComponent {
     }
 
     public onOkClick(): void {
-        this.dialogRef.close("ok");
+        this.dialogRef.close('ok');
     }
 
     public onCancelClick(): void {

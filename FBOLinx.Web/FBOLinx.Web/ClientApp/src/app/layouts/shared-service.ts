@@ -1,9 +1,9 @@
-import { Injectable } from "@angular/core";
-import { Subject, BehaviorSubject } from "rxjs";
-import * as moment from "moment";
+import { Injectable } from '@angular/core';
+import { Subject, BehaviorSubject } from 'rxjs';
+import * as moment from 'moment';
 
-import { AuthenticationService } from "../services/authentication.service";
-import { User } from "../models/User";
+import { AuthenticationService } from '../services/authentication.service';
+import { User } from '../models/User';
 
 export interface ActiveUser {
     fboId: number;
@@ -26,14 +26,14 @@ export class SharedService {
             (x) => (this.currentUser = x)
         );
         const storedDashboardSettings = localStorage.getItem(
-            "dashboardSetings"
+            'dashboardSetings'
         );
         if (!storedDashboardSettings) {
             this.dashboardSettings.filterStartDate = new Date(
-                moment().add(-6, "M").format("MM/DD/YYYY")
+                moment().add(-6, 'M').format('MM/DD/YYYY')
             );
             this.dashboardSettings.filterEndDate = new Date(
-                moment().format("MM/DD/YYYY")
+                moment().format('MM/DD/YYYY')
             );
         } else {
             this.dashboardSettings = JSON.parse(storedDashboardSettings);
@@ -41,8 +41,8 @@ export class SharedService {
     }
     // Public Members
     get currentUser(): User {
-        if (!this._currentUser.fboId && sessionStorage.getItem("fboId")) {
-            this._currentUser.fboId = Number(sessionStorage.getItem("fboId"));
+        if (!this._currentUser.fboId && sessionStorage.getItem('fboId')) {
+            this._currentUser.fboId = Number(sessionStorage.getItem('fboId'));
         }
         return this._currentUser;
     }
@@ -54,11 +54,11 @@ export class SharedService {
     dashboardSettings: DashboardSettings = new DashboardSettings();
 
     public priceTemplateMessageSource = new BehaviorSubject(
-        "Update Pricing Template"
+        'Update Pricing Template'
     );
     currentMessage = this.priceTemplateMessageSource.asObservable();
 
-    public priceUpdateMessage = new BehaviorSubject("Enable button");
+    public priceUpdateMessage = new BehaviorSubject('Enable button');
     priceMessage = this.priceUpdateMessage.asObservable();
 
     // Observable string sources

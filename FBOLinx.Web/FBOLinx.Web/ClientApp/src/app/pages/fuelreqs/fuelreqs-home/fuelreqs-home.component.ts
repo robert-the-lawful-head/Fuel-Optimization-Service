@@ -1,37 +1,37 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import * as _ from "lodash";
-import * as moment from "moment";
-import * as XLSX from "xlsx";
-import { Store } from "@ngrx/store";
+import * as _ from 'lodash';
+import * as moment from 'moment';
+import * as XLSX from 'xlsx';
+import { Store } from '@ngrx/store';
 
-import { State } from "../../../store/reducers";
-import { breadcrumbSet } from "../../../store/actions";
+import { State } from '../../../store/reducers';
+import { breadcrumbSet } from '../../../store/actions';
 
 // Services
-import { FuelreqsService } from "../../../services/fuelreqs.service";
-import { SharedService } from "../../../layouts/shared-service";
-import { interval, Subscription } from "rxjs";
+import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { interval, Subscription } from 'rxjs';
 
 const BREADCRUMBS: any[] = [
     {
-        title: "Main",
-        link: "/default-layout",
+        title: 'Main',
+        link: '/default-layout',
     },
     {
-        title: "Fuel Orders",
-        link: "/default-layout/fuelreqs",
+        title: 'Fuel Orders',
+        link: '/default-layout/fuelreqs',
     },
 ];
 
 @Component({
-    selector: "app-fuelreqs-home",
-    templateUrl: "./fuelreqs-home.component.html",
-    styleUrls: ["./fuelreqs-home.component.scss"],
+    selector: 'app-fuelreqs-home',
+    templateUrl: './fuelreqs-home.component.html',
+    styleUrls: ['./fuelreqs-home.component.scss'],
 })
 export class FuelreqsHomeComponent implements OnInit, OnDestroy {
     // Public Members
-    public pageTitle = "Fuel Orders";
+    public pageTitle = 'Fuel Orders';
     public breadcrumb: any[] = BREADCRUMBS;
     public fuelreqsData: any[];
     public filterStartDate: Date;
@@ -45,10 +45,10 @@ export class FuelreqsHomeComponent implements OnInit, OnDestroy {
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.filterStartDate = new Date(
-            moment().add(-30, "d").format("MM/DD/YYYY")
+            moment().add(-30, 'd').format('MM/DD/YYYY')
         );
         this.filterEndDate = new Date(
-            moment().add(30, "d").format("MM/DD/YYYY")
+            moment().add(30, 'd').format('MM/DD/YYYY')
         );
         this.startFuelReqDataServe();
     }
@@ -93,7 +93,7 @@ export class FuelreqsHomeComponent implements OnInit, OnDestroy {
         this.restartFuelReqDataServe();
     }
 
-    public export (event) {
+    public export(event) {
         this.fuelReqService
             .getForGroupFboAndDateRange(
                 this.sharedService.currentUser.groupId,
@@ -105,10 +105,10 @@ export class FuelreqsHomeComponent implements OnInit, OnDestroy {
                 const exportData = _.map(data, (item) => {
                     return {
                         ID: item.oid,
-                        "Flight Dept.": item.customerName,
+                        'Flight Dept.': item.customerName,
                         ETA: item.eta,
                         ICAO: item.icao,
-                        "Tail #": item.tailNumber,
+                        'Tail #': item.tailNumber,
                         FBO: item.fboName,
                         Notes: item.notes,
                         Source: item.source,
@@ -116,10 +116,10 @@ export class FuelreqsHomeComponent implements OnInit, OnDestroy {
                 });
                 const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
                 const wb: XLSX.WorkBook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Fuel Orders");
+                XLSX.utils.book_append_sheet(wb, ws, 'Fuel Orders');
 
                 /* save to file */
-                XLSX.writeFile(wb, "FuelOrders.xlsx");
+                XLSX.writeFile(wb, 'FuelOrders.xlsx');
             });
     }
 }

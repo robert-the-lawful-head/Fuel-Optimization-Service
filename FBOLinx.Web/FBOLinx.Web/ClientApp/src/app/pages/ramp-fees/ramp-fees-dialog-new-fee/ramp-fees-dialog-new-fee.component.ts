@@ -1,13 +1,13 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 // Services
-import { AircraftsService } from "../../../services/aircrafts.service";
-import { Parametri } from "../../../services/paremeters.service";
-import { Subscription } from "rxjs";
+import { AircraftsService } from '../../../services/aircrafts.service';
+import { Parametri } from '../../../services/paremeters.service';
+import { Subscription } from 'rxjs';
 
 export interface NewRampFeeDialogData {
     oid: number;
@@ -22,16 +22,16 @@ export interface NewRampFeeDialogData {
 }
 
 @Component({
-    selector: "app-ramp-fees-dialog-new-fee",
-    templateUrl: "./ramp-fees-dialog-new-fee.component.html",
-    styleUrls: ["./ramp-fees-dialog-new-fee.component.scss"],
+    selector: 'app-ramp-fees-dialog-new-fee',
+    templateUrl: './ramp-fees-dialog-new-fee.component.html',
+    styleUrls: ['./ramp-fees-dialog-new-fee.component.scss'],
 })
 export class RampFeesDialogNewFeeComponent {
     public categoryTypes: any[] = [
-        { text: "Aircraft Make/Model", value: 2 },
-        { text: "Weight Range", value: 3 },
-        { text: "Wingspan", value: 4 },
-        { text: "Tail Number", value: 5 },
+        { text: 'Aircraft Make/Model', value: 2 },
+        { text: 'Weight Range', value: 3 },
+        { text: 'Wingspan', value: 4 },
+        { text: 'Tail Number', value: 5 },
     ];
     public aircraftTypes: any[];
     subscription: Subscription;

@@ -5,21 +5,21 @@ import {
     Output,
     OnInit,
     ViewChild,
-} from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatDialog } from "@angular/material/dialog";
+} from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 // Services
-import { UserService } from "../../../services/user.service";
-import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
-import { UsersDialogNewUserComponent } from "../users-dialog-new-user/users-dialog-new-user.component";
+import { UserService } from '../../../services/user.service';
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { UsersDialogNewUserComponent } from '../users-dialog-new-user/users-dialog-new-user.component';
 
 @Component({
-    selector: "app-users-grid",
-    templateUrl: "./users-grid.component.html",
-    styleUrls: ["./users-grid.component.scss"],
+    selector: 'app-users-grid',
+    templateUrl: './users-grid.component.html',
+    styleUrls: ['./users-grid.component.scss'],
 })
 export class UsersGridComponent implements OnInit {
     @Output() userDeleted = new EventEmitter<any>();
@@ -31,12 +31,12 @@ export class UsersGridComponent implements OnInit {
 
     public usersDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [
-        "firstName",
-        "lastName",
-        "username",
-        "roleDescription",
-        "copyAlerts",
-        "delete",
+        'firstName',
+        'lastName',
+        'username',
+        'roleDescription',
+        'copyAlerts',
+        'delete',
     ];
     public resultsLength = 0;
 
@@ -65,7 +65,7 @@ export class UsersGridComponent implements OnInit {
         const dialogRef = this.deleteUserDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: record, description: "user" },
+                data: { item: record, description: 'user' },
                 autoFocus: false,
             }
         );
@@ -97,7 +97,7 @@ export class UsersGridComponent implements OnInit {
 
     public editRecord(record, $event) {
         if ($event.target) {
-            if ($event.target.className.indexOf("mat-slide-toggle") > -1) {
+            if ($event.target.className.indexOf('mat-slide-toggle') > -1) {
                 $event.stopPropagation();
                 return false;
             } else {
@@ -125,7 +125,7 @@ export class UsersGridComponent implements OnInit {
             newUser.groupId = this.groupInfo.oid;
         }
         const dialogRef = this.newUserDialog.open(UsersDialogNewUserComponent, {
-            width: "450px",
+            width: '450px',
             data: newUser,
         });
 
@@ -140,7 +140,7 @@ export class UsersGridComponent implements OnInit {
             this.userService.add(result).subscribe((data: any) => {
                 const savedUser = data;
                 const userArray = this.usersDataSource.data;
-                if (result.newPassword && result.newPassword !== "") {
+                if (result.newPassword && result.newPassword !== '') {
                     this.userService
                         .updatePassword({
                             user: data,

@@ -3,10 +3,10 @@ import {
     OnInit,
     Input,
     HostBinding,
-} from "@angular/core";
+} from '@angular/core';
 
 @Directive({
-    selector: "[gradient]",
+    selector: '[gradient]',
 })
 export class GradientDirective implements OnInit {
     @Input() gradient: string[];
@@ -20,20 +20,20 @@ export class GradientDirective implements OnInit {
         this.firstColor = this.gradient[0];
         this.secondColor = this.gradient[1];
         this.linearGradient =
-            "linear-gradient(to right, " +
+            'linear-gradient(to right, ' +
             this.firstColor +
-            " 0%, " +
+            ' 0%, ' +
             this.secondColor +
-            " 51%, " +
+            ' 51%, ' +
             this.firstColor +
-            " 100%)";
+            ' 100%)';
     }
 
-    @HostBinding("style.backgroundImage") get getGradient() {
+    @HostBinding('style.backgroundImage') get getGradient() {
         return this.linearGradient;
     }
 
-    @HostBinding("class.custom-gradient") get getClass() {
+    @HostBinding('class.custom-gradient') get getClass() {
         return true;
     }
 }

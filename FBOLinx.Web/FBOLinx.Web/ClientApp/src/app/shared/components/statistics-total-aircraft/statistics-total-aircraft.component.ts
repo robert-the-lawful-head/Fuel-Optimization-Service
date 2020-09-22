@@ -1,14 +1,14 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 // Services
-import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
-    selector: "app-statistics-total-aircraft",
-    templateUrl: "./statistics-total-aircraft.component.html",
-    styleUrls: ["./statistics-total-aircraft.component.scss"],
+    selector: 'app-statistics-total-aircraft',
+    templateUrl: './statistics-total-aircraft.component.html',
+    styleUrls: ['./statistics-total-aircraft.component.scss'],
 })
 
 // statistics-total-aircraft component
@@ -33,7 +33,7 @@ export class StatisticsTotalAircraftComponent implements OnInit {
     }
 
     public redirectClicked() {
-        this.router.navigate(["/default-layout/customers"]);
+        this.router.navigate(['/default-layout/customers']);
     }
 
     public refreshData() {

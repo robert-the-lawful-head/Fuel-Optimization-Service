@@ -1,7 +1,7 @@
-import { createReducer, on } from "@ngrx/store";
-import { pricingTemplateGridSet, pricingTemplateGridClear } from "../../actions";
+import { createReducer, on } from '@ngrx/store';
+import { pricingTemplateGridSet, pricingTemplateGridClear } from '../../actions';
 
-export const pricingTemplateFeatureKey = "pricing-template";
+export const pricingTemplateFeatureKey = 'pricing-template';
 
 export interface PricingTemplateGridState {
     filter: string;

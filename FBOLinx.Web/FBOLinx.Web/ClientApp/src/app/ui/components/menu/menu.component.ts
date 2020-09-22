@@ -4,24 +4,23 @@ import {
     ViewChildren,
     QueryList,
     AfterViewInit,
-} from "@angular/core";
-import { Observable } from "rxjs";
-import { IMenuItem } from "./menu-item";
-import { MenuService } from "./menu.service";
-import { SharedService } from "../../../layouts/shared-service";
-import { UserService } from "../../../services/user.service";
-import { menuTooltipShowedEvent } from "../../../models/sharedEvents";
+} from '@angular/core';
+import { Observable } from 'rxjs';
+import { IMenuItem } from './menu-item';
+import { MenuService } from './menu.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { UserService } from '../../../services/user.service';
+import { menuTooltipShowedEvent } from '../../../models/sharedEvents';
 
 @Component({
-    moduleId: module.id,
-    selector: "app-menu",
-    templateUrl: "./menu.component.html",
-    styleUrls: ["./menu.component.scss"],
+    selector: 'app-menu',
+    templateUrl: './menu.component.html',
+    styleUrls: ['./menu.component.scss'],
     providers: [MenuService],
-    host: {class: "app-menu"},
+    host: {class: 'app-menu'},
 })
 export class MenuComponent implements OnInit, AfterViewInit {
-    @ViewChildren("tooltip") priceTooltips: QueryList<any>;
+    @ViewChildren('tooltip') priceTooltips: QueryList<any>;
 
     menuItems: IMenuItem[];
     user: any;
@@ -39,7 +38,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === "fbo-prices-loaded") {
+            if (message === 'fbo-prices-loaded') {
                 this.showTooltipsIfFirstLogin();
             }
         });
@@ -55,16 +54,16 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
     getLiClasses(item: any, isActive: any) {
         let role = this.sharedService.currentUser.role;
-        if (this.sharedService.currentUser.impersonatedRole || sessionStorage.getItem("impersonatedrole")) {
+        if (this.sharedService.currentUser.impersonatedRole || sessionStorage.getItem('impersonatedrole')) {
             // role = this.sharedService.currentUser.impersonatedRole;
             role = 1;
         }
 
         const hidden = item.roles && item.roles.indexOf(role) === -1;
         return {
-            "has-sub": item.sub,
+            'has-sub': item.sub,
             active: item.active || isActive,
-            "menu-item-group": item.groupTitle,
+            'menu-item-group': item.groupTitle,
             disabled: item.disabled,
             hidden,
         };
@@ -72,7 +71,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
     isHidden(item: any) {
         let role = this.sharedService.currentUser.role;
-        if (this.sharedService.currentUser.impersonatedRole || sessionStorage.getItem("impersonatedrole")) {
+        if (this.sharedService.currentUser.impersonatedRole || sessionStorage.getItem('impersonatedrole')) {
             role = 1;
         }
         return item.roles && item.roles.indexOf(role) === -1;

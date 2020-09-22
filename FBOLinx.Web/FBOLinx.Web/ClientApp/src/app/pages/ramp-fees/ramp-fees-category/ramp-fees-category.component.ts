@@ -4,20 +4,20 @@ import {
     Input,
     Output,
     OnInit,
-} from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
-import { RampfeesService } from "../../../services/rampfees.service";
+import { RampfeesService } from '../../../services/rampfees.service';
 
 // Components
-import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 @Component({
-    selector: "app-ramp-fees-category",
-    templateUrl: "./ramp-fees-category.component.html",
-    styleUrls: ["./ramp-fees-category.component.scss"],
+    selector: 'app-ramp-fees-category',
+    templateUrl: './ramp-fees-category.component.html',
+    styleUrls: ['./ramp-fees-category.component.scss'],
 })
 export class RampFeesCategoryComponent implements OnInit {
     @Output() rampFeeFieldChanged = new EventEmitter<any>();
@@ -81,7 +81,7 @@ export class RampFeesCategoryComponent implements OnInit {
         const dialogRef = this.deleteRampFeeDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: fee, description: "ramp fee" },
+                data: { item: fee, description: 'ramp fee' },
                 autoFocus: false,
             }
         );
@@ -92,9 +92,9 @@ export class RampFeesCategoryComponent implements OnInit {
             }
             this.rampFeesService.remove(result.item).subscribe(() => {
                 this.rampFeeDeleted.emit();
-                this.snackBar.open(`${result.item.aircraftMake} ${result.item.aircraftModel} is deleted`, "", {
+                this.snackBar.open(`${result.item.aircraftMake} ${result.item.aircraftModel} is deleted`, '', {
                     duration: 2000,
-                    panelClass: ["blue-snackbar"],
+                    panelClass: ['blue-snackbar'],
                 });
             });
         });

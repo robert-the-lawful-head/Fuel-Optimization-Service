@@ -1,13 +1,13 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 @Component({
-    selector: "app-fuelreqs-export-modal-component",
-    templateUrl: "./fuelreqs-export.component.html",
-    styleUrls: ["./fuelreqs-export.component.scss"],
+    selector: 'app-fuelreqs-export-modal-component',
+    templateUrl: './fuelreqs-export.component.html',
+    styleUrls: ['./fuelreqs-export.component.scss'],
 })
 export class FuelReqsExportModalComponent {
     constructor(

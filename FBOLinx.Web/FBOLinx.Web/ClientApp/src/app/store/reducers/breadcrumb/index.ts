@@ -1,7 +1,7 @@
-import { createReducer, on } from "@ngrx/store";
-import { breadcrumbSet } from "../../actions";
+import { createReducer, on } from '@ngrx/store';
+import { breadcrumbSet } from '../../actions';
 
-export const breadcrumbFeatureKey = "breadcrumb";
+export const breadcrumbFeatureKey = 'breadcrumb';
 
 export interface BreadcrumbState {
   breadcrumbs: any[];

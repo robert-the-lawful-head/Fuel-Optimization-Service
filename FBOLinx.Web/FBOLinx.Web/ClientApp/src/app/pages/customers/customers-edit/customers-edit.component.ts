@@ -1,54 +1,54 @@
-import {Component, OnInit} from "@angular/core";
-import {MatDialog} from "@angular/material/dialog";
-import {ActivatedRoute, Router} from "@angular/router";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {Component, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
-import {combineLatest} from "rxjs";
-import {find} from "lodash";
-import { Store } from "@ngrx/store";
+import {combineLatest} from 'rxjs';
+import {find} from 'lodash';
+import { Store } from '@ngrx/store';
 
-import { State } from "../../../store/reducers";
-import { breadcrumbSet } from "../../../store/actions";
+import { State } from '../../../store/reducers';
+import { breadcrumbSet } from '../../../store/actions';
 
 // Services
-import {CustomcustomertypesService} from "../../../services/customcustomertypes.service";
-import {CustomeraircraftsService} from "../../../services/customeraircrafts.service";
-import {ContactinfobygroupsService} from "../../../services/contactinfobygroups.service";
-import {ContactsService} from "../../../services/contacts.service";
-import {CustomerinfobygroupService} from "../../../services/customerinfobygroup.service";
-import {CustomerCompanyTypesService} from "../../../services/customer-company-types.service";
-import {CustomercontactsService} from "../../../services/customercontacts.service";
-import {CustomersviewedbyfboService} from "../../../services/customersviewedbyfbo.service";
-import {PricingtemplatesService} from "../../../services/pricingtemplates.service";
-import {SharedService} from "../../../layouts/shared-service";
+import {CustomcustomertypesService} from '../../../services/customcustomertypes.service';
+import {CustomeraircraftsService} from '../../../services/customeraircrafts.service';
+import {ContactinfobygroupsService} from '../../../services/contactinfobygroups.service';
+import {ContactsService} from '../../../services/contacts.service';
+import {CustomerinfobygroupService} from '../../../services/customerinfobygroup.service';
+import {CustomerCompanyTypesService} from '../../../services/customer-company-types.service';
+import {CustomercontactsService} from '../../../services/customercontacts.service';
+import {CustomersviewedbyfboService} from '../../../services/customersviewedbyfbo.service';
+import {PricingtemplatesService} from '../../../services/pricingtemplates.service';
+import {SharedService} from '../../../layouts/shared-service';
 
 // Components
-import {CustomerCompanyTypeDialogComponent} from "../customer-company-type-dialog/customer-company-type-dialog.component";
-import {ContactsDialogNewContactComponent} from "../../contacts/contacts-edit-modal/contacts-edit-modal.component";
+import {CustomerCompanyTypeDialogComponent} from '../customer-company-type-dialog/customer-company-type-dialog.component';
+import {ContactsDialogNewContactComponent} from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
 
 const BREADCRUMBS: any[] = [
     {
-        title: "Main",
-        link: "/default-layout",
+        title: 'Main',
+        link: '/default-layout',
     },
     {
-        title: "Customers",
-        link: "/default-layout/customers",
+        title: 'Customers',
+        link: '/default-layout/customers',
     },
     {
-        title: "Edit Customer",
-        link: "",
+        title: 'Edit Customer',
+        link: '',
     },
 ];
 
 @Component({
-    selector: "app-customers-edit",
-    templateUrl: "./customers-edit.component.html",
-    styleUrls: ["./customers-edit.component.scss"],
+    selector: 'app-customers-edit',
+    templateUrl: './customers-edit.component.html',
+    styleUrls: ['./customers-edit.component.scss'],
 })
 export class CustomersEditComponent implements OnInit {
     // Members
-    pageTitle = "Edit Customer";
+    pageTitle = 'Edit Customer';
 
     customerInfoByGroup: any;
     contactsData: any[];
@@ -89,7 +89,7 @@ export class CustomersEditComponent implements OnInit {
     }
 
     async ngOnInit() {
-        const id = this.route.snapshot.paramMap.get("id");
+        const id = this.route.snapshot.paramMap.get('id');
         this.customerInfoByGroup = await this.customerInfoByGroupService.get({oid: id}).toPromise();
         const results = await combineLatest([
             this.customerInfoByGroupService.getCertificateTypes(),
@@ -167,20 +167,20 @@ export class CustomersEditComponent implements OnInit {
                     this.customCustomerTypesService
                         .add(this.customCustomerType)
                         .subscribe(() => {
-                            this.router.navigate(["/default-layout/customers/"]).then();
+                            this.router.navigate(['/default-layout/customers/']).then();
                         });
                 } else {
                     this.customCustomerTypesService
                         .update(this.customCustomerType)
                         .subscribe(() => {
-                            this.router.navigate(["/default-layout/customers/"]).then();
+                            this.router.navigate(['/default-layout/customers/']).then();
                         });
                 }
             });
     }
 
     cancelCustomerEdit() {
-        this.router.navigate(["/default-layout/customers/"]).then();
+        this.router.navigate(['/default-layout/customers/']).then();
     }
 
     contactDeleted(contact) {
@@ -216,7 +216,7 @@ export class CustomersEditComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (result !== "cancel") {
+            if (result !== 'cancel') {
                 if (this.currentContactInfoByGroup.contactId === 0) {
                     this.contactsService
                         .add({oid: 0})
@@ -242,7 +242,7 @@ export class CustomersEditComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (result !== "cancel") {
+            if (result !== 'cancel') {
                 if (result.toDelete) {
                     this.customerContactsService
                         .remove(result.customerContactId)

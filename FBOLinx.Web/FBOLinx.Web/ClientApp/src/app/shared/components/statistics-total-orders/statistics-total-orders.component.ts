@@ -1,17 +1,17 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 // Services
-import { FuelreqsService } from "../../../services/fuelreqs.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 // Components
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    selector: "app-statistics-total-orders",
-    templateUrl: "./statistics-total-orders.component.html",
-    styleUrls: ["./statistics-total-orders.component.scss"],
+    selector: 'app-statistics-total-orders',
+    templateUrl: './statistics-total-orders.component.html',
+    styleUrls: ['./statistics-total-orders.component.scss'],
 })
 // statistics-total-orders component
 export class StatisticsTotalOrdersComponent implements OnInit {
@@ -40,11 +40,11 @@ export class StatisticsTotalOrdersComponent implements OnInit {
     }
 
     public redirectClicked() {
-        this.router.navigate(["/default-layout/fuelreqs"]);
+        this.router.navigate(['/default-layout/fuelreqs']);
     }
 
     public refreshData() {
-        this.startDateString = moment(this.startDate).format("L");
+        this.startDateString = moment(this.startDate).format('L');
         this.fuelreqsService
             .getForFboCount(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {

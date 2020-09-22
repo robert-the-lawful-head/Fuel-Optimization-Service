@@ -1,39 +1,39 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Router} from "@angular/router";
-import { Store } from "@ngrx/store";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import { Store } from '@ngrx/store';
 
 // Services
-import {CustomerinfobygroupService} from "../../../services/customerinfobygroup.service";
-import {SharedService} from "../../../layouts/shared-service";
-import {PricingtemplatesService} from "../../../services/pricingtemplates.service";
-import {CustomeraircraftsService} from "../../../services/customeraircrafts.service";
+import {CustomerinfobygroupService} from '../../../services/customerinfobygroup.service';
+import {SharedService} from '../../../layouts/shared-service';
+import {PricingtemplatesService} from '../../../services/pricingtemplates.service';
+import {CustomeraircraftsService} from '../../../services/customeraircrafts.service';
 
-import {locationChangedEvent} from "../../../models/sharedEvents";
+import {locationChangedEvent} from '../../../models/sharedEvents';
 
-import {getCustomerGridState} from "../../../store/selectors";
-import {State} from "../../../store/reducers";
-import {customerGridSet, breadcrumbSet} from "../../../store/actions";
-import {CustomerGridState} from "../../../store/reducers/customer";
+import {getCustomerGridState} from '../../../store/selectors';
+import {State} from '../../../store/reducers';
+import {customerGridSet, breadcrumbSet} from '../../../store/actions';
+import {CustomerGridState} from '../../../store/reducers/customer';
 
 const BREADCRUMBS: any[] = [
     {
-        title: "Main",
-        link: "/default-layout",
+        title: 'Main',
+        link: '/default-layout',
     },
     {
-        title: "Customers",
-        link: "/default-layout/customers",
+        title: 'Customers',
+        link: '/default-layout/customers',
     },
 ];
 
 @Component({
-    selector: "app-customers-home",
-    templateUrl: "./customers-home.component.html",
-    styleUrls: ["./customers-home.component.scss"],
+    selector: 'app-customers-home',
+    templateUrl: './customers-home.component.html',
+    styleUrls: ['./customers-home.component.scss'],
 })
 export class CustomersHomeComponent implements OnInit, OnDestroy {
     // Public Members
-    pageTitle = "Customers";
+    pageTitle = 'Customers';
     breadcrumb: any[] = BREADCRUMBS;
     customersData: any[];
     aircraftData: any[];
@@ -86,7 +86,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         }));
 
         this.router.navigate([
-            "/default-layout/customers/" + event.customerInfoByGroupId,
+            '/default-layout/customers/' + event.customerInfoByGroupId,
         ]).then();
     }
 

@@ -5,22 +5,22 @@ import {
     Output,
     OnInit,
     Inject,
-} from "@angular/core";
+} from '@angular/core';
 
 // Services
-import { AircraftsService } from "../../../services/aircrafts.service";
-import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
+import { AircraftsService } from '../../../services/aircrafts.service';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import {
     MAT_DIALOG_DATA,
     MatDialogRef,
     MatDialog,
-} from "@angular/material/dialog";
-import { DialogConfirmAircraftDeleteComponent } from "../customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component";
+} from '@angular/material/dialog';
+import { DialogConfirmAircraftDeleteComponent } from '../customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component';
 
 @Component({
-    selector: "app-customer-aircrafts-edit",
-    templateUrl: "./customer-aircrafts-edit.component.html",
-    styleUrls: ["./customer-aircrafts-edit.component.scss"],
+    selector: 'app-customer-aircrafts-edit',
+    templateUrl: './customer-aircrafts-edit.component.html',
+    styleUrls: ['./customer-aircrafts-edit.component.scss'],
 })
 export class CustomerAircraftsEditComponent implements OnInit {
     @Output() saveEditClicked = new EventEmitter<any>();
@@ -77,7 +77,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (result === "cancel") {
+            if (result === 'cancel') {
             } else if (result && result.oid) {
                 result.toDelete = true;
                 this.dialogRef.close(result);

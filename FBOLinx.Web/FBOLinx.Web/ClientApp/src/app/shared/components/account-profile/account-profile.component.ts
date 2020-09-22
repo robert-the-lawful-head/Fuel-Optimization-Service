@@ -1,12 +1,12 @@
-import { Component, Inject } from "@angular/core";
-import { FormBuilder, FormGroup, FormControl, Validators } from "@angular/forms";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { Component, Inject } from '@angular/core';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { ContactsService } from "../../../services/contacts.service";
-import { FbosService } from "../../../services/fbos.service";
-import { FbocontactsService } from "../../../services/fbocontacts.service";
-import { SharedService } from "../../../layouts/shared-service";
-import { UserService } from "../../../services/user.service";
+import { ContactsService } from '../../../services/contacts.service';
+import { FbosService } from '../../../services/fbos.service';
+import { FbocontactsService } from '../../../services/fbocontacts.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { UserService } from '../../../services/user.service';
 
 export interface AccountProfileDialogData {
     oid: number;
@@ -22,9 +22,9 @@ export interface AccountProfileDialogData {
 }
 
 @Component({
-    selector: "app-account-profile",
-    templateUrl: "./account-profile.component.html",
-    styleUrls: ["./account-profile.component.scss"],
+    selector: 'app-account-profile',
+    templateUrl: './account-profile.component.html',
+    styleUrls: ['./account-profile.component.scss'],
     providers: [SharedService],
 })
 export class AccountProfileComponent {
@@ -46,7 +46,7 @@ export class AccountProfileComponent {
         private formBuilder: FormBuilder
     ) {
         this.systemContactsForm = this.formBuilder.group({
-            fuelDeskEmail: new FormControl("", [
+            fuelDeskEmail: new FormControl('', [
                 Validators.email,
                 Validators.required,
             ]),

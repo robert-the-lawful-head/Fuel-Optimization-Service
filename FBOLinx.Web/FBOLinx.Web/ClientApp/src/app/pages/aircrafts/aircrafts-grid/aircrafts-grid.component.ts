@@ -5,23 +5,23 @@ import {
     Output,
     OnInit,
     ViewChild,
-} from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSelectChange } from "@angular/material/select";
+} from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 
 // Services
-import { AircraftsService } from "../../../services/aircrafts.service";
-import { CustomeraircraftsService } from "../../../services/customeraircrafts.service";
-import { SharedService } from "../../../layouts/shared-service";
-import { CustomerAircraftsEditComponent } from "../../customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component";
+import { AircraftsService } from '../../../services/aircrafts.service';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
 
 @Component({
-    selector: "app-aircrafts-grid",
-    templateUrl: "./aircrafts-grid.component.html",
-    styleUrls: ["./aircrafts-grid.component.scss"],
+    selector: 'app-aircrafts-grid',
+    templateUrl: './aircrafts-grid.component.html',
+    styleUrls: ['./aircrafts-grid.component.scss'],
 })
 export class AircraftsGridComponent implements OnInit {
     // Input/Output Bindings
@@ -32,11 +32,11 @@ export class AircraftsGridComponent implements OnInit {
     // Public Members
     public aircraftsDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [
-        "tailNumber",
-        "aircraftType",
-        "aircraftSize",
-        "company",
-        "aircraftPricingTemplate",
+        'tailNumber',
+        'aircraftType',
+        'aircraftSize',
+        'company',
+        'aircraftPricingTemplate',
     ];
     public resultsLength = 0;
     public aircraftSizes: Array<any>;
@@ -71,12 +71,12 @@ export class AircraftsGridComponent implements OnInit {
         this.aircraftsDataSource.sort = this.sort;
         this.aircraftsDataSource.paginator = this.paginator;
 
-        if (sessionStorage.getItem("pageIndex")) {
+        if (sessionStorage.getItem('pageIndex')) {
             this.paginator.pageIndex = sessionStorage.getItem(
-                "pageIndex"
+                'pageIndex'
             ) as any;
-            sessionStorage.removeItem("pageIndex");
-            sessionStorage.removeItem("isCustomerEdit");
+            sessionStorage.removeItem('pageIndex');
+            sessionStorage.removeItem('isCustomerEdit');
         } else {
             this.paginator.pageIndex = 0;
         }
@@ -84,9 +84,9 @@ export class AircraftsGridComponent implements OnInit {
         this.resultsLength = this.aircraftsData.length;
         this.aircraftsDataSource.sortingDataAccessor = (item, property) => {
             switch (property) {
-                case "aircraftType":
-                    return item.make + " " + item.model;
-                case "aircraftSize":
+                case 'aircraftType':
+                    return item.make + ' ' + item.model;
+                case 'aircraftSize':
                     switch (item.size) {
                         case 8: // Single Engine Piston
                             return 1;
@@ -123,7 +123,7 @@ export class AircraftsGridComponent implements OnInit {
                         default:
                             return 17;
                     }
-                case "aircraftPricingTemplate":
+                case 'aircraftPricingTemplate':
                     return item.pricingTemplateName;
                 default:
                     return item[property];
@@ -136,7 +136,7 @@ export class AircraftsGridComponent implements OnInit {
             const dialogRef = this.editCustomerAircraftDialog.open(
                 CustomerAircraftsEditComponent,
                 {
-                    width: "450px",
+                    width: '450px',
                     data: {
                         oid: customerAircraft.oid,
                         disableDelete: customerAircraft.isFuelerlinxNetwork && customerAircraft.addedFrom,
@@ -245,6 +245,6 @@ export class AircraftsGridComponent implements OnInit {
     }
 
     onPageChanged(e: any) {
-        sessionStorage.setItem("pageIndex", e.pageIndex);
+        sessionStorage.setItem('pageIndex', e.pageIndex);
     }
 }

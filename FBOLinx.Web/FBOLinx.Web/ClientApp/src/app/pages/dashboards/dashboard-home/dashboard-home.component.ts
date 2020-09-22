@@ -1,13 +1,13 @@
-import { Component } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 // Services
-import { SharedService } from "../../../layouts/shared-service";
+import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
-    selector: "app-dashboard-home",
-    templateUrl: "./dashboard-home.component.html",
-    styleUrls: ["./dashboard-home.component.scss"],
+    selector: 'app-dashboard-home',
+    templateUrl: './dashboard-home.component.html',
+    styleUrls: ['./dashboard-home.component.scss'],
 })
 export class DashboardHomeComponent {
     constructor(
@@ -18,9 +18,9 @@ export class DashboardHomeComponent {
             this.sharedService.currentUser.role === 3 ||
             this.sharedService.currentUser.role === 2
         ) {
-            this.router.navigate(["/default-layout/fbos/"]);
+            this.router.navigate(['/default-layout/fbos/']);
         } else {
-            this.router.navigate(["/default-layout/dashboard-fbo/"]);
+            this.router.navigate(['/default-layout/dashboard-fbo/']);
         }
     }
 }

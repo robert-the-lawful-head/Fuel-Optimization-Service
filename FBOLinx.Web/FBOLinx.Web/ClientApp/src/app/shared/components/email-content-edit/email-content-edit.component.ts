@@ -1,11 +1,11 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 // Services
-import { EmailcontentService } from "../../../services/emailcontent.service";
+import { EmailcontentService } from '../../../services/emailcontent.service';
 
 export interface EmailContentDialogData {
     oid: number;
@@ -16,9 +16,9 @@ export interface EmailContentDialogData {
 }
 
 @Component({
-    selector: "app-email-content-edit",
-    templateUrl: "./email-content-edit.component.html",
-    styleUrls: ["./email-content-edit.component.scss"],
+    selector: 'app-email-content-edit',
+    templateUrl: './email-content-edit.component.html',
+    styleUrls: ['./email-content-edit.component.scss'],
 })
 export class EmailContentEditComponent {
     public emailContentTypes: any[] = [];

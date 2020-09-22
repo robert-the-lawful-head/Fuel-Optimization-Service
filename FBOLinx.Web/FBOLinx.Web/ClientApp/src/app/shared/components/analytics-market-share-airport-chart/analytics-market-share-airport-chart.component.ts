@@ -1,36 +1,36 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from "@angular/core";
-import * as _ from "lodash";
-import * as moment from "moment";
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import * as _ from 'lodash';
+import * as moment from 'moment';
 
 // Services
-import { FuelreqsService } from "../../../services/fuelreqs.service";
-import { SharedService } from "../../../layouts/shared-service";
-import * as SharedEvent from "../../../models/sharedEvents";
-import { NgxUiLoaderService } from "ngx-ui-loader";
+import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvent from '../../../models/sharedEvents';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
-    selector: "app-analytics-market-share-airport",
-    templateUrl: "./analytics-market-share-airport-chart.component.html",
-    styleUrls: ["./analytics-market-share-airport-chart.component.scss"],
+    selector: 'app-analytics-market-share-airport',
+    templateUrl: './analytics-market-share-airport-chart.component.html',
+    styleUrls: ['./analytics-market-share-airport-chart.component.scss'],
 })
 export class AnalyticsMarketShareAirportChartComponent implements OnInit, AfterViewInit, OnDestroy {
     // Public Members
-    public chartName = "market-share-airport-chart";
+    public chartName = 'market-share-airport-chart';
     public totalOrdersData: any[];
     public icao: string;
     public icaoChangedSubscription: any;
     public colorScheme = {
         domain: [
-            "#a8385d",
-            "#7aa3e5",
-            "#a27ea8",
-            "#aae3f5",
-            "#adcded",
-            "#a95963",
-            "#8796c0",
-            "#7ed3ed",
-            "#50abcc",
-            "#ad6886",
+            '#a8385d',
+            '#7aa3e5',
+            '#a27ea8',
+            '#aae3f5',
+            '#adcded',
+            '#a95963',
+            '#8796c0',
+            '#7ed3ed',
+            '#50abcc',
+            '#ad6886',
         ],
     };
 
@@ -64,10 +64,10 @@ export class AnalyticsMarketShareAirportChartComponent implements OnInit, AfterV
 
     public refreshData() {
         const startDate = new Date(
-            moment().add(-30, "days").format("MM/DD/YYYY")
+            moment().add(-30, 'days').format('MM/DD/YYYY')
         );
         const endDate = new Date(
-            moment().format("MM/DD/YYYY")
+            moment().format('MM/DD/YYYY')
         );
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService

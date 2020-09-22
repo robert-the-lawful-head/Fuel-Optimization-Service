@@ -1,8 +1,8 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 // Services
 
@@ -12,9 +12,9 @@ export interface ForgotPasswordDialogData {
 }
 
 @Component({
-    selector: "app-forgot-password-dialog",
-    templateUrl: "./forgot-password-dialog.component.html",
-    styleUrls: ["./forgot-password-dialog.component.scss"],
+    selector: 'app-forgot-password-dialog',
+    templateUrl: './forgot-password-dialog.component.html',
+    styleUrls: ['./forgot-password-dialog.component.scss'],
 })
 export class ForgotPasswordDialogComponent {
     constructor(

@@ -4,10 +4,10 @@ import {
     Input,
     HostBinding,
     HostListener,
-} from "@angular/core";
+} from '@angular/core';
 
 @Directive({
-    selector: "[bg]",
+    selector: '[bg]',
 })
 export class BgDirective implements OnInit {
     @Input() bg: string | string[];
@@ -20,29 +20,29 @@ export class BgDirective implements OnInit {
     constructor() {}
 
     ngOnInit() {
-        this.defaultBg = typeof this.bg === "string" ? this.bg : this.bg[0];
-        this.hoveredBg = typeof this.bg === "string" ? this.bg : this.bg[1];
-        this.currentBg = !this.outline ? this.defaultBg : "transparent";
+        this.defaultBg = typeof this.bg === 'string' ? this.bg : this.bg[0];
+        this.hoveredBg = typeof this.bg === 'string' ? this.bg : this.bg[1];
+        this.currentBg = !this.outline ? this.defaultBg : 'transparent';
         this.outlineColor = this.defaultBg;
     }
 
-    @HostBinding("style.background") get getBg() {
+    @HostBinding('style.background') get getBg() {
         return this.currentBg;
     }
 
-    @HostBinding("style.borderColor") get getOutline() {
+    @HostBinding('style.borderColor') get getOutline() {
         return this.outlineColor;
     }
 
-    @HostBinding("class.custom-bg") get getClass() {
+    @HostBinding('class.custom-bg') get getClass() {
         return true;
     }
 
-    @HostListener("mouseenter") onMouseEnter() {
+    @HostListener('mouseenter') onMouseEnter() {
         this.currentBg = this.hoveredBg;
     }
 
-    @HostListener("mouseleave") onMouseLeave() {
-        this.currentBg = !this.outline ? this.defaultBg : "transparent";
+    @HostListener('mouseleave') onMouseLeave() {
+        this.currentBg = !this.outline ? this.defaultBg : 'transparent';
     }
 }

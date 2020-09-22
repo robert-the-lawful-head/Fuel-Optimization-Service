@@ -5,25 +5,25 @@ import {
     Output,
     OnInit,
     ViewChild,
-} from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatDialog } from "@angular/material/dialog";
+} from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 
 // Services
-import { GroupsService } from "../../../services/groups.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { GroupsService } from '../../../services/groups.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 // Components
-import { GroupsDialogNewGroupComponent } from "../groups-dialog-new-group/groups-dialog-new-group.component";
-import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
+import { GroupsDialogNewGroupComponent } from '../groups-dialog-new-group/groups-dialog-new-group.component';
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 @Component({
-    selector: "app-groups-grid",
-    templateUrl: "./groups-grid.component.html",
-    styleUrls: ["./groups-grid.component.scss"],
+    selector: 'app-groups-grid',
+    templateUrl: './groups-grid.component.html',
+    styleUrls: ['./groups-grid.component.scss'],
 })
 export class GroupsGridComponent implements OnInit {
     // Input/Output Bindings
@@ -33,17 +33,17 @@ export class GroupsGridComponent implements OnInit {
     @Input() groupsData: Array<any>;
 
     // Public Members
-    public pageTitle = "Groups";
+    public pageTitle = 'Groups';
     public groupsDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ["group", "active", "delete"];
+    public displayedColumns: string[] = ['group', 'active', 'delete'];
     public resultsLength = 0;
-    public searchValue = "";
+    public searchValue = '';
 
     public pageIndexGroups = 0;
     public pageSizeGroups = 25;
 
-    public tableSortGroups = "group";
-    public tableSortOrderGroups = "asc";
+    public tableSortGroups = 'group';
+    public tableSortOrderGroups = 'asc';
 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -68,31 +68,31 @@ export class GroupsGridComponent implements OnInit {
         this.groupsDataSource.paginator = this.paginator;
         this.resultsLength = this.groupsData.length;
 
-        if (localStorage.getItem("pageIndexGroups")) {
-            this.paginator.pageIndex = localStorage.getItem("pageIndexGroups") as any;
+        if (localStorage.getItem('pageIndexGroups')) {
+            this.paginator.pageIndex = localStorage.getItem('pageIndexGroups') as any;
         } else {
             this.paginator.pageIndex = 0;
         }
 
-        if (sessionStorage.getItem("pageSizeGroups")) {
-            this.pageSizeGroups = sessionStorage.getItem("pageSizeGroups") as any;
+        if (sessionStorage.getItem('pageSizeGroups')) {
+            this.pageSizeGroups = sessionStorage.getItem('pageSizeGroups') as any;
         } else {
             this.pageSizeGroups = 25;
         }
 
-        if (sessionStorage.getItem("tableSortValueGroups")) {
-            this.tableSortGroups = sessionStorage.getItem("tableSortValueGroups") as any;
+        if (sessionStorage.getItem('tableSortValueGroups')) {
+            this.tableSortGroups = sessionStorage.getItem('tableSortValueGroups') as any;
         }
 
-        if (sessionStorage.getItem("tableSortValueGroupsGroups")) {
+        if (sessionStorage.getItem('tableSortValueGroupsGroups')) {
             this.tableSortOrderGroups = sessionStorage.getItem(
-                "tableSortValueGroupsGroups"
+                'tableSortValueGroupsGroups'
             ) as any;
         }
 
-        if (sessionStorage.getItem("searchValueGroups")) {
-            this.searchValue = sessionStorage.getItem("searchValueGroups").trim().toLowerCase();
-            this.groupsDataSource.filter = sessionStorage.getItem("searchValueGroups").trim().toLowerCase();
+        if (sessionStorage.getItem('searchValueGroups')) {
+            this.searchValue = sessionStorage.getItem('searchValueGroups').trim().toLowerCase();
+            this.groupsDataSource.filter = sessionStorage.getItem('searchValueGroups').trim().toLowerCase();
         }
     }
 
@@ -100,7 +100,7 @@ export class GroupsGridComponent implements OnInit {
         const dialogRef = this.deleteGroupDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: record, fullDescription: "You are about to remove this group. This will remove the fbos and all the other data related to the group. Are you sure?" },
+                data: { item: record, fullDescription: 'You are about to remove this group. This will remove the fbos and all the other data related to the group. Are you sure?' },
                 autoFocus: false,
             }
         );
@@ -117,9 +117,9 @@ export class GroupsGridComponent implements OnInit {
                 this.groupsDataSource.sort = this.sort;
                 this.groupsDataSource.paginator = this.paginator;
                 this.groupsDataSource.filter = filter;
-                this.snackBar.open(record.groupName + " is deleted", "", {
+                this.snackBar.open(record.groupName + ' is deleted', '', {
                     duration: 2000,
-                    panelClass: ["blue-snackbar"],
+                    panelClass: ['blue-snackbar'],
                 });
             });
             this.recordDeleted.emit(record);
@@ -135,7 +135,7 @@ export class GroupsGridComponent implements OnInit {
         const dialogRef = this.newGroupDialog.open(
             GroupsDialogNewGroupComponent,
             {
-                width: "450px",
+                width: '450px',
                 data: { oid: 0, initialSetupPhase: true },
             }
         );
@@ -154,28 +154,28 @@ export class GroupsGridComponent implements OnInit {
 
     public applyFilter(filterValue: string) {
         this.groupsDataSource.filter = filterValue.trim().toLowerCase();
-        sessionStorage.setItem("searchValueGroups", filterValue);
+        sessionStorage.setItem('searchValueGroups', filterValue);
         if (!filterValue) {
-            sessionStorage.removeItem("searchValueGroups");
+            sessionStorage.removeItem('searchValueGroups');
         }
     }
 
     onPageChanged(event: any) {
-        localStorage.setItem("pageIndexGroups", event.pageIndex);
+        localStorage.setItem('pageIndexGroups', event.pageIndex);
         sessionStorage.setItem(
-            "pageSizeGroups",
+            'pageSizeGroups',
             this.paginator.pageSize.toString()
         );
     }
 
     public saveHeader(value) {
         if (value) {
-            sessionStorage.setItem("tableSortValueGroups", value);
+            sessionStorage.setItem('tableSortValueGroups', value);
         }
 
         if (this.sort.direction) {
             sessionStorage.setItem(
-                "tableSortValueDirectionGroups",
+                'tableSortValueDirectionGroups',
                 this.sort.direction
             );
         }

@@ -1,10 +1,10 @@
-import { Injectable, Inject } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { BehaviorSubject, Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { User } from "../models/user";
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { User } from '../models/user';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     public currentUser: Observable<User>;
 
@@ -12,13 +12,13 @@ export class AuthenticationService {
     private accessPointUrl: string;
     private currentUserSubject: BehaviorSubject<User>;
 
-    constructor(private http: HttpClient, @Inject("BASE_URL") baseUrl: string) {
+    constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         this.headers = new HttpHeaders({
-            "Content-Type": "application/json; charset=utf-8",
+            'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + "api/users";
+        this.accessPointUrl = baseUrl + 'api/users';
         this.currentUserSubject = new BehaviorSubject<User>(
-            JSON.parse(localStorage.getItem("currentUser"))
+            JSON.parse(localStorage.getItem('currentUser'))
         );
         this.currentUser = this.currentUserSubject.asObservable();
     }
@@ -30,7 +30,7 @@ export class AuthenticationService {
     login(username: string, password: string, remember = false) {
         return this.http
             .post<any>(
-                this.accessPointUrl + "/authenticate",
+                this.accessPointUrl + '/authenticate',
                 { username, password },
                 { headers: this.headers }
             )
@@ -40,7 +40,7 @@ export class AuthenticationService {
                     if (user && user.token) {
                         // store user details and jwt token in local storage to keep user logged in between page refreshes
                         localStorage.setItem(
-                            "currentUser",
+                            'currentUser',
                             JSON.stringify(user)
                         );
                         this.currentUserSubject.next(user);
@@ -54,10 +54,10 @@ export class AuthenticationService {
     preAuth(token) {
         const tempUser = {
             oid: 0,
-            username: "",
-            password: "",
-            firstName: "",
-            lastName: "",
+            username: '',
+            password: '',
+            firstName: '',
+            lastName: '',
             token,
             role: 0,
             fboId: 0,
@@ -66,7 +66,7 @@ export class AuthenticationService {
         };
         this.currentUserSubject.next(tempUser);
         return this.http
-            .get<any>(this.accessPointUrl + "/current", {
+            .get<any>(this.accessPointUrl + '/current', {
                 headers: this.headers,
             })
             .pipe(
@@ -76,7 +76,7 @@ export class AuthenticationService {
                         user.token = token;
                         // store user details and jwt token in local storage to keep user logged in between page refreshes
                         localStorage.setItem(
-                            "currentUser",
+                            'currentUser',
                             JSON.stringify(user)
                         );
                         this.currentUserSubject.next(user);
@@ -88,14 +88,14 @@ export class AuthenticationService {
     }
 
     public postAuth() {
-        return this.http.post(this.accessPointUrl + "/run-login-checks", {
+        return this.http.post(this.accessPointUrl + '/run-login-checks', {
             headers: this.headers,
         });
     }
 
     logout() {
         // remove user from local storage to log user out
-        localStorage.removeItem("currentUser");
+        localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
     }
 }
