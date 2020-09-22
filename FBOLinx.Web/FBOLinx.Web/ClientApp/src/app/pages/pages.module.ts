@@ -40,7 +40,7 @@ import { TextMaskModule } from "angular2-text-mask";
 import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
 import { NgxUiLoaderModule } from "ngx-ui-loader";
 import { RichTextEditorAllModule } from "@syncfusion/ej2-angular-richtexteditor";
-import { GridModule, PageService, SortService, FilterService, GroupService } from '@syncfusion/ej2-angular-grids';
+import { GridModule, PageService, SortService, FilterService, GroupService } from "@syncfusion/ej2-angular-grids";
 
 import { AuthtokenComponent } from "./auth/authtoken/authtoken.component";
 import { LoginComponent } from "./auth/login/login.component";
@@ -299,7 +299,7 @@ import { ClickStopPropagationDirective } from "../shared/directives/click-stop-p
         PageService,
         SortService,
         FilterService,
-        GroupService
-    ]
+        GroupService,
+    ],
 })
 export class PagesModule {}
