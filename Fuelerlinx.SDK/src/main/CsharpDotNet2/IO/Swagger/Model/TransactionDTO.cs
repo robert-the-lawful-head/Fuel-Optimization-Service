@@ -513,6 +513,27 @@ namespace IO.Swagger.Model {
     public CompanyFuelerDTO CompanyFuelVendorInfo { get; set; }
 
     /// <summary>
+    /// Gets or Sets AirportNotes
+    /// </summary>
+    [DataMember(Name="airportNotes", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "airportNotes")]
+    public List<AirportDetailsByCompanyNotesDTO> AirportNotes { get; set; }
+
+    /// <summary>
+    /// Gets or Sets FboNotes
+    /// </summary>
+    [DataMember(Name="fboNotes", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fboNotes")]
+    public List<FboByCompanyNotesDTO> FboNotes { get; set; }
+
+    /// <summary>
+    /// Gets or Sets RampFeeNotes
+    /// </summary>
+    [DataMember(Name="rampFeeNotes", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "rampFeeNotes")]
+    public List<RampFeeByCompanyNoteDTO> RampFeeNotes { get; set; }
+
+    /// <summary>
     /// Gets or Sets PreUpliftPriceSync
     /// </summary>
     [DataMember(Name="preUpliftPriceSync", EmitDefaultValue=false)]
@@ -598,6 +619,9 @@ namespace IO.Swagger.Model {
       sb.Append("  AirportInfo: ").Append(AirportInfo).Append("\n");
       sb.Append("  FboHandlerDetail: ").Append(FboHandlerDetail).Append("\n");
       sb.Append("  CompanyFuelVendorInfo: ").Append(CompanyFuelVendorInfo).Append("\n");
+      sb.Append("  AirportNotes: ").Append(AirportNotes).Append("\n");
+      sb.Append("  FboNotes: ").Append(FboNotes).Append("\n");
+      sb.Append("  RampFeeNotes: ").Append(RampFeeNotes).Append("\n");
       sb.Append("  PreUpliftPriceSync: ").Append(PreUpliftPriceSync).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
