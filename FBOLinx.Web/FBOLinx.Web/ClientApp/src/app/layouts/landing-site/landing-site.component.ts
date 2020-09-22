@@ -26,7 +26,6 @@ export interface LoginRequest {
 }
 
 @Component({
-    moduleId: module.id,
     selector: 'landing-site-layout',
     templateUrl: './landing-site.component.html',
     styleUrls: ['./landing-site.component.scss'],

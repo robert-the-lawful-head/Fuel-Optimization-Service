@@ -29,7 +29,6 @@ import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 import { fboChangedEvent, customerUpdatedEvent } from '../../../models/sharedEvents';
 
 @Component({
-    moduleId: module.id,
     selector: 'horizontal-navbar',
     templateUrl: 'horizontal-navbar.component.html',
     styleUrls: ['horizontal-navbar.component.scss'],

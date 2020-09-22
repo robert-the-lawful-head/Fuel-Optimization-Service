@@ -19,7 +19,6 @@ import { NavigationStart, Router } from '@angular/router';
 import { delay } from 'rxjs/operators';
 
 @Component({
-    moduleId: module.id,
     selector: 'default-layout',
     templateUrl: 'default.component.html',
     styleUrls: ['../layouts.scss'],
