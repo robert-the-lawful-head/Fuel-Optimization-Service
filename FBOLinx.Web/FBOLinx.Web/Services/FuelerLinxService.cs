@@ -80,6 +80,13 @@ namespace FBOLinx.Web.Services
             return results;
         }
 
+        public FboLinxFbosTransactionsCountResponse GetFBOsTransactionsCountForAirport(FBOLinxOrdersRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FboLinxFbosTransactionsCountResponse results = api.GetFBOsTransactionsCount(request);
+            return results;
+        }
+
         public FBOLinxOrdersResponse GetTransactionsDirectOrdersCount(FBOLinxOrdersRequest request)
         {
             var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);

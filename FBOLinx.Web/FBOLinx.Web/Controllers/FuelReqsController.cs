@@ -888,7 +888,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("analysis/fbo-fuel-vendor-sources/fbo/{fboId}")]
-        public IActionResult FBOFuelVendorSources([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
+        public IActionResult GetFBOFuelVendorSources([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
         {
             if (!ModelState.IsValid)
             {
@@ -903,8 +903,7 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
-                List<int> otherFbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid).ToList();
-
+                
                 request.Icao = icao;
 
                 int fboOrderCount = _context.FuelReq
@@ -927,6 +926,45 @@ namespace FBOLinx.Web.Controllers
                     NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                     chartItemType.Name = vendor.ContractFuelVendor;
                     chartItemType.Value = vendor.TransactionsCount.GetValueOrDefault();
+                    chartData.Add(chartItemType);
+                }
+
+                return Ok(chartData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("analysis/market-share-fbos-airport/fbo/{fboId}")]
+        public IActionResult GetMarketShareFBOsAtAirport([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            try
+            {
+                string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+
+                request.Icao = icao;
+
+                FboLinxFbosTransactionsCountResponse fuelerlinxFBOsOrdersCount = _fuelerLinxService.GetFBOsTransactionsCountForAirport(request);
+
+                List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>();
+
+                foreach (GroupedTransactionCountByFBOAtAirport vendor in fuelerlinxFBOsOrdersCount.Result)
+                {
+                    NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
+                    chartItemType.Name = vendor.Fbo;
+                    chartItemType.Value = vendor.Count.GetValueOrDefault();
                     chartData.Add(chartItemType);
                 }
 
