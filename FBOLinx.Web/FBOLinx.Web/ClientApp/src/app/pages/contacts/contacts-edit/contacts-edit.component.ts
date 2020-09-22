@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-    selector: "app-contacts-edit",
-    templateUrl: "./contacts-edit.component.html",
-    styleUrls: ["./contacts-edit.component.scss"],
+    selector: 'app-contacts-edit',
+    templateUrl: './contacts-edit.component.html',
+    styleUrls: ['./contacts-edit.component.scss'],
 })
 export class ContactsEditComponent {
     @Output() saveEditClicked = new EventEmitter<any>();
@@ -12,19 +12,19 @@ export class ContactsEditComponent {
 
     // Masks
     phoneMask: any[] = [
-        "+",
-        "1",
-        " ",
-        "(",
+        '+',
+        '1',
+        ' ',
+        '(',
         /[1-9]/,
         /\d/,
         /\d/,
-        ")",
-        " ",
+        ')',
+        ' ',
         /\d/,
         /\d/,
         /\d/,
-        "-",
+        '-',
         /\d/,
         /\d/,
         /\d/,

@@ -5,51 +5,51 @@ import {
     HostListener,
     ElementRef,
     AfterContentChecked,
-} from "@angular/core";
-import { trigger, state, style, transition, animate } from "@angular/animations";
+} from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 
 @Component({
-    selector: "ni-card",
-    templateUrl: "./ni-card.component.html",
-    styleUrls: ["./ni-card.component.scss"],
+    selector: 'ni-card',
+    templateUrl: './ni-card.component.html',
+    styleUrls: ['./ni-card.component.scss'],
     animations: [
-        trigger("openClose", [
-            state("true", style({
-                height: "*",
-                paddingBottom: "15px",
-                paddingTop: "15px",
+        trigger('openClose', [
+            state('true', style({
+                height: '*',
+                paddingBottom: '15px',
+                paddingTop: '15px',
             })),
-            state("false", style({
-                height: "0",
-                paddingBottom: "0",
-                paddingTop: "0",
+            state('false', style({
+                height: '0',
+                paddingBottom: '0',
+                paddingTop: '0',
             })),
-            transition("false <=> true", [ animate(300) ]),
+            transition('false <=> true', [ animate(300) ]),
         ]),
     ],
     host: {
-        "[class.ni-card]": "true",
+        '[class.ni-card]': 'true',
     },
 })
 export class NiCardComponent implements AfterContentChecked {
-    @ViewChild("cardTitle") cardTitle: ElementRef;
-    @ViewChild("cardSubTitle") cardSubTitle: ElementRef;
+    @ViewChild('cardTitle') cardTitle: ElementRef;
+    @ViewChild('cardSubTitle') cardSubTitle: ElementRef;
 
-    @Input() title = "";
-    @Input() subtitle = "";
+    @Input() title = '';
+    @Input() subtitle = '';
 
-    @Input() bgColor = "";
-    @Input() color = "";
-    @Input() headerBgColor = "";
-    @Input() headerColor = "";
+    @Input() bgColor = '';
+    @Input() color = '';
+    @Input() headerBgColor = '';
+    @Input() headerColor = '';
 
     @Input() outline = false;
 
-    @Input() theme = "";
-    @Input() align = "";
+    @Input() theme = '';
+    @Input() align = '';
 
-    @Input() customStyle = "";
+    @Input() customStyle = '';
 
     @Input() collapsible = false;
 
@@ -69,7 +69,7 @@ export class NiCardComponent implements AfterContentChecked {
         }
     }
 
-    @HostListener("window:resize")
+    @HostListener('window:resize')
     onResize() {
         this.checkSubtitleVisible();
     }

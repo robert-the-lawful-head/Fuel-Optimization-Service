@@ -1,29 +1,29 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { Store } from "@ngrx/store";
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 
-import { State } from "../../../store/reducers";
-import { breadcrumbSet } from "../../../store/actions";
+import { State } from '../../../store/reducers';
+import { breadcrumbSet } from '../../../store/actions';
 // Services
-import { GroupsService } from "../../../services/groups.service";
-import { FbosService } from "../../../services/fbos.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { GroupsService } from '../../../services/groups.service';
+import { FbosService } from '../../../services/fbos.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 const BREADCRUMBS: any[] = [
     {
-        title: "Main",
-        link: "/default-layout",
+        title: 'Main',
+        link: '/default-layout',
     },
     {
-        title: "Groups",
-        link: "",
+        title: 'Groups',
+        link: '',
     },
 ];
 
 @Component({
-    selector: "app-groups-home",
-    templateUrl: "./groups-home.component.html",
-    styleUrls: ["./groups-home.component.scss"],
+    selector: 'app-groups-home',
+    templateUrl: './groups-home.component.html',
+    styleUrls: ['./groups-home.component.scss'],
 })
 export class GroupsHomeComponent implements OnInit {
     // Public Members
@@ -50,11 +50,11 @@ export class GroupsHomeComponent implements OnInit {
         if (this.sharedService.currentUser.role === 3) {
             this.sharedService.currentUser.groupId = record.oid;
         }
-        this.router.navigate(["/default-layout/groups/" + record.oid]);
+        this.router.navigate(['/default-layout/groups/' + record.oid]);
     }
 
     public editFboClicked(record) {
-        this.router.navigate(["/default-layout/fbos/" + record.oid]);
+        this.router.navigate(['/default-layout/fbos/' + record.oid]);
     }
 
     public deleteFboClicked() {}

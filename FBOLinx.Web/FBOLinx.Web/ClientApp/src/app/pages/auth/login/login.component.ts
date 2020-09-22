@@ -1,14 +1,14 @@
-import { Component, OnInit } from "@angular/core";
-import { Router, ActivatedRoute } from "@angular/router";
-import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 
 // Services
-import { OAuthService } from "../../../services/oauth.service";
+import { OAuthService } from '../../../services/oauth.service';
 
 @Component({
-    selector: "app-login",
-    templateUrl: "./login.component.html",
-    styleUrls: ["./login.component.scss"],
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
     partner: string;
@@ -24,15 +24,15 @@ export class LoginComponent implements OnInit {
         private formBuilder: FormBuilder
     ) {
         this.loginForm = this.formBuilder.group({
-            username: new FormControl(""),
-            password: new FormControl(""),
+            username: new FormControl(''),
+            password: new FormControl(''),
         });
     }
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
             if (!params.partner || !params.redirectTo) {
-                this.router.navigate(["/"]);
+                this.router.navigate(['/']);
             }
             this.partner = params.partner;
             this.redirectTo = params.redirectTo;
@@ -40,14 +40,14 @@ export class LoginComponent implements OnInit {
     }
 
     public onSubmit() {
-        if (this.submit) return;
+        if (this.submit) { return; }
 
-        this.error = "";
+        this.error = '';
         if (this.loginForm.valid) {
             this.submit = true;
             this.oauthService.login(this.loginForm.value.username, this.loginForm.value.password, this.partner)
                 .subscribe((token: any) => {
-                    window.location.href = this.redirectTo + "?accessToken=" + token.accessToken;
+                    window.location.href = this.redirectTo + '?accessToken=' + token.accessToken;
                 }, (err: any) => {
                     console.log(err);
                     this.error = err;

@@ -1,17 +1,17 @@
-import { Component, OnInit, Inject } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Component, OnInit, Inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 // Services
-import { CustomerinfobygroupService } from "../../../../services/customerinfobygroup.service";
-import { CustomerCompanyTypesService } from "../../../../services/customer-company-types.service";
-import { DistributionService } from "../../../../services/distribution.service";
-import { EmailcontentService } from "../../../../services/emailcontent.service";
-import { PricingtemplatesService } from "../../../../services/pricingtemplates.service";
-import { SharedService } from "../../../../layouts/shared-service";
+import { CustomerinfobygroupService } from '../../../../services/customerinfobygroup.service';
+import { CustomerCompanyTypesService } from '../../../../services/customer-company-types.service';
+import { DistributionService } from '../../../../services/distribution.service';
+import { EmailcontentService } from '../../../../services/emailcontent.service';
+import { PricingtemplatesService } from '../../../../services/pricingtemplates.service';
+import { SharedService } from '../../../../layouts/shared-service';
 
 export interface DistributionDialogData {
     pricingTemplate: any;
@@ -24,9 +24,9 @@ export interface DistributionDialogData {
 }
 
 @Component({
-    selector: "app-distribution-wizard-main",
-    templateUrl: "./distribution-wizard-main.component.html",
-    styleUrls: ["./distribution-wizard-main.component.scss"],
+    selector: 'app-distribution-wizard-main',
+    templateUrl: './distribution-wizard-main.component.html',
+    styleUrls: ['./distribution-wizard-main.component.scss'],
 })
 export class DistributionWizardMainComponent implements OnInit {
     public emailContentGreetings: any[] = [];
@@ -77,18 +77,18 @@ export class DistributionWizardMainComponent implements OnInit {
         this.loadValidityMessage();
 
         this.firstFormGroup = this.formBuilder.group({
-            pricingTemplate: [""],
-            customerCompanyType: [""],
-            customer: [""],
+            pricingTemplate: [''],
+            customerCompanyType: [''],
+            customer: [''],
         });
         this.secondFormGroup = this.formBuilder.group({
-            emailContentGreeting: ["", Validators.required],
-            emailContentGreetingName: ["", Validators.required],
-            emailContentSubject: ["", Validators.required],
+            emailContentGreeting: ['', Validators.required],
+            emailContentGreetingName: ['', Validators.required],
+            emailContentSubject: ['', Validators.required],
         });
         this.thirdFormGroup = this.formBuilder.group({
-            emailContentSignature: ["", Validators.required],
-            emailContentSignatureName: ["", Validators.required],
+            emailContentSignature: ['', Validators.required],
+            emailContentSignatureName: ['', Validators.required],
         });
 
         this.fourthFormGroup = this.formBuilder.group({});
@@ -97,7 +97,7 @@ export class DistributionWizardMainComponent implements OnInit {
 
         // Subscribe to necessary changes
         this.firstFormGroup
-            .get("pricingTemplate")
+            .get('pricingTemplate')
             .valueChanges.subscribe((val) => {
                 this.data.pricingTemplate = val;
                 // Only reload customers if they've already been loaded
@@ -119,33 +119,33 @@ export class DistributionWizardMainComponent implements OnInit {
 
     public pricingTemplateChanged() {
         this.data.pricingTemplate = this.firstFormGroup.get(
-            "pricingTemplate"
+            'pricingTemplate'
         ).value;
         this.loadAvailableCustomers();
     }
 
     public customerCompanyTypeChanged() {
         this.data.customerCompanyType = this.firstFormGroup.get(
-            "customerCompanyType"
+            'customerCompanyType'
         ).value;
         this.loadAvailableCustomers();
     }
 
     public customerChanged() {
-        this.data.customer = this.firstFormGroup.get("customer").value;
+        this.data.customer = this.firstFormGroup.get('customer').value;
     }
 
     public emailContentGreetingChange() {
         this.secondFormGroup.patchValue({
             emailContentGreetingName: this.secondFormGroup.get(
-                "emailContentGreeting"
+                'emailContentGreeting'
             ).value.name,
         });
     }
 
     public emailContentSubjectChange() {
         this.secondFormGroup.patchValue({
-            emailContentSubject: this.secondFormGroup.get("emailContentSubject")
+            emailContentSubject: this.secondFormGroup.get('emailContentSubject')
                 .value.name,
         });
     }
@@ -153,7 +153,7 @@ export class DistributionWizardMainComponent implements OnInit {
     public emailContentSignatureChange() {
         this.thirdFormGroup.patchValue({
             emailContentSignatureName: this.secondFormGroup.get(
-                "emailContentSignature"
+                'emailContentSignature'
             ).value.name,
         });
     }
@@ -170,19 +170,19 @@ export class DistributionWizardMainComponent implements OnInit {
 
     public distributePricingClicked() {
         this.data.emailContentGreeting = this.secondFormGroup.get(
-            "emailContentGreeting"
+            'emailContentGreeting'
         ).value;
         this.data.emailContentGreeting.name = this.secondFormGroup.get(
-            "emailContentGreetingName"
+            'emailContentGreetingName'
         ).value;
         this.data.emailContentGreeting.subject = this.secondFormGroup.get(
-            "emailContentSubject"
+            'emailContentSubject'
         ).value;
         this.data.emailContentSignature = this.thirdFormGroup.get(
-            "emailContentSignature"
+            'emailContentSignature'
         ).value;
         this.data.emailContentSignature.name = this.thirdFormGroup.get(
-            "emailContentSignatureName"
+            'emailContentSignatureName'
         ).value;
 
         this.distributionService
@@ -199,7 +199,7 @@ export class DistributionWizardMainComponent implements OnInit {
                 this.availablePricingTemplates = data;
                 this.availablePricingTemplates.splice(0, 0, {
                     oid: 0,
-                    name: "--All Margin Templates--",
+                    name: '--All Margin Templates--',
                 });
                 if (
                     !this.data.pricingTemplate ||
@@ -248,7 +248,7 @@ export class DistributionWizardMainComponent implements OnInit {
                 }
                 this.availableCustomers.splice(0, 0, {
                     oid: 0,
-                    company: "--All Applicable Customers--",
+                    company: '--All Applicable Customers--',
                 });
                 if (!this.data.customer || this.data.customer.oid === 0) {
                     this.data.customer = this.availableCustomers[0];
@@ -273,7 +273,7 @@ export class DistributionWizardMainComponent implements OnInit {
                 this.customerCompanyTypes = data;
                 this.customerCompanyTypes.splice(0, 0, {
                     oid: 0,
-                    name: "--All Types--",
+                    name: '--All Types--',
                 });
                 if (!this.data.customerCompanyType) {
                     this.data.customerCompanyType = 0;
@@ -300,14 +300,14 @@ export class DistributionWizardMainComponent implements OnInit {
                 this.emailContentGreetings.splice(0, 0, {
                     oid: 0,
                     emailContentType: 1,
-                    emailContentHtml: "",
-                    name: "New Greeting",
+                    emailContentHtml: '',
+                    name: 'New Greeting',
                 });
                 this.emailContentSignatures.splice(0, 0, {
                     oid: 0,
                     emailContentType: 3,
-                    emailContentHtml: "",
-                    name: "New Signature",
+                    emailContentHtml: '',
+                    name: 'New Signature',
                 });
                 this.data.emailContentGreeting = this.emailContentGreetings[
                     this.emailContentGreetings.length - 1

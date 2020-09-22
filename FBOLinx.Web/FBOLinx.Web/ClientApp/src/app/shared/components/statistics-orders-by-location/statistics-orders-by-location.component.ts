@@ -1,13 +1,13 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from '@angular/core';
 
 // Services
-import { FuelreqsService } from "../../../services/fuelreqs.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
-    selector: "app-statistics-orders-by-location",
-    templateUrl: "./statistics-orders-by-location.component.html",
-    styleUrls: ["./statistics-orders-by-location.component.scss"],
+    selector: 'app-statistics-orders-by-location',
+    templateUrl: './statistics-orders-by-location.component.html',
+    styleUrls: ['./statistics-orders-by-location.component.scss'],
 })
 export class StatisticsOrdersByLocationComponent implements OnInit {
     @Input() options: any = {
@@ -34,7 +34,7 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
             .getOrdersByLocation({
                 StartDateTime: this.startDate,
                 EndDateTime: this.endDate,
-                ICAO: "",
+                ICAO: '',
                 FboId: this.sharedService.currentUser.fboId,
             })
             .subscribe((data: any) => {

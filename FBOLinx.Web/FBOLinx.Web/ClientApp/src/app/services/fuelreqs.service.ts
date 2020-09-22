@@ -1,27 +1,27 @@
-import { Injectable, Inject } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class FuelreqsService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
 
-    constructor(private http: HttpClient, @Inject("BASE_URL") baseUrl: string) {
+    constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         this.headers = new HttpHeaders({
-            "Content-Type": "application/json; charset=utf-8",
+            'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + "api/fuelreqs";
+        this.accessPointUrl = baseUrl + 'api/fuelreqs';
     }
 
     public getForFbo(fboId: number) {
-        return this.http.get(this.accessPointUrl + "/fbo/" + fboId, {
+        return this.http.get(this.accessPointUrl + '/fbo/' + fboId, {
             headers: this.headers,
         });
     }
 
     public getForFboAndDateRange(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + "/fbo/" + fboId + "/daterange",
+            this.accessPointUrl + '/fbo/' + fboId + '/daterange',
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -34,7 +34,7 @@ export class FuelreqsService {
 
     public getForGroupFboAndDateRange(groupId: number, fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + "/group/" + groupId + "/fbo/" + fboId + "/daterange",
+            this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId + '/daterange',
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -46,13 +46,13 @@ export class FuelreqsService {
     }
 
     public getForFboCount(fboId: number) {
-        return this.http.get(this.accessPointUrl + "/fbo/" + fboId + "/count", {
+        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/count', {
             headers: this.headers,
         });
     }
 
     public get(payload) {
-        return this.http.get(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.get(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
@@ -64,13 +64,13 @@ export class FuelreqsService {
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.delete(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
 
     public update(payload) {
-        return this.http.put(this.accessPointUrl + "/" + payload.oid, payload, {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
     }
@@ -79,7 +79,7 @@ export class FuelreqsService {
 
     public topCustomersForFbo(fboId, payload) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/top-customers/fbo/" + fboId,
+            this.accessPointUrl + '/analysis/top-customers/fbo/' + fboId,
             payload,
             {
                 headers: this.headers,
@@ -90,7 +90,7 @@ export class FuelreqsService {
     public totalOrdersByMonthForFbo(fboId, payload) {
         return this.http.post(
             this.accessPointUrl +
-                "/analysis/total-orders-by-month/fbo/" +
+                '/analysis/total-orders-by-month/fbo/' +
                 fboId,
             payload,
             {
@@ -102,7 +102,7 @@ export class FuelreqsService {
     public totalOrdersByAircraftSizeForFbo(fboId, payload) {
         return this.http.post(
             this.accessPointUrl +
-                "/analysis/total-orders-by-aircraft-size/fbo/" +
+                '/analysis/total-orders-by-aircraft-size/fbo/' +
                 fboId,
             payload,
             {
@@ -113,7 +113,7 @@ export class FuelreqsService {
 
     public getOrdersByLocation(payload) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/fuelerlinx/orders-by-location",
+            this.accessPointUrl + '/analysis/fuelerlinx/orders-by-location',
             payload,
             {
                 headers: this.headers,
@@ -123,7 +123,7 @@ export class FuelreqsService {
 
     public getQuotesAndOrders(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/quotes-orders-over-time/fbo/" + fboId,
+            this.accessPointUrl + '/analysis/quotes-orders-over-time/fbo/' + fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -137,7 +137,7 @@ export class FuelreqsService {
 
     public getOrders(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/orders-won-over-time/fbo/" + fboId,
+            this.accessPointUrl + '/analysis/orders-won-over-time/fbo/' + fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -151,7 +151,7 @@ export class FuelreqsService {
 
     public getVolumesNearbyAirport(fboId: number, startDate: Date, endDate: Date, mile: number) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/volumes-nearby-airport/fbo/" + fboId,
+            this.accessPointUrl + '/analysis/volumes-nearby-airport/fbo/' + fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -165,7 +165,7 @@ export class FuelreqsService {
 
     public getMarketShareAirport(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/market-share-airport/fbo/" + fboId,
+            this.accessPointUrl + '/analysis/market-share-airport/fbo/' + fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -178,7 +178,7 @@ export class FuelreqsService {
 
     public getFBOCustomersBreakdown(fboId: number, startDate: Date, endDate: Date, chartType: string) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/customers-breakdown/fbo/" + fboId,
+            this.accessPointUrl + '/analysis/customers-breakdown/fbo/' + fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -192,7 +192,7 @@ export class FuelreqsService {
 
     public getCompaniesQuotingDealStatistics(groupId: number, fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/company-quoting-deal-statistics/group/" + groupId + "/fbo/" + fboId,
+            this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,

@@ -1,8 +1,8 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 export interface NewCustomerCompanyTypeDialogData {
     oid: number;
@@ -13,9 +13,9 @@ export interface NewCustomerCompanyTypeDialogData {
 }
 
 @Component({
-    selector: "app-customer-company-type-dialog",
-    templateUrl: "./customer-company-type-dialog.component.html",
-    styleUrls: ["./customer-company-type-dialog.component.scss"],
+    selector: 'app-customer-company-type-dialog',
+    templateUrl: './customer-company-type-dialog.component.html',
+    styleUrls: ['./customer-company-type-dialog.component.scss'],
 })
 export class CustomerCompanyTypeDialogComponent {
     constructor(

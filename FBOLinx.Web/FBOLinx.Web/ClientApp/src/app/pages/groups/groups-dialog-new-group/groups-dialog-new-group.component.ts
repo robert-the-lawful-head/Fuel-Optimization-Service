@@ -1,8 +1,8 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 // Interfaces
 export interface NewGroupDialogData {
@@ -13,9 +13,9 @@ export interface NewGroupDialogData {
 }
 
 @Component({
-    selector: "app-groups-dialog-new-group",
-    templateUrl: "./groups-dialog-new-group.component.html",
-    styleUrls: ["./groups-dialog-new-group.component.scss"],
+    selector: 'app-groups-dialog-new-group',
+    templateUrl: './groups-dialog-new-group.component.html',
+    styleUrls: ['./groups-dialog-new-group.component.scss'],
 })
 export class GroupsDialogNewGroupComponent {
     constructor(

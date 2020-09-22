@@ -1,10 +1,10 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialog,
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
-import { CloseConfirmationComponent } from "../../../shared/components/close-confirmation/close-confirmation.component";
+} from '@angular/material/dialog';
+import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 
 export interface NewCustomerDialogData {
     oid: number;
@@ -25,9 +25,9 @@ export interface NewCustomerDialogData {
 }
 
 @Component({
-    selector: "app-customers-dialog-new-customer",
-    templateUrl: "./customers-dialog-new-customer.component.html",
-    styleUrls: ["./customers-dialog-new-customer.component.scss"],
+    selector: 'app-customers-dialog-new-customer',
+    templateUrl: './customers-dialog-new-customer.component.html',
+    styleUrls: ['./customers-dialog-new-customer.component.scss'],
 })
 export class CustomersDialogNewCustomerComponent {
     constructor(
@@ -47,11 +47,11 @@ export class CustomersDialogNewCustomerComponent {
                     CloseConfirmationComponent,
                     {
                         data: {
-                            customTitle: "Discard Changes?",
+                            customTitle: 'Discard Changes?',
                             customText:
-                                "You have unsaved changes. Are you sure?",
-                            ok: "Discard",
-                            cancel: "Cancel",
+                                'You have unsaved changes. Are you sure?',
+                            ok: 'Discard',
+                            cancel: 'Cancel',
                         },
                         autoFocus: false,
                     }

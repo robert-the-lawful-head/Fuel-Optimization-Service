@@ -1,17 +1,17 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
-import { Router } from "@angular/router";
+} from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 // Components
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    selector: "app-pricing-expired-notification",
-    templateUrl: "./pricing-expired-notification.component.html",
-    styleUrls: ["./pricing-expired-notification.component.scss"],
+    selector: 'app-pricing-expired-notification',
+    templateUrl: './pricing-expired-notification.component.html',
+    styleUrls: ['./pricing-expired-notification.component.scss'],
 })
 export class PricingExpiredNotificationComponent {
     constructor(
@@ -21,13 +21,13 @@ export class PricingExpiredNotificationComponent {
     ) {}
 
     public onConfirmClicked() {
-        this.router.navigate(["/default-layout/dashboard-fbo"]);
+        this.router.navigate(['/default-layout/dashboard-fbo']);
         this.dialogRef.close();
     }
 
     public onRemindMeLaterClick() {
         // localStorage.setItem("pricingExpiredNotification", moment().format("L"));
-        localStorage.setItem("pricingExpiredNotification", moment().add(1, "days").format("L"));
+        localStorage.setItem('pricingExpiredNotification', moment().add(1, 'days').format('L'));
         this.dialogRef.close();
     }
 

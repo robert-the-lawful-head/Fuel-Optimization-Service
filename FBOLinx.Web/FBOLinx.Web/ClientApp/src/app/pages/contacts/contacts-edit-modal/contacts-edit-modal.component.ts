@@ -1,10 +1,10 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialog,
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
-import { ContactsDialogConfirmContactDeleteComponent } from "../contact-confirm-delete-modal/contact-confirm-delete-modal.component";
+} from '@angular/material/dialog';
+import { ContactsDialogConfirmContactDeleteComponent } from '../contact-confirm-delete-modal/contact-confirm-delete-modal.component';
 
 export interface NewContactDialogData {
     oid: number;
@@ -25,26 +25,26 @@ export interface NewContactDialogData {
 }
 
 @Component({
-    selector: "app-contacts-dialog-new-contact",
-    templateUrl: "./contacts-edit-modal.component.html",
-    styleUrls: ["./contacts-edit-modal.component.scss"],
+    selector: 'app-contacts-dialog-new-contact',
+    templateUrl: './contacts-edit-modal.component.html',
+    styleUrls: ['./contacts-edit-modal.component.scss'],
 })
 export class ContactsDialogNewContactComponent {
     // Masks
     phoneMask: any[] = [
-        "+",
-        "1",
-        " ",
-        "(",
+        '+',
+        '1',
+        ' ',
+        '(',
         /[1-9]/,
         /\d/,
         /\d/,
-        ")",
-        " ",
+        ')',
+        ' ',
         /\d/,
         /\d/,
         /\d/,
-        "-",
+        '-',
         /\d/,
         /\d/,
         /\d/,
@@ -59,7 +59,7 @@ export class ContactsDialogNewContactComponent {
 
     // Public Methods
     public onCancelClick(): void {
-        this.dialogRef.close("cancel");
+        this.dialogRef.close('cancel');
     }
 
     public ConfirmDelete(data) {
@@ -71,7 +71,7 @@ export class ContactsDialogNewContactComponent {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (result === "cancel") {
+            if (result === 'cancel') {
             } else if (result.contactId) {
                 result.toDelete = true;
                 this.dialogRef.close(result);

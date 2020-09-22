@@ -1,21 +1,21 @@
-import { Injectable, Inject } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class CustomersService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
 
-    constructor(private http: HttpClient, @Inject("BASE_URL") baseUrl: string) {
+    constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         this.headers = new HttpHeaders({
-            "Content-Type": "application/json; charset=utf-8",
+            'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + "api/customers";
+        this.accessPointUrl = baseUrl + 'api/customers';
     }
 
     public getByGroupAndFbo(groupId, fboId) {
         return this.http.get(
-            this.accessPointUrl + "/group/" + groupId + "/fbo/" + fboId,
+            this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId,
             {
                 headers: this.headers,
             }
@@ -23,7 +23,7 @@ export class CustomersService {
     }
 
     public get(payload) {
-        return this.http.get(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.get(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
@@ -35,20 +35,20 @@ export class CustomersService {
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.delete(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
 
     public update(payload) {
-        return this.http.put(this.accessPointUrl + "/" + payload.oid, payload, {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
     }
 
     public importcustomers(payload) {
         return this.http.post(
-            this.accessPointUrl + "/importcustomers",
+            this.accessPointUrl + '/importcustomers',
             payload,
             {
                 headers: this.headers,

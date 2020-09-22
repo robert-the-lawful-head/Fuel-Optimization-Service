@@ -5,25 +5,25 @@ import {
     Output,
     OnInit,
     ViewChild,
-} from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatDialog } from "@angular/material/dialog";
-import * as _ from "lodash";
-import FlatfileImporter from "flatfile-csv-importer";
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import * as _ from 'lodash';
+import FlatfileImporter from 'flatfile-csv-importer';
 
 // Services
-import { ContactinfobygroupsService } from "../../../services/contactinfobygroups.service";
-import { FbocontactsService } from "../../../services/fbocontacts.service";
-import { ContactsService } from "../../../services/contacts.service";
-import { SharedService } from "../../../layouts/shared-service";
-import { SystemcontactsNewContactModalComponent } from "../systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component";
+import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
+import { FbocontactsService } from '../../../services/fbocontacts.service';
+import { ContactsService } from '../../../services/contacts.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { SystemcontactsNewContactModalComponent } from '../systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 
 @Component({
-    selector: "app-systemcontacts-grid",
-    templateUrl: "./systemcontacts-grid.component.html",
-    styleUrls: ["./systemcontacts-grid.component.scss"],
+    selector: 'app-systemcontacts-grid',
+    templateUrl: './systemcontacts-grid.component.html',
+    styleUrls: ['./systemcontacts-grid.component.scss'],
 })
 export class SystemcontactsGridComponent implements OnInit {
     @Output() contactDeleted = new EventEmitter<any>();
@@ -33,19 +33,19 @@ export class SystemcontactsGridComponent implements OnInit {
     public currentContactInfoByGroup: any;
     contactsDataSource: MatTableDataSource<any> = null;
     displayedColumns: string[] = [
-        "firstName",
-        "lastName",
-        "email",
-        "copyAlerts",
-        "delete",
+        'firstName',
+        'lastName',
+        'email',
+        'copyAlerts',
+        'delete',
     ];
     public copyAll = false;
 
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-    LICENSE_KEY = "9eef62bd-4c20-452c-98fd-aa781f5ac111";
+    LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
-    results = "[]";
+    results = '[]';
 
     private importer: FlatfileImporter;
 
@@ -69,8 +69,8 @@ export class SystemcontactsGridComponent implements OnInit {
         FlatfileImporter.setVersion(2);
         this.initializeImporter();
         this.importer.setCustomer({
-            userId: "1",
-            name: "WebsiteImport",
+            userId: '1',
+            name: 'WebsiteImport',
         });
     }
 
@@ -98,7 +98,7 @@ export class SystemcontactsGridComponent implements OnInit {
                 return;
             }
 
-            if (result === "delete") {
+            if (result === 'delete') {
                 this.fbocontactsService
                     .remove(record)
                     .subscribe(() => {
@@ -133,7 +133,7 @@ export class SystemcontactsGridComponent implements OnInit {
             SystemcontactsNewContactModalComponent,
             {
                 data: {},
-                height: "300px",
+                height: '300px',
             }
         );
         dialogRef.afterClosed().subscribe(result => {
@@ -180,12 +180,12 @@ export class SystemcontactsGridComponent implements OnInit {
 
     async launchImporter() {
         if (!this.LICENSE_KEY) {
-            return alert("Set LICENSE_KEY on Line 13 before continuing.");
+            return alert('Set LICENSE_KEY on Line 13 before continuing.');
         }
         try {
             const results = await this.importer.requestDataFromUser();
             this.importer.displayLoader();
-            const customerId = this.route.snapshot.paramMap.get("id");
+            const customerId = this.route.snapshot.paramMap.get('id');
             if (results) {
                 results.data.forEach((result) => {
                     result.groupid = this.sharedService.currentUser.groupId;
@@ -205,7 +205,7 @@ export class SystemcontactsGridComponent implements OnInit {
                             this.contactsDataSource.sort = this.sort;
 
                             this.importer.displaySuccess(
-                                "Data successfully imported!"
+                                'Data successfully imported!'
                             );
                         }
                     });
@@ -217,103 +217,103 @@ export class SystemcontactsGridComponent implements OnInit {
         this.importer = new FlatfileImporter(this.LICENSE_KEY, {
             fields: [
                 {
-                    label: "First Name",
-                    alternates: ["first name"],
-                    key: "FirstName",
-                    description: "Contact First Name",
+                    label: 'First Name',
+                    alternates: ['first name'],
+                    key: 'FirstName',
+                    description: 'Contact First Name',
                     validators: [
                         {
-                            validate: "required",
-                            error: "this field is required",
+                            validate: 'required',
+                            error: 'this field is required',
                         },
                     ],
                 },
                 {
-                    label: "Last Name",
-                    alternates: ["last name"],
-                    key: "LastName",
-                    description: "Contact Last Name",
+                    label: 'Last Name',
+                    alternates: ['last name'],
+                    key: 'LastName',
+                    description: 'Contact Last Name',
                     validators: [
                         {
-                            validate: "required",
-                            error: "this field is required",
+                            validate: 'required',
+                            error: 'this field is required',
                         },
                     ],
                 },
                 {
-                    label: "Title",
-                    alternates: ["title"],
-                    key: "Title",
-                    description: "Contact Title",
+                    label: 'Title',
+                    alternates: ['title'],
+                    key: 'Title',
+                    description: 'Contact Title',
                 },
                 {
-                    label: "Email",
-                    alternates: ["email", "email address"],
-                    key: "Email",
-                    description: "Email Address",
+                    label: 'Email',
+                    alternates: ['email', 'email address'],
+                    key: 'Email',
+                    description: 'Email Address',
                 },
                 {
-                    label: "Phone Number",
-                    alternates: ["phone", "phone number"],
-                    key: "PhoneNumber",
-                    description: "Phone Number",
+                    label: 'Phone Number',
+                    alternates: ['phone', 'phone number'],
+                    key: 'PhoneNumber',
+                    description: 'Phone Number',
                 },
                 {
-                    label: "Extension",
-                    alternates: ["extension"],
-                    key: "Extension",
-                    description: "Phone Extension",
+                    label: 'Extension',
+                    alternates: ['extension'],
+                    key: 'Extension',
+                    description: 'Phone Extension',
                 },
                 {
-                    label: "Mobile",
-                    alternates: ["mobile", "cell", "mobile phone", "cell phone"],
-                    key: "MobilePhone",
-                    description: "Mobile Phone",
+                    label: 'Mobile',
+                    alternates: ['mobile', 'cell', 'mobile phone', 'cell phone'],
+                    key: 'MobilePhone',
+                    description: 'Mobile Phone',
                 },
                 {
-                    label: "Fax",
-                    alternates: ["fax"],
-                    key: "Fax",
-                    description: "Fax",
+                    label: 'Fax',
+                    alternates: ['fax'],
+                    key: 'Fax',
+                    description: 'Fax',
                 },
                 {
-                    label: "Address",
-                    alternates: ["address", "street address"],
-                    key: "Address",
-                    description: "Street Address",
+                    label: 'Address',
+                    alternates: ['address', 'street address'],
+                    key: 'Address',
+                    description: 'Street Address',
                 },
                 {
-                    label: "City",
-                    alternates: ["city", "town"],
-                    key: "City",
-                    description: "City",
+                    label: 'City',
+                    alternates: ['city', 'town'],
+                    key: 'City',
+                    description: 'City',
                 },
                 {
-                    label: "State",
-                    alternates: ["state"],
-                    key: "State",
-                    description: "State",
+                    label: 'State',
+                    alternates: ['state'],
+                    key: 'State',
+                    description: 'State',
                 },
                 {
-                    label: "Country",
-                    alternates: ["country"],
-                    key: "Country",
-                    description: "Country",
+                    label: 'Country',
+                    alternates: ['country'],
+                    key: 'Country',
+                    description: 'Country',
                 },
                 {
-                    label: "Primary",
-                    alternates: ["primary"],
-                    key: "PrimaryContact",
-                    description: "Primary",
+                    label: 'Primary',
+                    alternates: ['primary'],
+                    key: 'PrimaryContact',
+                    description: 'Primary',
                 },
                 {
-                    label: "Copy on Distribution",
-                    alternates: ["copy on distribution"],
-                    key: "CopyAlertsContact",
-                    description: "Copy Contact on Distribution",
+                    label: 'Copy on Distribution',
+                    alternates: ['copy on distribution'],
+                    key: 'CopyAlertsContact',
+                    description: 'Copy Contact on Distribution',
                 },
             ],
-            type: "Contacts",
+            type: 'Contacts',
             allowInvalidSubmit: true,
             managed: true,
             allowCustom: true,
