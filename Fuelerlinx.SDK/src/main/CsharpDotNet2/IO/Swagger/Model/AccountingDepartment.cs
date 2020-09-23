@@ -40,6 +40,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "active")]
     public bool? Active { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Value
+    /// </summary>
+    [DataMember(Name="value", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "value")]
+    public string Value { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Label
+    /// </summary>
+    [DataMember(Name="label", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "label")]
+    public string Label { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -52,6 +66,8 @@ namespace IO.Swagger.Model {
       sb.Append("  Title: ").Append(Title).Append("\n");
       sb.Append("  CustomTitle: ").Append(CustomTitle).Append("\n");
       sb.Append("  Active: ").Append(Active).Append("\n");
+      sb.Append("  Value: ").Append(Value).Append("\n");
+      sb.Append("  Label: ").Append(Label).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
