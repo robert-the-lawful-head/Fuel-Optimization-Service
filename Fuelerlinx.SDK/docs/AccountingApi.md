@@ -7,6 +7,7 @@ Method | HTTP request | Description
 [**CheckSageCredentials**](AccountingApi.md#checksagecredentials) | **POST** /api/Accounting/sage/check-credentials | Get Sage Credentials
 [**DeleteAccountingIntegrationItemCodes**](AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 [**DeleteSupplierDetails**](AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
+[**GetAccountingDepartmentList**](AccountingApi.md#getaccountingdepartmentlist) | **GET** /api/Accounting/department/list | Get department list from the company&#39;s accounting integration
 [**GetAccountingIntegrationItemCodesById**](AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
 [**GetAccountingItemMappingList**](AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets accounting integration mappings for line items
 [**GetAccountingItemMappingListForTransactions**](AccountingApi.md#getaccountingitemmappinglistfortransactions) | **GET** /api/Accounting/mapping/items/list/{transactionIds} | Gets accounting integration mappings for line items by comma-delimited {transactionIds}
@@ -218,6 +219,71 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteSupplierDetailsResponse**](DeleteSupplierDetailsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getaccountingdepartmentlist"></a>
+# **GetAccountingDepartmentList**
+> AccountingDepartmentListResponse GetAccountingDepartmentList ()
+
+Get department list from the company's accounting integration
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetAccountingDepartmentListExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AccountingApi();
+
+            try
+            {
+                // Get department list from the company's accounting integration
+                AccountingDepartmentListResponse result = apiInstance.GetAccountingDepartmentList();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AccountingApi.GetAccountingDepartmentList: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**AccountingDepartmentListResponse**](AccountingDepartmentListResponse.md)
 
 ### Authorization
 

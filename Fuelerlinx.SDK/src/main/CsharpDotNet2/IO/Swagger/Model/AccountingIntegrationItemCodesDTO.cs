@@ -54,6 +54,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "accountingItemCode")]
     public string AccountingItemCode { get; set; }
 
+    /// <summary>
+    /// Gets or Sets AccountingDepartment
+    /// </summary>
+    [DataMember(Name="accountingDepartment", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "accountingDepartment")]
+    public string AccountingDepartment { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -68,6 +75,7 @@ namespace IO.Swagger.Model {
       sb.Append("  AccountingCategory: ").Append(AccountingCategory).Append("\n");
       sb.Append("  AccountingItemName: ").Append(AccountingItemName).Append("\n");
       sb.Append("  AccountingItemCode: ").Append(AccountingItemCode).Append("\n");
+      sb.Append("  AccountingDepartment: ").Append(AccountingDepartment).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

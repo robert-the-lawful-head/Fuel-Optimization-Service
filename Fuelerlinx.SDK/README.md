@@ -86,6 +86,7 @@ Class | Method | HTTP request | Description
 *AccountingApi* | [**CheckSageCredentials**](docs/AccountingApi.md#checksagecredentials) | **POST** /api/Accounting/sage/check-credentials | Get Sage Credentials
 *AccountingApi* | [**DeleteAccountingIntegrationItemCodes**](docs/AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 *AccountingApi* | [**DeleteSupplierDetails**](docs/AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
+*AccountingApi* | [**GetAccountingDepartmentList**](docs/AccountingApi.md#getaccountingdepartmentlist) | **GET** /api/Accounting/department/list | Get department list from the company's accounting integration
 *AccountingApi* | [**GetAccountingIntegrationItemCodesById**](docs/AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
 *AccountingApi* | [**GetAccountingItemMappingList**](docs/AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets accounting integration mappings for line items
 *AccountingApi* | [**GetAccountingItemMappingListForTransactions**](docs/AccountingApi.md#getaccountingitemmappinglistfortransactions) | **GET** /api/Accounting/mapping/items/list/{transactionIds} | Gets accounting integration mappings for line items by comma-delimited {transactionIds}
@@ -437,6 +438,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AccessibleFeaturesDTO](docs/AccessibleFeaturesDTO.md)
  - [IO.Swagger.Model.AccountInfoAndSettingsDTO](docs/AccountInfoAndSettingsDTO.md)
  - [IO.Swagger.Model.AccountInfoAndSettingsSubFeaturesDTO](docs/AccountInfoAndSettingsSubFeaturesDTO.md)
+ - [IO.Swagger.Model.AccountingDepartment](docs/AccountingDepartment.md)
+ - [IO.Swagger.Model.AccountingDepartmentListResponse](docs/AccountingDepartmentListResponse.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesDTO](docs/AccountingIntegrationItemCodesDTO.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesDetailsResponse](docs/AccountingIntegrationItemCodesDetailsResponse.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesListResponse](docs/AccountingIntegrationItemCodesListResponse.md)
