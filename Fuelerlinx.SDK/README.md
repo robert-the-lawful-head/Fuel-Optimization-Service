@@ -188,6 +188,7 @@ Class | Method | HTTP request | Description
 *FBOApi* | [**UpdateFboDetailsByCompanyNotes**](docs/FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
 *FBOLinxApi* | [**GetAircraftTailsGroupedByCompany**](docs/FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
 *FBOLinxApi* | [**GetContractFuelVendorsTransactionsCount**](docs/FBOLinxApi.md#getcontractfuelvendorstransactionscount) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-count-at-airport | 
+*FBOLinxApi* | [**GetCustomerTransactionsCount**](docs/FBOLinxApi.md#getcustomertransactionscount) | **POST** /api/FBOLinx/get-customer-orders-count-at-airport | 
 *FBOLinxApi* | [**GetFBOsTransactionsCount**](docs/FBOLinxApi.md#getfbostransactionscount) | **POST** /api/FBOLinx/get-fbos-orders-count-at-airport | 
 *FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
 *FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
@@ -638,11 +639,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FboLinxAircraftsResponse](docs/FboLinxAircraftsResponse.md)
  - [IO.Swagger.Model.FboLinxContact](docs/FboLinxContact.md)
  - [IO.Swagger.Model.FboLinxContractFuelVendorsCountResponse](docs/FboLinxContractFuelVendorsCountResponse.md)
+ - [IO.Swagger.Model.FboLinxCustomerTransactionsCountAtAirportResponse](docs/FboLinxCustomerTransactionsCountAtAirportResponse.md)
  - [IO.Swagger.Model.FboLinxFbo](docs/FboLinxFbo.md)
  - [IO.Swagger.Model.FboLinxFbosTransactionsCountResponse](docs/FboLinxFbosTransactionsCountResponse.md)
  - [IO.Swagger.Model.FboLinxGroup](docs/FboLinxGroup.md)
  - [IO.Swagger.Model.FbolinxAircraftDTO](docs/FbolinxAircraftDTO.md)
  - [IO.Swagger.Model.FbolinxContractFuelVendorTransactionsCountAtAirport](docs/FbolinxContractFuelVendorTransactionsCountAtAirport.md)
+ - [IO.Swagger.Model.FbolinxCustomerTransactionsCountAtAirport](docs/FbolinxCustomerTransactionsCountAtAirport.md)
  - [IO.Swagger.Model.FlightBridgeAuthorizationCheckResponse](docs/FlightBridgeAuthorizationCheckResponse.md)
  - [IO.Swagger.Model.FlightBridgeExternalUserInformation](docs/FlightBridgeExternalUserInformation.md)
  - [IO.Swagger.Model.FlightPlanningSettingsDTO](docs/FlightPlanningSettingsDTO.md)
