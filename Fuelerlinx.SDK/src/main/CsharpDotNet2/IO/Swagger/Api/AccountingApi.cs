@@ -30,6 +30,11 @@ namespace IO.Swagger.Api
         /// <returns>DeleteSupplierDetailsResponse</returns>
         DeleteSupplierDetailsResponse DeleteSupplierDetails (int? id);
         /// <summary>
+        /// Get department list from the company&#39;s accounting integration 
+        /// </summary>
+        /// <returns>AccountingDepartmentListResponse</returns>
+        AccountingDepartmentListResponse GetAccountingDepartmentList ();
+        /// <summary>
         /// Gets single accounting integration item code record 
         /// </summary>
         /// <param name="id"></param>
@@ -269,6 +274,38 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupplierDetails: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteSupplierDetailsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupplierDetailsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Get department list from the company&#39;s accounting integration 
+        /// </summary>
+        /// <returns>AccountingDepartmentListResponse</returns>            
+        public AccountingDepartmentListResponse GetAccountingDepartmentList ()
+        {
+            
+    
+            var path = "/api/Accounting/department/list";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAccountingDepartmentList: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAccountingDepartmentList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (AccountingDepartmentListResponse) ApiClient.Deserialize(response.Content, typeof(AccountingDepartmentListResponse), response.Headers);
         }
     
         /// <summary>

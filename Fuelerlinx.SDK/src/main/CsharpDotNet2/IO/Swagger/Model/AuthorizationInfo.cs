@@ -47,6 +47,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "userPassword")]
     public string UserPassword { get; set; }
 
+    /// <summary>
+    /// Gets or Sets AttachmentsFolder
+    /// </summary>
+    [DataMember(Name="attachmentsFolder", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "attachmentsFolder")]
+    public string AttachmentsFolder { get; set; }
+
+    /// <summary>
+    /// Gets or Sets RequiresOAuth
+    /// </summary>
+    [DataMember(Name="requiresOAuth", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "requiresOAuth")]
+    public bool? RequiresOAuth { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -60,6 +74,8 @@ namespace IO.Swagger.Model {
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  UserId: ").Append(UserId).Append("\n");
       sb.Append("  UserPassword: ").Append(UserPassword).Append("\n");
+      sb.Append("  AttachmentsFolder: ").Append(AttachmentsFolder).Append("\n");
+      sb.Append("  RequiresOAuth: ").Append(RequiresOAuth).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
