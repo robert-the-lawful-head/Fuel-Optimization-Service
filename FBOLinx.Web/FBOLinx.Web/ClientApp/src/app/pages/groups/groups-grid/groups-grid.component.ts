@@ -252,7 +252,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.searchValue = filterValue;
 
         if (!filterValue || !filterValue.length) {
-            return this.groupsData;
+            this.groupDataSource = this.groupsData;
+            this.fboDataSource = this.fbosData;
+            return;
         }
 
         const firstFilteredFbos = this.fbosData.filter(fbo =>
