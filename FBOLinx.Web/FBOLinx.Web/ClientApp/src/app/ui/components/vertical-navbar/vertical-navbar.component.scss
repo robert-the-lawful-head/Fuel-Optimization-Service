@@ -1,5 +1,10 @@
 @import '../../../../assets/sass/variable';
 
+:host(.hideSidebar) {
+  display: block;
+  height: auto;
+}
+
 :host {
   background: $vertical-navbar-bg;
   display: flex;

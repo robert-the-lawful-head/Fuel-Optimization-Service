@@ -42,7 +42,10 @@ export class LoginModalComponent {
                     .postAuth()
                     .subscribe(() => {
                         this.dialogRef.close();
-                        if (data.role === 3 || data.role === 2) {
+                        if (data.role === 3) {
+                            this.router.navigate(['/default-layout/groups/']);
+                        }
+                        else if (data.role === 2) {
                             this.router.navigate(['/default-layout/fbos/']);
                         } else {
                             this.router.navigate([

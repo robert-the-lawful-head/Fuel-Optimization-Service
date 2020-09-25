@@ -8,12 +8,12 @@
             ></app-groups-edit>
         </div>
         <div *ngIf="!currentGroup && groupsData && fbosData">
-            <app-groups-grid-new
+            <app-groups-grid
                 [groupsData]="groupsData"
                 [fbosData]="fbosData"
                 (editGroupClicked)="editGroupClicked($event)"
                 (editFboClicked)="editFboClicked($event)"
-            ></app-groups-grid-new>
+            ></app-groups-grid>
         </div>
     </div>
     <div *ngIf="!(groupsData || currentGroup)">

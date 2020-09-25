@@ -5,98 +5,105 @@ import {
     Output,
     OnInit,
     ViewChild,
+    ViewContainerRef,
+    AfterViewInit
 } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { DetailRowService, GridComponent, GridModel, RecordClickEventArgs } from '@syncfusion/ej2-angular-grids';
 
 // Services
 import { GroupsService } from '../../../services/groups.service';
+import { FbosService } from '../../../services/fbos.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 // Components
 import { GroupsDialogNewGroupComponent } from '../groups-dialog-new-group/groups-dialog-new-group.component';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { FbosGridNewFboDialogComponent } from '../../fbos/fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
+import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
+import { fboChangedEvent } from '../../../models/sharedEvents';
 
 @Component({
     selector: 'app-groups-grid',
     templateUrl: './groups-grid.component.html',
     styleUrls: ['./groups-grid.component.scss'],
+    providers: [DetailRowService],
 })
-export class GroupsGridComponent implements OnInit {
+export class GroupsGridComponent implements OnInit, AfterViewInit {
+    @ViewChild('grid') public grid: GridComponent;
+    @ViewChild('fboManageTemplate', { static: true }) public fboManageTemplate: any;
+
     // Input/Output Bindings
-    @Output() recordDeleted = new EventEmitter<any>();
-    @Output() newGroupClicked = new EventEmitter<any>();
-    @Output() editGroupClicked = new EventEmitter<any>();
     @Input() groupsData: Array<any>;
+    @Input() fbosData: Array<any>;
+    @Output() editGroupClicked = new EventEmitter<any>();
+    @Output() editFboClicked = new EventEmitter<any>();
 
-    // Public Members
-    public pageTitle = 'Groups';
-    public groupsDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['group', 'active', 'delete'];
-    public resultsLength = 0;
-    public searchValue = '';
+    childGrid: GridModel;
 
-    public pageIndexGroups = 0;
-    public pageSizeGroups = 25;
+    // Members
+    pageTitle = 'Groups';
+    searchValue = '';
+    pageSettings: object = {
+        pageSizes: [25, 50, 100, 'All'],
+        pageSize: 25,
+    };
 
-    public tableSortGroups = 'group';
-    public tableSortOrderGroups = 'asc';
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    groupDataSource: any[];
+    fboDataSource: any[];
 
     constructor(
-        public newGroupDialog: MatDialog,
+        private router: Router,
+        private viewContainerRef: ViewContainerRef,
         private groupsService: GroupsService,
+        private fbosService: FbosService,
         private sharedService: SharedService,
-        public deleteGroupDialog: MatDialog,
+        private deleteGroupDialog: MatDialog,
+        private deleteFboDialog: MatDialog,
+        private newGroupDialog: MatDialog,
+        private newFboDialog: MatDialog,
+        private notification: MatDialog,
+        private manageFboDialog: MatDialog,
         private snackBar: MatSnackBar
     ) {}
 
     ngOnInit() {
+        this.groupDataSource = this.groupsData;
+        this.fboDataSource = this.fbosData;
+
         this.sharedService.titleChange(this.pageTitle);
-
-        if (!this.groupsData) {
-            return;
-        }
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.groupsDataSource = new MatTableDataSource(this.groupsData);
-        this.groupsDataSource.sort = this.sort;
-        this.groupsDataSource.paginator = this.paginator;
-        this.resultsLength = this.groupsData.length;
-
-        if (localStorage.getItem('pageIndexGroups')) {
-            this.paginator.pageIndex = localStorage.getItem('pageIndexGroups') as any;
-        } else {
-            this.paginator.pageIndex = 0;
-        }
-
-        if (sessionStorage.getItem('pageSizeGroups')) {
-            this.pageSizeGroups = sessionStorage.getItem('pageSizeGroups') as any;
-        } else {
-            this.pageSizeGroups = 25;
-        }
-
-        if (sessionStorage.getItem('tableSortValueGroups')) {
-            this.tableSortGroups = sessionStorage.getItem('tableSortValueGroups') as any;
-        }
-
-        if (sessionStorage.getItem('tableSortValueGroupsGroups')) {
-            this.tableSortOrderGroups = sessionStorage.getItem(
-                'tableSortValueGroupsGroups'
-            ) as any;
-        }
-
-        if (sessionStorage.getItem('searchValueGroups')) {
-            this.searchValue = sessionStorage.getItem('searchValueGroups').trim().toLowerCase();
-            this.groupsDataSource.filter = sessionStorage.getItem('searchValueGroups').trim().toLowerCase();
-        }
+        const self = this;
+        this.childGrid = {
+            dataSource: this.fboDataSource,
+            queryString: 'groupId',
+            columns: [
+                { field: 'icao', headerText: 'ICAO', width: 100 },
+                { field: 'fbo', headerText: 'FBO' },
+                { headerText: 'Needs Attention' },
+                { headerText: 'Last Login Date' },
+                { field: 'active', headerText: 'Active', width: 100 },
+                { template: this.fboManageTemplate, width: 150 },
+            ],
+            load() {
+                this.registeredTemplate = {};   // set registertemplate value as empty in load event
+                (this as GridComponent).parentDetails.parentKeyFieldValue
+                    = ((this as GridComponent).parentDetails.parentRowData as { oid?: string}).oid;
+            },
+            recordClick(args: RecordClickEventArgs) {
+                self.editFboClicked.emit(args.rowData);
+            },
+        };
     }
 
-    public deleteRecord(record) {
+    ngAfterViewInit() {
+        this.fboManageTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
+        this.fboManageTemplate.elementRef.nativeElement.propName = 'template';
+    }
+
+    deleteGroup(record) {
         const dialogRef = this.deleteGroupDialog.open(
             DeleteConfirmationComponent,
             {
@@ -109,29 +116,49 @@ export class GroupsGridComponent implements OnInit {
             if (!result) {
                 return;
             }
-            const deleteIndex = this.groupsData.indexOf(record);
-            const filter = this.groupsDataSource.filter;
+            const deleteIndex = this.groupsData.findIndex(group => group.oid === record.oid);
             this.groupsService.remove(record).subscribe(() => {
                 this.groupsData.splice(deleteIndex, 1);
-                this.groupsDataSource = new MatTableDataSource(this.groupsData);
-                this.groupsDataSource.sort = this.sort;
-                this.groupsDataSource.paginator = this.paginator;
-                this.groupsDataSource.filter = filter;
                 this.snackBar.open(record.groupName + ' is deleted', '', {
                     duration: 2000,
                     panelClass: ['blue-snackbar'],
                 });
+                this.grid.refresh();
             });
-            this.recordDeleted.emit(record);
         });
     }
 
-    public editRecord(record) {
-        const clonedRecord = Object.assign({}, record);
-        this.editGroupClicked.emit(clonedRecord);
+    deleteFbo(record) {
+        const dialogRef = this.deleteFboDialog.open(
+            DeleteConfirmationComponent,
+            {
+                data: { item: record, description: 'FBO' },
+                autoFocus: false,
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.fbosService.remove(record).subscribe(() => {
+                const fboIndex = this.fbosData.findIndex(fbo => fbo.oid === record.oid);
+                this.fbosData.splice(fboIndex, 1);
+                this.snackBar.open(record.fbo + ' is deleted', '', {
+                    duration: 2000,
+                    panelClass: ['blue-snackbar'],
+                });
+                this.grid.refresh();
+            });
+        });
     }
 
-    public newRecord() {
+    rowSelected(event) {
+        this.editGroupClicked.emit(event.data);
+    }
+
+    newGroup() {
         const dialogRef = this.newGroupDialog.open(
             GroupsDialogNewGroupComponent,
             {
@@ -146,38 +173,121 @@ export class GroupsGridComponent implements OnInit {
             }
             result.active = true;
             this.groupsService.add(result).subscribe((data: any) => {
-                this.editRecord(data);
+                this.editGroupClicked.emit(data);
             });
         });
-        this.newGroupClicked.emit();
     }
 
-    public applyFilter(filterValue: string) {
-        this.groupsDataSource.filter = filterValue.trim().toLowerCase();
-        sessionStorage.setItem('searchValueGroups', filterValue);
-        if (!filterValue) {
-            sessionStorage.removeItem('searchValueGroups');
-        }
+    newFbo(event) {
+        const parentRow = this.getParentUntil(event.currentTarget, 'e-detailrow');
+        const groupRow = parentRow.previousSibling;
+        const rowIndex = groupRow.getAttribute('aria-rowindex');
+        const dataIndex = this.grid.pageSettings.pageSize * (this.grid.pageSettings.currentPage - 1) + parseInt(rowIndex, 10);
+        const rowData = this.grid.dataSource[dataIndex];
+
+        const dialogRef = this.newFboDialog.open(FbosGridNewFboDialogComponent, {
+            width: '450px',
+            data: { oid: 0, initialSetupPhase: true },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                result.groupId = rowData.oid;
+
+                this.fbosService.add(result).subscribe((newFbo: any) => {
+                    this.snackBar.open(newFbo.fbo + ' is created', '', {
+                        duration: 3000,
+                        panelClass: ['blue-snackbar'],
+                    });
+                    this.editFboClicked.emit(newFbo);
+                });
+            }
+        });
     }
 
-    onPageChanged(event: any) {
-        localStorage.setItem('pageIndexGroups', event.pageIndex);
-        sessionStorage.setItem(
-            'pageSizeGroups',
-            this.paginator.pageSize.toString()
-        );
-    }
-
-    public saveHeader(value) {
-        if (value) {
-            sessionStorage.setItem('tableSortValueGroups', value);
-        }
-
-        if (this.sort.direction) {
-            sessionStorage.setItem(
-                'tableSortValueDirectionGroups',
-                this.sort.direction
+    manageFBO(fbo) {
+        if (!fbo.active) {
+            this.notification.open(
+                NotificationComponent,
+                {
+                    data: {
+                        title: 'Inactive fbo',
+                        text: 'You can\'t manage an inactive fbo!',
+                    },
+                }
             );
+        } else {
+            const dialogRef = this.manageFboDialog.open(
+                ManageConfirmationComponent,
+                {
+                    width: '450px',
+                    data: fbo,
+                    autoFocus: false,
+                }
+            );
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    return;
+                }
+
+                this.sharedService.currentUser.impersonatedRole = 1;
+                sessionStorage.setItem('impersonatedrole', '1');
+                this.sharedService.currentUser.fboId = result.oid;
+                sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+                this.sharedService.emitChange(fboChangedEvent);
+                this.router.navigate(['/default-layout/dashboard-fbo/']);
+            });
         }
+    }
+
+    getParentUntil(element, className) {
+        if (element.classList.contains(className)) {
+            return element;
+        }
+        return this.getParentUntil(element.parentElement, className);
+    }
+
+    applyFilter(filterValue: string) {
+        this.searchValue = filterValue;
+
+        if (!filterValue || !filterValue.length) {
+            return this.groupsData;
+        }
+
+        const firstFilteredFbos = this.fbosData.filter(fbo =>
+            this.ifStringContains(fbo.icao, filterValue) ||
+            this.ifStringContains(fbo.fbo, filterValue)
+        );
+
+        const firstFilteredGroups = this.groupsData.filter(group =>
+            this.ifStringContains(group.groupName, filterValue)
+        );
+
+        const secondFilteredGroups = this.groupsData.filter(group =>
+            this.ifStringContains(group.groupName, filterValue) || firstFilteredFbos.find(fbo => fbo.groupId === group.oid)
+        );
+
+        const secondFilteredFbos = this.fbosData.filter(fbo =>
+            firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
+            this.ifStringContains(fbo.icao, filterValue) ||
+            this.ifStringContains(fbo.fbo, filterValue)
+        );
+
+        this.groupDataSource = secondFilteredGroups;
+        this.fboDataSource = secondFilteredFbos;
+        this.childGrid.dataSource = this.fboDataSource;
+    }
+
+    groupFbos(groupIndex: number) {
+        const group = (this.grid.dataSource as any[])[groupIndex];
+        if (!group) {
+            return [];
+        }
+        return this.fbosData.filter(fbo => fbo.groupId === group.oid);
+    }
+
+    ifStringContains(str1: string, str2: string) {
+        return str1.toLowerCase().includes(str2.toLowerCase());
     }
 }
