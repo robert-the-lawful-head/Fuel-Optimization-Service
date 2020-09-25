@@ -152,7 +152,7 @@ namespace FBOLinx.Web.Services
                 GroupId = groupRecord.Oid,
                 LastName = "",
                 Password = hashUtility.HashPassword(groupRecord.Password),
-                Role = (groupRecord.GroupName == "FBOLinx") ? User.UserRoles.Conductor : User.UserRoles.GroupAdmin,
+                Role = (!string.IsNullOrEmpty(groupRecord.GroupName) && (groupRecord.GroupName == "FBOLinx" || groupRecord.GroupName.ToLower().Contains("fbolinx conductor"))) ? User.UserRoles.Conductor : User.UserRoles.GroupAdmin,
                 Username = groupRecord.Username,
                 Active = true
             };
