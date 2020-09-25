@@ -3,10 +3,8 @@ import {
   EventEmitter,
   Input,
   Output,
-  OnInit,
-  ViewChild
+  OnInit
 } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 
 @Component({
