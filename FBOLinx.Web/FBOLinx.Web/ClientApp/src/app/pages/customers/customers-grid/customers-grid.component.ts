@@ -71,6 +71,7 @@ export class CustomersGridComponent implements OnInit {
     pageSize = 100;
     tableSort = 'needsAttention';
     tableSortOrder = 'asc';
+    public customerSearch: string = '';
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
@@ -211,7 +212,8 @@ export class CustomersGridComponent implements OnInit {
     }
 
     applyFilter(event: any) {
-        this.customersDataSource.filter = event.target.value.trim().toLowerCase();
+      this.customerSearch = event.target.value.trim();
+      this.customersDataSource.filter = this.customerSearch.toLowerCase();
     }
 
     exportCustomersToExcel() {

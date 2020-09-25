@@ -1,0 +1,16 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-8">
+      <mat-form-field>
+        <input matInput
+               (keyup)="applyFilter($event.target.value)"
+               [placeholder]="placeholder"
+               [(ngModel)]="globalFilter.filterValue" />
+        <span matPrefix><i class="fa fa-search"></i></span>
+      </mat-form-field>
+    </div>
+    <div class="col-4" style="margin-top: 15px;">
+      <button ni-button [view]="'error'" size="small" (click)="clearAllFilters();$event.stopPropagation();">Clear All Filters</button>
+    </div>
+  </div>
+</div>

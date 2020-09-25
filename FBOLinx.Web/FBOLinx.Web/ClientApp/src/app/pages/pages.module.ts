@@ -122,6 +122,8 @@ import { AnalyticsCustomerBreakdownChartComponent } from '../shared/components/a
 import { AnalyticsCompaniesQuotesDealTableComponent } from '../shared/components/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component';
 import { FuelReqsExportModalComponent } from '../shared/components/fuelreqs-export/fuelreqs-export.component';
 import { CustomerMatchDialogComponent } from './customers/customer-match-dialog/customer-match-dialog.component';
+import { TableColumnFilterComponent } from '../shared/components/table-column-filter/table-column-filter.component';
+import { TableGlobalSearchComponent } from '../shared/components/table-global-search/table-global-search.component';
 // Pipes
 import { AppPipesModule } from '../app-pipes.module';
 
@@ -253,6 +255,8 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     ClickStopPropagationDirective,
     CustomerMatchDialogComponent,
     SystemcontactsNewContactModalComponent,
+    TableColumnFilterComponent,
+    TableGlobalSearchComponent
   ],
   exports: [
     ClickStopPropagationDirective,
