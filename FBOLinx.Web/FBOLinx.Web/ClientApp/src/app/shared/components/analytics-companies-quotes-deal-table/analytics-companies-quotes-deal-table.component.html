@@ -12,7 +12,7 @@
                     <td mat-cell *matCellDef="let info"> {{info.company}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="fboOrders">
+                <ng-container matColumnDef="directOrders">
                     <th mat-header-cell *matHeaderCellDef> Direct Orders </th>
                     <td mat-cell *matCellDef="let info"> {{info.directOrders}} </td>
                 </ng-container>
@@ -27,9 +27,9 @@
                     <td mat-cell *matCellDef="let info"> {{info.conversionRate}}% </td>
                 </ng-container>
 
-                <ng-container matColumnDef="fboOrders">
+                <ng-container matColumnDef="totalOrders">
                     <th mat-header-cell *matHeaderCellDef> Total Orders </th>
-                    <td mat-cell *matCellDef="let info"> {{info.fboOrders}} </td>
+                    <td mat-cell *matCellDef="let info"> {{info.totalOrders}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="airportOrders">

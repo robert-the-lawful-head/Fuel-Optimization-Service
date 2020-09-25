@@ -1072,7 +1072,8 @@ namespace FBOLinx.Web.Controllers
                                 }).ToList();
 
                 var pricingLogs = (from cpl in _context.CompanyPricingLog
-                                   join cibg in _context.CustomerInfoByGroup on cpl.CompanyId equals cibg.CustomerId
+                                   join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
+                                   join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
                                    where cibg.GroupId == groupId && cpl.ICAO == icao
                                    select new
                                    {
@@ -1095,6 +1096,9 @@ namespace FBOLinx.Web.Controllers
                 fbolinxOrdersRequest.Icao = icao;
 
                 List<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount = _fuelerLinxService.GetCustomerTransactionsCountForAirport(fbolinxOrdersRequest).Result;
+
+                string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
+                fbolinxOrdersRequest.Fbo = fbo;
                 List<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerFBOOrdersCount = _fuelerLinxService.GetCustomerFBOTransactionsCount(fbolinxOrdersRequest).Result;
 
 
@@ -1113,8 +1117,8 @@ namespace FBOLinx.Web.Controllers
                         customer.Company,
                         CompanyQuotesTotal = companyQuotes,
                         DirectOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
-                        ConversionRate = selectedCompanyFuelReqs == null || companyQuotes == 0 ? 0 : (selectedCompanyFuelReqs.TotalOrders / companyQuotes) * 100,
-                        TotalOrders = totalOrders,
+                        ConversionRate = selectedCompanyFuelReqs == null || companyQuotes == 0 ? 0 : Math.Round(decimal.Parse(selectedCompanyFuelReqs.TotalOrders.ToString()) / decimal.Parse(companyQuotes.ToString()) * 100, 2),
+                        TotalOrders = totalOrders == null ? 0 : totalOrders,
                         AirportOrders = airportTotalOrders == null ? 0 : airportTotalOrders,
                         LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString(),
                         airportICAO = icao
