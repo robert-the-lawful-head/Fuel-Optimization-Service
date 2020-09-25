@@ -28,7 +28,7 @@ export class TableGlobalSearchComponent implements OnInit {
     this.matDataSource.filterCollection.push(this.globalFilter);
   }
 
-  public applyFilter(filterValue: any, menuTrigger: any) {
+  public applyFilter(filterValue: any) {
 
     let existingFilters: any[];
     if (!this.matDataSource.filter) {
