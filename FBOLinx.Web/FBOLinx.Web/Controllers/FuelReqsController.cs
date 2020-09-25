@@ -1088,22 +1088,36 @@ namespace FBOLinx.Web.Controllers
                                             Company = c.Company.Trim()
                                         })
                                         .Distinct();
+
+                FBOLinxOrdersRequest fbolinxOrdersRequest = new FBOLinxOrdersRequest();
+                fbolinxOrdersRequest.StartDateTime = request.StartDateTime;
+                fbolinxOrdersRequest.EndDateTime = request.EndDateTime;
+                fbolinxOrdersRequest.Icao = icao;
+
+                List<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount = _fuelerLinxService.GetCustomerTransactionsCountForAirport(fbolinxOrdersRequest).Result;
+                List<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerFBOOrdersCount = _fuelerLinxService.GetCustomerFBOTransactionsCount(fbolinxOrdersRequest).Result;
+
+
                 List<object> tableData = new List<object>();
                 foreach (var customer in customers)
                 {
+                    var fuelerLinxCustomerID = _context.Customers.Where(c => c.Oid.Equals(customer.CustomerId)).Select(c => c.FuelerlinxId).FirstOrDefault();
                     var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
-                    var companyPricingLog = pricingLogs.Where(c => c.CustomerId.Equals(customer.CustomerId)).OrderByDescending(c => c.CreatedDate).FirstOrDefault();
                     var companyQuotes = pricingLogs.Where(c => c.CreatedDate >= request.StartDateTime && c.CreatedDate <= request.EndDateTime && c.CustomerId.Equals(customer.CustomerId)).Count();
+                    var companyPricingLog = pricingLogs.Where(c => c.CustomerId.Equals(customer.CustomerId)).OrderByDescending(c => c.CreatedDate).FirstOrDefault();
+                    var totalOrders = fuelerlinxCustomerOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
+                    var airportTotalOrders = fuelerlinxCustomerOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
 
                     tableData.Add(new
                     {
                         customer.Company,
-                        FboOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
-                        AirportOrders = fuelReqs.Sum(f => f.TotalOrders),
-                        LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString(),
-                        airportICAO = icao,
                         CompanyQuotesTotal = companyQuotes,
-                        ConversionRate = selectedCompanyFuelReqs == null || companyQuotes ==0 ? 0 : (selectedCompanyFuelReqs.TotalOrders / companyQuotes) * 100
+                        DirectOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
+                        ConversionRate = selectedCompanyFuelReqs == null || companyQuotes == 0 ? 0 : (selectedCompanyFuelReqs.TotalOrders / companyQuotes) * 100,
+                        TotalOrders = totalOrders,
+                        AirportOrders = airportTotalOrders == null ? 0 : airportTotalOrders,
+                        LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString(),
+                        airportICAO = icao
                     });
                 }
 
