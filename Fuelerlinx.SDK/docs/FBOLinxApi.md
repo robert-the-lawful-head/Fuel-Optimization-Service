@@ -6,6 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**GetAircraftTailsGroupedByCompany**](FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
 [**GetContractFuelVendorsTransactionsCount**](FBOLinxApi.md#getcontractfuelvendorstransactionscount) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-count-at-airport | 
+[**GetCustomerFBOTransactionsCount**](FBOLinxApi.md#getcustomerfbotransactionscount) | **POST** /api/FBOLinx/get-customer-fbo-orders-count-at-airport | 
 [**GetCustomerTransactionsCount**](FBOLinxApi.md#getcustomertransactionscount) | **POST** /api/FBOLinx/get-customer-orders-count-at-airport | 
 [**GetFBOsTransactionsCount**](FBOLinxApi.md#getfbostransactionscount) | **POST** /api/FBOLinx/get-fbos-orders-count-at-airport | 
 [**GetTransactionsCount**](FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
@@ -134,6 +135,74 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**FboLinxContractFuelVendorsCountResponse**](FboLinxContractFuelVendorsCountResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getcustomerfbotransactionscount"></a>
+# **GetCustomerFBOTransactionsCount**
+> FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerFBOTransactionsCount (FBOLinxOrdersRequest body)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetCustomerFBOTransactionsCountExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FBOLinxApi();
+            var body = new FBOLinxOrdersRequest(); // FBOLinxOrdersRequest |  (optional) 
+
+            try
+            {
+                FboLinxCustomerTransactionsCountAtAirportResponse result = apiInstance.GetCustomerFBOTransactionsCount(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FBOLinxApi.GetCustomerFBOTransactionsCount: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**FBOLinxOrdersRequest**](FBOLinxOrdersRequest.md)|  | [optional] 
+
+### Return type
+
+[**FboLinxCustomerTransactionsCountAtAirportResponse**](FboLinxCustomerTransactionsCountAtAirportResponse.md)
 
 ### Authorization
 

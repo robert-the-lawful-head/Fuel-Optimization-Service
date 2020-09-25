@@ -188,6 +188,7 @@ Class | Method | HTTP request | Description
 *FBOApi* | [**UpdateFboDetailsByCompanyNotes**](docs/FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
 *FBOLinxApi* | [**GetAircraftTailsGroupedByCompany**](docs/FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
 *FBOLinxApi* | [**GetContractFuelVendorsTransactionsCount**](docs/FBOLinxApi.md#getcontractfuelvendorstransactionscount) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-count-at-airport | 
+*FBOLinxApi* | [**GetCustomerFBOTransactionsCount**](docs/FBOLinxApi.md#getcustomerfbotransactionscount) | **POST** /api/FBOLinx/get-customer-fbo-orders-count-at-airport | 
 *FBOLinxApi* | [**GetCustomerTransactionsCount**](docs/FBOLinxApi.md#getcustomertransactionscount) | **POST** /api/FBOLinx/get-customer-orders-count-at-airport | 
 *FBOLinxApi* | [**GetFBOsTransactionsCount**](docs/FBOLinxApi.md#getfbostransactionscount) | **POST** /api/FBOLinx/get-fbos-orders-count-at-airport | 
 *FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
