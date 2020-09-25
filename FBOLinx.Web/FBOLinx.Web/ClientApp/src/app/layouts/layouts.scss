@@ -7,6 +7,11 @@
       overflow-y: auto;
       padding: $navbar-height + 100 / 16 0 0 $vertical-navbar-width;
       transition: padding .2s $animation;
+
+      &.full-width {
+        padding-left: 0;
+      }
+
       @media only screen and (max-width: 991px) {
         padding-left: 0;
       }
@@ -33,6 +38,10 @@
       background: $main-bg;
       height: 100px;
       z-index: 99998;
+
+      &.full-width {
+        left: 0;
+      }
 
       @media only screen and (max-width: 991px) {
         left: 0;

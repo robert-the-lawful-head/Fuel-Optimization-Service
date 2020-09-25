@@ -14,10 +14,9 @@ export class DashboardHomeComponent {
         private router: Router,
         private sharedService: SharedService
     ) {
-        if (
-            this.sharedService.currentUser.role === 3 ||
-            this.sharedService.currentUser.role === 2
-        ) {
+        if (this.sharedService.currentUser.role === 3) {
+            this.router.navigate(['/default-layout/groups/']);
+        } else if (this.sharedService.currentUser.role === 2) {
             this.router.navigate(['/default-layout/fbos/']);
         } else {
             this.router.navigate(['/default-layout/dashboard-fbo/']);

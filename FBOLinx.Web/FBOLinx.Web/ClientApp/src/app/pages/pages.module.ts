@@ -40,7 +40,7 @@ import { TextMaskModule } from 'angular2-text-mask';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
-import { GridModule, PageService, SortService, FilterService, GroupService } from '@syncfusion/ej2-angular-grids';
+import { GridModule, PageService, SortService, FilterService, GroupService, ToolbarService } from '@syncfusion/ej2-angular-grids';
 
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -75,7 +75,6 @@ import { FuelreqsHomeComponent } from './fuelreqs/fuelreqs-home/fuelreqs-home.co
 import { GroupsDialogNewGroupComponent } from './groups/groups-dialog-new-group/groups-dialog-new-group.component';
 import { GroupsEditComponent } from './groups/groups-edit/groups-edit.component';
 import { GroupsGridComponent } from './groups/groups-grid/groups-grid.component';
-import { GroupsGridNewComponent } from './groups/groups-grid-new/groups-grid-new.component';
 import { GroupsHomeComponent } from './groups/groups-home/groups-home.component';
 import { PricingTemplatesDialogNewTemplateComponent } from './pricing-templates/pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
 import { PricingTemplatesDialogCopyTemplateComponent } from './pricing-templates/pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component';
@@ -207,7 +206,6 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     GroupsDialogNewGroupComponent,
     GroupsEditComponent,
     GroupsGridComponent,
-    GroupsGridNewComponent,
     GroupsHomeComponent,
     PricingTemplatesDialogNewTemplateComponent,
     PricingTemplatesDialogCopyTemplateComponent,
@@ -265,6 +263,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     SortService,
     FilterService,
     GroupService,
+    ToolbarService,
   ],
 })
 export class PagesModule {}

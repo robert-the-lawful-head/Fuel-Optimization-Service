@@ -72,7 +72,7 @@ export class FbosGridComponent implements OnInit {
         private notification: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
-        this.canManageFbo = this.sharedService.currentUser.role === 3;
+        this.canManageFbo = this.sharedService.currentUser.role === 3 || this.sharedService.currentUser.role === 2;
         if (this.canManageFbo) {
             this.displayedColumns = [
                 'icao',

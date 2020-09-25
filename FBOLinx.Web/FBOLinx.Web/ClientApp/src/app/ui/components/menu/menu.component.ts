@@ -55,7 +55,6 @@ export class MenuComponent implements OnInit, AfterViewInit {
     getLiClasses(item: any, isActive: any) {
         let role = this.sharedService.currentUser.role;
         if (this.sharedService.currentUser.impersonatedRole || sessionStorage.getItem('impersonatedrole')) {
-            // role = this.sharedService.currentUser.impersonatedRole;
             role = 1;
         }
 
