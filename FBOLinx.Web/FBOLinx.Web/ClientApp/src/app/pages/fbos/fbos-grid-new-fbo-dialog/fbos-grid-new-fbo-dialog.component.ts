@@ -53,6 +53,7 @@ export class FbosGridNewFboDialogComponent {
     public fboSelectionChange() {
         this.data.fbo = this.data.acukwikFbo.handlerLongName;
         this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
+        this.data.group = `${this.data.fbo} - ${this.data.icao}`;
     }
 
     public onCancelClick(): void {
