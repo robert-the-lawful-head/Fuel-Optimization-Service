@@ -93,5 +93,8 @@ namespace FBOLinx.Web.Models
 
         [InverseProperty("Fbo")]
         public ICollection<Fbocontacts> Contacts { get; set; }
+
+        [InverseProperty("Fbo")]
+        public ICollection<User> Users { get; set; }
     }
 }

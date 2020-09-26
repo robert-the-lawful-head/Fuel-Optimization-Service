@@ -39,10 +39,21 @@ namespace FBOLinx.Web.Models
         public bool? GoOverTutorial { get; set; }
         public bool Active { get; set; }
         public UserRoles Role { get; set; }
+
         [Column("FBOID")]
         public int FboId { get; set; }
+
+        [ForeignKey("FboId")]
+        [InverseProperty("Users")]
+        public Fbos Fbo { get; set; }
+
         [Column("GroupID")]
         public int? GroupId { get; set; }
+
+        [ForeignKey("GroupId")]
+        [InverseProperty("Users")]
+        public Group Group { get; set; }
+
         public ICollection<AccessTokens> AccessTokens { get; set; }
         public string RoleDescription
         {

@@ -259,21 +259,37 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         const firstFilteredFbos = this.fbosData.filter(fbo =>
             this.ifStringContains(fbo.icao, filterValue) ||
-            this.ifStringContains(fbo.fbo, filterValue)
+            this.ifStringContains(fbo.fbo, filterValue) ||
+            fbo.users?.find(user =>
+                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                this.ifStringContains(user.username, filterValue)
+            )
         );
 
         const firstFilteredGroups = this.groupsData.filter(group =>
-            this.ifStringContains(group.groupName, filterValue)
+            this.ifStringContains(group.groupName, filterValue) ||
+            group.users?.find(user =>
+                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                this.ifStringContains(user.username, filterValue)
+            )
         );
 
         const secondFilteredGroups = this.groupsData.filter(group =>
-            this.ifStringContains(group.groupName, filterValue) || firstFilteredFbos.find(fbo => fbo.groupId === group.oid)
+            this.ifStringContains(group.groupName, filterValue) ||
+            group.users?.find(user =>
+                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                this.ifStringContains(user.username, filterValue)
+            ) || firstFilteredFbos.find(fbo => fbo.groupId === group.oid)
         );
 
         const secondFilteredFbos = this.fbosData.filter(fbo =>
             firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
             this.ifStringContains(fbo.icao, filterValue) ||
-            this.ifStringContains(fbo.fbo, filterValue)
+            this.ifStringContains(fbo.fbo, filterValue) ||
+            fbo.users?.find(user =>
+                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                this.ifStringContains(user.username, filterValue)
+            )
         );
 
         this.groupDataSource = secondFilteredGroups;

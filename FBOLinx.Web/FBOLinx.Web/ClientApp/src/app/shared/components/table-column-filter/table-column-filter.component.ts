@@ -44,12 +44,12 @@ import * as moment from 'moment';
 export class TableColumnFilterComponent implements OnInit {
   @Input() columnId: string;
   @Input() column: any;
-  @Input() columnFormat: number = 0; //Text = 0,Number = 1,Date = 2,Time = 3,DateTime = 4,Currency = 5,Weight = 6,TimeStandard = 7, YesNo = 8
+  @Input() columnFormat = 0; // Text = 0,Number = 1,Date = 2,Time = 3,DateTime = 4,Currency = 5,Weight = 6,TimeStandard = 7, YesNo = 8
   @Input() propertyName: string;
   @Input() matDataSource: any = null;
   @Input() matSort: MatSort;
   @Input() tableFilter: any;
-  @Input() allowEditHeading: boolean = false;
+  @Input() allowEditHeading = false;
   @Output() columnChanged: EventEmitter<any> = new EventEmitter<any>();
   @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
 
@@ -82,15 +82,17 @@ export class TableColumnFilterComponent implements OnInit {
       } else {
         this.column.propertyName = this.propertyName;
       }
-    };
+    }
     if (!this.column.columnFormat) {
       this.column.columnFormat = this.columnFormat;
     }
 
-    if (!this.matDataSource.filterCollection)
+    if (!this.matDataSource.filterCollection) {
       this.matDataSource.filterCollection = [];
-    if (this.matDataSource.filterCollection.indexOf(this.filter) == -1)
+    }
+    if (this.matDataSource.filterCollection.indexOf(this.filter) === -1) {
       this.matDataSource.filterCollection.push(this.filter);
+    }
 
     this.setupFilterPredicate();
   }
@@ -114,14 +116,16 @@ export class TableColumnFilterComponent implements OnInit {
     this.filter.isFiltered = (filterValue != null);
 
     this.column.filter = filterValue;
-    
-    if (this.matDataSource.filter && this.matDataSource.filter != '')
-      this.tableFilter = JSON.parse(this.matDataSource.filter);
-    else
-      this.tableFilter = [];
 
-    const existingFilter = this.tableFilter.filter(column => column.propertyName == this.column.propertyName);
-    if (existingFilter.length == 0) {
+    if (this.matDataSource.filter && this.matDataSource.filter !== '') {
+      this.tableFilter = JSON.parse(this.matDataSource.filter);
+    }
+    else {
+      this.tableFilter = [];
+    }
+
+    const existingFilter = this.tableFilter.filter(column => column.propertyName === this.column.propertyName);
+    if (existingFilter.length === 0) {
       this.tableFilter.push(this.column);
       existingFilter.push(this.column);
     } else {
@@ -134,8 +138,9 @@ export class TableColumnFilterComponent implements OnInit {
 
     this.matDataSource.filter = JSON.stringify(this.tableFilter);
     this.filterApplied.emit(this.column);
-    if (menuTrigger)
+    if (menuTrigger) {
       menuTrigger.closeMenu();
+    }
   }
 
   public clearFilter(): void {
@@ -165,10 +170,11 @@ export class TableColumnFilterComponent implements OnInit {
       function filterCallback(element, index, array): boolean {
         if (element.isGlobal) {
           if (!element.columns) {
-            if (!data)
+            if (!data) {
               return true;
+            }
             else {
-              var serializedData = JSON.stringify(data).toLowerCase();
+              const serializedData = JSON.stringify(data).toLowerCase();
               return (serializedData.indexOf(element.filterValue) > -1);
             }
           }

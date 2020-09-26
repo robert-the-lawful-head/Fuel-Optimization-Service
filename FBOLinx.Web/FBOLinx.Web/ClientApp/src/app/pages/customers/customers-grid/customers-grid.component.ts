@@ -71,7 +71,7 @@ export class CustomersGridComponent implements OnInit {
     pageSize = 100;
     tableSort = 'needsAttention';
     tableSortOrder = 'asc';
-    public customerSearch: string = '';
+    public customerSearch = '';
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
