@@ -1,17 +1,17 @@
-import { Component, Inject } from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { FormBuilder, FormGroup, FormControl } from "@angular/forms";
-import { AuthenticationService } from "../../../services/authentication.service";
-import { Router } from "@angular/router";
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { AuthenticationService } from '../../../services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
-    selector: "app-login-modal",
-    templateUrl: "./login-modal.component.html",
-    styleUrls: ["./login-modal.component.scss"],
+    selector: 'app-login-modal',
+    templateUrl: './login-modal.component.html',
+    styleUrls: ['./login-modal.component.scss'],
 })
 export class LoginModalComponent {
     loginForm: FormGroup;
-    error: "";
+    error: '';
 
     constructor(
         public dialogRef: MatDialogRef<LoginModalComponent>,
@@ -21,8 +21,8 @@ export class LoginModalComponent {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.loginForm = this.formBuilder.group({
-            username: new FormControl(""),
-            password: new FormControl(""),
+            username: new FormControl(''),
+            password: new FormControl(''),
             remember: new FormControl(false),
         });
     }
@@ -42,11 +42,14 @@ export class LoginModalComponent {
                     .postAuth()
                     .subscribe(() => {
                         this.dialogRef.close();
-                        if (data.role === 3 || data.role === 2) {
-                            this.router.navigate(["/default-layout/fbos/"]);
+                        if (data.role === 3) {
+                            this.router.navigate(['/default-layout/groups/']);
+                        }
+                        else if (data.role === 2) {
+                            this.router.navigate(['/default-layout/fbos/']);
                         } else {
                             this.router.navigate([
-                                "/default-layout/dashboard-fbo/",
+                                '/default-layout/dashboard-fbo/',
                             ]);
                         }
                     });
@@ -58,13 +61,13 @@ export class LoginModalComponent {
 
     public openRequestDemo() {
         this.dialogRef.close({
-            mode: "request-demo",
+            mode: 'request-demo',
         });
     }
 
     public openForgotPassword() {
         this.dialogRef.close({
-            mode: "forgot-password",
+            mode: 'forgot-password',
         });
     }
 }

@@ -6,36 +6,35 @@ import {
     Output,
     EventEmitter,
     OnDestroy,
-} from "@angular/core";
-import { Router } from "@angular/router";
-import { MatDialog } from "@angular/material/dialog";
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 // Services
-import { UserService } from "../../../services/user.service";
-import { AuthenticationService } from "../../../services/authentication.service";
-import { SharedService } from "../../../layouts/shared-service";
-import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
-import { FbopricesService } from "../../../services/fboprices.service";
-import { FboairportsService } from "../../../services/fboairports.service";
-import { FbosService } from "../../../services/fbos.service";
+import { UserService } from '../../../services/user.service';
+import { AuthenticationService } from '../../../services/authentication.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { FbopricesService } from '../../../services/fboprices.service';
+import { FboairportsService } from '../../../services/fboairports.service';
+import { FbosService } from '../../../services/fbos.service';
 
-import * as SharedEvents from "../../../models/sharedEvents";
+import * as SharedEvents from '../../../models/sharedEvents';
 
 // Components
-import { AccountProfileComponent } from "../../../shared/components/account-profile/account-profile.component";
-import { WindowRef } from "../../../shared/components/zoho-chat/WindowRef";
-import { fboChangedEvent } from "../../../models/sharedEvents";
+import { AccountProfileComponent } from '../../../shared/components/account-profile/account-profile.component';
+import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
+import { fboChangedEvent, customerUpdatedEvent } from '../../../models/sharedEvents';
 
 @Component({
-    moduleId: module.id,
-    selector: "horizontal-navbar",
-    templateUrl: "horizontal-navbar.component.html",
-    styleUrls: ["horizontal-navbar.component.scss"],
+    selector: 'horizontal-navbar',
+    templateUrl: 'horizontal-navbar.component.html',
+    styleUrls: ['horizontal-navbar.component.scss'],
     host: {
-        "[class.app-navbar]": "true",
-        "[class.show-overlay]": "showOverlay",
+        '[class.app-navbar]': 'true',
+        '[class.show-overlay]': 'showOverlay',
     },
     providers: [WindowRef],
 })
@@ -91,7 +90,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
             return;
         }
         this.userFullName =
-            this.currentUser.firstName + " " + this.currentUser.lastName;
+            this.currentUser.firstName + ' ' + this.currentUser.lastName;
         if (this.userFullName.length < 2) {
             this.userFullName = this.currentUser.username;
         }
@@ -111,6 +110,9 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
                 this.loadLocations();
                 this.loadFboInfo();
             }
+            if (message === customerUpdatedEvent) {
+                this.loadNeedsAttentionCustomers();
+            }
         });
     }
 
@@ -129,15 +131,15 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     open(event) {
-        const clickedComponent = event.target.closest(".nav-item");
+        const clickedComponent = event.target.closest('.nav-item');
         const items = clickedComponent.parentElement.children;
 
         event.preventDefault();
 
         for (const item of items) {
-            item.classList.remove("opened");
+            item.classList.remove('opened');
         }
-        clickedComponent.classList.add("opened");
+        clickedComponent.classList.add('opened');
 
         this.isOpened = true;
     }
@@ -159,10 +161,10 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     public logout() {
-        sessionStorage.removeItem("impersonatedrole");
-        sessionStorage.removeItem("fboId");
+        sessionStorage.removeItem('impersonatedrole');
+        sessionStorage.removeItem('fboId');
         this.authenticationService.logout();
-        this.router.navigate(["/landing-site-layout"]);
+        this.router.navigate(['/landing-site-layout']);
     }
 
     public accountProfileClicked(event) {
@@ -170,8 +172,8 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
             const dialogRef = this.accountProfileDialog.open(
                 AccountProfileComponent,
                 {
-                    height: "550px",
-                    width: "850px",
+                    height: '550px',
+                    width: '850px',
                     data: response,
                 }
             );
@@ -180,7 +182,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
                     return;
                 }
                 this.userService.update(result).subscribe((data: any) => {
-                    if (result.newPassword && result.newPassword !== "") {
+                    if (result.newPassword && result.newPassword !== '') {
                         this.userService
                             .updatePassword({
                                 user: data,
@@ -198,31 +200,31 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
 
     public stopManagingClicked(event) {
         this.sharedService.currentUser.impersonatedRole = null;
-        sessionStorage.removeItem("impersonatedrole");
-        sessionStorage.removeItem("fboId");
+        sessionStorage.removeItem('impersonatedrole');
+        sessionStorage.removeItem('fboId');
         this.sharedService.currentUser.fboId = 0;
         this.locations = [];
         this.fboAirport = null;
         this.fbo = null;
         this.close(event);
-        this.router.navigate(["/default-layout/fbos/"]);
+        this.router.navigate(['/default-layout/fbos/']);
     }
 
     public updatePricingClicked(event) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(["/default-layout/dashboard-fbo"]);
+        this.router.navigate(['/default-layout/dashboard-fbo']);
         this.close(event);
     }
 
     public gotoCustomer(customer: any, event: any) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(["/default-layout/customers/" + customer.oid]);
+        this.router.navigate(['/default-layout/customers/' + customer.oid]);
         this.close(event);
     }
 
     public viewAllNotificationsClicked(event) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(["/default-layout/customers"]);
+        this.router.navigate(['/default-layout/customers']);
         this.close(event);
     }
 
@@ -234,7 +236,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.fboPricesService
             .getFbopricesByFboIdAndProductCurrent(
                 this.currentUser.fboId,
-                "JetA Cost"
+                'JetA Cost'
             )
             .subscribe((data: any) => {
                 this.currrentJetACostPricing = data;
@@ -244,7 +246,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.fboPricesService
             .getFbopricesByFboIdAndProductCurrent(
                 this.currentUser.fboId,
-                "JetA Retail"
+                'JetA Retail'
             )
             .subscribe((data: any) => {
                 this.currrentJetARetailPricing = data;
@@ -271,12 +273,12 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     public loadFboInfo() {
-        if (!this.currentUser.fboId && !sessionStorage.getItem("fboId")) {
+        if (!this.currentUser.fboId && !sessionStorage.getItem('fboId')) {
             return;
         }
 
         if (!this.currentUser.fboId) {
-            this.currentUser.fboId = sessionStorage.getItem("fboId");
+            this.currentUser.fboId = sessionStorage.getItem('fboId');
         }
 
         this.fboAirportsService
@@ -302,12 +304,12 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     public checkImpersonatedRole() {
-        if (!this.currentUser.fboId && !sessionStorage.getItem("fboId")) {
+        if (!this.currentUser.fboId && !sessionStorage.getItem('fboId')) {
             return;
         }
 
         if (!this.currentUser.impersonatedRole) {
-            if (sessionStorage.getItem("impersonatedrole")) {
+            if (sessionStorage.getItem('impersonatedrole')) {
                 this.currentUser.impersonatedRole = 1;
             }
         }
@@ -322,7 +324,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.accountProfileMenu.isOpened = false;
         this.needsAttentionMenu.isOpened = false;
         this.sharedService.currentUser.fboId = this.fboAirport.fboid;
-        sessionStorage.setItem("fboId", this.sharedService.currentUser.fboId.toString());
+        sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
         this.sharedService.emitChange(SharedEvents.locationChangedEvent);
     }
 
@@ -343,13 +345,13 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
 
     showWidget() {
         if (this.window) {
-            this.window.$zoho.salesiq.floatwindow.visible("show");
+            this.window.$zoho.salesiq.floatwindow.visible('show');
         }
     }
 
     hideWidget() {
         if (this.window) {
-            this.window.$zoho.salesiq.floatwindow.visible("hide");
+            this.window.$zoho.salesiq.floatwindow.visible('hide');
         }
     }
 }

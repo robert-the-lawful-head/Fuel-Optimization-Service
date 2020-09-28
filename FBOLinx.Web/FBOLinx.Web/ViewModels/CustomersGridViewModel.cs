@@ -13,7 +13,7 @@ namespace FBOLinx.Web.ViewModels
         public int? CompanyByGroupId { get; set; }
         public string Company { get; set; }
         public int? PricingTemplateId { get; set; }
-        public Customers.CustomerSources? DefaultCustomerType { get; set; }
+        public int? DefaultCustomerType { get; set; }
         public bool? Suspended { get; set; }
         public int? FuelerLinxId { get; set; }
         public bool? Network { get; set; } = false;
@@ -43,13 +43,6 @@ namespace FBOLinx.Web.ViewModels
         public bool? PricingTemplateRemoved { get; set; }
 
         public bool? Active { get; set; }
-        public string DefaultCustomerTypeDescription
-        {
-            get
-            {
-                return Utilities.Enum.GetDescription(DefaultCustomerType ?? Customers.CustomerSources.NotSpecified);
-            }
-        }
 
         public string CertificateTypeDescription
         {

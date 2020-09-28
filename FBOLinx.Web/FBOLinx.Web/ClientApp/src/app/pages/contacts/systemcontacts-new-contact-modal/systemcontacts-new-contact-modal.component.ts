@@ -1,11 +1,11 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from '@angular/core';
 import {
     MatDialog,
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
-import { ContactsDialogConfirmContactDeleteComponent } from "../contact-confirm-delete-modal/contact-confirm-delete-modal.component";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+} from '@angular/material/dialog';
+import { ContactsDialogConfirmContactDeleteComponent } from '../contact-confirm-delete-modal/contact-confirm-delete-modal.component';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 export interface NewContactDialogData {
     firstName?: string;
@@ -15,9 +15,9 @@ export interface NewContactDialogData {
 }
 
 @Component({
-    selector: "app-systemcontacts-new-contact-modal",
-    templateUrl: "./systemcontacts-new-contact-modal.component.html",
-    styleUrls: ["./systemcontacts-new-contact-modal.component.scss"],
+    selector: 'app-systemcontacts-new-contact-modal',
+    templateUrl: './systemcontacts-new-contact-modal.component.html',
+    styleUrls: ['./systemcontacts-new-contact-modal.component.scss'],
 })
 export class SystemcontactsNewContactModalComponent implements OnInit {
     contactForm: FormGroup;
@@ -63,8 +63,8 @@ export class SystemcontactsNewContactModalComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (!result || result !== "cancel") {
-                this.dialogRef.close("delete");
+            if (!result || result !== 'cancel') {
+                this.dialogRef.close('delete');
             }
         });
     }

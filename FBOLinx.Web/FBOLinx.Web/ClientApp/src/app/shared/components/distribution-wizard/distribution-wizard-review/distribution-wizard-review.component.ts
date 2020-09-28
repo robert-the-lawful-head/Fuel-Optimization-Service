@@ -6,19 +6,19 @@ import {
     EventEmitter,
     Output,
     ElementRef,
-} from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { PricingtemplatesService } from "../../../../services/pricingtemplates.service";
-import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor";
-import { CustomermarginsService } from "../../../../services/customermargins.service";
-import { Router, NavigationEnd } from "@angular/router";
-import { FbopricesService } from "../../../../services/fboprices.service";
-import { SharedService } from "../../../../layouts/shared-service";
+} from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { PricingtemplatesService } from '../../../../services/pricingtemplates.service';
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { CustomermarginsService } from '../../../../services/customermargins.service';
+import { Router, NavigationEnd } from '@angular/router';
+import { FbopricesService } from '../../../../services/fboprices.service';
+import { SharedService } from '../../../../layouts/shared-service';
 
 @Component({
-    selector: "app-distribution-wizard-review",
-    templateUrl: "./distribution-wizard-review.component.html",
-    styleUrls: ["./distribution-wizard-review.component.scss"],
+    selector: 'app-distribution-wizard-review',
+    templateUrl: './distribution-wizard-review.component.html',
+    styleUrls: ['./distribution-wizard-review.component.scss'],
     providers: [SharedService],
 })
 export class DistributionWizardReviewComponent implements OnInit {
@@ -27,9 +27,9 @@ export class DistributionWizardReviewComponent implements OnInit {
     public currentPrice: any[];
     public navigationSubscription: any;
 
-    @ViewChild("typeEmail") rteEmail: RichTextEditorComponent;
+    @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
     @Output() idChanged1: EventEmitter<any> = new EventEmitter();
-    @ViewChild("custMargin") divView: ElementRef;
+    @ViewChild('custMargin') divView: ElementRef;
 
     constructor(
         public dialogRef: MatDialogRef<DistributionWizardReviewComponent>,
@@ -76,10 +76,10 @@ export class DistributionWizardReviewComponent implements OnInit {
     }
     public updateCustomerMargin(margin) {
         const jetACost = this.currentPrice.filter(
-            (item) => item.product === "JetA Cost"
+            (item) => item.product === 'JetA Cost'
         )[0].price;
         const jetARetail = this.currentPrice.filter(
-            (item) => item.product === "JetA Retail"
+            (item) => item.product === 'JetA Retail'
         )[0].price;
         margin.allin = 0;
         // if (this.data.marginType === 0) {
@@ -142,13 +142,13 @@ export class DistributionWizardReviewComponent implements OnInit {
         // this.router.navigate(['/default-layout/pricing-templates/' + pricingTemplate.oid]);
         this.router
             .navigateByUrl(
-                "/default-layout/pricing-templates/" + pricingTemplate.oid
+                '/default-layout/pricing-templates/' + pricingTemplate.oid
             )
             .then((e) => {
                 if (e) {
                     this.router.navigateByUrl(this.router.url);
                 } else {
-                    this.router.navigateByUrl("./" + pricingTemplate.oid);
+                    this.router.navigateByUrl('./' + pricingTemplate.oid);
                 }
             });
     }

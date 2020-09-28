@@ -6,25 +6,27 @@ import {
     OnInit,
     ViewChild,
     ChangeDetectionStrategy,
-} from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
+    OnChanges,
+    SimpleChanges
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 // Services
-import { SharedService } from "../../../layouts/shared-service";
+import { SharedService } from '../../../layouts/shared-service';
 
 // Shared components
-import { FuelReqsExportModalComponent } from "../../../shared/components/fuelreqs-export/fuelreqs-export.component";
+import { FuelReqsExportModalComponent } from '../../../shared/components/fuelreqs-export/fuelreqs-export.component';
 
 @Component({
-    selector: "app-fuelreqs-grid",
-    templateUrl: "./fuelreqs-grid.component.html",
-    styleUrls: ["./fuelreqs-grid.component.scss"],
+    selector: 'app-fuelreqs-grid',
+    templateUrl: './fuelreqs-grid.component.html',
+    styleUrls: ['./fuelreqs-grid.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FuelreqsGridComponent implements OnInit {
+export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Output() exportTriggered = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
@@ -38,16 +40,16 @@ export class FuelreqsGridComponent implements OnInit {
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
     displayedColumns: string[] = [
-        "oid",
-        "customer",
-        "eta",
-        "etd",
-        "quotedVolume",
-        "quotedPpg",
-        "tailNumber",
-        "email",
-        "phoneNumber",
-        "source",
+        'oid',
+        'customer',
+        'eta',
+        'etd',
+        'quotedVolume',
+        'quotedPpg',
+        'tailNumber',
+        'email',
+        'phoneNumber',
+        'source',
     ];
     public dashboardSettings: any;
 
@@ -60,19 +62,24 @@ export class FuelreqsGridComponent implements OnInit {
     ) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
     }
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.fuelreqsData) {
+            this.refreshTable();
+        }
+    }
 
     ngOnInit() {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.sort.active = "eta";
+        this.sort.active = 'eta';
 
-        if (localStorage.getItem("pageIndexFuelReqs")) {
-            this.paginator.pageIndex = localStorage.getItem("pageIndexFuelReqs") as any;
+        if (localStorage.getItem('pageIndexFuelReqs')) {
+            this.paginator.pageIndex = localStorage.getItem('pageIndexFuelReqs') as any;
         } else {
             this.paginator.pageIndex = 0;
         }
 
-        if (sessionStorage.getItem("pageSizeValueFuelReqs")) {
-            this.pageSize = sessionStorage.getItem("pageSizeValueFuelReqs") as any;
+        if (sessionStorage.getItem('pageSizeValueFuelReqs')) {
+            this.pageSize = sessionStorage.getItem('pageSizeValueFuelReqs') as any;
         } else {
             this.pageSize = 100;
         }
@@ -116,9 +123,9 @@ export class FuelreqsGridComponent implements OnInit {
     }
 
     onPageChanged(event: any) {
-        localStorage.setItem("pageIndexFuelReqs", event.pageIndex);
+        localStorage.setItem('pageIndexFuelReqs', event.pageIndex);
         sessionStorage.setItem(
-            "pageSizeValueFuelReqs",
+            'pageSizeValueFuelReqs',
             this.paginator.pageSize.toString()
         );
     }

@@ -81,7 +81,8 @@ namespace FBOLinx.Web.Controllers
                     Size = (AirCrafts.AircraftSizes) s.Value,
                     AppliesTo = (from a in _context.Aircrafts
                         where a.Size.HasValue && a.Size == (AirCrafts.AircraftSizes) s.Value
-                        select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList()
+                        select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList(),
+                    LastUpdated = r?.LastUpdated
 
                 }).ToList();
 
@@ -103,7 +104,8 @@ namespace FBOLinx.Web.Controllers
                     ExpirationDate = r.ExpirationDate,
                     AircraftMake = a == null ? "" : a.Make,
                     AircraftModel = a == null ? "" : a.Model,
-                    CategoryStringValue = r.CategoryStringValue
+                    CategoryStringValue = r.CategoryStringValue,
+                    LastUpdated = r.LastUpdated
                 }).ToListAsync();
 
             result.AddRange(customRampFees);
@@ -118,6 +120,8 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest();
             }
+
+            rampFees.LastUpdated = DateTime.Now;
 
             _context.Entry(rampFees).State = EntityState.Modified;
 
@@ -144,6 +148,7 @@ namespace FBOLinx.Web.Controllers
         [HttpPost]
         public async Task<ActionResult<RampFees>> PostRampFees(RampFees rampFees)
         {
+            rampFees.LastUpdated = DateTime.Now; 
             _context.RampFees.Add(rampFees);
             await _context.SaveChangesAsync();
 
@@ -226,9 +231,12 @@ namespace FBOLinx.Web.Controllers
                         {
                             existingTailRampFee.Price = newRampFee.Price;
                             existingTailRampFee.Waived = newRampFee.Waived;
+                            existingTailRampFee.LastUpdated = DateTime.Now;
+                            _context.RampFees.Update(existingTailRampFee);
                         }
                         else
                         {
+                            newRampFee.LastUpdated = DateTime.Now;
                             _context.RampFees.Add(newRampFee);
                         }
 
@@ -394,10 +402,12 @@ namespace FBOLinx.Web.Controllers
                         {
                             checkForExisting.Waived = newRampFee.Waived;
                             checkForExisting.Price = newRampFee.Price;
+                            checkForExisting.LastUpdated = DateTime.Now;
                             _context.RampFees.Update(checkForExisting);
                         }
                         else
                         {
+                            newRampFee.LastUpdated = DateTime.Now;
                             _context.RampFees.Add(newRampFee);
                         }
 

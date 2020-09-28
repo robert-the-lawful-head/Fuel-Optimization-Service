@@ -1,11 +1,11 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 // Services
-import { UserService } from "../../../services/user.service";
+import { UserService } from '../../../services/user.service';
 
 // Interfaces
 export interface NewUserDialogData {
@@ -21,9 +21,9 @@ export interface NewUserDialogData {
 }
 
 @Component({
-    selector: "app-users-dialog-new-user",
-    templateUrl: "./users-dialog-new-user.component.html",
-    styleUrls: ["./users-dialog-new-user.component.scss"],
+    selector: 'app-users-dialog-new-user',
+    templateUrl: './users-dialog-new-user.component.html',
+    styleUrls: ['./users-dialog-new-user.component.scss'],
 })
 export class UsersDialogNewUserComponent {
     // Public Members
@@ -52,7 +52,7 @@ export class UsersDialogNewUserComponent {
             },
             (err: any) => {
                 console.log(err);
-                if (err === "Conflict") {
+                if (err === 'Conflict') {
                     this.emailExists = true;
                 }
             }

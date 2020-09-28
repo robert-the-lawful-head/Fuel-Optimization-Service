@@ -1,16 +1,16 @@
-import { Injectable, Inject } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class CustomeraircraftsService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
 
-    constructor(private http: HttpClient, @Inject("BASE_URL") baseUrl: string) {
+    constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         this.headers = new HttpHeaders({
-            "Content-Type": "application/json; charset=utf-8",
+            'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + "api/customeraircrafts";
+        this.accessPointUrl = baseUrl + 'api/customeraircrafts';
     }
 
     public getCustomerAircraftsByGroupAndCustomerId(
@@ -20,11 +20,11 @@ export class CustomeraircraftsService {
     ) {
         return this.http.get(
             this.accessPointUrl +
-                "/group/" +
+                '/group/' +
                 groupId +
-                "/fbo/" +
+                '/fbo/' +
                 fboId +
-                "/customer/" +
+                '/customer/' +
                 customerId,
             {
                 headers: this.headers,
@@ -33,20 +33,20 @@ export class CustomeraircraftsService {
     }
 
     public getCustomerAircraftsByGroup(groupId) {
-        return this.http.get(this.accessPointUrl + "/group/" + groupId, {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId, {
             headers: this.headers,
         });
     }
 
     public getCustomerAircraftsByGroupAndFbo(groupId, fboId) {
-        return this.http.get(this.accessPointUrl + "/group/" + groupId + "/fbo/" + fboId, {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId, {
             headers: this.headers,
         });
     }
 
     public getCustomerAircraftsCountByGroupId(groupId) {
         return this.http.get(
-            this.accessPointUrl + "/group/" + groupId + "/count",
+            this.accessPointUrl + '/group/' + groupId + '/count',
             {
                 headers: this.headers,
             }
@@ -54,7 +54,7 @@ export class CustomeraircraftsService {
     }
 
     public get(payload) {
-        return this.http.get(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.get(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
@@ -66,25 +66,25 @@ export class CustomeraircraftsService {
     }
 
     public import(payload) {
-        return this.http.post(this.accessPointUrl + "/import", payload, {
+        return this.http.post(this.accessPointUrl + '/import', payload, {
             headers: this.headers,
         });
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.delete(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
 
     public update(payload) {
-        return this.http.put(this.accessPointUrl + "/" + payload.oid, payload, {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
     }
 
     public updateTemplate(fboid, payload) {
-        return this.http.put(this.accessPointUrl + "/fbo/" + fboid, payload, {
+        return this.http.put(this.accessPointUrl + '/fbo/' + fboid, payload, {
             headers: this.headers,
         });
     }

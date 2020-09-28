@@ -1,39 +1,39 @@
-import { Component, AfterViewInit, OnDestroy } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { Router } from "@angular/router";
-import { Store } from "@ngrx/store";
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 
-import { State } from "../../../store/reducers";
-import { pricingTemplateGridSet } from "../../../store/actions";
+import { State } from '../../../store/reducers';
+import { pricingTemplateGridSet, breadcrumbSet } from '../../../store/actions';
 
 // Services
-import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { SharedService } from '../../../layouts/shared-service';
 
-import * as SharedEvents from "../../../models/sharedEvents";
+import * as SharedEvents from '../../../models/sharedEvents';
 
 // Components
-import { DeleteConfirmationComponent } from "../../../shared/components/delete-confirmation/delete-confirmation.component";
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 const BREADCRUMBS: any[] = [
     {
-        title: "Main",
-        link: "/default-layout",
+        title: 'Main',
+        link: '/default-layout',
     },
     {
-        title: "ITP Margin Templates",
-        link: "/default-layout/pricing-templates",
+        title: 'ITP Margin Templates',
+        link: '/default-layout/pricing-templates',
     },
 ];
 
 @Component({
-    selector: "app-pricing-templates-home",
-    templateUrl: "./pricing-templates-home.component.html",
-    styleUrls: ["./pricing-templates-home.component.scss"],
+    selector: 'app-pricing-templates-home',
+    templateUrl: './pricing-templates-home.component.html',
+    styleUrls: ['./pricing-templates-home.component.scss'],
 })
 export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     // Public Members
-    public pageTitle = "ITP Margin Templates";
+    public pageTitle = 'ITP Margin Templates';
     public breadcrumb: any[] = BREADCRUMBS;
     public pricingTemplatesData: Array<any>;
     public locationChangedSubscription: any;
@@ -50,6 +50,8 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
+        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
+
         this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
                 if (message === SharedEvents.locationChangedEvent) {
@@ -83,7 +85,7 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
             orderBy: $event.orderBy,
         }));
         this.router.navigate([
-            "/default-layout/pricing-templates/" + $event.pricingTemplateId,
+            '/default-layout/pricing-templates/' + $event.pricingTemplateId,
         ]).then(() => {});
     }
 
@@ -91,7 +93,7 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
         const dialogRef = this.deleteFBODialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: pricingTemplate, description: "margin template" },
+                data: { item: pricingTemplate, description: 'margin template' },
                 autoFocus: false,
             }
         );
@@ -118,7 +120,7 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
                 });
 
             this.sharedService.NotifyPricingTemplateComponent(
-                "updateComponent"
+                'updateComponent'
             );
         });
     }

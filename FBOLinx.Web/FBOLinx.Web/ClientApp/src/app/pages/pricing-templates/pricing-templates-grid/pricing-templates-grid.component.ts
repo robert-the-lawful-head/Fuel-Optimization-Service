@@ -5,23 +5,24 @@ import {
     Output,
     OnInit,
     ViewChild,
-} from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
-import {MatSort, SortDirection} from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatDialog } from "@angular/material/dialog";
+} from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import {MatSort, SortDirection} from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import {Store} from '@ngrx/store';
 
 // Services
-import { SharedService } from "../../../layouts/shared-service";
-import { CustomcustomertypesService } from "../../../services/customcustomertypes.service";
+import { SharedService } from '../../../layouts/shared-service';
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 
 // Components
-import { PricingTemplatesDialogNewTemplateComponent } from "../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component";
-import { PricingTemplatesDialogCopyTemplateComponent } from "../pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component";
-import { PricingTemplatesDialogDeleteWarningComponent } from "../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component";
-import {getPricingTemplateState} from "../../../store/selectors/pricing-template";
-import {Store} from "@ngrx/store";
-import {State} from "../../../store/reducers";
+import { PricingTemplatesDialogNewTemplateComponent } from '../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
+import { PricingTemplatesDialogCopyTemplateComponent } from '../pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component';
+import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
+
+import { getPricingTemplateState } from '../../../store/selectors/pricing-template';
+import { State } from '../../../store/reducers';
 
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
@@ -30,9 +31,9 @@ export interface DefaultTemplateUpdate {
 }
 
 @Component({
-    selector: "app-pricing-templates-grid",
-    templateUrl: "./pricing-templates-grid.component.html",
-    styleUrls: ["./pricing-templates-grid.component.scss"],
+    selector: 'app-pricing-templates-grid',
+    templateUrl: './pricing-templates-grid.component.html',
+    styleUrls: ['./pricing-templates-grid.component.scss'],
 })
 export class PricingTemplatesGridComponent implements OnInit {
     // Input/Output Bindings
@@ -45,16 +46,15 @@ export class PricingTemplatesGridComponent implements OnInit {
     // Public Members
     public pricingTemplatesDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [
-        "isInvalid",
-        "name",
-        "marginTypeDescription",
-        "yourMargin",
-        "intoPlanePrice",
-        "customersAssigned",
-        "copy",
-        "delete",
+        'isInvalid',
+        'name',
+        'marginTypeDescription',
+        'yourMargin',
+        'intoPlanePrice',
+        'customersAssigned',
+        'copy',
+        'delete',
     ];
-    public resultsLength = 0;
 
     public pageIndexTemplate = 0;
     public pageSizeTemplate = 50;
@@ -82,30 +82,16 @@ export class PricingTemplatesGridComponent implements OnInit {
             return;
         }
 
-        if (localStorage.getItem("pageIndexTemplate")) {
-            this.paginator.pageIndex = localStorage.getItem("pageIndexTemplate") as any;
-        } else {
-            this.paginator.pageIndex = 0;
-        }
-
-        if (sessionStorage.getItem("pageSizeValueTemplate")) {
-            this.pageSizeTemplate = sessionStorage.getItem("pageSizeValueTemplate") as any;
-        } else {
-            this.pageSizeTemplate = 50;
-        }
-
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.pricingTemplatesDataSource = new MatTableDataSource(
             this.pricingTemplatesData
         );
         this.pricingTemplatesDataSource.sort = this.sort;
         this.pricingTemplatesDataSource.paginator = this.paginator;
-        this.resultsLength = this.pricingTemplatesData.length;
 
         this.updateModel.currenttemplate = 0;
 
         this.store.select(getPricingTemplateState).subscribe(state => {
-            console.log(state);
             if (state.filter) {
                 this.pricingTemplatesDataSource.filter = state.filter;
             }
@@ -132,18 +118,11 @@ export class PricingTemplatesGridComponent implements OnInit {
     }
 
     public addNewPricingTemplate() {
-        const dialogRef = this.newTemplateDialog.open(
-            PricingTemplatesDialogNewTemplateComponent,
-            {
-                data: {
-                    fboId: this.sharedService.currentUser.fboId,
-                    marginType: 1,
-                    customerMargins: [
-                        { min: 1, max: 99999, amount: 0, itp: 0, allin: 0 },
-                    ],
-                },
-            }
-        );
+        const dialogRef = this.newTemplateDialog.open(PricingTemplatesDialogNewTemplateComponent, {
+            data: {
+                fboId: this.sharedService.currentUser.fboId,
+            },
+        });
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
@@ -151,7 +130,7 @@ export class PricingTemplatesGridComponent implements OnInit {
             }
             this.newPricingTemplateAdded.emit();
             this.sharedService.NotifyPricingTemplateComponent(
-                "updateComponent"
+                'updateComponent'
             );
         });
     }
@@ -163,12 +142,12 @@ export class PricingTemplatesGridComponent implements OnInit {
                 {
                     data: this.pricingTemplatesData,
                     autoFocus: false,
-                    width: "600px",
+                    width: '600px',
                 }
             );
 
             dialogRef.afterClosed().subscribe((response) => {
-                if (response !== "cancel") {
+                if (response !== 'cancel') {
                     this.updateModel.currenttemplate = pricingTemplate.oid;
                     this.updateModel.fboid = pricingTemplate.fboid;
                     this.updateModel.newtemplate = response;
@@ -207,9 +186,9 @@ export class PricingTemplatesGridComponent implements OnInit {
     }
 
     onPageChanged(event: any) {
-        localStorage.setItem("pageIndexTemplate", event.pageIndex);
+        localStorage.setItem('pageIndexTemplate', event.pageIndex);
         sessionStorage.setItem(
-            "pageSizeValueTemplate",
+            'pageSizeValueTemplate',
             this.paginator.pageSize.toString()
         );
     }

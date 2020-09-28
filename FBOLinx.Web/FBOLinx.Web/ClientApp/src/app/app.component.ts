@@ -1,24 +1,10 @@
-import { Component } from "@angular/core";
-// import {
-//    trigger,
-//    state,
-//    style,
-//    animate,
-//    transition
-//    } from '@angular/animations';
-
-// @Component({
-//  selector: 'app-root',
-//  templateUrl: './app.component.html',
-//  styleUrls: ['./app.component.css']
-// })
-// export class AppComponent {
-//  title = 'app';
-// }
+import { Component } from '@angular/core';
 
 @Component({
-    moduleId: module.id,
-    selector: "app",
-    template: `<router-outlet></router-outlet>`,
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'FBOLinx';
+}

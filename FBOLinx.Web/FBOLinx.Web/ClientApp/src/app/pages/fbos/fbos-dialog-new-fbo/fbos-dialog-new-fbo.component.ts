@@ -1,11 +1,11 @@
-import { Component, Inject, EventEmitter, Output } from "@angular/core";
+import { Component, Inject, EventEmitter, Output } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 // Services
-import { AcukwikairportsService } from "../../../services/acukwikairports.service";
+import { AcukwikairportsService } from '../../../services/acukwikairports.service';
 
 // Interfaces
 export interface NewFBODialogData {
@@ -18,9 +18,9 @@ export interface NewFBODialogData {
 }
 
 @Component({
-    selector: "app-fbos-dialog-new-fbo",
-    templateUrl: "./fbos-dialog-new-fbo.component.html",
-    styleUrls: ["./fbos-dialog-new-fbo.component.scss"],
+    selector: 'app-fbos-dialog-new-fbo',
+    templateUrl: './fbos-dialog-new-fbo.component.html',
+    styleUrls: ['./fbos-dialog-new-fbo.component.scss'],
 })
 export class FbosDialogNewFboComponent {
     @Output() contactAdded = new EventEmitter<any>();

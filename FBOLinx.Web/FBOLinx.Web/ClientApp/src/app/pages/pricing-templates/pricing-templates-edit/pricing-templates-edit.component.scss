@@ -28,3 +28,8 @@
     top: -14px;
     right: 62px;
 }
+
+.card-content {
+    height: calc(100vh - 280px);
+    overflow: auto;
+}

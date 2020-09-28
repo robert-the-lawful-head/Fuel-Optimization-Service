@@ -1,13 +1,13 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
-} from "@angular/material/dialog";
+} from '@angular/material/dialog';
 
 @Component({
-    selector: "app-manage-confirmation",
-    templateUrl: "./manage-confirmation.component.html",
-    styleUrls: ["./manage-confirmation.component.scss"],
+    selector: 'app-manage-confirmation',
+    templateUrl: './manage-confirmation.component.html',
+    styleUrls: ['./manage-confirmation.component.scss'],
 })
 export class ManageConfirmationComponent {
     constructor(

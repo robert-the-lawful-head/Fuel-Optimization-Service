@@ -1,20 +1,20 @@
-import { Injectable, Inject } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class FbosService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
 
-    constructor(private http: HttpClient, @Inject("BASE_URL") baseUrl: string) {
+    constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         this.headers = new HttpHeaders({
-            "Content-Type": "application/json; charset=utf-8",
+            'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + "api/fbos";
+        this.accessPointUrl = baseUrl + 'api/fbos';
     }
 
     public getForGroup(groupId) {
-        return this.http.get(this.accessPointUrl + "/group/" + groupId, {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId, {
             headers: this.headers,
         });
     }
@@ -24,7 +24,7 @@ export class FbosService {
     }
 
     public get(payload) {
-        return this.http.get(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.get(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
@@ -36,19 +36,19 @@ export class FbosService {
     }
 
     public addSingleFbo(payload) {
-        return this.http.post(this.accessPointUrl + "/single", payload, {
+        return this.http.post(this.accessPointUrl + '/single', payload, {
             headers: this.headers,
         });
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.delete(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
 
     public update(payload) {
-        return this.http.put(this.accessPointUrl + "/" + payload.oid, payload, {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
     }

@@ -1,1 +1,3 @@
-export * from "./pricing-template";
+export * from './pricing-template';
+export * from './customer';
+export * from './breadcrumb';

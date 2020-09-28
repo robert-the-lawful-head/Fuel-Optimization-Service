@@ -54,10 +54,12 @@
 .mat-button-wrapper {
     .mat-icon {
         font-size: 18px;
-        height: 18px;
-        width: 18px;
-        margin-right: 5px;
     }
+}
+
+button.mat-icon-button {
+    height: 36px;
+    line-height: 36px;
 }
 
 .mat-button-base {
@@ -270,6 +272,16 @@
             position: absolute;
             top: 0;
             width: 100%;
+        }
+    }
+}
+
+.close-btn {
+    .mat-button-wrapper {
+        .mat-icon {
+            font-size: 30px;
+            width: auto;
+            height: auto;
         }
     }
 }

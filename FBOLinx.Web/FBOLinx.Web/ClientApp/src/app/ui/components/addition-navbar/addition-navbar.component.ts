@@ -8,34 +8,34 @@ import {
     AfterViewInit,
     OnChanges,
     SimpleChanges,
-} from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
-import * as moment from "moment";
-import { isEqual} from "lodash";
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
+import { isEqual} from 'lodash';
 
-import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
-import { SharedService } from "../../../layouts/shared-service";
-import { DistributionService } from "../../../services/distribution.service";
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { DistributionService } from '../../../services/distribution.service';
 
-import { DistributionWizardReviewComponent } from "../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component";
+import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 
 @Component({
-    selector: "addition-navbar",
-    templateUrl: "./addition-navbar.component.html",
-    styleUrls: ["./addition-navbar.component.scss"],
+    selector: 'addition-navbar',
+    templateUrl: './addition-navbar.component.html',
+    styleUrls: ['./addition-navbar.component.scss'],
     host: {
-        "[class.addition-navbar]": "true",
-        "[class.open]": "open",
+        '[class.addition-navbar]': 'true',
+        '[class.open]': 'open',
     },
 })
 export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges {
     title: string;
     open: boolean;
     // Public Members
-    public displayedColumns: string[] = ["template", "toggle"];
+    public displayedColumns: string[] = ['template', 'toggle'];
     public resultsLength: any;
     public marginTemplateDataSource: MatTableDataSource<any> = null;
     public pricingTemplatesData: any[];
@@ -44,13 +44,13 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     public timeLeft = 0;
     public interval: any;
     public selectAll: boolean;
-    labelPosition = "before";
-    buttontext = "Distribute Pricing";
+    labelPosition = 'before';
+    buttontext = 'Distribute Pricing';
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
-    @ViewChild("marginTableContainer") table: ElementRef;
-    @ViewChild("nodeInput") fileInput: ElementRef;
-    @ViewChild("insideElement") insideElement;
+    @ViewChild('marginTableContainer') table: ElementRef;
+    @ViewChild('nodeInput') fileInput: ElementRef;
+    @ViewChild('insideElement') insideElement;
     @Input() templatelst: any[];
 
     message: string;
@@ -61,7 +61,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         public templateDialog: MatDialog,
         public distributionService: DistributionService
     ) {
-        this.title = "Distribute Prices";
+        this.title = 'Distribute Prices';
         this.open = false;
     }
 
@@ -109,10 +109,10 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                             if (obj.pricingTemplateId === m.oid) {
                                 if (m.text === undefined) {
                                     m.text =
-                                        "Last sent " +
+                                        'Last sent ' +
                                         moment(
                                             moment.utc(obj.dateSent).toDate()
-                                        ).format("MM/DD/YYYY HH:mm");
+                                        ).format('MM/DD/YYYY HH:mm');
                                 }
                             }
                         });
@@ -160,7 +160,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
             DistributionWizardReviewComponent,
             {
                 data: this.filtered,
-                panelClass: "wizard",
+                panelClass: 'wizard',
             }
         );
         dialogRef.componentInstance.idChanged1.subscribe((result) => {
@@ -172,7 +172,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     async delay(ms: number) {
         await new Promise((resolve) =>
             setTimeout(() => resolve(), ms)
-        ).then(() => console.log("fired"));
+        ).then(() => console.log('fired'));
     }
     public changeSentOption(item) {
         item.toSend = !item.toSend;
@@ -182,45 +182,45 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         //  item.val = item.toSend ? item.val === undefined ? 0 + 33.33 : item.val + 33.33 : item.val - 33.33;
     }
 
-    @HostListener("document:click", ["$event"])
+    @HostListener('document:click', ['$event'])
     public onClick(targetElement) {
         if (
             this.open &&
-            targetElement.target.nodeName !== "svg" &&
+            targetElement.target.nodeName !== 'svg' &&
             !(
-                targetElement.target.className === "ng-star-inserted" ||
+                targetElement.target.className === 'ng-star-inserted' ||
                 targetElement.target.offsetParent.className.lastIndexOf(
-                    "addition-navbar"
+                    'addition-navbar'
                 ) > -1 ||
-                targetElement.target.textContent === "$Cost" ||
+                targetElement.target.textContent === '$Cost' ||
                 targetElement.target.offsetParent.className.lastIndexOf(
-                    "addition-navbar"
-                ) > -1 ||
-                targetElement.target.offsetParent.className.lastIndexOf(
-                    "open-navbar"
+                    'addition-navbar'
                 ) > -1 ||
                 targetElement.target.offsetParent.className.lastIndexOf(
-                    "mat-slide-toggle-thumb-container"
+                    'open-navbar'
+                ) > -1 ||
+                targetElement.target.offsetParent.className.lastIndexOf(
+                    'mat-slide-toggle-thumb-container'
                 ) > -1 ||
                 targetElement.target.offsetParent.tagName ===
-                    "MAT-PROGRESS-BAR" ||
-                targetElement.target.nodeName === "MAT-PROGRESS-BAR" ||
+                    'MAT-PROGRESS-BAR' ||
+                targetElement.target.nodeName === 'MAT-PROGRESS-BAR' ||
                 targetElement.target.offsetParent.className.lastIndexOf(
-                    "btn-text"
+                    'btn-text'
                 ) > -1 ||
                 targetElement.target.offsetParent.className.lastIndexOf(
-                    "ng-star-inserted"
+                    'ng-star-inserted'
                 ) > -1 ||
                 targetElement.target.offsetParent.className.lastIndexOf(
-                    "mat-progress-bar-element"
+                    'mat-progress-bar-element'
                 ) > -1 ||
                 targetElement.target.offsetParent.innerText ===
-                    "Distribute Pricing" ||
+                    'Distribute Pricing' ||
                 targetElement.target.offsetParent.offsetParent.className ===
-                    "addition-navbar"
+                    'addition-navbar'
             )
         ) {
-            if (targetElement.target.innerText !== "Sent!") {
+            if (targetElement.target.innerText !== 'Sent!') {
                 this.open = !this.open;
             }
         }
@@ -252,13 +252,13 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                     x.sent = false;
                 });
                 x.text =
-                    "Last sent " +
-                    moment(new Date()).format("MM/DD/YYYY HH:mm");
-                this.buttontext = "Sent!";
+                    'Last sent ' +
+                    moment(new Date()).format('MM/DD/YYYY HH:mm');
+                this.buttontext = 'Sent!';
             }
 
             setTimeout(() => {
-                this.buttontext = "Distribute Pricing";
+                this.buttontext = 'Distribute Pricing';
             }, 5000);
         });
     }
@@ -270,6 +270,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         });
     }
     public ReloadResults() {
-        alert("refresh results");
+        alert('refresh results');
     }
 }

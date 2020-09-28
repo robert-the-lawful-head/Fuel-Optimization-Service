@@ -1,14 +1,14 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 // Services
-import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
-    selector: "app-statistics-total-customers",
-    templateUrl: "./statistics-total-customers.component.html",
-    styleUrls: ["./statistics-total-customers.component.scss"],
+    selector: 'app-statistics-total-customers',
+    templateUrl: './statistics-total-customers.component.html',
+    styleUrls: ['./statistics-total-customers.component.scss'],
 })
 // statisticsTotalCustomers component
 export class StatisticsTotalCustomersComponent implements OnInit {
@@ -32,7 +32,7 @@ export class StatisticsTotalCustomersComponent implements OnInit {
     }
 
     public redirectClicked() {
-        this.router.navigate(["/default-layout/customers"]);
+        this.router.navigate(['/default-layout/customers']);
     }
 
     public refreshData() {

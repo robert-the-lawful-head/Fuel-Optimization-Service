@@ -11,7 +11,7 @@
     transform: translate(450px, 0);
     transition: .2s transform 0s $animation, 0s z-index .2s $animation;
     width: 450px;
-    z-index: 9997;
+    z-index: 99999;
 
     table {
         width: 100%;
@@ -48,7 +48,7 @@
     &.open {
         transform: translate(0, 0);
         transition: .2s transform 0s $animation, .2s z-index 0s $animation;
-        z-index: 9999;
+        z-index: 99999;
     }
 
     .open-navbar {
@@ -103,6 +103,9 @@
             //padding: ($module-rem * 2);
             width: 100%;
         }
+    }
+    ::-webkit-scrollbar {
+        width: 15px;
     }
 }
 

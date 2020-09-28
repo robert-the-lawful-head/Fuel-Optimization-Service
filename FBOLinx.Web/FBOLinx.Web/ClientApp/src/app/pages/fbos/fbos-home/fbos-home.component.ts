@@ -1,32 +1,46 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { Router } from "@angular/router";
-import * as _ from "lodash";
+import { Component, OnInit, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import * as _ from 'lodash';
+import { Store } from '@ngrx/store';
+
+import { State } from '../../../store/reducers';
+import { breadcrumbSet } from '../../../store/actions';
 
 // Services
-import { FbosService } from "../../../services/fbos.service";
-import { FboairportsService } from "../../../services/fboairports.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { FbosService } from '../../../services/fbos.service';
+import { FboairportsService } from '../../../services/fboairports.service';
+import { SharedService } from '../../../layouts/shared-service';
+
+const BREADCRUMBS: any[] = [
+    {
+        title: 'Main',
+        link: '/default-layout',
+    },
+    {
+        title: 'FBOs',
+        link: '',
+    },
+];
 
 @Component({
-    selector: "app-fbos-home",
-    templateUrl: "./fbos-home.component.html",
-    styleUrls: ["./fbos-home.component.scss"],
+    selector: 'app-fbos-home',
+    templateUrl: './fbos-home.component.html',
+    styleUrls: ['./fbos-home.component.scss'],
 })
 export class FbosHomeComponent implements OnInit {
     @Input() groupInfo: any;
+    @Input() embed: boolean;
 
     // Public Members
     public fbosData: Array<any>;
     public currentFbo: any;
     public currentFboAirport: any;
-    public airportData: Array<any>;
 
     constructor(
+        private store: Store<State>,
         private router: Router,
         private fboService: FbosService,
         private fboAirportsService: FboairportsService,
-        public newFboDialog: MatDialog,
         private sharedService: SharedService
     ) {
         this.currentFbo = null;
@@ -35,11 +49,15 @@ export class FbosHomeComponent implements OnInit {
 
     ngOnInit() {
         this.loadInitialData();
+
+        if (!this.embed) {
+            this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
+        }
     }
 
     public editFboClicked(record) {
         if (!this.groupInfo) {
-            this.router.navigate(["/default-layout/fbos/" + record.oid]);
+            this.router.navigate(['/default-layout/fbos/' + record.oid]);
         } else {
             this.fboService
                 .get(record)

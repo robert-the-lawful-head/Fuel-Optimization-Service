@@ -157,7 +157,7 @@
     </div>
 
     <div>
-        <mat-paginator [length]="resultsLength"
+        <mat-paginator [length]="pricingTemplatesData.length"
                        [pageSize]="pageSizeTemplate"
                        [pageSizeOptions]="[10, 25, 50, 100]"
                        (page)="(pageIndexTemplate); onPageChanged($event)"></mat-paginator>

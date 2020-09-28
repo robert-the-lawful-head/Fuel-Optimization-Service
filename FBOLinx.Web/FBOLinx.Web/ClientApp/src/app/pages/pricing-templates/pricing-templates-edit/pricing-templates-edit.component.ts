@@ -5,63 +5,68 @@ import {
     Output,
     ViewChild,
     OnInit,
-} from "@angular/core";
-import { Router, ActivatedRoute } from "@angular/router";
-import { FormBuilder, FormGroup, FormArray } from "@angular/forms";
+} from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
-import { combineLatest } from "rxjs";
-import { forOwn, differenceBy } from "lodash";
+import { combineLatest } from 'rxjs';
+import { forOwn, differenceBy } from 'lodash';
 
-import { RichTextEditorComponent } from "@syncfusion/ej2-angular-richtexteditor";
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { Store } from '@ngrx/store';
+
+import { State } from '../../../store/reducers';
+import { breadcrumbSet } from '../../../store/actions';
 
 // Services
-import { CustomermarginsService } from "../../../services/customermargins.service";
-import { FbopricesService } from "../../../services/fboprices.service";
-import { PricetiersService } from "../../../services/pricetiers.service";
-import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { CustomermarginsService } from '../../../services/customermargins.service';
+import { FbopricesService } from '../../../services/fboprices.service';
+import { PricetiersService } from '../../../services/pricetiers.service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 const BREADCRUMBS: any[] = [
     {
-        title: "Main",
-        link: "/default-layout",
+        title: 'Main',
+        link: '/default-layout',
     },
     {
-        title: "ITP Margin Templates",
-        link: "/default-layout/pricing-templates",
+        title: 'ITP Margin Templates',
+        link: '/default-layout/pricing-templates',
     },
     {
-        title: "Edit Margin Template",
-        link: "",
+        title: 'Edit Margin Template',
+        link: '',
     },
 ];
 
 @Component({
-    selector: "app-pricing-templates-edit",
-    templateUrl: "./pricing-templates-edit.component.html",
-    styleUrls: ["./pricing-templates-edit.component.scss"],
+    selector: 'app-pricing-templates-edit',
+    templateUrl: './pricing-templates-edit.component.html',
+    styleUrls: ['./pricing-templates-edit.component.scss'],
 })
 export class PricingTemplatesEditComponent implements OnInit {
     // Input/Output Bindings
     @Output() savePricingTemplateClicked = new EventEmitter<any>();
     @Input() pricingTemplate: any;
-    @ViewChild("typeRTE") rteObj: RichTextEditorComponent;
-    @ViewChild("typeEmail") rteEmail: RichTextEditorComponent;
+    @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
+    @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
 
     pricingTemplateForm: FormGroup;
 
     // Members
-    pageTitle = "Edit Margin Template";
+    pageTitle = 'Edit Margin Template';
     breadcrumb: any[] = BREADCRUMBS;
     marginTypeDataSource: Array<any> = [
-        { text: "Cost +", value: 0 },
-        { text: "Retail -", value: 1 },
+        { text: 'Cost +', value: 0 },
+        { text: 'Retail -', value: 1 },
     ];
     canSave: boolean;
     jetACost: number;
     jetARetail: number;
 
     constructor(
+        private store: Store<State>,
         private route: ActivatedRoute,
         private router: Router,
         private formBuilder: FormBuilder,
@@ -79,16 +84,19 @@ export class PricingTemplatesEditComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
+
         // Check for passed in id
-        const id = this.route.snapshot.paramMap.get("id");
+        const id = this.route.snapshot.paramMap.get('id');
 
         combineLatest([
             this.pricingTemplatesService.get({ oid: id }),
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(id),
             this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId),
         ]).subscribe(([pricingTemplateData, customerMarginsData, fboPricesData]) => {
-            this.jetACost = (fboPricesData as any).filter(item => item.product === "JetA Cost")[0].price;
-            this.jetARetail = (fboPricesData as any).filter(item => item.product === "JetA Retail")[0].price;
+            console.log(pricingTemplateData);
+            this.jetACost = (fboPricesData as any).filter(item => item.product === 'JetA Cost')[0].price;
+            this.jetARetail = (fboPricesData as any).filter(item => item.product === 'JetA Retail')[0].price;
 
             this.pricingTemplate = pricingTemplateData;
             this.pricingTemplate.customerMargins = this.updateMargins(customerMarginsData, this.pricingTemplate.marginType);
@@ -114,7 +122,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             });
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
-                this.canSave= true;
+                this.canSave = true;
             });
 
             this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(type => {
@@ -135,7 +143,7 @@ export class PricingTemplatesEditComponent implements OnInit {
 
     savePricingTemplate() {
         const removedCustomerMargins =
-            differenceBy(this.pricingTemplate.customerMargins, this.pricingTemplateForm.value.customerMargins, "oid");
+            differenceBy(this.pricingTemplate.customerMargins, this.pricingTemplateForm.value.customerMargins, 'oid');
 
         combineLatest([
             this.customerMarginsService.bulkRemove(removedCustomerMargins),
@@ -145,14 +153,14 @@ export class PricingTemplatesEditComponent implements OnInit {
                 ...this.pricingTemplateForm.value,
             }),
         ]).subscribe(() => {
-            this.canSave = false;
+            this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
 
-            this.sharedService.NotifyPricingTemplateComponent("updateComponent");
+            this.sharedService.NotifyPricingTemplateComponent('updateComponent');
         });
     }
 
     cancelPricingTemplateEdit() {
-        this.router.navigate(["/default-layout/pricing-templates/"]).then(() => {});
+        this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
     }
 
     deleteCustomerMargin(index: number) {
@@ -193,7 +201,7 @@ export class PricingTemplatesEditComponent implements OnInit {
 
     private updateMargins(oldMargins, marginType) {
         const margins = [...oldMargins];
-        for(let i = 0; i < margins?.length; i++) {
+        for (let i = 0; i < margins?.length; i++) {
             if ( i > 0) {
                 margins[i - 1].max = Math.abs(margins[i].min - 1);
             }
