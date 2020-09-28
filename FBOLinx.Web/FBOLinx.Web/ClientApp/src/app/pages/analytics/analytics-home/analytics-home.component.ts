@@ -22,6 +22,8 @@ import { AnalyticsVolumesNearbyAirportChartComponent } from '../../../shared/com
 import { AnalyticsMarketShareAirportChartComponent } from '../../../shared/components/analytics-market-share-airport-chart/analytics-market-share-airport-chart.component';
 import { AnalyticsCustomerBreakdownChartComponent } from '../../../shared/components/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component';
 import { AnalyticsCompaniesQuotesDealTableComponent } from '../../../shared/components/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component';
+import { AnalyticsFuelVendorSourceChartComponent } from '../../../shared/components/analytics-fuel-vendor-source-chart/analytics-fuel-vendor-source-chart.component';
+import { AnalyticsMarketShareFboAirportChartComponent } from '../../../shared/components/analytics-market-share-fbo-airport-chart/analytics-market-share-fbo-airport-chart.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -60,6 +62,10 @@ export class AnalyticsHomeComponent implements OnInit {
     public analyticsCustomerBreakdownChart: AnalyticsCustomerBreakdownChartComponent;
     @ViewChild('analyticsCompaniesQuotesDealTable')
     public analyticsCompaniesQuotesDealTable: AnalyticsCompaniesQuotesDealTableComponent;
+    @ViewChild('analyticsFuelVendorSourceChart')
+    public analyticsFuelVendorSourceChart: AnalyticsFuelVendorSourceChartComponent;
+    @ViewChild('analyticsMarketShareFboAirportChart')
+    public analyticsMarketShareFboAirportChart: AnalyticsMarketShareFboAirportChartComponent;
 
     public pageTitle = 'Analytics';
     public breadcrumb: any[] = BREADCRUMBS;
@@ -92,8 +98,9 @@ export class AnalyticsHomeComponent implements OnInit {
         this.analyticsOrdersQuoteChart.refreshData();
         this.analyticsOrdersOverTimeChart.refreshData();
         this.analyticsVolumesNearbyAirportChart.refreshData();
-        this.analyticsMarketShareAirportChart.refreshData();
         this.analyticsCustomerBreakdownChart.refreshData();
         this.analyticsCompaniesQuotesDealTable.refreshData();
+        this.analyticsFuelVendorSourceChart.refreshData();
+        this.analyticsMarketShareFboAirportChart.refreshData();
     }
 }

@@ -202,4 +202,30 @@ export class FuelreqsService {
             }
         );
     }
+
+    public getFuelVendorSources(fboId: number, startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + '/analysis/fbo-fuel-vendor-sources/fbo/' + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getMarketShareFboAirport(fboId: number, startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + '/analysis/market-share-fbos-airport/fbo/' + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

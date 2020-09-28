@@ -120,6 +120,8 @@ import { AnalyticsVolumesNearbyAirportChartComponent } from '../shared/component
 import { AnalyticsMarketShareAirportChartComponent } from '../shared/components/analytics-market-share-airport-chart/analytics-market-share-airport-chart.component';
 import { AnalyticsCustomerBreakdownChartComponent } from '../shared/components/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component';
 import { AnalyticsCompaniesQuotesDealTableComponent } from '../shared/components/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component';
+import { AnalyticsFuelVendorSourceChartComponent } from '../shared/components/analytics-fuel-vendor-source-chart/analytics-fuel-vendor-source-chart.component';
+import { AnalyticsMarketShareFboAirportChartComponent } from '../shared/components/analytics-market-share-fbo-airport-chart/analytics-market-share-fbo-airport-chart.component';
 import { FuelReqsExportModalComponent } from '../shared/components/fuelreqs-export/fuelreqs-export.component';
 import { CustomerMatchDialogComponent } from './customers/customer-match-dialog/customer-match-dialog.component';
 import { TableColumnFilterComponent } from '../shared/components/table-column-filter/table-column-filter.component';
@@ -232,6 +234,8 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     AnalyticsMarketShareAirportChartComponent,
     AnalyticsCustomerBreakdownChartComponent,
     AnalyticsCompaniesQuotesDealTableComponent,
+    AnalyticsFuelVendorSourceChartComponent,
+    AnalyticsMarketShareFboAirportChartComponent,
     DeleteConfirmationComponent,
     CloseConfirmationComponent,
     DistributionWizardMainComponent,
