@@ -21,7 +21,6 @@ import { SharedService } from '../../../layouts/shared-service';
 // Components
 import { GroupsDialogNewGroupComponent } from '../groups-dialog-new-group/groups-dialog-new-group.component';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
-import { FbosGridNewFboDialogComponent } from '../../fbos/fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
 import { fboChangedEvent } from '../../../models/sharedEvents';
@@ -64,7 +63,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private deleteGroupDialog: MatDialog,
         private deleteFboDialog: MatDialog,
         private newGroupDialog: MatDialog,
-        private newFboDialog: MatDialog,
         private notification: MatDialog,
         private manageFboDialog: MatDialog,
         private snackBar: MatSnackBar
@@ -158,7 +156,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.editGroupClicked.emit(event.data);
     }
 
-    newGroup() {
+    addNew() {
         const dialogRef = this.newGroupDialog.open(
             GroupsDialogNewGroupComponent,
             {
@@ -171,37 +169,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             if (!result) {
                 return;
             }
-            result.active = true;
-            this.groupsService.add(result).subscribe((data: any) => {
-                this.editGroupClicked.emit(data);
-            });
-        });
-    }
-
-    newFbo(event) {
-        const parentRow = this.getParentUntil(event.currentTarget, 'e-detailrow');
-        const groupRow = parentRow.previousSibling;
-        const rowIndex = groupRow.getAttribute('aria-rowindex');
-        const dataIndex = this.grid.pageSettings.pageSize * (this.grid.pageSettings.currentPage - 1) + parseInt(rowIndex, 10);
-        const rowData = this.grid.dataSource[dataIndex];
-
-        const dialogRef = this.newFboDialog.open(FbosGridNewFboDialogComponent, {
-            width: '450px',
-            data: { oid: 0, initialSetupPhase: true },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                result.groupId = rowData.oid;
-
-                this.fbosService.add(result).subscribe((newFbo: any) => {
-                    this.snackBar.open(newFbo.fbo + ' is created', '', {
-                        duration: 3000,
-                        panelClass: ['blue-snackbar'],
-                    });
-                    this.editFboClicked.emit(newFbo);
-                });
+            if (result.type === 'group') {
+                this.editGroupClicked.emit(result.data);
+            } else {
+                this.editFboClicked.emit(result.data);
             }
+
         });
     }
 
@@ -259,21 +232,37 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         const firstFilteredFbos = this.fbosData.filter(fbo =>
             this.ifStringContains(fbo.icao, filterValue) ||
-            this.ifStringContains(fbo.fbo, filterValue)
+            this.ifStringContains(fbo.fbo, filterValue) ||
+            fbo.users?.find(user =>
+                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                this.ifStringContains(user.username, filterValue)
+            )
         );
 
         const firstFilteredGroups = this.groupsData.filter(group =>
-            this.ifStringContains(group.groupName, filterValue)
+            this.ifStringContains(group.groupName, filterValue) ||
+            group.users?.find(user =>
+                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                this.ifStringContains(user.username, filterValue)
+            )
         );
 
         const secondFilteredGroups = this.groupsData.filter(group =>
-            this.ifStringContains(group.groupName, filterValue) || firstFilteredFbos.find(fbo => fbo.groupId === group.oid)
+            this.ifStringContains(group.groupName, filterValue) ||
+            group.users?.find(user =>
+                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                this.ifStringContains(user.username, filterValue)
+            ) || firstFilteredFbos.find(fbo => fbo.groupId === group.oid)
         );
 
         const secondFilteredFbos = this.fbosData.filter(fbo =>
             firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
             this.ifStringContains(fbo.icao, filterValue) ||
-            this.ifStringContains(fbo.fbo, filterValue)
+            this.ifStringContains(fbo.fbo, filterValue) ||
+            fbo.users?.find(user =>
+                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                this.ifStringContains(user.username, filterValue)
+            )
         );
 
         this.groupDataSource = secondFilteredGroups;

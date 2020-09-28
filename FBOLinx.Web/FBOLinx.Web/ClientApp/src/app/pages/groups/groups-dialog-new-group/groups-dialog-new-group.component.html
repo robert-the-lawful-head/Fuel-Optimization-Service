@@ -1,15 +1,46 @@
-<h1 mat-dialog-title>New Group</h1>
+<h1 mat-dialog-title>Create New Group or FBO</h1>
 <div mat-dialog-content>
     <mat-form-field>
-        <input matInput placeholder="Group Name" aria-label="Group Name" [(ngModel)]="data.groupName">
+        <mat-label>Group or FBO</mat-label>
+        <mat-select [(value)]="type">
+            <mat-option value="group">
+                Group
+            </mat-option>
+            <mat-option value="fbo">
+                FBO
+            </mat-option>
+        </mat-select>
     </mat-form-field>
+    <div *ngIf="type === 'group'">
+        <mat-form-field>
+            <input matInput placeholder="Group Name" aria-label="Group Name" [(ngModel)]="data.groupName">
+        </mat-form-field>
+    </div>
+    <div *ngIf="type === 'fbo'">
+        <app-airport-autocomplete [airportContainerModel]="data"
+                              (valueChange)="airportValueChanged($event)"></app-airport-autocomplete>
+        <mat-form-field *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0">
+            <mat-select placeholder="FBO"
+                        [(ngModel)]="data.acukwikFbo"
+                        (ngModelChange)="fboSelectionChange()">
+                <mat-option *ngFor="let acukwikFbo of dataSources.acukwikFbos"
+                            [value]="acukwikFbo">{{ acukwikFbo.handlerLongName }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="data.acukwikFbo">
+            <mat-label>Group</mat-label>
+            <input matInput
+                   [value]="data.group"
+                   [(ngModel)]="data.group">
+        </mat-form-field>
+    </div>
 </div>
 <div mat-dialog-actions>
     <button
         mat-flat-button
         color="accent"
-        [mat-dialog-close]="data"
+        (click)="onSaveClick()"
         class="mr-1"
-    >Add Group</button>
+    >Add {{ type === 'group' ? 'Group' : 'FBO' }}</button>
     <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
 </div>

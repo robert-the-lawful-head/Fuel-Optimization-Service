@@ -34,6 +34,9 @@ namespace FBOLinx.Web.Models
         public ICollection<Fbos> Fbos { get; set; }
 
         [InverseProperty("Group")]
+        public ICollection<User> Users { get; set; }
+
+        [InverseProperty("Group")]
         public ICollection<ContactInfoByGroup> ContactInfoByGroup { get; set; }
     }
 }

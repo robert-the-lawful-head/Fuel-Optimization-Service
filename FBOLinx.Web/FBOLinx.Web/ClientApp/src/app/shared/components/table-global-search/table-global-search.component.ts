@@ -23,8 +23,9 @@ export class TableGlobalSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupFilterPredicate();
-    if (!this.matDataSource.filterCollection)
+    if (!this.matDataSource.filterCollection) {
       this.matDataSource.filterCollection = [];
+    }
     this.matDataSource.filterCollection.push(this.globalFilter);
   }
 
@@ -68,9 +69,10 @@ export class TableGlobalSearchComponent implements OnInit {
     this.globalFilter.filterValue = '';
     this.matDataSource.filter = '';
 
-    for (let filter of this.matDataSource.filterCollection) {
-      if (filter.isGlobal)
+    for (const filter of this.matDataSource.filterCollection) {
+      if (filter.isGlobal) {
         continue;
+      }
 
       filter.dateFilter = {
         startDate: null,
@@ -97,10 +99,11 @@ export class TableGlobalSearchComponent implements OnInit {
       function filterCallback(element, index, array): boolean {
         if (element.isGlobal) {
           if (!element.columns) {
-            if (!data)
+            if (!data) {
               return true;
+            }
             else {
-              var serializedData = JSON.stringify(data).toLowerCase();
+              const serializedData = JSON.stringify(data).toLowerCase();
               return (serializedData.indexOf(element.filterValue) > -1);
             }
           }

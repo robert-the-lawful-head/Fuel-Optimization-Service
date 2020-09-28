@@ -63,7 +63,7 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var fbos = await GetAllFbos().Include("fboAirport").ToListAsync();
+            var fbos = await GetAllFbos().Include(f => f.Users).Include("fboAirport").ToListAsync();
             if (fbos == null)
             {
                 return NotFound();
@@ -76,7 +76,8 @@ namespace FBOLinx.Web.Controllers
                 Fbo = f.Fbo,
                 Icao = f.fboAirport?.Icao,
                 Oid = f.Oid,
-                GroupId = f.GroupId ?? 0
+                GroupId = f.GroupId ?? 0,
+                Users = f.Users
             }).ToList();
             return Ok(fbosVM);
         }
