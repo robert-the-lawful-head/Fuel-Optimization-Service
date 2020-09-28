@@ -52,6 +52,9 @@ Name | Type | Description | Notes
 **ReportedRampFeeWaivedAt** | [**Weight**](Weight.md) |  | [optional] 
 **RampFeeCallFbo** | **bool?** |  | [optional] 
 **ReportedRampFee** | **double?** |  | [optional] 
+**PaymentEmail** | **string** |  | [optional] 
+**IsPlaceholder** | **bool?** |  | [optional] 
+**HasPaid** | **bool?** |  | [optional] 
 **DepartureDateYearFirstFormat** | **string** |  | [optional] 
 **ArrivalDateYearFirstFormat** | **string** |  | [optional] 
 **ServiceDateYearFirstFormat** | **string** |  | [optional] 
@@ -71,6 +74,9 @@ Name | Type | Description | Notes
 **AirportInfo** | [**AcukwikAirportDTO**](AcukwikAirportDTO.md) |  | [optional] 
 **FboHandlerDetail** | [**AcukwikFboHandlerDetailDTO**](AcukwikFboHandlerDetailDTO.md) |  | [optional] 
 **CompanyFuelVendorInfo** | [**CompanyFuelerDTO**](CompanyFuelerDTO.md) |  | [optional] 
+**AirportNotes** | [**List&lt;AirportDetailsByCompanyNotesDTO&gt;**](AirportDetailsByCompanyNotesDTO.md) |  | [optional] 
+**FboNotes** | [**List&lt;FboByCompanyNotesDTO&gt;**](FboByCompanyNotesDTO.md) |  | [optional] 
+**RampFeeNotes** | [**List&lt;RampFeeByCompanyNoteDTO&gt;**](RampFeeByCompanyNoteDTO.md) |  | [optional] 
 **PreUpliftPriceSync** | [**PriceSyncTransactionDTO**](PriceSyncTransactionDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

@@ -7,6 +7,7 @@ Method | HTTP request | Description
 [**AddAircraftForCompany**](AircraftApi.md#addaircraftforcompany) | **POST** /api/Aircraft/company | Add an aircraft to the authorized company.
 [**AddAircraftForUser**](AircraftApi.md#addaircraftforuser) | **POST** /api/Aircraft/user | Add an existing aircraft to the user&#39;s account.
 [**AddTail**](AircraftApi.md#addtail) | **POST** /api/Aircraft/tail | Add a new aircraft with a corresponding tail number to be used by a specific company/user.
+[**DeleteUsereAircraftTankeringSettings**](AircraftApi.md#deleteusereaircrafttankeringsettings) | **DELETE** /api/Aircraft/tankering-settings/{id} | Delete tankering settings for an aircraft.
 [**GetAircraftByTailNumber**](AircraftApi.md#getaircraftbytailnumber) | **GET** /api/Aircraft/company/{companyId}/tail/{tailNumber} | Get an aircraft by [companyId] and [tailNumber].
 [**GetAircraftByTailNumberId**](AircraftApi.md#getaircraftbytailnumberid) | **GET** /api/Aircraft/tail/{tailNumberId} | Get an aircraft by the provided [tailNumberId].
 [**GetAircraftDataForCompany**](AircraftApi.md#getaircraftdataforcompany) | **GET** /api/Aircraft/company | Get all aircraft assigned to the authorized company.
@@ -17,8 +18,10 @@ Method | HTTP request | Description
 [**GetIFlightPlannerModel**](AircraftApi.md#getiflightplannermodel) | **GET** /api/Aircraft/iflightplanner/model/{aircraftModelId} | Internal use only - Get a specific iFlightPlanner model by it&#39;s Id.
 [**GetIFlightPlannerModelsByType**](AircraftApi.md#getiflightplannermodelsbytype) | **GET** /api/Aircraft/iflightplanner/modelsbytype/{aircraftType} | Internal use only - Get a list of iFlightPlanner aircraft models by the aircraft type (ICAO) code.
 [**GetIFlightPlannerProfileByTailNumber**](AircraftApi.md#getiflightplannerprofilebytailnumber) | **GET** /api/Aircraft/iflightplanner/aircraftprofile/{tailNumber} | Internal use only - Fetch an aircraft profile from iFlightPlanner.
+[**PostUserAircraftTankeringSettings**](AircraftApi.md#postuseraircrafttankeringsettings) | **POST** /api/Aircraft/tankering-settings | Add tankering settings for an aircraft.
 [**RegisterAircraftWithIFlightPlanner**](AircraftApi.md#registeraircraftwithiflightplanner) | **POST** /api/Aircraft/iflightplanner/register | Internal use only - Register an aircraft with iFlightPlanner.
 [**UpdateTail**](AircraftApi.md#updatetail) | **PUT** /api/Aircraft/tail/{tailNumberId} | Update an existing aircraft with the corresponding [tailNumberId].
+[**UpdateUserAircraftTankeringSettings**](AircraftApi.md#updateuseraircrafttankeringsettings) | **PUT** /api/Aircraft/tankering-settings | Update tankering settings for an aircraft.
 
 
 <a name="addaircraftforcompany"></a>
@@ -230,6 +233,75 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deleteusereaircrafttankeringsettings"></a>
+# **DeleteUsereAircraftTankeringSettings**
+> DeleteUserAircraftTankeringSettingsResponse DeleteUsereAircraftTankeringSettings (int? id)
+
+Delete tankering settings for an aircraft.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteUsereAircraftTankeringSettingsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AircraftApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Delete tankering settings for an aircraft.
+                DeleteUserAircraftTankeringSettingsResponse result = apiInstance.DeleteUsereAircraftTankeringSettings(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AircraftApi.DeleteUsereAircraftTankeringSettings: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteUserAircraftTankeringSettingsResponse**](DeleteUserAircraftTankeringSettingsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
@@ -924,6 +996,75 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="postuseraircrafttankeringsettings"></a>
+# **PostUserAircraftTankeringSettings**
+> PostUserAircraftTankeringSettingsResponse PostUserAircraftTankeringSettings (PostUserAircraftTankeringSettingsRequest body)
+
+Add tankering settings for an aircraft.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostUserAircraftTankeringSettingsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AircraftApi();
+            var body = new PostUserAircraftTankeringSettingsRequest(); // PostUserAircraftTankeringSettingsRequest |  (optional) 
+
+            try
+            {
+                // Add tankering settings for an aircraft.
+                PostUserAircraftTankeringSettingsResponse result = apiInstance.PostUserAircraftTankeringSettings(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AircraftApi.PostUserAircraftTankeringSettings: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostUserAircraftTankeringSettingsRequest**](PostUserAircraftTankeringSettingsRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostUserAircraftTankeringSettingsResponse**](PostUserAircraftTankeringSettingsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="registeraircraftwithiflightplanner"></a>
 # **RegisterAircraftWithIFlightPlanner**
 > IFlightPlannerAircraftRegistrationResponse RegisterAircraftWithIFlightPlanner (IFlightPlannerAircraftRegistrationRequest body)
@@ -1054,6 +1195,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**AircraftDataResponse**](AircraftDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updateuseraircrafttankeringsettings"></a>
+# **UpdateUserAircraftTankeringSettings**
+> UpdateUserAircraftTankeringSettingsResponse UpdateUserAircraftTankeringSettings (UpdateUserAircraftTankeringSettingsRequest body)
+
+Update tankering settings for an aircraft.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateUserAircraftTankeringSettingsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AircraftApi();
+            var body = new UpdateUserAircraftTankeringSettingsRequest(); // UpdateUserAircraftTankeringSettingsRequest |  (optional) 
+
+            try
+            {
+                // Update tankering settings for an aircraft.
+                UpdateUserAircraftTankeringSettingsResponse result = apiInstance.UpdateUserAircraftTankeringSettings(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AircraftApi.UpdateUserAircraftTankeringSettings: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateUserAircraftTankeringSettingsRequest**](UpdateUserAircraftTankeringSettingsRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateUserAircraftTankeringSettingsResponse**](UpdateUserAircraftTankeringSettingsResponse.md)
 
 ### Authorization
 

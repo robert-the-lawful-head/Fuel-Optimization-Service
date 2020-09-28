@@ -33,6 +33,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "icao")]
     public string Icao { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Fbo
+    /// </summary>
+    [DataMember(Name="fbo", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fbo")]
+    public string Fbo { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -44,6 +51,7 @@ namespace IO.Swagger.Model {
       sb.Append("  StartDateTime: ").Append(StartDateTime).Append("\n");
       sb.Append("  EndDateTime: ").Append(EndDateTime).Append("\n");
       sb.Append("  Icao: ").Append(Icao).Append("\n");
+      sb.Append("  Fbo: ").Append(Fbo).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

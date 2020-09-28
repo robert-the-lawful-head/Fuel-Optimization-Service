@@ -28,6 +28,7 @@ Name | Type | Description | Notes
 **ServiceUrl** | **string** |  | [optional] 
 **IsMessagesEnabled** | **bool?** |  | [optional] 
 **IsVendorLinxEnabled** | **bool?** |  | [optional] 
+**PaymentEmail** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

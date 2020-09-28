@@ -11,8 +11,8 @@ Name | Type | Description | Notes
 **Payee** | [**PayeeDetail**](PayeeDetail.md) |  | [optional] 
 **PurposeOfPayment** | **string** |  | [optional] 
 **ClaimLink** | **string** |  | [optional] 
-**TimeCreated** | **DateTime?** |  | [optional] 
-**TimeUpdated** | **DateTime?** |  | [optional] 
+**TimeCreated** | **string** |  | [optional] 
+**TimeUpdated** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **DataOptions** | [**ReportDataOptions**](ReportDataOptions.md) |  | [optional] 
 **CreationDateUtc** | **DateTime?** |  | [optional] 
 **ChartSettings** | [**ChartSettings**](ChartSettings.md) |  | [optional] 
+**ReportFilter** | [**ReportFilter**](ReportFilter.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

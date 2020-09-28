@@ -19,7 +19,7 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
     // Public Members
     public chartName: 'volumes-nearby-airport-chart';
     public totalOrdersData: any[];
-    public mile = 200;
+    public mile = 50;
     public colorScheme = {
         domain: [
             '#a8385d',

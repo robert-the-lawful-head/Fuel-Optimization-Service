@@ -3,7 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**SupplierName** | **string** |  | 
+**SupplierName** | **string** |  | [optional] 
 **SupplierSite** | **string** |  | [optional] 
 **SupplierNumber** | **string** |  | [optional] 
 **PaymentTerms** | **string** |  | [optional] 

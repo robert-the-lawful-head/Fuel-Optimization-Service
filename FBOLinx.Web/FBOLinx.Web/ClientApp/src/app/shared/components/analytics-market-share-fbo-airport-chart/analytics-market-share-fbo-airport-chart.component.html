@@ -1,0 +1,19 @@
+<ni-card title="Market Share at {{icao}}" [headerBgColor]="'gray'">
+    <div class="chart-container">
+        <ngx-charts-pie-chart
+            *ngIf="totalOrdersData"
+            [results]="totalOrdersData"
+            [scheme]="colorScheme"
+            [gradient]="false"
+            [labels]="true"
+            [trimLabels]="false"
+        ></ngx-charts-pie-chart>
+    </div>
+    <ngx-ui-loader
+        [loaderId]="chartName"
+        bgsPosition="center-center"
+        bgsType="ball-spin"
+        bgsColor="rgb(100, 181, 246)"
+        overlayColor="rgba(0, 0, 0, 0.1)"
+    ></ngx-ui-loader>
+</ni-card>

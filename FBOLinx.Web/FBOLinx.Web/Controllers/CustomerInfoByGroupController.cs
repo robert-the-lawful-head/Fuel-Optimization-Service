@@ -254,8 +254,13 @@ namespace FBOLinx.Web.Controllers
             //View model for customers grid
             var customerCount = (from cg in _context.CustomerInfoByGroup
                                  join c in _context.Customers on cg.CustomerId equals c.Oid
-                                 where cg.GroupId == groupId
-                                 && cg.Active.GetValueOrDefault()
+                                 join cvf in _context.CustomersViewedByFbo on new { cg.CustomerId, Fboid = fboId } equals new
+                                 {
+                                     cvf.CustomerId,
+                                     cvf.Fboid
+                                 } into letJoinCVF
+                                 from cvf in letJoinCVF.DefaultIfEmpty()
+                                 where cg.GroupId == groupId && !c.Suspended.GetValueOrDefault()
                                  select new
                                  {
                                      cg.Oid
