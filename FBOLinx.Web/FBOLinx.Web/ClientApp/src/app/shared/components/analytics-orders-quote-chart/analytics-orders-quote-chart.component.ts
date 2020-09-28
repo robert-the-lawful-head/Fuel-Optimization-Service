@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import * as _ from 'lodash';
-
+import * as moment from 'moment';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -12,8 +12,8 @@ import { SharedService } from '../../../layouts/shared-service';
     styleUrls: ['./analytics-orders-quote-chart.component.scss'],
 })
 export class AnalyticsOrdersQuoteChartComponent implements OnInit {
-    @Input() startDate: Date;
-    @Input() endDate: Date;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
     // Public Members
     public chartName = 'orders-quote-chart';
     public ordersQuoteData: any[];
@@ -37,7 +37,10 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
-    ) {}
+    ) {
+        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+    }
 
     ngOnInit() {
         this.refreshData();
@@ -48,8 +51,8 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
         this.fuelreqsService
             .getQuotesAndOrders(
                 this.sharedService.currentUser.fboId,
-                this.startDate,
-                this.endDate
+                this.filterStartDate,
+                this.filterEndDate
             )
             .subscribe((data: any) => {
                 this.ordersQuoteData = data[0];

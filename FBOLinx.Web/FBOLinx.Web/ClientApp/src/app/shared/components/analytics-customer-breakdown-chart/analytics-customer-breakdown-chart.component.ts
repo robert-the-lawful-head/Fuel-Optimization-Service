@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
@@ -13,8 +14,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
     styleUrls: ['./analytics-customer-breakdown-chart.component.scss'],
 })
 export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
-    @Input() startDate: Date;
-    @Input() endDate: Date;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
 
     // Public Members
     public chartName = 'customer-breakdown-chart';
@@ -39,7 +40,10 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
-    ) {}
+    ) {
+        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+    }
 
     ngOnInit() {
         this.chartType = 'order';
@@ -49,7 +53,7 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getFBOCustomersBreakdown(this.sharedService.currentUser.fboId, this.startDate, this.endDate, this.chartType)
+            .getFBOCustomersBreakdown(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate, this.chartType)
             .subscribe((data: any) => {
                 this.totalOrdersData = this.switchDataType(data);
             }, () => {

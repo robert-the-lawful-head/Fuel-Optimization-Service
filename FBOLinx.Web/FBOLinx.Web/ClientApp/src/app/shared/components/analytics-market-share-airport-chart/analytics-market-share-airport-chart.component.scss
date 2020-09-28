@@ -3,13 +3,9 @@
 .chart-container {
     align-items: center;
     display: flex;
-    height: 300px;
+    height: 365px;
     justify-content: center;
     width: 100%;
-
-    @media only screen and (max-width: 767px) {
-        height: 300px;
-    }
 
     canvas {
         margin: 0 auto;

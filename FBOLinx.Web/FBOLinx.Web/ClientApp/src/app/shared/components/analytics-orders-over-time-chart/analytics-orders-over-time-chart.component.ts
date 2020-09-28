@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
-
+import * as moment from 'moment';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -12,8 +12,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
     styleUrls: ['./analytics-orders-over-time-chart.component.scss'],
 })
 export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
-    @Input() startDate: Date;
-    @Input() endDate: Date;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
     // Public Members
     public chartName = 'orders-over-time-chart';
     public totalOrdersData: any[];
@@ -36,7 +36,10 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
-    ) {}
+    ) {
+        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+    }
 
     ngOnInit() {
         this.refreshData();
@@ -45,7 +48,7 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getOrders(this.sharedService.currentUser.fboId, this.startDate, this.endDate)
+            .getOrders(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
             }, () => {
