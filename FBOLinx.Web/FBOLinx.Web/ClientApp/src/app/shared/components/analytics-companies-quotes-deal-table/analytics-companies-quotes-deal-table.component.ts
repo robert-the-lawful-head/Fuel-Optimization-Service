@@ -17,8 +17,8 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit {
     @Input() endDate: Date;
 
     // Public Members
-    public chartName = "companies-quotes-deal-table";
-    public displayedColumns: string[] = ["company", "directOrders", "companyQuotesTotal", "conversionRate", "totalOrders", "airportOrders", "lastPullDate"];
+    public chartName = 'companies-quotes-deal-table';
+    public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
     public dataSource: any;
 
     constructor(

@@ -47,7 +47,7 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
                 //    for (const orders of data.totalOrdersByMonth) {
                 //        this.totalOrders = orders.count;
                 //    }
-                //}
+                // }
             }, (error: any) => {
             });
     }
