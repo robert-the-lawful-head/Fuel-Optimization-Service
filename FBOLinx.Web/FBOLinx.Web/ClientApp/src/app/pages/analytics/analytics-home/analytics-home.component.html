@@ -1,47 +1,47 @@
 <div class="row">
     <div class="col-10 col-sm-6">
-            <div class="d-inline-block pr-2" style="width: 130px">
-                <mat-form-field>
-                    <input
-                        matInput
-                        [max]="filterEndDate"
-                        [(ngModel)]="filterStartDate"
-                        [matDatepicker]="dashboardSettingsStartDateFilter"
-                        (focus)="dashboardSettingsStartDateFilter.open()"
-                        placeholder="Start Date"
-                        (dateChange)="applyDateFilterChange()"
-                    />
-                    <mat-datepicker-toggle
-                        matSuffix
-                        [for]="dashboardSettingsStartDateFilter"
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker
-                        #dashboardSettingsStartDateFilter
-                        disabled="false"
-                    ></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="d-inline-block pl-2" style="width: 130px">
-                <mat-form-field>
-                    <input
-                        matInput
-                        [min]="filterStartDate"
-                        [(ngModel)]="filterEndDate"
-                        [matDatepicker]="dashboardSettingsEndDateFilter"
-                        (focus)="dashboardSettingsEndDateFilter.open()"
-                        placeholder="End Date"
-                        (dateChange)="applyDateFilterChange()"
-                    />
-                    <mat-datepicker-toggle
-                        matSuffix
-                        [for]="dashboardSettingsEndDateFilter"
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker
-                        #dashboardSettingsEndDateFilter
-                        disabled="false"
-                    ></mat-datepicker>
-                </mat-form-field>
-            </div>
+        <div class="d-inline-block pr-2" style="width: 130px">
+            <mat-form-field>
+                <input
+                    matInput
+                    [max]="filterEndDate"
+                    [(ngModel)]="filterStartDate"
+                    [matDatepicker]="dashboardSettingsStartDateFilter"
+                    (focus)="dashboardSettingsStartDateFilter.open()"
+                    placeholder="Start Date"
+                    (dateChange)="applyDateFilterChange()"
+                />
+                <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dashboardSettingsStartDateFilter"
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsStartDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="d-inline-block pl-2" style="width: 130px">
+            <mat-form-field>
+                <input
+                    matInput
+                    [min]="filterStartDate"
+                    [(ngModel)]="filterEndDate"
+                    [matDatepicker]="dashboardSettingsEndDateFilter"
+                    (focus)="dashboardSettingsEndDateFilter.open()"
+                    placeholder="End Date"
+                    (dateChange)="applyDateFilterChange()"
+                />
+                <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dashboardSettingsEndDateFilter"
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsEndDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
     </div>
 </div>
 
@@ -80,6 +80,11 @@
 </div>
 
 <div class="row">
+    <div class="col-12">
+        <app-analytics-companies-quotes-deal
+            #analyticsCompaniesQuotesDealTable
+        ></app-analytics-companies-quotes-deal>
+    </div>
     <div class="col-md-6">
         <app-analytics-orders-quote
             #analyticsOrdersQuoteChart
@@ -112,13 +117,6 @@
             [startDate]="filterStartDate"
             [endDate]="filterEndDate"
         ></app-analytics-volumes-nearby-airport>
-    </div>
-    <div class="col-md-6">
-        <app-analytics-companies-quotes-deal
-            #analyticsCompaniesQuotesDealTable
-            [startDate]="filterStartDate"
-            [endDate]="filterEndDate"
-        ></app-analytics-companies-quotes-deal>
     </div>
     <div class="col-md-6">
         <app-analytics-fuel-vendor-source

@@ -99,7 +99,6 @@ export class AnalyticsHomeComponent implements OnInit {
         this.analyticsOrdersOverTimeChart.refreshData();
         this.analyticsVolumesNearbyAirportChart.refreshData();
         this.analyticsCustomerBreakdownChart.refreshData();
-        this.analyticsCompaniesQuotesDealTable.refreshData();
         this.analyticsFuelVendorSourceChart.refreshData();
         this.analyticsMarketShareFboAirportChart.refreshData();
     }
