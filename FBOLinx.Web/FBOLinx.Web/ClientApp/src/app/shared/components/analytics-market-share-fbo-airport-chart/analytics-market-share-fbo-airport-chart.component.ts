@@ -1,5 +1,5 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Input } from '@angular/core';
-
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import * as moment from 'moment';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -12,8 +12,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
     styleUrls: ['./analytics-market-share-fbo-airport-chart.component.scss'],
 })
 export class AnalyticsMarketShareFboAirportChartComponent implements OnInit, AfterViewInit, OnDestroy {
-    @Input() startDate: Date;
-    @Input() endDate: Date;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
 
     // Public Members
     public chartName = 'market-share-fbo-airport-chart';
@@ -40,6 +40,8 @@ export class AnalyticsMarketShareFboAirportChartComponent implements OnInit, Aft
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
+        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
         this.icao = this.sharedService.currentUser.icao;
     }
 
@@ -66,7 +68,7 @@ export class AnalyticsMarketShareFboAirportChartComponent implements OnInit, Aft
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getMarketShareFboAirport(this.sharedService.currentUser.fboId, this.startDate, this.endDate)
+            .getMarketShareFboAirport(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
             }, () => {

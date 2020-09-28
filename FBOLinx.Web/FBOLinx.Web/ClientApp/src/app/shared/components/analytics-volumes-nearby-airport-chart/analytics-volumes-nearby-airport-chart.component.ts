@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { MatSliderChange } from '@angular/material/slider';
-
+import * as moment from 'moment';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -13,8 +13,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
     styleUrls: ['./analytics-volumes-nearby-airport-chart.component.scss'],
 })
 export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
-    @Input() startDate: Date;
-    @Input() endDate: Date;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
 
     // Public Members
     public chartName: 'volumes-nearby-airport-chart';
@@ -39,7 +39,10 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
-    ) {}
+    ) {
+        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+    }
 
     ngOnInit() {
         this.refreshData();
@@ -48,7 +51,7 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getVolumesNearbyAirport(this.sharedService.currentUser.fboId, this.startDate, this.endDate, this.mile)
+            .getVolumesNearbyAirport(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate, this.mile)
             .subscribe((data: any) => {
                 this.totalOrdersData = data;
             }, () => {
