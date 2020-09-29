@@ -856,6 +856,8 @@ namespace FBOLinx.Web.Controllers
                                             .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd < request.EndDateTime.GetValueOrDefault().AddDays(1))
                                             .Count();
 
+                string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
+
                 List<FbolinxContractFuelVendorTransactionsCountAtAirport> fuelerlinxContractFuelVendorOrdersCount = _fuelerLinxService.GetContractFuelVendorsTransactionsCountForAirport(request).Result;
 
                 List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>()
@@ -869,10 +871,13 @@ namespace FBOLinx.Web.Controllers
 
                 foreach(FbolinxContractFuelVendorTransactionsCountAtAirport vendor in fuelerlinxContractFuelVendorOrdersCount)
                 {
-                    NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
-                    chartItemType.Name = vendor.ContractFuelVendor;
-                    chartItemType.Value = vendor.TransactionsCount.GetValueOrDefault();
-                    chartData.Add(chartItemType);
+                    if (vendor.ContractFuelVendor != "FBOlinx" && vendor.ContractFuelVendor != fbo + " - " + icao)
+                    {
+                        NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
+                        chartItemType.Name = vendor.ContractFuelVendor;
+                        chartItemType.Value = vendor.TransactionsCount.GetValueOrDefault();
+                        chartData.Add(chartItemType);
+                    }
                 }
 
                 return Ok(chartData);
