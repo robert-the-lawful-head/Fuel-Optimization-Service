@@ -19,8 +19,14 @@ import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmar
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 import { SharedService } from '../../../layouts/shared-service';
 
+// Enums
+import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
+import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
+import { EnumOptions } from '../../../models/enum-options';
+
 // Components
 import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
+import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
 
 import * as SharedEvents from '../../../models/sharedEvents';
 
@@ -39,17 +45,17 @@ export interface TemporaryAddOnMargin {
 }
 
 export interface TailLookupResponse {
-    pricePerGallon?: number;
-    fees?: number;
     template?: string;
     company?: string;
     makeModel?: string;
+    pricingList: Array<any>;
 }
 
 @Component({
     selector: 'app-fbo-prices-home',
     templateUrl: './fbo-prices-home.component.html',
-    styleUrls: ['./fbo-prices-home.component.scss'],
+  styleUrls: ['./fbo-prices-home.component.scss']
+    
 })
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChildren('tooltip') priceTooltips: QueryList<any>;
@@ -66,7 +72,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public isLoadingRetail = false;
     public isLoadingCost = false;
     public tailNumber: string;
-    public fuelVolume = 1;
+    public flightTypeClassification: FlightTypeClassifications = FlightTypeClassifications.Private;
+    public departureType: ApplicableTaxFlights = ApplicableTaxFlights.DomesticOnly;
+    public strictApplicableTaxFlightOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictApplicableTaxFlightOptions;
+    public strictFlightTypeClassificationOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictFlightTypeClassificationOptions;
 
     public tailLookupInfo: TailLookupResponse;
     public tailLookupError: boolean;
@@ -106,9 +115,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         private pricingTemplateService: PricingtemplatesService,
         private sharedService: SharedService,
         private customCustomerService: CustomcustomertypesService,
-        private temporaryAddOnMargin: TemporaryAddOnMarginService,
+      private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private NgxUiLoader: NgxUiLoaderService,
-        private fboPricesSelectDefaultTemplateDialog: MatDialog
+      private fboPricesSelectDefaultTemplateDialog: MatDialog,
+        private fboFeesAndTaxesDialog: MatDialog
     ) {}
 
     ngOnInit(): void {
@@ -306,9 +316,9 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         const tailLookupData = {
             icao: this.sharedService.currentUser.icao,
             tailNumber: this.tailNumber,
-            fuelVolume: this.fuelVolume,
             fboId: this.sharedService.currentUser.fboId,
-            groupId: this.sharedService.currentUser.groupId,
+          groupId: this.sharedService.currentUser.groupId,
+
         };
         this.tailLookupError = false;
         this.tailLookupInfo = undefined;
@@ -325,7 +335,24 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             this.tailLookupError = true;
             this.NgxUiLoader.stopLoader(this.tailLoader);
         });
-    }
+  }
+
+  public editFeesAndTaxes(): void {
+    const dialogRef = this.fboFeesAndTaxesDialog.open(
+      FeeAndTaxSettingsDialogComponent,
+      {
+        disableClose: true
+      }
+    );
+
+    dialogRef
+      .afterClosed()
+      .subscribe((result) => {
+        if (!result)
+          return;        
+      });
+  }
+
     // Private Methods
     private loadFboPrices() {
         return new Observable((observer) => {
@@ -463,7 +490,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             tooltipsArr[this.tooltipIndex].open();
             this.tooltipIndex--;
         }, 400);
-    }
+  }
 
     @HostListener('window:resize', ['$event'])
     private onResize(event: any) {

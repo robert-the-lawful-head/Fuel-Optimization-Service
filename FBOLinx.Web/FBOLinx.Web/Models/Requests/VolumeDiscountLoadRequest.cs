@@ -12,5 +12,7 @@ namespace FBOLinx.Web.Models.Requests
         public int FuelerlinxCompanyID { get; set; }
         [Required]
         public string ICAO { get; set; }
+        [Required]
+        public Enums.StrictFlightTypeClassifications FlightTypeClassification { get; set; }
     }
 }

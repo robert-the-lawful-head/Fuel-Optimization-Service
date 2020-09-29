@@ -70,6 +70,7 @@ import { FboPricesHomeComponent } from './fbo-prices/fbo-prices-home/fbo-prices-
 import { FbosHomeComponent } from './fbos/fbos-home/fbos-home.component';
 import { FbosGridComponent } from './fbos/fbos-grid/fbos-grid.component';
 import { FbosEditComponent } from './fbos/fbos-edit/fbos-edit.component';
+import { FeeAndTaxSettingsDialogComponent } from './fbo-prices/fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
 import { FuelreqsGridComponent } from './fuelreqs/fuelreqs-grid/fuelreqs-grid.component';
 import { FuelreqsHomeComponent } from './fuelreqs/fuelreqs-home/fuelreqs-home.component';
 import { GroupsDialogNewGroupComponent } from './groups/groups-dialog-new-group/groups-dialog-new-group.component';
@@ -203,6 +204,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     FbosHomeComponent,
     FbosGridComponent,
     FbosEditComponent,
+    FeeAndTaxSettingsDialogComponent,
     FuelreqsGridComponent,
     FuelreqsHomeComponent,
     GroupsDialogNewGroupComponent,

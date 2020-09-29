@@ -432,7 +432,12 @@ namespace FBOLinx.Web.Services
         private async Task<string> GetPriceBreakdownHTML(Models.CustomerInfoByGroup customer, Models.PricingTemplate pricingTemplate)
         {
             PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-            var priceResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid } );
+            var privatePricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private );
+            var commercialPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial);
+            
+            List<DTO.CustomerWithPricing> priceResults = new List<DTO.CustomerWithPricing>();
+            priceResults.AddRange(privatePricingResults);
+            priceResults.AddRange(commercialPricingResults);
 
             priceResults = priceResults.GroupBy(s => s.MinGallons).Select(s => s.Last()).ToList();
 
@@ -457,7 +462,7 @@ namespace FBOLinx.Web.Services
                 //}
                 //row =  row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
 
-                if (loopIndex + 1 < priceResults.Count)
+                if ((loopIndex + 1) < priceResults.Count)
                 {
                     row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
                     var next = priceResults[loopIndex + 1];
@@ -500,6 +505,7 @@ namespace FBOLinx.Web.Services
                 //    String.Format("{0:C}",
                 //        (model.CustomerMarginAmount.GetValueOrDefault() + model.FboFeeAmount.GetValueOrDefault())));
                 row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice)));
+                row = row.Replace("%PRODUCT_TYPE%", model.Product);
                 rowsHTML.Append(row);
                 loopIndex++;
             }

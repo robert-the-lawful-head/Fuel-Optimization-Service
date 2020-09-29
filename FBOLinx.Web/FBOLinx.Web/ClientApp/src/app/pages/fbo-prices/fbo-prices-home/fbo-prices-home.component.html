@@ -112,6 +112,16 @@
                 outline="true"
                 customStyle="min-height: 160px;"
             >
+              <div style="position: absolute; right: 10px; top: -30px;">
+                <button ni-button
+                        size="small"
+                        class="mr-1"
+                        view="'default'"
+                        (click)="editFeesAndTaxes()">
+                  Fees &amp; Taxes
+                </button>
+              </div>
+
                 <div class="row">
                     <div class="col-12">
                         <div class="mt-1 pricing-name">
@@ -371,14 +381,24 @@
                         </mat-form-field>
                     </div>
                     <div class="pr-2">
-                        <mat-form-field>
-                            <input
-                                matInput
-                                placeholder="Fuel Volume (gal)"
-                                [(ngModel)]="fuelVolume"
-                                aria-label="Fuel Volume (gal)"
-                            />
-                        </mat-form-field>
+                      <mat-form-field>
+                        <mat-label>Flight Type</mat-label>
+                        <mat-select placeholder="Flight Type" [(ngModel)]="flightTypeClassification">
+                          <mat-option *ngFor="let flightType of strictFlightTypeClassificationOptions" [value]="flightType.value">
+                            {{flightType.text}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    <div class="pr-2">
+                      <mat-form-field>
+                        <mat-label>Dom. v. Int.</mat-label>
+                        <mat-select placeholder="Dom. v. Int." [(ngModel)]="departureType">
+                          <mat-option *ngFor="let departureType of strictApplicableTaxFlightOptions" [value]="departureType.value">
+                            {{departureType.text}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
                     </div>
                     <div class="pr-2 invisible">
                         <mat-form-field>
@@ -405,8 +425,8 @@
                 <div *ngIf="tailLookupInfo && !tailLookupError">
                     <div class="tailLookupInfo">
                         <div class="h6 text-muted mt-0 mb-0">Price Per Gallon: </div>
-                        <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo && tailLookupInfo.pricePerGallon > 0">${{ tailLookupInfo.pricePerGallon | number: "1.4-4" }}</div>
-                        <div class="h6 mt-0 mb-0" *ngIf="!tailLookupInfo || tailLookupInfo.pricePerGallon <= 0">N/A</div>
+                        <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo && tailLookupInfo.priceList && tailLookupInfo.priceList.length > 0">${{ tailLookupInfo.priceList[0].allInPrice | number: "1.4-4" }}</div>
+                        <div class="h6 mt-0 mb-0" *ngIf="!tailLookupInfo || !tailLookupInfo.priceList || tailLookupInfo.priceList.length == 0">N/A</div>
                     </div>
                     <div class="tailLookupInfo">
                         <div class="h6 text-muted mt-0 mb-0">Pricing Template: </div>
