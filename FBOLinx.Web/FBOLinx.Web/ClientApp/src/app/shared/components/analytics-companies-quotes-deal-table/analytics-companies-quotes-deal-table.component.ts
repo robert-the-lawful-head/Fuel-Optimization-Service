@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import * as _ from 'lodash';
@@ -7,7 +7,9 @@ import * as moment from 'moment';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { FbosService } from '../../../services/fbos.service';
 import * as SharedEvent from '../../../models/sharedEvents';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
@@ -15,9 +17,12 @@ import * as SharedEvent from '../../../models/sharedEvents';
     styleUrls: ['./analytics-companies-quotes-deal-table.component.scss'],
 })
 export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild(MatSort) sort: MatSort;
+
     public filterStartDate: Date;
     public filterEndDate: Date;
     public icao: string;
+    public fbo: string;
     public icaoChangedSubscription: any;
     public chartName = 'companies-quotes-deal-table';
     public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
@@ -25,12 +30,18 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
 
     constructor(
         private fuelreqsService: FuelreqsService,
+        private fbosService: FbosService,
         private sharedService: SharedService,
-        private ngxLoader: NgxUiLoaderService
+        private ngxLoader: NgxUiLoaderService,
     ) {
         this.icao = this.sharedService.currentUser.icao;
         this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
-        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().add(7, 'd').format('MM/DD/YYYY'));
+        this.fbosService.get({ oid: this.sharedService.currentUser.fboId }).subscribe(
+            (data: any) => {
+                this.fbo = data.fbo;
+            }
+        );
     }
 
     ngOnInit() {
@@ -64,6 +75,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
             )
             .subscribe((data: any) => {
                 this.dataSource = new MatTableDataSource(data);
+                this.dataSource.sort = this.sort;
             }, () => {
             }, () => {
                 this.ngxLoader.stopLoader(this.chartName);

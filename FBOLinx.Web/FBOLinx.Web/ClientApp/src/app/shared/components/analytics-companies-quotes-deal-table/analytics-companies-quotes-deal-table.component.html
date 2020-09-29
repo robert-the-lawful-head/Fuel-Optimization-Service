@@ -47,6 +47,7 @@
                 <mat-form-field>
                     <mat-label>Company</mat-label>
                     <input matInput (keyup)="applyFilter($event)">
+                    <span matPrefix><i class="fa fa-search"></i></span>
                 </mat-form-field>
             </div>
         </div>
@@ -74,7 +75,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="totalOrders">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Orders </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Orders at {{fbo}} </th>
                     <td mat-cell *matCellDef="let info"> {{info.totalOrders}} </td>
                 </ng-container>
 
