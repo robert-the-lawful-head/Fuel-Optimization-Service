@@ -24,23 +24,28 @@ namespace FBOLinx.Web.Controllers
         private readonly FuelerLinxContext _fcontext;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         public IServiceScopeFactory _serviceScopeFactory;
-        private GroupFboService _groupFboService;
+        private readonly GroupFboService _groupFboService;
+        private readonly CustomerService _customerService;
 
-        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, CustomerService customerService)
         {
             _groupFboService = groupFboService;
             _context = context;
             _fcontext = fcontext;
             _HttpContextAccessor = httpContextAccessor;
             _serviceScopeFactory = serviceScopeFactory;
+            _customerService = customerService;
         }
 
         // GET: api/Groups
         [HttpGet]
-        public IEnumerable<Group> GetGroup()
+        public async Task<IEnumerable<Group>> GetGroup()
         {
             int groupId = UserService.GetClaimedGroupId(_HttpContextAccessor);
-            Models.User.UserRoles role = UserService.GetClaimedRole(_HttpContextAccessor);
+            var role = UserService.GetClaimedRole(_HttpContextAccessor);
+
+            //var customerNeedsAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
+
             return _context.Group
                         .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == Models.User.UserRoles.Conductor))
                         .Include(x => x.Users)

@@ -89,6 +89,7 @@ namespace FBOLinx.Web
             services.AddScoped<GroupTransitionService, GroupTransitionService>();
 
             services.AddTransient<GroupFboService, GroupFboService>();
+            services.AddTransient<CustomerService, CustomerService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
