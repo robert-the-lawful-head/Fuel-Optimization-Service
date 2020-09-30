@@ -106,10 +106,11 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     this.data.splice(this.data.indexOf(feeAndTax), 1);
     this.deletedFeesAndTaxes.push(feeAndTax);
     this.requiresSaving = true;
+    this.prepareDataSource();
   }
 
   public feeAndTaxAdded(): void {
-    this.data.push({ oid: 0, fboid: this.sharedService.currentUser.fboId, name: '', requiresUpdate: false, calculationType: 0, value: 0, flightTypeClassification: 0, departureType: 3 });
+    this.data.push({ oid: 0, fboid: this.sharedService.currentUser.fboId, name: '', requiresUpdate: false, calculationType: 0, value: 0, flightTypeClassification: 3, departureType: 3 });
     this.prepareDataSource();
     this.requiresSaving = true;
   }
