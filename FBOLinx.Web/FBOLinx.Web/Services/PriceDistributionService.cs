@@ -23,6 +23,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using MailSettings = FBOLinx.Web.Configurations.MailSettings;
+using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Services
 {
@@ -37,25 +38,26 @@ namespace FBOLinx.Web.Services
         private int _DistributionLogID = 0;
         private IHttpContextAccessor _HttpContextAccessor;
         private JwtManager _jwtManager;
+        private RampFeesService _RampFeesService;        
 
         #region Constructors
-        public PriceDistributionService(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
+        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService)
         {
             _HttpContextAccessor = httpContextAccessor;
             _FileProvider = fileProvider;
             _context = context;
             _fuelerLinxContext = fuelerLinxContext;
-            _MailSettings = mailSettings;
+            _MailSettings = mailSettings.Value;
             _jwtManager = jwtManager;
+            _RampFeesService = rampFeesService;
         }
         #endregion
 
         #region Static Methods
         public static async Task BeginPriceDistribution(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext,
-            DistributePricingRequest request, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
-        {
-            PriceDistributionService service = new PriceDistributionService(mailSettings, context, fuelerLinxContext, fileProvider, httpContextAccessor, jwtManager);
-            await service.DistributePricing(request);
+            DistributePricingRequest request, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, PriceDistributionService priceDistributionService)
+        {            
+            await priceDistributionService.DistributePricing(request);
         }
         #endregion
 
@@ -343,7 +345,7 @@ namespace FBOLinx.Web.Services
         {
             var pom = await new Controllers.CustomerMarginsController(_context).GetCustomerMarginsByPricingTemplateId(num);
             var res = pom as OkObjectResult;
-            var prom = await new Controllers.FbopricesController(_context, _HttpContextAccessor, _jwtManager).GetFbopricesByFboIdCurrent(fboId);
+            var prom = await new Controllers.FbopricesController(_context, _HttpContextAccessor, _jwtManager, _RampFeesService).GetFbopricesByFboIdCurrent(fboId);
             var resProm = prom as OkObjectResult;
          
             string body = "";

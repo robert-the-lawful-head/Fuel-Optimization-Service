@@ -10,6 +10,7 @@ namespace FBOLinx.Web.Models
     {
         private RampFeeCategories? _CategoryType = RampFeeCategories.Notset;
         private int? _CategoryMinValue;
+        private string _CategoryDescription = "";
 
         public enum RampFeeCategories: short
         {
@@ -75,9 +76,61 @@ namespace FBOLinx.Web.Models
             }
         }
 
+        [NotMapped]
         public string CategoryDescription
         {
-            get { return FBOLinx.Web.Utilities.Enum.GetDescription(CategoryType.GetValueOrDefault()); }
+            get
+            {
+                if (string.IsNullOrEmpty(_CategoryDescription))
+                    return FBOLinx.Web.Utilities.Enum.GetDescription(CategoryType.GetValueOrDefault());
+                return _CategoryDescription;
+            }
+            set
+            {
+                _CategoryDescription = value;
+            }
+        }
+
+        public string CategorizationDescription
+        {
+            get
+            {
+                switch (CategoryType)
+                {
+                    case RampFeeCategories.AircraftType:
+                        return "Applies to all  " + CategoryDescription + ".";
+                    case RampFeeCategories.AircraftSize:
+                        return "Applies to all aircraft with the size: " + FBOLinx.Web.Utilities.Enum.GetDescription((AirCrafts.AircraftSizes)(System.Convert.ToInt16(CategoryMinValue))) + ".";
+                    case RampFeeCategories.TailNumber:
+                        return "Applies to the following tails: " + CategoryStringValue;
+                    case RampFeeCategories.WeightRange:
+                        return "Applies to aircraft weighing between " + CategoryMinValue + " lbs. and " +
+                               CategoryMaxValue + " lbs.";
+                    case RampFeeCategories.Wingspan:
+                        return "Applies to aircraft with a wingspan between " + CategoryMinValue + " ft. and " + CategoryMaxValue + " ft.";
+                    default:
+                        return "Applies to all aircraft.";
+                }
+            }
+        }
+
+        public int GetCategoryPriority()
+        {
+            switch (CategoryType)
+            {
+                case RampFeeCategories.TailNumber:
+                    return 1;
+                case RampFeeCategories.AircraftType:
+                    return 2;
+                case RampFeeCategories.AircraftSize:
+                    return 3;
+                case RampFeeCategories.Wingspan:
+                    return 4;
+                case RampFeeCategories.WeightRange:
+                    return 5;
+                default:
+                    return 6;
+            }
         }
     }
 }

@@ -49,6 +49,7 @@ export interface TailLookupResponse {
     company?: string;
     makeModel?: string;
     pricingList: Array<any>;
+    rampFee: any;
 }
 
 @Component({

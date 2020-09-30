@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Models.Requests
 {
-    public class TailNumberLoadRequest
+    public class PriceLookupRequest
     {
-        [Required]
         public string TailNumber { get; set; }
         public int PricingTemplateID { get; set; }
         public string ICAO { get; set; }
@@ -20,5 +19,6 @@ namespace FBOLinx.Web.Models.Requests
         public Enums.FlightTypeClassifications FlightTypeClassification { get; set; }     
         [Required]
         public Enums.ApplicableTaxFlights DepartureType { get; set; }
+        public List<FboFeesAndTaxes> ReplacementFeesAndTaxes { get; set; }
     }
 }

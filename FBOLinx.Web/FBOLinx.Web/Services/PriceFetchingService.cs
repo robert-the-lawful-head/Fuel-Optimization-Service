@@ -79,7 +79,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        public async Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId, int customerInfoByGroupId, List<int> pricingTemplateIds, Enums.FlightTypeClassifications flightTypeClassifications, Enums.ApplicableTaxFlights departureType = Enums.ApplicableTaxFlights.All)
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId, int customerInfoByGroupId, List<int> pricingTemplateIds, Enums.FlightTypeClassifications flightTypeClassifications, Enums.ApplicableTaxFlights departureType = Enums.ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null)
         {
             _FboId = fboId;
             _GroupId = groupId;
@@ -93,8 +93,11 @@ namespace FBOLinx.Web.Services
                     defaultPricingTemplateId = defaultPricingTemplate.Oid;
 
                 //Prepare fees/taxes based on the provided departure type and flight type
-                var feesAndTaxes = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId && (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications)).ToListAsync();
-                feesAndTaxes = feesAndTaxes.Where(x => x.DepartureType == departureType || departureType == Enums.ApplicableTaxFlights.All).ToList();
+                if (feesAndTaxes == null)
+                {
+                    feesAndTaxes = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId && (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications)).ToListAsync();
+                    feesAndTaxes = feesAndTaxes.Where(x => x.DepartureType == departureType || departureType == Enums.ApplicableTaxFlights.All).ToList();
+                }                
 
                 //Fetch the customer pricing results
                 var customerPricingResults = await (from cg in _context.CustomerInfoByGroup

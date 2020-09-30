@@ -1,5 +1,5 @@
 ﻿{
-   "ContextClassName": "FboLinx_LocalContext",
+   "ContextClassName": "Dega_LocalContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -14,7 +14,7 @@
    "Tables": [
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[FBOFeesAndTaxes]"
+         "Name": "[dbo].[AircraftSpecifications]"
       }
    ],
    "UseDatabaseNames": false,

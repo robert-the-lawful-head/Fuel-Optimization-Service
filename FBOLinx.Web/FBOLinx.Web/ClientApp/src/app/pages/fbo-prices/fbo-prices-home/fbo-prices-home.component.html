@@ -423,23 +423,59 @@
                 <div *ngIf="tailLookupError" class="h6 mt-0 mb-0 text-danger pl-5">No Tail Price Found!</div>
 
                 <div *ngIf="tailLookupInfo && !tailLookupError">
-                    <div class="tailLookupInfo">
-                        <div class="h6 text-muted mt-0 mb-0">Price Per Gallon: </div>
-                        <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo && tailLookupInfo.priceList && tailLookupInfo.priceList.length > 0">${{ tailLookupInfo.priceList[0].allInPrice | number: "1.4-4" }}</div>
-                        <div class="h6 mt-0 mb-0" *ngIf="!tailLookupInfo || !tailLookupInfo.priceList || tailLookupInfo.priceList.length == 0">N/A</div>
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-6">                        
+                        <div class="tailLookupInfo">
+                          <div class="h6 text-muted mt-0 mb-0">Pricing Template: </div>
+                          <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.template ? tailLookupInfo.template : 'N/A' }}</div>
+                        </div>
+                        <div class="tailLookupInfo">
+                          <div class="h6 text-muted mt-0 mb-0">Company: </div>
+                          <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.company ? tailLookupInfo.company: 'N/A' }}</div>
+                        </div>
+                        <div class="tailLookupInfo">
+                          <div class="h6 text-muted mt-0 mb-0">Make/Model: </div>
+                          <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.makeModel ? tailLookupInfo.makeModel : 'N/A' }}</div>
+                        </div>
+                        <div class="tailLookupInfo">
+                          <div class="h6 text-muted mt-0 mb-0">Ramp Fee: </div>
+                          <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo?.rampFee">${{tailLookupInfo?.rampFee.price  | number: "1.2-4" }} waived at {{tailLookupInfo.rampFee.waived | number: "1.0"}} gal.</div>
+                          <div class="h6 mt-0 mb-0" *ngIf="!tailLookupInfo?.rampFee">N/A</div>
+                        </div>
+                        <div class="tailLookupInfo" *ngIf="tailLookupInfo?.rampFee">
+                          <div class="h6 text-muted mt-0 mb-0">Ramp Fee Rule: </div>
+                          <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo?.rampFee">{{tailLookupInfo.rampFee.categorizationDescription}}</div>
+                        </div>
+                      </div>
+
+                      <div class="col-6">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th class="pr-4">All-In Price</th>
+                              <th class="pr-4">Min. Gal.</th>
+                              <th class="pr-4">Max. Gal.</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let price of tailLookupInfo.pricingList">
+                              <td>
+                                ${{ price.allInPrice | number: "1.4-4" }}
+                              </td>
+                              <td>
+                                {{price.minGallons | number}}
+                              </td>
+                              <td>
+                                {{price.maxGallons | number}}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                    <div class="tailLookupInfo">
-                        <div class="h6 text-muted mt-0 mb-0">Pricing Template: </div>
-                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.template ? tailLookupInfo.template : 'N/A' }}</div>
-                    </div>
-                    <div class="tailLookupInfo">
-                        <div class="h6 text-muted mt-0 mb-0">Company: </div>
-                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.company ? tailLookupInfo.company: 'N/A' }}</div>
-                    </div>
-                    <div class="tailLookupInfo">
-                        <div class="h6 text-muted mt-0 mb-0">Make/Model: </div>
-                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.makeModel ? tailLookupInfo.makeModel : 'N/A' }}</div>
-                    </div>
+                  </div>
+                  
                 </div>
 
                 <ngx-ui-loader
