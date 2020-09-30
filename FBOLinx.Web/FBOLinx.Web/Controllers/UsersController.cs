@@ -64,6 +64,13 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
 
+            var fbo = _context.Fbos.FirstOrDefault(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
+            if (fbo != null)
+            {
+                fbo.LastLogin = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
             try
             {
                 var group = _context.Group.Find(user.GroupId);

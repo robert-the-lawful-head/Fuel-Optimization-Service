@@ -1,22 +1,19 @@
-<div>
-    <div *ngIf="groupsData || currentGroup">
-        <div *ngIf="currentGroup">
-            <app-groups-edit
-                [groupInfo]="currentGroup"
-                (saveClicked)="saveGroupEditClicked()"
-                (cancelClicked)="cancelGroupEditClicked()"
-            ></app-groups-edit>
-        </div>
-        <div *ngIf="!currentGroup && groupsData && fbosData">
-            <app-groups-grid
-                [groupsData]="groupsData"
-                [fbosData]="fbosData"
-                (editGroupClicked)="editGroupClicked($event)"
-                (editFboClicked)="editFboClicked($event)"
-            ></app-groups-grid>
-        </div>
+<div *ngIf="!(groupsFbosData || currentGroup)">
+    <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="groupsFbosData || currentGroup">
+    <div *ngIf="currentGroup">
+        <app-groups-edit
+            [groupInfo]="currentGroup"
+            (saveClicked)="saveGroupEditClicked()"
+            (cancelClicked)="cancelGroupEditClicked()"
+        ></app-groups-edit>
     </div>
-    <div *ngIf="!(groupsData || currentGroup)">
-        <mat-spinner></mat-spinner>
+    <div *ngIf="!currentGroup">
+        <app-groups-grid
+            [groupsFbosData]="groupsFbosData"
+            (editGroupClicked)="editGroupClicked($event)"
+            (editFboClicked)="editFboClicked($event)"
+        ></app-groups-grid>
     </div>
 </div>

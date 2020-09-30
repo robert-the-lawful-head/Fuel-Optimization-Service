@@ -8,6 +8,6 @@ namespace FBOLinx.Web.DTO
 {
     public class GroupViewModel : Group
     {
-
+        public int NeedAttentionCustomers { get; set; }
     }
 }
