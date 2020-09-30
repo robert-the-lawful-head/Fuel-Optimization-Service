@@ -57,7 +57,7 @@ namespace FBOLinx.Web.Controllers
         {
             var customersNeedAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
 
-            var groups = _context.Group
+            var groups = await _context.Group
                             .Where(x => !string.IsNullOrEmpty(x.GroupName))
                             .Include(x => x.Users)
                             .Include(x => x.Fbos)
@@ -77,12 +77,15 @@ namespace FBOLinx.Web.Controllers
                                 LastLogin = x.Fbos.Max(f => f.LastLogin),
                                 NeedAttentionCustomers = customersNeedAttention.Where(c => c.GroupId == x.Oid).Sum(c => c.CustomersNeedingAttention)
                             })
-                            .ToList();
+                            .ToListAsync();
+
+            var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
 
             //FbosViewModel used to display FBO info in the grid
-            var fbos = _context.Fbos
+            var fbos = await _context.Fbos
                             .Include(f => f.Users)
                             .Include(f => f.fboAirport)
+                            .Include(f => f.Fboprices)
                             .Join(customersNeedAttention,
                                   f => new { GroupId = f.GroupId ?? 0, FboId = f.Oid },
                                   cna => new { cna.GroupId, cna.FboId },
@@ -94,10 +97,11 @@ namespace FBOLinx.Web.Controllers
                                       Oid = f.Oid,
                                       GroupId = f.GroupId ?? 0,
                                       Users = f.Users,
+                                      PricingExpired = !f.Fboprices.Any(fp => fp.EffectiveTo > DateTime.UtcNow && products.Any(p => p.Description == fp.Product) && fp.Expired != true),
                                       LastLogin = f.LastLogin,
                                       NeedAttentionCustomers = cna.CustomersNeedingAttention
                                   }
-                            ).ToList();
+                            ).ToListAsync();
 
             return Ok(new GroupFboViewModel
             {
@@ -105,7 +109,6 @@ namespace FBOLinx.Web.Controllers
                 Fbos = fbos
             });
         }
-
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
