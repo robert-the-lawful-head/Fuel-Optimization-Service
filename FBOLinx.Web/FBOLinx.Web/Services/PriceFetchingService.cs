@@ -97,7 +97,10 @@ namespace FBOLinx.Web.Services
                 {
                     feesAndTaxes = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId && (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications)).ToListAsync();
                     feesAndTaxes = feesAndTaxes.Where(x => x.DepartureType == departureType || departureType == Enums.ApplicableTaxFlights.All).ToList();
-                }                
+                }
+                else {
+                    feesAndTaxes = feesAndTaxes.Where(x => (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications) && (x.DepartureType == departureType || departureType == Enums.ApplicableTaxFlights.All || x.DepartureType == Enums.ApplicableTaxFlights.All)).ToList();
+                }
 
                 //Fetch the customer pricing results
                 var customerPricingResults = await (from cg in _context.CustomerInfoByGroup
@@ -182,7 +185,7 @@ namespace FBOLinx.Web.Services
                         Group = groups.GroupName
                     }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToListAsync();
 
-                if (feesAndTaxes != null && feesAndTaxes.Count > 0)
+                if (feesAndTaxes == null || feesAndTaxes.Count == 0)
                     return customerPricingResults;
 
                 //Add domestic-departure-only price options
