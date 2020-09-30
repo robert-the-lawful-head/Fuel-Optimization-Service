@@ -25,5 +25,6 @@ namespace FBOLinx.Web.Models.Responses
         public string PricingTemplateName { get; set; }
         public string FuelDeskEmail { get; set; }
         public string CopyEmails { get; set; }
+        public double BasePrice { get; set; }
     }
 }

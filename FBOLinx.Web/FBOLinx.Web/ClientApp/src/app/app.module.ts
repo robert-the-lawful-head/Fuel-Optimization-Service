@@ -68,6 +68,7 @@ import { DistributionService } from './services/distribution.service';
 import { EmailcontentService } from './services/emailcontent.service';
 import { FboairportsService } from './services/fboairports.service';
 import { FbocontactsService } from './services/fbocontacts.service';
+import { FbofeesandtaxesService } from './services/fbofeesandtaxes.service';
 import { FbofeesService } from './services/fbofees.service';
 import { FbopreferencesService } from './services/fbopreferences.service';
 import { FbopricesService } from './services/fboprices.service';
@@ -167,6 +168,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     EmailcontentService,
     FboairportsService,
     FbocontactsService,
+    FbofeesandtaxesService,
     FbofeesService,
     FbopreferencesService,
     FbopricesService,
