@@ -21,10 +21,10 @@ export namespace EnumOptions {
     { text: "International", value: ApplicableTaxFlights.InternationalOnly },
   ];
 
-  export const flightTypeClassificationOptions: Array<EnumOption> = [
-    { text: "Not Set", value: FlightTypeClassifications.NotSet },
+  export const flightTypeClassificationOptions: Array<EnumOption> = [    
     { text: "Private", value: FlightTypeClassifications.Private },
-    { text: "Commercial", value: FlightTypeClassifications.Commercial }
+    { text: "Commercial", value: FlightTypeClassifications.Commercial },
+    { text: "All Types", value: FlightTypeClassifications.All }
   ];
 
   export const strictFlightTypeClassificationOptions: Array<EnumOption> = [
