@@ -4,7 +4,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Id** | **int?** |  | [optional] 
-**SupplierName** | **string** |  | 
+**SupplierName** | **string** |  | [optional] 
 **SupplierSite** | **string** |  | [optional] 
 **SupplierNumber** | **string** |  | [optional] 
 **PaymentTerms** | **string** |  | [optional] 

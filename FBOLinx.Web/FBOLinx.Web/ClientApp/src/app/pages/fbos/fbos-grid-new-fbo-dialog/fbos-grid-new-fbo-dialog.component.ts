@@ -1,9 +1,9 @@
-import { Component, Inject, EventEmitter, Output } from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { Component, Inject, EventEmitter, Output } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Services
-import { AcukwikairportsService } from "../../../services/acukwikairports.service";
-import { FbosService } from "../../../services/fbos.service";
+import { AcukwikairportsService } from '../../../services/acukwikairports.service';
+import { FbosService } from '../../../services/fbos.service';
 
 // Interfaces
 export interface NewFboModel {
@@ -17,9 +17,9 @@ export interface NewFboModel {
 }
 
 @Component({
-    selector: "app-fbos-grid-new-fbo-dialog",
-    templateUrl: "./fbos-grid-new-fbo-dialog.component.html",
-    styleUrls: ["./fbos-grid-new-fbo-dialog.component.scss"],
+    selector: 'app-fbos-grid-new-fbo-dialog',
+    templateUrl: './fbos-grid-new-fbo-dialog.component.html',
+    styleUrls: ['./fbos-grid-new-fbo-dialog.component.scss'],
 })
 export class FbosGridNewFboDialogComponent {
     @Output() contactAdded = new EventEmitter<any>();

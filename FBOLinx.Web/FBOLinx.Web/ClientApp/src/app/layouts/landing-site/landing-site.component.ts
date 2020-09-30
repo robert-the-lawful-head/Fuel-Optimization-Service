@@ -1,17 +1,17 @@
-import { Component, HostListener } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { Component, HostListener } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
-import { SharedService } from "../shared-service";
-import { UserService } from "../../services/user.service";
+import { SharedService } from '../shared-service';
+import { UserService } from '../../services/user.service';
 
 // Components
-import { ForgotPasswordDialogComponent } from "../../shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component";
-import { MatButtonToggleChange } from "@angular/material/button-toggle";
-import { LoginModalComponent } from "../../shared/components/login-modal/login-modal.component";
-import { RequestDemoModalComponent } from "../../shared/components/request-demo-modal/request-demo-modal.component";
-import { RequestDemoSuccessComponent } from "../../shared/components/request-demo-success/request-demo-success.component";
+import { ForgotPasswordDialogComponent } from '../../shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
+import { LoginModalComponent } from '../../shared/components/login-modal/login-modal.component';
+import { RequestDemoModalComponent } from '../../shared/components/request-demo-modal/request-demo-modal.component';
+import { RequestDemoSuccessComponent } from '../../shared/components/request-demo-success/request-demo-success.component';
 
 export interface ContactUsMessage {
     name: string;
@@ -26,37 +26,36 @@ export interface LoginRequest {
 }
 
 @Component({
-    moduleId: module.id,
-    selector: "landing-site-layout",
-    templateUrl: "./landing-site.component.html",
-    styleUrls: ["./landing-site.component.scss"],
+    selector: 'landing-site-layout',
+    templateUrl: './landing-site.component.html',
+    styleUrls: ['./landing-site.component.scss'],
     providers: [SharedService],
 })
 export class LandingSiteLayoutComponent {
-    public rememberMeUsernameKey = "rememberMeUsername";
-    public rememberMePasswordKey = "rememberMePassword";
+    public rememberMeUsernameKey = 'rememberMeUsername';
+    public rememberMePasswordKey = 'rememberMePassword';
 
     // Images
-    public slideHalfImage1URL = "../../../assets/content/slide-half-1.png";
-    public slideHalfImage2URL = "../../../assets/content/slide-half-2.png";
-    public slideHalfImage3URL = "../../../assets/content/slide-half-3.png";
-    public featureLayoutImage = "../../../assets/content/feature-layout.png";
-    public featureHtml5Image = "../../../assets/content/feature-html5.png";
-    public featureWebfontImage = "../../../assets/content/feature-webfonts.png";
-    public featureDesignImage = "../../../assets/content/feature-design.png";
-    public featureCustomizeImage = "../../../assets/content/feature-customize.png";
-    public featureSupportImage = "../../../assets/content/feature-support.png";
-    public paragonSmallLogoImage = "../../../assets/content/paragon-2c-logo_small.png";
-    public fuelerlinxLogo = "../../../assets/img/FuelerLinxLogo.png";
-    public x1fboLogo = "../../../assets/img/X1.png";
-    public millionAirLogo = "../../../assets/img/million-air.png";
-    public flightAwareLogo = "../../../assets/img/FlightAware.png";
-    public titanLogo = "../../../assets/img/titan.png";
-    public jetAviation = "../../../assets/img/JetAviation.png";
-    public amstatLogo = "../../../assets/img/Amstat.png";
-    public fbodirectorLogo = "../../../assets/img/fbodirector.png";
-    public fbopartnersLogo = "../../../assets/img/fbopartners.png";
-    public planeFrontImage = "../../../assets/img/landing-page/DSC03168.jpg";
+    public slideHalfImage1URL = '../../../assets/content/slide-half-1.png';
+    public slideHalfImage2URL = '../../../assets/content/slide-half-2.png';
+    public slideHalfImage3URL = '../../../assets/content/slide-half-3.png';
+    public featureLayoutImage = '../../../assets/content/feature-layout.png';
+    public featureHtml5Image = '../../../assets/content/feature-html5.png';
+    public featureWebfontImage = '../../../assets/content/feature-webfonts.png';
+    public featureDesignImage = '../../../assets/content/feature-design.png';
+    public featureCustomizeImage = '../../../assets/content/feature-customize.png';
+    public featureSupportImage = '../../../assets/content/feature-support.png';
+    public paragonSmallLogoImage = '../../../assets/content/paragon-2c-logo_small.png';
+    public fuelerlinxLogo = '../../../assets/img/FuelerLinxLogo.png';
+    public x1fboLogo = '../../../assets/img/X1.png';
+    public millionAirLogo = '../../../assets/img/million-air.png';
+    public flightAwareLogo = '../../../assets/img/FlightAware.png';
+    public titanLogo = '../../../assets/img/titan.png';
+    public jetAviation = '../../../assets/img/JetAviation.png';
+    public amstatLogo = '../../../assets/img/Amstat.png';
+    public fbodirectorLogo = '../../../assets/img/fbodirector.png';
+    public fbopartnersLogo = '../../../assets/img/fbopartners.png';
+    public planeFrontImage = '../../../assets/img/landing-page/DSC03168.jpg';
 
     public carouselImages: Array<any> = [
         this.slideHalfImage1URL,
@@ -87,7 +86,7 @@ export class LandingSiteLayoutComponent {
     public loginRequest: LoginRequest;
     public rememberMe: any;
     public isLoggingIn = false;
-    public error = "";
+    public error = '';
     public isSticky = false;
 
     constructor(
@@ -112,42 +111,42 @@ export class LandingSiteLayoutComponent {
             if (!result) {
                 return;
             }
-            if (result.mode === "request-demo") {
+            if (result.mode === 'request-demo') {
                 this.openRequestDemo();
             }
-            if (result.mode === "forgot-password") {
+            if (result.mode === 'forgot-password') {
                 this.forgotPassword();
             }
         });
     }
 
     public openRequestDemo() {
-        const data ={
+        const data = {
             succeed: false,
         };
         const dialogRef = this.requestDemoDialog.open(
             RequestDemoModalComponent,
             {
-                width: "600px",
-                height: "650px",
-                panelClass: "request-demo-container",
+                width: '600px',
+                height: '650px',
+                panelClass: 'request-demo-container',
                 data,
             }
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (!result) return;
+            if (!result) { return; }
 
             this.requestDemoSuccessDialog.open(RequestDemoSuccessComponent);
         });
     }
 
     public forgotPassword() {
-        const data = { username: "" };
+        const data = { username: '' };
         const dialogRef = this.forgotPasswordDialog.open(
             ForgotPasswordDialogComponent,
             {
-                width: "450px",
+                width: '450px',
                 data,
             }
         );
@@ -156,12 +155,12 @@ export class LandingSiteLayoutComponent {
             if (!result) {
                 return;
             }
-            console.log("Dialog data: ", result);
+            console.log('Dialog data: ', result);
             this.userService.resetPassword(result).subscribe(
                 () => {
                     this.snackBar.open(
-                        "An email has been sent with access instructions",
-                        "",
+                        'An email has been sent with access instructions',
+                        '',
                         {
                             duration: 5000,
                         }
@@ -170,7 +169,7 @@ export class LandingSiteLayoutComponent {
                 (error) => {
                     this.error = error;
                     // Simple message.
-                    this.snackBar.open(this.error, "", {
+                    this.snackBar.open(this.error, '', {
                         duration: 5000,
                     });
                 }
@@ -183,8 +182,8 @@ export class LandingSiteLayoutComponent {
             return;
         }
         if (!this.rememberMe) {
-            localStorage.setItem(this.rememberMeUsernameKey, "");
-            localStorage.setItem(this.rememberMePasswordKey, "");
+            localStorage.setItem(this.rememberMeUsernameKey, '');
+            localStorage.setItem(this.rememberMePasswordKey, '');
         } else {
             localStorage.setItem(
                 this.rememberMeUsernameKey,
@@ -253,7 +252,7 @@ export class LandingSiteLayoutComponent {
         }
     }
 
-    @HostListener("window:scroll", ["$event"])
+    @HostListener('window:scroll', ['$event'])
     public checkScroll(): void {
         this.isSticky = window.pageYOffset >= 171;
     }

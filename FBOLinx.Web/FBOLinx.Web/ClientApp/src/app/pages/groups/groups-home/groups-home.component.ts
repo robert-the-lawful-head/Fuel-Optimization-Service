@@ -1,32 +1,32 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { Store } from "@ngrx/store";
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 
-import { State } from "../../../store/reducers";
-import { breadcrumbSet } from "../../../store/actions";
+import { State } from '../../../store/reducers';
+import { breadcrumbSet } from '../../../store/actions';
 // Services
-import { GroupsService } from "../../../services/groups.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { GroupsService } from '../../../services/groups.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 const BREADCRUMBS: any[] = [
     {
-        title: "Main",
-        link: "/default-layout",
+        title: 'Main',
+        link: '/default-layout',
     },
     {
-        title: "Groups",
-        link: "",
+        title: 'Groups',
+        link: '',
     },
 ];
 
 @Component({
-    selector: "app-groups-home",
-    templateUrl: "./groups-home.component.html",
-    styleUrls: ["./groups-home.component.scss"],
+    selector: 'app-groups-home',
+    templateUrl: './groups-home.component.html',
+    styleUrls: ['./groups-home.component.scss'],
 })
 export class GroupsHomeComponent implements OnInit {
     // Public Members
-    public groupsData: any[];
+    public groupsFbosData: any;
     public currentGroup: any;
 
     constructor(
@@ -39,16 +39,18 @@ export class GroupsHomeComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.groupsService
-            .getAllGroups()
-            .subscribe((data: any) => (this.groupsData = data));
+        this.loadGroupsFbos();
     }
 
     public editGroupClicked(record) {
         if (this.sharedService.currentUser.role === 3) {
             this.sharedService.currentUser.groupId = record.oid;
         }
-        this.router.navigate(["/default-layout/groups/" + record.oid]);
+        this.router.navigate(['/default-layout/groups/' + record.oid]);
+    }
+
+    public editFboClicked(record) {
+        this.router.navigate(['/default-layout/fbos/' + record.oid]);
     }
 
     public deleteFboClicked() {}
@@ -65,5 +67,11 @@ export class GroupsHomeComponent implements OnInit {
             this.sharedService.currentUser.groupId = 0;
         }
         this.currentGroup = null;
+    }
+
+    private loadGroupsFbos() {
+        this.groupsService
+            .groupsAndFbos()
+            .subscribe((data: any) => (this.groupsFbosData = data));
     }
 }

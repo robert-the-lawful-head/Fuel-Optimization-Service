@@ -112,6 +112,16 @@
                 outline="true"
                 customStyle="min-height: 160px;"
             >
+              <div style="position: absolute; right: 10px; top: -30px;">
+                <button ni-button
+                        size="small"
+                        class="mr-1"
+                        view="'default'"
+                        (click)="editFeesAndTaxes()">
+                  Fees &amp; Taxes
+                </button>
+              </div>
+
                 <div class="row">
                     <div class="col-12">
                         <div class="mt-1 pricing-name">
@@ -371,14 +381,24 @@
                         </mat-form-field>
                     </div>
                     <div class="pr-2">
-                        <mat-form-field>
-                            <input
-                                matInput
-                                placeholder="Fuel Volume (gal)"
-                                [(ngModel)]="fuelVolume"
-                                aria-label="Fuel Volume (gal)"
-                            />
-                        </mat-form-field>
+                      <mat-form-field>
+                        <mat-label>Flight Type</mat-label>
+                        <mat-select placeholder="Flight Type" [(ngModel)]="flightTypeClassification">
+                          <mat-option *ngFor="let flightType of strictFlightTypeClassificationOptions" [value]="flightType.value">
+                            {{flightType.text}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    <div class="pr-2">
+                      <mat-form-field>
+                        <mat-label>Dom. v. Int.</mat-label>
+                        <mat-select placeholder="Dom. v. Int." [(ngModel)]="departureType">
+                          <mat-option *ngFor="let departureType of strictApplicableTaxFlightOptions" [value]="departureType.value">
+                            {{departureType.text}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
                     </div>
                     <div class="pr-2 invisible">
                         <mat-form-field>
@@ -403,23 +423,59 @@
                 <div *ngIf="tailLookupError" class="h6 mt-0 mb-0 text-danger pl-5">No Tail Price Found!</div>
 
                 <div *ngIf="tailLookupInfo && !tailLookupError">
-                    <div class="tailLookupInfo">
-                        <div class="h6 text-muted mt-0 mb-0">Price Per Gallon: </div>
-                        <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo && tailLookupInfo.pricePerGallon > 0">${{ tailLookupInfo.pricePerGallon | number: "1.4-4" }}</div>
-                        <div class="h6 mt-0 mb-0" *ngIf="!tailLookupInfo || tailLookupInfo.pricePerGallon <= 0">N/A</div>
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-6">                        
+                        <div class="tailLookupInfo">
+                          <div class="h6 text-muted mt-0 mb-0">Pricing Template: </div>
+                          <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.template ? tailLookupInfo.template : 'N/A' }}</div>
+                        </div>
+                        <div class="tailLookupInfo">
+                          <div class="h6 text-muted mt-0 mb-0">Company: </div>
+                          <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.company ? tailLookupInfo.company: 'N/A' }}</div>
+                        </div>
+                        <div class="tailLookupInfo">
+                          <div class="h6 text-muted mt-0 mb-0">Make/Model: </div>
+                          <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.makeModel ? tailLookupInfo.makeModel : 'N/A' }}</div>
+                        </div>
+                        <div class="tailLookupInfo">
+                          <div class="h6 text-muted mt-0 mb-0">Ramp Fee: </div>
+                          <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo?.rampFee">${{tailLookupInfo?.rampFee.price  | number: "1.2-4" }} waived at {{tailLookupInfo.rampFee.waived | number: "1.0"}} gal.</div>
+                          <div class="h6 mt-0 mb-0" *ngIf="!tailLookupInfo?.rampFee">N/A</div>
+                        </div>
+                        <div class="tailLookupInfo" *ngIf="tailLookupInfo?.rampFee">
+                          <div class="h6 text-muted mt-0 mb-0">Ramp Fee Rule: </div>
+                          <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo?.rampFee">{{tailLookupInfo.rampFee.categorizationDescription}}</div>
+                        </div>
+                      </div>
+
+                      <div class="col-6">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th class="pr-4">All-In Price</th>
+                              <th class="pr-4">Min. Gal.</th>
+                              <th class="pr-4">Max. Gal.</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let price of tailLookupInfo.pricingList">
+                              <td>
+                                ${{ price.allInPrice | number: "1.4-4" }}
+                              </td>
+                              <td>
+                                {{price.minGallons | number}}
+                              </td>
+                              <td>
+                                {{price.maxGallons | number}}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                    <div class="tailLookupInfo">
-                        <div class="h6 text-muted mt-0 mb-0">Pricing Template: </div>
-                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.template ? tailLookupInfo.template : 'N/A' }}</div>
-                    </div>
-                    <div class="tailLookupInfo">
-                        <div class="h6 text-muted mt-0 mb-0">Company: </div>
-                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.company ? tailLookupInfo.company: 'N/A' }}</div>
-                    </div>
-                    <div class="tailLookupInfo">
-                        <div class="h6 text-muted mt-0 mb-0">Make/Model: </div>
-                        <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.makeModel ? tailLookupInfo.makeModel : 'N/A' }}</div>
-                    </div>
+                  </div>
+                  
                 </div>
 
                 <ngx-ui-loader

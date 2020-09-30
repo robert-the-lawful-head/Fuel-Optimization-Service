@@ -359,6 +359,27 @@ namespace IO.Swagger.Model {
     public double? ReportedRampFee { get; set; }
 
     /// <summary>
+    /// Gets or Sets PaymentEmail
+    /// </summary>
+    [DataMember(Name="paymentEmail", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "paymentEmail")]
+    public string PaymentEmail { get; set; }
+
+    /// <summary>
+    /// Gets or Sets IsPlaceholder
+    /// </summary>
+    [DataMember(Name="isPlaceholder", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "isPlaceholder")]
+    public bool? IsPlaceholder { get; set; }
+
+    /// <summary>
+    /// Gets or Sets HasPaid
+    /// </summary>
+    [DataMember(Name="hasPaid", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "hasPaid")]
+    public bool? HasPaid { get; set; }
+
+    /// <summary>
     /// Gets or Sets DepartureDateYearFirstFormat
     /// </summary>
     [DataMember(Name="departureDateYearFirstFormat", EmitDefaultValue=false)]
@@ -492,6 +513,27 @@ namespace IO.Swagger.Model {
     public CompanyFuelerDTO CompanyFuelVendorInfo { get; set; }
 
     /// <summary>
+    /// Gets or Sets AirportNotes
+    /// </summary>
+    [DataMember(Name="airportNotes", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "airportNotes")]
+    public List<AirportDetailsByCompanyNotesDTO> AirportNotes { get; set; }
+
+    /// <summary>
+    /// Gets or Sets FboNotes
+    /// </summary>
+    [DataMember(Name="fboNotes", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fboNotes")]
+    public List<FboByCompanyNotesDTO> FboNotes { get; set; }
+
+    /// <summary>
+    /// Gets or Sets RampFeeNotes
+    /// </summary>
+    [DataMember(Name="rampFeeNotes", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "rampFeeNotes")]
+    public List<RampFeeByCompanyNoteDTO> RampFeeNotes { get; set; }
+
+    /// <summary>
     /// Gets or Sets PreUpliftPriceSync
     /// </summary>
     [DataMember(Name="preUpliftPriceSync", EmitDefaultValue=false)]
@@ -555,6 +597,9 @@ namespace IO.Swagger.Model {
       sb.Append("  ReportedRampFeeWaivedAt: ").Append(ReportedRampFeeWaivedAt).Append("\n");
       sb.Append("  RampFeeCallFbo: ").Append(RampFeeCallFbo).Append("\n");
       sb.Append("  ReportedRampFee: ").Append(ReportedRampFee).Append("\n");
+      sb.Append("  PaymentEmail: ").Append(PaymentEmail).Append("\n");
+      sb.Append("  IsPlaceholder: ").Append(IsPlaceholder).Append("\n");
+      sb.Append("  HasPaid: ").Append(HasPaid).Append("\n");
       sb.Append("  DepartureDateYearFirstFormat: ").Append(DepartureDateYearFirstFormat).Append("\n");
       sb.Append("  ArrivalDateYearFirstFormat: ").Append(ArrivalDateYearFirstFormat).Append("\n");
       sb.Append("  ServiceDateYearFirstFormat: ").Append(ServiceDateYearFirstFormat).Append("\n");
@@ -574,6 +619,9 @@ namespace IO.Swagger.Model {
       sb.Append("  AirportInfo: ").Append(AirportInfo).Append("\n");
       sb.Append("  FboHandlerDetail: ").Append(FboHandlerDetail).Append("\n");
       sb.Append("  CompanyFuelVendorInfo: ").Append(CompanyFuelVendorInfo).Append("\n");
+      sb.Append("  AirportNotes: ").Append(AirportNotes).Append("\n");
+      sb.Append("  FboNotes: ").Append(FboNotes).Append("\n");
+      sb.Append("  RampFeeNotes: ").Append(RampFeeNotes).Append("\n");
       sb.Append("  PreUpliftPriceSync: ").Append(PreUpliftPriceSync).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

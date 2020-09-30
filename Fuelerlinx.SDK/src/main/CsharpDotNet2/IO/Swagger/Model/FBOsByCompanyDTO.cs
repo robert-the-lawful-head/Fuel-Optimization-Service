@@ -96,6 +96,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "notes")]
     public List<FboByCompanyNotesDTO> Notes { get; set; }
 
+    /// <summary>
+    /// Gets or Sets SupplierDetails
+    /// </summary>
+    [DataMember(Name="supplierDetails", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "supplierDetails")]
+    public SupplierDetailsDTO SupplierDetails { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -116,6 +123,7 @@ namespace IO.Swagger.Model {
       sb.Append("  PreferredProduct: ").Append(PreferredProduct).Append("\n");
       sb.Append("  SupplierId: ").Append(SupplierId).Append("\n");
       sb.Append("  Notes: ").Append(Notes).Append("\n");
+      sb.Append("  SupplierDetails: ").Append(SupplierDetails).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

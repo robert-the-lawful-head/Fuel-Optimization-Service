@@ -15,6 +15,7 @@ Name | Type | Description | Notes
 **PreferredProduct** | **string** |  | [optional] 
 **SupplierId** | **int?** |  | [optional] 
 **Notes** | [**List&lt;FboByCompanyNotesDTO&gt;**](FboByCompanyNotesDTO.md) |  | [optional] 
+**SupplierDetails** | [**SupplierDetailsDTO**](SupplierDetailsDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

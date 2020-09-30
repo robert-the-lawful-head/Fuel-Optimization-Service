@@ -1,7 +1,7 @@
-import { createReducer, on } from "@ngrx/store";
-import { customerGridSet, customerGridClear } from "../../actions";
+import { createReducer, on } from '@ngrx/store';
+import { customerGridSet, customerGridClear } from '../../actions';
 
-export const customerFeatureKey = "customer";
+export const customerFeatureKey = 'customer';
 
 export interface CustomerGridState {
     filter: string;

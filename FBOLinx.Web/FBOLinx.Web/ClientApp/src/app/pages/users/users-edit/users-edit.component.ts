@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, Output, OnInit } from "@angular/core";
-import { Router, ActivatedRoute } from "@angular/router";
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 // Services
-import { UserService } from "../../../services/user.service";
+import { UserService } from '../../../services/user.service';
 
 @Component({
-    selector: "app-users-edit",
-    templateUrl: "./users-edit.component.html",
-    styleUrls: ["./users-edit.component.scss"],
+    selector: 'app-users-edit',
+    templateUrl: './users-edit.component.html',
+    styleUrls: ['./users-edit.component.scss'],
 })
 export class UsersEditComponent implements OnInit {
     @Output() saveClicked = new EventEmitter<any>();
@@ -32,7 +32,7 @@ export class UsersEditComponent implements OnInit {
         if (this.userInfo) {
             this.loadAvailableRoles();
         } else {
-            const id = this.route.snapshot.paramMap.get("id");
+            const id = this.route.snapshot.paramMap.get('id');
             this.requiresRouting = true;
             this.userService.get({ oid: id }).subscribe((data: any) => {
                 this.userInfo = data;
@@ -43,7 +43,7 @@ export class UsersEditComponent implements OnInit {
 
     public saveEdit() {
         this.userService.update(this.userInfo).subscribe(() => {
-            if (this.userInfo.newPassword && this.userInfo.newPassword !== "") {
+            if (this.userInfo.newPassword && this.userInfo.newPassword !== '') {
                 this.userService
                     .updatePassword({
                         user: this.userInfo,
@@ -59,7 +59,7 @@ export class UsersEditComponent implements OnInit {
 
     public cancelEdit() {
         if (this.requiresRouting) {
-            this.router.navigate(["/default-layout/fbos/"]);
+            this.router.navigate(['/default-layout/fbos/']);
         } else {
             this.cancelClicked.emit();
         }

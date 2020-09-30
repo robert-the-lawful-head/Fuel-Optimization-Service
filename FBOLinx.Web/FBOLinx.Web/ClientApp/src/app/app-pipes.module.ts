@@ -1,7 +1,7 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-import { SafeHtmlPipe } from "./shared/pipes/safe-html-pipe.pipe";
+import { SafeHtmlPipe } from './shared/pipes/safe-html-pipe.pipe';
 
 @NgModule({
     imports: [CommonModule],

@@ -1,37 +1,93 @@
-<ni-card title="Companies' Quoting/Deal statistics" [headerBgColor]="'gray'">
+<ni-card title="Customer Statistics" [headerBgColor]="'gray'">
     <div class="chart-container">
-        <mat-form-field>
-            <mat-label>Company</mat-label>
-            <input matInput (keyup)="applyFilter($event)">
-        </mat-form-field>
+        <div class="flex">
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input
+                        matInput
+                        [max]="filterEndDate"
+                        [(ngModel)]="filterStartDate"
+                        [matDatepicker]="dashboardSettingsStartDateFilter"
+                        (focus)="dashboardSettingsStartDateFilter.open()"
+                        placeholder="Start Date"
+                        (dateChange)="refreshData()"
+                    />
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="dashboardSettingsStartDateFilter"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsStartDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input
+                        matInput
+                        [min]="filterStartDate"
+                        [(ngModel)]="filterEndDate"
+                        [matDatepicker]="dashboardSettingsEndDateFilter"
+                        (focus)="dashboardSettingsEndDateFilter.open()"
+                        placeholder="End Date"
+                        (dateChange)="refreshData()"
+                    />
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="dashboardSettingsEndDateFilter"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsEndDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="d-inline-block mr-2 ml-2">
+                <mat-form-field>
+                    <mat-label>Company</mat-label>
+                    <input matInput (keyup)="applyFilter($event)">
+                    <span matPrefix><i class="fa fa-search"></i></span>
+                </mat-form-field>
+            </div>
+        </div>
 
         <div class="table-container mat-elevation-z8">
-            <table mat-table [dataSource]="dataSource">
+            <table mat-table matSort [dataSource]="dataSource">
                 <ng-container matColumnDef="company">
-                    <th mat-header-cell *matHeaderCellDef> Company </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Company </th>
                     <td mat-cell *matCellDef="let info"> {{info.company}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="fboOrders">
-                    <th mat-header-cell *matHeaderCellDef> FBO's total orders </th>
-                    <td mat-cell *matCellDef="let info"> {{info.fboOrders}} </td>
+                <ng-container matColumnDef="directOrders">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Direct Orders </th>
+                    <td mat-cell *matCellDef="let info"> {{info.directOrders}} </td>
                 </ng-container>
-            
-                <ng-container matColumnDef="fboVolume">
-                    <th mat-header-cell *matHeaderCellDef> FBO's $volume </th>
-                    <td mat-cell *matCellDef="let info"> {{info.fboVolume}} </td>
+
+                <ng-container matColumnDef="companyQuotesTotal">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Number of Quotes </th>
+                    <td mat-cell *matCellDef="let info"> {{info.companyQuotesTotal}} </td>
                 </ng-container>
-            
+
+                <ng-container matColumnDef="conversionRate">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Conversion Rate </th>
+                    <td mat-cell *matCellDef="let info"> {{info.conversionRate}}% </td>
+                </ng-container>
+
+                <ng-container matColumnDef="totalOrders">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Orders at {{fbo}} </th>
+                    <td mat-cell *matCellDef="let info"> {{info.totalOrders}} </td>
+                </ng-container>
+
                 <ng-container matColumnDef="airportOrders">
-                    <th mat-header-cell *matHeaderCellDef> Airport's total orders </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Orders at {{icao}}</th>
                     <td mat-cell *matCellDef="let info"> {{info.airportOrders}} </td>
                 </ng-container>
-            
+
                 <ng-container matColumnDef="lastPullDate">
-                    <th mat-header-cell *matHeaderCellDef> Last Pull Date </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{icao}} Last Quoted </th>
                     <td mat-cell *matCellDef="let info"> {{info.lastPullDate}} </td>
                 </ng-container>
-            
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>

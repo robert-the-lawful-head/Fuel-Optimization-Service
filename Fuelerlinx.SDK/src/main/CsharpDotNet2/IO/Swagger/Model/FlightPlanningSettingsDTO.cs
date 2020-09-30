@@ -13,6 +13,13 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class FlightPlanningSettingsDTO {
     /// <summary>
+    /// Gets or Sets Id
+    /// </summary>
+    [DataMember(Name="id", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "id")]
+    public int? Id { get; set; }
+
+    /// <summary>
     /// Gets or Sets CompanyID
     /// </summary>
     [DataMember(Name="CompanyID", EmitDefaultValue=false)]
@@ -76,6 +83,14 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "FlightPlanningProviderPassword")]
     public string FlightPlanningProviderPassword { get; set; }
 
+    /// <summary>
+    /// Routing Types:             0 = Optimal             1 = Direct             2 = Custom    * `Optimal` - Optimal  * `Direct` - Direct  * `Custom` - Customer  
+    /// </summary>
+    /// <value>Routing Types:             0 = Optimal             1 = Direct             2 = Custom    * `Optimal` - Optimal  * `Direct` - Direct  * `Custom` - Customer  </value>
+    [DataMember(Name="defaultRoutingType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "defaultRoutingType")]
+    public int? DefaultRoutingType { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -84,6 +99,7 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class FlightPlanningSettingsDTO {\n");
+      sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  CompanyID: ").Append(CompanyID).Append("\n");
       sb.Append("  AFSAccountID: ").Append(AFSAccountID).Append("\n");
       sb.Append("  IFlightPlannerGUID: ").Append(IFlightPlannerGUID).Append("\n");
@@ -93,6 +109,7 @@ namespace IO.Swagger.Model {
       sb.Append("  FlightPlanningProvider: ").Append(FlightPlanningProvider).Append("\n");
       sb.Append("  FlightPlanningProviderUsername: ").Append(FlightPlanningProviderUsername).Append("\n");
       sb.Append("  FlightPlanningProviderPassword: ").Append(FlightPlanningProviderPassword).Append("\n");
+      sb.Append("  DefaultRoutingType: ").Append(DefaultRoutingType).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

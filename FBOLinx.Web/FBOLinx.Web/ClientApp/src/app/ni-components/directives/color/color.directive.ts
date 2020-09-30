@@ -4,10 +4,10 @@ import {
     Input,
     HostBinding,
     HostListener,
-} from "@angular/core";
+} from '@angular/core';
 
 @Directive({
-    selector: "[color]",
+    selector: '[color]',
 })
 export class ColorDirective implements OnInit {
     @Input() color: string | string[];
@@ -19,25 +19,25 @@ export class ColorDirective implements OnInit {
 
     ngOnInit() {
         this.defaultColor =
-            typeof this.color === "string" ? this.color : this.color[0];
+            typeof this.color === 'string' ? this.color : this.color[0];
         this.hoveredColor =
-            typeof this.color === "string" ? this.color : this.color[1];
+            typeof this.color === 'string' ? this.color : this.color[1];
         this.currentColor = this.defaultColor;
     }
 
-    @HostBinding("style.color") get getColor() {
+    @HostBinding('style.color') get getColor() {
         return this.currentColor;
     }
 
-    @HostBinding("class.custom-color") get getClass() {
+    @HostBinding('class.custom-color') get getClass() {
         return true;
     }
 
-    @HostListener("mouseenter") onMouseEnter() {
+    @HostListener('mouseenter') onMouseEnter() {
         this.currentColor = this.hoveredColor;
     }
 
-    @HostListener("mouseleave") onMouseLeave() {
+    @HostListener('mouseleave') onMouseLeave() {
         this.currentColor = this.defaultColor;
     }
 }

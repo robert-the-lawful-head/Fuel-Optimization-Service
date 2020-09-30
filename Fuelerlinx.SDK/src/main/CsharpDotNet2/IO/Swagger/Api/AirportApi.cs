@@ -54,7 +54,12 @@ namespace IO.Swagger.Api
         /// <returns>List&lt;AcukwikAirportDTO&gt;</returns>
         List<AcukwikAirportDTO> GetAllAirports ();
         /// <summary>
-        ///  
+        /// Fetches the min. and avg. prices at each airport for the authenticated company. 
+        /// </summary>
+        /// <returns>AveragePriceByAirportListResponse</returns>
+        AveragePriceByAirportListResponse GetAverageAndMinPriceByAirportList ();
+        /// <summary>
+        /// Fetch the unique countries found in the airport DB. 
         /// </summary>
         /// <returns>DistinctCountryListResponse</returns>
         DistinctCountryListResponse GetDistinctAirportCountries ();
@@ -402,7 +407,39 @@ path = path.Replace("{" + "noteId" + "}", ApiClient.ParameterToString(noteId));
         }
     
         /// <summary>
-        ///  
+        /// Fetches the min. and avg. prices at each airport for the authenticated company. 
+        /// </summary>
+        /// <returns>AveragePriceByAirportListResponse</returns>            
+        public AveragePriceByAirportListResponse GetAverageAndMinPriceByAirportList ()
+        {
+            
+    
+            var path = "/api/Airport/average-and-min-price/list";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAverageAndMinPriceByAirportList: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAverageAndMinPriceByAirportList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (AveragePriceByAirportListResponse) ApiClient.Deserialize(response.Content, typeof(AveragePriceByAirportListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch the unique countries found in the airport DB. 
         /// </summary>
         /// <returns>DistinctCountryListResponse</returns>            
         public DistinctCountryListResponse GetDistinctAirportCountries ()

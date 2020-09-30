@@ -1,4 +1,59 @@
 <ni-card title="Comparison for nearby airports" [headerBgColor]="'gray'">
+    <div class="flex">
+        <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+            <mat-form-field>
+                <input
+                    matInput
+                    [max]="filterEndDate"
+                    [(ngModel)]="filterStartDate"
+                    [matDatepicker]="dashboardSettingsStartDateFilter"
+                    (focus)="dashboardSettingsStartDateFilter.open()"
+                    placeholder="Start Date"
+                    (dateChange)="refreshData()"
+                />
+                <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dashboardSettingsStartDateFilter"
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsStartDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+            <mat-form-field>
+                <input
+                    matInput
+                    [min]="filterStartDate"
+                    [(ngModel)]="filterEndDate"
+                    [matDatepicker]="dashboardSettingsEndDateFilter"
+                    (focus)="dashboardSettingsEndDateFilter.open()"
+                    placeholder="End Date"
+                    (dateChange)="refreshData()"
+                />
+                <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dashboardSettingsEndDateFilter"
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsEndDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="d-inline-block mr-2 ml-2">
+            <label>Miles: </label>
+            <mat-slider
+                thumbLabel
+                tickInterval="1"
+                min="0"
+                max="200"
+                [value]="mile"
+                (change)="changeMile($event)"
+            ></mat-slider>
+        </div>
+    </div>
     <div class="chart-container">
         <ngx-charts-bar-vertical
             *ngIf="totalOrdersData"
@@ -10,7 +65,7 @@
             [yAxis]="true"
         ></ngx-charts-bar-vertical>
     </div>
-    <div class="distance-selector">
+    <!-- <div class="distance-selector">
         <label>Miles: </label>
         <mat-slider
             thumbLabel
@@ -20,7 +75,7 @@
             [value]="mile"
             (change)="changeMile($event)"
         ></mat-slider>
-    </div>
+    </div> -->
     <ngx-ui-loader
         [loaderId]="chartName"
         bgsPosition="center-center"

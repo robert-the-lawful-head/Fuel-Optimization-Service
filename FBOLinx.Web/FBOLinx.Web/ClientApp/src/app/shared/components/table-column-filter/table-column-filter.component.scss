@@ -1,0 +1,16 @@
+.table-column-filter {
+  position: absolute;
+  right: 0;
+  top: -10px;
+}
+
+.mat-sort-header-content {
+  text-align: left !important;
+  display: flex;
+  align-items: inherit !important;
+}
+
+
+.overflow-label .table-column-filter {
+  top: 0px !important;
+}

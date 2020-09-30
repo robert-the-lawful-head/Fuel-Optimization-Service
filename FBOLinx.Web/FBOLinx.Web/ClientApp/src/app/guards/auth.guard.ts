@@ -1,16 +1,16 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import {
     Router,
     CanActivate,
     ActivatedRouteSnapshot,
     RouterStateSnapshot,
-} from "@angular/router";
+} from '@angular/router';
 
-import { User } from "../models/User";
+import { User } from '../models/User';
 
-import { AuthenticationService } from "../services/authentication.service";
+import { AuthenticationService } from '../services/authentication.service';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
     private currentUser: User;
 
@@ -42,7 +42,7 @@ export class AuthGuard implements CanActivate {
         }
 
         // not logged in so redirect to login page with the return url
-        this.router.navigate(["/landing-site"], {
+        this.router.navigate(['/landing-site'], {
             queryParams: { returnUrl: state.url },
         });
         return false;

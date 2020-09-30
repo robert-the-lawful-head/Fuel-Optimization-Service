@@ -1,27 +1,27 @@
-import { Injectable, Inject } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class FbopricesService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
 
-    constructor(private http: HttpClient, @Inject("BASE_URL") baseUrl: string) {
+    constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         this.headers = new HttpHeaders({
-            "Content-Type": "application/json; charset=utf-8",
+            'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + "api/fboprices";
+        this.accessPointUrl = baseUrl + 'api/fboprices';
     }
 
     public get(payload) {
-        return this.http.get(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.get(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
 
     public getFbopricesByFboIdCurrent(fboId) {
         return this.http.get(
-            this.accessPointUrl + "/fbo/" + fboId + "/current",
+            this.accessPointUrl + '/fbo/' + fboId + '/current',
             {
                 headers: this.headers,
             }
@@ -30,7 +30,7 @@ export class FbopricesService {
 
     public checkFboExpiredPricing(fboId) {
         return this.http.get(
-            this.accessPointUrl + "/fbo/" + fboId + "/ispricingexpired",
+            this.accessPointUrl + '/fbo/' + fboId + '/ispricingexpired',
             {
                 headers: this.headers,
             }
@@ -39,7 +39,7 @@ export class FbopricesService {
 
     public checkFboExpiredPricingGroup(groupid) {
         return this.http.get(
-            this.accessPointUrl + "/group/" + groupid + "/ispricingexpiredgroupadmin",
+            this.accessPointUrl + '/group/' + groupid + '/ispricingexpiredgroupadmin',
             {
                 headers: this.headers,
             }
@@ -48,7 +48,7 @@ export class FbopricesService {
 
     public getFbopricesByFboIdStaged(fboId) {
         return this.http.get(
-            this.accessPointUrl + "/fbo/" + fboId + "/staged",
+            this.accessPointUrl + '/fbo/' + fboId + '/staged',
             {
                 headers: this.headers,
             }
@@ -58,11 +58,11 @@ export class FbopricesService {
     public getFbopricesByFboIdAndProductCurrent(fboId, product) {
         return this.http.get(
             this.accessPointUrl +
-                "/fbo/" +
+                '/fbo/' +
                 fboId +
-                "/product/" +
+                '/product/' +
                 encodeURIComponent(product) +
-                "/current",
+                '/current',
             {
                 headers: this.headers,
             }
@@ -71,7 +71,7 @@ export class FbopricesService {
 
     public checkifExistFrboPrice(fboId, payload) {
         return this.http.post(
-            this.accessPointUrl + "/fbo/" + fboId + "/check/",
+            this.accessPointUrl + '/fbo/' + fboId + '/check/',
             payload,
             {
                 headers: this.headers,
@@ -81,7 +81,7 @@ export class FbopricesService {
 
     public suspendAllPricing(fboId) {
         return this.http.post(
-            this.accessPointUrl + "/fbo/" + fboId + "/suspendpricing",
+            this.accessPointUrl + '/fbo/' + fboId + '/suspendpricing',
             {
                 headers: this.headers,
             }
@@ -90,7 +90,7 @@ export class FbopricesService {
 
     public suspendJetPricing(fboId) {
         return this.http.post(
-            this.accessPointUrl + "/fbo/" + fboId + "/suspendpricing/jet",
+            this.accessPointUrl + '/fbo/' + fboId + '/suspendpricing/jet',
             {
                 headers: this.headers,
             }
@@ -99,7 +99,7 @@ export class FbopricesService {
 
     public suspendRetailPricing(fboId) {
         return this.http.post(
-            this.accessPointUrl + "/fbo/" + fboId + "/suspendpricing/retail",
+            this.accessPointUrl + '/fbo/' + fboId + '/suspendpricing/retail',
             {
                 headers: this.headers,
             }
@@ -108,7 +108,7 @@ export class FbopricesService {
 
     public getPricesByMonthForFbo(fboId, payload) {
         return this.http.post(
-            this.accessPointUrl + "/analysis/prices-by-month/fbo/" + fboId,
+            this.accessPointUrl + '/analysis/prices-by-month/fbo/' + fboId,
             payload,
             {
                 headers: this.headers,
@@ -118,7 +118,7 @@ export class FbopricesService {
 
     public getFuelPricesForCompany(payload) {
         return this.http.post(
-            this.accessPointUrl + "/volume-discounts-for-customer/", payload,
+            this.accessPointUrl + '/price-lookup-for-customer/', payload,
             {
                 headers: this.headers,
             }
@@ -132,13 +132,13 @@ export class FbopricesService {
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + "/" + payload.oid, {
+        return this.http.delete(this.accessPointUrl + '/' + payload.oid, {
             headers: this.headers,
         });
     }
 
     public update(payload) {
-        return this.http.put(this.accessPointUrl + "/" + payload.oid, payload, {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
     }

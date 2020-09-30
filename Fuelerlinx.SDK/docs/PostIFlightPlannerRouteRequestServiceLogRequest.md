@@ -3,6 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Id** | **int?** |  | [optional] 
 **RequestDate** | **DateTime?** |  | [optional] 
 **Apikey** | **string** |  | [optional] 
 **CompanyId** | **int?** |  | 

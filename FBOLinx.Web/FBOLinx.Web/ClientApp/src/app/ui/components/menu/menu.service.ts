@@ -1,19 +1,19 @@
-import { throwError as observableThrowError } from "rxjs";
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { throwError as observableThrowError } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-    providedIn: "root",
+    providedIn: 'root',
 })
 export class MenuService {
     constructor(private http: HttpClient) {}
 
     public getData() {
-        const URL = "../../../../assets/data/main-menu.json";
+        const URL = '../../../../assets/data/main-menu.json';
         return this.http.get(URL);
     }
 
     public handleError(error: any) {
-        return observableThrowError(error.error || "Server Error");
+        return observableThrowError(error.error || 'Server Error');
     }
 }

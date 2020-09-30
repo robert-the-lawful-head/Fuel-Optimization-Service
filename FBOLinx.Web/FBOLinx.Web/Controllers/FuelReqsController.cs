@@ -581,7 +581,9 @@ namespace FBOLinx.Web.Controllers
                 var result = _fuelerLinxService.GetTransactionsCountForAirport(new FBOLinxOrdersRequest()
                     {EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = request.ICAO});
 
-                return Ok(result);
+                var response = new { totalOrders = result.Result, icao = request.ICAO };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -831,6 +833,114 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        [HttpPost("analysis/fbo-fuel-vendor-sources/fbo/{fboId}")]
+        public IActionResult GetFBOFuelVendorSources([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            try
+            {
+                string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+                
+                request.Icao = icao;
+
+                int fboOrderCount = _context.FuelReq
+                                            .Where(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd < request.EndDateTime.GetValueOrDefault().AddDays(1))
+                                            .Count();
+
+                string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
+
+                List<FbolinxContractFuelVendorTransactionsCountAtAirport> fuelerlinxContractFuelVendorOrdersCount = _fuelerLinxService.GetContractFuelVendorsTransactionsCountForAirport(request).Result;
+
+                List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>()
+                            {
+                                new NgxChartBarChartItemType
+                                {
+                                    Name = "Directs",
+                                    Value = fboOrderCount
+                                }
+                            };
+
+                foreach(FbolinxContractFuelVendorTransactionsCountAtAirport vendor in fuelerlinxContractFuelVendorOrdersCount)
+                {
+                    if (vendor.ContractFuelVendor != "FBOlinx" && vendor.ContractFuelVendor != fbo + " - " + icao)
+                    {
+                        NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
+                        chartItemType.Name = vendor.ContractFuelVendor;
+                        chartItemType.Value = vendor.TransactionsCount.GetValueOrDefault();
+                        chartData.Add(chartItemType);
+                    }
+                }
+
+                return Ok(chartData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("analysis/market-share-fbos-airport/fbo/{fboId}")]
+        public IActionResult GetMarketShareFBOsAtAirport([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            {
+                return BadRequest("Invalid FBO");
+            }
+
+            try
+            {
+                string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
+
+                request.Icao = icao;
+
+                string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
+
+                FboLinxFbosTransactionsCountResponse fuelerlinxFBOsOrdersCount = _fuelerLinxService.GetFBOsTransactionsCountForAirport(request);
+
+                List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>();
+
+                int i = 1;
+                foreach (GroupedTransactionCountByFBOAtAirport vendor in fuelerlinxFBOsOrdersCount.Result)
+                {
+                    if (vendor.Fbo.ToLower() != fbo.ToLower())
+                    {
+                        NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
+                        chartItemType.Name = "Competitor FBO " + i;
+                        chartItemType.Value = vendor.Count.GetValueOrDefault();
+                        chartData.Add(chartItemType);
+                        i++;
+                    }
+                    else
+                    {
+                        NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
+                        chartItemType.Name = vendor.Fbo;
+                        chartItemType.Value = vendor.Count.GetValueOrDefault();
+                        chartData.Add(chartItemType);
+                    }
+                }
+
+                return Ok(chartData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpPost("analysis/customers-breakdown/fbo/{fboId}")]
         public async Task<IActionResult> GetCustomersBreakdown([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
         {
@@ -902,12 +1012,15 @@ namespace FBOLinx.Web.Controllers
                                                  fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()).GetValueOrDefault()
                                 }).ToList();
 
-                var pricingLogs = _context.CompanyPricingLog
-                                            .Include("Customer")
-                                            .OrderByDescending(c => c.CreatedDate)
-                                            .GroupBy(c => c.Customer.Oid)
-                                            .Select(c => c.First())
-                                            .ToList();
+                var pricingLogs = (from cpl in _context.CompanyPricingLog
+                                   join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
+                                   join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
+                                   where cibg.GroupId == groupId && cpl.ICAO == icao
+                                   select new
+                                   {
+                                       CustomerId = cibg.CustomerId,
+                                       CreatedDate = cpl.CreatedDate
+                                   }).ToList();
 
                 var customers = _context.CustomerInfoByGroup
                                         .Where(c => c.GroupId.Equals(groupId))
@@ -917,18 +1030,39 @@ namespace FBOLinx.Web.Controllers
                                             Company = c.Company.Trim()
                                         })
                                         .Distinct();
+
+                FBOLinxOrdersRequest fbolinxOrdersRequest = new FBOLinxOrdersRequest();
+                fbolinxOrdersRequest.StartDateTime = request.StartDateTime;
+                fbolinxOrdersRequest.EndDateTime = request.EndDateTime;
+                fbolinxOrdersRequest.Icao = icao;
+
+                List<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount = _fuelerLinxService.GetCustomerTransactionsCountForAirport(fbolinxOrdersRequest).Result;
+
+                string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
+                fbolinxOrdersRequest.Fbo = fbo;
+                List<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerFBOOrdersCount = _fuelerLinxService.GetCustomerFBOTransactionsCount(fbolinxOrdersRequest).Result;
+
+
                 List<object> tableData = new List<object>();
                 foreach (var customer in customers)
                 {
+                    var fuelerLinxCustomerID = _context.Customers.Where(c => c.Oid.Equals(customer.CustomerId)).Select(c => c.FuelerlinxId).FirstOrDefault();
                     var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
-                    var companyPricingLog = pricingLogs.Where(c => c.Customer.Oid.Equals(customer.CustomerId)).FirstOrDefault();
+                    var companyQuotes = pricingLogs.Where(c => c.CreatedDate >= request.StartDateTime && c.CreatedDate <= request.EndDateTime && c.CustomerId.Equals(customer.CustomerId)).Count();
+                    var companyPricingLog = pricingLogs.Where(c => c.CustomerId.Equals(customer.CustomerId)).OrderByDescending(c => c.CreatedDate).FirstOrDefault();
+                    var totalOrders = fuelerlinxCustomerOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
+                    var airportTotalOrders = fuelerlinxCustomerOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
+
                     tableData.Add(new
                     {
                         customer.Company,
-                        FBOOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
-                        FBOVolume = selectedCompanyFuelReqs == null ? 0 : Math.Round(selectedCompanyFuelReqs.TotalVolume, 2),
-                        AirportOrders = fuelReqs.Sum(f => f.TotalOrders),
-                        LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString()
+                        CompanyQuotesTotal = companyQuotes,
+                        DirectOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
+                        ConversionRate = selectedCompanyFuelReqs == null || companyQuotes == 0 ? 0 : Math.Round(decimal.Parse(selectedCompanyFuelReqs.TotalOrders.ToString()) / decimal.Parse(companyQuotes.ToString()) * 100, 2),
+                        TotalOrders = totalOrders == null ? 0 : totalOrders,
+                        AirportOrders = airportTotalOrders == null ? 0 : airportTotalOrders,
+                        LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString(),
+                        airportICAO = icao
                     });
                 }
 

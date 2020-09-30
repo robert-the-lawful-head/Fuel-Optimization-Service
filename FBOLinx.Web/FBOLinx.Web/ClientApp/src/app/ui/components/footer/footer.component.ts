@@ -1,12 +1,12 @@
-import { Component, OnInit } from "@angular/core";
-import { AppService } from "../../../services/app.service";
-import * as moment from "moment";
+import { Component, OnInit } from '@angular/core';
+import { AppService } from '../../../services/app.service';
+import * as moment from 'moment';
 
 @Component({
-    selector: "app-footer",
-    templateUrl: "./footer.component.html",
-    styleUrls: ["./footer.component.scss"],
-    host: {class: "app-footer"},
+    selector: 'app-footer',
+    templateUrl: './footer.component.html',
+    styleUrls: ['./footer.component.scss'],
+    host: {class: 'app-footer'},
 })
 export class FooterComponent implements OnInit {
     public version: string;
@@ -17,7 +17,7 @@ export class FooterComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.year = moment().format("YYYY");
+        this.year = moment().format('YYYY');
     }
 
     private getAppVersion() {

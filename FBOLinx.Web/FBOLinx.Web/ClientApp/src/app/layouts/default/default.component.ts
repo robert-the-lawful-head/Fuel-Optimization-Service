@@ -1,28 +1,27 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import * as moment from "moment";
-import { Store } from "@ngrx/store";
+import { Component, OnInit, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import * as moment from 'moment';
+import { Store } from '@ngrx/store';
 
-import { State } from "../../store/reducers";
-import { getBreadcrumbs } from "../../store/selectors";
+import { State } from '../../store/reducers';
+import { getBreadcrumbs } from '../../store/selectors';
 
 // Services
-import { FbopricesService } from "../../services/fboprices.service";
-import { PricingtemplatesService } from "../../services/pricingtemplates.service";
-import { SharedService } from "../shared-service";
+import { FbopricesService } from '../../services/fboprices.service';
+import { PricingtemplatesService } from '../../services/pricingtemplates.service';
+import { SharedService } from '../shared-service';
 
 // Components
-import { PricingExpiredNotificationComponent } from "../../shared/components/pricing-expired-notification/pricing-expired-notification.component";
-import { fboChangedEvent, locationChangedEvent, fboPricesUpdatedEvent } from "../../models/sharedEvents";
-import { Observable } from "rxjs";
-import { NavigationStart, Router } from "@angular/router";
-import { delay } from "rxjs/operators";
+import { PricingExpiredNotificationComponent } from '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
+import { fboChangedEvent, locationChangedEvent, fboPricesUpdatedEvent } from '../../models/sharedEvents';
+import { Observable } from 'rxjs';
+import { NavigationStart, Router } from '@angular/router';
+import { delay } from 'rxjs/operators';
 
 @Component({
-    moduleId: module.id,
-    selector: "default-layout",
-    templateUrl: "default.component.html",
-    styleUrls: ["../layouts.scss"],
+    selector: 'default-layout',
+    templateUrl: 'default.component.html',
+    styleUrls: ['../layouts.scss'],
     providers: [SharedService],
 })
 export class DefaultLayoutComponent implements OnInit {
@@ -51,7 +50,7 @@ export class DefaultLayoutComponent implements OnInit {
         this.openedSidebar = false;
         this.boxed = false;
         this.compress = false;
-        this.menuStyle = "style-3";
+        this.menuStyle = 'style-3';
 
         if (this.sharedService.currentUser.fboId) {
             this.pricingTemplatesService
@@ -92,10 +91,10 @@ export class DefaultLayoutComponent implements OnInit {
         });
     }
 
-    checkIfPricesPanelVisible (url: string) {
+    checkIfPricesPanelVisible(url: string) {
         const blacklist = [
-            "/default-layout/groups",
-            "/default-layout/fbos",
+            '/default-layout/groups',
+            '/default-layout/fbos',
         ];
         if (blacklist.findIndex(v => v.startsWith(url)) >= 0) {
             this.hidePricesPanel = true;
@@ -108,10 +107,10 @@ export class DefaultLayoutComponent implements OnInit {
         const menu: string = this.menuStyle;
 
         return {
-            ["menu-" + menu]: menu,
+            ['menu-' + menu]: menu,
             boxed: this.boxed,
-            "compress-vertical-navbar": this.compress,
-            "open-sidebar": this.openedSidebar,
+            'compress-vertical-navbar': this.compress,
+            'open-sidebar': this.openedSidebar,
             rtl: false,
         };
     }
@@ -120,18 +119,18 @@ export class DefaultLayoutComponent implements OnInit {
         this.openedSidebar = !this.openedSidebar;
     }
 
-    public checkCurrentPrices() {
+    checkCurrentPrices() {
         const remindMeLaterFlag = localStorage.getItem(
-            "pricingExpiredNotification"
+            'pricingExpiredNotification'
         );
         const noThanksFlag = sessionStorage.getItem(
-            "pricingExpiredNotification"
+            'pricingExpiredNotification'
         );
         if (noThanksFlag) {
             return;
         }
 
-        if (remindMeLaterFlag && (moment(moment().format("L")) !== moment(remindMeLaterFlag))) {
+        if (remindMeLaterFlag && (moment(moment().format('L')) !== moment(remindMeLaterFlag))) {
             return;
         }
 
@@ -155,15 +154,20 @@ export class DefaultLayoutComponent implements OnInit {
 
     }
 
+    isConductorGroup() {
+        return this.sharedService.currentUser.role === 3 &&
+            (window.location.pathname.startsWith('/default-layout/groups') || window.location.pathname.startsWith('/default-layout/fbos'));
+    }
+
     private loadFboPrices() {
         this.fboPricesService
             .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
             .subscribe((data: any) => {
                 for (const price of data) {
-                    if (price.product === "JetA Cost") {
+                    if (price.product === 'JetA Cost') {
                         this.cost = price.price;
                     }
-                    if (price.product === "JetA Retail") {
+                    if (price.product === 'JetA Retail') {
                         this.retail = price.price;
                     }
                 }

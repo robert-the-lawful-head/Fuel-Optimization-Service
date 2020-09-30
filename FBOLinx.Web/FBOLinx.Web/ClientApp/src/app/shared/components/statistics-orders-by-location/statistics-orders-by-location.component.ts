@@ -1,13 +1,13 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from '@angular/core';
 
 // Services
-import { FuelreqsService } from "../../../services/fuelreqs.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
-    selector: "app-statistics-orders-by-location",
-    templateUrl: "./statistics-orders-by-location.component.html",
-    styleUrls: ["./statistics-orders-by-location.component.scss"],
+    selector: 'app-statistics-orders-by-location',
+    templateUrl: './statistics-orders-by-location.component.html',
+    styleUrls: ['./statistics-orders-by-location.component.scss'],
 })
 export class StatisticsOrdersByLocationComponent implements OnInit {
     @Input() options: any = {
@@ -34,20 +34,19 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
             .getOrdersByLocation({
                 StartDateTime: this.startDate,
                 EndDateTime: this.endDate,
-                ICAO: "",
+                ICAO: '',
                 FboId: this.sharedService.currentUser.fboId,
             })
             .subscribe((data: any) => {
                 this.totalOrders = 0;
-                if (data && data.result) {
-                    this.totalOrders = data.result;
+                if (data) {
+                    if (data.totalOrders) {
+                        this.totalOrders = data.totalOrders;
+                    }
+                    if (data.icao) {
+                        this.icao = data.icao;
+                    }
                 }
-                // if (data.totalOrdersByMonth) {
-                //    for (const orders of data.totalOrdersByMonth) {
-                //        this.totalOrders = orders.count;
-                //    }
-                // }
-                this.icao = data.icao;
             }, (error: any) => {
             });
     }

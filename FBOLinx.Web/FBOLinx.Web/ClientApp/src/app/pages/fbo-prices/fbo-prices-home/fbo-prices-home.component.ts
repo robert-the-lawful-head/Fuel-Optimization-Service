@@ -6,23 +6,29 @@ import {
     ViewChildren,
     QueryList,
     HostListener,
-} from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { NgxUiLoaderService } from "ngx-ui-loader";
-import { Observable } from "rxjs";
-import * as moment from "moment";
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Observable } from 'rxjs';
+import * as moment from 'moment';
 
 // Services
-import { FbopricesService } from "../../../services/fboprices.service";
-import { PricingtemplatesService } from "../../../services/pricingtemplates.service";
-import { TemporaryAddOnMarginService } from "../../../services/temporaryaddonmargin.service";
-import { CustomcustomertypesService } from "../../../services/customcustomertypes.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { FbopricesService } from '../../../services/fboprices.service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
+import { SharedService } from '../../../layouts/shared-service';
+
+// Enums
+import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
+import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
+import { EnumOptions } from '../../../models/enum-options';
 
 // Components
-import { FboPricesSelectDefaultTemplateComponent } from "../fbo-prices-select-default-template/fbo-prices-select-default-template.component";
+import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
+import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
 
-import * as SharedEvents from "../../../models/sharedEvents";
+import * as SharedEvents from '../../../models/sharedEvents';
 
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
@@ -39,23 +45,24 @@ export interface TemporaryAddOnMargin {
 }
 
 export interface TailLookupResponse {
-    pricePerGallon?: number;
-    fees?: number;
     template?: string;
     company?: string;
     makeModel?: string;
+    pricingList: Array<any>;
+    rampFee: any;
 }
 
 @Component({
-    selector: "app-fbo-prices-home",
-    templateUrl: "./fbo-prices-home.component.html",
-    styleUrls: ["./fbo-prices-home.component.scss"],
+    selector: 'app-fbo-prices-home',
+    templateUrl: './fbo-prices-home.component.html',
+  styleUrls: ['./fbo-prices-home.component.scss']
+    
 })
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
-    @ViewChildren("tooltip") priceTooltips: QueryList<any>;
+    @ViewChildren('tooltip') priceTooltips: QueryList<any>;
     // Public Members
-    public pricingLoader = "pricing-loader";
-    public tailLoader = "tail-loader";
+    public pricingLoader = 'pricing-loader';
+    public tailLoader = 'tail-loader';
 
     public currentPrices: any[];
     public currentPricingEffectiveFrom = new Date();
@@ -66,7 +73,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public isLoadingRetail = false;
     public isLoadingCost = false;
     public tailNumber: string;
-    public fuelVolume = 1;
+    public flightTypeClassification: FlightTypeClassifications = FlightTypeClassifications.Private;
+    public departureType: ApplicableTaxFlights = ApplicableTaxFlights.DomesticOnly;
+    public strictApplicableTaxFlightOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictApplicableTaxFlightOptions;
+    public strictFlightTypeClassificationOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictFlightTypeClassificationOptions;
 
     public tailLookupInfo: TailLookupResponse;
     public tailLookupError: boolean;
@@ -78,7 +88,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public isUpdatingMargin = false;
     public isClearingMargin = false;
 
-    public priceEntryError = "";
+    public priceEntryError = '';
 
     public tooltipIndex = 0;
 
@@ -106,9 +116,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         private pricingTemplateService: PricingtemplatesService,
         private sharedService: SharedService,
         private customCustomerService: CustomcustomertypesService,
-        private temporaryAddOnMargin: TemporaryAddOnMarginService,
+      private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private NgxUiLoader: NgxUiLoaderService,
-        private fboPricesSelectDefaultTemplateDialog: MatDialog
+      private fboPricesSelectDefaultTemplateDialog: MatDialog,
+        private fboFeesAndTaxesDialog: MatDialog
     ) {}
 
     ngOnInit(): void {
@@ -182,38 +193,38 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     }
 
     public fboPriceRequiresUpdate(price: number, vl: string) {
-        if (vl === "JetA Retail") {
+        if (vl === 'JetA Retail') {
             this.jtRetail = price;
         }
-        if (vl === "JetA Cost") {
+        if (vl === 'JetA Cost') {
             this.jtCost = price;
         }
         if (this.jtRetail && this.jtCost) {
             if (this.jtCost < 0 || this.jtRetail < 0) {
                 this.priceEntryError =
-                    "Cost or Retail values cannot be negative.";
+                    'Cost or Retail values cannot be negative.';
             } else if (this.jtCost > this.jtRetail) {
                 this.priceEntryError =
-                    "Your cost value is higher than the retail price.";
+                    'Your cost value is higher than the retail price.';
             } else {
-                this.priceEntryError = "";
+                this.priceEntryError = '';
             }
         }
     }
 
     public updatePricing() {
-        const effectiveFrom = moment(this.currentPricingEffectiveFrom).format("MM/DD/YYYY");
-        const effectiveTo = moment(this.currentPricingEffectiveTo).format("MM/DD/YYYY");
+        const effectiveFrom = moment(this.currentPricingEffectiveFrom).format('MM/DD/YYYY');
+        const effectiveTo = moment(this.currentPricingEffectiveTo).format('MM/DD/YYYY');
         const newPrices = [];
         for (const price of this.currentPrices) {
-            if (price.product === "JetA Retail" && this.jtRetail > 0) {
+            if (price.product === 'JetA Retail' && this.jtRetail > 0) {
                 price.oid = 0;
                 price.price = this.jtRetail;
                 price.effectiveFrom = effectiveFrom;
                 price.effectiveTo = effectiveTo;
                 newPrices.push(price);
             }
-            if (price.product === "JetA Cost" && this.jtCost > 0) {
+            if (price.product === 'JetA Cost' && this.jtCost > 0) {
                 price.oid = 0;
                 price.price = this.jtCost;
                 price.effectiveFrom = effectiveFrom;
@@ -223,8 +234,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         }
         this.savePriceChangesAll(newPrices);
 
-        this.jtRetail = "";
-        this.jtCost = "";
+        this.jtRetail = '';
+        this.jtCost = '';
         this.currentPricingEffectiveTo = null;
     }
 
@@ -306,9 +317,9 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         const tailLookupData = {
             icao: this.sharedService.currentUser.icao,
             tailNumber: this.tailNumber,
-            fuelVolume: this.fuelVolume,
             fboId: this.sharedService.currentUser.fboId,
-            groupId: this.sharedService.currentUser.groupId,
+          groupId: this.sharedService.currentUser.groupId,
+
         };
         this.tailLookupError = false;
         this.tailLookupInfo = undefined;
@@ -316,7 +327,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         this.fboPricesService.getFuelPricesForCompany(tailLookupData).subscribe((data: TailLookupResponse) => {
             if (data) {
                 this.tailLookupInfo = data;
-                this.tailLookupError =false;
+                this.tailLookupError = false;
             } else {
                 this.tailLookupError = true;
             }
@@ -325,7 +336,24 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             this.tailLookupError = true;
             this.NgxUiLoader.stopLoader(this.tailLoader);
         });
-    }
+  }
+
+  public editFeesAndTaxes(): void {
+    const dialogRef = this.fboFeesAndTaxesDialog.open(
+      FeeAndTaxSettingsDialogComponent,
+      {
+        disableClose: true
+      }
+    );
+
+    dialogRef
+      .afterClosed()
+      .subscribe((result) => {
+        if (!result)
+          return;        
+      });
+  }
+
     // Private Methods
     private loadFboPrices() {
         return new Observable((observer) => {
@@ -333,29 +361,29 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
                 .subscribe((data: any) => {
                     this.currentPrices = data;
-                    this.currentFboPrice100LLCost = this.getCurrentPriceByProduct("100LL Cost");
-                    this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct("100LL Retail");
-                    this.currentFboPriceJetACost = this.getCurrentPriceByProduct("JetA Cost");
-                    this.currentFboPriceJetARetail = this.getCurrentPriceByProduct("JetA Retail");
+                    this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
+                    this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
+                    this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
+                    this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
 
                     if (this.currentFboPriceJetARetail.effectiveTo) {
                         this.currentFboPriceJetARetail.effectiveTo =
-                            moment(this.currentFboPriceJetARetail.effectiveTo).format("MM/DD/YYYY");
+                            moment(this.currentFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
                     }
 
                     if (this.currentFboPriceJetACost.effectiveTo) {
                         this.currentFboPriceJetACost.effectiveTo =
-                            moment(this.currentFboPriceJetACost.effectiveTo).format("MM/DD/YYYY");
+                            moment(this.currentFboPriceJetACost.effectiveTo).format('MM/DD/YYYY');
                     }
 
-                    if(data.length > 0) {
+                    if (data.length > 0) {
                         this.TempValueJet = data[0].tempJet;
                         this.TempValueId = data[0].tempId;
                         this.TempDateFrom = moment(data[0].tempDateFrom).toDate();
                         this.TempDateTo = moment(data[0].tempDateTo).toDate();
                     }
 
-                    this.sharedService.emitChange("fbo-prices-loaded");
+                    this.sharedService.emitChange('fbo-prices-loaded');
                     this.sharedService.valueChange({
                         message: SharedEvents.fboPricesUpdatedEvent,
                         JetACost: this.currentFboPriceJetACost.price,
@@ -433,7 +461,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                                         dialogRef
                                             .afterClosed()
                                             .subscribe((result) => {
-                                                if (result !== "cancel") {
+                                                if (result !== 'cancel') {
                                                     this.updateModel.currenttemplate = 0;
                                                     this.updateModel.fboid = currentFboId;
                                                     this.updateModel.newtemplate = result;
@@ -463,9 +491,9 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             tooltipsArr[this.tooltipIndex].open();
             this.tooltipIndex--;
         }, 400);
-    }
+  }
 
-    @HostListener("window:resize", ["$event"])
+    @HostListener('window:resize', ['$event'])
     private onResize(event: any) {
         if (event.target.innerWidth <= 1425) {
             this.layoutChanged = true;

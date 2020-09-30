@@ -1,14 +1,22 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
+import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
-    moduleId: module.id,
-    selector: "vertical-navbar",
-    templateUrl: "vertical-navbar.component.html",
-    styleUrls: ["vertical-navbar.component.scss"],
-    host: {class: "vertical-navbar"},
+    selector: 'vertical-navbar',
+    templateUrl: 'vertical-navbar.component.html',
+    styleUrls: ['vertical-navbar.component.scss']
 })
 export class VerticalNavbarComponent implements OnInit {
-    constructor() {}
+    constructor(
+        private sharedService: SharedService,
+    ) {
+    }
+
+    menuVisible() {
+        return this.sharedService.currentUser.role !== 3 ||
+            !(window.location.pathname.startsWith('/default-layout/groups') ||
+                window.location.pathname.startsWith('/default-layout/fbos'));
+    }
 
     ngOnInit() {}
 }

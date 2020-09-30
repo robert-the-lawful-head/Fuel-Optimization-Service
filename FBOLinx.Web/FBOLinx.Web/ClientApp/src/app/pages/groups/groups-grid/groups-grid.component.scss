@@ -1,1 +1,30 @@
-﻿
+﻿::ng-deep {
+  .e-grid {
+    .e-headercell, .e-detailheadercell {
+      height: 60px;
+    }
+    .e-detailcell {
+      .e-headercell {
+        height: 40px;
+      } 
+    }
+    .e-headercelldiv {
+      height: auto;
+    }
+    .e-rowcell {
+      padding: 12px 21px;
+    }
+    .e-toolbar-right {
+      left: 0;
+    }
+  }
+
+  .status {
+    color: red;
+    font-weight: bold;
+
+    &.good {
+      color: #81C784;
+    }
+  }
+}

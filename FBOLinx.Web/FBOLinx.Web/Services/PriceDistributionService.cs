@@ -23,6 +23,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using MailSettings = FBOLinx.Web.Configurations.MailSettings;
+using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Services
 {
@@ -37,25 +38,26 @@ namespace FBOLinx.Web.Services
         private int _DistributionLogID = 0;
         private IHttpContextAccessor _HttpContextAccessor;
         private JwtManager _jwtManager;
+        private RampFeesService _RampFeesService;        
 
         #region Constructors
-        public PriceDistributionService(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
+        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService)
         {
             _HttpContextAccessor = httpContextAccessor;
             _FileProvider = fileProvider;
             _context = context;
             _fuelerLinxContext = fuelerLinxContext;
-            _MailSettings = mailSettings;
+            _MailSettings = mailSettings.Value;
             _jwtManager = jwtManager;
+            _RampFeesService = rampFeesService;
         }
         #endregion
 
         #region Static Methods
         public static async Task BeginPriceDistribution(MailSettings mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext,
-            DistributePricingRequest request, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
-        {
-            PriceDistributionService service = new PriceDistributionService(mailSettings, context, fuelerLinxContext, fileProvider, httpContextAccessor, jwtManager);
-            await service.DistributePricing(request);
+            DistributePricingRequest request, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, PriceDistributionService priceDistributionService)
+        {            
+            await priceDistributionService.DistributePricing(request);
         }
         #endregion
 
@@ -343,7 +345,7 @@ namespace FBOLinx.Web.Services
         {
             var pom = await new Controllers.CustomerMarginsController(_context).GetCustomerMarginsByPricingTemplateId(num);
             var res = pom as OkObjectResult;
-            var prom = await new Controllers.FbopricesController(_context, _HttpContextAccessor, _jwtManager).GetFbopricesByFboIdCurrent(fboId);
+            var prom = await new Controllers.FbopricesController(_context, _HttpContextAccessor, _jwtManager, _RampFeesService).GetFbopricesByFboIdCurrent(fboId);
             var resProm = prom as OkObjectResult;
          
             string body = "";
@@ -432,7 +434,12 @@ namespace FBOLinx.Web.Services
         private async Task<string> GetPriceBreakdownHTML(Models.CustomerInfoByGroup customer, Models.PricingTemplate pricingTemplate)
         {
             PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-            var priceResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid } );
+            var privatePricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private );
+            var commercialPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial);
+            
+            List<DTO.CustomerWithPricing> priceResults = new List<DTO.CustomerWithPricing>();
+            priceResults.AddRange(privatePricingResults);
+            priceResults.AddRange(commercialPricingResults);
 
             priceResults = priceResults.GroupBy(s => s.MinGallons).Select(s => s.Last()).ToList();
 
@@ -457,7 +464,7 @@ namespace FBOLinx.Web.Services
                 //}
                 //row =  row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
 
-                if (loopIndex + 1 < priceResults.Count)
+                if ((loopIndex + 1) < priceResults.Count)
                 {
                     row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
                     var next = priceResults[loopIndex + 1];
@@ -500,6 +507,7 @@ namespace FBOLinx.Web.Services
                 //    String.Format("{0:C}",
                 //        (model.CustomerMarginAmount.GetValueOrDefault() + model.FboFeeAmount.GetValueOrDefault())));
                 row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice)));
+                row = row.Replace("%PRODUCT_TYPE%", model.Product);
                 rowsHTML.Append(row);
                 loopIndex++;
             }

@@ -6,11 +6,11 @@ import {
     Optional,
     ViewChild,
     ElementRef,
-} from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+} from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { TemporaryAddOnMarginService } from "../../../services/temporaryaddonmargin.service";
-import { SharedService } from "../../../layouts/shared-service";
+import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 export interface TemporaryAddOnMargin {
     id: any;
@@ -21,9 +21,9 @@ export interface TemporaryAddOnMargin {
 }
 
 @Component({
-    selector: "app-temporary-add-on-margin",
-    templateUrl: "./temporary-add-on-margin.component.html",
-    styleUrls: ["./temporary-add-on-margin.component.scss"],
+    selector: 'app-temporary-add-on-margin',
+    templateUrl: './temporary-add-on-margin.component.html',
+    styleUrls: ['./temporary-add-on-margin.component.scss'],
     providers: [SharedService],
 })
 export class TemporaryAddOnMarginComponent {
@@ -39,7 +39,7 @@ export class TemporaryAddOnMarginComponent {
     public brojac = 0;
     @Output() idChanged1: EventEmitter<any> = new EventEmitter();
     @Output() jetChanged: EventEmitter<any> = new EventEmitter();
-    @ViewChild("prm") btn: ElementRef;
+    @ViewChild('prm') btn: ElementRef;
 
     constructor(
         public dialogRef: MatDialogRef<TemporaryAddOnMarginComponent>,
@@ -49,7 +49,7 @@ export class TemporaryAddOnMarginComponent {
         private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private sharedService: SharedService
     ) {
-        this.stringButton = this.data.update ? "Update Margin" : "Add Margin";
+        this.stringButton = this.data.update ? 'Update Margin' : 'Add Margin';
         if (this.data.EffectiveFrom) {
             this.data.EffectiveFrom = new Date(this.data.EffectiveFrom);
         }
@@ -83,8 +83,8 @@ export class TemporaryAddOnMarginComponent {
         } else if (input.createTextRange) {
             const range = input.createTextRange();
             range.collapse(true);
-            range.moveEnd("character", selectionEnd);
-            range.moveStart("character", selectionStart);
+            range.moveEnd('character', selectionEnd);
+            range.moveStart('character', selectionStart);
             range.select();
         }
     }

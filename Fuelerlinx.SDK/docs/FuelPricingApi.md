@@ -4,6 +4,7 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**DeleteWeeklyPricingForFuelVendor**](FuelPricingApi.md#deleteweeklypricingforfuelvendor) | **DELETE** /api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId} | Internal use only - delete all weekly pricing records for a particular fuel vendor.
 [**GetAssociatedDetailsForFuelOption**](FuelPricingApi.md#getassociateddetailsforfueloption) | **POST** /api/FuelPricing/associated-details | 
 [**GetCurrentPricingForLocation**](FuelPricingApi.md#getcurrentpricingforlocation) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
 [**GetCurrentPricingForLocationAndFlightType**](FuelPricingApi.md#getcurrentpricingforlocationandflighttype) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos}/flight-type/{flightType} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
@@ -14,6 +15,75 @@ Method | HTTP request | Description
 [**GetWeeklyPricingForLocation**](FuelPricingApi.md#getweeklypricingforlocation) | **GET** /api/FuelPricing/weekly-pricing/by-locations/{commaDelimitedIcaos} | /// If available, will fetch records from the weekly price sheet received each week for the specified [commaDelimitedIcaos].  These are to be used as a fallback option when a vendor&#39;s service is unavailable.
 [**PostFuelOrder**](FuelPricingApi.md#postfuelorder) | **POST** /api/FuelPricing/fuel-order | Internal use only - Please use the \&quot;dispatching\&quot; API to dispatch a full fuel order.  This API method is strictly for notifying the fuel vendor.
 
+
+<a name="deleteweeklypricingforfuelvendor"></a>
+# **DeleteWeeklyPricingForFuelVendor**
+> DeleteWeeklyPricingResponse DeleteWeeklyPricingForFuelVendor (int? fuelVendorId)
+
+Internal use only - delete all weekly pricing records for a particular fuel vendor.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteWeeklyPricingForFuelVendorExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FuelPricingApi();
+            var fuelVendorId = 56;  // int? | 
+
+            try
+            {
+                // Internal use only - delete all weekly pricing records for a particular fuel vendor.
+                DeleteWeeklyPricingResponse result = apiInstance.DeleteWeeklyPricingForFuelVendor(fuelVendorId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FuelPricingApi.DeleteWeeklyPricingForFuelVendor: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **fuelVendorId** | **int?**|  | 
+
+### Return type
+
+[**DeleteWeeklyPricingResponse**](DeleteWeeklyPricingResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 <a name="getassociateddetailsforfueloption"></a>
 # **GetAssociatedDetailsForFuelOption**

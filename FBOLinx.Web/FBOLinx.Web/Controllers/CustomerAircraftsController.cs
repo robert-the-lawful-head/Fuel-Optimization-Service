@@ -232,22 +232,34 @@ namespace FBOLinx.Web.Controllers
             }
 
             var customerAircraftCount = (from ca in _context.CustomerAircrafts
-                                         join cg in _context.CustomerInfoByGroup on new
-                                         {
-                                             ca.CustomerId,
-                                             GroupId = ca.GroupId.GetValueOrDefault()
-                                         }
-                                             equals new
-                                             {
-                                                 cg.CustomerId,
-                                                 cg.GroupId
-                                             }
+                                         join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
+                                         join c in _context.Customers on cg.CustomerId equals c.Oid
+                                         join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+                                         into acjoin
+                                         from subacjoin in acjoin.DefaultIfEmpty()
                                          where ca.GroupId == groupId
-
                                          select new
                                          {
                                              Oid = ca.Oid
                                          }).Count();
+
+            //var customerAircraftCount = (from ca in _context.CustomerAircrafts
+            //                             join cg in _context.CustomerInfoByGroup on new
+            //                             {
+            //                                 ca.CustomerId,
+            //                                 GroupId = ca.GroupId.GetValueOrDefault()
+            //                             }
+            //                                 equals new
+            //                                 {
+            //                                     cg.CustomerId,
+            //                                     cg.GroupId
+            //                                 }
+            //                             where ca.GroupId == groupId
+
+            //                             select new
+            //                             {
+            //                                 Oid = ca.Oid
+            //                             }).Count();
 
             return Ok(customerAircraftCount);
         }
