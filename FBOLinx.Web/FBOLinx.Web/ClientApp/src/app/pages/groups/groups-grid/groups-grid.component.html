@@ -13,6 +13,13 @@
 >
     <e-columns>
         <e-column field='groupName' headerText='Group'></e-column>
+        <e-column>
+            <ng-template #template let-data>
+                <span class="need-attention" [ngClass]="{'good': data.needAttentionCustomers == 0 }">
+                    {{data.needAttentionCustomers}} Need Attentions
+                </span>
+            </ng-template>
+        </e-column>
         <e-column field='active' headerText='Active'></e-column>
         <e-column width=200>
             <ng-template #headerTemplate let-data>
@@ -44,4 +51,14 @@
 
 <ng-template #fboManageTemplate let-data>
     <button ni-button [view]="'warning'" size="small" beforeIcon="fa fa-briefcase" (click)="manageFBO(data)" clickStopPropagation>Manage</button>
+</ng-template>
+
+<ng-template #needAttentionTemplate let-data>
+    <span class="need-attention" [ngClass]="{'good': data.needAttentionCustomers == 0 }">
+        {{data.needAttentionCustomers}} Need Attentions
+    </span>
+</ng-template>
+
+<ng-template #lastLoginTemplate let-data>
+    {{data.lastLogin | date:'medium'}}
 </ng-template>

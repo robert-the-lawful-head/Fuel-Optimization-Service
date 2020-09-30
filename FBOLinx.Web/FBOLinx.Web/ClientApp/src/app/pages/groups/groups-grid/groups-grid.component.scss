@@ -18,4 +18,13 @@
       left: 0;
     }
   }
+
+  .need-attention {
+    color: red;
+    font-weight: bold;
+
+    &.good {
+      color: #81C784;
+    }
+  }
 }

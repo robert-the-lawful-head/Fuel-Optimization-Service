@@ -6,7 +6,6 @@ import { State } from '../../../store/reducers';
 import { breadcrumbSet } from '../../../store/actions';
 // Services
 import { GroupsService } from '../../../services/groups.service';
-import { FbosService } from '../../../services/fbos.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 const BREADCRUMBS: any[] = [
@@ -27,23 +26,20 @@ const BREADCRUMBS: any[] = [
 })
 export class GroupsHomeComponent implements OnInit {
     // Public Members
-    public groupsData: any[];
-    public fbosData: any[];
+    public groupsFbosData: any;
     public currentGroup: any;
 
     constructor(
         private store: Store<State>,
         private router: Router,
         private groupsService: GroupsService,
-        private fboService: FbosService,
         private sharedService: SharedService
     ) {
         this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
     }
 
     ngOnInit(): void {
-        this.loadGroups();
-        this.loadFbos();
+        this.loadGroupsFbos();
     }
 
     public editGroupClicked(record) {
@@ -73,15 +69,9 @@ export class GroupsHomeComponent implements OnInit {
         this.currentGroup = null;
     }
 
-    private loadGroups() {
+    private loadGroupsFbos() {
         this.groupsService
-            .getAllGroups()
-            .subscribe((data: any) => (this.groupsData = data));
-    }
-
-    private loadFbos() {
-        this.fboService
-            .getAllFbos()
-            .subscribe((data: any) => (this.fbosData = data));
+            .groupsAndFbos()
+            .subscribe((data: any) => (this.groupsFbosData = data));
     }
 }

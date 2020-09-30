@@ -14,6 +14,8 @@ namespace FBOLinx.Web.ViewModels
         public string Icao { get; set; }
         public string Iata { get; set; }
         public int GroupId { get; set; }
+        public int NeedAttentionCustomers { get; set; }
+        public DateTime? LastLogin { get; set; }
         public ICollection<User> Users { get; set; }
     }
 }

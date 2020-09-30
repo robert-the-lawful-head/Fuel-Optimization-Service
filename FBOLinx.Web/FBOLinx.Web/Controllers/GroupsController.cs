@@ -12,6 +12,8 @@ using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Remotion.Linq.Clauses.ResultOperators;
+using FBOLinx.Web.DTO;
+using FBOLinx.Web.ViewModels;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -44,13 +46,64 @@ namespace FBOLinx.Web.Controllers
             int groupId = UserService.GetClaimedGroupId(_HttpContextAccessor);
             var role = UserService.GetClaimedRole(_HttpContextAccessor);
 
-            //var customerNeedsAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
-
             return _context.Group
                         .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == Models.User.UserRoles.Conductor))
                         .Include(x => x.Users)
                         .OrderBy((x => x.GroupName));
         }
+
+        [HttpGet("group-fbo")]
+        public async Task<IActionResult> GetGroupsAndFbos()
+        {
+            var customersNeedAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
+
+            var groups = _context.Group
+                            .Where(x => !string.IsNullOrEmpty(x.GroupName))
+                            .Include(x => x.Users)
+                            .OrderBy((x => x.GroupName))
+                            .Select(x => new GroupViewModel
+                            {
+                                Oid = x.Oid,
+                                GroupName = x.GroupName,
+                                Username = x.Username,
+                                Password = x.Password,
+                                Isfbonetwork = x.Isfbonetwork,
+                                Domain = x.Domain,
+                                LoggedInHomePage = x.LoggedInHomePage,
+                                Active = x.Active,
+                                IsLegacyAccount = x.IsLegacyAccount,
+                                Users = x.Users,
+                                NeedAttentionCustomers = customersNeedAttention.Where(c => c.GroupId == x.Oid).Sum(c => c.CustomersNeedingAttention)
+                            })
+                            .ToList();
+
+            //FbosViewModel used to display FBO info in the grid
+            var fbos = _context.Fbos
+                            .Include(f => f.Users)
+                            .Include(f => f.fboAirport)
+                            .Join(customersNeedAttention,
+                                  f => new { GroupId = f.GroupId ?? 0, FboId = f.Oid },
+                                  cna => new { cna.GroupId, cna.FboId },
+                                  (f, cna) => new FbosGridViewModel
+                                  {
+                                      Active = f.Active,
+                                      Fbo = f.Fbo,
+                                      Icao = f.fboAirport == null ? null : f.fboAirport.Icao,
+                                      Oid = f.Oid,
+                                      GroupId = f.GroupId ?? 0,
+                                      Users = f.Users,
+                                      LastLogin = f.LastLogin,
+                                      NeedAttentionCustomers = cna.CustomersNeedingAttention
+                                  }
+                            ).ToList();
+
+            return Ok(new GroupFboViewModel
+            {
+                Groups = groups,
+                Fbos = fbos
+            });
+        }
+
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
