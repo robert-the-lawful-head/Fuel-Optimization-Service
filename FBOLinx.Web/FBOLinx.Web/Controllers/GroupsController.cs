@@ -60,6 +60,7 @@ namespace FBOLinx.Web.Controllers
             var groups = _context.Group
                             .Where(x => !string.IsNullOrEmpty(x.GroupName))
                             .Include(x => x.Users)
+                            .Include(x => x.Fbos)
                             .OrderBy((x => x.GroupName))
                             .Select(x => new GroupViewModel
                             {
@@ -73,6 +74,7 @@ namespace FBOLinx.Web.Controllers
                                 Active = x.Active,
                                 IsLegacyAccount = x.IsLegacyAccount,
                                 Users = x.Users,
+                                LastLogin = x.Fbos.Max(f => f.LastLogin),
                                 NeedAttentionCustomers = customersNeedAttention.Where(c => c.GroupId == x.Oid).Sum(c => c.CustomersNeedingAttention)
                             })
                             .ToList();
