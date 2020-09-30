@@ -41,5 +41,9 @@ namespace FBOLinx.Web.Models
         public bool? Expired { get; set; }
         [NotMapped]
         public int? Id { get; set; }
+
+        [ForeignKey("Fboid")]
+        [InverseProperty("Fboprices")]
+        public Fbos Fbo { get; set; }
     }
 }

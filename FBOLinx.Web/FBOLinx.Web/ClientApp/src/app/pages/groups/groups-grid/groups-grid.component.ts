@@ -36,7 +36,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('fboManageTemplate', { static: true }) public fboManageTemplate: any;
     @ViewChild('needAttentionTemplate', { static: true }) public needAttentionTemplate: any;
     @ViewChild('lastLoginTemplate', { static: true }) public lastLoginTemplate: any;
-
+    @ViewChild('pricingExpiredTemplate', { static: true }) public pricingExpiredTemplate: any;
+    
     // Input/Output Bindings
     @Input() groupsFbosData: any;
     @Output() editGroupClicked = new EventEmitter<any>();
@@ -81,6 +82,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             columns: [
                 { field: 'icao', headerText: 'ICAO', width: 100 },
                 { field: 'fbo', headerText: 'FBO' },
+                { template: this.pricingExpiredTemplate },
                 { template: this.needAttentionTemplate },
                 { template: this.lastLoginTemplate, headerText: 'Last Login Date', width: 200 },
                 { field: 'active', headerText: 'Active', width: 100 },
@@ -106,6 +108,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         this.lastLoginTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
         this.lastLoginTemplate.elementRef.nativeElement.propName = 'template';
+
+        this.pricingExpiredTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
+        this.pricingExpiredTemplate.elementRef.nativeElement.propName = 'template';
     }
 
     deleteGroup(record) {
@@ -284,6 +289,23 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             return [];
         }
         return this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
+    }
+
+    allChildFbosPricingLive(groupIndex: number) {
+        const group = (this.grid.dataSource as any[])[groupIndex];
+        const fbos: any[] = this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
+        return fbos.every(fbo => !fbo.pricingExpired);
+    }
+
+    fbosPricingExpired(groupIndex: number) {
+        const group = (this.grid.dataSource as any[])[groupIndex];
+        const fbos: any[] = this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
+        const all = fbos.length
+        const expired = fbos.filter(fbo => fbo.pricingExpired).length
+        if (!expired) {
+            return 'All Pricing Live'
+        }
+        return `${expired} of ${all} Expired`
     }
 
     ifStringContains(str1: string, str2: string) {
