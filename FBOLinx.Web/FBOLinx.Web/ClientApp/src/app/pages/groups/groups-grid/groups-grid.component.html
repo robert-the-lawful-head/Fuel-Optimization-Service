@@ -20,6 +20,11 @@
                 </span>
             </ng-template>
         </e-column>
+        <e-column field='lastLogin' headerText='Last Login Date'>
+            <ng-template #template let-data>
+                {{data.lastLogin | date:'medium'}}
+            </ng-template>
+        </e-column>
         <e-column field='active' headerText='Active'></e-column>
         <e-column width=200>
             <ng-template #headerTemplate let-data>
