@@ -87,7 +87,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
   public tailLookupError: boolean;
 
   public tailNumberForLookupControl: FormControl = new FormControl();
-  public tailNumberFormControlSub: Subscription;
+  
 
     public TempValueJet: number;
     public TempValueId = 0;
@@ -116,6 +116,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     public locationChangedSubscription: any;
     public tooltipSubscription: any;
+    public tailNumberFormControlSubscription: any;
 
     public layoutChanged: boolean;
 
@@ -132,7 +133,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     ) {
 
       //Register change subscription for tail number entry
-      this.tailNumberFormControlSub = this.tailNumberForLookupControl.valueChanges.debounceTime(1000).subscribe(tailValue => {
+      this.tailNumberFormControlSubscription = this.tailNumberForLookupControl.valueChanges.debounceTime(1000).subscribe(tailValue => {
         this.customerForTailLookup = null;
         this.tailNumber = tailValue;
           this.aircraftsService.getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumber).subscribe((response: any) => {
@@ -179,7 +180,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         }
         if (this.tooltipSubscription) {
             this.tooltipSubscription.unsubscribe();
-        }
+      }
+      if (this.tailNumberFormControlSubscription) {
+        this.tailNumberFormControlSubscription.unsubscribe();
+      }
     }
 
     resetAll() {
