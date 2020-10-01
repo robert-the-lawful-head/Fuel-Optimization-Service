@@ -207,7 +207,11 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.fboAirport = null;
         this.fbo = null;
         this.close(event);
-        this.router.navigate(['/default-layout/fbos/']);
+        if (this.sharedService.currentUser.role === 3) {
+            this.router.navigate(['/default-layout/groups/']);    
+        } else {
+            this.router.navigate(['/default-layout/fbos/']);
+        }
     }
 
     public updatePricingClicked(event) {
