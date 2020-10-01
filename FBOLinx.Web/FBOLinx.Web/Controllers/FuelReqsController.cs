@@ -910,7 +910,7 @@ namespace FBOLinx.Web.Controllers
                     if (vendor.Fbo == "Competitor FBO")
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
-                        chartItemType.Name = vendor.Fbo + i;
+                        chartItemType.Name = vendor.Fbo + " " + i;
                         chartItemType.Value = vendor.Count.GetValueOrDefault();
                         chartData.Add(chartItemType);
                         i++;
