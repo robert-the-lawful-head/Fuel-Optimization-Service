@@ -27,13 +27,14 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JwtManager _jwtManager;
-        private RampFeesService _rampFeesService;
+        private RampFeesService _RampFeesService;
 
-        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager)
+        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _jwtManager = jwtManager;
+            _RampFeesService = rampFeesService;
         }
 
         // GET: api/Fboprices
@@ -510,7 +511,7 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
-        [HttpPost("volume-discounts-for-fuelerlinx")]
+        [HttpPost("price-lookup-for-fuelerlinx")]
         public async Task<IActionResult> GetFuelPricesForFuelerlinx([FromBody] VolumeDiscountLoadRequest request)
         {
             if (!ModelState.IsValid)
@@ -536,7 +537,7 @@ namespace FBOLinx.Web.Controllers
 
                 PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
                 List<CustomerWithPricing> validPricing =
-                    await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid);
+                    await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid, (Enums.FlightTypeClassifications) request.FlightTypeClassification);
                 if (validPricing == null)
                     return Ok(null);
 
@@ -565,7 +566,7 @@ namespace FBOLinx.Web.Controllers
                         Fbo = p.Fbo,
                         GroupId = p.GroupId.GetValueOrDefault(),
                         Group = p.Group,
-                        Product = "JetA",
+                        Product = p.Product,
                         MinVolume = p.MinGallons.GetValueOrDefault(),
                         Notes = p.Notes,
                         Default = string.IsNullOrEmpty(p.TailNumbers),
@@ -586,8 +587,8 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        [HttpPost("volume-discounts-for-customer")]
-        public async Task<IActionResult> GetFuelPricesForCustomer([FromBody] TailNumberLoadRequest request)
+        [HttpPost("price-lookup-for-customer")]
+        public async Task<IActionResult> GetFuelPricesForCustomer([FromBody] PriceLookupRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -595,34 +596,43 @@ namespace FBOLinx.Web.Controllers
             }
             try
             {
-                var customerAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID);
-                if (customerAircraft == null)
-                    return Ok(null);
-
                 PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-                var validPricingList =
-                    await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customerAircraft.CustomerId);
-                if (validPricingList == null)
-                    return Ok(null);
+                PriceLookupResponse validPricing = new PriceLookupResponse();
 
-                var priceResult = validPricingList.FirstOrDefault(x =>
-                    !string.IsNullOrEmpty(x.TailNumbers) &&
-                    x.TailNumbers.ToUpper().Split(',').Contains(request.TailNumber.ToUpper()) && x.MinGallons <= request.FuelVolume && x.MaxGallons >= request.FuelVolume && x.FboId == request.FBOID);
-
-                if (priceResult == null)
-                    return Ok(null);
-
-                TailNumberLoadResponse validPricing = new TailNumberLoadResponse();
-                validPricing.PricePerGallon = priceResult.AllInPrice;
-                validPricing.Template = priceResult.PricingTemplateName;
-                validPricing.Company = priceResult.Company;
-
-                var custAircraftMakeModel = _context.Aircrafts.FirstOrDefault(s => s.AircraftId == customerAircraft.AircraftId);
-
-                if(custAircraftMakeModel != null)
+                if (!string.IsNullOrEmpty(request.TailNumber))
                 {
-                    validPricing.MakeModel = custAircraftMakeModel.Make + " " + custAircraftMakeModel.Model;
+                    var customerAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID);
+                    if (customerAircraft == null)
+                        return Ok(null);
+
+                    var validPricingList =
+                        await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customerAircraft.CustomerId, (Enums.FlightTypeClassifications)request.FlightTypeClassification);
+                    if (validPricingList == null)
+                        return Ok(null);
+
+                    validPricing.PricingList = validPricingList.Where(x =>
+                        !string.IsNullOrEmpty(x.TailNumbers) &&
+                        x.TailNumbers.ToUpper().Split(',').Contains(request.TailNumber.ToUpper())  && x.FboId == request.FBOID &&
+                        (request.CustomerInfoByGroupId == x.CustomerInfoByGroupId)).ToList();
+                    var custAircraftMakeModel = _context.Aircrafts.FirstOrDefault(s => s.AircraftId == customerAircraft.AircraftId);
+
+                    if (custAircraftMakeModel != null)
+                    {
+                        validPricing.MakeModel = custAircraftMakeModel.Make + " " + custAircraftMakeModel.Model;
+                    }
+                    validPricing.RampFee = await _RampFeesService.GetRampFeeForAircraft(request.FBOID, request.TailNumber);
+                } 
+                else
+                {
+                    var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == request.GroupID && x.Active.HasValue && x.Active.Value).FirstOrDefaultAsync();
+                    validPricing.PricingList = await priceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, customerInfoByGroup?.Oid > 0 ? customerInfoByGroup.Oid : 0, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
                 }
+
+                if (validPricing.PricingList == null || validPricing.PricingList.Count == 0)
+                    return Ok(null);
+                
+                validPricing.Template = validPricing.PricingList[0].PricingTemplateName;
+                validPricing.Company = validPricing.PricingList[0].Company;                
 
                 return Ok(validPricing);
             }

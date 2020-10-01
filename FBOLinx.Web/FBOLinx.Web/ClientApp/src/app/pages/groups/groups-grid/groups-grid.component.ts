@@ -34,10 +34,12 @@ import { fboChangedEvent } from '../../../models/sharedEvents';
 export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('grid') public grid: GridComponent;
     @ViewChild('fboManageTemplate', { static: true }) public fboManageTemplate: any;
-
+    @ViewChild('needAttentionTemplate', { static: true }) public needAttentionTemplate: any;
+    @ViewChild('lastLoginTemplate', { static: true }) public lastLoginTemplate: any;
+    @ViewChild('pricingExpiredTemplate', { static: true }) public pricingExpiredTemplate: any;
+    
     // Input/Output Bindings
-    @Input() groupsData: Array<any>;
-    @Input() fbosData: Array<any>;
+    @Input() groupsFbosData: any;
     @Output() editGroupClicked = new EventEmitter<any>();
     @Output() editFboClicked = new EventEmitter<any>();
 
@@ -69,8 +71,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit() {
-        this.groupDataSource = this.groupsData;
-        this.fboDataSource = this.fbosData;
+        this.groupDataSource = this.groupsFbosData.groups;
+        this.fboDataSource = this.groupsFbosData.fbos;
 
         this.sharedService.titleChange(this.pageTitle);
         const self = this;
@@ -80,8 +82,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             columns: [
                 { field: 'icao', headerText: 'ICAO', width: 100 },
                 { field: 'fbo', headerText: 'FBO' },
-                { headerText: 'Needs Attention' },
-                { headerText: 'Last Login Date' },
+                { template: this.pricingExpiredTemplate },
+                { template: this.needAttentionTemplate },
+                { template: this.lastLoginTemplate, headerText: 'Last Login Date', width: 200 },
                 { field: 'active', headerText: 'Active', width: 100 },
                 { template: this.fboManageTemplate, width: 150 },
             ],
@@ -99,6 +102,15 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         this.fboManageTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
         this.fboManageTemplate.elementRef.nativeElement.propName = 'template';
+
+        this.needAttentionTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
+        this.needAttentionTemplate.elementRef.nativeElement.propName = 'template';
+
+        this.lastLoginTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
+        this.lastLoginTemplate.elementRef.nativeElement.propName = 'template';
+
+        this.pricingExpiredTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
+        this.pricingExpiredTemplate.elementRef.nativeElement.propName = 'template';
     }
 
     deleteGroup(record) {
@@ -114,9 +126,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             if (!result) {
                 return;
             }
-            const deleteIndex = this.groupsData.findIndex(group => group.oid === record.oid);
+            const deleteIndex = this.groupsFbosData.groups.findIndex(group => group.oid === record.oid);
             this.groupsService.remove(record).subscribe(() => {
-                this.groupsData.splice(deleteIndex, 1);
+                this.groupsFbosData.groups.splice(deleteIndex, 1);
                 this.snackBar.open(record.groupName + ' is deleted', '', {
                     duration: 2000,
                     panelClass: ['blue-snackbar'],
@@ -141,8 +153,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             }
 
             this.fbosService.remove(record).subscribe(() => {
-                const fboIndex = this.fbosData.findIndex(fbo => fbo.oid === record.oid);
-                this.fbosData.splice(fboIndex, 1);
+                const fboIndex = this.groupsFbosData.fbos.findIndex(fbo => fbo.oid === record.oid);
+                this.groupsFbosData.fbos.splice(fboIndex, 1);
                 this.snackBar.open(record.fbo + ' is deleted', '', {
                     duration: 2000,
                     panelClass: ['blue-snackbar'],
@@ -225,12 +237,13 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.searchValue = filterValue;
 
         if (!filterValue || !filterValue.length) {
-            this.groupDataSource = this.groupsData;
-            this.fboDataSource = this.fbosData;
+            this.groupDataSource = this.groupsFbosData.groups;
+            this.fboDataSource = this.groupsFbosData.fbos;
+            this.childGrid.dataSource = this.fboDataSource;
             return;
         }
 
-        const firstFilteredFbos = this.fbosData.filter(fbo =>
+        const firstFilteredFbos = this.groupsFbosData.fbos.filter(fbo =>
             this.ifStringContains(fbo.icao, filterValue) ||
             this.ifStringContains(fbo.fbo, filterValue) ||
             fbo.users?.find(user =>
@@ -239,7 +252,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             )
         );
 
-        const firstFilteredGroups = this.groupsData.filter(group =>
+        const firstFilteredGroups = this.groupsFbosData.groups.filter(group =>
             this.ifStringContains(group.groupName, filterValue) ||
             group.users?.find(user =>
                 this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
@@ -247,7 +260,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             )
         );
 
-        const secondFilteredGroups = this.groupsData.filter(group =>
+        const secondFilteredGroups = this.groupsFbosData.groups.filter(group =>
             this.ifStringContains(group.groupName, filterValue) ||
             group.users?.find(user =>
                 this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
@@ -255,7 +268,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             ) || firstFilteredFbos.find(fbo => fbo.groupId === group.oid)
         );
 
-        const secondFilteredFbos = this.fbosData.filter(fbo =>
+        const secondFilteredFbos = this.groupsFbosData.fbos.filter(fbo =>
             firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
             this.ifStringContains(fbo.icao, filterValue) ||
             this.ifStringContains(fbo.fbo, filterValue) ||
@@ -275,7 +288,24 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         if (!group) {
             return [];
         }
-        return this.fbosData.filter(fbo => fbo.groupId === group.oid);
+        return this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
+    }
+
+    allChildFbosPricingLive(groupIndex: number) {
+        const group = (this.grid.dataSource as any[])[groupIndex];
+        const fbos: any[] = this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
+        return fbos.every(fbo => !fbo.pricingExpired);
+    }
+
+    fbosPricingExpired(groupIndex: number) {
+        const group = (this.grid.dataSource as any[])[groupIndex];
+        const fbos: any[] = this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
+        const all = fbos.length
+        const expired = fbos.filter(fbo => fbo.pricingExpired).length
+        if (!expired) {
+            return 'All Pricing Live'
+        }
+        return `${expired} of ${all} Expired`
     }
 
     ifStringContains(str1: string, str2: string) {

@@ -20,10 +20,12 @@ namespace FBOLinx.Web.Controllers
     public class RampFeesController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly FBOLinx.Web.Services.RampFeesService _RampFeesService;
 
-        public RampFeesController(FboLinxContext context)
+        public RampFeesController(FboLinxContext context, FBOLinx.Web.Services.RampFeesService rampFeesService)
         {
             _context = context;
+            _RampFeesService = rampFeesService;
         }
 
         // GET: api/RampFees
@@ -109,6 +111,14 @@ namespace FBOLinx.Web.Controllers
                 }).ToListAsync();
 
             result.AddRange(customRampFees);
+            return Ok(result);
+        }
+
+        [HttpGet("fbo/{fboId}/tail/{tailNumber}")]
+        public async Task<ActionResult<RampFees>> GetRampFeeForAircraft([FromRoute] int fboId, [FromRoute] string tailNumber)
+        {
+            var result = await _RampFeesService.GetRampFeeForAircraft(fboId, tailNumber);
+
             return Ok(result);
         }
 

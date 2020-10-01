@@ -140,6 +140,9 @@ export class TableGlobalSearchComponent implements OnInit {
           }
           return false;
         } else {
+          if (!element.filter)
+            return true;
+
           let columnValue = data[element.propertyName];
 
           if (columnValue === null || columnValue === '') {

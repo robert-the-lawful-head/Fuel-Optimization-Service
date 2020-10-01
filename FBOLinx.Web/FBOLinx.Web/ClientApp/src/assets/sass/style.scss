@@ -285,3 +285,29 @@ button.mat-icon-button {
         }
     }
 }
+
+
+
+.mat-sort-header-container {
+  padding-right: 25px;
+  position: relative;
+}
+
+.mat-sort-header-content {
+  text-align: left !important;
+  display: flex ;
+  align-items: inherit !important;
+}
+
+
+.overflow-label .table-column-filter {
+  top: 0px !important;
+}
+
+.customers-grid .mat-icon-button .mat-button-wrapper > * {
+  vertical-align: sub !important;
+}
+
+.export-import-menu .mat-button-wrapper .mat-icon {
+  font-size: 25px !important;
+}
