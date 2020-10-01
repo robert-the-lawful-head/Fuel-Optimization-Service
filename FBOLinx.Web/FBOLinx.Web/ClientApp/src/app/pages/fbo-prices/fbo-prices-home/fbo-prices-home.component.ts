@@ -7,9 +7,11 @@ import {
     QueryList,
     HostListener,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Observable } from 'rxjs';
+import { Subject, Observable } from "rxjs";
+import 'rxjs/add/operator/debounceTime';
 import * as moment from 'moment';
 
 // Services
@@ -17,6 +19,7 @@ import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
+import { AircraftsService } from '../../../services/aircrafts.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 // Enums
@@ -63,6 +66,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     // Public Members
     public pricingLoader = 'pricing-loader';
     public tailLoader = 'tail-loader';
+    public tailNumberForLookupChanged = new Subject<string>();
 
     public currentPrices: any[];
     public currentPricingEffectiveFrom = new Date();
@@ -73,13 +77,18 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     public isLoadingRetail = false;
     public isLoadingCost = false;
     public tailNumber: string;
+    public customerForTailLookup: any;
     public flightTypeClassification: FlightTypeClassifications = FlightTypeClassifications.Private;
     public departureType: ApplicableTaxFlights = ApplicableTaxFlights.DomesticOnly;
     public strictApplicableTaxFlightOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictApplicableTaxFlightOptions;
     public strictFlightTypeClassificationOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictFlightTypeClassificationOptions;
+    public customersForTail: Array<any>;
 
     public tailLookupInfo: TailLookupResponse;
-    public tailLookupError: boolean;
+  public tailLookupError: boolean;
+
+  public tailNumberForLookupControl: FormControl = new FormControl();
+  public tailNumberFormControlSub: Subscription;
 
     public TempValueJet: number;
     public TempValueId = 0;
@@ -119,12 +128,45 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
       private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private NgxUiLoader: NgxUiLoaderService,
       private fboPricesSelectDefaultTemplateDialog: MatDialog,
-        private fboFeesAndTaxesDialog: MatDialog
-    ) {}
+      private fboFeesAndTaxesDialog: MatDialog,
+      private aircraftsService: AircraftsService
+    ) {
+
+      //Register change subscription for tail number entry
+      this.tailNumberFormControlSub = this.tailNumberForLookupControl.valueChanges.debounceTime(1000).subscribe(tailValue => {
+        this.customerForTailLookup = null;
+        this.tailNumber = tailValue;
+          this.aircraftsService.getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumber).subscribe((response: any) => {
+          if (!response) {
+            this.customersForTail = [];
+            return;
+          }
+          this.customersForTail = response;
+          if (this.customersForTail.length > 0) {
+            this.customerForTailLookup = this.customersForTail[0];
+          }
+        });
+      });
+
+      //this.tailNumberForLookupChanged.pipe(debounceTime(200)).subscribe(() => {
+      //  this.aircraftsService.getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumber).subscribe((response: any) => {
+      //    if (!response) {
+      //      this.customersForTail = [];
+      //      return;
+      //    }
+      //    this.customersForTail = response;
+      //    if (this.customersForTail.length > 0) {
+      //      this.customerForTailLookup = this.customersForTail[0];
+      //    }
+      //  });
+      //});
+    }
 
     ngOnInit(): void {
         this.resetAll();
-        this.onResize({ target: {innerWidth: window.innerWidth }});
+      this.onResize({ target: { innerWidth: window.innerWidth } });
+      this
+
     }
 
     ngAfterViewInit(): void {
@@ -319,7 +361,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             tailNumber: this.tailNumber,
             fboId: this.sharedService.currentUser.fboId,
           groupId: this.sharedService.currentUser.groupId,
-
+          customerInfoByGroupId: this.customerForTailLookup.oid
         };
         this.tailLookupError = false;
         this.tailLookupInfo = undefined;
@@ -352,6 +394,11 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         if (!result)
           return;        
       });
+  }
+
+  public tailNumberForLookupChange(): void {
+    this.customerForTailLookup = null;
+    this.tailNumberForLookupChanged.next();
   }
 
     // Private Methods

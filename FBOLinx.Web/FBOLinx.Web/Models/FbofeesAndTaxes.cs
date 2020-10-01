@@ -14,7 +14,6 @@ namespace FBOLinx.Web
         public int Oid { get; set; }
         [Column("FBOID")]
         public int Fboid { get; set; }
-        [Required]
         [StringLength(100)]
         public string Name { get; set; }
         public FBOLinx.Web.Enums.FeeCalculationTypes? CalculationType { get; set; }
@@ -27,9 +26,9 @@ namespace FBOLinx.Web
             if (CalculationType == Enums.FeeCalculationTypes.FlatPerGallon)
                 return Value;
             if (CalculationType == Enums.FeeCalculationTypes.PercentageOfBase)
-                return ((Value > 1 ? (Value / 100.0) : Value) * basePrice);
+                return (((Value / 100.0)) * basePrice);
             if (CalculationType == Enums.FeeCalculationTypes.PercentageOfTotal)
-                return ((Value > 1 ? (Value / 100.0) : Value) * basePrice);
+                return (((Value / 100.0)) * basePrice);
             return Value;
         }
     }

@@ -86,13 +86,14 @@
                 <mat-form-field>
                   <input matInput
                          type="number"
-                         step="0.01"
+                         [step]="(feeAndTax.calculationType == 0 ? '.01' : '1')"
                          title="Your Cost values should be inclusive of all taxes/fees"
                          [ngModelOptions]="{updateOn: 'blur'}"
                          (click)="$event.target.select()"
-                         [ngModel]="feeAndTax.value | number: '1.4-4'"
+                         [ngModel]="feeAndTax.value | number: (feeAndTax.calculationType == 0 ? '1.4-4' : '1.2-2')"
                          (change)="feeValueChanged(feeAndTax, $event.target.value)" />
-                  <span matPrefix class="prefixDollar">$</span>
+                  <span matPrefix class="prefixDollar" *ngIf="feeAndTax.calculationType == 0">$</span>
+                  <span matSuffix *ngIf="feeAndTax.calculationType == 1 || feeAndTax.calculationType == 2">%</span>
                 </mat-form-field>
               </td>
             </ng-container>
