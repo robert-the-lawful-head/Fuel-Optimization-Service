@@ -72,6 +72,18 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerAircrafts);
         }
 
+        [HttpGet("customers-by-tail/group/{groupId}/tail/{tailNumber}")]
+        public async Task<ActionResult<CustomerInfoByGroup>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
+        {
+            var customerAircraft = await _context.CustomerAircrafts.Where(x => x.TailNumber == tailNumber).ToListAsync();
+            if (customerAircraft == null)
+                return null;
+
+            var result = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && customerAircraft.Any(ca => ca.CustomerId == x.CustomerId)).ToListAsync();
+
+            return Ok(result);
+        }
+
         // PUT: api/AirCrafts/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAirCrafts([FromRoute] int id, [FromBody] AirCrafts airCrafts)

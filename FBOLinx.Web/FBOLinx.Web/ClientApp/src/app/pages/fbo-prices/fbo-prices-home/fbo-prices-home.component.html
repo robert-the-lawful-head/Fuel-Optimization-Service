@@ -360,6 +360,9 @@
                 </div>
             </ni-card>
         </div>
+
+        <!--Tail number price lookup-->
+
         <div class="pricing-update-board">
             <ni-card
                 title="Lookup Price by Tail"
@@ -375,10 +378,21 @@
                             <input
                                 matInput
                                 placeholder="Tail Number*"
-                                [(ngModel)]="tailNumber"
+                                [formControl]="tailNumberForLookupControl"
                                 aria-label="Aircraft Tail Number"
+                                
                             />
                         </mat-form-field>
+                    </div>
+                    <div class="pr-2">
+                      <mat-form-field>
+                        <mat-label>Customer</mat-label>
+                        <mat-select placeholder="Customer" [(ngModel)]="customerForTailLookup">
+                          <mat-option *ngFor="let customer of customersForTail" [value]="customer">
+                            {{customer.company}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
                     </div>
                     <div class="pr-2">
                       <mat-form-field>
@@ -411,7 +425,7 @@
                                 mat-raised-button
                                 color="accent"
                                 class="mr-1 updateBtn"
-                                [disabled]="!tailNumber"
+                                [disabled]="!tailNumber || !customerForTailLookup"
                                 (click)="lookupTail()"
                             >
                                 Check Pricing

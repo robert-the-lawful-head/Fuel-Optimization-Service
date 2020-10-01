@@ -612,7 +612,8 @@ namespace FBOLinx.Web.Controllers
 
                     validPricing.PricingList = validPricingList.Where(x =>
                         !string.IsNullOrEmpty(x.TailNumbers) &&
-                        x.TailNumbers.ToUpper().Split(',').Contains(request.TailNumber.ToUpper())  && x.FboId == request.FBOID).ToList();
+                        x.TailNumbers.ToUpper().Split(',').Contains(request.TailNumber.ToUpper())  && x.FboId == request.FBOID &&
+                        (request.CustomerInfoByGroupId == x.CustomerInfoByGroupId)).ToList();
                     var custAircraftMakeModel = _context.Aircrafts.FirstOrDefault(s => s.AircraftId == customerAircraft.AircraftId);
 
                     if (custAircraftMakeModel != null)
