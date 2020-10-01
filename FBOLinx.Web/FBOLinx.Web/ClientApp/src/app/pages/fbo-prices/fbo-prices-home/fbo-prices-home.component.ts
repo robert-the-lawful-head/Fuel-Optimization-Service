@@ -10,7 +10,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subject, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import 'rxjs/add/operator/debounceTime';
 import * as moment from 'moment';
 
@@ -66,7 +66,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     // Public Members
     public pricingLoader = 'pricing-loader';
     public tailLoader = 'tail-loader';
-    public tailNumberForLookupChanged = new Subject<string>();
 
     public currentPrices: any[];
     public currentPricingEffectiveFrom = new Date();
@@ -147,19 +146,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
           }
         });
       });
-
-      //this.tailNumberForLookupChanged.pipe(debounceTime(200)).subscribe(() => {
-      //  this.aircraftsService.getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumber).subscribe((response: any) => {
-      //    if (!response) {
-      //      this.customersForTail = [];
-      //      return;
-      //    }
-      //    this.customersForTail = response;
-      //    if (this.customersForTail.length > 0) {
-      //      this.customerForTailLookup = this.customersForTail[0];
-      //    }
-      //  });
-      //});
     }
 
     ngOnInit(): void {
@@ -394,11 +380,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         if (!result)
           return;        
       });
-  }
-
-  public tailNumberForLookupChange(): void {
-    this.customerForTailLookup = null;
-    this.tailNumberForLookupChanged.next();
   }
 
     // Private Methods
