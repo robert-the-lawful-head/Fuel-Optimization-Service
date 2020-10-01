@@ -35,13 +35,17 @@
         <e-column field='active' headerText='Active'></e-column>
         <e-column width=200>
             <ng-template #headerTemplate let-data>
-                <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addNew()">Add New</button>
+                <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addNewGroupOrFbo()">Add New</button>
             </ng-template>
             <ng-template #template let-data>
                 <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Group Actions" clickStopPropagation>
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
+                    <button mat-menu-item clickStopPropagation (click)="addNewFbo(data)">
+                        <mat-icon>add</mat-icon>
+                        <span>Add FBO</span>
+                    </button>
                     <button mat-menu-item clickStopPropagation (click)="deleteGroup(data)">
                         <mat-icon>delete_forever</mat-icon>
                         <span>Delete Group</span>

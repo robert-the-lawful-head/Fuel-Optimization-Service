@@ -13,21 +13,6 @@ import { ContactsService } from '../../../services/contacts.service';
 import { GroupsService } from '../../../services/groups.service';
 import { SharedService } from '../../../layouts/shared-service';
 
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '/default-layout',
-    },
-    {
-        title: 'FBOs',
-        link: '/default-layout/fbos',
-    },
-    {
-        title: 'Edit FBO',
-        link: '',
-    },
-];
-
 @Component({
     selector: 'app-fbos-edit',
     templateUrl: './fbos-edit.component.html',
@@ -42,13 +27,11 @@ export class FbosEditComponent implements OnInit {
 
     // Public Members
     public pageTitle = 'Edit FBO';
-    public breadcrumb: any[] = BREADCRUMBS;
     public currentContact: any;
     public contactsData: any;
     public groups: Array<any>;
 
     // Private Members
-    private requiresRouting = false;
 
     constructor(
         private store: Store<State>,
@@ -65,12 +48,44 @@ export class FbosEditComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
+        let breadcrumbs: any[];
+        if (this.sharedService.currentUser.role === 3) {
+            breadcrumbs = [
+                {
+                    title: 'Main',
+                    link: '/default-layout',
+                },
+                {
+                    title: 'Groups',
+                    link: '/default-layout/groups',
+                },
+                {
+                    title: 'Edit FBO',
+                    link: '',
+                },
+            ];
+        } else {
+            breadcrumbs = [
+                {
+                    title: 'Main',
+                    link: '/default-layout',
+                },
+                {
+                    title: 'FBOs',
+                    link: '/default-layout/fbos',
+                },
+                {
+                    title: 'Edit FBO',
+                    link: '',
+                },
+            ];
+        }
+        this.store.dispatch(breadcrumbSet({ breadcrumbs }));
+        
         if (this.fboInfo) {
             this.loadAdditionalFboInfo();
         } else {
             const id = this.route.snapshot.paramMap.get('id');
-            this.requiresRouting = true;
             this.fboService.get({ oid: id }).subscribe((data: any) => {
                 this.fboInfo = data;
                 this.loadAdditionalFboInfo();
@@ -101,16 +116,13 @@ export class FbosEditComponent implements OnInit {
             this.fboService.remove(this.fboInfo).subscribe(() => {
                 sessionStorage.removeItem('isNewFbo');
                 this.saveClicked.emit(this.fboInfo);
-            }, () => {
-
             });
-
         }
         else {
-            if (this.requiresRouting) {
-                this.router.navigate(['/default-layout/fbos/']);
+            if (this.sharedService.currentUser.role === 3) {
+                this.router.navigate(['/default-layout/groups/']);    
             } else {
-                this.cancelClicked.emit();
+                this.router.navigate(['/default-layout/fbos/']);
             }
         }
     }
