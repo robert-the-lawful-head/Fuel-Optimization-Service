@@ -62,7 +62,8 @@ export class AuthenticationService {
             role: 0,
             fboId: 0,
             groupId: 0,
-            impersonatedRole: null,
+          impersonatedRole: null,
+          managerGroupId: 0
         };
         this.currentUserSubject.next(tempUser);
         return this.http
