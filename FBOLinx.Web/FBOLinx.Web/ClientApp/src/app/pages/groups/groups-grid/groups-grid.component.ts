@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { DetailRowService, GridComponent, GridModel, RecordClickEventArgs } from '@syncfusion/ej2-angular-grids';
+import { Store } from '@ngrx/store';
 
 // Services
 import { GroupsService } from '../../../services/groups.service';
@@ -25,6 +26,8 @@ import { NotificationComponent } from '../../../shared/components/notification/n
 import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
 import { fboChangedEvent } from '../../../models/sharedEvents';
 import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
+import { State } from '../../../store/reducers';
+import { manageRoleSet, userRoleSet } from 'src/app/store/actions';
 
 @Component({
     selector: 'app-groups-grid',
@@ -58,6 +61,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     fboDataSource: any[];
 
     constructor(
+        private store: Store<State>,
         private router: Router,
         private viewContainerRef: ViewContainerRef,
         private groupsService: GroupsService,
@@ -68,7 +72,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private newGroupDialog: MatDialog,
         private newFboDialog: MatDialog,
         private notification: MatDialog,
-        private manageFboDialog: MatDialog,
+        private manageDialog: MatDialog,
         private snackBar: MatSnackBar
     ) {}
 
@@ -205,7 +209,44 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         });
     }
 
-    manageFBO(fbo) {
+    manageGroup(group: any) {
+        if (!group.active) {
+            this.notification.open(
+                NotificationComponent,
+                {
+                    data: {
+                        title: 'Inactive group',
+                        text: 'You can\'t manage an inactive group!',
+                    },
+                }
+            );
+        } else {
+            const dialogRef = this.manageDialog.open(
+                ManageConfirmationComponent,
+                {
+                    width: '450px',
+                    data: {
+                        title: 'Manage Group?',
+                        description: 'This will temporarily switch your account to a group admin for this group.  Would you like to continue?'
+                    },
+                    autoFocus: false,
+                }
+            );
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    return;
+                }
+
+                this.store.dispatch(userRoleSet({ role: 3 }));
+                this.store.dispatch(manageRoleSet({ role: 2 }));
+
+                this.sharedService.currentUser.groupId = group.oid;
+                this.router.navigate(['/default-layout/fbos/']);
+            });
+        }
+    }
+
+    manageFBO(fbo: any) {
         if (!fbo.active) {
             this.notification.open(
                 NotificationComponent,
@@ -217,11 +258,14 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 }
             );
         } else {
-            const dialogRef = this.manageFboDialog.open(
+            const dialogRef = this.manageDialog.open(
                 ManageConfirmationComponent,
                 {
                     width: '450px',
-                    data: fbo,
+                    data: {
+                        title: 'Manage FBO?',
+                        description: 'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?'
+                    },
                     autoFocus: false,
                 }
             );
@@ -231,12 +275,13 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     return;
                 }
 
+                this.store.dispatch(userRoleSet({ role: 3 }));
+                this.store.dispatch(manageRoleSet({ role: 1 }));
+
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
-                this.sharedService.currentUser.groupId = result.groupId;
+                this.sharedService.currentUser.groupId = fbo.groupId;
                 this.sharedService.currentUser.impersonatedRole = 1;
-                sessionStorage.setItem('impersonatedrole', '1');
-                this.sharedService.currentUser.fboId = result.oid;
-                sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+                this.sharedService.currentUser.fboId = fbo.oid;
                 this.sharedService.emitChange(fboChangedEvent);
                 this.router.navigate(['/default-layout/dashboard-fbo/']);
             });

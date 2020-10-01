@@ -257,7 +257,10 @@ export class FbosGridComponent implements OnInit {
                 ManageConfirmationComponent,
                 {
                     width: '450px',
-                    data: fbo,
+                    data: {
+                        title: 'Manage FBO?',
+                        description: 'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?'
+                    },
                     autoFocus: false,
                 }
             );
@@ -267,10 +270,10 @@ export class FbosGridComponent implements OnInit {
                     return;
                 }
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
-                this.sharedService.currentUser.groupId = result.groupId;
+                this.sharedService.currentUser.groupId = fbo.groupId;
                 this.sharedService.currentUser.impersonatedRole = 1;
                 sessionStorage.setItem('impersonatedrole', '1');
-                this.sharedService.currentUser.fboId = result.oid;
+                this.sharedService.currentUser.fboId = fbo.oid;
                 sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
                 this.sharedService.emitChange(fboChangedEvent);
                 this.router.navigate(['/default-layout/dashboard-fbo/']);
