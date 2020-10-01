@@ -3,6 +3,7 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { FbosService } from 'src/app/services/fbos.service';
 
 // Services
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
@@ -31,7 +32,8 @@ export class FbosDialogNewFboComponent {
     constructor(
         public dialogRef: MatDialogRef<FbosDialogNewFboComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewFBODialogData,
-        private acukwikairportsService: AcukwikairportsService
+        private acukwikairportsService: AcukwikairportsService,
+        private fbosService: FbosService
     ) {}
 
     public airportValueChanged(airport: any) {
@@ -55,5 +57,11 @@ export class FbosDialogNewFboComponent {
 
     public onCancelClick(): void {
         this.dialogRef.close();
+    }
+
+    public onSaveChanges(): void {
+        this.fbosService.add(this.data).subscribe((newFbo: any) => {
+            this.dialogRef.close(newFbo);
+        });
     }
 }

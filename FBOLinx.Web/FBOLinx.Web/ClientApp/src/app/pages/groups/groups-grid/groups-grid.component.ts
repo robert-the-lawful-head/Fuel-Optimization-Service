@@ -24,6 +24,7 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
 import { fboChangedEvent } from '../../../models/sharedEvents';
+import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 
 @Component({
     selector: 'app-groups-grid',
@@ -65,6 +66,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private deleteGroupDialog: MatDialog,
         private deleteFboDialog: MatDialog,
         private newGroupDialog: MatDialog,
+        private newFboDialog: MatDialog,
         private notification: MatDialog,
         private manageFboDialog: MatDialog,
         private snackBar: MatSnackBar
@@ -168,7 +170,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.editGroupClicked.emit(event.data);
     }
 
-    addNew() {
+    addNewGroupOrFbo() {
         const dialogRef = this.newGroupDialog.open(
             GroupsDialogNewGroupComponent,
             {
@@ -187,6 +189,19 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.editFboClicked.emit(result.data);
             }
 
+        });
+    }
+
+    addNewFbo(group: any) {
+        const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
+            width: '450px',
+            data: { oid: 0, initialSetupPhase: true, groupId: group.oid },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.editFboClicked.emit(result);
+            }
         });
     }
 
@@ -216,6 +231,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     return;
                 }
 
+                this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
+                this.sharedService.currentUser.groupId = result.groupId;
                 this.sharedService.currentUser.impersonatedRole = 1;
                 sessionStorage.setItem('impersonatedrole', '1');
                 this.sharedService.currentUser.fboId = result.oid;

@@ -19,14 +19,13 @@
                 >{{ acukwikFbo.handlerLongName }}</mat-option
             >
         </mat-select>
-        <!--<input matInput placeholder="FBO Name" aria-label="FBO Name" [(ngModel)]="data.fbo">-->
     </mat-form-field>
 </div>
 <div class="mt-2 text-center">
     <button
         mat-flat-button
         color="accent"
-        [mat-dialog-close]="data"
+        (click)="onSaveChanges()"
         class="mr-1"
         [disabled]="!data.acukwikFboHandlerId"
     >
