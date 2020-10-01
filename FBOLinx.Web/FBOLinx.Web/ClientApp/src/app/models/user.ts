@@ -10,4 +10,5 @@ export class User {
     groupId: number;
     impersonatedRole: number;
     icao?: string;
+    managerGroupId: number;
 }
