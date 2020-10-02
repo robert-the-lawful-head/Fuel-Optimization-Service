@@ -43,7 +43,13 @@ export class SharedService {
     get currentUser(): User {
         if (!this._currentUser.fboId && sessionStorage.getItem('fboId')) {
             this._currentUser.fboId = Number(sessionStorage.getItem('fboId'));
-        }
+      }
+      if (!this._currentUser.managerGroupId && sessionStorage.getItem('managerGroupId')) {
+        this._currentUser.managerGroupId = Number(sessionStorage.getItem('managerGroupId'));
+      }
+      if (sessionStorage.getItem('groupId')) {
+        this._currentUser.groupId = Number(sessionStorage.getItem('groupId'));
+      }
         return this._currentUser;
     }
 
