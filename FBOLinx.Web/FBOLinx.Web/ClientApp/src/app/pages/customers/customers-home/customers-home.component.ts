@@ -12,7 +12,7 @@ import {locationChangedEvent} from '../../../models/sharedEvents';
 
 import {getCustomerGridState} from '../../../store/selectors';
 import {State} from '../../../store/reducers';
-import {customerGridSet, breadcrumbSet} from '../../../store/actions';
+import {customerGridSet} from '../../../store/actions';
 import {CustomerGridState} from '../../../store/reducers/customer';
 
 const BREADCRUMBS: any[] = [
@@ -56,7 +56,6 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
         this.store.select(getCustomerGridState).subscribe(state => {
             this.customerGridState = state;
         });

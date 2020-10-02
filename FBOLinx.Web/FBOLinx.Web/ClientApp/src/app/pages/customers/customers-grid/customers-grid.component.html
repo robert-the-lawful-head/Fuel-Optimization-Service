@@ -135,7 +135,7 @@
                     <app-table-column-filter columnId="company"
                                              propertyName="company"
                                              [matDataSource]="customersDataSource"
-                                             [matSort]="tableSort"
+                                             [matSort]="sort"
                                              ></app-table-column-filter>
                   </span>
                 </th>
@@ -155,7 +155,7 @@
                   <app-table-column-filter columnId="customerCompanyTypeName"
                                            propertyName="customerCompanyTypeName"
                                            [matDataSource]="customersDataSource"
-                                           [matSort]="tableSort"></app-table-column-filter>
+                                           [matSort]="sort"></app-table-column-filter>
                 </span>
               </th>
                 <td mat-cell *matCellDef="let customer">
@@ -177,7 +177,7 @@
                                            propertyName="isFuelerLinxCustomer"
                                            [matDataSource]="customersDataSource"
                                            [columnFormat]="8"
-                                           [matSort]="tableSort"></app-table-column-filter>
+                                           [matSort]="sort"></app-table-column-filter>
                 </span>
               </th>
                 <td mat-cell *matCellDef="let customer">
@@ -198,7 +198,7 @@
                   <app-table-column-filter columnId="certificateTypeDescription"
                                            propertyName="certificateTypeDescription"
                                            [matDataSource]="customersDataSource"
-                                           [matSort]="tableSort"></app-table-column-filter>
+                                           [matSort]="sort"></app-table-column-filter>
                 </span>
               </th>
                 <td mat-cell *matCellDef="let customer">
@@ -216,7 +216,7 @@
                   <app-table-column-filter columnId="pricingTemplateName"
                                            propertyName="pricingTemplateName"
                                            [matDataSource]="customersDataSource"
-                                           [matSort]="tableSort"></app-table-column-filter>
+                                           [matSort]="sort"></app-table-column-filter>
                 </span>
               </th>
                 <td mat-cell *matCellDef="let customer" clickStopPropagation>
@@ -244,7 +244,7 @@
                                            propertyName="allInPrice"
                                            [matDataSource]="customersDataSource"
                                            [columnFormat]="5"
-                                           [matSort]="tableSort"></app-table-column-filter>
+                                           [matSort]="sort"></app-table-column-filter>
                 </span>
               </th>
                 <td mat-cell *matCellDef="let customer">
@@ -272,7 +272,7 @@
                                            propertyName="fleetSize"
                                            [matDataSource]="customersDataSource"
                                            [columnFormat]="1"
-                                           [matSort]="tableSort"></app-table-column-filter>
+                                           [matSort]="sort"></app-table-column-filter>
                 </span>
               </th>
                 <td mat-cell *matCellDef="let customer">

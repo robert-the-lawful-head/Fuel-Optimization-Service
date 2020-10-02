@@ -50,7 +50,8 @@ namespace FBOLinx.Web.Controllers
                 Fbo = f.Fbo,
                 Icao = f.fboAirport == null ? "" : f.fboAirport.Icao,
                 Iata = f.fboAirport == null ? "" : f.fboAirport.Iata,
-                Oid = f.Oid
+                Oid = f.Oid,
+                GroupId = f.GroupId.GetValueOrDefault()
             }).Distinct().ToList();
             return Ok(fbosVM);
         }

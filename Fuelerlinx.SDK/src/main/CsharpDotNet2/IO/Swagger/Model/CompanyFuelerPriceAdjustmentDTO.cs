@@ -27,9 +27,9 @@ namespace IO.Swagger.Model {
     public int? CompanyFuelerId { get; set; }
 
     /// <summary>
-    /// NotSet = 0,             Private = 1,             Commercial = 2    * `NotSet` - Not Set  * `Private` - Private  * `Commercial` - Commercial  
+    /// NotSet = 0,             Private = 1,             Commercial = 2    * `NotSet` - Not Set  * `Private` - Private  * `Commercial` - Commercial  * `All` - All  
     /// </summary>
-    /// <value>NotSet = 0,             Private = 1,             Commercial = 2    * `NotSet` - Not Set  * `Private` - Private  * `Commercial` - Commercial  </value>
+    /// <value>NotSet = 0,             Private = 1,             Commercial = 2    * `NotSet` - Not Set  * `Private` - Private  * `Commercial` - Commercial  * `All` - All  </value>
     [DataMember(Name="flightTypeClassification", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "flightTypeClassification")]
     public int? FlightTypeClassification { get; set; }

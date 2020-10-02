@@ -841,11 +841,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
-            }
-
             try
             {
                 string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
@@ -871,7 +866,7 @@ namespace FBOLinx.Web.Controllers
 
                 foreach(FbolinxContractFuelVendorTransactionsCountAtAirport vendor in fuelerlinxContractFuelVendorOrdersCount)
                 {
-                    if (vendor.ContractFuelVendor != "FBOlinx" && vendor.ContractFuelVendor != fbo + " - " + icao)
+                    if (vendor.ContractFuelVendor != null && vendor.ContractFuelVendor != "FBOlinx" && vendor.ContractFuelVendor != fbo + " - " + icao)
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                         chartItemType.Name = vendor.ContractFuelVendor;
@@ -896,11 +891,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
-            {
-                return BadRequest("Invalid FBO");
-            }
-
             try
             {
                 string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
@@ -908,6 +898,7 @@ namespace FBOLinx.Web.Controllers
                 request.Icao = icao;
 
                 string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
+                request.Fbo = fbo;
 
                 FboLinxFbosTransactionsCountResponse fuelerlinxFBOsOrdersCount = _fuelerLinxService.GetFBOsTransactionsCountForAirport(request);
 
@@ -916,10 +907,10 @@ namespace FBOLinx.Web.Controllers
                 int i = 1;
                 foreach (GroupedTransactionCountByFBOAtAirport vendor in fuelerlinxFBOsOrdersCount.Result)
                 {
-                    if (vendor.Fbo.ToLower() != fbo.ToLower())
+                    if (vendor.Fbo == "Competitor FBO")
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
-                        chartItemType.Name = "Competitor FBO " + i;
+                        chartItemType.Name = vendor.Fbo + " " + i;
                         chartItemType.Value = vendor.Count.GetValueOrDefault();
                         chartData.Add(chartItemType);
                         i++;

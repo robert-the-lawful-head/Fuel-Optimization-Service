@@ -20,5 +20,6 @@ namespace FBOLinx.Web.Models.Requests
         [Required]
         public Enums.ApplicableTaxFlights DepartureType { get; set; }
         public List<FboFeesAndTaxes> ReplacementFeesAndTaxes { get; set; }
+        public int CustomerInfoByGroupId { get; set; }
     }
 }

@@ -1,9 +1,13 @@
-<h1 mat-dialog-title>
+<div>
+  <div class="dialog-header">
     Fee and Tax Settings
     <a class="float-right close-btn" (click)="onCancelClick()">
-        <mat-icon>close</mat-icon>
-  </a>
-</h1>
+      <mat-icon>close</mat-icon>
+    </a>
+  </div>
+</div>
+
+
 
 <div mat-dialog-content>
   <div *ngIf="!feeAndTaxDatasource || !pricingTemplates" style="width: 700px; min-height: 150px;">
@@ -42,132 +46,135 @@
       <div class="row">
         <div class="col-1"></div>
         <div class="col-10">
+          <div class="table-conainer">
+            <table mat-table [dataSource]="feeAndTaxDatasource">
 
-          <table mat-table [dataSource]="feeAndTaxDatasource">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>
+                  <div class="font-weight-bold">Name</div>
+                  <div>
+                    <small>Choose what you call each item.</small>
+                  </div>
+                </th>
+                <td mat-cell *matCellDef="let feeAndTax">
+                  <mat-form-field>
+                    <input matInput [(ngModel)]="feeAndTax.name" (change)="feeAndTaxChanged(feeAndTax, true);" />
+                  </mat-form-field>
+                </td>
+              </ng-container>
 
-            <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef>
-                <div class="font-weight-bold">Name</div>
-                <div>
-                  <small>Choose what you call each item.</small>
-                </div>
-              </th>
-              <td mat-cell *matCellDef="let feeAndTax">
-                <mat-form-field>
-                  <input matInput [(ngModel)]="feeAndTax.name" (change)="feeAndTaxChanged(feeAndTax, true);" />
-                </mat-form-field>
-              </td>
-            </ng-container>
+              <ng-container matColumnDef="calculationType">
+                <th mat-header-cell *matHeaderCellDef>
+                  <div class="font-weight-bold">Type of Fee</div>
+                  <div>
+                    <small>Changes how the line item is applied.</small>
+                  </div>
+                </th>
+                <td mat-cell *matCellDef="let feeAndTax">
+                  <mat-select placeholder="Type of Fee" [(ngModel)]="feeAndTax.calculationType" (selectionChange)="feeAndTaxChanged(feeAndTax)">
+                    <mat-option *ngFor="let calculationType of feeCalculationTypes" [value]="calculationType.value">
+                      {{calculationType.text}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+              </ng-container>
 
-            <ng-container matColumnDef="calculationType">
-              <th mat-header-cell *matHeaderCellDef>
-                <div class="font-weight-bold">Type of Fee</div>
-                <div>
-                  <small>Changes how the line item is applied.</small>
-                </div>
-              </th>
-              <td mat-cell *matCellDef="let feeAndTax">
-                <mat-select placeholder="Type of Fee" [(ngModel)]="feeAndTax.calculationType" (selectionChange)="feeAndTaxChanged(feeAndTax)">
-                  <mat-option *ngFor="let calculationType of feeCalculationTypes" [value]="calculationType.value">
-                    {{calculationType.text}}
-                  </mat-option>
-                </mat-select>
-              </td>
-            </ng-container>
+              <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef>
+                  <div class="font-weight-bold">Value</div>
+                  <div>
+                    <small>The value of the fee.</small>
+                  </div>
+                </th>
+                <td mat-cell *matCellDef="let feeAndTax">
+                  <mat-form-field>
+                    <input matInput
+                           type="number"
+                         [step]="(feeAndTax.calculationType == 0 ? '.01' : '1')"
+                           title="Your Cost values should be inclusive of all taxes/fees"
+                           [ngModelOptions]="{updateOn: 'blur'}"
+                           (click)="$event.target.select()"
+                         [ngModel]="feeAndTax.value | number: (feeAndTax.calculationType == 0 ? '1.4-4' : '1.2-2')"
+                           (change)="feeValueChanged(feeAndTax, $event.target.value)" />
+                  <span matPrefix class="prefixDollar" *ngIf="feeAndTax.calculationType == 0">$</span>
+                  <span matSuffix *ngIf="feeAndTax.calculationType == 1 || feeAndTax.calculationType == 2">%</span>
+                  </mat-form-field>
+                </td>
+              </ng-container>
 
-            <ng-container matColumnDef="value">
-              <th mat-header-cell *matHeaderCellDef>
-                <div class="font-weight-bold">Value</div>
-                <div>
-                  <small>The value of the fee.</small>
-                </div>
-              </th>
-              <td mat-cell *matCellDef="let feeAndTax">
-                <mat-form-field>
-                  <input matInput
-                         type="number"
-                         step="0.01"
-                         title="Your Cost values should be inclusive of all taxes/fees"
-                         [ngModelOptions]="{updateOn: 'blur'}"
-                         (click)="$event.target.select()"
-                         [ngModel]="feeAndTax.value | number: '1.4-4'"
-                         (change)="feeValueChanged(feeAndTax, $event.target.value)" />
-                  <span matPrefix class="prefixDollar">$</span>
-                </mat-form-field>
-              </td>
-            </ng-container>
+              <ng-container matColumnDef="flightTypeClassification">
+                <th mat-header-cell *matHeaderCellDef>
+                  <div class="font-weight-bold">Flight Types</div>
+                  <div>
+                    <small>Choose whether each line item is applied based on teh flight type your customer quotes.</small>
+                  </div>
+                </th>
+                <td mat-cell *matCellDef="let feeAndTax">
+                  <mat-select placeholder="Flight Type" [(ngModel)]="feeAndTax.flightTypeClassification" (selectionChange)="feeAndTaxChanged(feeAndTax)">
+                    <mat-option *ngFor="let flightTypeClassification of flightTypeClassifications" [value]="flightTypeClassification.value">
+                      {{flightTypeClassification.text}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+              </ng-container>
 
-            <ng-container matColumnDef="flightTypeClassification">
-              <th mat-header-cell *matHeaderCellDef>
-                <div class="font-weight-bold">Flight Types</div>
-                <div>
-                  <small>Choose whether each line item is applied based on teh flight type your customer quotes.</small>
-                </div>
-              </th>
-              <td mat-cell *matCellDef="let feeAndTax">
-                <mat-select placeholder="Flight Type" [(ngModel)]="feeAndTax.flightTypeClassification" (selectionChange)="feeAndTaxChanged(feeAndTax)">
-                  <mat-option *ngFor="let flightTypeClassification of flightTypeClassifications" [value]="flightTypeClassification.value">
-                    {{flightTypeClassification.text}}
-                  </mat-option>
-                </mat-select>
-              </td>
-            </ng-container>
+              <ng-container matColumnDef="departureType">
+                <th mat-header-cell *matHeaderCellDef>
+                  <div class="font-weight-bold">Dom. v Int.</div>
+                  <div>
+                    <small>Choose whether each line item applies to domestic or international flights.</small>
+                  </div>
+                </th>
+                <td mat-cell *matCellDef="let feeAndTax">
+                  <mat-select placeholder="Domestic/International" [(ngModel)]="feeAndTax.departureType" (selectionChange)="feeAndTaxChanged(feeAndTax)">
+                    <mat-option *ngFor="let applicableFlightType of applicableTaxFlightOptions" [value]="applicableFlightType.value">
+                      {{applicableFlightType.text}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+              </ng-container>
 
-            <ng-container matColumnDef="departureType">
-              <th mat-header-cell *matHeaderCellDef>
-                <div class="font-weight-bold">Dom. v Int.</div>
-                <div>
-                  <small>Choose whether each line item applies to domestic or international flights.</small>
-                </div>
-              </th>
-              <td mat-cell *matCellDef="let feeAndTax">
-                <mat-select placeholder="Domestic/International" [(ngModel)]="feeAndTax.departureType" (selectionChange)="feeAndTaxChanged(feeAndTax)">
-                  <mat-option *ngFor="let applicableFlightType of applicableTaxFlightOptions" [value]="applicableFlightType.value">
-                    {{applicableFlightType.text}}
-                  </mat-option>
-                </mat-select>
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="delete">
-              <th mat-header-cell *matHeaderCellDef>
-                <div class="pull-right">
-                  <button ni-button
-                          [view]="'accent'"
-                          beforeIcon="fa fa-plus"
-                          (click)="feeAndTaxAdded()">
-                    Add New
-                  </button>
-                </div>
-              </th>
-              <td mat-cell *matCellDef="let feeAndTax">
-                <div class="pull-right">
-                  <button ni-button
-                          [view]="'error'"
-                          size="small"
-                          beforeIcon="fa fa-trash"
-                          (click)="
+              <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef>
+                  <div class="pull-right">
+                    <button ni-button
+                            [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            (click)="feeAndTaxAdded()">
+                      Add New
+                    </button>
+                  </div>
+                </th>
+                <td mat-cell *matCellDef="let feeAndTax">
+                  <div class="pull-right">
+                    <button ni-button
+                            [view]="'error'"
+                            size="small"
+                            beforeIcon="fa fa-trash"
+                            (click)="
                                 feeAndTaxDeleted(feeAndTax);
                                 $event.stopPropagation()
                             ">
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </ng-container>
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row
-                *matRowDef="let row; columns: displayedColumns" class="mat-row-not-hover"></tr>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row
+                  *matRowDef="let row; columns: displayedColumns" class="mat-row-not-hover"></tr>
 
-          </table>
+            </table>
+          </div>
+         
 
         </div>
         <div class="col-1"></div>
       </div>
 
       <div class="row mt-4">
-        <div class="col">
+        <div class="col mb-2">
           Live sample calculation (based on what you entered above):
         </div>
       </div>
@@ -176,7 +183,7 @@
         <div class="col-2">
           <mat-form-field>
             <mat-label>ITP Template</mat-label>
-            <mat-select placeholder="ITP Template" [(ngModel)]="sampleCalculation.pricingTemplateId" (selectionChange)="sampleCalculationChanged()">
+            <mat-select class="font-weight-bold" placeholder="ITP Template" [(ngModel)]="sampleCalculation.pricingTemplateId" (selectionChange)="sampleCalculationChanged()">
               <mat-option *ngFor="let pricingTemplate of pricingTemplates" [value]="pricingTemplate.oid">
                 {{pricingTemplate.name}}
               </mat-option>
@@ -186,7 +193,7 @@
         <div class="col-2">
           <mat-form-field>
             <mat-label>Flight Type</mat-label>
-            <mat-select placeholder="Flight Type" [(ngModel)]="sampleCalculation.flightTypeClassification" (selectionChange)="sampleCalculationChanged()">
+            <mat-select class="font-weight-bold" placeholder="Flight Type" [(ngModel)]="sampleCalculation.flightTypeClassification" (selectionChange)="sampleCalculationChanged()">
               <mat-option *ngFor="let flightType of strictFlightTypeClassificationOptions" [value]="flightType.value">
                 {{flightType.text}}
               </mat-option>
@@ -196,25 +203,24 @@
         <div class="col-2">
           <mat-form-field>
             <mat-label>Dom. v. Int.</mat-label>
-            <mat-select placeholder="Dom. v. Int." [(ngModel)]="sampleCalculation.departureType" (selectionChange)="sampleCalculationChanged()">
+            <mat-select class="font-weight-bold" placeholder="Dom. v. Int." [(ngModel)]="sampleCalculation.departureType" (selectionChange)="sampleCalculationChanged()">
               <mat-option *ngFor="let departureType of strictApplicableTaxFlightOptions" [value]="departureType.value">
                 {{departureType.text}}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col-2">
-          <div>
-            <mat-label>Exclusive</mat-label>
-            <div>${{sampleCalculation.exclusivePrice | number: "1.4-4"}}</div>
+        <div class="col-3 text-center">
+          <div class="d-inline-block mr-4">
+            <mat-label class="font-smaller">Exclusive</mat-label>
+            <div class="font-weight-bold">${{sampleCalculation.exclusivePrice | number: "1.4-4"}}</div>
+          </div>
+          <div class="d-inline-block ml-1">
+            <mat-label class="font-smaller">Inclusive</mat-label>
+            <div class="font-weight-bold">${{sampleCalculation.inclusivePrice | number: "1.4-4"}}</div>
           </div>
         </div>
-        <div class="col-2">
-          <div>
-            <mat-label>Inclusive</mat-label>
-            <div>${{sampleCalculation.inclusivePrice | number: "1.4-4"}}</div>
-          </div>
-        </div>
+      
         <!--<div class="col-2" *ngIf="sampleCalculation.isCalculating">
           <mat-spinner diameter="20"></mat-spinner>
         </div>-->
