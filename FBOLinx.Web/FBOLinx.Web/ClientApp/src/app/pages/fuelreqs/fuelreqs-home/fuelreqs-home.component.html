@@ -1,4 +1,6 @@
-<div>
+<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
+
+<div class="after-breadcrumb">
     <div *ngIf="fuelreqsData">
         <app-fuelreqs-grid
             [fuelreqsData]="fuelreqsData"
