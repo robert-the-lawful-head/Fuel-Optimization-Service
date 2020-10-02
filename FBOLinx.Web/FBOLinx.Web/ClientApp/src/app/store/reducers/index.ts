@@ -10,11 +10,6 @@ import {
     customerReducer
 } from './customer';
 import {
-    breadcrumbFeatureKey,
-    BreadcrumbState,
-    breadcrumbReducer
-} from './breadcrumb';
-import {
     manageFeatureKey,
     ManageState,
     manageReducer
@@ -23,14 +18,12 @@ import {
 export interface State {
     [pricingTemplateFeatureKey]: PricingTemplateGridState;
     [customerFeatureKey]: CustomerGridState;
-    [breadcrumbFeatureKey]: BreadcrumbState;
     [manageFeatureKey]: ManageState;
 }
 
 export const reducers: ActionReducerMap<State> = {
     [pricingTemplateFeatureKey]: pricingTemplateReducer,
     [customerFeatureKey]: customerReducer,
-    [breadcrumbFeatureKey]: breadcrumbReducer,
     [manageFeatureKey]: manageReducer
 };
 

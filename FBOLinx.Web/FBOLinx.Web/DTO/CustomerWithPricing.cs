@@ -79,7 +79,7 @@ namespace FBOLinx.Web.DTO
 
                 //Calculate the fee totals, adding in flat first, then percentage of base, then percentage of total after the others have been totalled
                 double resultWithBaseFees = result;
-                foreach(var feeAndTax in FeesAndTaxes.Where(x => x.CalculationType != Enums.FeeCalculationTypes.PercentageOfTotal).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.PercentageOfBase ? 1 : 2))
+                foreach(var feeAndTax in FeesAndTaxes.Where(x => x.CalculationType != Enums.FeeCalculationTypes.PercentageOfTotal).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.PercentageOfBase ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2))
                 {
                     resultWithBaseFees += feeAndTax.GetCalculatedValue(result, resultWithBaseFees);
                 }

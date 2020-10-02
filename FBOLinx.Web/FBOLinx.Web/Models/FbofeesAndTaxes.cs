@@ -28,7 +28,7 @@ namespace FBOLinx.Web
             if (CalculationType == Enums.FeeCalculationTypes.PercentageOfBase)
                 return (((Value / 100.0)) * basePrice);
             if (CalculationType == Enums.FeeCalculationTypes.PercentageOfTotal)
-                return (((Value / 100.0)) * basePrice);
+                return (((Value / 100.0)) * allInPrice);
             return Value;
         }
     }

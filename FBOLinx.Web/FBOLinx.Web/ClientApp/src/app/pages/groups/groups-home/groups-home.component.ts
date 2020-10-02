@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 
-import { State } from '../../../store/reducers';
-import { breadcrumbSet } from '../../../store/actions';
 // Services
 import { GroupsService } from '../../../services/groups.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -26,17 +23,15 @@ const BREADCRUMBS: any[] = [
 })
 export class GroupsHomeComponent implements OnInit {
     // Public Members
+    public breadcrumb = BREADCRUMBS;
     public groupsFbosData: any;
     public currentGroup: any;
 
     constructor(
-        private store: Store<State>,
         private router: Router,
         private groupsService: GroupsService,
         private sharedService: SharedService
-    ) {
-        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
-    }
+    ) {}
 
     ngOnInit(): void {
         this.loadGroupsFbos();
