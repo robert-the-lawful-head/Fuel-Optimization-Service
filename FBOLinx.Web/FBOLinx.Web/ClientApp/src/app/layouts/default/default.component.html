@@ -6,29 +6,12 @@
     <addition-navbar #insideElement [templatelst]="pricingTemplatesData"></addition-navbar>
   </div>
 
-  <div
-    *ngIf="($breadcrumb | async) != null"
+  <app-fbo-prices-panel
     class="sticky-panel"
-    [ngClass]="{ 'full-width': isConductorGroup() }"
-  >
-    <div class="position-relative">
-      <ni-breadcrumb
-        [menu]="$breadcrumb | async"
-        [style]="'custom1'"
-      ></ni-breadcrumb>
-
-      <app-fbo-prices-panel
-        *ngIf="!hidePricesPanel"
-        [retail]="retail"
-        [cost]="cost"
-        style="
-          position: absolute;
-          top: -14px;
-          right: 12px;
-        "
-      ></app-fbo-prices-panel>
-    </div>
-  </div>
+    *ngIf="isPricePanelVisible()"
+    [retail]="retail"
+    [cost]="cost"
+  ></app-fbo-prices-panel>
 
   <main class="main-content" [ngClass]="{ 'full-width': isConductorGroup() }">
     <div class="main-content-wrap">

@@ -1,9 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
-
-import { State } from '../../../store/reducers';
-import { breadcrumbSet } from '../../../store/actions';
 
 // Services
 import { FbosService } from '../../../services/fbos.service';
@@ -24,8 +20,10 @@ export class FbosEditComponent implements OnInit {
     @Input() fboInfo: any;
     @Input() fboAirportInfo: any;
     @Input() groupInfo: any;
+    @Input() embed: boolean;
 
     // Public Members
+    public breadcrumb: any[];
     public pageTitle = 'Edit FBO';
     public currentContact: any;
     public contactsData: any;
@@ -34,7 +32,6 @@ export class FbosEditComponent implements OnInit {
     // Private Members
 
     constructor(
-        private store: Store<State>,
         private route: ActivatedRoute,
         private router: Router,
         private fboService: FbosService,
@@ -48,39 +45,39 @@ export class FbosEditComponent implements OnInit {
     }
 
     ngOnInit() {
-        let breadcrumbs: any[];
-        if (this.sharedService.currentUser.role === 3) {
-            breadcrumbs = [
-                {
-                    title: 'Main',
-                    link: '/default-layout',
-                },
-                {
-                    title: 'Groups',
-                    link: '/default-layout/groups',
-                },
-                {
-                    title: 'Edit FBO',
-                    link: '',
-                },
-            ];
-        } else {
-            breadcrumbs = [
-                {
-                    title: 'Main',
-                    link: '/default-layout',
-                },
-                {
-                    title: 'FBOs',
-                    link: '/default-layout/fbos',
-                },
-                {
-                    title: 'Edit FBO',
-                    link: '',
-                },
-            ];
+        if (!this.embed) {
+            if (this.sharedService.currentUser.role === 3) {
+                this.breadcrumb = [
+                    {
+                        title: 'Main',
+                        link: '/default-layout',
+                    },
+                    {
+                        title: 'Groups',
+                        link: '/default-layout/groups',
+                    },
+                    {
+                        title: 'Edit FBO',
+                        link: '',
+                    },
+                ];
+            } else {
+                this.breadcrumb = [
+                    {
+                        title: 'Main',
+                        link: '/default-layout',
+                    },
+                    {
+                        title: 'FBOs',
+                        link: '/default-layout/fbos',
+                    },
+                    {
+                        title: 'Edit FBO',
+                        link: '',
+                    },
+                ];
+            }
         }
-        this.store.dispatch(breadcrumbSet({ breadcrumbs }));
         
         if (this.fboInfo) {
             this.loadAdditionalFboInfo();

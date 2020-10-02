@@ -1,58 +1,57 @@
+<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
-<div class="row">
-    <div class="col-md-6 col-xl-3">
-        <app-statistics-total-orders
-            #statisticsTotalOrders
-            [startDate]="filterStartDate"
-            [endDate]="filterEndDate"
-        ></app-statistics-total-orders>
+<div class="after-breadcrumb">
+    <div class="row">
+        <div class="col-md-6 col-xl-3">
+            <app-statistics-total-orders
+                [startDate]="filterStartDate"
+                [endDate]="filterEndDate"
+            ></app-statistics-total-orders>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <app-statistics-total-customers
+                [startDate]="filterStartDate"
+                [endDate]="filterEndDate"
+            ></app-statistics-total-customers>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <app-statistics-total-aircraft
+                [startDate]="filterStartDate"
+                [endDate]="filterEndDate"
+            ></app-statistics-total-aircraft>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <app-statistics-orders-by-location
+                [startDate]="pastThirtyDaysStartDate"
+                [endDate]="filterEndDate"
+            ></app-statistics-orders-by-location>
+        </div>
     </div>
 
-    <div class="col-md-6 col-xl-3">
-        <app-statistics-total-customers
-            #statisticsTotalCustomers
-            [startDate]="filterStartDate"
-            [endDate]="filterEndDate"
-        ></app-statistics-total-customers>
-    </div>
-
-    <div class="col-md-6 col-xl-3">
-        <app-statistics-total-aircraft
-            #statisticsTotalAircraft
-            [startDate]="filterStartDate"
-            [endDate]="filterEndDate"
-        ></app-statistics-total-aircraft>
-    </div>
-
-    <div class="col-md-6 col-xl-3">
-        <app-statistics-orders-by-location
-            #statisticsOrdersByLocation
-            [startDate]="pastThirtyDaysStartDate"
-            [endDate]="filterEndDate"
-        ></app-statistics-orders-by-location>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <app-analytics-companies-quotes-deal></app-analytics-companies-quotes-deal>
-    </div>
-    <div class="col-md-6">
-        <app-analytics-fuel-vendor-source></app-analytics-fuel-vendor-source>
-    </div>
-    <div class="col-md-6">
-        <app-analytics-market-share-fbo-airport></app-analytics-market-share-fbo-airport>
-    </div>
-    <div class="col-md-6">
-        <app-analytics-orders-quote></app-analytics-orders-quote>
-    </div>
-    <div class="col-md-6">
-        <app-analytics-orders-over-time></app-analytics-orders-over-time>
-    </div>
-    <div class="col-md-6">
-        <app-analytics-customer-breakdown></app-analytics-customer-breakdown>
-    </div>
-    <div class="col-md-6">
-        <app-analytics-volumes-nearby-airport></app-analytics-volumes-nearby-airport>
+    <div class="row">
+        <div class="col-12">
+            <app-analytics-companies-quotes-deal></app-analytics-companies-quotes-deal>
+        </div>
+        <div class="col-md-6">
+            <app-analytics-fuel-vendor-source></app-analytics-fuel-vendor-source>
+        </div>
+        <div class="col-md-6">
+            <app-analytics-market-share-fbo-airport></app-analytics-market-share-fbo-airport>
+        </div>
+        <div class="col-md-6">
+            <app-analytics-orders-quote></app-analytics-orders-quote>
+        </div>
+        <div class="col-md-6">
+            <app-analytics-orders-over-time></app-analytics-orders-over-time>
+        </div>
+        <div class="col-md-6">
+            <app-analytics-customer-breakdown></app-analytics-customer-breakdown>
+        </div>
+        <div class="col-md-6">
+            <app-analytics-volumes-nearby-airport></app-analytics-volumes-nearby-airport>
+        </div>
     </div>
 </div>

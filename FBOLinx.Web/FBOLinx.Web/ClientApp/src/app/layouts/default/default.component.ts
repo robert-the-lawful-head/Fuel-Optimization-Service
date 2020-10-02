@@ -1,10 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
-import { Store } from '@ngrx/store';
-
-import { State } from '../../store/reducers';
-import { getBreadcrumbs } from '../../store/selectors';
 
 // Services
 import { FbopricesService } from '../../services/fboprices.service';
@@ -15,8 +11,6 @@ import { SharedService } from '../shared-service';
 import { PricingExpiredNotificationComponent } from '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 import { fboChangedEvent, locationChangedEvent, fboPricesUpdatedEvent } from '../../models/sharedEvents';
 import { Observable } from 'rxjs';
-import { NavigationStart, Router } from '@angular/router';
-import { delay } from 'rxjs/operators';
 
 @Component({
     selector: 'default-layout',
@@ -40,8 +34,6 @@ export class DefaultLayoutComponent implements OnInit {
     hidePricesPanel: boolean;
 
     constructor(
-        private store: Store<State>,
-        private router: Router,
         private sharedService: SharedService,
         private fboPricesService: FbopricesService,
         private pricingTemplatesService: PricingtemplatesService,
@@ -80,27 +72,17 @@ export class DefaultLayoutComponent implements OnInit {
                 this.retail = value.JetARetail;
             }
         });
-
-        this.$breadcrumb = this.store.select(getBreadcrumbs).pipe(delay(0));
-
-        this.checkIfPricesPanelVisible(window.location.pathname);
-        this.router.events.subscribe(event => {
-            if (event instanceof NavigationStart) {
-                this.checkIfPricesPanelVisible(event.url);
-            }
-        });
     }
 
-    checkIfPricesPanelVisible(url: string) {
+    isPricePanelVisible() {
         const blacklist = [
             '/default-layout/groups',
             '/default-layout/fbos',
         ];
-        if (blacklist.findIndex(v => v.startsWith(url)) >= 0) {
-            this.hidePricesPanel = true;
-        } else {
-            this.hidePricesPanel = false;
+        if (blacklist.findIndex(v => window.location.pathname.startsWith(v)) >= 0) {
+            return false;
         }
+        return true;
     }
 
     getClasses() {
