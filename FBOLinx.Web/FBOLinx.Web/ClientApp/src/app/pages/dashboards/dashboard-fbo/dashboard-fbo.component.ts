@@ -1,10 +1,6 @@
 import { Component, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 
 import * as moment from 'moment';
-import { Store } from '@ngrx/store';
-
-import { State } from '../../../store/reducers';
-import { breadcrumbSet } from '../../../store/actions';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -34,6 +30,7 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./dashboard-fbo.component.scss'],
 })
 export class DashboardFboComponent implements AfterViewInit, OnDestroy {
+    public breadcrumb: any[] = BREADCRUMBS;
     public pageTitle = 'Dashboard';
     public fboid: any;
     public groupid: any;
@@ -52,10 +49,7 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     @ViewChild('statisticsOrdersByLocation')
     private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
 
-    constructor(
-        private store: Store<State>,
-        private sharedService: SharedService
-    ) {
+    constructor(private sharedService: SharedService) {
         this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
         this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
@@ -72,10 +66,6 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
                 }
             }
         );
-
-        this.store.dispatch(breadcrumbSet({
-            breadcrumbs: BREADCRUMBS,
-        }));
     }
 
     ngOnDestroy() {

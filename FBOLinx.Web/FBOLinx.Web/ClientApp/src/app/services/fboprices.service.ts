@@ -118,7 +118,7 @@ export class FbopricesService {
 
     public getFuelPricesForCompany(payload) {
         return this.http.post(
-            this.accessPointUrl + '/volume-discounts-for-customer/', payload,
+            this.accessPointUrl + '/price-lookup-for-customer/', payload,
             {
                 headers: this.headers,
             }

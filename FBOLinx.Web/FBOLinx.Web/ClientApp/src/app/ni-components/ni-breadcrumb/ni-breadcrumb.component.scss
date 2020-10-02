@@ -3,6 +3,12 @@
 :host {
     display: block;
     overflow: hidden;
+    height: 100px;
+    padding-top: 24px;
+    position: fixed;
+    width: 100%;
+    background: $main-bg;
+    z-index: 99997;
 
     .breadcrumb {
         display: flex;

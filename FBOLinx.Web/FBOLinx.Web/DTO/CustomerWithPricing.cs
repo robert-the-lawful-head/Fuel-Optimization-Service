@@ -41,20 +41,56 @@ namespace FBOLinx.Web.DTO
         public string Group { get; set; }
         public string FuelDeskEmail { get; set; }
         public string CopyEmails { get; set; }
+        public string Product { get; set; }
+
+        public double? BasePrice
+        {
+            get
+            {
+                double result = 0;
+                if (!MarginType.HasValue)
+                    result = 0;
+                else if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
+                    result = (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
+                else if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
+                    result = (FboPrice.GetValueOrDefault() - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
+                else if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
+                    result = Math.Abs(CustomerMarginAmount.GetValueOrDefault());
+                return result;
+            }
+        }
 
         public double? AllInPrice
         {
             get
             {
+                double result = 0;
                 if (!MarginType.HasValue)
-                    return 0;
-                if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
-                    return (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
-                if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
-                    return (FboPrice.GetValueOrDefault() - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
-                if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
-                    return Math.Abs(CustomerMarginAmount.GetValueOrDefault());
-                return 0;
+                    result = 0;
+                else if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
+                    result = (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
+                else if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
+                    result = (FboPrice.GetValueOrDefault() - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
+                else if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
+                    result = Math.Abs(CustomerMarginAmount.GetValueOrDefault());
+
+                if (FeesAndTaxes == null)
+                    return result;
+
+                //Calculate the fee totals, adding in flat first, then percentage of base, then percentage of total after the others have been totalled
+                double resultWithBaseFees = result;
+                foreach(var feeAndTax in FeesAndTaxes.Where(x => x.CalculationType != Enums.FeeCalculationTypes.PercentageOfTotal).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.PercentageOfBase ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2))
+                {
+                    resultWithBaseFees += feeAndTax.GetCalculatedValue(result, resultWithBaseFees);
+                }
+
+                double resultWithAllFees = resultWithBaseFees;
+                foreach(var feeAndTax in FeesAndTaxes.Where(x => x.CalculationType == Enums.FeeCalculationTypes.PercentageOfTotal))
+                {
+                    resultWithAllFees += feeAndTax.GetCalculatedValue(result, resultWithBaseFees);
+                }
+
+                return resultWithAllFees;
             }
         }
 
@@ -65,5 +101,7 @@ namespace FBOLinx.Web.DTO
                 return Utilities.Enum.GetDescription(CertificateType ?? CustomerInfoByGroup.CertificateTypes.NotSet);
             }
         }
+
+        public List<FboFeesAndTaxes> FeesAndTaxes { get; set; }
     }
 }

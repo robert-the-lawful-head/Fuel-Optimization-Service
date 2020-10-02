@@ -2,10 +2,12 @@
 
 :host {
   .site-container {
+    position: relative;
+
     .main-content {
       overflow-x: hidden;
       overflow-y: auto;
-      padding: $navbar-height + 100 / 16 0 0 $vertical-navbar-width;
+      padding: $navbar-height 0 0 $vertical-navbar-width;
       transition: padding .2s $animation;
 
       &.full-width {
@@ -31,21 +33,10 @@
     }
     .sticky-panel {
       position: absolute;
-      top: $navbar-height;
-      left: $vertical-navbar-width;
-      right: 0;
-      padding: 22px 55px 5px 22px;
+      top: 4rem;
+      right: 55px;
       background: $main-bg;
-      height: 100px;
       z-index: 99998;
-
-      &.full-width {
-        left: 0;
-      }
-
-      @media only screen and (max-width: 991px) {
-        left: 0;
-      }
     }
 
     &.open-sidebar {

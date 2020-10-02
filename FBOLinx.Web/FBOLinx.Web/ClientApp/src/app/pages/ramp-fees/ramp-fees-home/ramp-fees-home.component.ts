@@ -2,10 +2,6 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { MatDialog } from '@angular/material/dialog';
 
 import FlatfileImporter from 'flatfile-csv-importer';
-import { Store } from '@ngrx/store';
-
-import { State } from '../../../store/reducers';
-import { breadcrumbSet } from '../../../store/actions';
 
 // Services
 import { RampfeesService } from '../../../services/rampfees.service';
@@ -55,7 +51,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private importer: FlatfileImporter;
 
     constructor(
-        private store: Store<State>,
         private rampFeesService: RampfeesService,
         private sharedService: SharedService,
         private aircraftsService: AircraftsService,
@@ -70,7 +65,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
         this.initRampfees();
     }
 

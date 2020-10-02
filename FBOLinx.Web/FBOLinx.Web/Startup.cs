@@ -84,11 +84,14 @@ namespace FBOLinx.Web
 
             // configure DI for application services
             services.AddScoped<FuelerLinxService, FuelerLinxService>();
+            services.AddScoped<RampFeesService, RampFeesService>();
+            services.AddScoped<PriceDistributionService, PriceDistributionService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<UserRoleAttribute>();
             services.AddScoped<GroupTransitionService, GroupTransitionService>();
 
             services.AddTransient<GroupFboService, GroupFboService>();
+            services.AddTransient<CustomerService, CustomerService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

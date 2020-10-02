@@ -28,8 +28,9 @@ namespace FBOLinx.Web.Controllers
         private IFileProvider _FileProvider;
         private IOptions<MailSettings> _MailSettings;
         private JwtManager _jwtManager;
+        private PriceDistributionService _PriceDistributionService;
 
-        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager)
+        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager, PriceDistributionService priceDistributionService)
         {
             _MailSettings = mailSettings;
             _FileProvider = fileProvider;
@@ -37,6 +38,7 @@ namespace FBOLinx.Web.Controllers
             _context = context;
             _fuelerLinxContext = fuelerLinxContext;
             _jwtManager = jwtManager;
+            _PriceDistributionService = priceDistributionService;
         }
 
         // GET: fbo/5/log/10
@@ -129,7 +131,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
 
             await Task.Run(() =>
-                PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context, _fuelerLinxContext, request, _FileProvider, _HttpContextAccessor, _jwtManager));
+                PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context, _fuelerLinxContext, request, _FileProvider, _HttpContextAccessor, _jwtManager, _PriceDistributionService));
 
             return Ok();
         }
@@ -146,8 +148,7 @@ namespace FBOLinx.Web.Controllers
             if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
                 return BadRequest(ModelState);
 
-            Services.PriceDistributionService service = new PriceDistributionService(_MailSettings.Value, _context, _fuelerLinxContext, _FileProvider, _HttpContextAccessor, _jwtManager);
-            string preview = await service.GeneratePreview(request);
+            string preview = await _PriceDistributionService.GeneratePreview(request);
 
             return Ok(new {preview = preview});
         }

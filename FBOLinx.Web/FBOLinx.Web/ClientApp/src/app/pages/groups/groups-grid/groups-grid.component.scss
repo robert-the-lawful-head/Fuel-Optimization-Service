@@ -18,4 +18,13 @@
       left: 0;
     }
   }
+
+  .status {
+    color: red;
+    font-weight: bold;
+
+    &.good {
+      color: #81C784;
+    }
+  }
 }

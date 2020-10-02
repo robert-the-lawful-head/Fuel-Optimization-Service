@@ -1,239 +1,243 @@
-<div *ngIf="!customerForm">
-    <mat-spinner></mat-spinner>
-</div>
+<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
-<div *ngIf="customerForm" [formGroup]="customerForm">
-    <div class="card-wrap">
-        <h3 class="card-header h5">
-            <div class="row">
-                <div class="col-12">
-                    <span class="card-header-title">{{ customerForm.value.company }}</span>
-                    <button
-                        mat-icon-button
-                        (click)="cancelCustomerEdit()"
-                        class="float-right close-btn"
-                    >
-                        <mat-icon aria-hidden="false">close</mat-icon>
-                    </button>
-                    <button
-                        mat-stroked-button
-                        color="green"
-                        (click)="saveDirectCustomerEdit()"
-                        class="mr-1 float-right"
-                        [disabled]="!canSave"
-                    >
-                        <mat-icon>save</mat-icon>
-                        Save Changes
-                    </button>
+<div class="after-breadcrumb">
+    <div *ngIf="!customerForm">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="customerForm" [formGroup]="customerForm">
+        <div class="card-wrap">
+            <h3 class="card-header h5">
+                <div class="row">
+                    <div class="col-12">
+                        <span class="card-header-title">{{ customerForm.value.company }}</span>
+                        <button
+                            mat-icon-button
+                            (click)="cancelCustomerEdit()"
+                            class="float-right close-btn"
+                        >
+                            <mat-icon aria-hidden="false">close</mat-icon>
+                        </button>
+                        <button
+                            mat-stroked-button
+                            color="green"
+                            (click)="saveDirectCustomerEdit()"
+                            class="mr-1 float-right"
+                            [disabled]="!canSave"
+                        >
+                            <mat-icon>save</mat-icon>
+                            Save Changes
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </h3>
-        <div class="card-content">
-            <mat-tab-group>
-                <mat-tab label="Customer Details">
-                    <div class="container-fluid">
-                        <h5>General Information</h5>
+            </h3>
+            <div class="card-content">
+                <mat-tab-group>
+                    <mat-tab label="Customer Details">
+                        <div class="container-fluid">
+                            <h5>General Information</h5>
 
-                        <div class="row mb-2">
-                            <div class="col-md-6">
-                                <mat-slide-toggle
-                                    color="accent"
-                                    (change)="toggleChange($event)"
-                                    formControlName="active"
-                                >Active</mat-slide-toggle>
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <mat-slide-toggle
+                                        color="accent"
+                                        (change)="toggleChange($event)"
+                                        formControlName="active"
+                                    >Active</mat-slide-toggle>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <input
-                                        matInput
-                                        placeholder="Company"
-                                        formControlName="company"
-                                    />
-                                </mat-form-field>
-                            </div>
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <mat-select
-                                        placeholder="Customer Type"
-                                        formControlName="customerCompanyType"
-                                    >
-                                        <mat-option
-                                            *ngFor="let customerCompanyType of customerCompanyTypes"
-                                            [value]="customerCompanyType.oid"
-                                        >
-                                            {{ customerCompanyType.name }}
-                                        </mat-option>
-                                        <mat-option [value]="-1">
-                                            &lt;Add Custom&gt;
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <mat-select
-                                        placeholder="Certificate Type"
-                                        formControlName="certificateType"
-                                    >
-                                        <mat-option
-                                            *ngFor="let certificateType of certificateTypes"
-                                            [value]="certificateType.value"
-                                        >
-                                            {{ certificateType.description }}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <input
-                                        matInput
-                                        placeholder="Main Phone"
-                                        formControlName="mainPhone"
-                                    />
-                                </mat-form-field>
-                            </div>
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <input
-                                        matInput
-                                        placeholder="Address"
-                                        formControlName="address"
-                                    />
-                                </mat-form-field>
-                            </div>
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <input
-                                        matInput
-                                        placeholder="City"
-                                        formControlName="city"
-                                    />
-                                </mat-form-field>
-                            </div>
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <input
-                                        matInput
-                                        placeholder="State"
-                                        formControlName="state"
-                                    />
-                                </mat-form-field>
-                            </div>
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <input
-                                        matInput
-                                        placeholder="Zip Code"
-                                        formControlName="zipCode"
-                                    />
-                                </mat-form-field>
-                            </div>
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <input
-                                        matInput
-                                        placeholder="Country"
-                                        formControlName="country"
-                                    />
-                                </mat-form-field>
-                            </div>
-                            <div class="col-md-6">
-                                <mat-form-field>
-                                    <input
-                                        matInput
-                                        placeholder="Website"
-                                        formControlName="website"
-                                    />
-                                </mat-form-field>
-                            </div>
-                        </div>
-
-                        <h5>Contacts</h5>
-
-                        <!--Contacts Grid-->
-                        <div *ngIf="contactsData && !currentContactInfoByGroup">
-                            <app-contacts-grid
-                                [contactsData]="contactsData"
-                                (contactDeleted)="contactDeleted($event)"
-                                (newContactClicked)="newContactClicked()"
-                            ></app-contacts-grid>
-                        </div>
-
-                        <h5>Price &amp; Margin Information</h5>
-
-                        <div class="row mb-2">
-                            <div class="col-md-3">
-                                <mat-slide-toggle
-                                    color="accent"
-                                    *ngIf="hasContactForPriceDistribution"
-                                    formControlName="distribute"
-                                >
-                                    {{ customerInfoByGroup.customerType == 1
-                                    ? "Push pricing into FuelerLinx"
-                                    : "Distribute fuel pricing email"
-                                    }}
-                                </mat-slide-toggle>
-                            </div>
-                            <div class="col-md-3">
-                                <mat-slide-toggle
-                                    color="accent"
-                                    formControlName="showJetA"
-                                >Show JetA Pricing</mat-slide-toggle>
-                            </div>
-                            <div class="col-md-3">
-                                <mat-slide-toggle
-                                    color="accent"
-                                    formControlName="show100Ll"
-                                >Show 100LL Pricing</mat-slide-toggle>
-                            </div>
-                        </div>
-
-                        <div>
-                        </div>
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>Margin Template</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr *ngIf="customCustomerType">
-                                <td>
-                                    <mat-form-field class="template-dropdown">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            matInput
+                                            placeholder="Company"
+                                            formControlName="company"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
                                         <mat-select
-                                            placeholder="Margin Template"
-                                            formControlName="customerMarginTemplate"
+                                            placeholder="Customer Type"
+                                            formControlName="customerCompanyType"
                                         >
                                             <mat-option
-                                                *ngFor="let pricingTemplate of pricingTemplatesData"
-                                                [value]="pricingTemplate.oid"
+                                                *ngFor="let customerCompanyType of customerCompanyTypes"
+                                                [value]="customerCompanyType.oid"
                                             >
-                                                {{ pricingTemplate.name }}
+                                                {{ customerCompanyType.name }}
+                                            </mat-option>
+                                            <mat-option [value]="-1">
+                                                &lt;Add Custom&gt;
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </mat-tab>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <mat-select
+                                            placeholder="Certificate Type"
+                                            formControlName="certificateType"
+                                        >
+                                            <mat-option
+                                                *ngFor="let certificateType of certificateTypes"
+                                                [value]="certificateType.value"
+                                            >
+                                                {{ certificateType.description }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            matInput
+                                            placeholder="Main Phone"
+                                            formControlName="mainPhone"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            matInput
+                                            placeholder="Address"
+                                            formControlName="address"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            matInput
+                                            placeholder="City"
+                                            formControlName="city"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            matInput
+                                            placeholder="State"
+                                            formControlName="state"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            matInput
+                                            placeholder="Zip Code"
+                                            formControlName="zipCode"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            matInput
+                                            placeholder="Country"
+                                            formControlName="country"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            matInput
+                                            placeholder="Website"
+                                            formControlName="website"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                            </div>
 
-                <mat-tab label="Aircraft">
-                    <!--Customer Aircraft Grid-->
-                    <div *ngIf="customerAircraftsData && customerInfoByGroup">
-                        <app-customer-aircrafts-grid
-                            [pricingTemplatesData]="pricingTemplatesData"
-                            [customerAircraftsData]="customerAircraftsData"
-                            [customer]="customerInfoByGroup"
-                            (updateCustomerPricingTemplate)="updateCustomerPricingTemplate($event)"
-                        ></app-customer-aircrafts-grid>
-                    </div>
-                </mat-tab>
-            </mat-tab-group>
+                            <h5>Contacts</h5>
+
+                            <!--Contacts Grid-->
+                            <div *ngIf="contactsData && !currentContactInfoByGroup">
+                                <app-contacts-grid
+                                    [contactsData]="contactsData"
+                                    (contactDeleted)="contactDeleted($event)"
+                                    (newContactClicked)="newContactClicked()"
+                                ></app-contacts-grid>
+                            </div>
+
+                            <h5>Price &amp; Margin Information</h5>
+
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <mat-slide-toggle
+                                        color="accent"
+                                        *ngIf="hasContactForPriceDistribution"
+                                        formControlName="distribute"
+                                    >
+                                        {{ customerInfoByGroup.customerType == 1
+                                        ? "Push pricing into FuelerLinx"
+                                        : "Distribute fuel pricing email"
+                                        }}
+                                    </mat-slide-toggle>
+                                </div>
+                                <div class="col-md-3">
+                                    <mat-slide-toggle
+                                        color="accent"
+                                        formControlName="showJetA"
+                                    >Show JetA Pricing</mat-slide-toggle>
+                                </div>
+                                <div class="col-md-3">
+                                    <mat-slide-toggle
+                                        color="accent"
+                                        formControlName="show100Ll"
+                                    >Show 100LL Pricing</mat-slide-toggle>
+                                </div>
+                            </div>
+
+                            <div>
+                            </div>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Margin Template</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngIf="customCustomerType">
+                                    <td>
+                                        <mat-form-field class="template-dropdown">
+                                            <mat-select
+                                                placeholder="Margin Template"
+                                                formControlName="customerMarginTemplate"
+                                            >
+                                                <mat-option
+                                                    *ngFor="let pricingTemplate of pricingTemplatesData"
+                                                    [value]="pricingTemplate.oid"
+                                                >
+                                                    {{ pricingTemplate.name }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </mat-tab>
+
+                    <mat-tab label="Aircraft">
+                        <!--Customer Aircraft Grid-->
+                        <div *ngIf="customerAircraftsData && customerInfoByGroup">
+                            <app-customer-aircrafts-grid
+                                [pricingTemplatesData]="pricingTemplatesData"
+                                [customerAircraftsData]="customerAircraftsData"
+                                [customer]="customerInfoByGroup"
+                                (updateCustomerPricingTemplate)="updateCustomerPricingTemplate($event)"
+                            ></app-customer-aircrafts-grid>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
         </div>
     </div>
 </div>

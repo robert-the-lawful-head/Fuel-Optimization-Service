@@ -40,4 +40,10 @@ export class GroupsService {
             headers: this.headers,
         });
     }
+
+    public groupsAndFbos() {
+        return this.http.get(this.accessPointUrl + '/group-fbo', {
+            headers: this.headers
+        });
+    }
 }

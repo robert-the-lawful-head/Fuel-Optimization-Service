@@ -102,18 +102,12 @@ export class UsersGridComponent implements OnInit {
                 return false;
             } else {
                 const clonedRecord = Object.assign({}, record);
-                console.log(clonedRecord);
                 this.editUserClicked.emit(clonedRecord);
             }
         } else {
             const clonedRecord = Object.assign({}, record);
-            console.log(clonedRecord);
             this.editUserClicked.emit(clonedRecord);
         }
-
-        // const clonedRecord = Object.assign({}, record);
-        // console.log(clonedRecord);
-        // this.editUserClicked.emit(clonedRecord);
     }
 
     public newRecord() {

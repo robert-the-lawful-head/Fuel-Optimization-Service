@@ -1,12 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as XLSX from 'xlsx';
-import { Store } from '@ngrx/store';
-
-import { State } from '../../../store/reducers';
-import { breadcrumbSet } from '../../../store/actions';
 
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
@@ -29,7 +25,7 @@ const BREADCRUMBS: any[] = [
     templateUrl: './fuelreqs-home.component.html',
     styleUrls: ['./fuelreqs-home.component.scss'],
 })
-export class FuelreqsHomeComponent implements OnInit, OnDestroy {
+export class FuelreqsHomeComponent implements OnDestroy {
     // Public Members
     public pageTitle = 'Fuel Orders';
     public breadcrumb: any[] = BREADCRUMBS;
@@ -39,7 +35,6 @@ export class FuelreqsHomeComponent implements OnInit, OnDestroy {
     public timer: Subscription;
 
     constructor(
-        private store: Store<State>,
         private fuelReqService: FuelreqsService,
         private sharedService: SharedService
     ) {
@@ -51,10 +46,6 @@ export class FuelreqsHomeComponent implements OnInit, OnDestroy {
             moment().add(30, 'd').format('MM/DD/YYYY')
         );
         this.startFuelReqDataServe();
-    }
-
-    ngOnInit() {
-        this.store.dispatch(breadcrumbSet({ breadcrumbs: BREADCRUMBS }));
     }
 
     ngOnDestroy() {
