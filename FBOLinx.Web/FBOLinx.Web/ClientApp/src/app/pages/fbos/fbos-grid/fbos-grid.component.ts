@@ -270,7 +270,9 @@ export class FbosGridComponent implements OnInit {
                     return;
                 }
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
-                this.sharedService.currentUser.groupId = fbo.groupId;
+                sessionStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
+                this.sharedService.currentUser.groupId = result.groupId;
+                sessionStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.impersonatedRole = 1;
                 sessionStorage.setItem('impersonatedrole', '1');
                 this.sharedService.currentUser.fboId = fbo.oid;

@@ -275,11 +275,10 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     return;
                 }
 
-                this.store.dispatch(userRoleSet({ role: 3 }));
-                this.store.dispatch(manageRoleSet({ role: 1 }));
-
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
-                this.sharedService.currentUser.groupId = fbo.groupId;
+                sessionStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
+                this.sharedService.currentUser.groupId = result.groupId;
+                sessionStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.impersonatedRole = 1;
                 this.sharedService.currentUser.fboId = fbo.oid;
                 this.sharedService.emitChange(fboChangedEvent);
