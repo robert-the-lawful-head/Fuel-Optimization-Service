@@ -39,6 +39,11 @@ namespace FBOLinx.Web.Services
         {
             FBOLinx.Web.Utilities.Hash hashUtility = new FBOLinx.Web.Utilities.Hash();
             var user = _Context.User.SingleOrDefault(x => x.Username == username);
+            var groupRecord = _Context.Group.Where(x => x.Oid == user.GroupId).FirstOrDefault();
+
+            //return null if Paragon
+            if (groupRecord.Isfbonetwork.GetValueOrDefault())
+                return null;
 
             // return null if user not found
             if (user == null)
@@ -70,6 +75,11 @@ namespace FBOLinx.Web.Services
         {
             Utilities.Hash hashUtility = new Utilities.Hash();
             var user = _Context.User.SingleOrDefault(x => x.Username == username);
+            var groupRecord = _Context.Group.Where(x => x.Oid == user.GroupId).FirstOrDefault();
+
+            //return null if Paragon
+            if (groupRecord.Isfbonetwork.GetValueOrDefault())
+                return null;
 
             // return null if user not found
             if (user == null)
@@ -197,14 +207,19 @@ namespace FBOLinx.Web.Services
 
         private User CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)
         {
-            var fboRecord = _Context.Fbos.Where((x => x.Username == username && (x.Password == password || resetPassword))).FirstOrDefault();
+            var fbo = from f in _Context.Fbos
+                      join g in _Context.Group on f.GroupId equals g.Oid
+                      where g.Isfbonetwork == false && f.Username == username && (f.Password == password || resetPassword)
+                      select f;
 
+            var fboRecord = fbo.FirstOrDefault();
+            
             if (fboRecord != null)
             {
                 return CreateFBOLoginIfNeeded(fboRecord);
             }
 
-            var groupRecord = _Context.Group.Where((x => x.Username == username && (x.Password == password || resetPassword)))
+            var groupRecord = _Context.Group.Where((x => x.Isfbonetwork == false && x.Username == username && (x.Password == password || resetPassword)))
                 .FirstOrDefault();
 
             if (groupRecord != null)
