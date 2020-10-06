@@ -1,7 +1,7 @@
-<h1 mat-dialog-title>Manage FBO?</h1>
+<h1 mat-dialog-title>{{ data.title }}</h1>
 <div mat-dialog-content class="mt-1 mb-2">
     <div class="text-center">
-        This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?
+        {{ data.description }}
     </div>
 </div>
 <div mat-dialog-actions>
@@ -9,9 +9,9 @@
         <button
             mat-flat-button
             color="accent"
-            [mat-dialog-close]="data"
+            [mat-dialog-close]="true"
             class="mr-1"
         >Confirm</button>
-        <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+        <button mat-stroked-button [mat-dialog-close]="false">Cancel</button>
     </div>
 </div>

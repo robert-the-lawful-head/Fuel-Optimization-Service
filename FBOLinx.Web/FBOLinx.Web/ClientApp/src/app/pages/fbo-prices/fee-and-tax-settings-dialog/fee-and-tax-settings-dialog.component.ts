@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import {
-  MatDialog,
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
@@ -43,7 +42,7 @@ export interface SampleCalculation {
   styleUrls: ['./fee-and-tax-settings-dialog.component.scss'],
   providers: [SharedService, PricingtemplatesService, FbopricesService, NgxUiLoaderService]
 })
-export class FeeAndTaxSettingsDialogComponent implements OnInit {    
+export class FeeAndTaxSettingsDialogComponent implements OnInit {
 
   public calculationLoader = 'calculation-loader';
 
@@ -56,50 +55,55 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
   public strictFlightTypeClassificationOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictFlightTypeClassificationOptions;
   public deletedFeesAndTaxes: Array<FeeAndTaxDialogData> = [];
   public pricingTemplates: Array<any>;
-  public sampleCalculation: SampleCalculation = { pricingTemplateId: 0, flightTypeClassification: FlightTypeClassifications.Private, departureType: ApplicableTaxFlights.DomesticOnly, isCalculating: false, exclusivePrice: 0, inclusivePrice: 0 };
-  public requiresSaving: boolean = false;
+  public sampleCalculation: SampleCalculation = {
+    pricingTemplateId: 0,
+    flightTypeClassification: FlightTypeClassifications.Private,
+    departureType: ApplicableTaxFlights.DomesticOnly,
+    isCalculating: false,
+    exclusivePrice: 0,
+    inclusivePrice: 0
+  };
+  public requiresSaving = false;
 
   constructor(
-    public dialogRef: MatDialogRef<FeeAndTaxSettingsDialogComponent>,
-    public closeConfirmationDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: Array<FeeAndTaxDialogData>,
+    public dialogRef: MatDialogRef<FeeAndTaxSettingsDialogComponent>,
     private feesAndTaxesService: FbofeesandtaxesService,
     private sharedService: SharedService,
     private pricingTemplateService: PricingtemplatesService,
-    private FbopricesService: FbopricesService,
+    private fbopricesService: FbopricesService,
     private NgxUiLoader: NgxUiLoaderService
-  ) {
-
-  }
+  ) {}
 
   public ngOnInit(): void {
     this.loadPricingTemplates();
     if (!this.data) {
       this.loadFeesAndTaxes();
     } else {
-      this.prepareDataSource();      
+      this.prepareDataSource();
     }
   }
 
   public saveChanges(): void {
-    for (let feeAndTax of this.data) {
+    for (const feeAndTax of this.data) {
       if (feeAndTax.requiresUpdate) {
         this.saveFeeAndTax(feeAndTax);
       }
     }
 
-    for (let deletedFeeAndTax of this.deletedFeesAndTaxes) {
+    for (const deletedFeeAndTax of this.deletedFeesAndTaxes) {
       this.deleteFeeAndTax(deletedFeeAndTax);
     }
 
     this.dialogRef.close(this.data);
   }
 
-  public feeAndTaxChanged(feeAndTax, avoidRecalculation = false): void {    
+  public feeAndTaxChanged(feeAndTax, avoidRecalculation = false): void {
     feeAndTax.requiresUpdate = true;
     this.requiresSaving = true;
-    if (!avoidRecalculation)
+    if (!avoidRecalculation) {
       this.sampleCalculationChanged();
+    }
   }
 
   public feeAndTaxDeleted(feeAndTax): void {
@@ -110,14 +114,23 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
   }
 
   public feeAndTaxAdded(): void {
-    this.data.push({ oid: 0, fboid: this.sharedService.currentUser.fboId, name: '', requiresUpdate: false, calculationType: 0, value: 0, flightTypeClassification: 3, departureType: 3 });
+    this.data.push({
+      oid: 0,
+      fboid: this.sharedService.currentUser.fboId,
+      name: '',
+      requiresUpdate: false,
+      calculationType: 0,
+      value: 0,
+      flightTypeClassification: 3,
+      departureType: 3
+    });
     this.prepareDataSource();
     this.requiresSaving = true;
   }
 
   public sampleCalculationChanged(): void {
     this.NgxUiLoader.startLoader(this.calculationLoader);
-    this.FbopricesService.getFuelPricesForCompany({
+    this.fbopricesService.getFuelPricesForCompany({
       flightTypeClassification: this.sampleCalculation.flightTypeClassification,
       DepartureType: this.sampleCalculation.departureType,
       fboid: this.sharedService.currentUser.fboId,
@@ -126,7 +139,7 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
       pricingTemplateId: this.sampleCalculation.pricingTemplateId
     }).subscribe((response: any) => {
       if (response != null && response.pricingList != null && response.pricingList.length > 0) {
-        this.sampleCalculation.inclusivePrice = response.pricingList[0].allInPrice
+        this.sampleCalculation.inclusivePrice = response.pricingList[0].allInPrice;
         this.sampleCalculation.exclusivePrice = response.pricingList[0].basePrice;
       } else {
         this.sampleCalculation.inclusivePrice = 0;
@@ -176,15 +189,19 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
   }
 
   private loadPricingTemplates(): void {
-    this.pricingTemplateService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).subscribe((response: any) => {
+    this.pricingTemplateService.getByFbo(
+      this.sharedService.currentUser.fboId,
+      this.sharedService.currentUser.groupId
+    ).subscribe((response: any) => {
       this.pricingTemplates = response;
-      for (let pricingTemplate of this.pricingTemplates) {
+      for (const pricingTemplate of this.pricingTemplates) {
         if (pricingTemplate.default) {
           this.sampleCalculation.pricingTemplateId = pricingTemplate.oid;
-        }        
+        }
       }
-      if (this.sampleCalculation.pricingTemplateId == 0 && this.pricingTemplates.length > 0)
+      if (this.sampleCalculation.pricingTemplateId === 0 && this.pricingTemplates.length > 0) {
         this.sampleCalculation.pricingTemplateId = this.pricingTemplates[0].oid;
+      }
       this.sampleCalculationChanged();
     });
   }

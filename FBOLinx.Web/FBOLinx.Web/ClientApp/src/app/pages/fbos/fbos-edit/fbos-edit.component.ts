@@ -78,7 +78,7 @@ export class FbosEditComponent implements OnInit {
                 ];
             }
         }
-        
+
         if (this.fboInfo) {
             this.loadAdditionalFboInfo();
         } else {
@@ -117,7 +117,7 @@ export class FbosEditComponent implements OnInit {
         }
         else {
             if (this.sharedService.currentUser.role === 3) {
-                this.router.navigate(['/default-layout/groups/']);    
+                this.router.navigate(['/default-layout/groups/']);
             } else {
                 this.router.navigate(['/default-layout/fbos/']);
             }

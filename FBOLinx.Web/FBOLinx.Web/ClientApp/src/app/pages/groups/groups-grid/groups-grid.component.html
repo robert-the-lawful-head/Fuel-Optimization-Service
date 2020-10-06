@@ -42,6 +42,10 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
+                    <button mat-menu-item clickStopPropagation (click)="manageGroup(data)">
+                        <mat-icon>business_center</mat-icon>
+                        <span>Manage</span>
+                    </button>
                     <button mat-menu-item clickStopPropagation (click)="addNewFbo(data)">
                         <mat-icon>add</mat-icon>
                         <span>Add FBO</span>
