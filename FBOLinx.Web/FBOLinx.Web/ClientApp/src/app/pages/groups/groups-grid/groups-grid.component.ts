@@ -354,12 +354,18 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
   allChildFbosPricingLive(groupIndex: number) {
     const group = (this.grid.dataSource as any[])[groupIndex];
+    if (!group) {
+      return true;
+    }
     const fbos: any[] = this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
     return fbos.every(fbo => !fbo.pricingExpired);
   }
 
   fbosPricingExpired(groupIndex: number) {
     const group = (this.grid.dataSource as any[])[groupIndex];
+    if (!group) {
+      return '';
+    }
     const fbos: any[] = this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
     const all = fbos.length;
     const expired = fbos.filter(fbo => fbo.pricingExpired).length;
