@@ -17,7 +17,7 @@ export interface State {
 
 export const reducers: ActionReducerMap<State> = {
     [pricingTemplateFeatureKey]: pricingTemplateReducer,
-    [customerFeatureKey]: customerReducer,
+    [customerFeatureKey]: customerReducer
 };
 
 export const metaReducers: MetaReducer<State>[] = [];

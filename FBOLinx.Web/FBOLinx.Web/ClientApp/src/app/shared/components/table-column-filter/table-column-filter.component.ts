@@ -211,8 +211,9 @@ export class TableColumnFilterComponent implements OnInit {
           }
           return false;
         } else {
-          if (!element.filter)
+          if (!element.filter) {
             return true;
+          }
 
           let columnValue = data[element.propertyName];
 

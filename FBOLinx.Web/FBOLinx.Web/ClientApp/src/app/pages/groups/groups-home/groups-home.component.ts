@@ -6,67 +6,67 @@ import { GroupsService } from '../../../services/groups.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '/default-layout',
-    },
-    {
-        title: 'Groups',
-        link: '',
-    },
+  {
+    title: 'Main',
+    link: '/default-layout',
+  },
+  {
+    title: 'Groups',
+    link: '',
+  },
 ];
 
 @Component({
-    selector: 'app-groups-home',
-    templateUrl: './groups-home.component.html',
-    styleUrls: ['./groups-home.component.scss'],
+  selector: 'app-groups-home',
+  templateUrl: './groups-home.component.html',
+  styleUrls: ['./groups-home.component.scss'],
 })
 export class GroupsHomeComponent implements OnInit {
-    // Public Members
-    public breadcrumb = BREADCRUMBS;
-    public groupsFbosData: any;
-    public currentGroup: any;
+    // Members
+  breadcrumb = BREADCRUMBS;
+  groupsFbosData: any;
+  currentGroup: any;
 
-    constructor(
-        private router: Router,
-        private groupsService: GroupsService,
-        private sharedService: SharedService
-    ) {}
+  constructor(
+    private router: Router,
+    private groupsService: GroupsService,
+    private sharedService: SharedService
+  ) {}
 
-    ngOnInit(): void {
-        this.loadGroupsFbos();
+  ngOnInit(): void {
+    this.loadGroupsFbos();
+  }
+
+  editGroupClicked(record) {
+    if (this.sharedService.currentUser.role === 3) {
+      this.sharedService.currentUser.groupId = record.oid;
     }
+    this.router.navigate(['/default-layout/groups/' + record.oid]);
+  }
 
-    public editGroupClicked(record) {
-        if (this.sharedService.currentUser.role === 3) {
-            this.sharedService.currentUser.groupId = record.oid;
-        }
-        this.router.navigate(['/default-layout/groups/' + record.oid]);
+  editFboClicked(record) {
+    this.router.navigate(['/default-layout/fbos/' + record.oid]);
+  }
+
+  deleteFboClicked() {}
+
+  saveGroupEditClicked() {
+    if (this.sharedService.currentUser.role === 3) {
+      this.sharedService.currentUser.groupId = 0;
     }
+    this.currentGroup = null;
+  }
 
-    public editFboClicked(record) {
-        this.router.navigate(['/default-layout/fbos/' + record.oid]);
+  cancelGroupEditClicked() {
+    if (this.sharedService.currentUser.role === 3) {
+      this.sharedService.currentUser.groupId = 0;
     }
+    this.currentGroup = null;
+  }
 
-    public deleteFboClicked() {}
-
-    public saveGroupEditClicked() {
-        if (this.sharedService.currentUser.role === 3) {
-            this.sharedService.currentUser.groupId = 0;
-        }
-        this.currentGroup = null;
-    }
-
-    public cancelGroupEditClicked() {
-        if (this.sharedService.currentUser.role === 3) {
-            this.sharedService.currentUser.groupId = 0;
-        }
-        this.currentGroup = null;
-    }
-
-    private loadGroupsFbos() {
-        this.groupsService
-            .groupsAndFbos()
-            .subscribe((data: any) => (this.groupsFbosData = data));
-    }
+  private loadGroupsFbos() {
+    this.groupsService
+      .groupsAndFbos()
+      .subscribe((data: any) => (this.groupsFbosData = data));
+  }
 }

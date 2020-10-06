@@ -11,4 +11,5 @@ export class User {
     impersonatedRole: number;
     icao?: string;
     managerGroupId: number;
+    conductorFbo?: boolean;
 }
