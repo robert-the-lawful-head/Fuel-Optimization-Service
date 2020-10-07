@@ -39,11 +39,6 @@ namespace FBOLinx.Web.Services
         {
             FBOLinx.Web.Utilities.Hash hashUtility = new FBOLinx.Web.Utilities.Hash();
             var user = _Context.User.SingleOrDefault(x => x.Username == username);
-            var groupRecord = _Context.Group.Where(x => x.Oid == user.GroupId).FirstOrDefault();
-
-            //return null if Paragon
-            if (groupRecord.Isfbonetwork.GetValueOrDefault())
-                return null;
 
             // return null if user not found
             if (user == null)
@@ -54,6 +49,12 @@ namespace FBOLinx.Web.Services
             }
             else
             {
+                var groupRecord = _Context.Group.Where(x => x.Oid == user.GroupId).FirstOrDefault();
+
+                //return null if Paragon
+                if (groupRecord.Isfbonetwork.GetValueOrDefault())
+                    return null;
+
                 if (!resetPassword && !hashUtility.VerifyHashedPassword(user.Password, password))
                 {
                     return null;
