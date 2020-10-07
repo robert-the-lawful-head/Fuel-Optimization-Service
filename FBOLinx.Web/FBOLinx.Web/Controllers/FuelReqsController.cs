@@ -852,6 +852,7 @@ namespace FBOLinx.Web.Controllers
                                             .Count();
 
                 string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
+                request.Fbo = fbo;
 
                 List<FbolinxContractFuelVendorTransactionsCountAtAirport> fuelerlinxContractFuelVendorOrdersCount = _fuelerLinxService.GetContractFuelVendorsTransactionsCountForAirport(request).Result;
 
