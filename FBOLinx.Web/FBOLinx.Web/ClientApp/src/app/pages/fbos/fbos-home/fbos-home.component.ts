@@ -44,7 +44,7 @@ export class FbosHomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadInitialData();
+    this.loadAllFbosForGroup();
 
     if (!this.embed) {
       this.breadcrumb = BREADCRUMBS;
@@ -68,7 +68,7 @@ export class FbosHomeComponent implements OnInit {
     this.currentFboAirport = null;
     this.currentFbo = null;
     this.fbosData = null;
-    this.loadInitialData();
+    this.loadAllFbosForGroup();
   }
 
   public cancelFboEditClicked() {
@@ -76,20 +76,6 @@ export class FbosHomeComponent implements OnInit {
   }
 
   // Private Methods
-  private loadInitialData() {
-    if (!this.groupInfo && this.sharedService.currentUser.impersonatedRole !== 2) {
-      this.loadAllFbos();
-    } else {
-      this.loadAllFbosForGroup();
-    }
-  }
-
-  private loadAllFbos() {
-    this.fboService
-      .getAllFbos()
-      .subscribe((data: any) => (this.fbosData = data));
-  }
-
   private loadAllFbosForGroup() {
     if (!this.groupInfo) {
       this.fboService

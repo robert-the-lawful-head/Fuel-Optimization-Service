@@ -101,7 +101,9 @@ export class FbosGridComponent implements OnInit {
                 return;
             }
 
-            if (remindMeLaterFlag && (moment(moment().format('L')) !== moment(remindMeLaterFlag))) {
+            if (remindMeLaterFlag && 
+                (moment(new Date(moment().format('L'))) !== moment(new Date(remindMeLaterFlag)))
+            ) {
                 return;
             }
 
@@ -271,7 +273,7 @@ export class FbosGridComponent implements OnInit {
                 }
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
                 sessionStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
-                this.sharedService.currentUser.groupId = result.groupId;
+                this.sharedService.currentUser.groupId = fbo.groupId;
                 sessionStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.impersonatedRole = 1;
                 sessionStorage.setItem('impersonatedrole', '1');

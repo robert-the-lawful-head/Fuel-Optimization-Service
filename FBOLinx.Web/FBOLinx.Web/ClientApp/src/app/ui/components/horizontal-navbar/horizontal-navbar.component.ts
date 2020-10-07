@@ -201,10 +201,11 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   stopManagingFBOClicked() {
-    this.sharedService.currentUser.impersonatedRole = null;
     sessionStorage.removeItem('fboId');
     sessionStorage.removeItem('managerGroupId');
+    sessionStorage.removeItem('impersonatedrole');
     this.sharedService.currentUser.fboId = 0;
+    this.sharedService.currentUser.impersonatedRole = null;
     if (this.sharedService.currentUser.managerGroupId && this.sharedService.currentUser.managerGroupId > 0) {
       this.sharedService.currentUser.groupId = this.sharedService.currentUser.managerGroupId;
     } else {
@@ -222,8 +223,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
       if (this.sharedService.currentUser.role === 3) {
         this.sharedService.currentUser.impersonatedRole = 2;
         sessionStorage.setItem('impersonatedrole', '2');
-      } else {
-        sessionStorage.removeItem('impersonatedrole');
       }
       this.router.navigate(['/default-layout/fbos/']);
     }
