@@ -376,6 +376,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
   }
 
   ifStringContains(str1: string, str2: string) {
-    return str1.toLowerCase().includes(str2.toLowerCase());
+    return (!str1 ? '' : str1).toLowerCase().includes((!str2 ? '' : str2).toLowerCase());
   }
 }
