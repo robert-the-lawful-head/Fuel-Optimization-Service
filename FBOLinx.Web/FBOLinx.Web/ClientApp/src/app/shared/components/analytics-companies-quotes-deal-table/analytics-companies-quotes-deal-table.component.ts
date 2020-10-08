@@ -76,7 +76,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
             .subscribe((data: any) => {
                 this.dataSource = new MatTableDataSource(data);
                 this.dataSource.sortingDataAccessor = (item, property) => {
-                    switch(property) {
+                    switch (property) {
                         case 'lastPullDate':
                             if (item[property] === 'N/A') {
                                 if (this.sort.direction === 'asc') {

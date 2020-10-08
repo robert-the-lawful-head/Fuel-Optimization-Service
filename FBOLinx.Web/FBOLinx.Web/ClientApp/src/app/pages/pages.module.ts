@@ -44,6 +44,7 @@ import { GridModule, PageService, SortService, FilterService, GroupService, Tool
 
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
 import { LoginComponent } from './auth/login/login.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { AircraftsGridComponent } from './aircrafts/aircrafts-grid/aircrafts-grid.component';
 import { ContactsEditComponent } from './contacts/contacts-edit/contacts-edit.component';
 import { ContactsDialogNewContactComponent } from './contacts/contacts-edit-modal/contacts-edit-modal.component';
@@ -180,6 +181,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
   declarations: [
     AuthtokenComponent,
     LoginComponent,
+    ResetPasswordComponent,
     ContactsEditComponent,
     ContactsDialogNewContactComponent,
     ContactsDialogConfirmContactDeleteComponent,

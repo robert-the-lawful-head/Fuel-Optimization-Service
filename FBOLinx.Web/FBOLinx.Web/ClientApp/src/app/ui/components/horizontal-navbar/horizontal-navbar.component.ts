@@ -183,17 +183,15 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         if (!result) {
           return;
         }
-        this.userService.update(result).subscribe((data: any) => {
-          if (result.newPassword && result.newPassword !== '') {
-            this.userService
-              .updatePassword({
-                user: data,
-                newPassword: result.newPassword,
-              })
-              .subscribe((newPass: any) => {
-                result.password = newPass;
-              });
-          }
+        this.userService.update(result).subscribe(() => {
+          this.userService
+            .updatePassword({
+              user: result,
+              newPassword: result.newPassword,
+            })
+            .subscribe((newPass: any) => {
+              result.password = newPass;
+            });
         });
       });
     });
