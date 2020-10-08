@@ -90,6 +90,7 @@ export class PricingTemplatesEditComponent implements OnInit {
       this.jetACost = (fboPricesData as any).filter(item => item.product === 'JetA Cost')[0].price;
       this.jetARetail = (fboPricesData as any).filter(item => item.product === 'JetA Retail')[0].price;
 
+      console.log(this.jetACost, this.jetARetail);
       this.pricingTemplate = pricingTemplateData;
       this.pricingTemplate.customerMargins = this.updateMargins(customerMarginsData, this.pricingTemplate.marginType);
       this.pricingTemplateForm = this.formBuilder.group({
@@ -193,34 +194,28 @@ export class PricingTemplatesEditComponent implements OnInit {
     this.customerMarginsFormArray.push(this.formBuilder.group(group, { updateOn: 'blur' }));
   }
 
-  marginFocuseOut(event) {
-    if (event.target.value.length) {
-      event.target.value = Number(event.target.value).toFixed(4);
-    }
-  }
-
   private updateMargins(oldMargins, marginType) {
     const margins = [...oldMargins];
     for (let i = 0; i < margins?.length; i++) {
-      if (margins[i].amount !== null || margins[i].amount !== '') {
-        margins[i].amount = Number(margins[i].amount).toFixed(4);
-      }
       if ( i > 0) {
         margins[i - 1].max = Math.abs(margins[i].min - 1);
       }
 
       if (marginType !== 1) {
         if (margins[i].min !== null && margins[i].amount !== null) {
-          margins[i].allin = this.jetACost + margins[i].amount;
+          margins[i].allin = this.jetACost + Number(margins[i].amount);
         }
       } else {
         if (margins[i].amount !== null && margins[i].min !== null) {
-          margins[i].allin = this.jetARetail - margins[i].amount;
+          margins[i].allin = this.jetARetail - Number(margins[i].amount);
           margins[i].itp = this.jetARetail;
           if (margins[i].allin) {
             margins[i].itp = margins[i].allin - this.jetACost;
           }
         }
+      }
+      if (margins[i].amount !== null || margins[i].amount !== '') {
+        margins[i].amount = Number(margins[i].amount).toFixed(4);
       }
     }
     return margins;
