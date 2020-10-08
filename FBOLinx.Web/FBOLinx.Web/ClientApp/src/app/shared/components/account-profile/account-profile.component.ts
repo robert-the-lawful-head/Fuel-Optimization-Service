@@ -129,13 +129,16 @@ export class AccountProfileComponent {
         }
       }
 
-      if (this.availableroles.length > 1) {
-        this.data.role = this.availableroles[
-          this.availableroles.length - 1
-        ].Value;
-      } else {
-        this.data.role = this.availableroles[0].value;
+      if (!this.data.role || this.data.role == 0) {
+        if (this.availableroles.length > 1) {
+          this.data.role = this.availableroles[
+            this.availableroles.length - 1
+          ].value;
+        } else {
+          this.data.role = this.availableroles[0].value;
+        }
       }
+
     });
   }
 }
