@@ -978,7 +978,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("analysis/company-quoting-deal-statistics/group/{groupId}/fbo/{fboId}")]
-        public IActionResult GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null)
+        public async Task<IActionResult> GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null)
         {
             if (!ModelState.IsValid)
             {
@@ -987,12 +987,11 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
-                IQueryable<int> airportfbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid);
+                string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
+                List<int> airportfbos = await _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid).ToListAsync();
 
-                var fuelReqs = (from fr in _context.FuelReq
-                                join afboid in airportfbos on fr.Fboid equals afboid
-                                where fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
+                var fuelReqs = await (from fr in _context.FuelReq
+                                where fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && airportfbos.Any(a => a == fr.Fboid)
                                 group fr by fr.CustomerId
                                 into groupedFuelReqs
                                 select new
@@ -1002,9 +1001,9 @@ namespace FBOLinx.Web.Controllers
                                     TotalVolume = groupedFuelReqs.Sum(fr => fr.ActualVolume.GetValueOrDefault() * fr.ActualPpg.GetValueOrDefault() > 0 ?
                                                  fr.ActualVolume * fr.ActualPpg :
                                                  fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()).GetValueOrDefault()
-                                }).ToList();
+                                }).ToListAsync();
 
-                var pricingLogs = (from cpl in _context.CompanyPricingLog
+                var pricingLogs = await (from cpl in _context.CompanyPricingLog
                                    join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
                                    join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
                                    where cibg.GroupId == groupId && cpl.ICAO == icao
@@ -1012,16 +1011,19 @@ namespace FBOLinx.Web.Controllers
                                    {
                                        CustomerId = cibg.CustomerId,
                                        CreatedDate = cpl.CreatedDate
-                                   }).ToList();
+                                   }).ToListAsync();
 
-                var customers = _context.CustomerInfoByGroup
+                var customers = await _context.CustomerInfoByGroup
                                         .Where(c => c.GroupId.Equals(groupId))
+                                        .Include(x => x.Customer)
+                                        .Where(x => (x.Customer != null && x.Customer.Suspended != true))
                                         .Select(c => new
                                         {
                                             c.CustomerId,
-                                            Company = c.Company.Trim()
+                                            Company = c.Company.Trim(),
+                                            Customer = c.Customer
                                         })
-                                        .Distinct();
+                                        .Distinct().ToListAsync();
 
                 FBOLinxOrdersRequest fbolinxOrdersRequest = new FBOLinxOrdersRequest();
                 fbolinxOrdersRequest.StartDateTime = request.StartDateTime;
@@ -1038,7 +1040,8 @@ namespace FBOLinx.Web.Controllers
                 List<object> tableData = new List<object>();
                 foreach (var customer in customers)
                 {
-                    var fuelerLinxCustomerID = _context.Customers.Where(c => c.Oid.Equals(customer.CustomerId)).Select(c => c.FuelerlinxId).FirstOrDefault();
+                    //var fuelerLinxCustomerID = _context.Customers.Where(c => c.Oid.Equals(customer.CustomerId)).Select(c => c.FuelerlinxId).FirstOrDefault();
+                    var fuelerLinxCustomerID = customer.Customer?.FuelerlinxId;
                     var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
                     var companyQuotes = pricingLogs.Where(c => c.CreatedDate >= request.StartDateTime && c.CreatedDate <= request.EndDateTime && c.CustomerId.Equals(customer.CustomerId)).Count();
                     var companyPricingLog = pricingLogs.Where(c => c.CustomerId.Equals(customer.CustomerId)).OrderByDescending(c => c.CreatedDate).FirstOrDefault();

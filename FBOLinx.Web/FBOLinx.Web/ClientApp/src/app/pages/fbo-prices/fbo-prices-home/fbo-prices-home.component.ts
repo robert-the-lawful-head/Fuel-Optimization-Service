@@ -138,6 +138,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
       this.aircraftsService.getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumber).subscribe((response: any) => {
         if (!response) {
           this.customersForTail = [];
+          this.customerForTailLookup = null;
           return;
         }
         this.customersForTail = response;
