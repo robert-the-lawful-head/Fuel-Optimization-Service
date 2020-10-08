@@ -26,7 +26,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
     public icaoChangedSubscription: any;
     public chartName = 'companies-quotes-deal-table';
     public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
-    public dataSource: any;
+    public dataSource: MatTableDataSource<any[]>;
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -75,6 +75,21 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
             )
             .subscribe((data: any) => {
                 this.dataSource = new MatTableDataSource(data);
+                this.dataSource.sortingDataAccessor = (item, property) => {
+                    switch (property) {
+                        case 'lastPullDate':
+                            if (item[property] === 'N/A') {
+                                if (this.sort.direction === 'asc') {
+                                    return new Date(8640000000000000);
+                                } else {
+                                    return new Date(-8640000000000000);
+                                }
+                            }
+                            return new Date(item[property]);
+                        default:
+                            return item[property];
+                    }
+                };
                 this.dataSource.sort = this.sort;
             }, () => {
             }, () => {

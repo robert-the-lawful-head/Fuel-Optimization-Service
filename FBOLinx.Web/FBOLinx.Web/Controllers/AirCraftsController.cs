@@ -75,11 +75,14 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("customers-by-tail/group/{groupId}/tail/{tailNumber}")]
         public async Task<ActionResult<CustomerInfoByGroup>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
         {
+            if (string.IsNullOrEmpty(tailNumber))
+                return Ok(new List<CustomerInfoByGroup>());
+            
             var customerAircraft = await _context.CustomerAircrafts.Where(x => x.TailNumber == tailNumber).ToListAsync();
             if (customerAircraft == null)
-                return null;
+                return Ok(new List<CustomerInfoByGroup>());
 
-            var result = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && customerAircraft.Any(ca => ca.CustomerId == x.CustomerId)).ToListAsync();
+            var result = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && customerAircraft.Any(ca => ca.CustomerId == x.CustomerId)).Include(x => x.Customer).Where(x => (x.Customer != null && x.Customer.Suspended != true)).ToListAsync();
 
             return Ok(result);
         }

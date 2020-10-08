@@ -8,7 +8,7 @@ import {
 
 // Interfaces
 export interface ForgotPasswordDialogData {
-    username: string;
+    email: string;
 }
 
 @Component({

@@ -16,9 +16,9 @@ namespace FBOLinx.Web.Services
     public class ResetPasswordService
     {
         private FBOLinx.Web.Configurations.MailSettings _MailSettings;
-        private FboLinxContext _Context;
-        private IFileProvider _FileProvider;
-        private IHttpContextAccessor _HttpContextAccessor;
+        private readonly FboLinxContext _Context;
+        private readonly IFileProvider _FileProvider;
+        private readonly IHttpContextAccessor _HttpContextAccessor;
 
         public ResetPasswordService(FBOLinx.Web.Configurations.MailSettings mailSettings, FboLinxContext context, IFileProvider fileProvider,
             IHttpContextAccessor httpContextAccessor)
@@ -30,15 +30,15 @@ namespace FBOLinx.Web.Services
         }
 
         #region Public Methods
-        public async Task SendResetPasswordEmailAsync(User user, string emailAddress)
+        public async Task SendResetPasswordEmailAsync(string name, string emailAddress, string token)
         {
             if (string.IsNullOrEmpty(emailAddress) || !(_MailSettings.IsValidEmailRecipient(emailAddress)))
                 return;
 
             MailMessage mailMessage = new MailMessage();
             string body = GetResetPasswordEmailTemplate();
-            body = body.Replace("%USERNAME%", user.Username);
-            body = body.Replace("%RESETPASSWORDLINK%", _HttpContextAccessor.HttpContext.Request.Scheme + "://" + _HttpContextAccessor.HttpContext.Request.Host + "/#/extra-layout/authtoken/" + user.Token);
+            body = body.Replace("%USERNAME%", name);
+            body = body.Replace("%RESETPASSWORDLINK%", _HttpContextAccessor.HttpContext.Request.Scheme + "://" + _HttpContextAccessor.HttpContext.Request.Host + "/reset-password?token=" + token);
             mailMessage.From = new MailAddress("donotreply@fbolinx.com");
             mailMessage.To.Add(new MailAddress(emailAddress));
             mailMessage.Body = body;

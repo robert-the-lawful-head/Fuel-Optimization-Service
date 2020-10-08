@@ -37,7 +37,9 @@ namespace FBOLinx.Web.Models
         public long? LoginCount { get;set; }
         public int? AddOnMarginTries { get; set; }
         public bool? GoOverTutorial { get; set; }
-        public bool Active { get; set; }
+        public bool? Active { get; set; }
+        public string ResetPasswordToken { get; set; }
+        public DateTime? ResetPasswordTokenExpiration { get; set; }
         public UserRoles Role { get; set; }
 
         [Column("FBOID")]

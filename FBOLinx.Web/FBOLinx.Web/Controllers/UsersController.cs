@@ -1,22 +1,19 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using FBOLinx.Web.Auth;
+﻿using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
-using FBOLinx.Web.Models.Responses;
-using System.Security.Cryptography;
 using System;
-using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -240,36 +237,75 @@ namespace FBOLinx.Web.Controllers
             return CreatedAtAction("GetUser", new { id = user.Oid }, user);
         }
 
-        // POST: api/users/resetpassword
         [AllowAnonymous]
-        [HttpPost("resetpassword")]
-        public async Task<IActionResult> PostResetPassword([FromBody] UserResetPasswordRequest request)
+        [HttpPost("request-reset-password")]
+        public async Task<IActionResult> RequestResetPassword([FromBody] UserRequireResetPasswordRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = _userService.Authenticate(request.username, "", true);
-            if (user == null)
-                return BadRequest(new { message = "There are no records of that username in the system" });
-
-            string emailAddress = "";
-            if (user.Username.Contains("@"))
-                emailAddress = user.Username;
-            if (user.FboId > 0)
+            var user = _context.User.FirstOrDefault(u => u.Username.Equals(request.Email));
+            if (user != null)
             {
-                var fbo = await _context.Fbos.FindAsync(user.FboId);
-                if (fbo != null)
-                    emailAddress = fbo.FuelDeskEmail;
+                var rand = new Random();
+                byte[] bytes = new byte[32];
+                rand.NextBytes(bytes);
+
+                string token = Convert.ToBase64String(bytes);
+
+                user.ResetPasswordToken = token;
+                user.ResetPasswordTokenExpiration = DateTime.UtcNow.AddDays(7);
+                await _context.SaveChangesAsync();
+
+                ResetPasswordService service = new ResetPasswordService(_MailSettings, _context, _fileProvider, _httpContextAccessor);
+                await service.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, token);
             }
-            if (string.IsNullOrEmpty(emailAddress))
-                return BadRequest(new { message = "No valid email address to send to.  Please contact us for assistance." });
 
-            ResetPasswordService service =
-                new ResetPasswordService(_MailSettings, _context, _fileProvider, _httpContextAccessor);
-            await service.SendResetPasswordEmailAsync(user, emailAddress);
+            return Ok();
+        }
 
+        [AllowAnonymous]
+        [HttpPost("validate-reset-password-token")]
+        public IActionResult ValidateResetPasswordToken([FromBody] UserResetPasswordValidateRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = _context.User.FirstOrDefault(u => u.ResetPasswordToken.Equals(request.Token));
+            if (user == null || user.ResetPasswordTokenExpiration < DateTime.UtcNow)
+            {
+                return BadRequest();
+            }
+
+            return Ok(user);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] UserResetPasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = _context.User.FirstOrDefault(u => u.Username.Equals(request.Username) && u.ResetPasswordToken.Equals(request.ResetPasswordToken));
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            Utilities.Hash hashUtility = new Utilities.Hash();
+
+            user.ResetPasswordToken = null;
+            user.ResetPasswordTokenExpiration = null;
+            user.Password = hashUtility.HashPassword(request.Password);
+
+            await _context.SaveChangesAsync();
             return Ok();
         }
 

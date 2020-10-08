@@ -8,6 +8,7 @@ import { LandingSiteLayoutComponent } from './layouts/landing-site/landing-site.
 // Page Components
 import { AuthtokenComponent } from './pages/auth/authtoken/authtoken.component';
 import { LoginComponent } from './pages/auth/login/login.component';
+import { ResetPasswordComponent } from './pages/auth/reset-password/reset-password.component';
 import { CustomersEditComponent } from './pages/customers/customers-edit/customers-edit.component';
 import { CustomersHomeComponent } from './pages/customers/customers-home/customers-home.component';
 import { DashboardFboComponent } from './pages/dashboards/dashboard-fbo/dashboard-fbo.component';
@@ -158,6 +159,10 @@ const routes: Routes = [{
   {
     path: 'app-login',
     component: LoginComponent,
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent
   },
   {
     path: '**',
