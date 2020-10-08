@@ -867,7 +867,7 @@ namespace FBOLinx.Web.Controllers
 
                 foreach(FbolinxContractFuelVendorTransactionsCountAtAirport vendor in fuelerlinxContractFuelVendorOrdersCount)
                 {
-                    if (vendor.ContractFuelVendor != null && vendor.ContractFuelVendor != "FBOlinx" && vendor.ContractFuelVendor != fbo + " - " + icao)
+                    if (vendor.ContractFuelVendor != null && !vendor.ContractFuelVendor.ToLower().Contains("fbolinx") && vendor.ContractFuelVendor != fbo + " - " + icao)
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                         chartItemType.Name = vendor.ContractFuelVendor;
