@@ -46,8 +46,13 @@ export class LoginComponent implements OnInit {
         if (this.loginForm.valid) {
             this.submit = true;
             this.oauthService.login(this.loginForm.value.username, this.loginForm.value.password, this.partner)
-                .subscribe((token: any) => {
-                    window.location.href = this.redirectTo + '?accessToken=' + token.accessToken;
+              .subscribe((token: any) => {
+                  var tokenQueryString = 'accessToken=' + token.accessToken;
+                  if (this.redirectTo.indexOf('?') == -1)
+                    tokenQueryString = '?' + tokenQueryString;
+                  else
+                    tokenQueryString = '&' + tokenQueryString;
+                  window.location.href = this.redirectTo + tokenQueryString;
                 }, (err: any) => {
                     console.log(err);
                     this.error = err;
