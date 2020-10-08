@@ -228,7 +228,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
   private updateMargins(oldMargins, marginType) {
     const margins = [...oldMargins];
     for (let i = 0; i < margins?.length; i++) {
-      if(margins[i].amount !== null || margins[i].amount !== '') {
+      if (margins[i].amount !== null || margins[i].amount !== '') {
         margins[i].amount = Number(margins[i].amount).toFixed(4);
       }
       if (i > 0) {

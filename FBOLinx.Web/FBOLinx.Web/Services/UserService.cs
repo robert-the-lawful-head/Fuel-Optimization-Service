@@ -61,7 +61,7 @@ namespace FBOLinx.Web.Services
                 }
             }
 
-            if (!user.Active)
+            if (user.Active != true)
             {
                 return null;
             }
@@ -97,7 +97,7 @@ namespace FBOLinx.Web.Services
                 }
             }
 
-            if (!user.Active)
+            if (user.Active != true)
             {
                 return null;
             }
