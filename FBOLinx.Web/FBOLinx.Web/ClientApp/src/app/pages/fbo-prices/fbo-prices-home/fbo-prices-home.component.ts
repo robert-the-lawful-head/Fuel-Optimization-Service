@@ -458,20 +458,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   private checkDefaultTemplate() {
-    let currentFboId = 0;
-
-    if (this.sharedService.currentUser.fboId !== 0) {
-      currentFboId = this.sharedService.currentUser.fboId;
-    } else {
-      currentFboId = sessionStorage.fboId;
-    }
-
     this.pricingTemplateService
-      .checkdefaultpricingtemplates(currentFboId)
+      .checkdefaultpricingtemplates(this.sharedService.currentUser.fboId)
       .subscribe((response: any) => {
         if (!response) {
           this.pricingTemplateService
-            .getByFboDefaultTemplate(currentFboId)
+            .getByFboDefaultTemplate(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
             .subscribe(
               (data: any) => {
                 this.pricingTemplates = data;
@@ -496,7 +488,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                       .subscribe((result) => {
                         if (result !== 'cancel') {
                           this.updateModel.currenttemplate = 0;
-                          this.updateModel.fboid = currentFboId;
+                          this.updateModel.fboid = this.sharedService.currentUser.fboId;
                           this.updateModel.newtemplate = result;
 
                           this.customCustomerService

@@ -44,7 +44,7 @@ export class DefaultLayoutComponent implements OnInit {
 
     if (this.sharedService.currentUser.fboId) {
       this.pricingTemplatesService
-        .getByFbo(this.sharedService.currentUser.fboId)
+        .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
         .subscribe((data: any) => (this.pricingTemplatesData = data));
       sharedService.titleChanged$.subscribe((title) => {
         this.pageTitle = title;
@@ -60,7 +60,7 @@ export class DefaultLayoutComponent implements OnInit {
     this.sharedService.changeEmitted$.subscribe((message) => {
       if ((message === fboChangedEvent || message === locationChangedEvent) && this.sharedService.currentUser.fboId) {
         this.pricingTemplatesService
-          .getByFbo(this.sharedService.currentUser.fboId)
+          .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
           .subscribe((data: any) => (this.pricingTemplatesData = data));
       }
     });

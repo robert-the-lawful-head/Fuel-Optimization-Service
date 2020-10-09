@@ -14,19 +14,11 @@ export class PricingtemplatesService {
     }
 
     public getByFbo(fboId, groupId?) {
-        let url = this.accessPointUrl;
-        if (groupId) {
-            url += '/group/' + groupId;
-        }
-        return this.http.get(url + '/fbo/' + fboId, { headers: this.headers });
+        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId, { headers: this.headers });
     }
 
-    public getByFboDefaultTemplate(fboId, groupId?) {
-        let url = this.accessPointUrl;
-        if (groupId) {
-            url += '/group/' + groupId;
-        }
-        return this.http.get(url + '/fbodefaultpricingtemplate/' + fboId, { headers: this.headers });
+    public getByFboDefaultTemplate(groupId, fboId) {
+        return this.http.get(this.accessPointUrl + '/fbodefaultpricingtemplate/group/' + groupId + '/fbo/' + fboId, { headers: this.headers });
     }
 
     public get(payload) {
