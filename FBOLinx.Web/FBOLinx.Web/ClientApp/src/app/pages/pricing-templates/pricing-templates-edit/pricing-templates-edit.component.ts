@@ -90,7 +90,6 @@ export class PricingTemplatesEditComponent implements OnInit {
       this.jetACost = (fboPricesData as any).filter(item => item.product === 'JetA Cost')[0].price;
       this.jetARetail = (fboPricesData as any).filter(item => item.product === 'JetA Retail')[0].price;
 
-      console.log(this.jetACost, this.jetARetail);
       this.pricingTemplate = pricingTemplateData;
       this.pricingTemplate.customerMargins = this.updateMargins(customerMarginsData, this.pricingTemplate.marginType);
       this.pricingTemplateForm = this.formBuilder.group({

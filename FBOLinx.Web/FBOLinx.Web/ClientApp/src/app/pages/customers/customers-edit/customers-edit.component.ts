@@ -87,7 +87,7 @@ export class CustomersEditComponent implements OnInit {
         this.customerInfoByGroup = await this.customerInfoByGroupService.get({oid: id}).toPromise();
         const results = await combineLatest([
             this.customerInfoByGroupService.getCertificateTypes(),
-            this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId),
+            this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId),
             this.contactInfoByGroupsService.getCustomerContactInfoByGroup(
                 this.sharedService.currentUser.groupId,
                 this.customerInfoByGroup.customerId
