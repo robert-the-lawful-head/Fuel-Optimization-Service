@@ -356,14 +356,16 @@ namespace FBOLinx.Web.Services
                                       join cct in _context.CustomCustomerTypes on p.Oid equals cct.CustomerType
                                       into leftJoinCct
                                       from cct in leftJoinCct.DefaultIfEmpty()
-                                      join cig in _context.CustomerInfoByGroup on new { cct.CustomerId, GroupId = groupId } equals new { cig.CustomerId, cig.GroupId }
+                                      join cig in _context.CustomerInfoByGroup on new { CustomerId = cct == null ? 0 : cct.CustomerId, GroupId = groupId } equals new { cig.CustomerId, cig.GroupId }
+                                      into leftJoinCig
+                                      from cig in leftJoinCig.DefaultIfEmpty()
                                       where p.Fboid == fboId
                                       group p by new
                                       {
                                           p.CustomerId,
                                           p.Default,
                                           p.Fboid,
-                                          Margin = p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue,
+                                          Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
                                           p.MarginType,
                                           p.Name,
                                           p.Notes,
@@ -372,9 +374,9 @@ namespace FBOLinx.Web.Services
                                           p.Subject,
                                           p.Email,
                                           IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
-                                          IntoPlanePrice = p.MarginType == MarginTypes.CostPlus ? fp.Price + cm.MaxPriceTierValue : (p.MarginType == MarginTypes.RetailMinus ? fp.Price - cm.MinPriceTierValue : 0),
-                                          cm.TemplateId,
-                                          CustomerInfoByGroupId = cig.Oid
+                                          IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) : p.MarginType == MarginTypes.CostPlus ? fp.Price + cm.MaxPriceTierValue : (p.MarginType == MarginTypes.RetailMinus ? fp.Price - cm.MinPriceTierValue : 0),
+                                          TemplateId = cm == null ? 0 : cm.TemplateId,
+                                          CustomerInfoByGroupId = cig == null ? 0 : cig.Oid
                                       } into groupedResult
                                       select new
                                       {
@@ -427,7 +429,7 @@ namespace FBOLinx.Web.Services
                               Email = groupedPt.Key.Email,
                               IsPricingExpired = groupedPt.Key.IsPricingExpired,
                               IntoPlanePrice = groupedPt.Key.IntoPlanePrice,
-                              CustomersAssigned = groupedPt.Count()
+                              CustomersAssigned = groupedPt.Count(g => g.CustomerInfoByGroupId != 0)
                           })
                           .OrderBy(pt => pt.Name)
                           .ToList();
