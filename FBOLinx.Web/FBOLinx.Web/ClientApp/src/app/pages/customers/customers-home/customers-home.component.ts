@@ -109,7 +109,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     private loadPricingTemplates() {
         this.pricingTemplatesData = null;
         this.pricingTemplatesService
-            .getByFbo(this.sharedService.currentUser.fboId)
+            .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
             .subscribe((data: any) => {
                 this.pricingTemplatesData = data;
             });

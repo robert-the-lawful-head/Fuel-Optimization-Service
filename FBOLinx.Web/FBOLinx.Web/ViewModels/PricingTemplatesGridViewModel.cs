@@ -24,7 +24,7 @@ namespace FBOLinx.Web.ViewModels
             get { return Utilities.Enum.GetDescription(MarginType ?? PricingTemplate.MarginTypes.CostPlus); }
         }
         public double Margin { get; set; }
-        public double IntoPlanePrice { get; set; }
+        public double? IntoPlanePrice { get; set; }
         public bool IsInvalid { get; set; }
         public bool IsPricingExpired { get; set; }
         public double? YourMargin { get; set; }

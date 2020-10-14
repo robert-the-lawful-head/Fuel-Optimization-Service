@@ -55,17 +55,8 @@ namespace FBOLinx.Web.Controllers
             return Ok(pricingTemplate);
         }
 
-        // GET: api/PricingTemplates/fbo/5
-        [HttpGet("fbo/{fboId}")]
-        public async Task<IActionResult> GetPricingTemplateByFboId([FromRoute] int fboId)
-        {
-            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, null);
-
-            return Ok(marginTemplates);
-        }
-
-        [HttpGet("fbodefaultpricingtemplate/{fboId}")]
-        public async Task<IActionResult> GetPricingTemplateByFboIdForDefaultTemplate([FromRoute] int fboId)
+        [HttpGet("fbodefaultpricingtemplate/group/{groupId}/fbo/{fboId}")]
+        public async Task<IActionResult> GetPricingTemplateByFboIdForDefaultTemplate([FromRoute] int groupId, [FromRoute] int fboId)
         {
             if (!ModelState.IsValid)
             {
@@ -75,7 +66,7 @@ namespace FBOLinx.Web.Controllers
             PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
             await pricingTemplateService.FixDefaultPricingTemplate(fboId);
 
-            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, null);
+            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
 
             return Ok(marginTemplates);
         }
