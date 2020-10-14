@@ -18,6 +18,12 @@ namespace IO.Swagger.Api
         /// <returns>CheckAuthorizationInfoResponse</returns>
         CheckAuthorizationInfoResponse CheckSageCredentials (SageCredentialsRequest body);
         /// <summary>
+        /// Deletes accounting contract mappings record based on ID 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteAccountingContractMappingsResponse</returns>
+        DeleteAccountingContractMappingsResponse DeleteAccountingContractMappings (int? id);
+        /// <summary>
         /// Deletes accounting integration item code record based on ID 
         /// </summary>
         /// <param name="id"></param>
@@ -29,6 +35,12 @@ namespace IO.Swagger.Api
         /// <param name="id"></param>
         /// <returns>DeleteSupplierDetailsResponse</returns>
         DeleteSupplierDetailsResponse DeleteSupplierDetails (int? id);
+        /// <summary>
+        /// Gets accounting contract mappings by company Id 
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns>AccountingContractMappingsResponse</returns>
+        AccountingContractMappingsResponse GetAccountingContractMappingList (int? companyId);
         /// <summary>
         /// Get department list from the company&#39;s accounting integration 
         /// </summary>
@@ -78,23 +90,35 @@ namespace IO.Swagger.Api
         /// <returns>SupplierDetailsResponse</returns>
         SupplierDetailsResponse GetSupplierDetailsById (int? id);
         /// <summary>
+        /// Adds new accounting contract mapping record 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostAccountingContractMappingsResponse</returns>
+        PostAccountingContractMappingsResponse PostAccountingContractMappings (PostAccountingContractMappingsRequest body);
+        /// <summary>
         /// Adds new accounting integration item code record 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostAccountingIntegrationItemCodesResponse</returns>
         PostAccountingIntegrationItemCodesResponse PostAccountingIntegrationItemCodesDetails (PostAccountingIntegrationItemCodesRequest body);
         /// <summary>
-        /// Insert new bill in Sage 
+        ///  
         /// </summary>
-        /// <param name="transactionid"></param>
-        /// <returns>SageCreateBillResponse</returns>
-        SageCreateBillResponse PostSageBill (int? transactionid);
+        /// <param name="transactionId"></param>
+        /// <returns>BillCreationResponse</returns>
+        BillCreationResponse PostBillToAccounting (int? transactionId);
         /// <summary>
         /// Adds a new record for supplier-details of an FBO or Vendor. 
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostSupplierDetailsResponse</returns>
         PostSupplierDetailsResponse PostSupplierDetails (PostSupplierDetailsRequest body);
+        /// <summary>
+        /// Updates accounting contract mapping record 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateAccountingContractMappingsResponse</returns>
+        UpdateAccountingContractMappingsResponse UpdateAccountingContractMappings (UpdateAccountingContractMappingsRequest body);
         /// <summary>
         /// Updates accounting integration item code record 
         /// </summary>
@@ -203,6 +227,43 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Deletes accounting contract mappings record based on ID 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteAccountingContractMappingsResponse</returns>            
+        public DeleteAccountingContractMappingsResponse DeleteAccountingContractMappings (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteAccountingContractMappings");
+            
+    
+            var path = "/api/Accounting/accounting-contract-mappings/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteAccountingContractMappings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteAccountingContractMappings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteAccountingContractMappingsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteAccountingContractMappingsResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Deletes accounting integration item code record based on ID 
         /// </summary>
         /// <param name="id"></param> 
@@ -274,6 +335,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupplierDetails: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteSupplierDetailsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupplierDetailsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Gets accounting contract mappings by company Id 
+        /// </summary>
+        /// <param name="companyId"></param> 
+        /// <returns>AccountingContractMappingsResponse</returns>            
+        public AccountingContractMappingsResponse GetAccountingContractMappingList (int? companyId)
+        {
+            
+            // verify the required parameter 'companyId' is set
+            if (companyId == null) throw new ApiException(400, "Missing required parameter 'companyId' when calling GetAccountingContractMappingList");
+            
+    
+            var path = "/api/Accounting/accounting-contract-mappings/{companyId}/list";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(companyId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAccountingContractMappingList: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAccountingContractMappingList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (AccountingContractMappingsResponse) ApiClient.Deserialize(response.Content, typeof(AccountingContractMappingsResponse), response.Headers);
         }
     
         /// <summary>
@@ -580,6 +678,40 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Adds new accounting contract mapping record 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostAccountingContractMappingsResponse</returns>            
+        public PostAccountingContractMappingsResponse PostAccountingContractMappings (PostAccountingContractMappingsRequest body)
+        {
+            
+    
+            var path = "/api/Accounting/accounting-contract-mappings";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostAccountingContractMappings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostAccountingContractMappings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostAccountingContractMappingsResponse) ApiClient.Deserialize(response.Content, typeof(PostAccountingContractMappingsResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Adds new accounting integration item code record 
         /// </summary>
         /// <param name="body"></param> 
@@ -614,20 +746,20 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Insert new bill in Sage 
+        ///  
         /// </summary>
-        /// <param name="transactionid"></param> 
-        /// <returns>SageCreateBillResponse</returns>            
-        public SageCreateBillResponse PostSageBill (int? transactionid)
+        /// <param name="transactionId"></param> 
+        /// <returns>BillCreationResponse</returns>            
+        public BillCreationResponse PostBillToAccounting (int? transactionId)
         {
             
-            // verify the required parameter 'transactionid' is set
-            if (transactionid == null) throw new ApiException(400, "Missing required parameter 'transactionid' when calling PostSageBill");
+            // verify the required parameter 'transactionId' is set
+            if (transactionId == null) throw new ApiException(400, "Missing required parameter 'transactionId' when calling PostBillToAccounting");
             
     
-            var path = "/api/Accounting/sage/bill/{transactionid}";
+            var path = "/api/Accounting/integration/bill/{transactionId}";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "transactionid" + "}", ApiClient.ParameterToString(transactionid));
+            path = path.Replace("{" + "transactionId" + "}", ApiClient.ParameterToString(transactionId));
     
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
@@ -643,11 +775,11 @@ namespace IO.Swagger.Api
             IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
     
             if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostSageBill: " + response.Content, response.Content);
+                throw new ApiException ((int)response.StatusCode, "Error calling PostBillToAccounting: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostSageBill: " + response.ErrorMessage, response.ErrorMessage);
+                throw new ApiException ((int)response.StatusCode, "Error calling PostBillToAccounting: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (SageCreateBillResponse) ApiClient.Deserialize(response.Content, typeof(SageCreateBillResponse), response.Headers);
+            return (BillCreationResponse) ApiClient.Deserialize(response.Content, typeof(BillCreationResponse), response.Headers);
         }
     
         /// <summary>
@@ -682,6 +814,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling PostSupplierDetails: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostSupplierDetailsResponse) ApiClient.Deserialize(response.Content, typeof(PostSupplierDetailsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates accounting contract mapping record 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateAccountingContractMappingsResponse</returns>            
+        public UpdateAccountingContractMappingsResponse UpdateAccountingContractMappings (UpdateAccountingContractMappingsRequest body)
+        {
+            
+    
+            var path = "/api/Accounting/accounting-contract-mappings";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateAccountingContractMappings: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateAccountingContractMappings: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateAccountingContractMappingsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateAccountingContractMappingsResponse), response.Headers);
         }
     
         /// <summary>

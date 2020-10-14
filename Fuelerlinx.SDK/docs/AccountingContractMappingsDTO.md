@@ -1,17 +1,13 @@
-# IO.Swagger.Model.AccountingIntegrationItemCodesDTO
+# IO.Swagger.Model.AccountingContractMappingsDTO
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Id** | **int?** |  | [optional] 
-**CompanyID** | **int?** |  | [optional] 
-**ItemName** | **string** |  | [optional] 
-**AccountingCategory** | **string** |  | [optional] 
-**AccountingItemName** | **string** |  | [optional] 
-**AccountingItemCode** | **string** |  | [optional] 
-**AccountingDepartment** | **string** |  | [optional] 
+**CompanyId** | **int?** |  | [optional] 
 **FuelerId** | **int?** |  | [optional] 
 **TailNumber** | **string** |  | [optional] 
+**AccountingCode** | **string** |  | [optional] 
 **Icao** | **string** |  | [optional] 
 **Fbo** | **string** |  | [optional] 
 

@@ -11,7 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class AccountingIntegrationItemCodesDTO {
+  public class AccountingContractMappingsDTO {
     /// <summary>
     /// Gets or Sets Id
     /// </summary>
@@ -20,46 +20,11 @@ namespace IO.Swagger.Model {
     public int? Id { get; set; }
 
     /// <summary>
-    /// Gets or Sets CompanyID
+    /// Gets or Sets CompanyId
     /// </summary>
-    [DataMember(Name="companyID", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "companyID")]
-    public int? CompanyID { get; set; }
-
-    /// <summary>
-    /// Gets or Sets ItemName
-    /// </summary>
-    [DataMember(Name="itemName", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "itemName")]
-    public string ItemName { get; set; }
-
-    /// <summary>
-    /// Gets or Sets AccountingCategory
-    /// </summary>
-    [DataMember(Name="accountingCategory", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "accountingCategory")]
-    public string AccountingCategory { get; set; }
-
-    /// <summary>
-    /// Gets or Sets AccountingItemName
-    /// </summary>
-    [DataMember(Name="accountingItemName", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "accountingItemName")]
-    public string AccountingItemName { get; set; }
-
-    /// <summary>
-    /// Gets or Sets AccountingItemCode
-    /// </summary>
-    [DataMember(Name="accountingItemCode", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "accountingItemCode")]
-    public string AccountingItemCode { get; set; }
-
-    /// <summary>
-    /// Gets or Sets AccountingDepartment
-    /// </summary>
-    [DataMember(Name="accountingDepartment", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "accountingDepartment")]
-    public string AccountingDepartment { get; set; }
+    [DataMember(Name="companyId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyId")]
+    public int? CompanyId { get; set; }
 
     /// <summary>
     /// Gets or Sets FuelerId
@@ -74,6 +39,13 @@ namespace IO.Swagger.Model {
     [DataMember(Name="tailNumber", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "tailNumber")]
     public string TailNumber { get; set; }
+
+    /// <summary>
+    /// Gets or Sets AccountingCode
+    /// </summary>
+    [DataMember(Name="accountingCode", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "accountingCode")]
+    public string AccountingCode { get; set; }
 
     /// <summary>
     /// Gets or Sets Icao
@@ -96,16 +68,12 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class AccountingIntegrationItemCodesDTO {\n");
+      sb.Append("class AccountingContractMappingsDTO {\n");
       sb.Append("  Id: ").Append(Id).Append("\n");
-      sb.Append("  CompanyID: ").Append(CompanyID).Append("\n");
-      sb.Append("  ItemName: ").Append(ItemName).Append("\n");
-      sb.Append("  AccountingCategory: ").Append(AccountingCategory).Append("\n");
-      sb.Append("  AccountingItemName: ").Append(AccountingItemName).Append("\n");
-      sb.Append("  AccountingItemCode: ").Append(AccountingItemCode).Append("\n");
-      sb.Append("  AccountingDepartment: ").Append(AccountingDepartment).Append("\n");
+      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  FuelerId: ").Append(FuelerId).Append("\n");
       sb.Append("  TailNumber: ").Append(TailNumber).Append("\n");
+      sb.Append("  AccountingCode: ").Append(AccountingCode).Append("\n");
       sb.Append("  Icao: ").Append(Icao).Append("\n");
       sb.Append("  Fbo: ").Append(Fbo).Append("\n");
       sb.Append("}\n");
