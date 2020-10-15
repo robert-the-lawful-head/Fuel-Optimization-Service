@@ -125,14 +125,16 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
     tooltipHidden() {
         const tooltipsArr = this.priceTooltips.toArray();
+        if (this.tooltipIndex === 1) {
+            this.user.goOverTutorial = true;
+            this.userService.update(this.user).subscribe(() => {});
+        }
         if (tooltipsArr.length > this.tooltipIndex) {
             setTimeout(() => {
                 tooltipsArr[this.tooltipIndex].open();
                 this.tooltipIndex++;
             }, 400);
         } else {
-            this.user.goOverTutorial = true;
-            this.userService.update(this.user).subscribe(() => {});
             this.sharedService.emitChange(menuTooltipShowedEvent);
         }
     }
