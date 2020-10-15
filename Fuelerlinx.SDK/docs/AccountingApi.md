@@ -8,7 +8,7 @@ Method | HTTP request | Description
 [**DeleteAccountingContractMappings**](AccountingApi.md#deleteaccountingcontractmappings) | **DELETE** /api/Accounting/accounting-contract-mappings/{id} | Deletes accounting contract mappings record based on ID
 [**DeleteAccountingIntegrationItemCodes**](AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 [**DeleteSupplierDetails**](AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
-[**GetAccountingContractMappingList**](AccountingApi.md#getaccountingcontractmappinglist) | **GET** /api/Accounting/accounting-contract-mappings/{companyId}/list | Gets accounting contract mappings by company Id
+[**GetAccountingContractMappingList**](AccountingApi.md#getaccountingcontractmappinglist) | **GET** /api/Accounting/accounting-contract-mappings/list | Gets accounting contract mappings by company Id
 [**GetAccountingDepartmentList**](AccountingApi.md#getaccountingdepartmentlist) | **GET** /api/Accounting/department/list | Get department list from the company&#39;s accounting integration
 [**GetAccountingIntegrationItemCodesById**](AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
 [**GetAccountingItemMappingList**](AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets accounting integration mappings for line items
@@ -306,7 +306,7 @@ Name | Type | Description  | Notes
 
 <a name="getaccountingcontractmappinglist"></a>
 # **GetAccountingContractMappingList**
-> AccountingContractMappingsResponse GetAccountingContractMappingList (int? companyId)
+> AccountingContractMappingsResponse GetAccountingContractMappingList ()
 
 Gets accounting contract mappings by company Id
 
@@ -335,12 +335,11 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new AccountingApi();
-            var companyId = 56;  // int? | 
 
             try
             {
                 // Gets accounting contract mappings by company Id
-                AccountingContractMappingsResponse result = apiInstance.GetAccountingContractMappingList(companyId);
+                AccountingContractMappingsResponse result = apiInstance.GetAccountingContractMappingList();
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -353,10 +352,7 @@ namespace Example
 ```
 
 ### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **companyId** | **int?**|  | 
+This endpoint does not need any parameter.
 
 ### Return type
 

@@ -38,9 +38,8 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Gets accounting contract mappings by company Id 
         /// </summary>
-        /// <param name="companyId"></param>
         /// <returns>AccountingContractMappingsResponse</returns>
-        AccountingContractMappingsResponse GetAccountingContractMappingList (int? companyId);
+        AccountingContractMappingsResponse GetAccountingContractMappingList ();
         /// <summary>
         /// Get department list from the company&#39;s accounting integration 
         /// </summary>
@@ -340,19 +339,14 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Gets accounting contract mappings by company Id 
         /// </summary>
-        /// <param name="companyId"></param> 
         /// <returns>AccountingContractMappingsResponse</returns>            
-        public AccountingContractMappingsResponse GetAccountingContractMappingList (int? companyId)
+        public AccountingContractMappingsResponse GetAccountingContractMappingList ()
         {
             
-            // verify the required parameter 'companyId' is set
-            if (companyId == null) throw new ApiException(400, "Missing required parameter 'companyId' when calling GetAccountingContractMappingList");
-            
     
-            var path = "/api/Accounting/accounting-contract-mappings/{companyId}/list";
+            var path = "/api/Accounting/accounting-contract-mappings/list";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(companyId));
-    
+                
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();
