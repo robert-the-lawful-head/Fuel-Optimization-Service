@@ -81,27 +81,34 @@ namespace FBOLinx.Web.Controllers
 
             var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
 
+            var fboPrices = (from f in _context.Fboprices
+                                   group f by f.Fboid into g
+                                   select new { fboId = g.Key, lastEffectiveDate = g.Max(t => t.EffectiveTo), product = g.Select(t => t.Product), expired = g.Select(t => t.Expired) });
+
+            var users = await _context.User.GroupBy(t => t.FboId).ToListAsync();
+
             //FbosViewModel used to display FBO info in the grid
-            var fbos = await _context.Fbos
-                            .Include(f => f.Users)
-                            .Include(f => f.fboAirport)
-                            .Include(f => f.Fboprices)
-                            .Join(customersNeedAttention,
-                                  f => new { GroupId = f.GroupId ?? 0, FboId = f.Oid },
-                                  cna => new { cna.GroupId, cna.FboId },
-                                  (f, cna) => new FbosGridViewModel
-                                  {
-                                      Active = f.Active,
-                                      Fbo = f.Fbo,
-                                      Icao = f.fboAirport == null ? null : f.fboAirport.Icao,
-                                      Oid = f.Oid,
-                                      GroupId = f.GroupId ?? 0,
-                                      Users = f.Users,
-                                      PricingExpired = !f.Fboprices.Any(fp => fp.EffectiveTo > DateTime.UtcNow && products.Any(p => p.Description == fp.Product) && fp.Expired != true),
-                                      LastLogin = f.LastLogin,
-                                      NeedAttentionCustomers = cna.CustomersNeedingAttention
-                                  }
-                            ).ToListAsync();
+            var fbos = await (from f in _context.Fbos
+                              join fa in _context.Fboairports on f.Oid equals fa.Fboid into fas
+                              from fairports in fas.DefaultIfEmpty()
+                              join fp in fboPrices on f.Oid equals fp.fboId into fps
+                              from fprices in fps.DefaultIfEmpty()
+                              select new FbosGridViewModel
+                              {
+                                  Active = f.Active,
+                                  Fbo = f.Fbo,
+                                  Icao = fairports.Icao,
+                                  Oid = f.Oid,
+                                  GroupId = f.GroupId ?? 0,
+                                  PricingExpired = !(fprices.lastEffectiveDate > DateTime.UtcNow && products.Any(p => p.Description == fprices.product.FirstOrDefault()) && fprices.expired.FirstOrDefault() != true),
+                                  LastLogin = f.LastLogin
+                              }).ToListAsync();
+            
+            fbos.ForEach(f =>
+            {
+                f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
+                f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Count();
+            });
 
             return Ok(new GroupFboViewModel
             {
