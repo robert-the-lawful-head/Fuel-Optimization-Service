@@ -127,7 +127,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
                 return BadRequest(ModelState);
 
             await Task.Run(() =>
@@ -145,7 +145,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
                 return BadRequest(ModelState);
 
             string preview = await _PriceDistributionService.GeneratePreview(request);
