@@ -10,6 +10,8 @@ Name | Type | Description | Notes
 **AccountingItemName** | **string** |  | [optional] 
 **AccountingItemCode** | **string** |  | [optional] 
 **AccountingDepartment** | **string** |  | [optional] 
+**FuelerId** | **int?** |  | [optional] 
+**TailNumber** | **string** |  | [optional] 
 **Icao** | **string** |  | [optional] 
 **Fbo** | **string** |  | [optional] 
 
