@@ -5,10 +5,8 @@ All URIs are relative to *https://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**CheckSageCredentials**](AccountingApi.md#checksagecredentials) | **POST** /api/Accounting/sage/check-credentials | Get Sage Credentials
-[**DeleteAccountingContractMappings**](AccountingApi.md#deleteaccountingcontractmappings) | **DELETE** /api/Accounting/accounting-contract-mappings/{id} | Deletes accounting contract mappings record based on ID
 [**DeleteAccountingIntegrationItemCodes**](AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 [**DeleteSupplierDetails**](AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
-[**GetAccountingContractMappingList**](AccountingApi.md#getaccountingcontractmappinglist) | **GET** /api/Accounting/accounting-contract-mappings/list | Gets accounting contract mappings by company Id
 [**GetAccountingDepartmentList**](AccountingApi.md#getaccountingdepartmentlist) | **GET** /api/Accounting/department/list | Get department list from the company&#39;s accounting integration
 [**GetAccountingIntegrationItemCodesById**](AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
 [**GetAccountingItemMappingList**](AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets accounting integration mappings for line items
@@ -18,11 +16,9 @@ Method | HTTP request | Description
 [**GetSageGlAccounts**](AccountingApi.md#getsageglaccounts) | **GET** /api/Accounting/sage/gl-accounts | Get Sage GL Account Details
 [**GetSageVendorAccounts**](AccountingApi.md#getsagevendoraccounts) | **GET** /api/Accounting/sage/vendor-accounts | Get Sage GL Account Details
 [**GetSupplierDetailsById**](AccountingApi.md#getsupplierdetailsbyid) | **GET** /api/Accounting/supplier-details/{id} | Fetch supplier-details for a particular FBO or Vendor based on the provided [ID].
-[**PostAccountingContractMappings**](AccountingApi.md#postaccountingcontractmappings) | **POST** /api/Accounting/accounting-contract-mappings | Adds new accounting contract mapping record
 [**PostAccountingIntegrationItemCodesDetails**](AccountingApi.md#postaccountingintegrationitemcodesdetails) | **POST** /api/Accounting/integration-item-codes | Adds new accounting integration item code record
-[**PostBillToAccounting**](AccountingApi.md#postbilltoaccounting) | **POST** /api/Accounting/integration/bill/{transactionId} | 
+[**PostSageBill**](AccountingApi.md#postsagebill) | **POST** /api/Accounting/sage/bill/{transactionid} | Insert new bill in Sage
 [**PostSupplierDetails**](AccountingApi.md#postsupplierdetails) | **POST** /api/Accounting/supplier-details | Adds a new record for supplier-details of an FBO or Vendor.
-[**UpdateAccountingContractMappings**](AccountingApi.md#updateaccountingcontractmappings) | **PUT** /api/Accounting/accounting-contract-mappings | Updates accounting contract mapping record
 [**UpdateAccountingIntegrationItemCodesDetails**](AccountingApi.md#updateaccountingintegrationitemcodesdetails) | **PUT** /api/Accounting/integration-item-codes | Updates accounting integration item code record
 [**UpdateSageCredentials**](AccountingApi.md#updatesagecredentials) | **POST** /api/Accounting/sage/update-credentials | Get Sage Credentials
 [**UpdateSupplierDetails**](AccountingApi.md#updatesupplierdetails) | **PUT** /api/Accounting/supplier-details | Updates current supplier detail record
@@ -93,75 +89,6 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
- - **Accept**: text/plain, application/json, text/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-<a name="deleteaccountingcontractmappings"></a>
-# **DeleteAccountingContractMappings**
-> DeleteAccountingContractMappingsResponse DeleteAccountingContractMappings (int? id)
-
-Deletes accounting contract mappings record based on ID
-
-### Example
-```csharp
-using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class DeleteAccountingContractMappingsExample
-    {
-        public void main()
-        {
-            
-            // Configure API key authorization: ApiKeyScheme
-            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new AccountingApi();
-            var id = 56;  // int? | 
-
-            try
-            {
-                // Deletes accounting contract mappings record based on ID
-                DeleteAccountingContractMappingsResponse result = apiInstance.DeleteAccountingContractMappings(id);
-                Debug.WriteLine(result);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling AccountingApi.DeleteAccountingContractMappings: " + e.Message );
-            }
-        }
-    }
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **id** | **int?**|  | 
-
-### Return type
-
-[**DeleteAccountingContractMappingsResponse**](DeleteAccountingContractMappingsResponse.md)
-
-### Authorization
-
-[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
  - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
@@ -292,71 +219,6 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteSupplierDetailsResponse**](DeleteSupplierDetailsResponse.md)
-
-### Authorization
-
-[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: text/plain, application/json, text/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-<a name="getaccountingcontractmappinglist"></a>
-# **GetAccountingContractMappingList**
-> AccountingContractMappingsResponse GetAccountingContractMappingList ()
-
-Gets accounting contract mappings by company Id
-
-### Example
-```csharp
-using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class GetAccountingContractMappingListExample
-    {
-        public void main()
-        {
-            
-            // Configure API key authorization: ApiKeyScheme
-            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new AccountingApi();
-
-            try
-            {
-                // Gets accounting contract mappings by company Id
-                AccountingContractMappingsResponse result = apiInstance.GetAccountingContractMappingList();
-                Debug.WriteLine(result);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling AccountingApi.GetAccountingContractMappingList: " + e.Message );
-            }
-        }
-    }
-}
-```
-
-### Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
-[**AccountingContractMappingsResponse**](AccountingContractMappingsResponse.md)
 
 ### Authorization
 
@@ -965,75 +827,6 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-<a name="postaccountingcontractmappings"></a>
-# **PostAccountingContractMappings**
-> PostAccountingContractMappingsResponse PostAccountingContractMappings (PostAccountingContractMappingsRequest body)
-
-Adds new accounting contract mapping record
-
-### Example
-```csharp
-using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class PostAccountingContractMappingsExample
-    {
-        public void main()
-        {
-            
-            // Configure API key authorization: ApiKeyScheme
-            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new AccountingApi();
-            var body = new PostAccountingContractMappingsRequest(); // PostAccountingContractMappingsRequest |  (optional) 
-
-            try
-            {
-                // Adds new accounting contract mapping record
-                PostAccountingContractMappingsResponse result = apiInstance.PostAccountingContractMappings(body);
-                Debug.WriteLine(result);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling AccountingApi.PostAccountingContractMappings: " + e.Message );
-            }
-        }
-    }
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **body** | [**PostAccountingContractMappingsRequest**](PostAccountingContractMappingsRequest.md)|  | [optional] 
-
-### Return type
-
-[**PostAccountingContractMappingsResponse**](PostAccountingContractMappingsResponse.md)
-
-### Authorization
-
-[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
-
-### HTTP request headers
-
- - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
- - **Accept**: text/plain, application/json, text/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
 <a name="postaccountingintegrationitemcodesdetails"></a>
 # **PostAccountingIntegrationItemCodesDetails**
 > PostAccountingIntegrationItemCodesResponse PostAccountingIntegrationItemCodesDetails (PostAccountingIntegrationItemCodesRequest body)
@@ -1103,11 +896,11 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-<a name="postbilltoaccounting"></a>
-# **PostBillToAccounting**
-> BillCreationResponse PostBillToAccounting (int? transactionId)
+<a name="postsagebill"></a>
+# **PostSageBill**
+> SageCreateBillResponse PostSageBill (int? transactionid)
 
-
+Insert new bill in Sage
 
 ### Example
 ```csharp
@@ -1119,7 +912,7 @@ using IO.Swagger.Model;
 
 namespace Example
 {
-    public class PostBillToAccountingExample
+    public class PostSageBillExample
     {
         public void main()
         {
@@ -1134,16 +927,17 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new AccountingApi();
-            var transactionId = 56;  // int? | 
+            var transactionid = 56;  // int? | 
 
             try
             {
-                BillCreationResponse result = apiInstance.PostBillToAccounting(transactionId);
+                // Insert new bill in Sage
+                SageCreateBillResponse result = apiInstance.PostSageBill(transactionid);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling AccountingApi.PostBillToAccounting: " + e.Message );
+                Debug.Print("Exception when calling AccountingApi.PostSageBill: " + e.Message );
             }
         }
     }
@@ -1154,11 +948,11 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **transactionId** | **int?**|  | 
+ **transactionid** | **int?**|  | 
 
 ### Return type
 
-[**BillCreationResponse**](BillCreationResponse.md)
+[**SageCreateBillResponse**](SageCreateBillResponse.md)
 
 ### Authorization
 
@@ -1228,75 +1022,6 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PostSupplierDetailsResponse**](PostSupplierDetailsResponse.md)
-
-### Authorization
-
-[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
-
-### HTTP request headers
-
- - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
- - **Accept**: text/plain, application/json, text/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-<a name="updateaccountingcontractmappings"></a>
-# **UpdateAccountingContractMappings**
-> UpdateAccountingContractMappingsResponse UpdateAccountingContractMappings (UpdateAccountingContractMappingsRequest body)
-
-Updates accounting contract mapping record
-
-### Example
-```csharp
-using System;
-using System.Diagnostics;
-using IO.Swagger.Api;
-using IO.Swagger.Client;
-using IO.Swagger.Model;
-
-namespace Example
-{
-    public class UpdateAccountingContractMappingsExample
-    {
-        public void main()
-        {
-            
-            // Configure API key authorization: ApiKeyScheme
-            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
-            // Configure API key authorization: Bearer
-            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
-            var apiInstance = new AccountingApi();
-            var body = new UpdateAccountingContractMappingsRequest(); // UpdateAccountingContractMappingsRequest |  (optional) 
-
-            try
-            {
-                // Updates accounting contract mapping record
-                UpdateAccountingContractMappingsResponse result = apiInstance.UpdateAccountingContractMappings(body);
-                Debug.WriteLine(result);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling AccountingApi.UpdateAccountingContractMappings: " + e.Message );
-            }
-        }
-    }
-}
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **body** | [**UpdateAccountingContractMappingsRequest**](UpdateAccountingContractMappingsRequest.md)|  | [optional] 
-
-### Return type
-
-[**UpdateAccountingContractMappingsResponse**](UpdateAccountingContractMappingsResponse.md)
 
 ### Authorization
 

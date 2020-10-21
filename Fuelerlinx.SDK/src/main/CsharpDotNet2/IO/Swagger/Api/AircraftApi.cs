@@ -36,6 +36,12 @@ namespace IO.Swagger.Api
         /// <returns>DeleteUserAircraftTankeringSettingsResponse</returns>
         DeleteUserAircraftTankeringSettingsResponse DeleteUsereAircraftTankeringSettings (int? id);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="aircraftId"></param>
+        /// <returns>UserAircraftListResponse</returns>
+        UserAircraftListResponse GetAircraftByAircraftId (int? aircraftId);
+        /// <summary>
         /// Get an aircraft by [companyId] and [tailNumber]. The request will fail if the authorized user is not part of the company that the record is attached to.
         /// </summary>
         /// <param name="companyId"></param>
@@ -311,6 +317,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteUsereAircraftTankeringSettings: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteUserAircraftTankeringSettingsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteUserAircraftTankeringSettingsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="aircraftId"></param> 
+        /// <returns>UserAircraftListResponse</returns>            
+        public UserAircraftListResponse GetAircraftByAircraftId (int? aircraftId)
+        {
+            
+            // verify the required parameter 'aircraftId' is set
+            if (aircraftId == null) throw new ApiException(400, "Missing required parameter 'aircraftId' when calling GetAircraftByAircraftId");
+            
+    
+            var path = "/api/Aircraft/aircraftId/{aircraftId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "aircraftId" + "}", ApiClient.ParameterToString(aircraftId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAircraftByAircraftId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAircraftByAircraftId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UserAircraftListResponse) ApiClient.Deserialize(response.Content, typeof(UserAircraftListResponse), response.Headers);
         }
     
         /// <summary>

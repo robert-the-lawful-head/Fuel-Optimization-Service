@@ -1,8 +1,9 @@
-# IO.Swagger.Model.DeleteAccountingContractMappingsResponse
+# IO.Swagger.Model.CrowdSourcedRampFeeListResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Result** | [**List&lt;MostCommonReportedRampFeeResultDTO&gt;**](MostCommonReportedRampFeeResultDTO.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

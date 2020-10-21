@@ -1,9 +1,9 @@
-# IO.Swagger.Model.BillCreationResponse
+# IO.Swagger.Model.SageCreateBillResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**AccountingBill**](AccountingBill.md) |  | [optional] 
+**Result** | [**SageBillVM**](SageBillVM.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 
