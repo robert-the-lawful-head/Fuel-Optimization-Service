@@ -84,8 +84,11 @@ All URIs are relative to *https://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *AccountingApi* | [**CheckSageCredentials**](docs/AccountingApi.md#checksagecredentials) | **POST** /api/Accounting/sage/check-credentials | Get Sage Credentials
+*AccountingApi* | [**DeleteAccountingContractMappings**](docs/AccountingApi.md#deleteaccountingcontractmappings) | **DELETE** /api/Accounting/accounting-contract-mappings/{id} | Deletes accounting contract mappings record based on ID
 *AccountingApi* | [**DeleteAccountingIntegrationItemCodes**](docs/AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 *AccountingApi* | [**DeleteSupplierDetails**](docs/AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
+*AccountingApi* | [**GetAccountingContractMappingList**](docs/AccountingApi.md#getaccountingcontractmappinglist) | **GET** /api/Accounting/accounting-contract-mappings/list | Gets accounting contract mappings by company Id
+*AccountingApi* | [**GetAccountingContractMappingListForTransactions**](docs/AccountingApi.md#getaccountingcontractmappinglistfortransactions) | **GET** /api/Accounting/accounting-contract-mappings/list/{transactionIds} | Gets accounting contract mappings by comma-delimited {transactionIds}
 *AccountingApi* | [**GetAccountingDepartmentList**](docs/AccountingApi.md#getaccountingdepartmentlist) | **GET** /api/Accounting/department/list | Get department list from the company's accounting integration
 *AccountingApi* | [**GetAccountingIntegrationItemCodesById**](docs/AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
 *AccountingApi* | [**GetAccountingItemMappingList**](docs/AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets accounting integration mappings for line items
@@ -95,9 +98,11 @@ Class | Method | HTTP request | Description
 *AccountingApi* | [**GetSageGlAccounts**](docs/AccountingApi.md#getsageglaccounts) | **GET** /api/Accounting/sage/gl-accounts | Get Sage GL Account Details
 *AccountingApi* | [**GetSageVendorAccounts**](docs/AccountingApi.md#getsagevendoraccounts) | **GET** /api/Accounting/sage/vendor-accounts | Get Sage GL Account Details
 *AccountingApi* | [**GetSupplierDetailsById**](docs/AccountingApi.md#getsupplierdetailsbyid) | **GET** /api/Accounting/supplier-details/{id} | Fetch supplier-details for a particular FBO or Vendor based on the provided [ID].
+*AccountingApi* | [**PostAccountingContractMappings**](docs/AccountingApi.md#postaccountingcontractmappings) | **POST** /api/Accounting/accounting-contract-mappings | Adds new accounting contract mapping record
 *AccountingApi* | [**PostAccountingIntegrationItemCodesDetails**](docs/AccountingApi.md#postaccountingintegrationitemcodesdetails) | **POST** /api/Accounting/integration-item-codes | Adds new accounting integration item code record
-*AccountingApi* | [**PostSageBill**](docs/AccountingApi.md#postsagebill) | **POST** /api/Accounting/sage/bill/{transactionid} | Insert new bill in Sage
+*AccountingApi* | [**PostBillToAccounting**](docs/AccountingApi.md#postbilltoaccounting) | **POST** /api/Accounting/integration/bill/{transactionId} | 
 *AccountingApi* | [**PostSupplierDetails**](docs/AccountingApi.md#postsupplierdetails) | **POST** /api/Accounting/supplier-details | Adds a new record for supplier-details of an FBO or Vendor.
+*AccountingApi* | [**UpdateAccountingContractMappings**](docs/AccountingApi.md#updateaccountingcontractmappings) | **PUT** /api/Accounting/accounting-contract-mappings | Updates accounting contract mapping record
 *AccountingApi* | [**UpdateAccountingIntegrationItemCodesDetails**](docs/AccountingApi.md#updateaccountingintegrationitemcodesdetails) | **PUT** /api/Accounting/integration-item-codes | Updates accounting integration item code record
 *AccountingApi* | [**UpdateSageCredentials**](docs/AccountingApi.md#updatesagecredentials) | **POST** /api/Accounting/sage/update-credentials | Get Sage Credentials
 *AccountingApi* | [**UpdateSupplierDetails**](docs/AccountingApi.md#updatesupplierdetails) | **PUT** /api/Accounting/supplier-details | Updates current supplier detail record
@@ -442,6 +447,9 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AccessibleFeaturesDTO](docs/AccessibleFeaturesDTO.md)
  - [IO.Swagger.Model.AccountInfoAndSettingsDTO](docs/AccountInfoAndSettingsDTO.md)
  - [IO.Swagger.Model.AccountInfoAndSettingsSubFeaturesDTO](docs/AccountInfoAndSettingsSubFeaturesDTO.md)
+ - [IO.Swagger.Model.AccountingBill](docs/AccountingBill.md)
+ - [IO.Swagger.Model.AccountingContractMappingsDTO](docs/AccountingContractMappingsDTO.md)
+ - [IO.Swagger.Model.AccountingContractMappingsResponse](docs/AccountingContractMappingsResponse.md)
  - [IO.Swagger.Model.AccountingDepartment](docs/AccountingDepartment.md)
  - [IO.Swagger.Model.AccountingDepartmentListResponse](docs/AccountingDepartmentListResponse.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesDTO](docs/AccountingIntegrationItemCodesDTO.md)
@@ -491,6 +499,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AviationProfiles](docs/AviationProfiles.md)
  - [IO.Swagger.Model.AviationProfilesResponse](docs/AviationProfilesResponse.md)
  - [IO.Swagger.Model.Background](docs/Background.md)
+ - [IO.Swagger.Model.BillCreationResponse](docs/BillCreationResponse.md)
  - [IO.Swagger.Model.BuildVersionResponse](docs/BuildVersionResponse.md)
  - [IO.Swagger.Model.ButtonOptions](docs/ButtonOptions.md)
  - [IO.Swagger.Model.CSSObject](docs/CSSObject.md)
@@ -549,6 +558,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CurrentScheduledTripsResponse](docs/CurrentScheduledTripsResponse.md)
  - [IO.Swagger.Model.DataLabels](docs/DataLabels.md)
  - [IO.Swagger.Model.DateTimeLabelFormats](docs/DateTimeLabelFormats.md)
+ - [IO.Swagger.Model.DeleteAccountingContractMappingsResponse](docs/DeleteAccountingContractMappingsResponse.md)
  - [IO.Swagger.Model.DeleteAccountingIntegrationItemCodesDetailsResponse](docs/DeleteAccountingIntegrationItemCodesDetailsResponse.md)
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyNoteResponse](docs/DeleteAirportDetailsByCompanyNoteResponse.md)
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyResponse](docs/DeleteAirportDetailsByCompanyResponse.md)
@@ -745,6 +755,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PlotOptionsSeries](docs/PlotOptionsSeries.md)
  - [IO.Swagger.Model.PlotPointEvents](docs/PlotPointEvents.md)
  - [IO.Swagger.Model.PointEvents](docs/PointEvents.md)
+ - [IO.Swagger.Model.PostAccountingContractMappingsRequest](docs/PostAccountingContractMappingsRequest.md)
+ - [IO.Swagger.Model.PostAccountingContractMappingsResponse](docs/PostAccountingContractMappingsResponse.md)
  - [IO.Swagger.Model.PostAccountingIntegrationItemCodesRequest](docs/PostAccountingIntegrationItemCodesRequest.md)
  - [IO.Swagger.Model.PostAccountingIntegrationItemCodesResponse](docs/PostAccountingIntegrationItemCodesResponse.md)
  - [IO.Swagger.Model.PostAirportDetailsByCompanyNotesRequest](docs/PostAirportDetailsByCompanyNotesRequest.md)
@@ -886,8 +898,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.RouteDetailsCalculation](docs/RouteDetailsCalculation.md)
  - [IO.Swagger.Model.RouteDetailsCalculationAircraftData](docs/RouteDetailsCalculationAircraftData.md)
  - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)
- - [IO.Swagger.Model.SageBillVM](docs/SageBillVM.md)
- - [IO.Swagger.Model.SageCreateBillResponse](docs/SageCreateBillResponse.md)
  - [IO.Swagger.Model.SageCredentialsRequest](docs/SageCredentialsRequest.md)
  - [IO.Swagger.Model.SageGeneralLedgerResponse](docs/SageGeneralLedgerResponse.md)
  - [IO.Swagger.Model.SageGeneralLedgerVM](docs/SageGeneralLedgerVM.md)
@@ -971,6 +981,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.TripPlanningDTO](docs/TripPlanningDTO.md)
  - [IO.Swagger.Model.TripTankeringOptions](docs/TripTankeringOptions.md)
  - [IO.Swagger.Model.TripTimeResults](docs/TripTimeResults.md)
+ - [IO.Swagger.Model.UpdateAccountingContractMappingsRequest](docs/UpdateAccountingContractMappingsRequest.md)
+ - [IO.Swagger.Model.UpdateAccountingContractMappingsResponse](docs/UpdateAccountingContractMappingsResponse.md)
  - [IO.Swagger.Model.UpdateAccountingIntegrationItemCodesDetailsRequest](docs/UpdateAccountingIntegrationItemCodesDetailsRequest.md)
  - [IO.Swagger.Model.UpdateAirportDetailsByCompanyNotesRequest](docs/UpdateAirportDetailsByCompanyNotesRequest.md)
  - [IO.Swagger.Model.UpdateAirportDetailsByCompanyNotesResponse](docs/UpdateAirportDetailsByCompanyNotesResponse.md)

@@ -29,6 +29,7 @@ Name | Type | Description | Notes
 **IsMessagesEnabled** | **bool?** |  | [optional] 
 **IsVendorLinxEnabled** | **bool?** |  | [optional] 
 **PaymentEmail** | **string** |  | [optional] 
+**IsDirectVendorType** | **bool?** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
