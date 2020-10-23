@@ -12,6 +12,7 @@ import { ResetPasswordComponent } from './pages/auth/reset-password/reset-passwo
 import { CustomersEditComponent } from './pages/customers/customers-edit/customers-edit.component';
 import { CustomersHomeComponent } from './pages/customers/customers-home/customers-home.component';
 import { DashboardFboComponent } from './pages/dashboards/dashboard-fbo/dashboard-fbo.component';
+import { DashboardCsrComponent } from './pages/dashboards/dashboard-csr/dashboard-csr.component';
 import { DashboardHomeComponent } from './pages/dashboards/dashboard-home/dashboard-home.component';
 import { FboPricesHomeComponent } from './pages/fbo-prices/fbo-prices-home/fbo-prices-home.component';
 import { FbosHomeComponent } from './pages/fbos/fbos-home/fbos-home.component';
@@ -46,6 +47,11 @@ const defaultRoutes: Routes = [{
   {
     path: 'dashboard-fbo',
     component: DashboardFboComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'dashboard-csr',
+    component: DashboardCsrComponent,
     canActivate: [AuthGuard],
   },
   {

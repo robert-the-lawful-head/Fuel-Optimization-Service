@@ -31,6 +31,8 @@ export class DashboardHomeComponent {
       if (this.sharedService.currentUser.impersonatedRole === 1) {
         this.router.navigate(['/default-layout/dashboard-fbo/']);
       }
+    } else if (this.sharedService.currentUser.role === 5) {
+      this.router.navigate(['/default-layout/dashboard-csr/']);
     } else {
       this.router.navigate(['/default-layout/dashboard-fbo/']);
     }

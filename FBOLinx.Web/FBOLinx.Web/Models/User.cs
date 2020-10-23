@@ -21,7 +21,9 @@ namespace FBOLinx.Web.Models
             [Description("Conductor")]
             Conductor = 3,
             [Description("Member")]
-            Member = 4
+            Member = 4,
+            [Description("CSR")]
+            CSR = 5
         }
 
         [Key]

@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <div class="d-flex pricing-page justify-content-between">
+    <div *ngIf="!isCsr" class="d-flex pricing-page justify-content-between">
         <div class="pricing-display-board mt-3">
             <ni-card
                 title="Live Pricing"
@@ -249,8 +249,8 @@
             </ni-card>
         </div>
     </div>
-    <div class="d-flex pricing-page justify-content-between" [ngClass]="{ 'mt-3': !layoutChanged }">
-        <div class="add-on-margin-board" [ngClass]="{ 'mt-3': layoutChanged }">
+    <div class="d-flex pricing-page justify-content-between mt-3">
+        <div *ngIf="!isCsr" class="add-on-margin-board" [ngClass]="{ 'mt-3': layoutChanged }">
             <ni-card
                 title="Add On Margin"
                 subtitle="This margin is applies to all customers"
@@ -363,14 +363,14 @@
 
         <!--Tail number price lookup-->
 
-        <div class="pricing-update-board">
+        <div class="pricing-update-board" [ngClass]="{ 'w-full': isCsr }">
             <ni-card
                 title="Lookup Price by Tail"
                 bgColor="dead"
                 headerBgColor="dead"
                 theme="small"
                 outline="true"
-                [collapsible]="'true'"
+                [collapsible]="!isCsr"
             >
                 <div class="d-flex justify-content-around">
                     <div class="pr-2">
@@ -413,11 +413,6 @@
                           </mat-option>
                         </mat-select>
                       </mat-form-field>
-                    </div>
-                    <div class="pr-2 invisible">
-                        <mat-form-field>
-                            <input matInput/>
-                        </mat-form-field>
                     </div>
                     <div class="pt-2">
                         <div class="text-center">

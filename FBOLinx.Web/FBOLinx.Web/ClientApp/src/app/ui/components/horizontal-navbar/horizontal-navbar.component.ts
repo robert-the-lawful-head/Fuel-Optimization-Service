@@ -383,6 +383,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   get notificationVisible() {
-    return this.sharedService.currentUser.fboId > 0;
+    return this.sharedService.currentUser.fboId > 0 && this.sharedService.currentUser.role !== 5;
   }
 }

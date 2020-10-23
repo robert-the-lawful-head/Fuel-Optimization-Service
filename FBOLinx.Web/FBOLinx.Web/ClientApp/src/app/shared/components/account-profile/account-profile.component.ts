@@ -91,6 +91,10 @@ export class AccountProfileComponent {
     }
   }
 
+  get isCsr() {
+    return this.sharedService.currentUser.role === 5;
+  }
+
   // Private Methods
   private loadFboInfo(): void {
     if (
