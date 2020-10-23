@@ -76,6 +76,7 @@ import { FeeAndTaxSettingsDialogComponent } from './fbo-prices/fee-and-tax-setti
 import { FuelreqsGridComponent } from './fuelreqs/fuelreqs-grid/fuelreqs-grid.component';
 import { FuelreqsHomeComponent } from './fuelreqs/fuelreqs-home/fuelreqs-home.component';
 import { GroupsDialogNewGroupComponent } from './groups/groups-dialog-new-group/groups-dialog-new-group.component';
+import { GroupsMergeDialogComponent } from './groups/groups-merge-dialog/groups-merge-dialog.component';
 import { GroupsEditComponent } from './groups/groups-edit/groups-edit.component';
 import { GroupsGridComponent } from './groups/groups-grid/groups-grid.component';
 import { GroupsHomeComponent } from './groups/groups-home/groups-home.component';
@@ -213,6 +214,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     FuelreqsGridComponent,
     FuelreqsHomeComponent,
     GroupsDialogNewGroupComponent,
+    GroupsMergeDialogComponent,
     GroupsEditComponent,
     GroupsGridComponent,
     GroupsHomeComponent,
