@@ -123,7 +123,7 @@ export class AccountProfileComponent {
       let supportedRoleValues = [4];
       this.availableroles = [];
       if (this.data.fboId > 0) {
-        supportedRoleValues = [1, 4];
+        supportedRoleValues = [1, 4, 5];
       } else if (this.data.groupId > 0) {
         supportedRoleValues = [2];
       }
@@ -133,7 +133,7 @@ export class AccountProfileComponent {
         }
       }
 
-      if (!this.data.role || this.data.role == 0) {
+      if (!this.data.role || this.data.role === 0) {
         if (this.availableroles.length > 1) {
           this.data.role = this.availableroles[
             this.availableroles.length - 1
@@ -142,7 +142,6 @@ export class AccountProfileComponent {
           this.data.role = this.availableroles[0].value;
         }
       }
-
     });
   }
 }

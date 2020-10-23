@@ -62,7 +62,7 @@ export interface TailLookupResponse {
   styleUrls: ['./fbo-prices-home.component.scss']
 })
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() isCsr?: boolean; 
+  @Input() isCsr?: boolean;
 
   @ViewChildren('tooltip') priceTooltips: QueryList<any>;
   // Members

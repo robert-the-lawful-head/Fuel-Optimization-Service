@@ -47,7 +47,7 @@ export class LoginModalComponent {
                         }
                         else if (data.role === 2) {
                             this.router.navigate(['/default-layout/fbos/']);
-                        } else if(data.role === 5) {
+                        } else if (data.role === 5) {
                             this.router.navigate([
                                 '/default-layout/dashboard-csr/',
                             ]);

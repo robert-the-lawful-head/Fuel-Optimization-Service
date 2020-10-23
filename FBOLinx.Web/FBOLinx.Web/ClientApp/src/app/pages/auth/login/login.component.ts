@@ -47,11 +47,13 @@ export class LoginComponent implements OnInit {
             this.submit = true;
             this.oauthService.login(this.loginForm.value.username, this.loginForm.value.password, this.partner)
               .subscribe((token: any) => {
-                  var tokenQueryString = 'accessToken=' + encodeURIComponent(token.accessToken);
-                  if (this.redirectTo.indexOf('?') == -1)
+                  let tokenQueryString = 'accessToken=' + encodeURIComponent(token.accessToken);
+                  if (this.redirectTo.indexOf('?') === -1) {
                     tokenQueryString = '?' + tokenQueryString;
-                  else
+                  }
+                  else {
                     tokenQueryString = '&' + tokenQueryString;
+                  }
                   window.location.href = this.redirectTo + tokenQueryString;
                 }, (err: any) => {
                     console.log(err);

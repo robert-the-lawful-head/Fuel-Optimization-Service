@@ -18,7 +18,10 @@ export class PricingtemplatesService {
     }
 
     public getByFboDefaultTemplate(groupId, fboId) {
-        return this.http.get(this.accessPointUrl + '/fbodefaultpricingtemplate/group/' + groupId + '/fbo/' + fboId, { headers: this.headers });
+        return this.http.get(
+            this.accessPointUrl + '/fbodefaultpricingtemplate/group/' + groupId + '/fbo/' + fboId,
+            { headers: this.headers }
+        );
     }
 
     public get(payload) {
