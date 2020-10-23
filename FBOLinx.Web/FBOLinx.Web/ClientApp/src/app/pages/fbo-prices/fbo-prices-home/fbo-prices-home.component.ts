@@ -6,6 +6,7 @@ import {
   ViewChildren,
   QueryList,
   HostListener,
+  Input,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -61,6 +62,8 @@ export interface TailLookupResponse {
   styleUrls: ['./fbo-prices-home.component.scss']
 })
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
+  @Input() isCsr?: boolean;
+
   @ViewChildren('tooltip') priceTooltips: QueryList<any>;
   // Members
   pricingLoader = 'pricing-loader';
@@ -526,4 +529,4 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
       this.layoutChanged = false;
     }
   }
-  }
+}

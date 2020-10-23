@@ -4,16 +4,6 @@
         "groupTitle": true
     },
     {
-        "title": "Dashboard (Admin)",
-        "icon": {
-            "class": "fa fa-home",
-            "bg": "#ea8080",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "routing": "/default-layout/dashboard-admin",
-        "roles": [9999]
-    },
-    {
         "title": "Dashboard",
         "icon": {
             "class": "fa fa-home",
@@ -23,6 +13,16 @@
         "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers.",
         "routing": "/default-layout/dashboard-fbo",
         "roles": [1, 4]
+    },
+    {
+        "title": "CSR Dashboard",
+        "icon": {
+            "class": "fa fa-home",
+            "bg": "#ea8080",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/dashboard-csr",
+        "roles": [5]
     },
     {
         "title": "FBO Group",
@@ -75,7 +75,7 @@
         },
         "tooltip": "See your incoming fuel orders.",
         "routing": "/default-layout/fuelreqs",
-        "roles": [1, 4]
+        "roles": [1, 4, 5]
     },
     {
         "title": "Ramp Fees",

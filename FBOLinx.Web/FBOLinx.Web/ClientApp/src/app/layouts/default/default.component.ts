@@ -139,6 +139,10 @@ export class DefaultLayoutComponent implements OnInit {
       (window.location.pathname.startsWith('/default-layout/groups') || window.location.pathname.startsWith('/default-layout/fbos'));
   }
 
+  get isCsr() {
+    return this.sharedService.currentUser.role === 5;
+  }
+
   private loadFboPrices() {
     this.fboPricesService
       .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
