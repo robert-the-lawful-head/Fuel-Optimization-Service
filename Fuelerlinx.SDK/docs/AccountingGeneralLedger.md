@@ -1,4 +1,4 @@
-# IO.Swagger.Model.SageGeneralLedgerVM
+# IO.Swagger.Model.AccountingGeneralLedger
 ## Properties
 
 Name | Type | Description | Notes

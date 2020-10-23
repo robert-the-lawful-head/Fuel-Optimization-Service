@@ -1,9 +1,9 @@
-# IO.Swagger.Model.SageGeneralLedgerResponse
+# IO.Swagger.Model.AccountingBillCreationResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**List&lt;SageGeneralLedgerVM&gt;**](SageGeneralLedgerVM.md) |  | [optional] 
+**Result** | [**AccountingBill**](AccountingBill.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

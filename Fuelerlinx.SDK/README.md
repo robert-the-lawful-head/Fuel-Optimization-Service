@@ -93,11 +93,11 @@ Class | Method | HTTP request | Description
 *AccountingApi* | [**GetAccountingIntegrationItemCodesById**](docs/AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
 *AccountingApi* | [**GetAccountingItemMappingList**](docs/AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets accounting integration mappings for line items
 *AccountingApi* | [**GetAccountingItemMappingListForTransactions**](docs/AccountingApi.md#getaccountingitemmappinglistfortransactions) | **GET** /api/Accounting/mapping/items/list/{transactionIds} | Gets accounting integration mappings for line items by comma-delimited {transactionIds}
+*AccountingApi* | [**GetGeneralLedgerAccountsFromIntegration**](docs/AccountingApi.md#getgeneralledgeraccountsfromintegration) | **GET** /api/Accounting/integration/gl-accounts/list | Get GL account details from the accounting integration if available
 *AccountingApi* | [**GetPendingAccountingExport**](docs/AccountingApi.md#getpendingaccountingexport) | **GET** /api/Accounting/oracle/accounting-export/pending | 
 *AccountingApi* | [**GetSageCredentials**](docs/AccountingApi.md#getsagecredentials) | **GET** /api/Accounting/sage/credentials | Get Sage Credentials
-*AccountingApi* | [**GetSageGlAccounts**](docs/AccountingApi.md#getsageglaccounts) | **GET** /api/Accounting/sage/gl-accounts | Get Sage GL Account Details
-*AccountingApi* | [**GetSageVendorAccounts**](docs/AccountingApi.md#getsagevendoraccounts) | **GET** /api/Accounting/sage/vendor-accounts | Get Sage GL Account Details
 *AccountingApi* | [**GetSupplierDetailsById**](docs/AccountingApi.md#getsupplierdetailsbyid) | **GET** /api/Accounting/supplier-details/{id} | Fetch supplier-details for a particular FBO or Vendor based on the provided [ID].
+*AccountingApi* | [**GetVendorAccountsFromIntegration**](docs/AccountingApi.md#getvendoraccountsfromintegration) | **GET** /api/Accounting/integration/vendor-accounts/list | Get GL vendors from the accounting integration if available
 *AccountingApi* | [**PostAccountingContractMappings**](docs/AccountingApi.md#postaccountingcontractmappings) | **POST** /api/Accounting/accounting-contract-mappings | Adds new accounting contract mapping record
 *AccountingApi* | [**PostAccountingIntegrationItemCodesDetails**](docs/AccountingApi.md#postaccountingintegrationitemcodesdetails) | **POST** /api/Accounting/integration-item-codes | Adds new accounting integration item code record
 *AccountingApi* | [**PostBillToAccounting**](docs/AccountingApi.md#postbilltoaccounting) | **POST** /api/Accounting/integration/bill/{transactionId} | 
@@ -448,13 +448,18 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AccountInfoAndSettingsDTO](docs/AccountInfoAndSettingsDTO.md)
  - [IO.Swagger.Model.AccountInfoAndSettingsSubFeaturesDTO](docs/AccountInfoAndSettingsSubFeaturesDTO.md)
  - [IO.Swagger.Model.AccountingBill](docs/AccountingBill.md)
+ - [IO.Swagger.Model.AccountingBillCreationResponse](docs/AccountingBillCreationResponse.md)
  - [IO.Swagger.Model.AccountingContractMappingsDTO](docs/AccountingContractMappingsDTO.md)
  - [IO.Swagger.Model.AccountingContractMappingsResponse](docs/AccountingContractMappingsResponse.md)
  - [IO.Swagger.Model.AccountingDepartment](docs/AccountingDepartment.md)
  - [IO.Swagger.Model.AccountingDepartmentListResponse](docs/AccountingDepartmentListResponse.md)
+ - [IO.Swagger.Model.AccountingGeneralLedger](docs/AccountingGeneralLedger.md)
+ - [IO.Swagger.Model.AccountingGeneralLedgerListResponse](docs/AccountingGeneralLedgerListResponse.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesDTO](docs/AccountingIntegrationItemCodesDTO.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesDetailsResponse](docs/AccountingIntegrationItemCodesDetailsResponse.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesListResponse](docs/AccountingIntegrationItemCodesListResponse.md)
+ - [IO.Swagger.Model.AccountingVendor](docs/AccountingVendor.md)
+ - [IO.Swagger.Model.AccountingVendorListResponse](docs/AccountingVendorListResponse.md)
  - [IO.Swagger.Model.AcukwikAirportDTO](docs/AcukwikAirportDTO.md)
  - [IO.Swagger.Model.AcukwikAirportResponse](docs/AcukwikAirportResponse.md)
  - [IO.Swagger.Model.AcukwikFboHandlerDetailDTO](docs/AcukwikFboHandlerDetailDTO.md)
@@ -499,7 +504,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AviationProfiles](docs/AviationProfiles.md)
  - [IO.Swagger.Model.AviationProfilesResponse](docs/AviationProfilesResponse.md)
  - [IO.Swagger.Model.Background](docs/Background.md)
- - [IO.Swagger.Model.BillCreationResponse](docs/BillCreationResponse.md)
  - [IO.Swagger.Model.BuildVersionResponse](docs/BuildVersionResponse.md)
  - [IO.Swagger.Model.ButtonOptions](docs/ButtonOptions.md)
  - [IO.Swagger.Model.CSSObject](docs/CSSObject.md)
@@ -899,10 +903,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.RouteDetailsCalculationAircraftData](docs/RouteDetailsCalculationAircraftData.md)
  - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)
  - [IO.Swagger.Model.SageCredentialsRequest](docs/SageCredentialsRequest.md)
- - [IO.Swagger.Model.SageGeneralLedgerResponse](docs/SageGeneralLedgerResponse.md)
- - [IO.Swagger.Model.SageGeneralLedgerVM](docs/SageGeneralLedgerVM.md)
- - [IO.Swagger.Model.SageVendorResponse](docs/SageVendorResponse.md)
- - [IO.Swagger.Model.SageVendorVM](docs/SageVendorVM.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerRequest](docs/SaveCompanyToIFlightPlannerRequest.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerResponse](docs/SaveCompanyToIFlightPlannerResponse.md)
  - [IO.Swagger.Model.SaveUserToIFlightPlannerRequest](docs/SaveUserToIFlightPlannerRequest.md)

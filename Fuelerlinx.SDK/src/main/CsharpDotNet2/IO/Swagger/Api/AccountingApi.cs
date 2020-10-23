@@ -69,6 +69,11 @@ namespace IO.Swagger.Api
         /// <returns>AccountingIntegrationItemCodesListResponse</returns>
         AccountingIntegrationItemCodesListResponse GetAccountingItemMappingListForTransactions (string transactionIds);
         /// <summary>
+        /// Get GL account details from the accounting integration if available 
+        /// </summary>
+        /// <returns>AccountingGeneralLedgerListResponse</returns>
+        AccountingGeneralLedgerListResponse GetGeneralLedgerAccountsFromIntegration ();
+        /// <summary>
         ///  
         /// </summary>
         /// <returns>OracleAccountingExportResponse</returns>
@@ -79,21 +84,16 @@ namespace IO.Swagger.Api
         /// <returns>AuthorizationInfoResponse</returns>
         AuthorizationInfoResponse GetSageCredentials ();
         /// <summary>
-        /// Get Sage GL Account Details 
-        /// </summary>
-        /// <returns>SageGeneralLedgerResponse</returns>
-        SageGeneralLedgerResponse GetSageGlAccounts ();
-        /// <summary>
-        /// Get Sage GL Account Details 
-        /// </summary>
-        /// <returns>SageVendorResponse</returns>
-        SageVendorResponse GetSageVendorAccounts ();
-        /// <summary>
         /// Fetch supplier-details for a particular FBO or Vendor based on the provided [ID]. 
         /// </summary>
         /// <param name="id"></param>
         /// <returns>SupplierDetailsResponse</returns>
         SupplierDetailsResponse GetSupplierDetailsById (int? id);
+        /// <summary>
+        /// Get GL vendors from the accounting integration if available 
+        /// </summary>
+        /// <returns>AccountingVendorListResponse</returns>
+        AccountingVendorListResponse GetVendorAccountsFromIntegration ();
         /// <summary>
         /// Adds new accounting contract mapping record 
         /// </summary>
@@ -110,8 +110,8 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="transactionId"></param>
-        /// <returns>BillCreationResponse</returns>
-        BillCreationResponse PostBillToAccounting (int? transactionId);
+        /// <returns>AccountingBillCreationResponse</returns>
+        AccountingBillCreationResponse PostBillToAccounting (int? transactionId);
         /// <summary>
         /// Adds a new record for supplier-details of an FBO or Vendor. 
         /// </summary>
@@ -550,6 +550,38 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Get GL account details from the accounting integration if available 
+        /// </summary>
+        /// <returns>AccountingGeneralLedgerListResponse</returns>            
+        public AccountingGeneralLedgerListResponse GetGeneralLedgerAccountsFromIntegration ()
+        {
+            
+    
+            var path = "/api/Accounting/integration/gl-accounts/list";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetGeneralLedgerAccountsFromIntegration: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetGeneralLedgerAccountsFromIntegration: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (AccountingGeneralLedgerListResponse) ApiClient.Deserialize(response.Content, typeof(AccountingGeneralLedgerListResponse), response.Headers);
+        }
+    
+        /// <summary>
         ///  
         /// </summary>
         /// <returns>OracleAccountingExportResponse</returns>            
@@ -614,70 +646,6 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Get Sage GL Account Details 
-        /// </summary>
-        /// <returns>SageGeneralLedgerResponse</returns>            
-        public SageGeneralLedgerResponse GetSageGlAccounts ()
-        {
-            
-    
-            var path = "/api/Accounting/sage/gl-accounts";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetSageGlAccounts: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetSageGlAccounts: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (SageGeneralLedgerResponse) ApiClient.Deserialize(response.Content, typeof(SageGeneralLedgerResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Get Sage GL Account Details 
-        /// </summary>
-        /// <returns>SageVendorResponse</returns>            
-        public SageVendorResponse GetSageVendorAccounts ()
-        {
-            
-    
-            var path = "/api/Accounting/sage/vendor-accounts";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetSageVendorAccounts: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetSageVendorAccounts: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (SageVendorResponse) ApiClient.Deserialize(response.Content, typeof(SageVendorResponse), response.Headers);
-        }
-    
-        /// <summary>
         /// Fetch supplier-details for a particular FBO or Vendor based on the provided [ID]. 
         /// </summary>
         /// <param name="id"></param> 
@@ -712,6 +680,38 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetSupplierDetailsById: " + response.ErrorMessage, response.ErrorMessage);
     
             return (SupplierDetailsResponse) ApiClient.Deserialize(response.Content, typeof(SupplierDetailsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Get GL vendors from the accounting integration if available 
+        /// </summary>
+        /// <returns>AccountingVendorListResponse</returns>            
+        public AccountingVendorListResponse GetVendorAccountsFromIntegration ()
+        {
+            
+    
+            var path = "/api/Accounting/integration/vendor-accounts/list";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetVendorAccountsFromIntegration: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetVendorAccountsFromIntegration: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (AccountingVendorListResponse) ApiClient.Deserialize(response.Content, typeof(AccountingVendorListResponse), response.Headers);
         }
     
         /// <summary>
@@ -786,8 +786,8 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="transactionId"></param> 
-        /// <returns>BillCreationResponse</returns>            
-        public BillCreationResponse PostBillToAccounting (int? transactionId)
+        /// <returns>AccountingBillCreationResponse</returns>            
+        public AccountingBillCreationResponse PostBillToAccounting (int? transactionId)
         {
             
             // verify the required parameter 'transactionId' is set
@@ -816,7 +816,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling PostBillToAccounting: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (BillCreationResponse) ApiClient.Deserialize(response.Content, typeof(BillCreationResponse), response.Headers);
+            return (AccountingBillCreationResponse) ApiClient.Deserialize(response.Content, typeof(AccountingBillCreationResponse), response.Headers);
         }
     
         /// <summary>

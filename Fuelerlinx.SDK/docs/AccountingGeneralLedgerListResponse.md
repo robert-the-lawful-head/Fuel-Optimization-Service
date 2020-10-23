@@ -1,10 +1,11 @@
-# IO.Swagger.Model.SageVendorVM
+# IO.Swagger.Model.AccountingGeneralLedgerListResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**VendorId** | **string** |  | [optional] 
-**VendorName** | **string** |  | [optional] 
+**Result** | [**List&lt;AccountingGeneralLedger&gt;**](AccountingGeneralLedger.md) |  | [optional] 
+**Success** | **bool?** |  | [optional] 
+**Message** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

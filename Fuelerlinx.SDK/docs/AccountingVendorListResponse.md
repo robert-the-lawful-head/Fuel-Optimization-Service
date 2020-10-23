@@ -1,9 +1,9 @@
-# IO.Swagger.Model.SageVendorResponse
+# IO.Swagger.Model.AccountingVendorListResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**List&lt;SageVendorVM&gt;**](SageVendorVM.md) |  | [optional] 
+**Result** | [**List&lt;AccountingVendor&gt;**](AccountingVendor.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 
