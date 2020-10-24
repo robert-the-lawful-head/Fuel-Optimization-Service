@@ -80,7 +80,7 @@ export class DefaultLayoutComponent implements OnInit {
     if (blacklist.findIndex(v => window.location.pathname.startsWith(v)) >= 0) {
       return false;
     }
-    return true;
+    return !this.isCsr;
   }
 
   getClasses() {
