@@ -63,7 +63,6 @@ import { CustomersDialogNewCustomerComponent } from './customers/customers-dialo
 import { CustomersGridComponent } from './customers/customers-grid/customers-grid.component';
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
-import { DashboardCsrComponent } from './dashboards/dashboard-csr/dashboard-csr.component';
 import { DashboardHomeComponent } from './dashboards/dashboard-home/dashboard-home.component';
 import { FbosContactsComponent } from './fbos/fbos-contacts/fbos-contacts.component';
 import { FbosDialogNewFboComponent } from './fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
@@ -201,7 +200,6 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     CustomersGridComponent,
     CustomersHomeComponent,
     DashboardFboComponent,
-    DashboardCsrComponent,
     DashboardHomeComponent,
     FbosContactsComponent,
     FbosDialogNewFboComponent,
