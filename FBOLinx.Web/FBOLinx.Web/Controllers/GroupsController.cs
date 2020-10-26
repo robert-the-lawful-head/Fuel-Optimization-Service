@@ -307,6 +307,12 @@ namespace FBOLinx.Web.Controllers
 
                     _context.ContactInfoByGroup.RemoveRange(duplicatedContactInfoByGroups);
 
+                    var baseCustomerAircrafts = _context.CustomerAircrafts.Where(a => a.GroupId == request.BaseGroupId).Concat(customerAircrafts).ToList();
+                    var distinctedCustomerAircrafts = baseCustomerAircrafts.GroupBy(ca => new { ca.GroupId, ca.CustomerId, ca.TailNumber }).Select(g => g.First()).ToList();
+                    var duplicatedCustomerAircrafts = baseCustomerAircrafts.Except(distinctedCustomerAircrafts).ToList();
+
+                    _context.CustomerAircrafts.RemoveRange(duplicatedCustomerAircrafts);
+
                     var removingGroups = _context.Group.Where(a => changeableGroups.Contains(a.Oid));
                     _context.Group.RemoveRange(removingGroups);
 
