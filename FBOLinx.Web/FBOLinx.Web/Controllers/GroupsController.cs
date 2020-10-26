@@ -276,7 +276,6 @@ namespace FBOLinx.Web.Controllers
                     var customerCompanyTypes = _context.CustomerCompanyTypes.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
                     var customerInfoByGroups = _context.CustomerInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
                     var customerNotes = _context.CustomerNotes.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var customers = _context.Customers.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
                     var customerSchedulingSoftwareByGroups = _context.CustomerSchedulingSoftwareByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
                     var distributionLogs = _context.DistributionLog.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
                     var distributionQueues = _context.DistributionQueue.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
@@ -291,10 +290,22 @@ namespace FBOLinx.Web.Controllers
                     customerCompanyTypes.ForEach(a => a.GroupId = request.BaseGroupId);
                     customerInfoByGroups.ForEach(a => a.GroupId = request.BaseGroupId);
                     customerNotes.ForEach(a => a.GroupId = request.BaseGroupId);
-                    customers.ForEach(a => a.GroupId = request.BaseGroupId);
+
                     customerSchedulingSoftwareByGroups.ForEach(a => a.GroupId = request.BaseGroupId);
                     distributionLogs.ForEach(a => a.GroupId = request.BaseGroupId);
                     distributionQueues.ForEach(a => a.GroupId = request.BaseGroupId);
+
+                    var baseCustomerInfoByGroups = _context.CustomerInfoByGroup.Where(a => a.GroupId == request.BaseGroupId).Concat(customerInfoByGroups).ToList();
+                    var distinctedCustomerInfoByGroups = baseCustomerInfoByGroups.GroupBy(cg => new { cg.CustomerId, cg.GroupId }).Select(g => g.First()).ToList();
+                    var duplicatedCustomerInfoByGroups = baseCustomerInfoByGroups.Except(distinctedCustomerInfoByGroups).ToList();
+
+                    _context.CustomerInfoByGroup.RemoveRange(duplicatedCustomerInfoByGroups);
+
+                    var baseContactInfoByGroups = _context.ContactInfoByGroup.Where(a => a.GroupId == request.BaseGroupId).Concat(contactInfoByGroups).ToList();
+                    var distinctedContactInfoByGroups = baseContactInfoByGroups.GroupBy(cg => new { cg.GroupId, cg.Email }).Select(g => g.First()).ToList();
+                    var duplicatedContactInfoByGroups = baseContactInfoByGroups.Except(distinctedContactInfoByGroups).ToList();
+
+                    _context.ContactInfoByGroup.RemoveRange(duplicatedContactInfoByGroups);
 
                     var removingGroups = _context.Group.Where(a => changeableGroups.Contains(a.Oid));
                     _context.Group.RemoveRange(removingGroups);
