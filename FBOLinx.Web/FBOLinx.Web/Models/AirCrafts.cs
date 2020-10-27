@@ -82,5 +82,11 @@ namespace FBOLinx.Web.Models
         [StringLength(25)]
         public string FuelType { get; set; }
         public short? TempSize { get; set; }
+
+        [InverseProperty("AirCrafts")]
+        public ICollection<AFSAircraft> AFSAircraft { get; set; }
+
+        [InverseProperty("AirCrafts")]
+        public AircraftSpecifications AircraftSpecifications { get; set; }
     }
 }

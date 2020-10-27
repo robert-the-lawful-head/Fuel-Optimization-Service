@@ -38,10 +38,11 @@ namespace FBOLinx.Web.Services
         private int _DistributionLogID = 0;
         private IHttpContextAccessor _HttpContextAccessor;
         private JwtManager _jwtManager;
-        private RampFeesService _RampFeesService;        
+        private RampFeesService _RampFeesService;
+        private AircraftService _aircraftService;
 
         #region Constructors
-        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService)
+        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService)
         {
             _HttpContextAccessor = httpContextAccessor;
             _FileProvider = fileProvider;
@@ -50,6 +51,7 @@ namespace FBOLinx.Web.Services
             _MailSettings = mailSettings.Value;
             _jwtManager = jwtManager;
             _RampFeesService = rampFeesService;
+            _aircraftService = aircraftService;
         }
         #endregion
 
@@ -336,16 +338,12 @@ namespace FBOLinx.Web.Services
             body = await PerformBodyReplacements(customer, body, pricingTemplates);
             return body;
         }
-        public Expression<Func<dynamic, bool>> GetSelectXpr(string filter, string value)
-        {
-            return null;
-        }
 
         private async Task<string> getCustomBody(int num,string id,int fboId)
         {
             var pom = await new Controllers.CustomerMarginsController(_context).GetCustomerMarginsByPricingTemplateId(num);
             var res = pom as OkObjectResult;
-            var prom = await new Controllers.FbopricesController(_context, _HttpContextAccessor, _jwtManager, _RampFeesService).GetFbopricesByFboIdCurrent(fboId);
+            var prom = await new Controllers.FbopricesController(_context, _HttpContextAccessor, _jwtManager, _RampFeesService, _aircraftService).GetFbopricesByFboIdCurrent(fboId);
             var resProm = prom as OkObjectResult;
          
             string body = "";

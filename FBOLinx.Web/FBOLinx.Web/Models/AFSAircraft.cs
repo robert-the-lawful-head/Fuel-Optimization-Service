@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Models
 {
+    [Table("AFSAircraft")]
     public class AFSAircraft
     {
         [Key]
@@ -21,5 +22,9 @@ namespace FBOLinx.Web.Models
         public string AircraftTypeEngineName { get; set; }
 
         public int DegaAircraftID { get; set; }
+
+        [ForeignKey("DegaAircraftID")]
+        [InverseProperty("AFSAircraft")]
+        public AirCrafts AirCrafts { get; set; }
     }
 }
