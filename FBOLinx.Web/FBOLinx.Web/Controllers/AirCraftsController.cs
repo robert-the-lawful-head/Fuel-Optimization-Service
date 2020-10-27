@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -17,17 +18,19 @@ namespace FBOLinx.Web.Controllers
     public class AirCraftsController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly AircraftService _aircraftService;
 
-        public AirCraftsController(FboLinxContext context)
+        public AirCraftsController(FboLinxContext context, AircraftService aircraftService)
         {
             _context = context;
+            _aircraftService = aircraftService;
         }
 
         // GET: api/AirCrafts
         [HttpGet]
         public IEnumerable<AirCrafts> GetAirCrafts()
         {
-            return _context.Aircrafts.OrderBy((x => x.Make)).ThenBy((x => x.Model));
+            return _aircraftService.GetAllAircrafts().OrderBy(x => x.Make).ThenBy(x => x.Model);
         }
 
         [HttpGet("Sizes")]
@@ -47,7 +50,7 @@ namespace FBOLinx.Web.Controllers
 
             var customerAircrafts = await (from ca in _context.CustomerAircrafts
                                            join c in _context.Customers on ca.CustomerId equals c.Oid
-                                           join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
+                                           join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
                                            from ac in leftJoinAircrafts.DefaultIfEmpty()
                                            where ca.Oid == id
                                            select new
@@ -101,25 +104,16 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(airCrafts).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _aircraftService.UpdateAirCrafts(airCrafts);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AirCraftsExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/AirCrafts
@@ -131,8 +125,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Aircrafts.Add(airCrafts);
-            await _context.SaveChangesAsync();
+            await _aircraftService.AddAirCrafts(airCrafts);
 
             return CreatedAtAction("GetAirCrafts", new { id = airCrafts.AircraftId }, airCrafts);
         }
@@ -146,21 +139,15 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var airCrafts = await _context.Aircrafts.FindAsync(id);
+            var airCrafts = _aircraftService.GetAircrafts(id);
             if (airCrafts == null)
             {
                 return NotFound();
             }
 
-            _context.Aircrafts.Remove(airCrafts);
-            await _context.SaveChangesAsync();
+            await _aircraftService.RemoveAirCrafts(airCrafts);
 
             return Ok(airCrafts);
-        }
-
-        private bool AirCraftsExists(int id)
-        {
-            return _context.Aircrafts.Any(e => e.AircraftId == id);
         }
     }
 }
