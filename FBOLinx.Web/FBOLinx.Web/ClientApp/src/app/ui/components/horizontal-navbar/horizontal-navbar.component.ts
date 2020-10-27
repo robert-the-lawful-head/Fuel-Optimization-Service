@@ -349,6 +349,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     this.accountProfileMenu.isOpened = false;
     this.needsAttentionMenu.isOpened = false;
     this.sharedService.currentUser.fboId = this.fboAirport.fboid;
+    this.loadFboInfo();
     sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
     this.sharedService.emitChange(SharedEvents.locationChangedEvent);
   }
