@@ -2,7 +2,7 @@
   <horizontal-navbar [title]="pageTitle" (sidebarState)="sidebarState()"></horizontal-navbar>
 
   <vertical-navbar [ngClass]="{ 'hideSidebar': isConductorGroup() }"></vertical-navbar>
-  <div *ngIf="pricingTemplatesData && !isCsr">
+  <div *ngIf="pricingTemplatesData">
     <addition-navbar #insideElement [templatelst]="pricingTemplatesData"></addition-navbar>
   </div>
 
