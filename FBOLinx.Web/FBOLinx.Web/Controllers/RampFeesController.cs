@@ -11,6 +11,7 @@ using FBOLinx.Web.ViewModels;
 using static FBOLinx.Web.Models.RampFees;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -20,12 +21,14 @@ namespace FBOLinx.Web.Controllers
     public class RampFeesController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly FBOLinx.Web.Services.RampFeesService _RampFeesService;
+        private readonly RampFeesService _RampFeesService;
+        private readonly AircraftService _aircraftService;
 
-        public RampFeesController(FboLinxContext context, FBOLinx.Web.Services.RampFeesService rampFeesService)
+        public RampFeesController(FboLinxContext context, RampFeesService rampFeesService, AircraftService aircraftService)
         {
             _context = context;
             _RampFeesService = rampFeesService;
+            _aircraftService = aircraftService;
         }
 
         // GET: api/RampFees
@@ -81,7 +84,7 @@ namespace FBOLinx.Web.Controllers
                     CategoryMaxValue = r?.CategoryMaxValue,
                     ExpirationDate = r?.ExpirationDate,
                     Size = (AirCrafts.AircraftSizes) s.Value,
-                    AppliesTo = (from a in _context.Aircrafts
+                    AppliesTo = (from a in _aircraftService.GetAllAircrafts()
                         where a.Size.HasValue && a.Size == (AirCrafts.AircraftSizes) s.Value
                         select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList(),
                     LastUpdated = r?.LastUpdated
@@ -90,7 +93,7 @@ namespace FBOLinx.Web.Controllers
 
             // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
             List<ViewModels.RampFeesGridViewModel> customRampFees = await (from r in _context.RampFees
-                join a in _context.Aircrafts on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
+                join a in _aircraftService.GetAllAircrafts() on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
                 from a in leftJoinAircrafts.DefaultIfEmpty()
                 where r.Fboid == fboId && r.CategoryType.HasValue &&
                       r.CategoryType.Value != RampFees.RampFeeCategories.AircraftSize

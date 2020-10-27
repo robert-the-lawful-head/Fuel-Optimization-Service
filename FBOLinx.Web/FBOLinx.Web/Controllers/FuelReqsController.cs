@@ -28,12 +28,14 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly FuelerLinxService _fuelerLinxService;
+        private readonly AircraftService _aircraftService;
 
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, Services.FuelerLinxService fuelerLinxService)
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxService fuelerLinxService, AircraftService aircraftService)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
             _HttpContextAccessor = httpContextAccessor;
+            _aircraftService = aircraftService;
         }
 
         // GET: api/FuelReqs/5
@@ -526,7 +528,7 @@ namespace FBOLinx.Web.Controllers
                 var fuelReqsByAircraftSizeVM = await (from f in _context.FuelReq
                                                       join ca in
                                                           (from ca in _context.CustomerAircrafts
-                                                           join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+                                                           join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
                                                            select new
                                                            {
                                                                Size = (ca.Size.HasValue && ca.Size.Value != AirCrafts.AircraftSizes.NotSet
@@ -1009,8 +1011,8 @@ namespace FBOLinx.Web.Controllers
                                    where cibg.GroupId == groupId && cpl.ICAO == icao
                                    select new
                                    {
-                                       CustomerId = cibg.CustomerId,
-                                       CreatedDate = cpl.CreatedDate
+                                       cibg.CustomerId,
+                                       cpl.CreatedDate
                                    }).ToListAsync();
 
                 var customers = await _context.CustomerInfoByGroup

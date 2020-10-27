@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>Merge Groups and FBOs</h1>
+<div>
+  <div mat-dialog-content>
+    <mat-form-field>
+      <mat-label>Base Group</mat-label>
+      <mat-select [(ngModel)]="baseGroup" [disabled]="loading">
+        <mat-option *ngFor="let group of data.groups" [value]="group.oid">
+          {{group.groupName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-hint *ngIf="failed" class="text-danger">Failed to merge groups. Contact the support team!</mat-hint>
+  </div>
+
+  <div mat-dialog-actions>
+    <button
+      mat-flat-button
+      color="accent"
+      (click)="onSaveClick()"
+      class="mr-1"
+      [disabled]="loading"
+    >
+      {{ loading ? "Merging &nbsp;" : "Merge Groups" }}
+      <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    </button>
+    <button
+      [disabled]="loading"
+      mat-stroked-button
+      (click)="onCancelClick()"
+    >Cancel</button>
+  </div>
+</div>
