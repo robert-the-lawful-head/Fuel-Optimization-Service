@@ -147,6 +147,8 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+
+
             List<FuelReqsGridViewModel> fuelReqVM = await
                 (from fr in _context.FuelReq
                  join c in _context.CustomerInfoByGroup on new { GroupId = groupId, CustomerId = fr.CustomerId.GetValueOrDefault() } equals new { c.GroupId, c.CustomerId }
