@@ -17,6 +17,8 @@ Name | Type | Description | Notes
 **AirportNameShort** | **string** |  | [optional] 
 **Latitude** | **string** |  | [optional] 
 **Longitude** | **string** |  | [optional] 
+**FuelType** | **string** |  | [optional] 
+**AirportType** | **string** |  | [optional] 
 **IsUnitedStatesAirport** | **bool?** |  | [optional] 
 **ProperAirportIdentifier** | **string** |  | [optional] 
 
