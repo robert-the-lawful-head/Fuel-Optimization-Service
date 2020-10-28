@@ -1,11 +1,10 @@
-# IO.Swagger.Model.PostAccountingContractMappingsResponse
+# IO.Swagger.Model.SageVendorVM
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**AccountingContractMappingsDTO**](AccountingContractMappingsDTO.md) |  | [optional] 
-**Success** | **bool?** |  | [optional] 
-**Message** | **string** |  | [optional] 
+**VendorId** | **string** |  | [optional] 
+**VendorName** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

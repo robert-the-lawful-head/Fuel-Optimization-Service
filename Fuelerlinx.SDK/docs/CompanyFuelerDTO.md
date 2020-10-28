@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **CompanyId** | **int?** |  | [optional] 
 **Active** | **bool?** |  | [optional] 
 **AddDate** | **DateTime?** |  | [optional] 
-**DisplayName** | **string** |  | [optional] 
 **Settings** | [**CompanyFuelerSettingsDTO**](CompanyFuelerSettingsDTO.md) |  | [optional] 
 **FuelVendor** | [**FuelVendorDTO**](FuelVendorDTO.md) |  | [optional] 
 **CompanyFuelerNotes** | [**List&lt;CompanyFuelerNotesDTO&gt;**](CompanyFuelerNotesDTO.md) |  | [optional] 

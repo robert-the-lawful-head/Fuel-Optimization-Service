@@ -1,8 +1,9 @@
-# IO.Swagger.Model.UpdateAccountingContractMappingsResponse
+# IO.Swagger.Model.SageCreateBillResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Result** | [**SageBillVM**](SageBillVM.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

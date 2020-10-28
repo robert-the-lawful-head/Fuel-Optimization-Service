@@ -11,7 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class AccountingGeneralLedger {
+  public class SageGeneralLedgerVM {
     /// <summary>
     /// Gets or Sets GeneralLedgerCode
     /// </summary>
@@ -61,7 +61,7 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class AccountingGeneralLedger {\n");
+      sb.Append("class SageGeneralLedgerVM {\n");
       sb.Append("  GeneralLedgerCode: ").Append(GeneralLedgerCode).Append("\n");
       sb.Append("  GeneralLedgerItemName: ").Append(GeneralLedgerItemName).Append("\n");
       sb.Append("  GeneralLedgerItemCategory: ").Append(GeneralLedgerItemCategory).Append("\n");

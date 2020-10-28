@@ -1,9 +1,9 @@
-# IO.Swagger.Model.AccountingBillCreationResponse
+# IO.Swagger.Model.FBOLinxContractFuelOrdersResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**AccountingBill**](AccountingBill.md) |  | [optional] 
+**Result** | [**List&lt;TransactionDTO&gt;**](TransactionDTO.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

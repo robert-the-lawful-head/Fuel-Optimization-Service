@@ -48,13 +48,6 @@ namespace IO.Swagger.Model {
     public DateTime? AddDate { get; set; }
 
     /// <summary>
-    /// Gets or Sets DisplayName
-    /// </summary>
-    [DataMember(Name="displayName", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "displayName")]
-    public string DisplayName { get; set; }
-
-    /// <summary>
     /// Gets or Sets Settings
     /// </summary>
     [DataMember(Name="settings", EmitDefaultValue=false)]
@@ -102,7 +95,6 @@ namespace IO.Swagger.Model {
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  Active: ").Append(Active).Append("\n");
       sb.Append("  AddDate: ").Append(AddDate).Append("\n");
-      sb.Append("  DisplayName: ").Append(DisplayName).Append("\n");
       sb.Append("  Settings: ").Append(Settings).Append("\n");
       sb.Append("  FuelVendor: ").Append(FuelVendor).Append("\n");
       sb.Append("  CompanyFuelerNotes: ").Append(CompanyFuelerNotes).Append("\n");

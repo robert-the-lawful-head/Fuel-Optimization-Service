@@ -194,13 +194,6 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "paymentEmail")]
     public string PaymentEmail { get; set; }
 
-    /// <summary>
-    /// Gets or Sets IsDirectVendorType
-    /// </summary>
-    [DataMember(Name="isDirectVendorType", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "isDirectVendorType")]
-    public bool? IsDirectVendorType { get; set; }
-
 
     /// <summary>
     /// Get the string presentation of the object
@@ -235,7 +228,6 @@ namespace IO.Swagger.Model {
       sb.Append("  IsMessagesEnabled: ").Append(IsMessagesEnabled).Append("\n");
       sb.Append("  IsVendorLinxEnabled: ").Append(IsVendorLinxEnabled).Append("\n");
       sb.Append("  PaymentEmail: ").Append(PaymentEmail).Append("\n");
-      sb.Append("  IsDirectVendorType: ").Append(IsDirectVendorType).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

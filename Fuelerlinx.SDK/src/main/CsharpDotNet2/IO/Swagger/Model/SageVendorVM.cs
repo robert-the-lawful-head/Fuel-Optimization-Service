@@ -11,27 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class AccountingVendorListResponse {
+  public class SageVendorVM {
     /// <summary>
-    /// Gets or Sets Result
+    /// Gets or Sets VendorId
     /// </summary>
-    [DataMember(Name="result", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "result")]
-    public List<AccountingVendor> Result { get; set; }
+    [DataMember(Name="vendorId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "vendorId")]
+    public string VendorId { get; set; }
 
     /// <summary>
-    /// Gets or Sets Success
+    /// Gets or Sets VendorName
     /// </summary>
-    [DataMember(Name="success", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "success")]
-    public bool? Success { get; set; }
-
-    /// <summary>
-    /// Gets or Sets Message
-    /// </summary>
-    [DataMember(Name="message", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "message")]
-    public string Message { get; set; }
+    [DataMember(Name="vendorName", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "vendorName")]
+    public string VendorName { get; set; }
 
 
     /// <summary>
@@ -40,10 +33,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class AccountingVendorListResponse {\n");
-      sb.Append("  Result: ").Append(Result).Append("\n");
-      sb.Append("  Success: ").Append(Success).Append("\n");
-      sb.Append("  Message: ").Append(Message).Append("\n");
+      sb.Append("class SageVendorVM {\n");
+      sb.Append("  VendorId: ").Append(VendorId).Append("\n");
+      sb.Append("  VendorName: ").Append(VendorName).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

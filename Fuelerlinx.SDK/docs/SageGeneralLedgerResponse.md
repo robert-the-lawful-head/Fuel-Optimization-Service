@@ -1,8 +1,9 @@
-# IO.Swagger.Model.DeleteAccountingContractMappingsResponse
+# IO.Swagger.Model.SageGeneralLedgerResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Result** | [**List&lt;SageGeneralLedgerVM&gt;**](SageGeneralLedgerVM.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 
