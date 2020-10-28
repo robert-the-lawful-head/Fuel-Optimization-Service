@@ -29,5 +29,38 @@ namespace FBOLinx.Web.ViewModels
         public string FboName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+
+        public void CastFromComplexType(IO.Swagger.Model.TransactionDTO item)
+        {
+            Oid = 0;
+            ActualPpg = 0;
+            ActualVolume = item.InvoicedVolume.Amount;
+            Archived = item.Archived;
+            Cancelled = false;
+            CustomerId = item.CompanyId;
+            DateCreated = item.CreationDate;
+            DispatchNotes = "";
+            Eta = item.ArrivalDateTime;
+            Etd = item.DepartureDateTime;
+            Icao = item.Icao;
+            Notes = "";
+            QuotedPpg = 0;
+            QuotedVolume = item.DispatchedVolume.Amount;
+            Source = item.FuelVendor;
+            SourceId = item.FuelVendorId;
+            TimeStandard = item.TimeStandard.GetValueOrDefault().ToString();
+            CustomerName = item.CustomerName;
+            TailNumber = item.TailNumber;
+            FboName = item.Fbo;
+            Email = "";
+            PhoneNumber = ""; 
+        }
+
+        public static FuelReqsGridViewModel Cast(IO.Swagger.Model.TransactionDTO item)
+        {
+            FuelReqsGridViewModel result = new FuelReqsGridViewModel();
+            result.CastFromComplexType(item);
+            return result;
+        }
     }
 }

@@ -8,6 +8,7 @@ Method | HTTP request | Description
 [**AddAircraftForUser**](AircraftApi.md#addaircraftforuser) | **POST** /api/Aircraft/user | Add an existing aircraft to the user&#39;s account.
 [**AddTail**](AircraftApi.md#addtail) | **POST** /api/Aircraft/tail | Add a new aircraft with a corresponding tail number to be used by a specific company/user.
 [**DeleteUsereAircraftTankeringSettings**](AircraftApi.md#deleteusereaircrafttankeringsettings) | **DELETE** /api/Aircraft/tankering-settings/{id} | Delete tankering settings for an aircraft.
+[**GetAircraftByAircraftId**](AircraftApi.md#getaircraftbyaircraftid) | **GET** /api/Aircraft/aircraftId/{aircraftId} | 
 [**GetAircraftByTailNumber**](AircraftApi.md#getaircraftbytailnumber) | **GET** /api/Aircraft/company/{companyId}/tail/{tailNumber} | Get an aircraft by [companyId] and [tailNumber].
 [**GetAircraftByTailNumberId**](AircraftApi.md#getaircraftbytailnumberid) | **GET** /api/Aircraft/tail/{tailNumberId} | Get an aircraft by the provided [tailNumberId].
 [**GetAircraftDataForCompany**](AircraftApi.md#getaircraftdataforcompany) | **GET** /api/Aircraft/company | Get all aircraft assigned to the authorized company.
@@ -294,6 +295,74 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteUserAircraftTankeringSettingsResponse**](DeleteUserAircraftTankeringSettingsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getaircraftbyaircraftid"></a>
+# **GetAircraftByAircraftId**
+> UserAircraftListResponse GetAircraftByAircraftId (int? aircraftId)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetAircraftByAircraftIdExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AircraftApi();
+            var aircraftId = 56;  // int? | 
+
+            try
+            {
+                UserAircraftListResponse result = apiInstance.GetAircraftByAircraftId(aircraftId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AircraftApi.GetAircraftByAircraftId: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **aircraftId** | **int?**|  | 
+
+### Return type
+
+[**UserAircraftListResponse**](UserAircraftListResponse.md)
 
 ### Authorization
 

@@ -8,6 +8,7 @@ Method | HTTP request | Description
 [**DeleteRampFeeByCompany**](RampFeeApi.md#deleterampfeebycompany) | **DELETE** /api/RampFee/company-specific/{id} | Delete a company-specific ramp fee.
 [**DeleteRampFeeByCompanyNote**](RampFeeApi.md#deleterampfeebycompanynote) | **DELETE** /api/RampFee/company-specific/{id}/notes/{noteId} | Delete a company-specific note for a ramp fee.  The note will be changed to a \&quot;deleted\&quot; state but will not be removed from the database to allow for change-tracking.
 [**GetCrowdSourcedRampFeeByScenario**](RampFeeApi.md#getcrowdsourcedrampfeebyscenario) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a crowd-sourced ramp fee pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
+[**GetCrowdSourcedRampFeeByScenarioList**](RampFeeApi.md#getcrowdsourcedrampfeebyscenariolist) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName}/list | Fetch all crowd-sourced ramp fees pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
 [**GetRampFeeByCompany**](RampFeeApi.md#getrampfeebycompany) | **GET** /api/RampFee/company-specific/{id} | Get a company-specific ramp fee by it&#39;s [id].
 [**GetRampFeeByCompanyByScenario**](RampFeeApi.md#getrampfeebycompanybyscenario) | **GET** /api/RampFee/company-specific/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}.
 [**GetRampFeeByCompanyNotes**](RampFeeApi.md#getrampfeebycompanynotes) | **GET** /api/RampFee/company-specific/{id}/notes | Fetch all company-specific notes for the specified [rampFeeByCompanyId].
@@ -290,6 +291,79 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**CrowdSourcedRampFeeResponse**](CrowdSourcedRampFeeResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getcrowdsourcedrampfeebyscenariolist"></a>
+# **GetCrowdSourcedRampFeeByScenarioList**
+> CrowdSourcedRampFeeListResponse GetCrowdSourcedRampFeeByScenarioList (string tailNumber, string icao, string fboName)
+
+Fetch all crowd-sourced ramp fees pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetCrowdSourcedRampFeeByScenarioListExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new RampFeeApi();
+            var tailNumber = tailNumber_example;  // string | 
+            var icao = icao_example;  // string | 
+            var fboName = fboName_example;  // string | 
+
+            try
+            {
+                // Fetch all crowd-sourced ramp fees pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
+                CrowdSourcedRampFeeListResponse result = apiInstance.GetCrowdSourcedRampFeeByScenarioList(tailNumber, icao, fboName);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling RampFeeApi.GetCrowdSourcedRampFeeByScenarioList: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **tailNumber** | **string**|  | 
+ **icao** | **string**|  | 
+ **fboName** | **string**|  | 
+
+### Return type
+
+[**CrowdSourcedRampFeeListResponse**](CrowdSourcedRampFeeListResponse.md)
 
 ### Authorization
 

@@ -20,6 +20,12 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param>
+        /// <returns>FBOLinxContractFuelOrdersResponse</returns>
+        FBOLinxContractFuelOrdersResponse GetContractFuelOrders (FBOLinxOrdersRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
         /// <returns>FboLinxContractFuelVendorsCountResponse</returns>
         FboLinxContractFuelVendorsCountResponse GetContractFuelVendorsTransactionsCount (FBOLinxOrdersRequest body);
         /// <summary>
@@ -149,6 +155,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetAircraftTailsGroupedByCompany: " + response.ErrorMessage, response.ErrorMessage);
     
             return (FboLinxAircraftsResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxAircraftsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>FBOLinxContractFuelOrdersResponse</returns>            
+        public FBOLinxContractFuelOrdersResponse GetContractFuelOrders (FBOLinxOrdersRequest body)
+        {
+            
+    
+            var path = "/api/FBOLinx/get-contract-orders";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetContractFuelOrders: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetContractFuelOrders: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FBOLinxContractFuelOrdersResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxContractFuelOrdersResponse), response.Headers);
         }
     
         /// <summary>

@@ -39,6 +39,14 @@ namespace IO.Swagger.Api
         /// <returns>CrowdSourcedRampFeeResponse</returns>
         CrowdSourcedRampFeeResponse GetCrowdSourcedRampFeeByScenario (string tailNumber, string icao, string fboName);
         /// <summary>
+        /// Fetch all crowd-sourced ramp fees pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName]. 
+        /// </summary>
+        /// <param name="tailNumber"></param>
+        /// <param name="icao"></param>
+        /// <param name="fboName"></param>
+        /// <returns>CrowdSourcedRampFeeListResponse</returns>
+        CrowdSourcedRampFeeListResponse GetCrowdSourcedRampFeeByScenarioList (string tailNumber, string icao, string fboName);
+        /// <summary>
         /// Get a company-specific ramp fee by it&#39;s [id]. The request will fail if the authorized user is not part of the company that the record is attached to.
         /// </summary>
         /// <param name="id"></param>
@@ -302,6 +310,53 @@ path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName))
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCrowdSourcedRampFeeByScenario: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CrowdSourcedRampFeeResponse) ApiClient.Deserialize(response.Content, typeof(CrowdSourcedRampFeeResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch all crowd-sourced ramp fees pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName]. 
+        /// </summary>
+        /// <param name="tailNumber"></param> 
+        /// <param name="icao"></param> 
+        /// <param name="fboName"></param> 
+        /// <returns>CrowdSourcedRampFeeListResponse</returns>            
+        public CrowdSourcedRampFeeListResponse GetCrowdSourcedRampFeeByScenarioList (string tailNumber, string icao, string fboName)
+        {
+            
+            // verify the required parameter 'tailNumber' is set
+            if (tailNumber == null) throw new ApiException(400, "Missing required parameter 'tailNumber' when calling GetCrowdSourcedRampFeeByScenarioList");
+            
+            // verify the required parameter 'icao' is set
+            if (icao == null) throw new ApiException(400, "Missing required parameter 'icao' when calling GetCrowdSourcedRampFeeByScenarioList");
+            
+            // verify the required parameter 'fboName' is set
+            if (fboName == null) throw new ApiException(400, "Missing required parameter 'fboName' when calling GetCrowdSourcedRampFeeByScenarioList");
+            
+    
+            var path = "/api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName}/list";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "tailNumber" + "}", ApiClient.ParameterToString(tailNumber));
+path = path.Replace("{" + "icao" + "}", ApiClient.ParameterToString(icao));
+path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCrowdSourcedRampFeeByScenarioList: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCrowdSourcedRampFeeByScenarioList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CrowdSourcedRampFeeListResponse) ApiClient.Deserialize(response.Content, typeof(CrowdSourcedRampFeeListResponse), response.Headers);
         }
     
         /// <summary>
