@@ -147,7 +147,26 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
 
+            var customers = await (from c in _context.Customers
+                                            join ci in _context.CustomerInfoByGroup on c.Oid equals ci.CustomerId
+                                            where c.FuelerlinxId > 0 && ci.GroupId == groupId
+                                               select new {
+                                                   FuelerLinxID = c.FuelerlinxId,
+                                                   Company = ci.Company}).ToListAsync();
+
+            FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
+            { EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = airport.Icao });
+
+            List<FuelReqsGridViewModel> fuelReqsFromFuelerLinx = new List<FuelReqsGridViewModel>();
+
+
+            foreach(TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
+            {
+                transaction.CustomerName = customers.Where(x => x.FuelerLinxID == transaction.CompanyId).Select(x => x.Company).FirstOrDefault();
+                fuelReqsFromFuelerLinx.Add(FuelReqsGridViewModel.Cast(transaction));
+            }
 
             List<FuelReqsGridViewModel> fuelReqVM = await
                 (from fr in _context.FuelReq
@@ -209,6 +228,8 @@ namespace FBOLinx.Web.Controllers
                 )
                 .OrderByDescending(f => f.Oid)
                 .ToListAsync();
+
+            fuelReqVM.AddRange(fuelReqsFromFuelerLinx);
 
             return Ok(fuelReqVM);
         }

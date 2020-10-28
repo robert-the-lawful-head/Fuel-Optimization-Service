@@ -108,12 +108,12 @@ namespace FBOLinx.Web.Services
             return results;
         }
 
-        //public FBOLinxNearbyAirportsResponse GetContractFuelRequests(FBOLinxNearbyAirportsRequest request)
-        //{
-        //    var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-        //    FBOLinxNearbyAirportsResponse results = api.GetTransactionsCountForNearbyAirports(request);
-        //    return results;
-        //}
+        public FBOLinxContractFuelOrdersResponse GetContractFuelRequests(FBOLinxOrdersRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FBOLinxContractFuelOrdersResponse results = api.GetContractFuelOrders(request);
+            return results;
+        }
 
         public FboLinxAircraftsResponse GetAircraftsFromFuelerinx()
         {
