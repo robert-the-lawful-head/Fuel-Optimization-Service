@@ -1,17 +1,27 @@
-<mat-form-field>
-    <input matInput (keyup)="applyFilter($event.target.value)" [value]="searchValue" placeholder="Search by Group, FBO, User, ...">
-    <span matPrefix><i class="fa fa-search"></i></span>
-</mat-form-field>
+<div>
+    <mat-form-field class="filter">
+        <input matInput (keyup)="applyFilter($event.target.value)" [value]="searchValue" placeholder="Search by Group, FBO, User, ...">
+        <span matPrefix><i class="fa fa-search"></i></span>
+    </mat-form-field>
+
+    <button *ngIf="selectedRows.length > 1" mat-flat-button color="warn" (click)="mergeGroups()">
+        <mat-icon>merge_type</mat-icon>
+        Merge Groups
+    </button>
+</div>
 
 <ejs-grid
     #grid
     [dataSource]='groupDataSource'
     [childGrid]='childGrid'
     (rowSelected)="rowSelected($event)"
+    (rowDeselected)="rowDeselected()"
     [allowPaging]='true'
     [pageSettings]='pageSettings'
+    [selectionSettings]='selectionOptions'
 >
     <e-columns>
+        <e-column type='checkbox' width='50'></e-column>
         <e-column field='groupName' headerText='Group'></e-column>
         <e-column>
             <ng-template #template let-data>

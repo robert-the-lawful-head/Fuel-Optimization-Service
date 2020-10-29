@@ -71,7 +71,7 @@ export class UsersEditComponent implements OnInit {
             let supportedRoleValues = [4];
             this.availableroles = [];
             if (this.userInfo.fboId > 0) {
-                supportedRoleValues = [1, 4];
+                supportedRoleValues = [1, 4, 5];
             } else if (this.userInfo.groupId > 0) {
                 supportedRoleValues = [2];
             }
@@ -83,9 +83,7 @@ export class UsersEditComponent implements OnInit {
             if (this.userInfo.role > 0) {
                 return;
             }
-            this.userInfo.role = this.availableroles[
-                this.availableroles.length - 1
-            ].Value;
+            this.userInfo.role = this.availableroles[0].Value;
         });
     }
 }

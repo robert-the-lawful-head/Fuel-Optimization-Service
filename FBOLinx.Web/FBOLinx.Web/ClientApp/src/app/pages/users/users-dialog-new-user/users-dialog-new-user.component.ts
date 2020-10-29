@@ -65,7 +65,7 @@ export class UsersDialogNewUserComponent {
             let supportedRoleValues = [4];
             this.availableroles = [];
             if (this.data.fboId > 0) {
-                supportedRoleValues = [1, 4];
+                supportedRoleValues = [1, 4, 5];
             } else if (this.data.groupId > 0) {
                 supportedRoleValues = [2];
             }
@@ -77,9 +77,7 @@ export class UsersDialogNewUserComponent {
             if (this.data.role > 0) {
                 return;
             }
-            this.data.role = this.availableroles[
-                this.availableroles.length - 1
-            ].value;
+            this.data.role = this.availableroles[0].value;
         });
     }
 }

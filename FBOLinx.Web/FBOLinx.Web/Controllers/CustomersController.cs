@@ -10,6 +10,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using static FBOLinx.Web.Models.AirCrafts;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -19,10 +20,12 @@ namespace FBOLinx.Web.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly AircraftService _aircraftService;
 
-        public CustomersController(FboLinxContext context)
+        public CustomersController(FboLinxContext context, AircraftService aircraftService)
         {
             _context = context;
+            _aircraftService = aircraftService;
         }
 
         // GET: api/Customers
@@ -50,37 +53,6 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(customers);
         }
-
-        //// GET: api/Customers/5
-        //[HttpGet("group/{groupId}/fbo/{fboId}")]
-        //public async Task<IActionResult> GetCustomersByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var customers = await GetAllCustomers().Include("CustomerInfoByGroup").Where(c => c.CustomerInfoByGroup?.GroupId == groupId).ToListAsync();
-
-        //    //View model for customers grid
-        //    var customerVM = customers.Select(c => new CustomersGridViewModel
-        //    {
-        //        CustomerId = c.Oid,
-        //        CustomerInfoByGroupId = c.CustomerInfoByGroup?.Oid,
-        //        CompanyByGroupId = c.CompanyByGroup?.Oid,
-        //        Company = c.CustomerInfoByGroup?.Company,
-        //        PricingTemplateId = 0,
-        //        DefaultCustomerType = c.CustomerInfoByGroup?.CustomerType,
-        //        Joined = c.CustomerInfoByGroup?.Joined,
-        //        Price = 0,
-        //        Suspended = c.CustomerInfoByGroup?.Suspended,
-        //        FuelerLinxId = c.FuelerlinxId,
-        //        Network = c.CustomerInfoByGroup?.Network,
-        //        GroupId = c.CustomerInfoByGroup?.GroupId
-        //    });
-
-        //    return Ok(customerVM);
-        //}
 
         // PUT: api/Customers/5
         [HttpPut("{id}")]
@@ -214,8 +186,7 @@ namespace FBOLinx.Web.Controllers
                             ac.Size = acSize;
                         }
 
-                        _context.Aircrafts.Add(ac);
-                        await _context.SaveChangesAsync();
+                        await _aircraftService.AddAirCrafts(ac);
 
                         if (ac.AircraftId != 0)
                         {
@@ -281,11 +252,6 @@ namespace FBOLinx.Web.Controllers
         private bool CustomersExists(int id)
         {
             return _context.Customers.Any(e => e.Oid == id);
-        }
-
-        private IQueryable<Customers> GetAllCustomers()
-        {
-            return _context.Customers.AsQueryable();
         }
     }
 }

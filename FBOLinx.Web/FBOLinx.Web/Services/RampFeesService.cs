@@ -13,11 +13,13 @@ namespace FBOLinx.Web.Services
     {
         private readonly FboLinxContext _context;
         private readonly DegaContext _DegaContext;
+        private readonly AircraftService _aircraftService;
 
-        public RampFeesService(FboLinxContext context, DegaContext degaContext)
+        public RampFeesService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService)
         {
             _context = context;
             _DegaContext = degaContext;
+            _aircraftService = aircraftService;
         }
 
         public async Task<RampFees> GetRampFeeForAircraft(int fboId, string tailNumber)
@@ -54,7 +56,7 @@ namespace FBOLinx.Web.Services
 
             List<int> aircraftIds = rampFees.Where(x => x.CategoryType == RampFees.RampFeeCategories.AircraftType).Select(x => x.CategoryMinValue.GetValueOrDefault()).ToList();
 
-            var aircraftTypes = _context.Aircrafts.Where(x => aircraftIds.Any(a => a == x.AircraftId));
+            var aircraftTypes = _aircraftService.GetAllAircrafts().Where(x => aircraftIds.Any(a => a == x.AircraftId));
 
             rampFees.ForEach(x => {
                 if (x.CategoryType != RampFees.RampFeeCategories.AircraftType)

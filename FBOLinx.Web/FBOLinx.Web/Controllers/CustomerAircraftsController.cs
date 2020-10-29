@@ -22,12 +22,14 @@ namespace FBOLinx.Web.Controllers
     public class CustomerAircraftsController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private IHttpContextAccessor _HttpContextAccessor;      
+        private readonly IHttpContextAccessor _HttpContextAccessor;
+        private readonly AircraftService _aircraftService;
 
-        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor)
+        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService)
         {
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
+            _aircraftService = aircraftService;
         }
 
         [HttpGet]
@@ -45,7 +47,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var customerAircrafts = await (from ca in _context.CustomerAircrafts
-                                           join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
+                                           join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
                                            from ac in leftJoinAircrafts.DefaultIfEmpty()
                                            where ca.Oid == id
                                            select new
@@ -95,7 +97,7 @@ namespace FBOLinx.Web.Controllers
             List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
                 from ca in _context.CustomerAircrafts
                 join c in _context.Customers on ca.CustomerId equals c.Oid
-                join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+                join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
                 into acjoin from subacjoin in acjoin.DefaultIfEmpty()
                 join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
                 into leftJoinPt
@@ -140,7 +142,7 @@ namespace FBOLinx.Web.Controllers
             List<CustomerAircraftsGridViewModel> customerAircraft = await (
                 from ca in _context.CustomerAircrafts
                 join c in _context.Customers on ca.CustomerId equals c.Oid
-                join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+                join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
                 join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId
                 into leftJoinAircraftPrices
                 from a in leftJoinAircraftPrices.DefaultIfEmpty()
@@ -191,7 +193,7 @@ namespace FBOLinx.Web.Controllers
                from ca in _context.CustomerAircrafts
                join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
                join c in _context.Customers on cg.CustomerId equals c.Oid
-               join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+               join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
                into acjoin from subacjoin in acjoin.DefaultIfEmpty()
                join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
                into leftJoinPt
@@ -234,7 +236,7 @@ namespace FBOLinx.Web.Controllers
             var customerAircraftCount = (from ca in _context.CustomerAircrafts
                                          join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
                                          join c in _context.Customers on cg.CustomerId equals c.Oid
-                                         join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+                                         join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
                                          into acjoin
                                          from subacjoin in acjoin.DefaultIfEmpty()
                                          where ca.GroupId == groupId
@@ -385,7 +387,7 @@ namespace FBOLinx.Web.Controllers
 
             foreach(var singleAircraft in customerAircrafts)
             {
-                var aircraft = _context.Aircrafts.FirstOrDefault(s => s.Make == singleAircraft.AircraftMake && s.Model == singleAircraft.Model);
+                var aircraft = _aircraftService.GetAllAircrafts().FirstOrDefault(s => s.Make == singleAircraft.AircraftMake && s.Model == singleAircraft.Model);
 
                 if (aircraft != null)
                 {
@@ -408,7 +410,7 @@ namespace FBOLinx.Web.Controllers
                 else
                 {
                     singleAircraft.IsImported = false;
-                    var otherOptions = _context.Aircrafts.Where(s => s.Make == singleAircraft.AircraftMake).Select(s => s.Model);
+                    var otherOptions = _aircraftService.GetAllAircrafts().Where(s => s.Make == singleAircraft.AircraftMake).Select(s => s.Model);
 
                     if(otherOptions != null)
                     {
