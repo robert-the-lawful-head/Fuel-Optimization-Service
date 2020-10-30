@@ -206,6 +206,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     this.sharedService.currentUser.impersonatedRole = null;
     if (this.sharedService.currentUser.managerGroupId && this.sharedService.currentUser.managerGroupId > 0) {
       this.sharedService.currentUser.groupId = this.sharedService.currentUser.managerGroupId;
+      sessionStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
     } else {
       sessionStorage.removeItem('groupId');
     }
