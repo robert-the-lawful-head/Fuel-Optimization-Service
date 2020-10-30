@@ -59,7 +59,7 @@ namespace FBOLinx.Web.Controllers
             //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
             IEnumerable<Utilities.Enum.EnumDescriptionValue> sizes =
                 Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
-            List<ViewModels.RampFeesGridViewModel> result = (
+            List<RampFeesGridViewModel> result = (
                 from s in sizes
                 join r in _context.RampFees on new
                     {
@@ -73,7 +73,7 @@ namespace FBOLinx.Web.Controllers
                     }
                     into leftJoinRampFees
                 from r in leftJoinRampFees.DefaultIfEmpty()
-                select new ViewModels.RampFeesGridViewModel()
+                select new RampFeesGridViewModel()
                 {
                     Oid = r?.Oid ?? 0,
                     Price = r?.Price,
@@ -92,12 +92,12 @@ namespace FBOLinx.Web.Controllers
                 }).ToList();
 
             // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
-            List<ViewModels.RampFeesGridViewModel> customRampFees = await (from r in _context.RampFees
+            List<RampFeesGridViewModel> customRampFees = await (from r in _context.RampFees
                 join a in _aircraftService.GetAllAircrafts() on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
                 from a in leftJoinAircrafts.DefaultIfEmpty()
                 where r.Fboid == fboId && r.CategoryType.HasValue &&
-                      r.CategoryType.Value != RampFees.RampFeeCategories.AircraftSize
-                select new ViewModels.RampFeesGridViewModel()
+                      r.CategoryType.Value != RampFeeCategories.AircraftSize
+                select new RampFeesGridViewModel()
                 {
                     Oid = r.Oid,
                     Price = r.Price,
