@@ -71,6 +71,15 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="pricingTemplateName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    ITP Margin Template
+                </th>
+                <td mat-cell *matCellDef="let fuelreq">
+                    {{ fuelreq.pricingTemplateName }}
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="eta">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>ETA</th>
                 <td mat-cell *matCellDef="let fuelreq">

@@ -42,6 +42,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     displayedColumns: string[] = [
         'oid',
         'customer',
+        'pricingTemplateName',
         'eta',
         'etd',
         'quotedVolume',
