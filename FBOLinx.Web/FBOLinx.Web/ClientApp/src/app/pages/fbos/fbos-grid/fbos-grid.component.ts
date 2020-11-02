@@ -43,7 +43,7 @@ export class FbosGridComponent implements OnInit {
     // Public Members
     public pageTitle = 'FBOs';
     public fbosDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['icao', 'fbo', 'active', 'delete'];
+    public displayedColumns: string[] = ['icao', 'fbo', 'active', 'manage'];
     public airportData: Array<any>;
     public resultsLength = 0;
     public canManageFbo = false;
@@ -73,13 +73,21 @@ export class FbosGridComponent implements OnInit {
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.canManageFbo = this.sharedService.currentUser.role === 3 || this.sharedService.currentUser.role === 2;
-        if (this.canManageFbo) {
+
+        if (this.sharedService.currentUser.role === 3) {
             this.displayedColumns = [
                 'icao',
                 'fbo',
                 'active',
                 'manage',
                 'delete',
+            ];
+        } else {
+            this.displayedColumns = [
+                'icao',
+                'fbo',
+                'active',
+                'manage',
             ];
         }
     }
