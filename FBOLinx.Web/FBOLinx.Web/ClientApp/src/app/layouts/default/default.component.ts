@@ -80,7 +80,7 @@ export class DefaultLayoutComponent implements OnInit {
     if (blacklist.findIndex(v => window.location.pathname.startsWith(v)) >= 0) {
       return false;
     }
-    return true;
+    return !this.isCsr;
   }
 
   getClasses() {
@@ -137,6 +137,10 @@ export class DefaultLayoutComponent implements OnInit {
   isConductorGroup() {
     return this.sharedService.currentUser.role === 3 &&
       (window.location.pathname.startsWith('/default-layout/groups') || window.location.pathname.startsWith('/default-layout/fbos'));
+  }
+
+  get isCsr() {
+    return this.sharedService.currentUser.role === 5;
   }
 
   private loadFboPrices() {

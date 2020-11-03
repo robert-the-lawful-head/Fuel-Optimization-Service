@@ -19,7 +19,7 @@
     right .2s $animation;
   width: $vertical-navbar-width;
   will-change: left, right, width;
-  z-index: 9996;
+  z-index: 99999;
   @media only screen and (max-width: 991px) {
     left: -($vertical-navbar-width);
   }
@@ -39,7 +39,7 @@
     width: $vertical-navbar-width;
     @media only screen and (max-width: 991px) {
       position: relative;
-      z-index: 9999;
+      z-index: 99999;
     }
   }
   .sidebar-overlay {
@@ -54,6 +54,6 @@
       0s visibility .2s $animation;
     visibility: hidden;
     width: 100%;
-    z-index: 9998;
+    z-index: 99998;
   }
 }

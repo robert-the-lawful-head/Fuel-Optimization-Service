@@ -40,6 +40,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "lastUpdated")]
     public string LastUpdated { get; set; }
 
+    /// <summary>
+    /// Gets or Sets ReportCount
+    /// </summary>
+    [DataMember(Name="reportCount", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "reportCount")]
+    public int? ReportCount { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Source
+    /// </summary>
+    [DataMember(Name="source", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "source")]
+    public string Source { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -52,6 +66,8 @@ namespace IO.Swagger.Model {
       sb.Append("  RampFeeWaived: ").Append(RampFeeWaived).Append("\n");
       sb.Append("  AppliesTo: ").Append(AppliesTo).Append("\n");
       sb.Append("  LastUpdated: ").Append(LastUpdated).Append("\n");
+      sb.Append("  ReportCount: ").Append(ReportCount).Append("\n");
+      sb.Append("  Source: ").Append(Source).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

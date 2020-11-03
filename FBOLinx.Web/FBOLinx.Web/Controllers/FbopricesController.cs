@@ -27,14 +27,16 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JwtManager _jwtManager;
-        private RampFeesService _RampFeesService;
+        private readonly RampFeesService _RampFeesService;
+        private readonly AircraftService _aircraftService;
 
-        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService)
+        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _jwtManager = jwtManager;
             _RampFeesService = rampFeesService;
+            _aircraftService = aircraftService;
         }
 
         // GET: api/Fboprices
@@ -614,7 +616,7 @@ namespace FBOLinx.Web.Controllers
                         !string.IsNullOrEmpty(x.TailNumbers) &&
                         x.TailNumbers.ToUpper().Split(',').Contains(request.TailNumber.ToUpper())  && x.FboId == request.FBOID &&
                         (request.CustomerInfoByGroupId == x.CustomerInfoByGroupId)).ToList();
-                    var custAircraftMakeModel = _context.Aircrafts.FirstOrDefault(s => s.AircraftId == customerAircraft.AircraftId);
+                    var custAircraftMakeModel = _aircraftService.GetAllAircrafts().FirstOrDefault(s => s.AircraftId == customerAircraft.AircraftId);
 
                     if (custAircraftMakeModel != null)
                     {
@@ -676,30 +678,6 @@ namespace FBOLinx.Web.Controllers
         private IQueryable<Fboprices> GetAllFboPrices()
         {
             return _context.Fboprices.AsQueryable();
-        }
-
-        private double GetTPrice(VolumeScaleDiscountFboPrice vsd, CustomerMarginPriceTier p, int groupId)
-        {
-            double? price;
-            double? pAmount = (p == null || p.Amount == null) ? 0 : p.Amount;
-            double? salesTax = 1 + vsd.SalesTax;
-            if (vsd.MarginType == 0)
-            {
-                price = (vsd.Price + vsd.Margin) * salesTax + pAmount;
-            }
-            else if (vsd.MarginType == 1 && vsd.Margin == 0 && groupId == 1)
-            {
-                price = vsd.Price + pAmount;
-            }
-            else if (vsd.MarginType == 1 && vsd.Margin == 0)
-            {
-                price = vsd.Price * salesTax + pAmount;
-            }
-            else
-            {
-                price = (vsd.Price / salesTax - vsd.Margin) * salesTax + pAmount;
-            }
-            return price ?? 0;
         }
     }
 }

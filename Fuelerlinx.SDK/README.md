@@ -105,6 +105,7 @@ Class | Method | HTTP request | Description
 *AircraftApi* | [**AddAircraftForUser**](docs/AircraftApi.md#addaircraftforuser) | **POST** /api/Aircraft/user | Add an existing aircraft to the user's account.
 *AircraftApi* | [**AddTail**](docs/AircraftApi.md#addtail) | **POST** /api/Aircraft/tail | Add a new aircraft with a corresponding tail number to be used by a specific company/user.
 *AircraftApi* | [**DeleteUsereAircraftTankeringSettings**](docs/AircraftApi.md#deleteusereaircrafttankeringsettings) | **DELETE** /api/Aircraft/tankering-settings/{id} | Delete tankering settings for an aircraft.
+*AircraftApi* | [**GetAircraftByAircraftId**](docs/AircraftApi.md#getaircraftbyaircraftid) | **GET** /api/Aircraft/aircraftId/{aircraftId} | 
 *AircraftApi* | [**GetAircraftByTailNumber**](docs/AircraftApi.md#getaircraftbytailnumber) | **GET** /api/Aircraft/company/{companyId}/tail/{tailNumber} | Get an aircraft by [companyId] and [tailNumber].
 *AircraftApi* | [**GetAircraftByTailNumberId**](docs/AircraftApi.md#getaircraftbytailnumberid) | **GET** /api/Aircraft/tail/{tailNumberId} | Get an aircraft by the provided [tailNumberId].
 *AircraftApi* | [**GetAircraftDataForCompany**](docs/AircraftApi.md#getaircraftdataforcompany) | **GET** /api/Aircraft/company | Get all aircraft assigned to the authorized company.
@@ -187,6 +188,7 @@ Class | Method | HTTP request | Description
 *FBOApi* | [**UpdateFboDetailsByCompany**](docs/FBOApi.md#updatefbodetailsbycompany) | **PUT** /api/FBO/company-specific-details | Update company-specific details for a particular FBO.
 *FBOApi* | [**UpdateFboDetailsByCompanyNotes**](docs/FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
 *FBOLinxApi* | [**GetAircraftTailsGroupedByCompany**](docs/FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
+*FBOLinxApi* | [**GetContractFuelOrders**](docs/FBOLinxApi.md#getcontractfuelorders) | **POST** /api/FBOLinx/get-contract-orders | 
 *FBOLinxApi* | [**GetContractFuelVendorsTransactionsCount**](docs/FBOLinxApi.md#getcontractfuelvendorstransactionscount) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-count-at-airport | 
 *FBOLinxApi* | [**GetCustomerFBOTransactionsCount**](docs/FBOLinxApi.md#getcustomerfbotransactionscount) | **POST** /api/FBOLinx/get-customer-fbo-orders-count-at-airport | 
 *FBOLinxApi* | [**GetCustomerTransactionsCount**](docs/FBOLinxApi.md#getcustomertransactionscount) | **POST** /api/FBOLinx/get-customer-orders-count-at-airport | 
@@ -302,6 +304,7 @@ Class | Method | HTTP request | Description
 *RampFeeApi* | [**DeleteRampFeeByCompany**](docs/RampFeeApi.md#deleterampfeebycompany) | **DELETE** /api/RampFee/company-specific/{id} | Delete a company-specific ramp fee.
 *RampFeeApi* | [**DeleteRampFeeByCompanyNote**](docs/RampFeeApi.md#deleterampfeebycompanynote) | **DELETE** /api/RampFee/company-specific/{id}/notes/{noteId} | Delete a company-specific note for a ramp fee.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
 *RampFeeApi* | [**GetCrowdSourcedRampFeeByScenario**](docs/RampFeeApi.md#getcrowdsourcedrampfeebyscenario) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a crowd-sourced ramp fee pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
+*RampFeeApi* | [**GetCrowdSourcedRampFeeByScenarioList**](docs/RampFeeApi.md#getcrowdsourcedrampfeebyscenariolist) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName}/list | Fetch all crowd-sourced ramp fees pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
 *RampFeeApi* | [**GetRampFeeByCompany**](docs/RampFeeApi.md#getrampfeebycompany) | **GET** /api/RampFee/company-specific/{id} | Get a company-specific ramp fee by it's [id].
 *RampFeeApi* | [**GetRampFeeByCompanyByScenario**](docs/RampFeeApi.md#getrampfeebycompanybyscenario) | **GET** /api/RampFee/company-specific/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}.
 *RampFeeApi* | [**GetRampFeeByCompanyNotes**](docs/RampFeeApi.md#getrampfeebycompanynotes) | **GET** /api/RampFee/company-specific/{id}/notes | Fetch all company-specific notes for the specified [rampFeeByCompanyId].
@@ -538,6 +541,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CredentialsListResponse](docs/CredentialsListResponse.md)
  - [IO.Swagger.Model.CredentialsResponse](docs/CredentialsResponse.md)
  - [IO.Swagger.Model.CredentialsResponseVM](docs/CredentialsResponseVM.md)
+ - [IO.Swagger.Model.CrowdSourcedRampFeeListResponse](docs/CrowdSourcedRampFeeListResponse.md)
  - [IO.Swagger.Model.CrowdSourcedRampFeeResponse](docs/CrowdSourcedRampFeeResponse.md)
  - [IO.Swagger.Model.CurrencyConversionDTO](docs/CurrencyConversionDTO.md)
  - [IO.Swagger.Model.CurrencyListResponse](docs/CurrencyListResponse.md)
@@ -622,6 +626,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ExchangeRefreshTokenResponse](docs/ExchangeRefreshTokenResponse.md)
  - [IO.Swagger.Model.Exporting](docs/Exporting.md)
  - [IO.Swagger.Model.FBOContact](docs/FBOContact.md)
+ - [IO.Swagger.Model.FBOLinxContractFuelOrdersResponse](docs/FBOLinxContractFuelOrdersResponse.md)
  - [IO.Swagger.Model.FBOLinxFBOResponse](docs/FBOLinxFBOResponse.md)
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateRequest](docs/FBOLinxFuelVendorUpdateRequest.md)
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateResponse](docs/FBOLinxFuelVendorUpdateResponse.md)

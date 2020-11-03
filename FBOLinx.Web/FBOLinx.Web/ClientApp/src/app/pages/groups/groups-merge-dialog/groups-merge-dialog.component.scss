@@ -1,0 +1,17 @@
+:host {
+  position: relative;
+}
+
+::ng-deep {
+  .mat-spinner {
+    circle {
+        stroke: white;
+    }
+  }
+
+  .mat-button-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

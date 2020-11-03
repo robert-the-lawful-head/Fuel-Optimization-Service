@@ -28,12 +28,14 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly FuelerLinxService _fuelerLinxService;
+        private readonly AircraftService _aircraftService;
 
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, Services.FuelerLinxService fuelerLinxService)
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxService fuelerLinxService, AircraftService aircraftService)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
             _HttpContextAccessor = httpContextAccessor;
+            _aircraftService = aircraftService;
         }
 
         // GET: api/FuelReqs/5
@@ -147,6 +149,27 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
+
+            var customers = await (from c in _context.Customers
+                                            join ci in _context.CustomerInfoByGroup on c.Oid equals ci.CustomerId
+                                            where c.FuelerlinxId > 0 && ci.GroupId == groupId
+                                               select new {
+                                                   FuelerLinxID = c.FuelerlinxId,
+                                                   Company = ci.Company}).ToListAsync();
+
+            FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
+            { EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = airport.Icao });
+
+            List<FuelReqsGridViewModel> fuelReqsFromFuelerLinx = new List<FuelReqsGridViewModel>();
+
+
+            foreach(TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
+            {
+                transaction.CustomerName = customers.Where(x => x.FuelerLinxID == transaction.CompanyId).Select(x => x.Company).FirstOrDefault();
+                fuelReqsFromFuelerLinx.Add(FuelReqsGridViewModel.Cast(transaction));
+            }
+
             List<FuelReqsGridViewModel> fuelReqVM = await
                 (from fr in _context.FuelReq
                  join c in _context.CustomerInfoByGroup on new { GroupId = groupId, CustomerId = fr.CustomerId.GetValueOrDefault() } equals new { c.GroupId, c.CustomerId }
@@ -207,6 +230,8 @@ namespace FBOLinx.Web.Controllers
                 )
                 .OrderByDescending(f => f.Oid)
                 .ToListAsync();
+
+            fuelReqVM.AddRange(fuelReqsFromFuelerLinx);
 
             return Ok(fuelReqVM);
         }
@@ -526,7 +551,7 @@ namespace FBOLinx.Web.Controllers
                 var fuelReqsByAircraftSizeVM = await (from f in _context.FuelReq
                                                       join ca in
                                                           (from ca in _context.CustomerAircrafts
-                                                           join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId
+                                                           join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
                                                            select new
                                                            {
                                                                Size = (ca.Size.HasValue && ca.Size.Value != AirCrafts.AircraftSizes.NotSet
@@ -1009,8 +1034,8 @@ namespace FBOLinx.Web.Controllers
                                    where cibg.GroupId == groupId && cpl.ICAO == icao
                                    select new
                                    {
-                                       CustomerId = cibg.CustomerId,
-                                       CreatedDate = cpl.CreatedDate
+                                       cibg.CustomerId,
+                                       cpl.CreatedDate
                                    }).ToListAsync();
 
                 var customers = await _context.CustomerInfoByGroup

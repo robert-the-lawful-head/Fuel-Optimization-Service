@@ -34,12 +34,6 @@
     }
 
     @media (max-width: 1425px) {
-        .pricing-update-board {
-            width: 100%;
-        }
-    }
-
-    @media (max-width: 1360px) {
         .pricing-page {
             flex-direction: column;
         }
@@ -119,5 +113,10 @@
         &>div:first-child {
             width: 130px;
         }
+    }
+
+    .w-full {
+        width: 100% !important;
+        max-width: 900px !important;
     }
 }

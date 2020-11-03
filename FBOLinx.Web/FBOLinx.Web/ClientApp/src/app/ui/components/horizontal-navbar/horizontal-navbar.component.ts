@@ -349,6 +349,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     this.accountProfileMenu.isOpened = false;
     this.needsAttentionMenu.isOpened = false;
     this.sharedService.currentUser.fboId = this.fboAirport.fboid;
+    this.loadFboInfo();
     sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
     this.sharedService.emitChange(SharedEvents.locationChangedEvent);
   }
@@ -383,6 +384,6 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   get notificationVisible() {
-    return this.sharedService.currentUser.fboId > 0;
+    return this.sharedService.currentUser.fboId > 0 && this.sharedService.currentUser.role !== 5;
   }
 }

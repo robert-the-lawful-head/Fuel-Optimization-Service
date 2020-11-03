@@ -11,7 +11,7 @@ import {
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { DetailRowService, GridComponent, GridModel, RecordClickEventArgs } from '@syncfusion/ej2-angular-grids';
+import { DetailRowService, GridComponent, GridModel, RecordClickEventArgs, SelectionSettingsModel  } from '@syncfusion/ej2-angular-grids';
 
 // Services
 import { GroupsService } from '../../../services/groups.service';
@@ -25,6 +25,7 @@ import { NotificationComponent } from '../../../shared/components/notification/n
 import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
 import { fboChangedEvent } from '../../../models/sharedEvents';
 import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
+import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
 
 @Component({
   selector: 'app-groups-grid',
@@ -45,6 +46,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
   @Output() editFboClicked = new EventEmitter<any>();
 
   childGrid: GridModel;
+  selectionOptions: SelectionSettingsModel = {
+    checkboxMode: 'ResetOnRowClick'
+  };
 
   // Members
   pageTitle = 'Groups';
@@ -56,6 +60,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
   groupDataSource: any[];
   fboDataSource: any[];
+
+  selectedRows: any[] = [];
 
   constructor(
     private router: Router,
@@ -69,6 +75,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     private newFboDialog: MatDialog,
     private notification: MatDialog,
     private manageDialog: MatDialog,
+    private mergeGroupsDialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
@@ -170,8 +177,16 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     });
   }
 
-  rowSelected(event) {
-    this.editGroupClicked.emit(event.data);
+  rowSelected(event: any) {
+    if (!event.isInteracted) {
+      this.editGroupClicked.emit(event.data);
+    } else {
+      this.selectedRows = this.grid.getSelectedRecords();
+    }
+  }
+
+  rowDeselected() {
+    this.selectedRows = this.grid.getSelectedRecords();
   }
 
   addNewGroupOrFbo() {
@@ -294,6 +309,40 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     }
   }
 
+  mergeGroups() {
+    const dialogRef = this.mergeGroupsDialog.open(
+      GroupsMergeDialogComponent, {
+        width: '450px',
+        data: {
+          groups: this.selectedRows
+        },
+      }
+    );
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) {
+        return;
+      }
+
+      this.grid.clearSelection();
+
+      this.groupsFbosData.groups = this.groupsFbosData.groups.filter(group =>
+        !result.groups.find(bg => bg.oid !== result.baseGroupId && bg.oid === group.oid)
+      );
+      this.groupDataSource = this.groupsFbosData.groups;
+
+      this.groupsFbosData.fbos = this.groupsFbosData.fbos.map(fbo => {
+        if (result.groups.find(bg => bg.oid === fbo.groupId)) {
+          fbo.groupId = result.baseGroupId;
+        }
+        return fbo;
+      });
+      this.fboDataSource = this.groupsFbosData.fbos;
+      this.childGrid.dataSource = this.fboDataSource;
+
+      this.grid.refresh();
+    });
+  }
+
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
 
@@ -357,7 +406,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     if (!group) {
       return true;
     }
-    const fbos: any[] = this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
+    const fbos: any[] = this.groupsFbosData.fbos?.filter(fbo => fbo.groupId === group.oid) || [];
     return fbos.every(fbo => !fbo.pricingExpired);
   }
 

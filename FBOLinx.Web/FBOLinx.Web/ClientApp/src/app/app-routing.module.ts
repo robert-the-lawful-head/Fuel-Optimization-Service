@@ -49,6 +49,11 @@ const defaultRoutes: Routes = [{
     canActivate: [AuthGuard],
   },
   {
+    path: 'dashboard-csr',
+    component: DashboardFboComponent,
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'fbo-prices',
     component: FboPricesHomeComponent,
     canActivate: [AuthGuard],

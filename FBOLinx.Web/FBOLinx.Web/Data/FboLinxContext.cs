@@ -19,7 +19,7 @@ namespace FBOLinx.Web.Data
         }
 
         public virtual DbSet<AccessTokens> AccessTokens { get; set; }
-        public virtual DbSet<AirCrafts> Aircrafts { get; set; }
+        //public virtual DbSet<AirCrafts> Aircrafts { get; set; }
         public virtual DbSet<Contacts> Contacts { get; set; }
         public virtual DbSet<CompanyPricingLog> CompanyPricingLog { get; set; }
         public virtual DbSet<CustomerAircrafts> CustomerAircrafts { get; set; }
@@ -90,10 +90,10 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.Active).HasDefaultValue(true);
             });
 
-            modelBuilder.Entity<AirCrafts>(entity =>
-            {
-                entity.Property(e => e.FuelType).IsUnicode(false);
-            });
+            //modelBuilder.Entity<AirCrafts>(entity =>
+            //{
+            //    entity.Property(e => e.FuelType).IsUnicode(false);
+            //});
 
             modelBuilder.Entity<Contacts>(entity =>
             {
