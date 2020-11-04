@@ -150,6 +150,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
+            string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
 
             var customers = await (from c in _context.Customers
                                             join ci in _context.CustomerInfoByGroup on c.Oid equals ci.CustomerId
@@ -159,7 +160,7 @@ namespace FBOLinx.Web.Controllers
                                                    Company = ci.Company}).ToListAsync();
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = airport.Icao });
+            { EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = airport.Icao, Fbo = fbo });
 
             List<FuelReqsGridViewModel> fuelReqsFromFuelerLinx = new List<FuelReqsGridViewModel>();
 
