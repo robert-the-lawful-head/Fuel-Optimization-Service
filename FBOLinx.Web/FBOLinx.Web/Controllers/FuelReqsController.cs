@@ -150,6 +150,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
+            string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
 
             var customers = await (from c in _context.Customers
                                             join ci in _context.CustomerInfoByGroup on c.Oid equals ci.CustomerId
@@ -159,7 +160,7 @@ namespace FBOLinx.Web.Controllers
                                                    Company = ci.Company}).ToListAsync();
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = airport.Icao });
+            { EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = airport.Icao, Fbo = fbo });
 
             List<FuelReqsGridViewModel> fuelReqsFromFuelerLinx = new List<FuelReqsGridViewModel>();
 
@@ -173,6 +174,8 @@ namespace FBOLinx.Web.Controllers
             List<FuelReqsGridViewModel> fuelReqVM = await
                 (from fr in _context.FuelReq
                  join c in _context.CustomerInfoByGroup on new { GroupId = groupId, CustomerId = fr.CustomerId.GetValueOrDefault() } equals new { c.GroupId, c.CustomerId }
+                 join cct in _context.CustomCustomerTypes on c.CustomerId equals cct.CustomerId
+                 join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
                  join ca in _context.CustomerAircrafts on fr.CustomerAircraftId equals ca.Oid
                  join f in _context.Fbos on fr.Fboid equals f.Oid
                  where fr.Fboid == fboId && fr.Eta > request.StartDateTime && fr.Eta < request.EndDateTime
@@ -195,11 +198,12 @@ namespace FBOLinx.Web.Controllers
                      fr.Source,
                      fr.SourceId,
                      fr.TimeStandard,
-                     CustomerName = c == null ? "" : c.Company,
-                     TailNumber = ca == null ? "" : ca.TailNumber,
-                     FboName = f == null ? "" : f.Fbo,
+                     CustomerName = c.Company,
+                     ca.TailNumber,
+                     FboName = f.Fbo,
                      fr.Email,
-                     fr.PhoneNumber
+                     fr.PhoneNumber,
+                     PricingTemplateName = pt.Name,
                  }
                  into results
                  select new FuelReqsGridViewModel
@@ -225,7 +229,8 @@ namespace FBOLinx.Web.Controllers
                      TailNumber = results.Key.TailNumber,
                      FboName = results.Key.FboName,
                      Email = results.Key.Email,
-                     PhoneNumber = results.Key.PhoneNumber
+                     PhoneNumber = results.Key.PhoneNumber,
+                     PricingTemplateName = results.Key.PricingTemplateName,
                  }
                 )
                 .OrderByDescending(f => f.Oid)

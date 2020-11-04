@@ -13,15 +13,10 @@
         </mat-form-field>
       </div>
       <div class="col-6" *ngIf="customersDataSource">
-        <app-table-global-search [matDataSource]="customersDataSource"
-                                 placeholder="Search by Company, Tail, etc."></app-table-global-search>
-        <!--<mat-form-field>
-      <input matInput
-             (keyup)="applyFilter($event)"
-             placeholder="Search by Company, Tail, etc."
-             [value]="customerSearch" />
-      <span matPrefix><i class="fa fa-search"></i></span>
-    </mat-form-field>-->
+        <app-table-global-search
+          [matDataSource]="customersDataSource"
+          placeholder="Search by Company, Tail, etc."
+        ></app-table-global-search>
       </div>
       <div class="col-2">
         <mat-form-field>
