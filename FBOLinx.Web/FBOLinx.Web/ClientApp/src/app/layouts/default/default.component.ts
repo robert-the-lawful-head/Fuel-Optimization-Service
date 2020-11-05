@@ -76,6 +76,7 @@ export class DefaultLayoutComponent implements OnInit {
     const blacklist = [
       '/default-layout/groups',
       '/default-layout/fbos',
+      '/default-layout/group-analytics',
     ];
     if (blacklist.findIndex(v => window.location.pathname.startsWith(v)) >= 0) {
       return false;

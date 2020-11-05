@@ -159,4 +159,13 @@ export class CustomerinfobygroupService {
             }
         );
     }
+
+    getCustomersByGroup(groupId: number) {
+        return this.http.get(
+            `${this.accessPointUrl}/group/${groupId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }
