@@ -65,6 +65,28 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerInfoByGroup);
         }
 
+        [HttpGet("group/{groupId}")]
+        public IActionResult GetCustomersByGroup([FromRoute] int groupId)
+        {
+            var result = (from cg in _context.CustomerInfoByGroup
+                          join c in _context.Customers on cg.CustomerId equals c.Oid
+                          where cg.GroupId == groupId
+                          group cg by new
+                          {
+                              cg.CustomerId,
+                              cg.Company
+                          } into groupedResult
+                          select new
+                          {
+                              groupedResult.Key.CustomerId,
+                              groupedResult.Key.Company,
+                          })
+                          .Distinct()
+                          .ToList();
+
+            return Ok(result);
+        }
+
         // GET: api/CustomerInfoByGroup/group/5/fbo/6
         [HttpGet("group/{groupId}/fbo/{fboId}")]
         public async Task<IActionResult> GetCustomerInfoByGroupAndFBO([FromRoute] int groupId, [FromRoute] int fboId)
