@@ -46,7 +46,7 @@ export class StatisticsTotalOrdersComponent implements OnInit {
     public refreshData() {
         this.startDateString = moment(this.startDate).format('L');
         this.fuelreqsService
-            .getForFboCount(this.sharedService.currentUser.fboId)
+            .getForFboCount(this.sharedService.currentUser.fboId, this.startDate)
             .subscribe((data: any) => {
                 this.totalOrders = data;
             }, () => {

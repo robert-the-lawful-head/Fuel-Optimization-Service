@@ -295,16 +295,16 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqs);
         }
 
-        // Get: api/FuelReqs/fbo/5
-        [HttpGet("fbo/{fboId}/count")]
-        public async Task<IActionResult> GetFuelReqsByFboCount([FromRoute] int fboId)
+        // Get: api/FuelReqs/fbo/5/count/startdate
+        [HttpPost("fbo/{fboId}/count/startdate")]
+        public async Task<IActionResult> GetFuelReqsByFboCount([FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            int fuelReqCount = await GetAllFuelRequests().Include("Fbo").Where((x => x.Fboid == fboId)).CountAsync();
+            int fuelReqCount = await GetAllFuelRequests().Include("Fbo").Where((x => x.Fboid == fboId && x.Eta > request.StartDateTime)).CountAsync();
 
             return Ok(fuelReqCount);
         }
@@ -892,7 +892,7 @@ namespace FBOLinx.Web.Controllers
 
                 foreach(FbolinxContractFuelVendorTransactionsCountAtAirport vendor in fuelerlinxContractFuelVendorOrdersCount)
                 {
-                    if (vendor.ContractFuelVendor != null && !vendor.ContractFuelVendor.ToLower().Contains("fbolinx") && vendor.ContractFuelVendor != fbo + " - " + icao)
+                    if (vendor.ContractFuelVendor != null && !vendor.ContractFuelVendor.ToLower().Contains("fbolinx") && !vendor.ContractFuelVendor.Contains(fbo) && !vendor.ContractFuelVendor.Contains(" - " + icao))
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                         chartItemType.Name = vendor.ContractFuelVendor;
@@ -968,12 +968,14 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
+
                 var chartData = await (from fr in (
                                      from fr in _context.FuelReq
                                      where fr.Fboid.Equals(fboId) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
                                      group fr by new
                                      {
-                                         CustomerID = fr.CustomerId
+                                         CustomerID = fr.CustomerId,
+                                         FboId = fr.Fboid
                                      }
                                      into groupedFuelReqs
                                      select new
@@ -982,10 +984,13 @@ namespace FBOLinx.Web.Controllers
                                          Volume = groupedFuelReqs.Sum(fr => fr.ActualVolume.GetValueOrDefault() * fr.ActualPpg.GetValueOrDefault() > 0 ?
                                                  fr.ActualVolume * fr.ActualPpg :
                                                  fr.QuotedVolume.GetValueOrDefault() * fr.QuotedPpg.GetValueOrDefault()),
-                                         Orders = groupedFuelReqs.Count()
+                                         Orders = groupedFuelReqs.Count(),
+                                         FboId = groupedFuelReqs.Key.FboId
                                      }
                                 )
+                                       join f in _context.Fbos on fr.FboId equals f.Oid
                                        join c in _context.CustomerInfoByGroup on fr.CustomerID.GetValueOrDefault() equals c.CustomerId
+                                       where f.GroupId == c.GroupId
                                        select new
                                        {
                                            Name = c.Company,
