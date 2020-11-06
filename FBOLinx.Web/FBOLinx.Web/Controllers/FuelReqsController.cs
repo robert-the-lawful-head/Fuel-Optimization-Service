@@ -156,8 +156,8 @@ namespace FBOLinx.Web.Controllers
                                             join ci in _context.CustomerInfoByGroup on c.Oid equals ci.CustomerId
                                             where c.FuelerlinxId > 0 && ci.GroupId == groupId
                                                select new {
-                                                   FuelerLinxID = c.FuelerlinxId,
-                                                   Company = ci.Company}).ToListAsync();
+                                                   c.FuelerlinxId,
+                                                   ci.Company}).ToListAsync();
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
             { EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = airport.Icao, Fbo = fbo });
@@ -165,9 +165,9 @@ namespace FBOLinx.Web.Controllers
             List<FuelReqsGridViewModel> fuelReqsFromFuelerLinx = new List<FuelReqsGridViewModel>();
 
 
-            foreach(TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
+            foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
-                transaction.CustomerName = customers.Where(x => x.FuelerLinxID == transaction.CompanyId).Select(x => x.Company).FirstOrDefault();
+                transaction.CustomerName = customers.Where(x => x.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault();
                 fuelReqsFromFuelerLinx.Add(FuelReqsGridViewModel.Cast(transaction));
             }
 
@@ -175,7 +175,7 @@ namespace FBOLinx.Web.Controllers
                 (from fr in _context.FuelReq
                  join c in _context.CustomerInfoByGroup on new { GroupId = groupId, CustomerId = fr.CustomerId.GetValueOrDefault() } equals new { c.GroupId, c.CustomerId }
                  join cct in _context.CustomCustomerTypes on c.CustomerId equals cct.CustomerId
-                 join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
+                 join pt in _context.PricingTemplate on new { cct.CustomerType, Fboid = fr.Fboid.GetValueOrDefault() } equals new { CustomerType = pt.Oid, pt.Fboid }
                  join ca in _context.CustomerAircrafts on fr.CustomerAircraftId equals ca.Oid
                  join f in _context.Fbos on fr.Fboid equals f.Oid
                  where fr.Fboid == fboId && fr.Eta > request.StartDateTime && fr.Eta < request.EndDateTime
