@@ -236,7 +236,7 @@ namespace FBOLinx.Web.Controllers
                 .OrderByDescending(f => f.Oid)
                 .ToListAsync();
 
-            //fuelReqVM.AddRange(fuelReqsFromFuelerLinx);
+            fuelReqVM.AddRange(fuelReqsFromFuelerLinx);
 
             return Ok(fuelReqVM);
         }
