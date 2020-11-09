@@ -45,8 +45,8 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<Fbopreferences> Fbopreferences { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<DistributionLog> DistributionLog { get; set; }
-        public virtual DbSet<FBOLinx.Web.Models.CustomerInfoByGroup> CustomerInfoByGroup { get; set; }
-        public virtual DbSet<FBOLinx.Web.Models.EmailContent> EmailContent { get; set; }
+        public virtual DbSet<CustomerInfoByGroup> CustomerInfoByGroup { get; set; }
+        public virtual DbSet<EmailContent> EmailContent { get; set; }
         public virtual DbSet<CustomerCompanyTypes> CustomerCompanyTypes { get; set; }
         public virtual DbSet<DistributionQueue> DistributionQueue { get; set; }
         public virtual DbSet<DistributionErrors> DistributionErrors { get; set; }
@@ -63,6 +63,7 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<NetworkNotes> NetworkNotes { get; set; }
         public virtual DbSet<DefaultDiscount> DefaultDiscount { get; set; }
         public virtual DbSet<FuelReq> FuelReq { get; set; }
+        public virtual DbSet<FuelReqPricingTemplate> FuelReqPricingTemplate { get; set; }
         public virtual DbSet<ReminderEmailsToFbos> ReminderEmailsToFbos { get; set; }
         public virtual DbSet<ContractFuelRelationships> ContractFuelRelationships { get; set; }
         public virtual DbSet<DistributionEmailsBody> DistributionEmailsBody { get; set; }
@@ -264,6 +265,13 @@ namespace FBOLinx.Web.Data
                 entity.Property(e => e.PhoneNumber).IsUnicode(false);
 
                 entity.Property(e => e.TimeStandard).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<FuelReqPricingTemplate>(entity =>
+            {
+                entity.Property(e => e.PricingTemplateName).IsUnicode(false);
+
+                entity.Property(e => e.PricingTemplateRaw).IsUnicode(false);
             });
 
             modelBuilder.Entity<CustomerInfoByGroup>(entity =>
