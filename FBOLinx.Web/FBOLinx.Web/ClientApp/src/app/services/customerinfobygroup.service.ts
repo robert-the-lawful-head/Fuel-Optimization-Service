@@ -159,4 +159,23 @@ export class CustomerinfobygroupService {
             }
         );
     }
+
+    getCustomersByGroup(groupId: number) {
+        return this.http.get(
+            `${this.accessPointUrl}/group/${groupId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    getGroupAnalytics(groupId: number, customerIds: number[]) {
+        return this.http.post(
+            `${this.accessPointUrl}/group-analytics/group/${groupId}`,
+            customerIds,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

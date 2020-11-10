@@ -35,6 +35,16 @@
         "roles": [2]
     },
     {
+        "title": "Group Analytics",
+        "icon": {
+            "class": "fa fa-bar-chart",
+            "bg": "rgb(178, 223, 219)",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/group-analytics",
+        "roles": [2]
+    },
+    {
         "title": "Groups",
         "icon": {
             "class": "fa fa-group",
