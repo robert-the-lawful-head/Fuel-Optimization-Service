@@ -111,8 +111,6 @@ export class DistributionWizardReviewComponent implements OnInit {
   }
   private loadCustomerForPreview() {
     var templateId = this.data.oid;
-    var tailNumber = "";
-    var customerId;
 
     const tailLookupData = {
       icao: this.sharedService.currentUser.icao,
