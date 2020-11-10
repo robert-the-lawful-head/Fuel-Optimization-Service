@@ -1,63 +1,59 @@
 import { Component, Inject, ViewChild } from '@angular/core';
+import * as XLSX from 'xlsx';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GridComponent } from '@syncfusion/ej2-angular-grids';
-import * as XLSX from 'xlsx';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
   selector: 'app-group-analytics-generate-dialog',
   templateUrl: './group-analytics-generate-dialog.component.html',
   styleUrls: ['./group-analytics-generate-dialog.component.scss'],
+  providers: [SharedService]
 })
 export class GroupAnalyticsGenerateDialogComponent {
   @ViewChild('grid') public grid: GridComponent;
 
   // Public Members
   dataSources: any = {};
-  filter: string = '';
+  filter = '';
   selectedCustomers: any[];
   loading: boolean;
+  exportedCustomersCount: number;
 
   constructor(
     public dialogRef: MatDialogRef<GroupAnalyticsGenerateDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private customerInfoByGroupService: CustomerinfobygroupService,
+    private sharedService: SharedService
   ) {
-    this.dataSources = data.customers
+    this.dataSources = data.customers;
   }
 
   onCancelClick(): void {
     this.dialogRef.close();
   }
 
-  onGenerate(): void {
+  async onGenerate() {
     this.loading = true;
+    this.exportedCustomersCount = 0;
 
-    const exportData = [
-      {
-        FBO: {
-          FBO: ['F21', ['F12']],
-        },
-      },
-      {
-        FBO: {
-          FBO: ['F21', ['F22']],
-        }
+    this.customerInfoByGroupService.getGroupAnalytics(
+      this.sharedService.currentUser.groupId,
+      this.selectedCustomers.map(customer => customer.customerId),
+    ).subscribe(async (data: any[]) => {
+      for (const customerFbos of data) {
+        await this.exportReportForCustomer(customerFbos.company, customerFbos.groupCustomerFbos);
       }
-    ];
-
-    // TODO
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Aircraft');
-
-    /* save to file */
-    XLSX.writeFile(wb, 'Aircraft.xlsx');
+      this.loading = false;
+    });
   }
 
   applyFilter(filter: string) {
     this.filter = filter;
 
     this.dataSources = this.data.customers.filter(customer =>
-      customer.company.toLowerCase().includes(filter))
+      customer.company.toLowerCase().includes(filter));
   }
 
   rowSelected() {
@@ -66,5 +62,30 @@ export class GroupAnalyticsGenerateDialogComponent {
 
   rowDeselected() {
     this.selectedCustomers = this.grid.getSelectedRecords();
+  }
+
+  exportReportForCustomer(company: string, data: any[]) {
+    return new Promise((resolve) => {
+      const allInKey = 'All-In For ' + company;
+      const exportData = data.map(fboData => ({
+        FBO: fboData.icao,
+        Retail: fboData.retail,
+        [allInKey]: fboData.allIn,
+        'Expiry Date': fboData.expiryDate,
+        Notes: fboData.notes,
+      }));
+
+      // TODO
+      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Report');
+
+      /* save to file */
+      XLSX.writeFile(wb, company + '.csv');
+
+      setTimeout(() => {
+        resolve();
+      }, 100);
+    });
   }
 }

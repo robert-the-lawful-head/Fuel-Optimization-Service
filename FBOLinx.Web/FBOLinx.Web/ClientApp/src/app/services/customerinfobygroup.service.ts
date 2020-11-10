@@ -168,4 +168,14 @@ export class CustomerinfobygroupService {
             }
         );
     }
+
+    getGroupAnalytics(groupId: number, customerIds: number[]) {
+        return this.http.post(
+            `${this.accessPointUrl}/group-analytics/group/${groupId}`,
+            customerIds,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }
