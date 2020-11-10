@@ -8,13 +8,19 @@ import {
   ElementRef,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FbosService } from '../../../../services/fbos.service';
 import { PricingtemplatesService } from '../../../../services/pricingtemplates.service';
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
-import { CustomermarginsService } from '../../../../services/customermargins.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { FbopricesService } from '../../../../services/fboprices.service';
 import { SharedService } from '../../../../layouts/shared-service';
+
+export interface TailLookupResponse {
+  template?: string;
+  company?: string;
+  makeModel?: string;
+  pricingList: Array<any>;
+  rampFee: any;
+}
 
 @Component({
   selector: 'app-distribution-wizard-review',
@@ -35,9 +41,7 @@ export class DistributionWizardReviewComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<DistributionWizardReviewComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private fbosService: FbosService,
     private pricingTemplatesService: PricingtemplatesService,
-    private customerMarginsService: CustomermarginsService,
     private router: Router,
     private fbopricesService: FbopricesService,
     private sharedService: SharedService
@@ -58,62 +62,9 @@ export class DistributionWizardReviewComponent implements OnInit {
 
   ngOnInit() {
     try {
-    this.customerMarginsService
-      .getCustomerMarginsByPricingTemplateId(this.data.oid)
-      .subscribe((data: any) => {
-        console.log(data);
-        this.customerMargins = data;
-        this.data.customerMargins = data;
-        this.fbopricesService
-          .getFbopricesByFboIdCurrent(
-            this.sharedService.currentUser.fboId
-          )
-          .subscribe((dates: any) => {
-            this.currentPrice = dates;
-            for (const margin of this.data.customerMargins) {
-              // this.calculateItpForMargin(margin);
-              this.updateCustomerMargin(margin);
-            }
-          });
-      });
+      this.loadCustomerForPreview();
     } catch (e) {
-      alert(e.message);  
-    }
-  }
-  public updateCustomerMargin(margin) {
-    const jetACost = this.currentPrice.filter(
-      (item) => item.product === 'JetA Cost'
-    )[0].price;
-    const jetARetail = this.currentPrice.filter(
-      (item) => item.product === 'JetA Retail'
-    )[0].price;
-    margin.allin = 0;
-    // if (this.data.marginType === 0) {
-    //    if (margin.min && margin.itp) {
-    //        margin.allin = jetACost + margin.itp;
-    //    }
-
-    // }
-    // else if (this.data.marginType === 1) {
-    //    if (margin.amount && margin.min) {
-    //        margin.allin = jetARetail - margin.amount;
-    //        if (margin.allin) {
-    //            margin.itp = margin.allin - jetACost;
-    //        }
-    //    }
-    // }
-
-    if (this.data.marginType === 0) {
-      if (margin.min !== null && margin.amount !== null) {
-        margin.allin = jetACost + margin.amount;
-      }
-    } else if (this.data.marginType === 1) {
-      if (margin.amount !== null && margin.min !== null) {
-        margin.allin = jetARetail - margin.amount;
-        if (margin.allin) {
-          margin.itp = margin.allin - jetACost;
-        }
-      }
+      alert(e.message);
     }
   }
 
@@ -157,5 +108,100 @@ export class DistributionWizardReviewComponent implements OnInit {
           this.router.navigateByUrl('./' + pricingTemplate.oid);
         }
       });
+  }
+  private loadCustomerForPreview() {
+    var templateId = this.data.oid;
+    var tailNumber = "";
+    var customerId;
+
+    const tailLookupData = {
+      icao: this.sharedService.currentUser.icao,
+      fboId: this.sharedService.currentUser.fboId,
+      groupId: this.sharedService.currentUser.groupId,
+      pricingTemplateID: templateId
+    };
+    this.fbopricesService.getFuelPricesForCompany(tailLookupData).subscribe((data: TailLookupResponse) => {
+      if (data) {
+        this.customerMargins = data.pricingList;
+      }
+    },
+      (error: any) => {
+        console.log(error);
+      });
+
+    //this.customerInfoByGroupService
+    //  .getCustomersByGroupAndFBOAndPricing(
+    //    groupId,
+    //    fboId,
+    //    templateId
+    //  )
+    //  .subscribe((data: any) => {
+    //    if (data.length > 0) {
+    //      for (const customer of data) {
+    //        this.customerAircraftsService
+    //          .getCustomerAircraftsByGroupAndCustomerId(
+    //            groupId,
+    //            fboId,
+    //            customer.customerId
+    //          )
+    //          .subscribe((data: any) => {
+    //            var customerAircrafts = data;
+
+    //            if (customerAircrafts.length > 0) {
+    //              for (const aircraft of customerAircrafts) {
+    //                if (aircraft.pricingTemplateId == 0) {
+    //                  tailNumber = aircraft.tailNumber;
+    //                  customerId = customer.oid;
+
+    //                  if (tailNumber != "") {
+    //                    const tailLookupData = {
+    //                      icao: this.sharedService.currentUser.icao,
+    //                      tailNumber: tailNumber,
+    //                      fboId: this.sharedService.currentUser.fboId,
+    //                      groupId: this.sharedService.currentUser.groupId,
+    //                      customerInfoByGroupId: customerId
+    //                    };
+    //                    this.fbopricesService.getFuelPricesForCompany(tailLookupData).subscribe((data: TailLookupResponse) => {
+    //                      if (data) {
+    //                        this.customerMargins = data.pricingList;
+    //                      }
+    //                    },
+    //                      (error: any) => {
+    //                        console.log(error);
+    //                      });
+    //                    break;
+    //                  }
+    //                }
+    //              }
+    //            }
+    //            else {
+    //              const tailLookupData = {
+    //                icao: this.sharedService.currentUser.icao,
+    //                fboId: this.sharedService.currentUser.fboId,
+    //                groupId: this.sharedService.currentUser.groupId,
+    //                pricingTemplateID: templateId
+    //              };
+    //              this.fbopricesService.getFuelPricesForCompany(tailLookupData).subscribe((data: TailLookupResponse) => {
+    //                if (data) {
+    //                  this.customerMargins = data.pricingList;
+    //                }
+    //              },
+    //                (error: any) => {
+    //                  console.log(error);
+    //                });
+    //            }
+    //          },
+    //            (error: any) => {
+    //              console.log(error);
+    //            });
+
+    //        if (this.customerMargins.length > 0)
+    //          break;
+    //      }
+    //    }
+    //  },
+    //    (error: any) => {
+    //      console.log(error);
+    //    });
   }
 }
