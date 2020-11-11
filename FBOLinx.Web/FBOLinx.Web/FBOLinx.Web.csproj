@@ -58,6 +58,7 @@
     <None Remove="ClientApp\src\app\services\paremeters.service.ts" />
     <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
+    <None Remove="ClientApp\src\app\shared\components\proceed-confirmation\proceed-confirmation.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\table-column-filter\table-column-filter.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\table-global-search\table-global-search.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\tail-lookup-tool\tail-lookup-tool.component.ts" />
@@ -98,6 +99,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\paremeters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\proceed-confirmation\proceed-confirmation.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\table-column-filter\table-column-filter.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\table-global-search\table-global-search.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\tail-lookup-tool\tail-lookup-tool.component.ts" />

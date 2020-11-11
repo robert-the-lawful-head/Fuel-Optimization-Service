@@ -104,6 +104,7 @@ import { FboPricesPanelComponent } from '../shared/components/fbo-prices-panel/f
 import { AccountProfileComponent } from '../shared/components/account-profile/account-profile.component';
 import { AirportAutocompleteComponent } from '../shared/components/airport-autocomplete/airport-autocomplete.component';
 import { DeleteConfirmationComponent } from '../shared/components/delete-confirmation/delete-confirmation.component';
+import { ProceedConfirmationComponent } from '../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { CloseConfirmationComponent } from '../shared/components/close-confirmation/close-confirmation.component';
 import { DistributionWizardMainComponent } from '../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
 import { DistributionWizardReviewComponent } from '../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
@@ -243,6 +244,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     AnalyticsFuelVendorSourceChartComponent,
     AnalyticsMarketShareFboAirportChartComponent,
     DeleteConfirmationComponent,
+    ProceedConfirmationComponent,
     CloseConfirmationComponent,
     DistributionWizardMainComponent,
     DistributionWizardReviewComponent,
