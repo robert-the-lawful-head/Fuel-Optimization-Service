@@ -250,7 +250,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         ProceedConfirmationComponent,
         {
           data: {
-            description: "You are about to distribute the following templates to the customers assigned to them. Are you sure?", fullDescription: templatesWithCustomerCount
+            description: "You are about to distribute the following templates to the customers assigned to them. Are you sure?", itemsList: templatesWithCustomerCount
           },
           autoFocus: false
         }

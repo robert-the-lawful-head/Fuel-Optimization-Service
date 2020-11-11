@@ -6,7 +6,7 @@ import {
 
 export interface ProceedConfirmationData {
   description: string;
-  fullDescription: string[];
+  itemsList: string[];
 }
 
 @Component({
