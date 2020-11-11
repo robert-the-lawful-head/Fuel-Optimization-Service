@@ -14,7 +14,7 @@
     </div>
     <div class="row" #custMargin>
         <div class="col-12" *ngIf="customerMargins">
-            <div class="text-center font-weight-bold mt-4" style="min-width: 65%;max-width:75%">{{data.marginType == 1 ? 'Retail-' : data.marginType==0 ? 'Cost+' : 'Flat Fee'}}</div>
+          <div class="text-center font-weight-bold mt-4" style="min-width: 65%;max-width:75%">{{customerMargins[0].marginType == 1 ? 'Retail-' : customerMargins[0].marginType==0 ? 'Cost+' : 'Flat Fee'}}</div>
             <div class="row">
                 <table class="mat-table mt-2" style="min-width: 65%;max-width:75%">
                     <thead>
@@ -25,12 +25,13 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let customerMargin of customerMargins; let last = last" class="mat-row mat-row-not-hover text-left">
-                            <td class="mat-cell">
-                                {{customerMargin.min}}<span *ngIf="last">+</span> <span *ngIf="!last">&nbsp;- {{customerMargin.max}}</span>
-                            </td>
-                            <td class="mat-cell text-center">
-                                ${{customerMargin.allin | number:'1.4-4'}}
-                            </td>
+                          <td class="mat-cell">
+                            {{customerMargin.minGallons}}<span *ngIf="last">+</span> <span *ngIf="!last">&nbsp;- {{customerMargin.maxGallons}}</span>
+                          </td>
+                          <td class="mat-cell text-center">
+                            ${{customerMargin
+                            .allInPrice | number:'1.4-4'}}
+                          </td>
                         </tr>
                     </tbody>
                 </table>

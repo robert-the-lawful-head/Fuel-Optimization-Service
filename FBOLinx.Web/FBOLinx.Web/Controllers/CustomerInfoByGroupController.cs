@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Hosting;
 using OfficeOpenXml;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.DTO;
+using FBOLinx.Web.Models.Responses;
+using static FBOLinx.Web.Models.PricingTemplate;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -63,6 +65,28 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(customerInfoByGroup);
+        }
+
+        [HttpGet("group/{groupId}")]
+        public IActionResult GetCustomersByGroup([FromRoute] int groupId)
+        {
+            var result = (from cg in _context.CustomerInfoByGroup
+                          join c in _context.Customers on cg.CustomerId equals c.Oid
+                          where cg.GroupId == groupId
+                          group cg by new
+                          {
+                              cg.CustomerId,
+                              cg.Company
+                          } into groupedResult
+                          select new
+                          {
+                              groupedResult.Key.CustomerId,
+                              groupedResult.Key.Company,
+                          })
+                          .Distinct()
+                          .ToList();
+
+            return Ok(result);
         }
 
         // GET: api/CustomerInfoByGroup/group/5/fbo/6
@@ -325,134 +349,6 @@ namespace FBOLinx.Web.Controllers
             return Ok(customersWithoutMargins.Take(count));
         }
 
-        private bool CustomerInfoByGroupExists(int id)
-        {
-            return _context.CustomerInfoByGroup.Any(e => e.Oid == id);
-        }
-
-        private async Task<List<CustomersGridViewModel>> FetchCustomersViewModelByGroupAndFbo(int groupId, int fboId)
-        {
-            try
-            {
-                List<PricingTemplatesGridViewModel> pricingTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
-
-                PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
-                    .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
-
-                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
-
-                await pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
-
-                var customerAircraft =
-                    from aircraftByCustomer in _context.CustomerAircrafts
-                    where aircraftByCustomer.GroupId == groupId
-                    group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
-                    into results
-                    select new
-                    {
-                        results.Key.CustomerId,
-                        Tails = string.Join(",", results.Select(x => x.TailNumber)),
-                        Count = results.Count()
-                    };
-
-                var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
-
-                List<CustomersGridViewModel> customerGridVM = await (
-                                                    from cg in _context.CustomerInfoByGroup
-                                                    join c in _context.Customers on cg.CustomerId equals c.Oid
-                                                    join cna in needsAttentionCustomers on cg.Oid equals cna.Oid
-                                                    into leftJoinCna
-                                                    from cna in leftJoinCna.DefaultIfEmpty()
-                                                    join cct in _context.CustomCustomerTypes on new { customerId = cg.CustomerId, fboId } equals
-                                                        new
-                                                        {
-                                                            customerId = cct.CustomerId,
-                                                            fboId = cct.Fboid
-                                                        } into leftJoinCCT
-                                                    from cct in leftJoinCCT.DefaultIfEmpty()
-                                                    join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid into leftJoinPT
-                                                    from pt in leftJoinPT.DefaultIfEmpty()
-                                                    join ccot in _context.CustomerCompanyTypes on new {
-                                                            CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
-                                                            cg.GroupId 
-                                                        } equals new { 
-                                                            CustomerCompanyType = ccot.Oid,
-                                                            GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId
-                                                        }
-                                                    into leftJoinCCOT
-                                                    from ccot in leftJoinCCOT.DefaultIfEmpty()
-                                                    join ca in customerAircraft on cg.CustomerId equals ca.CustomerId
-                                                    into leftJoinCA
-                                                    from ca in leftJoinCA.DefaultIfEmpty()
-                                                    join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
-                                                    into leftJoinCC
-                                                    from cc in leftJoinCC.DefaultIfEmpty()
-                                                    join cibg in _context.ContactInfoByGroup on
-                                                            new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId, CopyAlerts = true }
-                                                            equals
-                                                            new { cibg.ContactId, cibg.GroupId, CopyAlerts = cibg.CopyAlerts.GetValueOrDefault() }
-                                                    into leftJoinCIBG
-                                                    from cibg in leftJoinCIBG.DefaultIfEmpty()
-                                                    join ai in pricingTemplates on new { Name = (string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name) } equals new { ai.Name}
-                                                    into leftJoinAi
-                                                    from ai in leftJoinAi.DefaultIfEmpty()
-                                                    where cg.GroupId == groupId && !c.Suspended.GetValueOrDefault()
-                                                    orderby cibg.CopyAlerts descending
-                                                    group cg by new
-                                                    {
-                                                        cg.CustomerId,
-                                                        CustomerInfoByGroupId = cg.Oid,
-                                                        cg.Company,
-                                                        FuelerLinxId = c.FuelerlinxId.GetValueOrDefault(),
-                                                        CustomerCompanyTypeName = ccot.Name,
-                                                        CertificateType = cg.CertificateType.GetValueOrDefault(),
-                                                        ContactExists = cibg == null ? false : cibg.CopyAlerts.GetValueOrDefault(),
-                                                        PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name,
-                                                        IsPricingExpired = ai == null ? false : ai.IsPricingExpired,
-                                                        Active = cg.Active.GetValueOrDefault(),
-                                                        FleetSize = ca == null ? 0 : ca.Count,
-                                                        AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
-                                                        PricingTemplateId = pt.Oid,
-                                                        cg.PricingTemplateRemoved,
-                                                        NeedsAttention = cna != null
-                                                    }
-                                                    into resultsGroup
-                                                    select new CustomersGridViewModel()
-                                                    {
-                                                        CustomerInfoByGroupId = resultsGroup.Key.CustomerInfoByGroupId,
-                                                        Active = resultsGroup.Key.Active,
-                                                        AllInPrice = resultsGroup.Key.AllInPrice,
-                                                        CertificateType = resultsGroup.Key.CertificateType,
-                                                        CustomerId = resultsGroup.Key.CustomerId,
-                                                        CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
-                                                        ContactExists = resultsGroup.Key.ContactExists,
-                                                        Company = resultsGroup.Key.Company,
-                                                        FleetSize = resultsGroup.Key.FleetSize,
-                                                        IsFuelerLinxCustomer = resultsGroup.Key.FuelerLinxId > 0,
-                                                        IsPricingExpired = resultsGroup.Key.IsPricingExpired,
-                                                        PricingTemplateId = resultsGroup.Key.PricingTemplateId,
-                                                        PricingTemplateName = resultsGroup.Key.PricingTemplateName,
-                                                        NeedsAttention = resultsGroup.Key.NeedsAttention,
-                                                        NeedsAttentionReason = resultsGroup.Key.PricingTemplateRemoved.Equals(true) ? "The pricing template was deleted for this customer and has been set to the default template." : (resultsGroup.Key.PricingTemplateId.Equals(defaultPricingTemplate.Oid) ? "This customer was given the default template and has not been changed yet." : ""),
-                                                        SelectAll = false,
-                                                    })
-                                                    .GroupBy(p => p.CustomerId)
-                                                    .Select(g => g.FirstOrDefault())
-                                                    .OrderByDescending(s => s.FleetSize.GetValueOrDefault())
-                                                    .ToListAsync();
-                
-
-                await _context.SaveChangesAsync();
-
-                return customerGridVM;
-            }
-            catch(Exception ex)
-            {
-                string sss = ex.Message;
-                return null;
-            }
-        }
-
         [HttpGet("matchcustomerinfo/customerId/{customerId}/groupId/{groupId}")]
         public PotentialCustomerMatchVM MatchCustomerInfo(int customerId, int groupId)
         {
@@ -692,6 +588,197 @@ namespace FBOLinx.Web.Controllers
             //return NoContent();
             return new JsonResult(Flcustomerobject.Oid);
         }
+    
+        [HttpPost("group-analytics/group/{groupId}")]
+        public async Task<IActionResult> GetGroupAnalytics([FromRoute]int groupId, [FromBody] List<int> customerIds)
+        {
+            var customerFbos = await (from cig in _context.CustomerInfoByGroup
+                              join fbo in _context.Fbos on cig.GroupId equals fbo.GroupId
+                              join fa in _context.Fboairports on fbo.Oid equals fa.Fboid
+                              join cct in _context.CustomCustomerTypes on new { cig.CustomerId, Fboid = fbo.Oid } equals new { cct.CustomerId, cct.Fboid }
+                              into leftJoinCCT
+                              from cct in leftJoinCCT.DefaultIfEmpty()
+                              join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
+                              into leftJoinPT
+                              from pt in leftJoinPT.DefaultIfEmpty()
+                              join c in customerIds on cig.CustomerId equals c
+                              where cig.GroupId == groupId
+                              select new
+                              {
+                                  cig.Company,
+                                  fbo.Oid,
+                                  fa.Icao,
+                                  PricingTemplateId = pt == null ? 0 : pt.Oid,
+                                  PricingTemplateName = pt == null ? "" : pt.Name,
+                                  PricingTemplateNote = pt == null ? "" : pt.Notes,
+                              })
+                              .GroupBy(cf => cf.Company)
+                              .ToListAsync();
+
+            var result = new List<GroupCustomerAnalyticsResponse>();
+            var pricingTemplates = await _priceFetchingService.GetPricingTemplatesByGroup(groupId);
+            var groupFbos = _context.Fbos.Where(fbo => fbo.GroupId == groupId);
+            var fboPrices = _context.Fboprices.Where(fp => fp.EffectiveTo > DateTime.UtcNow
+                                && groupFbos.Any(fbo => fbo.Oid == fp.Fboid) && fp.Price != null && fp.Expired != true && fp.Product == "JetA Retail").ToList();
+
+            foreach (var customerfbo in customerFbos)
+            {
+                var record = new GroupCustomerAnalyticsResponse
+                {
+                    Company = customerfbo.Key,
+                    GroupCustomerFbos = new List<GroupCustomerFbos>()
+                };
+                var customerfbosData = customerfbo.ToList();
+                foreach(var fbo in customerfbosData)
+                {
+                    var ai = pricingTemplates.Where(ai => ai.Oid == fbo.PricingTemplateId && ai.Fboid == fbo.Oid).FirstOrDefault();
+                    var fboPrice = fboPrices.Where(fp => fp.Fboid == fbo.Oid).FirstOrDefault();
+
+                    record.GroupCustomerFbos.Add(new GroupCustomerFbos
+                    {
+                        Icao = fbo.Icao,
+                        Retail = fboPrice == null ? null : fboPrice.Price,
+                        AllIn = ai == null ? null : ai.IntoPlanePrice,
+                        ExpiryDate = fboPrice == null ? null : fboPrice.EffectiveTo,
+                        Notes = fbo.PricingTemplateNote,
+                    });
+                }
+                result.Add(record);
+            }
+
+            return Ok(result);
+        }
+
+        private bool CustomerInfoByGroupExists(int id)
+        {
+            return _context.CustomerInfoByGroup.Any(e => e.Oid == id);
+        }
+
+        private async Task<List<CustomersGridViewModel>> FetchCustomersViewModelByGroupAndFbo(int groupId, int fboId)
+        {
+            try
+            {
+                List<PricingTemplatesGridViewModel> pricingTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+
+                PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
+                    .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
+
+                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
+
+                await pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
+
+                var customerAircraft =
+                    from aircraftByCustomer in _context.CustomerAircrafts
+                    where aircraftByCustomer.GroupId == groupId
+                    group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
+                    into results
+                    select new
+                    {
+                        results.Key.CustomerId,
+                        Tails = string.Join(",", results.Select(x => x.TailNumber)),
+                        Count = results.Count()
+                    };
+
+                var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
+
+                List<CustomersGridViewModel> customerGridVM = await (
+                                                    from cg in _context.CustomerInfoByGroup
+                                                    join c in _context.Customers on cg.CustomerId equals c.Oid
+                                                    join cna in needsAttentionCustomers on cg.Oid equals cna.Oid
+                                                    into leftJoinCna
+                                                    from cna in leftJoinCna.DefaultIfEmpty()
+                                                    join cct in _context.CustomCustomerTypes on new { customerId = cg.CustomerId, fboId } equals
+                                                        new
+                                                        {
+                                                            customerId = cct.CustomerId,
+                                                            fboId = cct.Fboid
+                                                        } into leftJoinCCT
+                                                    from cct in leftJoinCCT.DefaultIfEmpty()
+                                                    join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid into leftJoinPT
+                                                    from pt in leftJoinPT.DefaultIfEmpty()
+                                                    join ccot in _context.CustomerCompanyTypes on new
+                                                    {
+                                                        CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(),
+                                                        cg.GroupId
+                                                    } equals new
+                                                    {
+                                                        CustomerCompanyType = ccot.Oid,
+                                                        GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId
+                                                    }
+                                                    into leftJoinCCOT
+                                                    from ccot in leftJoinCCOT.DefaultIfEmpty()
+                                                    join ca in customerAircraft on cg.CustomerId equals ca.CustomerId
+                                                    into leftJoinCA
+                                                    from ca in leftJoinCA.DefaultIfEmpty()
+                                                    join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
+                                                    into leftJoinCC
+                                                    from cc in leftJoinCC.DefaultIfEmpty()
+                                                    join cibg in _context.ContactInfoByGroup on
+                                                            new { ContactId = (cc == null ? 0 : cc.ContactId), GroupId = groupId, CopyAlerts = true }
+                                                            equals
+                                                            new { cibg.ContactId, cibg.GroupId, CopyAlerts = cibg.CopyAlerts.GetValueOrDefault() }
+                                                    into leftJoinCIBG
+                                                    from cibg in leftJoinCIBG.DefaultIfEmpty()
+                                                    join ai in pricingTemplates on new { Name = (string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name) } equals new { ai.Name }
+                                                    into leftJoinAi
+                                                    from ai in leftJoinAi.DefaultIfEmpty()
+                                                    where cg.GroupId == groupId && !c.Suspended.GetValueOrDefault()
+                                                    orderby cibg.CopyAlerts descending
+                                                    group cg by new
+                                                    {
+                                                        cg.CustomerId,
+                                                        CustomerInfoByGroupId = cg.Oid,
+                                                        cg.Company,
+                                                        FuelerLinxId = c.FuelerlinxId.GetValueOrDefault(),
+                                                        CustomerCompanyTypeName = ccot.Name,
+                                                        CertificateType = cg.CertificateType.GetValueOrDefault(),
+                                                        ContactExists = cibg == null ? false : cibg.CopyAlerts.GetValueOrDefault(),
+                                                        PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name,
+                                                        IsPricingExpired = ai == null ? false : ai.IsPricingExpired,
+                                                        Active = cg.Active.GetValueOrDefault(),
+                                                        FleetSize = ca == null ? 0 : ca.Count,
+                                                        AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
+                                                        PricingTemplateId = pt.Oid,
+                                                        cg.PricingTemplateRemoved,
+                                                        NeedsAttention = cna != null
+                                                    }
+                                                    into resultsGroup
+                                                    select new CustomersGridViewModel()
+                                                    {
+                                                        CustomerInfoByGroupId = resultsGroup.Key.CustomerInfoByGroupId,
+                                                        Active = resultsGroup.Key.Active,
+                                                        AllInPrice = resultsGroup.Key.AllInPrice,
+                                                        CertificateType = resultsGroup.Key.CertificateType,
+                                                        CustomerId = resultsGroup.Key.CustomerId,
+                                                        CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
+                                                        ContactExists = resultsGroup.Key.ContactExists,
+                                                        Company = resultsGroup.Key.Company,
+                                                        FleetSize = resultsGroup.Key.FleetSize,
+                                                        IsFuelerLinxCustomer = resultsGroup.Key.FuelerLinxId > 0,
+                                                        IsPricingExpired = resultsGroup.Key.IsPricingExpired,
+                                                        PricingTemplateId = resultsGroup.Key.PricingTemplateId,
+                                                        PricingTemplateName = resultsGroup.Key.PricingTemplateName,
+                                                        NeedsAttention = resultsGroup.Key.NeedsAttention,
+                                                        NeedsAttentionReason = resultsGroup.Key.PricingTemplateRemoved.Equals(true) ? "The pricing template was deleted for this customer and has been set to the default template." : (resultsGroup.Key.PricingTemplateId.Equals(defaultPricingTemplate.Oid) ? "This customer was given the default template and has not been changed yet." : ""),
+                                                        SelectAll = false,
+                                                    })
+                                                    .GroupBy(p => p.CustomerId)
+                                                    .Select(g => g.FirstOrDefault())
+                                                    .OrderByDescending(s => s.FleetSize.GetValueOrDefault())
+                                                    .ToListAsync();
+
+
+                await _context.SaveChangesAsync();
+
+                return customerGridVM;
+            }
+            catch (Exception ex)
+            {
+                string sss = ex.Message;
+                return null;
+            }
+        }
+
     }
 
 }

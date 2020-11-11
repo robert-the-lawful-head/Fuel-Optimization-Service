@@ -47,13 +47,13 @@ export class SharedService {
     if (!this._currentUser.managerGroupId && sessionStorage.getItem('managerGroupId')) {
       this._currentUser.managerGroupId = Number(sessionStorage.getItem('managerGroupId'));
     }
-    if (sessionStorage.getItem('impersonatedrole')) {
+    if (!this._currentUser.impersonatedRole && sessionStorage.getItem('impersonatedrole')) {
       this._currentUser.impersonatedRole = Number(sessionStorage.getItem('impersonatedrole'));
     }
-    if (sessionStorage.getItem('groupId')) {
+    if (!this._currentUser.groupId && sessionStorage.getItem('groupId')) {
       this._currentUser.groupId = Number(sessionStorage.getItem('groupId'));
     }
-    if (sessionStorage.getItem('conductorFbo')) {
+    if (!this._currentUser.conductorFbo && sessionStorage.getItem('conductorFbo')) {
       this._currentUser.conductorFbo = Boolean(sessionStorage.getItem('conductorFbo'));
     }
     return this._currentUser;

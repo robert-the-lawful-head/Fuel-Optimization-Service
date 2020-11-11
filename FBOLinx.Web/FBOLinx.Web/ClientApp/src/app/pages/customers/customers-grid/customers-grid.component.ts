@@ -69,7 +69,7 @@ export class CustomersGridComponent implements OnInit {
     selectedRows: number;
     pageIndex = 0;
     pageSize = 100;
-    tableSort = 'needsAttention';
+    tableSort = 'company';
     tableSortOrder = 'asc';
     public customerSearch = '';
 

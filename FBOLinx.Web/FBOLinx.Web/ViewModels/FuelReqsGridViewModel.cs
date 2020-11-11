@@ -29,6 +29,7 @@ namespace FBOLinx.Web.ViewModels
         public string FboName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string PricingTemplateName { get; set; }
 
         public void CastFromComplexType(IO.Swagger.Model.TransactionDTO item)
         {

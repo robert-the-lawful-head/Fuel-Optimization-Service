@@ -96,6 +96,8 @@ import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { SystemcontactsNewContactModalComponent } from './contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
+import { GroupAnalyticsHomeComponent } from './group-analytics/group-analytics-home/group-analytics-home.component';
+import { GroupAnalyticsGenerateDialogComponent } from './group-analytics/group-analytics-generate-dialog/group-analytics-generate-dialog.component';
 
 // Shared
 import { FboPricesPanelComponent } from '../shared/components/fbo-prices-panel/fbo-prices-panel.component';
@@ -266,7 +268,9 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     CustomerMatchDialogComponent,
     SystemcontactsNewContactModalComponent,
     TableColumnFilterComponent,
-    TableGlobalSearchComponent
+    TableGlobalSearchComponent,
+    GroupAnalyticsHomeComponent,
+    GroupAnalyticsGenerateDialogComponent,
   ],
   exports: [
     ClickStopPropagationDirective,

@@ -42,6 +42,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     displayedColumns: string[] = [
         'oid',
         'customer',
+        'pricingTemplateName',
         'eta',
         'etd',
         'quotedVolume',
@@ -87,9 +88,14 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     }
 
     public refreshTable() {
+        let filter = '';
+        if (this.fuelreqsDataSource) {
+            filter = this.fuelreqsDataSource.filter;
+        }
         this.fuelreqsDataSource = new MatTableDataSource(this.fuelreqsData);
         this.fuelreqsDataSource.sort = this.sort;
         this.fuelreqsDataSource.paginator = this.paginator;
+        this.fuelreqsDataSource.filter = filter;
         this.resultsLength = this.fuelreqsData.length;
     }
 

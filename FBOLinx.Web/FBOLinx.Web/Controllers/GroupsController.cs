@@ -83,8 +83,14 @@ namespace FBOLinx.Web.Controllers
             var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
 
             var fboPrices = (from f in _context.Fboprices
+                             where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
                              group f by f.Fboid into g
-                             select new { fboId = g.Key, lastEffectiveDate = g.Max(t => t.EffectiveTo), product = g.Select(t => t.Product), expired = g.Select(t => t.Expired) });
+                             select new {
+                                 fboId = g.Key,
+                                 lastEffectiveDate = g.Max(t => t.EffectiveTo),
+                                 product = g.Select(t => t.Product),
+                                 expired = g.Select(t => t.Expired)
+                             });
 
             var users = await _context.User.GroupBy(t => t.FboId).ToListAsync();
 
@@ -101,7 +107,7 @@ namespace FBOLinx.Web.Controllers
                                   Icao = fairports.Icao,
                                   Oid = f.Oid,
                                   GroupId = f.GroupId ?? 0,
-                                  PricingExpired = !(fprices.lastEffectiveDate > DateTime.UtcNow && products.Any(p => p.Description == fprices.product.FirstOrDefault()) && fprices.expired.FirstOrDefault() != true),
+                                  PricingExpired = fprices == null,
                                   LastLogin = f.LastLogin
                               }).ToListAsync();
 
@@ -295,23 +301,51 @@ namespace FBOLinx.Web.Controllers
                     distributionLogs.ForEach(a => a.GroupId = request.BaseGroupId);
                     distributionQueues.ForEach(a => a.GroupId = request.BaseGroupId);
 
-                    var baseCustomerInfoByGroups = _context.CustomerInfoByGroup.Where(a => a.GroupId == request.BaseGroupId).Concat(customerInfoByGroups).ToList();
-                    var distinctedCustomerInfoByGroups = baseCustomerInfoByGroups.GroupBy(cg => new { cg.CustomerId, cg.GroupId }).Select(g => g.First()).ToList();
-                    var duplicatedCustomerInfoByGroups = baseCustomerInfoByGroups.Except(distinctedCustomerInfoByGroups).ToList();
+                    var baseCustomerInfoByGroups = _context.CustomerInfoByGroup
+                        .Where(a => a.GroupId == request.BaseGroupId)
+                        .Concat(customerInfoByGroups)
+                        .ToList();
+                    var distinctedByCustomerIDCustomerInfoByGroups = baseCustomerInfoByGroups
+                        .GroupBy(cg => new { cg.CustomerId, cg.GroupId })
+                        .Select(g => g.First())
+                        .ToList();
+                    var duplicatedByCustomerIDCustomerInfoByGroups = baseCustomerInfoByGroups
+                        .Except(distinctedByCustomerIDCustomerInfoByGroups)
+                        .ToList();
+                    _context.CustomerInfoByGroup.RemoveRange(duplicatedByCustomerIDCustomerInfoByGroups);
 
-                    _context.CustomerInfoByGroup.RemoveRange(duplicatedCustomerInfoByGroups);
-
-                    var baseContactInfoByGroups = _context.ContactInfoByGroup.Where(a => a.GroupId == request.BaseGroupId).Concat(contactInfoByGroups).ToList();
-                    var distinctedContactInfoByGroups = baseContactInfoByGroups.GroupBy(cg => new { cg.GroupId, cg.Email }).Select(g => g.First()).ToList();
-                    var duplicatedContactInfoByGroups = baseContactInfoByGroups.Except(distinctedContactInfoByGroups).ToList();
-
+                    var baseContactInfoByGroups = _context.ContactInfoByGroup
+                        .Where(a => a.GroupId == request.BaseGroupId)
+                        .Concat(contactInfoByGroups)
+                        .ToList();
+                    var distinctedContactInfoByGroups = baseContactInfoByGroups
+                        .GroupBy(cg => new { cg.GroupId, cg.Email })
+                        .Select(g => g.First())
+                        .ToList();
+                    var duplicatedContactInfoByGroups = baseContactInfoByGroups
+                        .Except(distinctedContactInfoByGroups)
+                        .ToList();
                     _context.ContactInfoByGroup.RemoveRange(duplicatedContactInfoByGroups);
 
-                    var baseCustomerAircrafts = _context.CustomerAircrafts.Where(a => a.GroupId == request.BaseGroupId).Concat(customerAircrafts).ToList();
-                    var distinctedCustomerAircrafts = baseCustomerAircrafts.GroupBy(ca => new { ca.GroupId, ca.CustomerId, ca.TailNumber }).Select(g => g.First()).ToList();
-                    var duplicatedCustomerAircrafts = baseCustomerAircrafts.Except(distinctedCustomerAircrafts).ToList();
-
-                    _context.CustomerAircrafts.RemoveRange(duplicatedCustomerAircrafts);
+                    var groupedByCustomerNameCustomerInfoByGroups = distinctedByCustomerIDCustomerInfoByGroups
+                            .GroupBy(cg => new { Company = cg.Company.ToLower(), cg.GroupId })
+                            .ToList();
+                    groupedByCustomerNameCustomerInfoByGroups.ForEach(groupedResult =>
+                    {
+                        if (groupedResult.Count() > 0)
+                        {
+                            var customerIds = groupedResult
+                                .Skip(1)
+                                .Select(cg => cg.CustomerId)
+                                .ToList();
+                            var replacingCustomerContacts = _context.CustomerContacts
+                                .Where(c => customerIds.Contains(c.CustomerId))
+                                .ToList();
+                            replacingCustomerContacts.ForEach(c => c.CustomerId = groupedResult.First().CustomerId);
+                            _context.CustomerContacts.UpdateRange(replacingCustomerContacts);
+                            _context.CustomerInfoByGroup.RemoveRange(groupedResult.Skip(1));
+                        }
+                    });
 
                     var removingGroups = _context.Group.Where(a => changeableGroups.Contains(a.Oid));
                     _context.Group.RemoveRange(removingGroups);

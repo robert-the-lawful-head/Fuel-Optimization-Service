@@ -45,8 +45,12 @@ export class FuelreqsService {
         );
     }
 
-    public getForFboCount(fboId: number) {
-        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/count', {
+    public getForFboCount(fboId: number, startDate: Date) {
+      return this.http.post(this.accessPointUrl + '/fbo/' + fboId + '/count' + '/startdate',
+        {
+          startDateTime: startDate,
+        },
+        {
             headers: this.headers,
         });
     }

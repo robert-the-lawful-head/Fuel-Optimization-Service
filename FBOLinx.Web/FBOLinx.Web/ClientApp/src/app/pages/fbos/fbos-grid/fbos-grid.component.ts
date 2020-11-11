@@ -43,7 +43,7 @@ export class FbosGridComponent implements OnInit {
     // Public Members
     public pageTitle = 'FBOs';
     public fbosDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['icao', 'fbo', 'active', 'delete'];
+    public displayedColumns: string[] = ['icao', 'fbo', 'active', 'manage'];
     public airportData: Array<any>;
     public resultsLength = 0;
     public canManageFbo = false;
@@ -73,13 +73,21 @@ export class FbosGridComponent implements OnInit {
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.canManageFbo = this.sharedService.currentUser.role === 3 || this.sharedService.currentUser.role === 2;
-        if (this.canManageFbo) {
+
+        if (this.sharedService.currentUser.role === 3) {
             this.displayedColumns = [
                 'icao',
                 'fbo',
                 'active',
                 'manage',
                 'delete',
+            ];
+        } else {
+            this.displayedColumns = [
+                'icao',
+                'fbo',
+                'active',
+                'manage',
             ];
         }
     }
@@ -188,23 +196,23 @@ export class FbosGridComponent implements OnInit {
         if (this.groupInfo) {
             const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
                 width: '450px',
-                data: { oid: 0, initialSetupPhase: true },
+                data: {
+                    groupId: this.groupInfo.oid,
+                    initialSetupPhase: true
+                },
             });
 
             dialogRef.afterClosed().subscribe((result) => {
                 if (result) {
-                    result.groupId = this.groupInfo.oid;
+                    this.fbosData.push(result);
 
-                    this.fboService.add(result).subscribe((newFbo: any) => {
-                        this.fbosData.push(newFbo);
-                        this.refreshTable();
-                        this.snackBar.open(newFbo.fbo + ' is created', '', {
-                            duration: 3000,
-                            panelClass: ['blue-snackbar'],
-                        });
-                        sessionStorage.setItem('isNewFbo', 'yes');
-                        this.editRecord(newFbo, null);
+                    this.refreshTable();
+                    this.snackBar.open(result.fbo + ' is created', '', {
+                        duration: 3000,
+                        panelClass: ['blue-snackbar'],
                     });
+                    sessionStorage.setItem('isNewFbo', 'yes');
+                    this.editRecord(result, null);
                 }
             });
         } else {

@@ -25,6 +25,7 @@ import { RampFeesHomeComponent } from './pages/ramp-fees/ramp-fees-home/ramp-fee
 import { AnalyticsHomeComponent } from './pages/analytics/analytics-home/analytics-home.component';
 import { UsersEditComponent } from './pages/users/users-edit/users-edit.component';
 import { UsersHomeComponent } from './pages/users/users-home/users-home.component';
+import { GroupAnalyticsHomeComponent } from './pages/group-analytics/group-analytics-home/group-analytics-home.component';
 
 // Guards
 import { AuthGuard } from './guards';
@@ -85,6 +86,14 @@ const defaultRoutes: Routes = [{
   {
     path: 'fbos/:id',
     component: FbosEditComponent,
+    canActivate: [AuthGuard],
+    data: {
+      expectedRoles: [2, 3],
+    },
+  },
+  {
+    path: 'group-analytics',
+    component: GroupAnalyticsHomeComponent,
     canActivate: [AuthGuard],
     data: {
       expectedRoles: [2, 3],

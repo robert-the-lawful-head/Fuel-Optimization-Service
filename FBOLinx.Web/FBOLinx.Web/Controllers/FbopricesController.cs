@@ -603,7 +603,11 @@ namespace FBOLinx.Web.Controllers
 
                 if (!string.IsNullOrEmpty(request.TailNumber))
                 {
-                    var customerAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID);
+                    var customerInfoByGroup = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid == request.CustomerInfoByGroupId);
+                    if (customerInfoByGroup == null)
+                        return Ok(null);
+
+                    var customerAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID && s.CustomerId == customerInfoByGroup.CustomerId);
                     if (customerAircraft == null)
                         return Ok(null);
 
