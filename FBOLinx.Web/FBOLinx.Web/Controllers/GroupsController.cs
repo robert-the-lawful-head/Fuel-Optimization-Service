@@ -83,7 +83,7 @@ namespace FBOLinx.Web.Controllers
             var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
 
             var fboPrices = (from f in _context.Fboprices
-                             where f.EffectiveTo <= DateTime.UtcNow && f.Price != null && f.Expired != true
+                             where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
                              group f by f.Fboid into g
                              select new {
                                  fboId = g.Key,
@@ -107,7 +107,7 @@ namespace FBOLinx.Web.Controllers
                                   Icao = fairports.Icao,
                                   Oid = f.Oid,
                                   GroupId = f.GroupId ?? 0,
-                                  PricingExpired = fprices != null,
+                                  PricingExpired = fprices == null,
                                   LastLogin = f.LastLogin
                               }).ToListAsync();
 
