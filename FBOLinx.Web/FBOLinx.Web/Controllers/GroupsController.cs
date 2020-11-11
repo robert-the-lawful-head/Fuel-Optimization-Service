@@ -83,8 +83,14 @@ namespace FBOLinx.Web.Controllers
             var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
 
             var fboPrices = (from f in _context.Fboprices
+                             where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
                              group f by f.Fboid into g
-                             select new { fboId = g.Key, lastEffectiveDate = g.Max(t => t.EffectiveTo), product = g.Select(t => t.Product), expired = g.Select(t => t.Expired) });
+                             select new {
+                                 fboId = g.Key,
+                                 lastEffectiveDate = g.Max(t => t.EffectiveTo),
+                                 product = g.Select(t => t.Product),
+                                 expired = g.Select(t => t.Expired)
+                             });
 
             var users = await _context.User.GroupBy(t => t.FboId).ToListAsync();
 
@@ -101,7 +107,7 @@ namespace FBOLinx.Web.Controllers
                                   Icao = fairports.Icao,
                                   Oid = f.Oid,
                                   GroupId = f.GroupId ?? 0,
-                                  PricingExpired = !(fprices.lastEffectiveDate > DateTime.UtcNow && products.Any(p => p.Description == fprices.product.FirstOrDefault()) && fprices.expired.FirstOrDefault() != true),
+                                  PricingExpired = fprices == null,
                                   LastLogin = f.LastLogin
                               }).ToListAsync();
 
