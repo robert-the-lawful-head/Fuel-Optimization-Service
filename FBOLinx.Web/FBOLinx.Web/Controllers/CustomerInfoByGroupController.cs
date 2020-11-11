@@ -589,7 +589,6 @@ namespace FBOLinx.Web.Controllers
             return new JsonResult(Flcustomerobject.Oid);
         }
     
-        [AllowAnonymous]
         [HttpPost("group-analytics/group/{groupId}")]
         public async Task<IActionResult> GetGroupAnalytics([FromRoute]int groupId, [FromBody] List<int> customerIds)
         {
