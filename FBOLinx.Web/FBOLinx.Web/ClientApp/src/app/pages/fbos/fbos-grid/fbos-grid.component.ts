@@ -196,23 +196,23 @@ export class FbosGridComponent implements OnInit {
         if (this.groupInfo) {
             const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
                 width: '450px',
-                data: { oid: 0, initialSetupPhase: true },
+                data: {
+                    groupId: this.groupInfo.oid,
+                    initialSetupPhase: true
+                },
             });
 
             dialogRef.afterClosed().subscribe((result) => {
                 if (result) {
-                    result.groupId = this.groupInfo.oid;
+                    this.fbosData.push(result);
 
-                    this.fboService.add(result).subscribe((newFbo: any) => {
-                        this.fbosData.push(newFbo);
-                        this.refreshTable();
-                        this.snackBar.open(newFbo.fbo + ' is created', '', {
-                            duration: 3000,
-                            panelClass: ['blue-snackbar'],
-                        });
-                        sessionStorage.setItem('isNewFbo', 'yes');
-                        this.editRecord(newFbo, null);
+                    this.refreshTable();
+                    this.snackBar.open(result.fbo + ' is created', '', {
+                        duration: 3000,
+                        panelClass: ['blue-snackbar'],
                     });
+                    sessionStorage.setItem('isNewFbo', 'yes');
+                    this.editRecord(result, null);
                 }
             });
         } else {
