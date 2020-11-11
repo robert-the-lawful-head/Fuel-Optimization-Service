@@ -16,6 +16,7 @@ export interface NewFBODialogData {
     iata: string;
     acukwikFboHandlerId: number;
     acukwikFbo: any;
+    groupId: number;
 }
 
 @Component({
