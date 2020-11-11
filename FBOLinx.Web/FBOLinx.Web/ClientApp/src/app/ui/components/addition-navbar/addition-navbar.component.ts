@@ -14,218 +14,278 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
-import { isEqual} from 'lodash';
+import { isEqual } from 'lodash';
+import { Observable } from 'rxjs';
+import { forkJoin } from 'rxjs';
 
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { DistributionService } from '../../../services/distribution.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 
+// Components
+import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 
 @Component({
-    selector: 'addition-navbar',
-    templateUrl: './addition-navbar.component.html',
-    styleUrls: ['./addition-navbar.component.scss'],
-    host: {
-        '[class.addition-navbar]': 'true',
-        '[class.open]': 'open',
-    },
+  selector: 'addition-navbar',
+  templateUrl: './addition-navbar.component.html',
+  styleUrls: ['./addition-navbar.component.scss'],
+  host: {
+    '[class.addition-navbar]': 'true',
+    '[class.open]': 'open',
+  },
 })
 export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges {
-    title: string;
-    open: boolean;
-    // Public Members
-    public displayedColumns: string[] = ['template', 'toggle'];
-    public resultsLength: any;
-    public marginTemplateDataSource: MatTableDataSource<any> = null;
-    public pricingTemplatesData: any[];
-    public filtered: any;
-    public distributionLog: any[];
-    public timeLeft = 0;
-    public interval: any;
-    public selectAll: boolean;
-    labelPosition = 'before';
-    buttontext = 'Distribute Pricing';
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-    @ViewChild('marginTableContainer') table: ElementRef;
-    @ViewChild('nodeInput') fileInput: ElementRef;
-    @ViewChild('insideElement') insideElement;
-    @Input() templatelst: any[];
+  title: string;
+  open: boolean;
+  private priceTemplatesForSending: any[];
+  // Public Members
+  public displayedColumns: string[] = ['template', 'toggle'];
+  public resultsLength: any;
+  public marginTemplateDataSource: MatTableDataSource<any> = null;
+  public pricingTemplatesData: any[];
+  public filtered: any;
+  public distributionLog: any[];
+  public timeLeft = 0;
+  public interval: any;
+  public selectAll: boolean;
+  labelPosition = 'before';
+  buttontext = 'Distribute Pricing';
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild('marginTableContainer') table: ElementRef;
+  @ViewChild('nodeInput') fileInput: ElementRef;
+  @ViewChild('insideElement') insideElement;
+  @Input() templatelst: any[];
 
-    message: string;
+  message: string;
 
-    constructor(
-        private pricingTemplatesService: PricingtemplatesService,
-        private sharedService: SharedService,
-        public templateDialog: MatDialog,
-        public distributionService: DistributionService
-    ) {
-        this.title = 'Distribute Prices';
-        this.open = false;
-    }
+  constructor(
+    private pricingTemplatesService: PricingtemplatesService,
+    private sharedService: SharedService,
+    private proceedConfirmationDialog: MatDialog,
+    public templateDialog: MatDialog,
+    public distributionService: DistributionService,
+    private customerInfoByGroupService: CustomerinfobygroupService,
+  ) {
+    this.title = 'Distribute Prices';
+    this.open = false;
+  }
 
-    ngOnInit() {
-        this.refresh();
-    }
+  ngOnInit() {
+    this.refresh();
+  }
 
-    ngAfterViewInit() {
-        this.sharedService.currentMessage.subscribe((message) => {
-            this.message = message;
-            this.pricingTemplatesService
-                .getByFbo(
-                    this.sharedService.currentUser.fboId,
-                    this.sharedService.currentUser.groupId
-                )
-                .subscribe((data: any) => {
-                    this.pricingTemplatesData = [];
-                    if (data) {
-                        this.pricingTemplatesData = data;
-                    }
-                    this.marginTemplateDataSource = new MatTableDataSource(
-                        this.pricingTemplatesData
-                    );
-                    this.resultsLength = this.pricingTemplatesData.length;
-                });
-        });
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.templatelst && !isEqual(changes.templatelst.currentValue, changes.templatelst.previousValue)) {
-            this.refresh();
-        }
-    }
-
-    public refresh() {
-        this.distributionService
-            .getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50)
-            .subscribe((data: any) => {
-                this.distributionLog = data;
-                if (!this.distributionLog) {
-                    this.distributionLog = [];
-                } else {
-                    this.templatelst.forEach((m) => {
-                        this.distributionLog.forEach((obj) => {
-                            if (obj.pricingTemplateId === m.oid) {
-                                if (m.text === undefined) {
-                                    m.text =
-                                        'Last sent ' +
-                                        moment(
-                                            moment.utc(obj.dateSent).toDate()
-                                        ).format('MM/DD/YYYY HH:mm');
-                                }
-                            }
-                        });
-                    });
-                }
-            });
-
-        this.pricingTemplatesData = this.templatelst.filter(
-            (element: any, index: number, array: any[]) => {
-                return (
-                    array.indexOf(
-                        array.find(
-                            (t) =>
-                                t.oid === element.oid &&
-                                t.text === element.text &&
-                                t.name === element.name
-                        )
-                    ) === index
-                );
-            }
-        );
-
-        this.selectAll = false;
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.marginTemplateDataSource = new MatTableDataSource(
+  ngAfterViewInit() {
+    this.sharedService.currentMessage.subscribe((message) => {
+      this.message = message;
+      this.pricingTemplatesService
+        .getByFbo(
+          this.sharedService.currentUser.fboId,
+          this.sharedService.currentUser.groupId
+        )
+        .subscribe((data: any) => {
+          this.pricingTemplatesData = [];
+          if (data) {
+            this.pricingTemplatesData = data;
+          }
+          this.marginTemplateDataSource = new MatTableDataSource(
             this.pricingTemplatesData
-        );
-        this.marginTemplateDataSource.sort = this.sort;
-        this.marginTemplateDataSource.paginator = this.paginator;
-        this.resultsLength = this.pricingTemplatesData.length;
-    }
-
-    public openNavbar(event) {
-        event.preventDefault();
-
-        this.open = !this.open;
-    }
-
-    public OpenMarginInfo(event) {
-        this.filtered = this.pricingTemplatesData.find(
-            ({ oid }) => oid === event
-        );
-
-        const dialogRef = this.templateDialog.open(
-            DistributionWizardReviewComponent,
-            {
-                data: this.filtered,
-                panelClass: 'wizard',
-            }
-        );
-        dialogRef.componentInstance.idChanged1.subscribe((result) => {
-            this.fileInput.nativeElement.click();
-            // this.openNavbar(event);
+          );
+          this.resultsLength = this.pricingTemplatesData.length;
         });
-        dialogRef.afterClosed().subscribe((result) => {});
-    }
-    async delay(ms: number) {
-        await new Promise((resolve) =>
-            setTimeout(() => resolve(), ms)
-        ).then(() => console.log('fired'));
-    }
-    public changeSentOption(item) {
-        item.toSend = !item.toSend;
-        if (!item.toSend) {
-            this.selectAll = false;
-        }
-        //  item.val = item.toSend ? item.val === undefined ? 0 + 33.33 : item.val + 33.33 : item.val - 33.33;
-    }
+    });
+  }
 
-    @HostListener('document:click', ['$event'])
-    public onClick(targetElement) {
-        if (
-            this.open &&
-            targetElement.target.nodeName !== 'svg' &&
-            !(
-                targetElement.target.className === 'ng-star-inserted' ||
-                targetElement.target.offsetParent.className.lastIndexOf(
-                    'addition-navbar'
-                ) > -1 ||
-                targetElement.target.textContent === '$Cost' ||
-                targetElement.target.offsetParent.className.lastIndexOf(
-                    'addition-navbar'
-                ) > -1 ||
-                targetElement.target.offsetParent.className.lastIndexOf(
-                    'open-navbar'
-                ) > -1 ||
-                targetElement.target.offsetParent.className.lastIndexOf(
-                    'mat-slide-toggle-thumb-container'
-                ) > -1 ||
-                targetElement.target.offsetParent.tagName ===
-                    'MAT-PROGRESS-BAR' ||
-                targetElement.target.nodeName === 'MAT-PROGRESS-BAR' ||
-                targetElement.target.offsetParent.className.lastIndexOf(
-                    'btn-text'
-                ) > -1 ||
-                targetElement.target.offsetParent.className.lastIndexOf(
-                    'ng-star-inserted'
-                ) > -1 ||
-                targetElement.target.offsetParent.className.lastIndexOf(
-                    'mat-progress-bar-element'
-                ) > -1 ||
-                targetElement.target.offsetParent.innerText ===
-                    'Distribute Pricing' ||
-                targetElement.target.offsetParent.offsetParent.className ===
-                    'addition-navbar'
-            )
-        ) {
-            if (targetElement.target.innerText !== 'Sent!') {
-                this.open = !this.open;
-            }
-        }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.templatelst && !isEqual(changes.templatelst.currentValue, changes.templatelst.previousValue)) {
+      this.refresh();
     }
-    public sendMails() {
+  }
+
+  public refresh() {
+    this.distributionService
+      .getDistributionLogForFbo(this.sharedService.currentUser.fboId, 50)
+      .subscribe((data: any) => {
+        this.distributionLog = data;
+        if (!this.distributionLog) {
+          this.distributionLog = [];
+        } else {
+          this.templatelst.forEach((m) => {
+            this.distributionLog.forEach((obj) => {
+              if (obj.pricingTemplateId === m.oid) {
+                if (m.text === undefined) {
+                  m.text =
+                    'Last sent ' +
+                    moment(
+                      moment.utc(obj.dateSent).toDate()
+                    ).format('MM/DD/YYYY HH:mm');
+                }
+              }
+            });
+          });
+        }
+      });
+
+    this.pricingTemplatesData = this.templatelst.filter(
+      (element: any, index: number, array: any[]) => {
+        return (
+          array.indexOf(
+            array.find(
+              (t) =>
+                t.oid === element.oid &&
+                t.text === element.text &&
+                t.name === element.name
+            )
+          ) === index
+        );
+      }
+    );
+
+    this.selectAll = false;
+    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+    this.marginTemplateDataSource = new MatTableDataSource(
+      this.pricingTemplatesData
+    );
+    this.marginTemplateDataSource.sort = this.sort;
+    this.marginTemplateDataSource.paginator = this.paginator;
+    this.resultsLength = this.pricingTemplatesData.length;
+  }
+
+  public openNavbar(event) {
+    event.preventDefault();
+
+    this.open = !this.open;
+  }
+
+  public OpenMarginInfo(event) {
+    this.filtered = this.pricingTemplatesData.find(
+      ({ oid }) => oid === event
+    );
+
+    const dialogRef = this.templateDialog.open(
+      DistributionWizardReviewComponent,
+      {
+        data: this.filtered,
+        panelClass: 'wizard',
+      }
+    );
+    dialogRef.componentInstance.idChanged1.subscribe((result) => {
+      this.fileInput.nativeElement.click();
+      // this.openNavbar(event);
+    });
+    dialogRef.afterClosed().subscribe((result) => { });
+  }
+  async delay(ms: number) {
+    await new Promise((resolve) =>
+      setTimeout(() => resolve(), ms)
+    ).then(() => console.log('fired'));
+  }
+  public changeSentOption(item) {
+    item.toSend = !item.toSend;
+    if (!item.toSend) {
+      this.selectAll = false;
+    }
+    //  item.val = item.toSend ? item.val === undefined ? 0 + 33.33 : item.val + 33.33 : item.val - 33.33;
+  }
+
+  @HostListener('document:click', ['$event'])
+  public onClick(targetElement) {
+    if (
+      this.open &&
+      targetElement.target.nodeName !== 'svg' &&
+      !(
+        targetElement.target.className === 'ng-star-inserted' ||
+        targetElement.target.offsetParent.className.lastIndexOf(
+          'addition-navbar'
+        ) > -1 ||
+        targetElement.target.textContent === '$Cost' ||
+        targetElement.target.offsetParent.className.lastIndexOf(
+          'addition-navbar'
+        ) > -1 ||
+        targetElement.target.offsetParent.className.lastIndexOf(
+          'open-navbar'
+        ) > -1 ||
+        targetElement.target.offsetParent.className.lastIndexOf(
+          'mat-slide-toggle-thumb-container'
+        ) > -1 ||
+        targetElement.target.offsetParent.tagName ===
+        'MAT-PROGRESS-BAR' ||
+        targetElement.target.nodeName === 'MAT-PROGRESS-BAR' ||
+        targetElement.target.offsetParent.className.lastIndexOf(
+          'btn-text'
+        ) > -1 ||
+        targetElement.target.offsetParent.className.lastIndexOf(
+          'ng-star-inserted'
+        ) > -1 ||
+        targetElement.target.offsetParent.className.lastIndexOf(
+          'mat-progress-bar-element'
+        ) > -1 ||
+        targetElement.target.offsetParent.innerText ===
+        'Distribute Pricing' ||
+        targetElement.target.offsetParent.offsetParent.className ===
+        'addition-navbar'
+      )
+    ) {
+      if (targetElement.target.innerText !== 'Sent!') {
+        this.open = !this.open;
+      }
+    }
+  }
+
+  public confirmSendEmails() {
+    //Show loading here
+    let templatesWithCustomerCount: any[] = [];
+    this.getTemplatesWithCustomerCount().subscribe((responseList: any[]) => {
+      //Stop loading here
+      if (!responseList) {
+        alert('No customers found for the selected distributions.');
+      }
+      for (let responseIndex in responseList) {
+        templatesWithCustomerCount.push(this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex].length + (responseList[responseIndex].length == 1 ? " customer" : " customers"));
+      }
+
+      const dialogRef = this.proceedConfirmationDialog.open(
+        ProceedConfirmationComponent,
+        {
+          data: {
+            description: "You are about to distribute the following templates to the customers assigned to them. Are you sure?", fullDescription: templatesWithCustomerCount
+          },
+          autoFocus: false
+        }
+      );
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (!result) {
+          return;
+        }
+        this.sendMails();
+      });
+    });
+
+        
+  }
+
+  public getTemplatesWithCustomerCount(): Observable<any[]> {
+    let result: any[] = [];
+    this.priceTemplatesForSending = [];
+
+    this.pricingTemplatesData.forEach((x) => {
+      if (x.toSend) {
+        this.priceTemplatesForSending.push(x);
+        result.push(this.customerInfoByGroupService
+          .getCustomersByGroupAndFBOAndPricing(
+            this.sharedService.currentUser.groupId,
+            this.sharedService.currentUser.fboId,
+            x.oid
+          ));
+      }
+    });
+    return forkJoin(result);
+  }
+
+  public sendMails() {
         this.pricingTemplatesData.forEach((x) => {
             if (x.toSend) {
                 const request = {

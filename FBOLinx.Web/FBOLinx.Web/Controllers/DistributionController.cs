@@ -130,8 +130,8 @@ namespace FBOLinx.Web.Controllers
             if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
                 return BadRequest(ModelState);
 
-            await Task.Run(() =>
-                PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context, _fuelerLinxContext, request, _FileProvider, _HttpContextAccessor, _jwtManager, _PriceDistributionService));
+            //await Task.Run(() =>
+            //    PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context, _fuelerLinxContext, request, _FileProvider, _HttpContextAccessor, _jwtManager, _PriceDistributionService));
 
             return Ok();
         }
