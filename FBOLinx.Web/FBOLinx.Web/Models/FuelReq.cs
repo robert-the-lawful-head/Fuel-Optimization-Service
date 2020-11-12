@@ -39,5 +39,8 @@ namespace FBOLinx.Web.Models
         [ForeignKey("Fboid")]
         [InverseProperty("FuelReqs")]
         public Fbos Fbo { get; set; }
+
+        [InverseProperty("FuelReq")]
+        public FuelReqPricingTemplate FuelReqPricingTemplate { get; set; }
     }
 }

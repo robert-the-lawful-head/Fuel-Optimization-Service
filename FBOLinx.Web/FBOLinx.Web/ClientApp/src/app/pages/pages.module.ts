@@ -96,12 +96,15 @@ import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { SystemcontactsNewContactModalComponent } from './contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
+import { GroupAnalyticsHomeComponent } from './group-analytics/group-analytics-home/group-analytics-home.component';
+import { GroupAnalyticsGenerateDialogComponent } from './group-analytics/group-analytics-generate-dialog/group-analytics-generate-dialog.component';
 
 // Shared
 import { FboPricesPanelComponent } from '../shared/components/fbo-prices-panel/fbo-prices-panel.component';
 import { AccountProfileComponent } from '../shared/components/account-profile/account-profile.component';
 import { AirportAutocompleteComponent } from '../shared/components/airport-autocomplete/airport-autocomplete.component';
 import { DeleteConfirmationComponent } from '../shared/components/delete-confirmation/delete-confirmation.component';
+import { ProceedConfirmationComponent } from '../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { CloseConfirmationComponent } from '../shared/components/close-confirmation/close-confirmation.component';
 import { DistributionWizardMainComponent } from '../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
 import { DistributionWizardReviewComponent } from '../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
@@ -241,6 +244,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     AnalyticsFuelVendorSourceChartComponent,
     AnalyticsMarketShareFboAirportChartComponent,
     DeleteConfirmationComponent,
+    ProceedConfirmationComponent,
     CloseConfirmationComponent,
     DistributionWizardMainComponent,
     DistributionWizardReviewComponent,
@@ -264,7 +268,9 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     CustomerMatchDialogComponent,
     SystemcontactsNewContactModalComponent,
     TableColumnFilterComponent,
-    TableGlobalSearchComponent
+    TableGlobalSearchComponent,
+    GroupAnalyticsHomeComponent,
+    GroupAnalyticsGenerateDialogComponent,
   ],
   exports: [
     ClickStopPropagationDirective,
