@@ -14,5 +14,7 @@ namespace FBOLinx.Web.Models.Requests
         public EmailContent EmailContentSignature { get; set; }
         public int FboId { get; set; }
         public int GroupId { get; set; }
+
+        public string PreviewEmail { get; set; }
     }
 }
