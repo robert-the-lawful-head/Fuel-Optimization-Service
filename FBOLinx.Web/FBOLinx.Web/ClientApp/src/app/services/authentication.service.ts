@@ -18,9 +18,6 @@ export class AuthenticationService {
     });
     this.accessPointUrl = baseUrl + 'api/users';
     const user: User = JSON.parse(localStorage.getItem('currentUser'));
-    if (user) {
-      user.groupId = null;
-    }
     this.currentUserSubject = new BehaviorSubject<User>(user);
     this.currentUser = this.currentUserSubject.asObservable();
   }

@@ -64,7 +64,7 @@ export class CustomersGridComponent implements OnInit {
         'fleetSize',
         'delete',
     ];
-    customerFilterType = 0;
+    customerFilterType: number = undefined;
     selectAll = false;
     selectedRows: number;
     pageIndex = 0;
@@ -518,7 +518,7 @@ export class CustomersGridComponent implements OnInit {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.customersDataSource = new MatTableDataSource(
             this.customersData.filter((element: any) => {
-                    if (this.customerFilterType === 0) {
+                    if (this.customerFilterType !== 1) {
                         return true;
                     }
                     return element.needsAttention;
