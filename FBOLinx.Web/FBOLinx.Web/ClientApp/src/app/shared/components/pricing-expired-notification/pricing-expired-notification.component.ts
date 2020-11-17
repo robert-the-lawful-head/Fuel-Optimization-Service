@@ -14,13 +14,16 @@ import * as moment from 'moment';
     styleUrls: ['./pricing-expired-notification.component.scss'],
 })
 export class PricingExpiredNotificationComponent {
-@Input() hideRemindMeButton: boolean;
+  @Input() hideRemindMeButton: boolean = false;
 
     constructor(
         private router: Router,
         public dialogRef: MatDialogRef<PricingExpiredNotificationComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any
-    ) { this.hideRemindMeButton = false; }
+    ) {
+      if (data.hideRemindMeButton)
+        this.hideRemindMeButton = data.hideRemindMeButton;
+    }
 
     public onConfirmClicked() {
         this.router.navigate(['/default-layout/dashboard-fbo']);
@@ -31,10 +34,6 @@ export class PricingExpiredNotificationComponent {
         // localStorage.setItem("pricingExpiredNotification", moment().format("L"));
         localStorage.setItem('pricingExpiredNotification', moment().add(1, 'days').format('L'));
         this.dialogRef.close();
-  }
-
-  public isRemindMeButtonHidden() {
-    return this.hideRemindMeButton;
   }
 
     public onCancelClick() {

@@ -291,20 +291,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     }
   }
 
-  private checkExpiredPrices(template) {
-    if (template.intoPlanePrice == 0 || template.intoPlanePrice == null) {
-      const dialogRef = this.expiredPricingDialog.open(
-        PricingExpiredNotificationComponent, {
-        data: {},
-        autoFocus: false,
-        hideRemindMeButton: true
-      }
-      );
-      dialogRef.afterClosed().subscribe();
-      this.pricesExpired = true;
-    }
-  }
-
   public getTemplatesWithCustomerCount(): Observable<any[]> {
     let result: any[] = [];
     this.priceTemplatesForSending = [];
@@ -375,5 +361,20 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
       pricingTemplate: template,
       previewEmail: this.previewEmail
     };
+  }
+
+  private checkExpiredPrices(template) {
+    if (template.intoPlanePrice == 0 || template.intoPlanePrice == null) {
+      const dialogRef = this.expiredPricingDialog.open(
+        PricingExpiredNotificationComponent, {
+          data: {
+            hideRemindMeButton: true
+          },
+        autoFocus: false
+      }
+      );
+      dialogRef.afterClosed().subscribe();
+      this.pricesExpired = true;
+    }
   }
 }
