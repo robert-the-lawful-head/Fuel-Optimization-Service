@@ -45,11 +45,12 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   public resultsLength: any;
   public marginTemplateDataSource: MatTableDataSource<any> = null;
   public pricingTemplatesData: any[];
-  public filtered: any;
+  public filteredTemplate: any;
   public distributionLog: any[];
   public timeLeft = 0;
   public interval: any;
   public selectAll: boolean;
+  public previewEmail: string = "";
   labelPosition = 'before';
   buttontext = 'Distribute Pricing';
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -160,22 +161,29 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   public OpenMarginInfo(event) {
-    this.filtered = this.pricingTemplatesData.find(
+    this.filteredTemplate = this.pricingTemplatesData.find(
       ({ oid }) => oid === event
     );
 
     const dialogRef = this.templateDialog.open(
       DistributionWizardReviewComponent,
       {
-        data: this.filtered,
+        data: this.previewEmail,
         panelClass: 'wizard',
       }
     );
-    dialogRef.componentInstance.idChanged1.subscribe((result) => {
-      this.fileInput.nativeElement.click();
-      // this.openNavbar(event);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) {
+        return;
+      }
+
+      this.previewEmail = result;
+      const request = this.GetSendDistributionRequest(this.filteredTemplate);
+      this.distributionService
+        .previewDistribution(request)
+        .subscribe((data: any) => { });
     });
-    dialogRef.afterClosed().subscribe((result) => { });
   }
   async delay(ms: number) {
     await new Promise((resolve) =>
@@ -235,10 +243,8 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   public confirmSendEmails() {
-    //Show loading here
     let templatesWithCustomerCount: any[] = [];
     this.getTemplatesWithCustomerCount().subscribe((responseList: any[]) => {
-      //Stop loading here
       if (!responseList) {
         alert('No customers found for the selected distributions.');
       }
@@ -263,8 +269,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         this.sendMails();
       });
     });
-
-        
   }
 
   public getTemplatesWithCustomerCount(): Observable<any[]> {
@@ -288,11 +292,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   public sendMails() {
         this.pricingTemplatesData.forEach((x) => {
             if (x.toSend) {
-                const request = {
-                    fboId: this.sharedService.currentUser.fboId,
-                    groupId: this.sharedService.currentUser.groupId,
-                    pricingTemplate: x,
-                };
+              const request = this.GetSendDistributionRequest(x);
                 this.distributionService
                     .distributePricing(request)
                     .subscribe((data: any) => {});
@@ -331,5 +331,15 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     }
     public ReloadResults() {
         alert('refresh results');
-    }
+  }
+
+  //Private Methods
+  private GetSendDistributionRequest(template) {
+    return {
+      fboId: this.sharedService.currentUser.fboId,
+      groupId: this.sharedService.currentUser.groupId,
+      pricingTemplate: template,
+      previewEmail: this.previewEmail
+    };
+  }
 }
