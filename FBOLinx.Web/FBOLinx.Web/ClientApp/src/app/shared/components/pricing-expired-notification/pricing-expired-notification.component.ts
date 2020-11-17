@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import {
     MatDialogRef,
     MAT_DIALOG_DATA,
@@ -14,11 +14,13 @@ import * as moment from 'moment';
     styleUrls: ['./pricing-expired-notification.component.scss'],
 })
 export class PricingExpiredNotificationComponent {
+@Input() hideRemindMeButton: boolean;
+
     constructor(
         private router: Router,
         public dialogRef: MatDialogRef<PricingExpiredNotificationComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any
-    ) {}
+      @Inject(MAT_DIALOG_DATA) public data: any
+    ) { this.hideRemindMeButton = false; }
 
     public onConfirmClicked() {
         this.router.navigate(['/default-layout/dashboard-fbo']);
@@ -29,7 +31,11 @@ export class PricingExpiredNotificationComponent {
         // localStorage.setItem("pricingExpiredNotification", moment().format("L"));
         localStorage.setItem('pricingExpiredNotification', moment().add(1, 'days').format('L'));
         this.dialogRef.close();
-    }
+  }
+
+  public isRemindMeButtonHidden() {
+    return this.hideRemindMeButton;
+  }
 
     public onCancelClick() {
         // sessionStorage.setItem(

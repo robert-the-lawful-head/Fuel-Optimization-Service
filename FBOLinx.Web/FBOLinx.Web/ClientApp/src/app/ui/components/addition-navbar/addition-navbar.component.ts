@@ -22,6 +22,7 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { SharedService } from '../../../layouts/shared-service';
 import { DistributionService } from '../../../services/distribution.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { PricingExpiredNotificationComponent } from '../../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 
 // Components
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
@@ -40,6 +41,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   title: string;
   open: boolean;
   private priceTemplatesForSending: any[];
+  private pricesExpired: boolean;
   // Public Members
   public displayedColumns: string[] = ['template', 'toggle'];
   public resultsLength: any;
@@ -69,6 +71,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     public templateDialog: MatDialog,
     public distributionService: DistributionService,
     private customerInfoByGroupService: CustomerinfobygroupService,
+    private expiredPricingDialog: MatDialog
   ) {
     this.title = 'Distribute Prices';
     this.open = false;
@@ -161,30 +164,36 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   public OpenMarginInfo(event) {
+    this.pricesExpired = false;
     this.filteredTemplate = this.pricingTemplatesData.find(
       ({ oid }) => oid === event
     );
 
-    const dialogRef = this.templateDialog.open(
-      DistributionWizardReviewComponent,
-      {
-        data: this.previewEmail,
-        panelClass: 'wizard',
-      }
-    );
+    this.checkExpiredPrices(this.filteredTemplate);
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) {
-        return;
-      }
+    if (!this.pricesExpired) {
+      const dialogRef = this.templateDialog.open(
+        DistributionWizardReviewComponent,
+        {
+          data: this.previewEmail,
+          panelClass: 'wizard',
+        }
+      );
 
-      this.previewEmail = result;
-      const request = this.GetSendDistributionRequest(this.filteredTemplate);
-      this.distributionService
-        .previewDistribution(request)
-        .subscribe((data: any) => { });
-    });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (!result) {
+          return;
+        }
+
+        this.previewEmail = result;
+        const request = this.GetSendDistributionRequest(this.filteredTemplate);
+        this.distributionService
+          .previewDistribution(request)
+          .subscribe((data: any) => { });
+      });
+    }
   }
+
   async delay(ms: number) {
     await new Promise((resolve) =>
       setTimeout(() => resolve(), ms)
@@ -243,32 +252,57 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   public confirmSendEmails() {
-    let templatesWithCustomerCount: any[] = [];
-    this.getTemplatesWithCustomerCount().subscribe((responseList: any[]) => {
-      if (!responseList) {
-        alert('No customers found for the selected distributions.');
-      }
-      for (let responseIndex in responseList) {
-        templatesWithCustomerCount.push(this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex].length + (responseList[responseIndex].length == 1 ? " customer" : " customers"));
-      }
-
-      const dialogRef = this.proceedConfirmationDialog.open(
-        ProceedConfirmationComponent,
-        {
-          data: {
-            description: "You are about to distribute the following templates to the customers assigned to them. Are you sure?", itemsList: templatesWithCustomerCount
-          },
-          autoFocus: false
-        }
-      );
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (!result) {
+    this.pricesExpired = false;
+    for (let template of this.pricingTemplatesData) {
+      if (template.toSend) {
+        this.checkExpiredPrices(template);
+        if (this.pricesExpired)
           return;
+      }
+    }
+
+    if (!this.pricesExpired) {
+      let templatesWithCustomerCount: any[] = [];
+      this.getTemplatesWithCustomerCount().subscribe((responseList: any[]) => {
+        if (!responseList) {
+          alert('No customers found for the selected distributions.');
         }
-        this.sendMails();
+        for (let responseIndex in responseList) {
+          templatesWithCustomerCount.push(this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex].length + (responseList[responseIndex].length == 1 ? " customer" : " customers"));
+        }
+
+        const dialogRef = this.proceedConfirmationDialog.open(
+          ProceedConfirmationComponent,
+          {
+            data: {
+              description: "You are about to distribute the following templates to the customers assigned to them. Are you sure?", itemsList: templatesWithCustomerCount
+            },
+            autoFocus: false
+          }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (!result) {
+            return;
+          }
+          this.sendMails();
+        });
       });
-    });
+    }
+  }
+
+  private checkExpiredPrices(template) {
+    if (template.intoPlanePrice == 0 || template.intoPlanePrice == null) {
+      const dialogRef = this.expiredPricingDialog.open(
+        PricingExpiredNotificationComponent, {
+        data: {},
+        autoFocus: false,
+        hideRemindMeButton: true
+      }
+      );
+      dialogRef.afterClosed().subscribe();
+      this.pricesExpired = true;
+    }
   }
 
   public getTemplatesWithCustomerCount(): Observable<any[]> {
