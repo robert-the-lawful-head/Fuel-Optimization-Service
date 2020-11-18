@@ -31,9 +31,28 @@ export class CustomercontactsService {
         });
     }
 
-    public update(payload) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
-            headers: this.headers,
-        });
-    }
+  public update(payload) {
+    return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
+      headers: this.headers,
+    });
+  }
+
+  public getCustomerEmailCountByGroupAndFBOAndPricing(
+    groupId,
+    fboId,
+    pricingTemplateId
+  ) {
+    return this.http.get(
+      this.accessPointUrl +
+      '/group/' +
+      groupId +
+      '/fbo/' +
+      fboId +
+      '/pricingtemplate/' +
+      pricingTemplateId,
+      {
+        headers: this.headers,
+      }
+    );
+  }
 }

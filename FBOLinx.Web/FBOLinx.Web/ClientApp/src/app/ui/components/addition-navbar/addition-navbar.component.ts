@@ -21,7 +21,7 @@ import { forkJoin } from 'rxjs';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { DistributionService } from '../../../services/distribution.service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { CustomercontactsService } from '../../../services/customercontacts.service';
 import { PricingExpiredNotificationComponent } from '../../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 
 // Components
@@ -70,7 +70,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     private proceedConfirmationDialog: MatDialog,
     public templateDialog: MatDialog,
     public distributionService: DistributionService,
-    private customerInfoByGroupService: CustomerinfobygroupService,
+    private customerContactsService: CustomercontactsService,
     private expiredPricingDialog: MatDialog
   ) {
     this.title = 'Distribute Prices';
@@ -268,7 +268,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
           alert('No customers found for the selected distributions.');
         }
         for (let responseIndex in responseList) {
-          templatesWithCustomerCount.push(this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex].length + (responseList[responseIndex].length == 1 ? " customer" : " customers"));
+          templatesWithCustomerCount.push(this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex] + (responseList[responseIndex]== 1 ? " email" : " emails"));
         }
 
         const dialogRef = this.proceedConfirmationDialog.open(
@@ -298,8 +298,8 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     this.pricingTemplatesData.forEach((x) => {
       if (x.toSend) {
         this.priceTemplatesForSending.push(x);
-        result.push(this.customerInfoByGroupService
-          .getCustomersByGroupAndFBOAndPricing(
+        result.push(this.customerContactsService
+          .getCustomerEmailCountByGroupAndFBOAndPricing(
             this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId,
             x.oid
