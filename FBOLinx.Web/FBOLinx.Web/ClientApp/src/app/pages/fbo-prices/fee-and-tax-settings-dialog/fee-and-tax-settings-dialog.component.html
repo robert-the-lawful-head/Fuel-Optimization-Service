@@ -79,6 +79,22 @@
                 </td>
               </ng-container>
 
+              <ng-container matColumnDef="whenToApply">
+                <th mat-header-cell *matHeaderCellDef>
+                  <div class="font-weight-bold">Applies to</div>
+                  <div>
+                    <small>A sales tax is often "below the line"<br />FET is typically "above the line"</small>
+                  </div>
+                </th>
+                <td mat-cell *matCellDef="let feeAndTax">
+                  <mat-select placeholder="Applies To" [(ngModel)]="feeAndTax.whenToApply" (selectionChange)="feeAndTaxChanged(feeAndTax)">
+                    <mat-option *ngFor="let whenToApply of feeCalculationApplyingTypes" [value]="whenToApply.value">
+                      {{whenToApply.text}}
+                    </mat-option>
+                  </mat-select>
+                </td>
+              </ng-container>
+
               <ng-container matColumnDef="value">
                 <th mat-header-cell *matHeaderCellDef>
                   <div class="font-weight-bold">Value</div>
@@ -90,14 +106,14 @@
                   <mat-form-field>
                     <input matInput
                            type="number"
-                         [step]="(feeAndTax.calculationType == 0 ? '.01' : '1')"
+                           [step]="(feeAndTax.calculationType == 0 ? '.01' : '1')"
                            title="Your Cost values should be inclusive of all taxes/fees"
                            [ngModelOptions]="{updateOn: 'blur'}"
                            (click)="$event.target.select()"
-                         [ngModel]="feeAndTax.value | number: (feeAndTax.calculationType == 0 ? '1.4-4' : '1.2-2')"
+                           [ngModel]="feeAndTax.value | number: (feeAndTax.calculationType == 0 ? '1.4-4' : '1.2-2')"
                            (change)="feeValueChanged(feeAndTax, $event.target.value)" />
-                  <span matPrefix class="prefixDollar" *ngIf="feeAndTax.calculationType == 0">$</span>
-                  <span matSuffix *ngIf="feeAndTax.calculationType == 1 || feeAndTax.calculationType == 2">%</span>
+                    <span matPrefix class="prefixDollar" *ngIf="feeAndTax.calculationType == 0">$</span>
+                    <span matSuffix *ngIf="feeAndTax.calculationType == 1 || feeAndTax.calculationType == 2">%</span>
                   </mat-form-field>
                 </td>
               </ng-container>
@@ -167,20 +183,24 @@
 
             </table>
           </div>
-         
+
 
         </div>
         <div class="col-1"></div>
       </div>
 
-      <div class="row mt-4">
-        <div class="col mb-2">
-          Live sample calculation (based on what you entered above):
+      <div class="row mt-4 mb-2">
+        <div class="col-3">
+          Live sample calculation:
+        </div>
+        <div class="col-9">
+          Customer's All-In Rate:
         </div>
       </div>
-
+      
       <div class="row mt-4">
-        <div class="col-2">
+
+        <div class="col-3">
           <mat-form-field>
             <mat-label>ITP Template</mat-label>
             <mat-select class="font-weight-bold" placeholder="ITP Template" [(ngModel)]="sampleCalculation.pricingTemplateId" (selectionChange)="sampleCalculationChanged()">
@@ -190,40 +210,12 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col-2">
-          <mat-form-field>
-            <mat-label>Flight Type</mat-label>
-            <mat-select class="font-weight-bold" placeholder="Flight Type" [(ngModel)]="sampleCalculation.flightTypeClassification" (selectionChange)="sampleCalculationChanged()">
-              <mat-option *ngFor="let flightType of strictFlightTypeClassificationOptions" [value]="flightType.value">
-                {{flightType.text}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+        <div class="col-9">
+          <price-breakdown #priceBreakdownPreview [priceTemplateId]="sampleCalculation.pricingTemplateId"
+                           [feesAndTaxes]="data">
+
+          </price-breakdown>
         </div>
-        <div class="col-2">
-          <mat-form-field>
-            <mat-label>Dom. v. Int.</mat-label>
-            <mat-select class="font-weight-bold" placeholder="Dom. v. Int." [(ngModel)]="sampleCalculation.departureType" (selectionChange)="sampleCalculationChanged()">
-              <mat-option *ngFor="let departureType of strictApplicableTaxFlightOptions" [value]="departureType.value">
-                {{departureType.text}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div class="col-3 text-center">
-          <div class="d-inline-block mr-4">
-            <mat-label class="font-smaller">Exclusive</mat-label>
-            <div class="font-weight-bold">${{sampleCalculation.exclusivePrice | number: "1.4-4"}}</div>
-          </div>
-          <div class="d-inline-block ml-1">
-            <mat-label class="font-smaller">Inclusive</mat-label>
-            <div class="font-weight-bold">${{sampleCalculation.inclusivePrice | number: "1.4-4"}}</div>
-          </div>
-        </div>
-      
-        <!--<div class="col-2" *ngIf="sampleCalculation.isCalculating">
-          <mat-spinner diameter="20"></mat-spinner>
-        </div>-->
       </div>
 
       <div>

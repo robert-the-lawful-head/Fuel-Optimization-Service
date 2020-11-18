@@ -1,0 +1,186 @@
+<div class="container-fluid">
+  <div class="row" *ngIf="domesticPrivatePricing">
+    <!--Price breakdown-->
+    <div class="col">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+
+            <!--No-rules display-->
+            <table *ngIf="priceBreakdownDisplayType == 0">
+              <thead>
+                <tr>
+                  <th>Volume Tier</th>
+                  <th>All Flights</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let priceRow of domesticPrivatePricing.pricingList; let indexOfRow = index;">
+                  <td>{{domesticPrivatePricing.pricingList[indexOfRow].minGallons}} - {{domesticPrivatePricing.pricingList[indexOfRow].maxGallons}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!--2-rule - departure-based display-->
+            <table *ngIf="priceBreakdownDisplayType == 1">
+              <thead>
+                <tr>
+                  <th>Volume Tier</th>
+                  <th>Domestic Flights</th>
+                  <th>International Flights</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let priceRow of domesticPrivatePricing.pricingList; let indexOfRow = index;">
+                  <td>{{domesticPrivatePricing.pricingList[indexOfRow].minGallons}} - {{domesticPrivatePricing.pricingList[indexOfRow].maxGallons}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow], [0,2,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!--2-rule flight-type-based display-->
+            <table *ngIf="priceBreakdownDisplayType == 2">
+              <thead>
+                <tr>
+                  <th>Volume Tier</th>
+                  <th>Private Flights</th>
+                  <th>Commercial Flights</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let priceRow of domesticPrivatePricing.pricingList; let indexOfRow = index;">
+                  <td>{{internationalCommercialPricing.pricingList[indexOfRow].minGallons}} - {{internationalCommercialPricing.pricingList[indexOfRow].maxGallons}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow], [0,1,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!--4-rule display-->
+            <table *ngIf="priceBreakdownDisplayType == 3">
+              <thead>
+                <tr>
+                  <th>Volume Tier</th>
+                  <th>Int/Comm</th>
+                  <th>Int/Private</th>
+                  <th>Dom/Comm</th>
+                  <th>Dom/Private</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let priceRow of domesticPrivatePricing.pricingList; let indexOfRow = index;">
+                  <td>{{internationalCommercialPricing.pricingList[indexOfRow].minGallons}} - {{internationalCommercialPricing.pricingList[indexOfRow].maxGallons}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(internationalCommercialPricing.pricingList[indexOfRow], [0,2,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{internationalCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow], [0,2,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow], [0,1,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--Fee and tax breakdown-->
+    <div class="col">
+      <fee-and-tax-breakdown #feeAndTaxBreakdown
+                             [feesAndTaxes]="feesAndTaxes"
+                             [marginType]="domesticPrivatePricing.pricingList[0].marginType"
+                             [customerMargin]="domesticPrivatePricing.pricingList[0].customerMarginAmount"
+                             [displayMode]="0"
+                             [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
+                             [validDepartureTypes]="[0,1,3]"
+                             [validFlightTypes]="[0,1,3]"
+                             (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
+    </div>
+  </div>
+
+  <div>
+    <ngx-ui-loader [loaderId]="priceBreakdownLoader"
+                   bgsPosition="center-center"
+                   fgsType="fading-circle"
+                   fgsColor="#252d47"
+                   pbColor="#252d47"
+                   overlayColor="rgba(0, 0, 0, 0.06)"></ngx-ui-loader>
+  </div>
+</div>
+
+<!--Popover combinations-->
+<!--Domestic/Private Popover-->
+<popover-content #feeAndTaxPopover
+                 title="Fee/Tax Breakdown"
+                 placement="top-right"
+                 [closeOnMouseOutside]="true">
+  <div *ngIf="activeHoverPriceItem">
+    <fee-and-tax-breakdown #dynamicFeeAndTaxBreakdown [feesAndTaxes]="feesAndTaxes"
+                           [marginType]="activeHoverPriceItem.marginType"
+                           [customerMargin]="activeHoverPriceItem.customerMarginAmount"
+                           [displayMode]="0"
+                           [fboPrice]="activeHoverPriceItem.fboPrice"
+                           [validDepartureTypes]="activeHoverDeparturetypes"
+                           [validFlightTypes]="activeHoverFlightTypes"
+                           (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
+  </div>
+  
+</popover-content>
+
+<!--Domestic/Commercial Popover-->
+<!--<popover-content #domesticCommercialPopover
+                 title="Fee/Tax Breakdown"
+                 placement="right"
+                 [closeOnMouseOutside]="true">
+  <div *ngIf="domesticCommercialPricing">
+    <fee-and-tax-breakdown #domesticCommercialFeeAndTaxBreakdown [feesAndTaxes]="feesAndTaxes"
+                           [marginType]="domesticCommercialPricing.pricingList[0].marginType"
+                           [customerMargin]="activeHoverPriceItem.customerMarginAmount"
+                           [displayMode]="0"
+                           [fboPrice]="domesticCommercialPricing.pricingList[0].fboPrice"
+                           [validDepartureTypes]="[0,1,3]"
+                           [validFlightTypes]="[0,2,3]"
+                           (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
+  </div>
+  
+</popover-content>-->
+
+<!--International/Private Popover-->
+<!--<popover-content #internationalPrivatePopover
+                 title="Fee/Tax Breakdown"
+                 placement="right"
+                 [closeOnMouseOutside]="true">
+  <div *ngIf="internationalPrivatePricing">
+    <fee-and-tax-breakdown #internationalPrivateFeeAndTaxBreakdown [feesAndTaxes]="feesAndTaxes"
+                           [marginType]="internationalPrivatePricing.pricingList[0].marginType"
+                           [customerMargin]="activeHoverPriceItem.customerMarginAmount"
+                           [displayMode]="0"
+                           [fboPrice]="internationalPrivatePricing.pricingList[0].fboPrice"
+                           [validDepartureTypes]="[0,2,3]"
+                           [validFlightTypes]="[0,1,3]"
+                           (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
+  </div>
+  
+</popover-content>-->
+
+<!--International/Commercial Popover-->
+<!--<popover-content #internationalCommercialPopover
+                 title="Fee/Tax Breakdown"
+                 placement="right"
+                 [closeOnMouseOutside]="true">
+  <div *ngIf="internationalCommercialPricing">
+    <fee-and-tax-breakdown #internationalCommercialFeeAndTaxBreakdown [feesAndTaxes]="feesAndTaxes"
+                           [marginType]="internationalCommercialPricing.pricingList[0].marginType"
+                           [customerMargin]="activeHoverPriceItem.customerMarginAmount"
+                           [displayMode]="0"
+                           [fboPrice]="internationalCommercialPricing.pricingList[0].fboPrice"
+                           [validDepartureTypes]="[0,2,3]"
+                           [validFlightTypes]="[0,2,3]"
+                           (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
+  </div>
+  
+</popover-content>-->

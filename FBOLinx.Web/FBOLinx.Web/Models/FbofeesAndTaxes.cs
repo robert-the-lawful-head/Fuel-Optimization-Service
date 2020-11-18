@@ -20,12 +20,13 @@ namespace FBOLinx.Web
         public double Value { get; set; }
         public FBOLinx.Web.Enums.FlightTypeClassifications? FlightTypeClassification { get; set; }
         public FBOLinx.Web.Enums.ApplicableTaxFlights? DepartureType { get; set; }
+        public FBOLinx.Web.Enums.FeeCalculationApplyingTypes? WhenToApply { get; set; }
 
         public double GetCalculatedValue(double basePrice, double allInPrice)
         {
             if (CalculationType == Enums.FeeCalculationTypes.FlatPerGallon)
                 return Value;
-            if (CalculationType == Enums.FeeCalculationTypes.PercentageOfBase)
+            if (CalculationType == Enums.FeeCalculationTypes.Percentage)
                 return (((Value / 100.0)) * basePrice);
             if (CalculationType == Enums.FeeCalculationTypes.PercentageOfTotal)
                 return (((Value / 100.0)) * allInPrice);

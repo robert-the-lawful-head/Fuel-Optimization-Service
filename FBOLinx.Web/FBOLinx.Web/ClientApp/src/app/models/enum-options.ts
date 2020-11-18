@@ -3,6 +3,7 @@
 import { ApplicableTaxFlights } from '../enums/applicable-tax-flights';
 import { FlightTypeClassifications } from '../enums/flight-type-classifications';
 import { FeeCalculationTypes } from '../enums/fee-calculation-types';
+import { FeeCalculationApplyingTypes }  from '../enums/fee-calculation-applying-types';
 
 export namespace EnumOptions {
 
@@ -36,7 +37,11 @@ export namespace EnumOptions {
 
   export const feeCalculationTypeOptions: Array<EnumOption> = [
     { text: 'Flat Per Gallon', value: FeeCalculationTypes.FlatPerGallon },
-    { text: 'Percentage of Base', value: FlightTypeClassifications.Private },
-    { text: 'Percentage of All-In', value: FlightTypeClassifications.Commercial }
+    { text: 'Percentage', value: FeeCalculationTypes.Percentage }
+  ];
+
+  export const feeCalculationApplyingTypeOptions: Array<EnumOption> = [
+    { text: 'Above the Line', value: FeeCalculationApplyingTypes.PreMargin },
+    { text: 'Below the Line', value: FeeCalculationApplyingTypes.PostMargin }
   ];
 }
