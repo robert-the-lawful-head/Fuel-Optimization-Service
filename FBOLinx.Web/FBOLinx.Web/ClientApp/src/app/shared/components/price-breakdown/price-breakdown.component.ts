@@ -42,6 +42,8 @@ export class PriceBreakdownComponent implements OnInit {
   public priceBreakdownDisplayType: PriceBreakdownDisplayTypes = PriceBreakdownDisplayTypes.SingleColumnAllFlights;
   public priceBreakdownLoader = 'price-breakdown-loader';
   public activeHoverPriceItem: any = {};
+  public activeHoverDeparturetypes: Array<number> = [];
+  public activeHoverFlightTypes: Array<number> = [];
 
   @ViewChild('feeAndTaxBreakdown') private feeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
   @ViewChild('dynamicFeeAndTaxBreakdown') private dynamicFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
@@ -62,8 +64,10 @@ export class PriceBreakdownComponent implements OnInit {
     this.omitCheckChanged.emit(fee);
   }
 
-  public mouseEnterPriceItem(priceItem: any): void {
+  public mouseEnterPriceItem(priceItem: any, departureTypes: Array<number>, flightTypes: Array<number>): void {
     this.activeHoverPriceItem = priceItem;
+    this.activeHoverDeparturetypes = departureTypes;
+    this.activeHoverFlightTypes = flightTypes;
     let self = this;
     setTimeout(function() {
       if (self.dynamicFeeAndTaxBreakdown) {
@@ -168,7 +172,7 @@ export class PriceBreakdownComponent implements OnInit {
 
   private loadInternationalPrivatePricing(): Observable<Object> {
     return this.fboPricesService.getFuelPricesForCompany({
-      flightTypeClassification: FlightTypeClassifications.Commercial,
+      flightTypeClassification: FlightTypeClassifications.Private,
       DepartureType: ApplicableTaxFlights.InternationalOnly,
       fboid: this.sharedService.currentUser.fboId,
       groupId: this.sharedService.currentUser.groupId,
@@ -180,7 +184,7 @@ export class PriceBreakdownComponent implements OnInit {
   private loadDomesticCommercialPricing(): Observable<Object> {
     return this.fboPricesService.getFuelPricesForCompany({
       flightTypeClassification: FlightTypeClassifications.Commercial,
-      DepartureType: ApplicableTaxFlights.InternationalOnly,
+      DepartureType: ApplicableTaxFlights.DomesticOnly,
       fboid: this.sharedService.currentUser.fboId,
       groupId: this.sharedService.currentUser.groupId,
       replacementFeesAndTaxes: this.feesAndTaxes,
@@ -190,8 +194,8 @@ export class PriceBreakdownComponent implements OnInit {
 
   private loadDomesticPrivatePricing(): Observable<Object> {
     return this.fboPricesService.getFuelPricesForCompany({
-      flightTypeClassification: FlightTypeClassifications.Commercial,
-      DepartureType: ApplicableTaxFlights.InternationalOnly,
+      flightTypeClassification: FlightTypeClassifications.Private,
+      DepartureType: ApplicableTaxFlights.DomesticOnly,
       fboid: this.sharedService.currentUser.fboId,
       groupId: this.sharedService.currentUser.groupId,
       replacementFeesAndTaxes: this.feesAndTaxes,

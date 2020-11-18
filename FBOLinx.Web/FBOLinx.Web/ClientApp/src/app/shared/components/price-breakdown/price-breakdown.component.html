@@ -18,7 +18,7 @@
               <tbody>
                 <tr *ngFor="let priceRow of domesticPrivatePricing.pricingList; let indexOfRow = index;">
                   <td>{{domesticPrivatePricing.pricingList[indexOfRow].minGallons}} - {{domesticPrivatePricing.pricingList[indexOfRow].maxGallons}}</td>
-                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
                 </tr>
               </tbody>
             </table>
@@ -36,8 +36,8 @@
               <tbody>
                 <tr *ngFor="let priceRow of domesticPrivatePricing.pricingList; let indexOfRow = index;">
                   <td>{{domesticPrivatePricing.pricingList[indexOfRow].minGallons}} - {{domesticPrivatePricing.pricingList[indexOfRow].maxGallons}}</td>
-                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
-                  <td (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow], [0,2,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
                 </tr>
               </tbody>
             </table>
@@ -55,8 +55,8 @@
               <tbody>
                 <tr *ngFor="let priceRow of domesticPrivatePricing.pricingList; let indexOfRow = index;">
                   <td>{{internationalCommercialPricing.pricingList[indexOfRow].minGallons}} - {{internationalCommercialPricing.pricingList[indexOfRow].maxGallons}}</td>
-                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
-                  <td (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow], [0,1,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
                 </tr>
               </tbody>
             </table>
@@ -76,10 +76,10 @@
               <tbody>
                 <tr *ngFor="let priceRow of domesticPrivatePricing.pricingList; let indexOfRow = index;">
                   <td>{{internationalCommercialPricing.pricingList[indexOfRow].minGallons}} - {{internationalCommercialPricing.pricingList[indexOfRow].maxGallons}}</td>
-                  <td (mouseenter)="mouseEnterPriceItem(internationalCommercialPricing.pricingList[indexOfRow])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{internationalCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
-                  <td (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
-                  <td (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
-                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(internationalCommercialPricing.pricingList[indexOfRow], [0,2,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{internationalCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow], [0,2,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow], [0,1,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
+                  <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</td>
                 </tr>
               </tbody>
             </table>
@@ -124,8 +124,8 @@
                            [customerMargin]="activeHoverPriceItem.customerMarginAmount"
                            [displayMode]="0"
                            [fboPrice]="activeHoverPriceItem.fboPrice"
-                           [validDepartureTypes]="[0,1,3]"
-                           [validFlightTypes]="[0,1,3]"
+                           [validDepartureTypes]="activeHoverDeparturetypes"
+                           [validFlightTypes]="activeHoverFlightTypes"
                            (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
   </div>
   

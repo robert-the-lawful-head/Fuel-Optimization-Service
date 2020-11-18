@@ -5,25 +5,26 @@
       Cost
     </div>
     <div class="col">
-
     </div>
     <div class="col text-right">
-      ${{ fboPrice | number: "1.4-4" }}
+      ${{
+ fboPrice | number: "1.4-4"
+      }}
     </div>
     <div class="col" *ngIf="displayMode == 1">
-      
+
     </div>
   </div>
 
   <!--Above the line taxes-->
   <div class="row" *ngFor="let aboveLineTax of aboveTheLineTaxes">
-    <div class="col" [ngClass]="{'strike-through': aboveLineTax.isOmitted}">
+    <div class="col" [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}">
       {{aboveLineTax.name}}
     </div>
-    <div class="col text-right" [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification))}">
+    <div class="col text-right" [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}">
       <span *ngIf="aboveLineTax.calculationType == 1">{{ aboveLineTax.value | number }}%</span>
     </div>
-    <div class="col text-right" [ngClass]="{'strike-through': aboveLineTax.isOmitted}">
+    <div class="col text-right" [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}">
       <span *ngIf="marginType == 0">${{ aboveLineTax.amount | number: "1.4-4" }}</span>
       <span *ngIf="marginType == 1">Applied</span>
     </div>
@@ -42,7 +43,7 @@
       ${{ fboPrice | number: "1.4-4" }}
     </div>
     <div class="col" *ngIf="displayMode == 1">
-      
+
     </div>
   </div>
 
@@ -56,7 +57,7 @@
       ${{ preMarginSubTotal | number: "1.4-4" }}
     </div>
     <div class="col" *ngIf="displayMode == 1">
-      
+
     </div>
   </div>
 
@@ -70,7 +71,7 @@
       ${{ customerMargin | number: "1.4-4" }}
     </div>
     <div class="col" *ngIf="displayMode == 1">
-      
+
     </div>
   </div>
 
@@ -84,24 +85,24 @@
       ${{ subTotalWithMargin | number: "1.4-4" }}
     </div>
     <div class="col" *ngIf="displayMode == 1">
-      
+
     </div>
   </div>
 
   <!--Below the line taxes-->
   <div class="row" *ngFor="let belowLineTax of belowTheLineTaxes">
-    <div class="col" [ngClass]="{'strike-through': belowLineTax.isOmitted}">
+    <div class="col" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}">
       {{belowLineTax.name}}
     </div>
-    <div class="col text-right" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification))}">
+    <div class="col text-right" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}">
       <span *ngIf="belowLineTax.calculationType == 1">{{ belowLineTax.value | number }}%</span>
     </div>
-    <div class="col text-right" [ngClass]="{'strike-through': belowLineTax.isOmitted}">
+    <div class="col text-right" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}">
       <span *ngIf="marginType == 0">${{ belowLineTax.amount | number: "1.4-4" }}</span>
       <span *ngIf="marginType == 1">Applied</span>
     </div>
     <div class="col" *ngIf="displayMode == 1">
-      <input type="checkbox" (click)="omitChanged(belowLineTax)"/>
+      <input type="checkbox" (click)="omitChanged(belowLineTax)" />
     </div>
   </div>
 
@@ -115,7 +116,7 @@
       ${{ total | number: "1.4-4" }}
     </div>
     <div class="col" *ngIf="displayMode == 1">
-      
+
     </div>
   </div>
 </div>
