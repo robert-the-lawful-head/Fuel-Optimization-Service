@@ -1,2 +1,6 @@
-﻿body {
+body {
+}
+
+div.row div.col:first-child {
+    min-width: 175px;
 }

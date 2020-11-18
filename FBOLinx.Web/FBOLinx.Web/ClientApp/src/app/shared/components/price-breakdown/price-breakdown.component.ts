@@ -1,13 +1,15 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
 import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { FeeAndTaxBreakdownComponent } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 
 import { forkJoin } from 'rxjs';
 import { Observable } from 'rxjs';
+
 
 export enum PriceBreakdownDisplayTypes {
   SingleColumnAllFlights = 0,
@@ -41,6 +43,9 @@ export class PriceBreakdownComponent implements OnInit {
   public priceBreakdownLoader = 'price-breakdown-loader';
   public activeHoverPriceItem: any = {};
 
+  @ViewChild('feeAndTaxBreakdown') private feeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+  @ViewChild('dynamicFeeAndTaxBreakdown') private dynamicFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+
 
   constructor(private feesAndTaxesService: FbofeesandtaxesService,
     private sharedService: SharedService,
@@ -50,6 +55,29 @@ export class PriceBreakdownComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.performCalculations();
+  }
+
+  public omitChanged(fee: any): void {
+    this.omitCheckChanged.emit(fee);
+  }
+
+  public mouseEnterPriceItem(priceItem: any): void {
+    this.activeHoverPriceItem = priceItem;
+    let self = this;
+    setTimeout(function() {
+      if (self.dynamicFeeAndTaxBreakdown) {
+        self.dynamicFeeAndTaxBreakdown.performRecalculation();
+      }
+    });
+  }
+
+  public performRecalculation(): void {
+    this.performCalculations();
+  }
+
+  // Private Methods
+  private performCalculations(): void {
     this.NgxUiLoader.startLoader(this.priceBreakdownLoader);
     if (!this.feesAndTaxes) {
       this.loadFeesAndTaxes();
@@ -60,15 +88,6 @@ export class PriceBreakdownComponent implements OnInit {
     }
   }
 
-  public omitChanged(fee: any): void {
-    this.omitCheckChanged.emit(fee);
-  }
-
-  public mouseEnterPriceItem(priceItem: any): void {
-    this.activeHoverPriceItem = priceItem;
-  }
-
-  // Private Methods
   private loadFeesAndTaxes() {
     this.feesAndTaxesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((response: any) => {
       this.feesAndTaxes = response;
@@ -130,6 +149,9 @@ export class PriceBreakdownComponent implements OnInit {
       this.internationalPrivatePricing = responseList[1];
       this.domesticCommercialPricing = responseList[2];
       this.domesticPrivatePricing = responseList[3];
+      if (this.feeAndTaxBreakdown) {
+        this.feeAndTaxBreakdown.performRecalculation();
+      }
     });
   }
 

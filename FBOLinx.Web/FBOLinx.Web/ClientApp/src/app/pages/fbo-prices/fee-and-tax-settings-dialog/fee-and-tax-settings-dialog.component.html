@@ -211,7 +211,7 @@
           </mat-form-field>
         </div>
         <div class="col-9">
-          <price-breakdown [priceTemplateId]="sampleCalculation.pricingTemplateId"
+          <price-breakdown #priceBreakdownPreview [priceTemplateId]="sampleCalculation.pricingTemplateId"
                            [feesAndTaxes]="data">
 
           </price-breakdown>

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
@@ -15,6 +15,7 @@ import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.servic
 import { SharedService } from '../../../layouts/shared-service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { FbopricesService } from '../../../services/fboprices.service';
+import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 
 
 export interface FeeAndTaxDialogData {
@@ -68,14 +69,14 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
   };
   public requiresSaving = false;
 
+  @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Array<FeeAndTaxDialogData>,
     public dialogRef: MatDialogRef<FeeAndTaxSettingsDialogComponent>,
     private feesAndTaxesService: FbofeesandtaxesService,
     private sharedService: SharedService,
     private pricingTemplateService: PricingtemplatesService
-    //private fbopricesService: FbopricesService,
-    //private NgxUiLoader: NgxUiLoaderService
   ) {}
 
   public ngOnInit(): void {
@@ -104,9 +105,9 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
   public feeAndTaxChanged(feeAndTax, avoidRecalculation = false): void {
     feeAndTax.requiresUpdate = true;
     this.requiresSaving = true;
-    //if (!avoidRecalculation) {
-    //  this.sampleCalculationChanged();
-    //}
+    if (!avoidRecalculation) {
+      this.sampleCalculationChanged();
+    }
   }
 
   public feeAndTaxDeleted(feeAndTax): void {
@@ -132,26 +133,11 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     this.requiresSaving = true;
   }
 
-  //public sampleCalculationChanged(): void {
-  //  this.NgxUiLoader.startLoader(this.calculationLoader);
-  //  this.fbopricesService.getFuelPricesForCompany({
-  //    flightTypeClassification: this.sampleCalculation.flightTypeClassification,
-  //    DepartureType: this.sampleCalculation.departureType,
-  //    fboid: this.sharedService.currentUser.fboId,
-  //    groupId: this.sharedService.currentUser.groupId,
-  //    replacementFeesAndTaxes: this.data,
-  //    pricingTemplateId: this.sampleCalculation.pricingTemplateId
-  //  }).subscribe((response: any) => {
-  //    if (response != null && response.pricingList != null && response.pricingList.length > 0) {
-  //      this.sampleCalculation.inclusivePrice = response.pricingList[0].allInPrice;
-  //      this.sampleCalculation.exclusivePrice = response.pricingList[0].basePrice;
-  //    } else {
-  //      this.sampleCalculation.inclusivePrice = 0;
-  //      this.sampleCalculation.exclusivePrice = 0;
-  //    }
-  //    this.NgxUiLoader.stopLoader(this.calculationLoader);
-  //  });
-  //}
+  public sampleCalculationChanged(): void {
+    if (this.priceBreakdownPreview) {
+      this.priceBreakdownPreview.performRecalculation();
+    }
+  }
 
   public feeValueChanged(feeAndTax, value) {
     feeAndTax.value = value;

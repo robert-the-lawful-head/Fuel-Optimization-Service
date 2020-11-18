@@ -1,11 +1,17 @@
 <div class="container-fluid">
   <!--Top row for Cost Price-->
   <div class="row" *ngIf="marginType == 0">
-    <div class="col-6">
+    <div class="col">
       Cost
     </div>
-    <div class="col-6 text-right">
+    <div class="col">
+
+    </div>
+    <div class="col text-right">
       ${{ fboPrice | number: "1.4-4" }}
+    </div>
+    <div class="col" *ngIf="displayMode == 1">
+      
     </div>
   </div>
 
@@ -28,12 +34,15 @@
 
   <!--Row for Retail Price-->
   <div class="row" *ngIf="marginType == 1">
-    <div class="col-6">
+    <div class="col">
       Posted Retail
     </div>
     <div class="col"></div>
-    <div class="col-6 text-right">
+    <div class="col text-right">
       ${{ fboPrice | number: "1.4-4" }}
+    </div>
+    <div class="col" *ngIf="displayMode == 1">
+      
     </div>
   </div>
 
@@ -46,6 +55,9 @@
     <div class="col text-right">
       ${{ preMarginSubTotal | number: "1.4-4" }}
     </div>
+    <div class="col" *ngIf="displayMode == 1">
+      
+    </div>
   </div>
 
   <!--ITP Margin-->
@@ -57,6 +69,9 @@
     <div class="col text-right">
       ${{ customerMargin | number: "1.4-4" }}
     </div>
+    <div class="col" *ngIf="displayMode == 1">
+      
+    </div>
   </div>
 
   <!--Sub-total with Margin-->
@@ -67,6 +82,9 @@
     <div class="col"></div>
     <div class="col text-right">
       ${{ subTotalWithMargin | number: "1.4-4" }}
+    </div>
+    <div class="col" *ngIf="displayMode == 1">
+      
     </div>
   </div>
 
@@ -95,6 +113,9 @@
     <div class="col"></div>
     <div class="col text-right">
       ${{ total | number: "1.4-4" }}
+    </div>
+    <div class="col" *ngIf="displayMode == 1">
+      
     </div>
   </div>
 </div>

@@ -40,6 +40,11 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     this.omitCheckChanged.emit(fee);
   }
 
+  public performRecalculation(): void {
+    this.prepareTaxes();
+    this.calculatePrices();
+  }
+
   // Private Methods
   private prepareTaxes() {
     if (!this.feesAndTaxes)
