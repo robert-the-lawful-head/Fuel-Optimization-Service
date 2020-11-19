@@ -617,7 +617,7 @@ namespace FBOLinx.Web.Controllers
                 var fuelReqsByAircraftSizeVM = await (from f in _context.FuelReq
                                                       join ca in
                                                           (from ca in _context.CustomerAircrafts
-                                                           join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
+                                                           join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
                                                            select new
                                                            {
                                                                Size = (ca.Size.HasValue && ca.Size.Value != AirCrafts.AircraftSizes.NotSet

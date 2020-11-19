@@ -98,7 +98,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerGridVM = await FetchCustomersViewModelByGroupAndFbo(groupId, fboId);
+            var customerGridVM = (await FetchCustomersViewModelByGroupAndFbo(groupId, fboId)).OrderBy(x => x.Company).ToList();
 
             return Ok(customerGridVM);
         }

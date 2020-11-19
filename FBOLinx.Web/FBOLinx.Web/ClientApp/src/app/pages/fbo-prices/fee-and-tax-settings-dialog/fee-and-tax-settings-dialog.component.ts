@@ -192,7 +192,6 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
       if (this.sampleCalculation.pricingTemplateId === 0 && this.pricingTemplates.length > 0) {
         this.sampleCalculation.pricingTemplateId = this.pricingTemplates[0].oid;
       }
-      //this.sampleCalculationChanged();
     });
   }
 }

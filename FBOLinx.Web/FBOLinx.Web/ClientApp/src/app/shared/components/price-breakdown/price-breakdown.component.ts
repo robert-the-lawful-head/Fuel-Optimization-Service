@@ -25,11 +25,13 @@ export enum PriceBreakdownDisplayTypes {
 })
 export class PriceBreakdownComponent implements OnInit {    
 
-  @Input() priceTemplateId: number;
-  @Input() tailNumber: string;
-  @Input() companyId: number;
+  @Input() priceTemplateId: number = 0;
+  @Input() tailNumber: string = '';
+  @Input() customerInfoByGroupId: number = 0;
   @Input() feesAndTaxes: Array<any>;
+  @Input() hideFeeAndTaxGeneralBreakdown: boolean = false;
   @Output() omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
+  @Output() calculationsComplated: EventEmitter<any> = new EventEmitter<any>();
 
   public internationalCommercialPricing: any;
   public internationalPrivatePricing: any;
@@ -155,51 +157,64 @@ export class PriceBreakdownComponent implements OnInit {
       this.domesticPrivatePricing = responseList[3];
       if (this.feeAndTaxBreakdown) {
         this.feeAndTaxBreakdown.performRecalculation();
-      }
+        }
+        this.calculationsComplated.emit([this.internationalCommercialPricing, this.internationalPrivatePricing, this.domesticCommercialPricing, this.domesticPrivatePricing]);
     });
   }
 
   private loadInternationalCommercialPricing(): Observable<Object> {
     return this.fboPricesService.getFuelPricesForCompany({
       flightTypeClassification: FlightTypeClassifications.Commercial,
-      DepartureType: ApplicableTaxFlights.InternationalOnly,
+      departureType: ApplicableTaxFlights.InternationalOnly,
+      icao: this.sharedService.currentUser.icao,
       fboid: this.sharedService.currentUser.fboId,
       groupId: this.sharedService.currentUser.groupId,
       replacementFeesAndTaxes: this.feesAndTaxes,
-      pricingTemplateId: this.priceTemplateId
+      pricingTemplateId: this.priceTemplateId,
+      customerInfoByGroupId: this.customerInfoByGroupId,
+      tailNumber: this.tailNumber
     });
   }
 
   private loadInternationalPrivatePricing(): Observable<Object> {
     return this.fboPricesService.getFuelPricesForCompany({
       flightTypeClassification: FlightTypeClassifications.Private,
-      DepartureType: ApplicableTaxFlights.InternationalOnly,
+      departureType: ApplicableTaxFlights.InternationalOnly,
+      icao: this.sharedService.currentUser.icao,
       fboid: this.sharedService.currentUser.fboId,
       groupId: this.sharedService.currentUser.groupId,
       replacementFeesAndTaxes: this.feesAndTaxes,
-      pricingTemplateId: this.priceTemplateId
+      pricingTemplateId: this.priceTemplateId,
+      customerInfoByGroupId: this.customerInfoByGroupId,
+      tailNumber: this.tailNumber
     });
   }
 
   private loadDomesticCommercialPricing(): Observable<Object> {
     return this.fboPricesService.getFuelPricesForCompany({
       flightTypeClassification: FlightTypeClassifications.Commercial,
-      DepartureType: ApplicableTaxFlights.DomesticOnly,
+      departureType: ApplicableTaxFlights.DomesticOnly,
+      icao: this.sharedService.currentUser.icao,
       fboid: this.sharedService.currentUser.fboId,
       groupId: this.sharedService.currentUser.groupId,
       replacementFeesAndTaxes: this.feesAndTaxes,
-      pricingTemplateId: this.priceTemplateId
+      pricingTemplateId: this.priceTemplateId,
+      customerInfoByGroupId: this.customerInfoByGroupId,
+      tailNumber: this.tailNumber
     });
   }
 
   private loadDomesticPrivatePricing(): Observable<Object> {
     return this.fboPricesService.getFuelPricesForCompany({
       flightTypeClassification: FlightTypeClassifications.Private,
-      DepartureType: ApplicableTaxFlights.DomesticOnly,
+      departureType: ApplicableTaxFlights.DomesticOnly,
+      icao: this.sharedService.currentUser.icao,
       fboid: this.sharedService.currentUser.fboId,
       groupId: this.sharedService.currentUser.groupId,
       replacementFeesAndTaxes: this.feesAndTaxes,
-      pricingTemplateId: this.priceTemplateId
+      pricingTemplateId: this.priceTemplateId,
+      customerInfoByGroupId: this.customerInfoByGroupId,
+      tailNumber: this.tailNumber
     });
   }
 }

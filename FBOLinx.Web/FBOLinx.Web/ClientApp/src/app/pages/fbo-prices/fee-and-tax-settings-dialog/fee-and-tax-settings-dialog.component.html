@@ -190,11 +190,12 @@
       </div>
 
       <div class="row mt-4 mb-2">
-        <div class="col-3">
+        <div class="col-3 font-weight-bold">
           Live sample calculation:
         </div>
         <div class="col-9">
-          Customer's All-In Rate:
+          <div class="ml-4 pl-1 font-weight-bold">Customer's All-In Rate:</div>
+          
         </div>
       </div>
       
@@ -210,9 +211,10 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col-9">
+        <div class="col-9 mt-3">
           <price-breakdown #priceBreakdownPreview [priceTemplateId]="sampleCalculation.pricingTemplateId"
-                           [feesAndTaxes]="data">
+                           [feesAndTaxes]="data"
+                           [hideFeeAndTaxGeneralBreakdown]="true">
 
           </price-breakdown>
         </div>

@@ -84,7 +84,7 @@ namespace FBOLinx.Web.Controllers
                     CategoryMaxValue = r?.CategoryMaxValue,
                     ExpirationDate = r?.ExpirationDate,
                     Size = (AirCrafts.AircraftSizes) s.Value,
-                    AppliesTo = (from a in _aircraftService.GetAllAircrafts()
+                    AppliesTo = (from a in _aircraftService.GetAllAircraftsAsQueryable()
                         where a.Size.HasValue && a.Size == (AirCrafts.AircraftSizes) s.Value
                         select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList(),
                     LastUpdated = r?.LastUpdated
@@ -93,7 +93,7 @@ namespace FBOLinx.Web.Controllers
 
             // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
             List<RampFeesGridViewModel> customRampFees = await (from r in _context.RampFees
-                join a in _aircraftService.GetAllAircrafts() on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
+                join a in _aircraftService.GetAllAircraftsAsQueryable() on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
                 from a in leftJoinAircrafts.DefaultIfEmpty()
                 where r.Fboid == fboId && r.CategoryType.HasValue &&
                       r.CategoryType.Value != RampFeeCategories.AircraftSize
