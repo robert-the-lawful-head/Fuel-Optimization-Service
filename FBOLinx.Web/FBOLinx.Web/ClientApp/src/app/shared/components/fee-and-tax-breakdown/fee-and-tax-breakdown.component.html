@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <!--Top row for Cost Price-->
-  <div class="row" *ngIf="marginType == 0">
+  <div class="row mb-3" *ngIf="marginType == 0">
     <div class="col">
       Cost
     </div>
@@ -17,7 +17,7 @@
   </div>
 
   <!--Above the line taxes-->
-  <div class="row" *ngFor="let aboveLineTax of aboveTheLineTaxes">
+  <div class="row font-italic" *ngFor="let aboveLineTax of aboveTheLineTaxes">
     <div class="col" [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}">
       {{aboveLineTax.name}}
     </div>
@@ -48,7 +48,7 @@
   </div>
 
   <!--Sub-total-->
-  <div class="row">
+  <div class="row mt-3 mb-3">
     <div class="col">
       Sub-total
     </div>
@@ -76,7 +76,7 @@
   </div>
 
   <!--Sub-total with Margin-->
-  <div class="row">
+  <div class="row mb-3 mt-3">
     <div class="col">
       Sub-total w/ Margin
     </div>
@@ -90,7 +90,7 @@
   </div>
 
   <!--Below the line taxes-->
-  <div class="row" *ngFor="let belowLineTax of belowTheLineTaxes">
+  <div class="row font-italic" *ngFor="let belowLineTax of belowTheLineTaxes">
     <div class="col" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}">
       {{belowLineTax.name}}
     </div>
@@ -107,7 +107,7 @@
   </div>
 
   <!--Total-->
-  <div class="row">
+  <div class="row font-weight-bold mb-3">
     <div class="col">
       Total
     </div>
