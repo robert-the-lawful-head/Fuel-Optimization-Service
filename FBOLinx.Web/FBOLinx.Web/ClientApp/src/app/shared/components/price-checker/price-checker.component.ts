@@ -6,7 +6,6 @@ import 'rxjs/add/operator/debounceTime';
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
