@@ -119,6 +119,7 @@ import { NotificationComponent } from '../shared/components/notification/notific
 import { PricingExpiredNotificationComponent } from '../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 import { PricingExpiredNotificationGroupComponent } from '../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component';
 import { PriceBreakdownComponent } from '../shared/components/price-breakdown/price-breakdown.component';
+import { PriceCheckerComponent } from '../shared/components/price-checker/price-checker.component';
 import { TemporaryAddOnMarginComponent } from '../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import { StatisticsOrdersByLocationComponent } from '../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 import { StatisticsTotalAircraftComponent } from '../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
@@ -263,6 +264,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     ManageConfirmationComponent,
     NotificationComponent,
     PriceBreakdownComponent,
+    PriceCheckerComponent,
     PricingExpiredNotificationComponent,
     PricingExpiredNotificationGroupComponent,
     TemporaryAddOnMarginComponent,

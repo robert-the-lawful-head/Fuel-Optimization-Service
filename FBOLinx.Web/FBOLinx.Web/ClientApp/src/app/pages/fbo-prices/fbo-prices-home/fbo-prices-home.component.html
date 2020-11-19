@@ -364,139 +364,18 @@
         <!--Tail number price lookup-->
 
         <div class="pricing-update-board" [ngClass]="{ 'w-full': isCsr }">
-            <ni-card
-                title="Lookup Price by Tail"
-                bgColor="dead"
-                headerBgColor="dead"
-                theme="small"
-                outline="true"
-                [collapsible]="!isCsr"
-                [opened]="true"
-            >
-                <div class="d-flex justify-content-around">
-                    <div class="pr-2">
-                        <mat-form-field>
-                            <input
-                                matInput
-                                placeholder="Tail Number*"
-                                [formControl]="tailNumberForLookupControl"
-                                aria-label="Aircraft Tail Number"
-                                
-                            />
-                        </mat-form-field>
-                    </div>
-                    <div class="pr-2">
-                      <mat-form-field>
-                        <mat-label>Customer</mat-label>
-                        <mat-select placeholder="Customer" [(ngModel)]="customerForTailLookup">
-                          <mat-option *ngFor="let customer of customersForTail" [value]="customer">
-                            {{customer.company}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
-                    <div class="pr-2">
-                      <mat-form-field>
-                        <mat-label>Flight Type</mat-label>
-                        <mat-select placeholder="Flight Type" [(ngModel)]="flightTypeClassification">
-                          <mat-option *ngFor="let flightType of strictFlightTypeClassificationOptions" [value]="flightType.value">
-                            {{flightType.text}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
-                    <div class="pr-2">
-                      <mat-form-field>
-                        <mat-label>Dom. v. Int.</mat-label>
-                        <mat-select placeholder="Dom. v. Int." [(ngModel)]="departureType">
-                          <mat-option *ngFor="let departureType of strictApplicableTaxFlightOptions" [value]="departureType.value">
-                            {{departureType.text}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
-                    <div class="pt-2">
-                        <div class="text-center">
-                            <button
-                                mat-raised-button
-                                color="accent"
-                                class="mr-1 updateBtn"
-                                [disabled]="!tailNumber || !customerForTailLookup"
-                                (click)="lookupTail()"
-                            >
-                                Check Pricing
-                            </button>
-                        </div>
-                    </div>
-                </div>
+          <ni-card
+            title="Lookup Price by Tail"
+            bgColor="dead"
+            headerBgColor="dead"
+            theme="small"
+            outline="true"
+            [collapsible]="!isCsr"
+            [opened]="true">
 
-                <div *ngIf="tailLookupError" class="h6 mt-0 mb-0 text-danger pl-5">No Tail Price Found!</div>
+            <price-checker></price-checker>
 
-                <div *ngIf="tailLookupInfo && !tailLookupError">
-                  <div class="container-fluid">
-                    <div class="row">
-                      <div class="col-6">                        
-                        <div class="tailLookupInfo">
-                          <div class="h6 text-muted mt-0 mb-0">Pricing Template: </div>
-                          <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.template ? tailLookupInfo.template : 'N/A' }}</div>
-                        </div>
-                        <div class="tailLookupInfo">
-                          <div class="h6 text-muted mt-0 mb-0">Company: </div>
-                          <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.company ? tailLookupInfo.company: 'N/A' }}</div>
-                        </div>
-                        <div class="tailLookupInfo">
-                          <div class="h6 text-muted mt-0 mb-0">Make/Model: </div>
-                          <div class="h6 mt-0 mb-0">{{ tailLookupInfo?.makeModel ? tailLookupInfo.makeModel : 'N/A' }}</div>
-                        </div>
-                        <div class="tailLookupInfo">
-                          <div class="h6 text-muted mt-0 mb-0">Ramp Fee: </div>
-                          <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo?.rampFee">${{tailLookupInfo?.rampFee.price  | number: "1.2-4" }} waived at {{tailLookupInfo.rampFee.waived | number: "1.0"}} gal.</div>
-                          <div class="h6 mt-0 mb-0" *ngIf="!tailLookupInfo?.rampFee">N/A</div>
-                        </div>
-                        <div class="tailLookupInfo" *ngIf="tailLookupInfo?.rampFee">
-                          <div class="h6 text-muted mt-0 mb-0">Ramp Fee Rule: </div>
-                          <div class="h6 mt-0 mb-0" *ngIf="tailLookupInfo?.rampFee">{{tailLookupInfo.rampFee.categorizationDescription}}</div>
-                        </div>
-                      </div>
-
-                      <div class="col-6">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th class="pr-4">All-In Price</th>
-                              <th class="pr-4">Min. Gal.</th>
-                              <th class="pr-4">Max. Gal.</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr *ngFor="let price of tailLookupInfo.pricingList">
-                              <td>
-                                ${{ price.allInPrice | number: "1.4-4" }}
-                              </td>
-                              <td>
-                                {{price.minGallons | number}}
-                              </td>
-                              <td>
-                                {{price.maxGallons | number}}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                  
-                </div>
-
-                <ngx-ui-loader
-                    [loaderId]="tailLoader"
-                    bgsPosition="center-center"
-                    fgsType="fading-circle"
-                    fgsColor="#252d47"
-                    pbColor="#252d47"
-                    overlayColor="rgba(0, 0, 0, 0.06)"
-                ></ngx-ui-loader>
-            </ni-card>
+          </ni-card>
         </div>
     </div>
 </div>

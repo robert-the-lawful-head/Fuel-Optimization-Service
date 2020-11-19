@@ -89,7 +89,7 @@
     </div>
 
     <!--Fee and tax breakdown-->
-    <div class="col">
+    <div class="col" *ngIf="!hideFeeAndTaxGeneralBreakdown">
       <fee-and-tax-breakdown #feeAndTaxBreakdown
                              [feesAndTaxes]="feesAndTaxes"
                              [marginType]="domesticPrivatePricing.pricingList[0].marginType"

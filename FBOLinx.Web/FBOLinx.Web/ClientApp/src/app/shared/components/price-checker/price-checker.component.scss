@@ -1,0 +1,11 @@
+:host {
+  .tailLookupInfo {
+    display: flex;
+    align-items: center;
+    margin-left: 3rem;
+
+    & > div:first-child {
+      width: 130px;
+    }
+  }
+}

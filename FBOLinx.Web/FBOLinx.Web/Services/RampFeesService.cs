@@ -56,7 +56,7 @@ namespace FBOLinx.Web.Services
 
             List<int> aircraftIds = rampFees.Where(x => x.CategoryType == RampFees.RampFeeCategories.AircraftType).Select(x => x.CategoryMinValue.GetValueOrDefault()).ToList();
 
-            var aircraftTypes = _aircraftService.GetAllAircrafts().Where(x => aircraftIds.Any(a => a == x.AircraftId));
+            var aircraftTypes = await _aircraftService.GetAllAircraftsAsQueryable().Where(x => aircraftIds.Any(a => a == x.AircraftId)).ToListAsync();
 
             rampFees.ForEach(x => {
                 if (x.CategoryType != RampFees.RampFeeCategories.AircraftType)

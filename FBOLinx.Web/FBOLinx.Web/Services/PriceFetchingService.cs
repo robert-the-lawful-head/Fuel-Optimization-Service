@@ -26,14 +26,14 @@ namespace FBOLinx.Web.Services
 
         #region Public Methods
 
-        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId, Enums.FlightTypeClassifications flightTypeClassifications)
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId, Enums.FlightTypeClassifications flightTypeClassifications, Enums.ApplicableTaxFlights departureType = Enums.ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
         {
             List<string> airports = icao.Split(',').Select(x => x.Trim()).ToList();
             List<CustomerWithPricing> result = new List<CustomerWithPricing>();
             List<Fboairports> fboAirports = await _context.Fboairports
                                                             .Include(x => x.Fbo)
                                                             .ThenInclude(x => x.Group)
-                                                            .Where(x => airports.Any(a => a == x.Icao) && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true)
+                                                            .Where(x => airports.Any(a => a == x.Icao) && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true && (fboId == 0 || x.Fbo.Oid == fboId))
                                                             .ToListAsync();
             if (fboAirports == null)
                 return result;
@@ -58,7 +58,7 @@ namespace FBOLinx.Web.Services
                     continue;
 
                 List<CustomerWithPricing> pricing =
-                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications);
+                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
 
                 List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyAlerts.HasValue && x.Contact.CopyAlerts.Value).Select(x => x.Contact.Email).ToListAsync();
 

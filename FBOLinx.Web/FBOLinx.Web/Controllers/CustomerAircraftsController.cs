@@ -46,8 +46,9 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            var aircrafts = await _aircraftService.GetAllAircrafts();
             var customerAircrafts = await (from ca in _context.CustomerAircrafts
-                                           join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
+                                           join ac in aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
                                            from ac in leftJoinAircrafts.DefaultIfEmpty()
                                            where ca.Oid == id
                                            select new
@@ -97,7 +98,7 @@ namespace FBOLinx.Web.Controllers
             List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
                 from ca in _context.CustomerAircrafts
                 join c in _context.Customers on ca.CustomerId equals c.Oid
-                join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
+                join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
                 into acjoin from subacjoin in acjoin.DefaultIfEmpty()
                 join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
                 into leftJoinPt
@@ -142,7 +143,7 @@ namespace FBOLinx.Web.Controllers
             List<CustomerAircraftsGridViewModel> customerAircraft = await (
                 from ca in _context.CustomerAircrafts
                 join c in _context.Customers on ca.CustomerId equals c.Oid
-                join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
+                join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
                 join a in _context.AircraftPrices on ca.Oid equals a.CustomerAircraftId
                 into leftJoinAircraftPrices
                 from a in leftJoinAircraftPrices.DefaultIfEmpty()
@@ -193,7 +194,7 @@ namespace FBOLinx.Web.Controllers
                from ca in _context.CustomerAircrafts
                join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
                join c in _context.Customers on cg.CustomerId equals c.Oid
-               join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
+               join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
                into acjoin from subacjoin in acjoin.DefaultIfEmpty()
                join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
                into leftJoinPt
@@ -236,7 +237,7 @@ namespace FBOLinx.Web.Controllers
             var customerAircraftCount = (from ca in _context.CustomerAircrafts
                                          join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
                                          join c in _context.Customers on cg.CustomerId equals c.Oid
-                                         join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
+                                         join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
                                          into acjoin
                                          from subacjoin in acjoin.DefaultIfEmpty()
                                          where ca.GroupId == groupId
@@ -387,7 +388,7 @@ namespace FBOLinx.Web.Controllers
 
             foreach(var singleAircraft in customerAircrafts)
             {
-                var aircraft = _aircraftService.GetAllAircrafts().FirstOrDefault(s => s.Make == singleAircraft.AircraftMake && s.Model == singleAircraft.Model);
+                var aircraft = await _aircraftService.GetAllAircraftsAsQueryable().FirstOrDefaultAsync(s => s.Make == singleAircraft.AircraftMake && s.Model == singleAircraft.Model);
 
                 if (aircraft != null)
                 {
@@ -410,7 +411,7 @@ namespace FBOLinx.Web.Controllers
                 else
                 {
                     singleAircraft.IsImported = false;
-                    var otherOptions = _aircraftService.GetAllAircrafts().Where(s => s.Make == singleAircraft.AircraftMake).Select(s => s.Model);
+                    var otherOptions = await _aircraftService.GetAllAircraftsAsQueryable().Where(s => s.Make == singleAircraft.AircraftMake).Select(s => s.Model).ToListAsync();
 
                     if(otherOptions != null)
                     {
