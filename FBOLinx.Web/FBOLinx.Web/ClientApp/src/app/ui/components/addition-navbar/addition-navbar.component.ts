@@ -78,7 +78,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   ngOnInit() {
-    this.refresh();
+
   }
 
   ngAfterViewInit() {
@@ -214,8 +214,8 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   @HostListener('document:click', ['$event'])
   public onClick(targetElement) {
     if (
-      this.open &&
-      targetElement.target.nodeName !== 'svg' &&
+      this.open && ((targetElement.target.innerText === 'Clear') ||
+      (targetElement.target.nodeName !== 'svg' &&
       !(
         targetElement.target.className === 'ng-star-inserted' ||
         targetElement.target.offsetParent.className.lastIndexOf(
@@ -247,7 +247,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         'Distribute Pricing' ||
         targetElement.target.offsetParent.offsetParent.className ===
         'addition-navbar'
-      )
+      )))
     ) {
       if (targetElement.target.innerText !== 'Sent!') {
         this.open = !this.open;
