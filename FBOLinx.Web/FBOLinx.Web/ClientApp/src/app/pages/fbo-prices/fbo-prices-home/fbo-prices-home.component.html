@@ -8,6 +8,42 @@
                outline="true"
                theme="small"
                customStyle="min-height: 160px; padding-top: 15px; padding-bottom: 15px;">
+          <div class="row">
+              <div class="col-2"></div>
+              <div class="col-5 text-center">
+                  <div class="h5 mt-0 mb-2 text-muted">Retail</div>
+              </div>
+              <div class="col-5 text-center">
+                  <div class="h5 mt-0 mb-2 text-muted">Cost</div>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-2"></div>
+              <div class="col-5">
+                  <div *ngIf="feesAndTaxes && currentFboPriceJetARetail">
+                      <fee-and-tax-breakdown #retailFeeAndTaxBreakdown
+                                             [showLineSeparator]="true"
+                                             [feesAndTaxes]="feesAndTaxes"
+                                             [marginType]="1"
+                                             [displayMode]="2"
+                                             [fboPrice]="currentFboPriceJetARetail.price"
+                                             [validDepartureTypes]="[0,1,2,3]"
+                                             [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
+                  </div>
+              </div>
+              <div class="col-5">
+                  <div *ngIf="feesAndTaxes && currentFboPriceJetACost">
+                      <fee-and-tax-breakdown #costFeeAndTaxBreakdown
+                                             [showLineSeparator]="true"
+                                             [feesAndTaxes]="feesAndTaxes"
+                                             [marginType]="0"
+                                             [displayMode]="2"
+                                             [fboPrice]="currentFboPriceJetACost.price"
+                                             [validDepartureTypes]="[0,1,2,3]"
+                                             [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
+                  </div>
+              </div>
+          </div>
           <div *ngIf="currentPrices"
                class="row">
               <div class="col-2">
@@ -22,7 +58,6 @@
               <!--Retail Pricing Display-->
               <div class="col-5">
                   <div class="text-center">
-                      <div class="h5 mt-0 mb-2 text-muted">Retail</div>
                       <h4 *ngIf="jetARetailExists()"
                           class="mt-0 mb-1">
                           ${{ currentFboPriceJetARetail.price | number: "1.4-4" }}
@@ -49,7 +84,6 @@
               <!--Cost Pricing Display-->
               <div class="col-5">
                   <div class="text-center">
-                      <div class="h5 mt-0 mb-2 text-muted">Cost</div>
                       <h4 *ngIf="jetACostExists()"
                           class="mt-0 mb-1">
                           ${{ currentFboPriceJetACost.price | number: "1.4-4" }}

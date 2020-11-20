@@ -3,7 +3,8 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 
 export enum FeeAndTaxBreakdownDisplayModes {
   PriceTaxBreakdown = 0,
-  CustomerOmitting = 1
+    CustomerOmitting = 1,
+    PricingPanel = 2
 }
 
 @Component({
@@ -20,7 +21,6 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     customerMargin: number;
     @Input()
     showLineSeparator: boolean = false;
-
     @Input()
     displayMode: FeeAndTaxBreakdownDisplayModes = FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
     @Input()
