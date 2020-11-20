@@ -84,21 +84,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   ngAfterViewInit() {
     this.sharedService.currentMessage.subscribe((message) => {
       this.message = message;
-      this.pricingTemplatesService
-        .getByFbo(
-          this.sharedService.currentUser.fboId,
-          this.sharedService.currentUser.groupId
-        )
-        .subscribe((data: any) => {
-          this.pricingTemplatesData = [];
-          if (data) {
-            this.pricingTemplatesData = data;
-          }
-          this.marginTemplateDataSource = new MatTableDataSource(
-            this.pricingTemplatesData
-          );
-          this.resultsLength = this.pricingTemplatesData.length;
-        });
     });
   }
 
@@ -160,13 +145,32 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   public openNavbar(event) {
     event.preventDefault();
 
+    if (!this.open) {
+      this.pricingTemplatesData = [];
+
+      this.pricingTemplatesService
+        .getByFbo(
+          this.sharedService.currentUser.fboId,
+          this.sharedService.currentUser.groupId
+        )
+        .subscribe((data: any) => {
+          if (data) {
+            this.pricingTemplatesData = data;
+          }
+          this.marginTemplateDataSource = new MatTableDataSource(
+            this.pricingTemplatesData
+          );
+          this.resultsLength = this.pricingTemplatesData.length;
+        });
+    }
+
     this.open = !this.open;
   }
 
-  public OpenMarginInfo(event) {
+  public OpenMarginInfo(templateId) {
     this.pricesExpired = false;
     this.filteredTemplate = this.pricingTemplatesData.find(
-      ({ oid }) => oid === event
+      ({ oid }) => oid === templateId
     );
 
     this.checkExpiredPrices(this.filteredTemplate);
