@@ -74,6 +74,7 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<RequestPricingTracker> RequestPricingTracker { get; set; }
         public virtual DbSet<RefreshTokens> RefreshTokens { get; set; }
         public virtual DbSet<FboFeesAndTaxes> FbofeesAndTaxes { get; set; }
+        public virtual DbSet<FboFeeAndTaxOmitsByCustomer> FboFeeAndTaxOmitsByCustomer { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -885,6 +886,8 @@ namespace FBOLinx.Web.Data
             {
                 entity.Property(e => e.Name).IsUnicode(false);
             });
+
+            modelBuilder.Entity<FboFeeAndTaxOmitsByCustomer>(entity => { entity.HasKey(e => e.Oid); });
         }
     }
 }

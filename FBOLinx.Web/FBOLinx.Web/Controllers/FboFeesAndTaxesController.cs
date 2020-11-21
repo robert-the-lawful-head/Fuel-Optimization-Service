@@ -51,6 +51,15 @@ namespace FBOLinx.Web.Controllers
             return Ok(fboFeesandTaxes);
         }
 
+        // GET api/<controller>/fbo/5
+        [HttpGet("fbo/{fboId}/customer/{customerId}")]
+        public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndCustomer([FromRoute] int fboId, [FromRoute] int customerId)
+        {
+            var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).Include(x => x.OmitsByCustomer.Where(o => o.CustomerId == customerId)).ToListAsync();
+            //var result = await _context.FboFeeAndTaxOmitsByCustomer.FirstOrDefaultAsync(x => x.Oid == id);
+            return Ok(result);
+        }
+
         // PUT: api/FboFeesAndTaxes/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFboFeesAndTaxes(int id, FboFeesAndTaxes fboFeesAndTaxes)

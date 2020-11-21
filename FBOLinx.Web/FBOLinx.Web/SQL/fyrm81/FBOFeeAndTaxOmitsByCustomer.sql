@@ -1,0 +1,21 @@
+
+
+/****** Object:  Table [dbo].[FBOFeeAndTaxOmitsByCustomer]    Script Date: 11/19/2020 5:26:23 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[FBOFeeAndTaxOmitsByCustomer](
+	[OID] [int] IDENTITY(1,1) NOT NULL,
+	[FBOFeeAndTaxID] [int] NOT NULL,
+	[CustomerID] [int] NOT NULL,
+ CONSTRAINT [PK_FBOFeeAndTaxOmitsByCustomer] PRIMARY KEY CLUSTERED 
+(
+	[OID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
