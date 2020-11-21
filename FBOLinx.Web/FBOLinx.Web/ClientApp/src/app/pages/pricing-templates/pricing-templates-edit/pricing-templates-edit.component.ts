@@ -132,6 +132,9 @@ export class PricingTemplatesEditComponent implements OnInit {
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
                 this.canSave = true;
+                if (!this.isSaving) {
+                    this.savePricingTemplate();
+                }
             });
 
             //Margin type change event
