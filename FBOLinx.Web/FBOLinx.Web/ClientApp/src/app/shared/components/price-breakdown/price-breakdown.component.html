@@ -1,7 +1,20 @@
 <div class="container-fluid">
   <div class="row" *ngIf="domesticPrivatePricing">
+    <!--Fee and tax breakdown-->
+    <div class="col" *ngIf="!hideFeeAndTaxGeneralBreakdown">
+      <fee-and-tax-breakdown #feeAndTaxBreakdown
+                             [feesAndTaxes]="feesAndTaxes"
+                             [marginType]="domesticPrivatePricing.pricingList[0].marginType"
+                             [customerMargin]="domesticPrivatePricing.pricingList[0].customerMarginAmount"
+                             [displayMode]="0"
+                             [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
+                             [validDepartureTypes]="[0,1,3]"
+                             [validFlightTypes]="[0,1,3]"
+                             (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
+    </div>
+
     <!--Price breakdown-->
-    <div class="col">
+    <div class="col" *ngIf="!hidePriceTierBreakdown">
       <div class="container-fluid">
         <div class="row">
           <div class="col">
@@ -140,18 +153,7 @@
       </div>
     </div>
 
-    <!--Fee and tax breakdown-->
-    <div class="col" *ngIf="!hideFeeAndTaxGeneralBreakdown">
-      <fee-and-tax-breakdown #feeAndTaxBreakdown
-                             [feesAndTaxes]="feesAndTaxes"
-                             [marginType]="domesticPrivatePricing.pricingList[0].marginType"
-                             [customerMargin]="domesticPrivatePricing.pricingList[0].customerMarginAmount"
-                             [displayMode]="0"
-                             [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
-                             [validDepartureTypes]="[0,1,3]"
-                             [validFlightTypes]="[0,1,3]"
-                             (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
-    </div>
+
   </div>
 
   <div>
@@ -182,57 +184,3 @@
   </div>
   
 </popover-content>
-
-<!--Domestic/Commercial Popover-->
-<!--<popover-content #domesticCommercialPopover
-                 title="Fee/Tax Breakdown"
-                 placement="right"
-                 [closeOnMouseOutside]="true">
-  <div *ngIf="domesticCommercialPricing">
-    <fee-and-tax-breakdown #domesticCommercialFeeAndTaxBreakdown [feesAndTaxes]="feesAndTaxes"
-                           [marginType]="domesticCommercialPricing.pricingList[0].marginType"
-                           [customerMargin]="activeHoverPriceItem.customerMarginAmount"
-                           [displayMode]="0"
-                           [fboPrice]="domesticCommercialPricing.pricingList[0].fboPrice"
-                           [validDepartureTypes]="[0,1,3]"
-                           [validFlightTypes]="[0,2,3]"
-                           (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
-  </div>
-  
-</popover-content>-->
-
-<!--International/Private Popover-->
-<!--<popover-content #internationalPrivatePopover
-                 title="Fee/Tax Breakdown"
-                 placement="right"
-                 [closeOnMouseOutside]="true">
-  <div *ngIf="internationalPrivatePricing">
-    <fee-and-tax-breakdown #internationalPrivateFeeAndTaxBreakdown [feesAndTaxes]="feesAndTaxes"
-                           [marginType]="internationalPrivatePricing.pricingList[0].marginType"
-                           [customerMargin]="activeHoverPriceItem.customerMarginAmount"
-                           [displayMode]="0"
-                           [fboPrice]="internationalPrivatePricing.pricingList[0].fboPrice"
-                           [validDepartureTypes]="[0,2,3]"
-                           [validFlightTypes]="[0,1,3]"
-                           (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
-  </div>
-  
-</popover-content>-->
-
-<!--International/Commercial Popover-->
-<!--<popover-content #internationalCommercialPopover
-                 title="Fee/Tax Breakdown"
-                 placement="right"
-                 [closeOnMouseOutside]="true">
-  <div *ngIf="internationalCommercialPricing">
-    <fee-and-tax-breakdown #internationalCommercialFeeAndTaxBreakdown [feesAndTaxes]="feesAndTaxes"
-                           [marginType]="internationalCommercialPricing.pricingList[0].marginType"
-                           [customerMargin]="activeHoverPriceItem.customerMarginAmount"
-                           [displayMode]="0"
-                           [fboPrice]="internationalCommercialPricing.pricingList[0].fboPrice"
-                           [validDepartureTypes]="[0,2,3]"
-                           [validFlightTypes]="[0,2,3]"
-                           (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
-  </div>
-  
-</popover-content>-->

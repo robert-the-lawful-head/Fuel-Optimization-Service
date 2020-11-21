@@ -21,41 +21,55 @@
                 <div *ngIf="!item.sub; then simple; else sub"></div>
 
                 <ng-template #simple>
-                    <a
-                        href="#"
-                        class="item-link"
-                        routerLink="{{ item.routing }}"
-                        (click)="toggle($event, item, this)"
-                    >
-                        <span *ngIf="isHidden(item) != true" class="text">{{
+                    <a *ngIf="item.routing"
+                       href="#"
+                       class="item-link"
+                       routerLink="{{ item.routing }}"
+                       (click)="toggle($event, item, this)">
+                        <span *ngIf="isHidden(item) != true" class="text">
+                            {{
                             item.title
-                        }}</span>
+                            }}
+                        </span>
 
-                        <span
-                            class="item-badge"
-                            *ngIf="item.badge && item.badge.text"
-                            [ngStyle]="getStyles(item.badge)"
-                            >{{ item.badge.text }}</span
-                        >
+                        <span class="item-badge"
+                              *ngIf="item.badge && item.badge.text"
+                              [ngStyle]="getStyles(item.badge)">{{ item.badge.text }}</span>
 
                         <span class="icon">
-                            <i
-                                class="icon-wrap {{ item.icon.class }}"
-                                *ngIf="item.icon && item.icon.class"
-                                [ngStyle]="getStyles(item.icon)"
-                            ></i>
+                            <i class="icon-wrap {{ item.icon.class }}"
+                               *ngIf="item.icon && item.icon.class"
+                               [ngStyle]="getStyles(item.icon)"></i>
                         </span>
                     </a>
-                    <button
-                        *ngIf="isHidden(item) != true"
-                        class="tooltip-button"
-                        #tooltip="ngbPopover"
-                        [popoverTitle]="item.title"
-                        [ngbPopover]="tooltipContent"
-                        triggers="manual"
-                        placement="right"
-                        (hidden)="tooltipHidden()"
-                    ></button>
+                    <a *ngIf="item.href"
+                       href="{{ item.href}}"
+                       class="item-link"
+                       target="{{item.target}}">
+                        <span *ngIf="isHidden(item) != true" class="text">
+                            {{
+                            item.title
+                            }}
+                        </span>
+
+                        <span class="item-badge"
+                              *ngIf="item.badge && item.badge.text"
+                              [ngStyle]="getStyles(item.badge)">{{ item.badge.text }}</span>
+
+                        <span class="icon">
+                            <i class="icon-wrap {{ item.icon.class }}"
+                               *ngIf="item.icon && item.icon.class"
+                               [ngStyle]="getStyles(item.icon)"></i>
+                        </span>
+                    </a>
+                    <button *ngIf="isHidden(item) != true"
+                            class="tooltip-button"
+                            #tooltip="ngbPopover"
+                            [popoverTitle]="item.title"
+                            [ngbPopover]="tooltipContent"
+                            triggers="manual"
+                            placement="right"
+                            (hidden)="tooltipHidden()"></button>
                     <ng-template #tooltipContent>
                         {{ item.tooltip }}
                         <div class="popover-actions">

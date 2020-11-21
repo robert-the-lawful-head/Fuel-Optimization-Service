@@ -115,6 +115,10 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     this.deletedFeesAndTaxes.push(feeAndTax);
     this.requiresSaving = true;
     this.prepareDataSource();
+    if (this.priceBreakdownPreview) {
+      this.priceBreakdownPreview.feesAndTaxes = this.data;
+      this.priceBreakdownPreview.performRecalculation();
+    }
   }
 
   public feeAndTaxAdded(): void {
@@ -140,7 +144,12 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
   }
 
   public feeValueChanged(feeAndTax, value) {
-    feeAndTax.value = value;
+    try {
+        feeAndTax.value = parseFloat(value);
+    } catch (e) {
+        feeAndTax.value = 0;
+    }
+    
     this.feeAndTaxChanged(feeAndTax);
   }
 

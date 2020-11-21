@@ -7,6 +7,7 @@ import {
   QueryList,
   HostListener,
   Input,
+  ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -14,6 +15,7 @@ import { Observable } from 'rxjs';
 import * as moment from 'moment';
 
 // Services
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
@@ -24,6 +26,7 @@ import { SharedService } from '../../../layouts/shared-service';
 // Components
 import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
 import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
+import { FeeAndTaxBreakdownComponent } from '../../../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 
 import * as SharedEvents from '../../../models/sharedEvents';
 
@@ -66,6 +69,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
   currentPricingEffectiveFrom = new Date();
   currentPricingEffectiveTo: any;
   pricingTemplates: any[];
+  public feesAndTaxes: Array<any>;
   jtCost: any;
   jtRetail: any;
   isLoadingRetail = false;
@@ -102,7 +106,11 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
   layoutChanged: boolean;
 
+  @ViewChild('retailFeeAndTaxBreakdown') private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+  @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+
   constructor(
+      private feesAndTaxesService: FbofeesandtaxesService,
     private fboPricesService: FbopricesService,
     private pricingTemplateService: PricingtemplatesService,
     private sharedService: SharedService,
@@ -160,6 +168,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     this.loadFboPrices().subscribe(() => {
       this.NgxUiLoader.stopLoader(this.pricingLoader);
     });
+    this.loadFeesAndTaxes();
     this.checkDefaultTemplate();
   }
 
@@ -323,6 +332,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     dialogRef
       .afterClosed()
       .subscribe((result) => {
+          this.loadFeesAndTaxes();
         if (!result) {
           return;
         }
@@ -457,6 +467,20 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
       tooltipsArr[this.tooltipIndex].open();
       this.tooltipIndex--;
     }, 400);
+  }
+
+  private loadFeesAndTaxes() {
+      this.feesAndTaxesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((response: any) => {
+        this.feesAndTaxes = response;
+        if (this.retailFeeAndTaxBreakdown) {
+            this.retailFeeAndTaxBreakdown.feesAndTaxes = this.feesAndTaxes;
+          this.retailFeeAndTaxBreakdown.performRecalculation();
+        }
+        if (this.costFeeAndTaxBreakdown) {
+            this.costFeeAndTaxBreakdown.feesAndTaxes = this.feesAndTaxes;
+            this.costFeeAndTaxBreakdown.performRecalculation();
+        }
+      });
   }
 
   @HostListener('window:resize', ['$event'])
