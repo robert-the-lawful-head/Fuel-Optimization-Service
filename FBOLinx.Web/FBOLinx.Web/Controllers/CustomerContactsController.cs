@@ -134,11 +134,11 @@ namespace FBOLinx.Web.Controllers
                              join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
                              join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                              join co in _context.Contacts on custc.ContactId equals co.Oid
-                             join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
+                             join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
                              where cg.Active.GetValueOrDefault()
                                  && cg.Active.GetValueOrDefault()
                                    && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
-                                   && cibg.CopyAlerts.GetValueOrDefault()
+                                   && cibg.CopyAlerts.GetValueOrDefault() == true
                                    && !string.IsNullOrEmpty(cibg.Email)
                              select co).Count();
 
