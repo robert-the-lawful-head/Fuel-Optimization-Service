@@ -154,6 +154,10 @@ export class CustomersEditComponent implements OnInit {
                 this.customerCompanyTypeChanged();
             }
         });
+        this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe(() => {
+            this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
+            this.priceBreakdownPreview.performRecalculation();
+        });
 
         this.loadCustomerFeesAndTaxes();
     }

@@ -34,7 +34,7 @@
                 <div class="col">
                   <mat-form-field>
                     <mat-label>Tail Number</mat-label>
-                    <mat-select placeholder="Customer" [(ngModel)]="tailNumberForCustomerLookup" [disabled]="!customerForCustomerLookup">
+                    <mat-select placeholder="Customer" [(ngModel)]="tailNumberForCustomerLookup" (selectionChange)="customerForLookupTailChanged()" [disabled]="!customerForCustomerLookup">
                       <mat-option *ngFor="let aircraft of aircraftForCustomer" [value]="aircraft.tailNumber">
                         {{aircraft.tailNumber}}
                       </mat-option>
@@ -60,7 +60,7 @@
                 <div class="col">
                   <mat-form-field>
                     <mat-label>Customer</mat-label>
-                    <mat-select placeholder="Customer" [(ngModel)]="customerForTailLookup" [disabled]="!customerForTailLookup || !customersForTail">
+                    <mat-select placeholder="Customer" [(ngModel)]="customerForTailLookup" (selectionChange)="tailNumberLookupCustomerChanged()" [disabled]="!customerForTailLookup || !customersForTail">
                       <mat-option *ngFor="let customer of customersForTail" [value]="customer">
                         {{customer.company}}
                       </mat-option>
@@ -75,7 +75,7 @@
       </div>
 
       <!--"Check Pricing" button column-->
-      <div class="col-2 mt-5">
+      <!--<div class="col-2 mt-5">
         <div class="text-center">
           <button mat-raised-button
                   color="accent"
@@ -84,7 +84,7 @@
             Check Pricing
           </button>
         </div>
-      </div>
+      </div>-->
 
       <!--Pricing template/company information-->
       <div class="col">

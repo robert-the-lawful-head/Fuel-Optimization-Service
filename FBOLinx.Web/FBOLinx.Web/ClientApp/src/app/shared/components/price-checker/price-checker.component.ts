@@ -96,6 +96,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
                             this.customersForTail = response;
                             if (this.customersForTail.length > 0) {
                                 this.customerForTailLookup = this.customersForTail[0];
+                                this.lookupPricing();
                             }
                         });
             });
@@ -126,29 +127,37 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
             this.aircraftForCustomer = response;
             if (this.aircraftForCustomer.length > 0) {
                 this.tailNumberForCustomerLookup = this.aircraftForCustomer[0].tailNumber;
+                this.lookupPricing();
             }
         });
     }
 
     public lookupPricing() {
-        this.sampleCalculation = {
-            pricingTemplateId: this.getPricingTemplateId(),
-            tailNumber: this.getTailNumber(),
-            customerInfoByGroupId: this.getCustomerInfoByGroupId()
-        };
+        let pricingTemplateId = this.getPricingTemplateId();
+        let tailNumber = this.getTailNumber();
+        let customerInfoByGroupId = this.getCustomerInfoByGroupId();
 
-        var self = this;
-        setTimeout(function() {
-            if (self.priceBreakdownPreview) {
-                self.priceBreakdownPreview.performRecalculation();
-            }
-        });
+        if (pricingTemplateId > 0 || (tailNumber != '' && customerInfoByGroupId > 0)) {
+            this.sampleCalculation = {
+                pricingTemplateId: pricingTemplateId,
+                tailNumber: tailNumber,
+                customerInfoByGroupId: customerInfoByGroupId
+            };
+            var self = this;
+            setTimeout(function() {
+                if (self.priceBreakdownPreview) {
+                    self.priceBreakdownPreview.performRecalculation();
+                }
+            });
+        }
     }
 
     public onTabChanged(event: any): void {
         this.priceCheckerLookupType = event.index;
         this.hasChangedTabsSinceCalculation = true;
         this.priceLookupInfo = null;
+        this.sampleCalculation = null;
+        this.lookupPricing();
     }
 
     public priceBreakdownCalculationsCompleted(calculationResults: any[]): void {
@@ -160,6 +169,14 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
             this.priceLookupInfo = calculationResults[0];
         }
         this.hasChangedTabsSinceCalculation = false;
+    }
+
+    public customerForLookupTailChanged(): void {
+        this.lookupPricing();
+    }
+
+    public tailNumberLookupCustomerChanged(): void {
+        this.lookupPricing();
     }
 
     // Private Methods
