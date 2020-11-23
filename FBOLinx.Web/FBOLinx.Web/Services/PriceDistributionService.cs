@@ -432,40 +432,25 @@ namespace FBOLinx.Web.Services
         private async Task<string> GetPriceBreakdownHTML(Models.CustomerInfoByGroup customer, Models.PricingTemplate pricingTemplate)
         {
             PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-            var privatePricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private );
-            var commercialPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial);
-            
-            List<DTO.CustomerWithPricing> priceResults = new List<DTO.CustomerWithPricing>();
-            priceResults.AddRange(privatePricingResults);
-            priceResults.AddRange(commercialPricingResults);
+            var commercialInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.InternationalOnly);
+            var privateInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.DomesticOnly);
+            var commercialDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.InternationalOnly);
+            var privateDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.DomesticOnly);
 
-            priceResults = priceResults.GroupBy(s => s.MinGallons).Select(s => s.Last()).ToList();
+            commercialInternationalPricingResults = commercialInternationalPricingResults.OrderBy(s => s.MinGallons).ToList();
 
-            //string priceBreakdownTemplate = GetPriceBreakdownTemplate().Replace("%PRICING_TEMPLATE_NAME%", pricingTemplate.Name).Replace("%PRICING_TEMPLATE_NOTES%", pricingTemplate.Notes);
-            //string priceBreakdownTemplate = GetPriceBreakdownTemplate().Replace("%PRICING_TEMPLATE_NAME%", pricingTemplate.Name).Replace("%PRICING_TEMPLATE_NOTES%", "");
             string priceBreakdownTemplate = GetPriceBreakdownTemplate();
             string rowHTMLTemplate = GetPriceBreakdownRowTemplate();
             StringBuilder rowsHTML = new StringBuilder();
             int loopIndex = 0;
-            foreach (DTO.CustomerWithPricing model in priceResults)
+            foreach (DTO.CustomerWithPricing model in commercialInternationalPricingResults)
             {
                 string row = rowHTMLTemplate;
 
-                //if(model.MinGallons > 999)
-                //{
-                //    string output = Convert.ToDouble(model.MaxGallons).ToString("#,##", CultureInfo.InvariantCulture);
-                //    row = row.Replace("%MIN_GALLON%", output);
-                //}
-                //else
-                //{
-                //    row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
-                //}
-                //row =  row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
-
-                if ((loopIndex + 1) < priceResults.Count)
+                if ((loopIndex + 1) < commercialInternationalPricingResults.Count)
                 {
                     row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
-                    var next = priceResults[loopIndex + 1];
+                    var next = commercialInternationalPricingResults[loopIndex + 1];
                     Double maxValue = Convert.ToDouble(next.MinGallons) - 1;
 
                     if(maxValue > 999)
@@ -477,35 +462,21 @@ namespace FBOLinx.Web.Services
                     {
                         row = row.Replace("%MAX_GALLON%", maxValue.ToString());
                     }
-
-                    //row = row.Replace("%MAX_GALLON%", maxValue.ToString());
                 }
                 else
                 {
-                    //if(model.MaxGallons > 999)
-                    //{
-                    //    string output = Convert.ToDouble(model.MaxGallons).ToString("#,##", CultureInfo.InvariantCulture);
-                    //    row = row.Replace("%MAX_GALLON%", output);
-                    //}
-                    //else
-                    //{
-                    //    row = row.Replace("%MAX_GALLON%", model.MaxGallons.GetValueOrDefault().ToString());
-                    //}
                     string output = Convert.ToDouble(model.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
 
                     output = output + "+";
-                    //row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
                     row = row.Replace("%MIN_GALLON%", output);
                     row = row.Replace("%MAX_GALLON%", "");
                     row = row.Replace("-", "");
                 }
-                    
-                //row = row.Replace("%MAX_GALLON%", model.MaxGallons.GetValueOrDefault().ToString());
-                //row = row.Replace("%ITP%",
-                //    String.Format("{0:C}",
-                //        (model.CustomerMarginAmount.GetValueOrDefault() + model.FboFeeAmount.GetValueOrDefault())));
-                row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice)));
-                row = row.Replace("%PRODUCT_TYPE%", model.Product);
+                   
+                row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", (model.AllInPrice)));
+                row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", (privateInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice))));
+                row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", (commercialDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice))));
+                row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", (privateDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice))));
                 rowsHTML.Append(row);
                 loopIndex++;
             }
