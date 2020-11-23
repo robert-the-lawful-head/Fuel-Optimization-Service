@@ -23,6 +23,17 @@ namespace FBOLinx.Web
         public FBOLinx.Web.Enums.ApplicableTaxFlights? DepartureType { get; set; }
         public FBOLinx.Web.Enums.FeeCalculationApplyingTypes? WhenToApply { get; set; }
 
+        [NotMapped]
+        public bool IsOmitted
+        {
+            get
+            {
+                if (OmitsByCustomer == null || OmitsByCustomer.Count == 0)
+                    return false;
+                return true;
+            }
+        }
+
         #region Relationships
         [InverseProperty("FboFeeAndTax")]
         public List<FboFeeAndTaxOmitsByCustomer> OmitsByCustomer { get; set; }

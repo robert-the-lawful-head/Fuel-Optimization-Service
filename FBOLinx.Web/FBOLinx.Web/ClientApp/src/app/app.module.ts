@@ -71,7 +71,7 @@ import { EmailcontentService } from './services/emailcontent.service';
 import { FboairportsService } from './services/fboairports.service';
 import { FbocontactsService } from './services/fbocontacts.service';
 import { FbofeesandtaxesService } from './services/fbofeesandtaxes.service';
-import { FbofeeandtaxomitsbycompanyService } from './services/fbofeeandtaxomitsbycustomer.service';
+import { FbofeeandtaxomitsbycustomerService } from './services/fbofeeandtaxomitsbycustomer.service';
 import { FbofeesService } from './services/fbofees.service';
 import { FbopreferencesService } from './services/fbopreferences.service';
 import { FbopricesService } from './services/fboprices.service';
@@ -173,7 +173,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     FboairportsService,
       FbocontactsService,
       FbofeesandtaxesService,
-    FbofeeandtaxomitsbycompanyService,
+    FbofeeandtaxomitsbycustomerService,
     FbofeesService,
     FbopreferencesService,
     FbopricesService,

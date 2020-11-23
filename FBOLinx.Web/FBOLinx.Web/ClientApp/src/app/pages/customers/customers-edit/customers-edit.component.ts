@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup} from '@angular/forms';
@@ -14,13 +14,16 @@ import {ContactsService} from '../../../services/contacts.service';
 import {CustomerinfobygroupService} from '../../../services/customerinfobygroup.service';
 import {CustomerCompanyTypesService} from '../../../services/customer-company-types.service';
 import {CustomercontactsService} from '../../../services/customercontacts.service';
-import {CustomersviewedbyfboService} from '../../../services/customersviewedbyfbo.service';
+import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
+import { FbofeeandtaxomitsbycustomerService } from '../../../services/fbofeeandtaxomitsbycustomer.service';
 import {PricingtemplatesService} from '../../../services/pricingtemplates.service';
 import {SharedService} from '../../../layouts/shared-service';
 
 // Components
 import {CustomerCompanyTypeDialogComponent} from '../customer-company-type-dialog/customer-company-type-dialog.component';
-import {ContactsDialogNewContactComponent} from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
+import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
+import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -60,6 +63,10 @@ export class CustomersEditComponent implements OnInit {
     hasContactForPriceDistribution = false;
     customerForm: FormGroup;
     canSave: boolean;
+    public feesAndTaxes: Array<any>;
+
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -76,7 +83,10 @@ export class CustomersEditComponent implements OnInit {
         private customerCompanyTypesService: CustomerCompanyTypesService,
         private customersViewedByFboService: CustomersviewedbyfboService,
         private dialog: MatDialog,
-        private newContactDialog: MatDialog
+        private newContactDialog: MatDialog,
+        private fboFeesAndTaxesService: FbofeesandtaxesService,
+        private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService
+
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
@@ -144,6 +154,8 @@ export class CustomersEditComponent implements OnInit {
                 this.customerCompanyTypeChanged();
             }
         });
+
+        this.loadCustomerFeesAndTaxes();
     }
 
     // Methods
@@ -343,6 +355,34 @@ export class CustomersEditComponent implements OnInit {
         }
     }
 
+    public omitFeeAndTaxCheckChanged(feeAndTax: any): void {
+        if (!feeAndTax.omitsByCustomer) {
+            feeAndTax.omitsByCustomer = [];
+        }
+        let omitRecord: any = {
+            oid: 0,
+            fboFeeAndTaxId: feeAndTax.oid,
+            customerId: this.customerInfoByGroup.customerId
+        };
+        if (feeAndTax.omitsByCustomer.length > 0) {
+            omitRecord = feeAndTax.omitsByCustomer[0];
+        } else {
+            feeAndTax.omitsByCustomer.push(omitRecord);
+        }
+        omitRecord.fboFeeAndTaxId = feeAndTax.oid;
+        if (feeAndTax.isOmitted) {
+            this.fboFeeAndTaxOmitsbyCustomerService.add(omitRecord).subscribe((response: any) => {
+                omitRecord.oid = response.oid;
+                this.priceBreakdownPreview.performRecalculation();
+            });
+        } else {
+            this.fboFeeAndTaxOmitsbyCustomerService.remove(omitRecord).subscribe((response: any) => {
+                feeAndTax.omitsByCustomer = [];
+                this.priceBreakdownPreview.performRecalculation();
+            });
+        }
+    }
+
     // Private Methods
     private loadCustomerContacts() {
         this.contactInfoByGroupsService
@@ -395,5 +435,13 @@ export class CustomersEditComponent implements OnInit {
         } else {
             this.loadCustomerContacts();
         }
+    }
+
+    private loadCustomerFeesAndTaxes(): void {
+        this.fboFeesAndTaxesService
+            .getByFboAndCustomer(this.sharedService.currentUser.fboId, this.customerInfoByGroup.customerId).subscribe(
+                (response: any[]) => {
+                    this.feesAndTaxes = response;
+                });
     }
 }

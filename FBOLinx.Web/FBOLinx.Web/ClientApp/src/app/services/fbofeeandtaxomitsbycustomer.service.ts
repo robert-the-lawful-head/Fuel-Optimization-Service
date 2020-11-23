@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
-export class FbofeeandtaxomitsbycompanyService {
+export class FbofeeandtaxomitsbycustomerService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
 
@@ -10,7 +10,7 @@ export class FbofeeandtaxomitsbycompanyService {
         this.headers = new HttpHeaders({
             'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + 'api/fbofeeandtaxomitsbycustomer';
+        this.accessPointUrl = baseUrl + 'api/FboFeeAndTaxOmitsByCustomer';
     }
 
     public getById(id) {

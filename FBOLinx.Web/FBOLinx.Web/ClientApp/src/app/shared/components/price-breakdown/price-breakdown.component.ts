@@ -9,6 +9,7 @@ import { FeeAndTaxBreakdownComponent } from '../fee-and-tax-breakdown/fee-and-ta
 
 import { forkJoin } from 'rxjs';
 import { Observable } from 'rxjs';
+import { FeeAndTaxBreakdownDisplayModes } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 
 
 export enum PriceBreakdownDisplayTypes {
@@ -37,6 +38,8 @@ export class PriceBreakdownComponent implements OnInit {
     hideFeeAndTaxGeneralBreakdown: boolean = false;
     @Input()
     hidePriceTierBreakdown: boolean = false;
+    @Input()
+    feeAndTaxDisplayMode: FeeAndTaxBreakdownDisplayModes = FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
     @Output()
     omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output()
@@ -55,6 +58,8 @@ export class PriceBreakdownComponent implements OnInit {
     public activeHoverPriceItem: any = {};
     public activeHoverDeparturetypes: Array<number> = [];
     public activeHoverFlightTypes: Array<number> = [];
+    public defaultValidDepartureTypes: Array<number> = [0,1,3];
+    public defaultValidFlightTypes: Array<number> = [0,1,3];
 
     @ViewChild('feeAndTaxBreakdown')
     private feeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
@@ -70,6 +75,7 @@ export class PriceBreakdownComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.prepareDefaultSettings();
         this.performCalculations();
     }
 
@@ -94,6 +100,13 @@ export class PriceBreakdownComponent implements OnInit {
     }
 
     // Private Methods
+    private prepareDefaultSettings(): void {
+        if (this.feeAndTaxDisplayMode == FeeAndTaxBreakdownDisplayModes.CustomerOmitting) {
+            this.defaultValidDepartureTypes = [0, 1, 2, 3];
+            this.defaultValidFlightTypes = [0, 1, 2, 3];
+        }
+    }
+
     private performCalculations(): void {
         this.NgxUiLoader.startLoader(this.priceBreakdownLoader);
         if (!this.feesAndTaxes) {

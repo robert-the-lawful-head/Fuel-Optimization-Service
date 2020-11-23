@@ -28,7 +28,7 @@
             <span *ngIf="marginType == 1">Applied</span>
         </div>
         <div class="col" *ngIf="displayMode == 1">
-            <input type="checkbox" (click)="omitChanged(aboveLineTax)"/>
+            <mat-checkbox type="checkbox" (change)="omitChanged(aboveLineTax)" [(ngModel)]="aboveLineTax.isOmitted"></mat-checkbox>
         </div>
     </div>
 
@@ -89,7 +89,7 @@
             <span>${{ belowLineTax.amount | number: "1.4-4" }}</span>
         </div>
         <div class="col" *ngIf="displayMode == 1">
-            <input type="checkbox" (click)="omitChanged(belowLineTax)"/>
+            <mat-checkbox type="checkbox" (change)="omitChanged(belowLineTax)" [(ngModel)]="belowLineTax.isOmitted"></mat-checkbox>
         </div>
     </div>
 

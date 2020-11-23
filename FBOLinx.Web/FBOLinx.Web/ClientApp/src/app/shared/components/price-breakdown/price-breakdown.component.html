@@ -6,10 +6,10 @@
                              [feesAndTaxes]="feesAndTaxes"
                              [marginType]="domesticPrivatePricing.pricingList[0].marginType"
                              [customerMargin]="domesticPrivatePricing.pricingList[0].customerMarginAmount"
-                             [displayMode]="0"
+                             [displayMode]="feeAndTaxDisplayMode"
                              [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
-                             [validDepartureTypes]="[0,1,3]"
-                             [validFlightTypes]="[0,1,3]"
+                             [validDepartureTypes]="defaultValidDepartureTypes"
+                             [validFlightTypes]="defaultValidFlightTypes"
                              (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
     </div>
 
@@ -170,7 +170,7 @@
 <!--Domestic/Private Popover-->
 <popover-content #feeAndTaxPopover
                  title="Fee/Tax Breakdown"
-                 placement="top-right"
+                 placement="left"
                  [closeOnMouseOutside]="true">
   <div *ngIf="activeHoverPriceItem">
     <fee-and-tax-breakdown #dynamicFeeAndTaxBreakdown [feesAndTaxes]="feesAndTaxes"
