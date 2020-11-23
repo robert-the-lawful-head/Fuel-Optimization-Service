@@ -675,12 +675,6 @@ namespace FBOLinx.Web.Controllers
 
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
-                var customerNeedsAttentionReasons = new List<string> {
-                    "Customer was assigned to the default template and has not been changed yet.",
-                    "The ITP Margin Template for this customer was deleted and the customer has been assigned to the default template.",
-                    "This FuelerLinx customer was added and set to your default pricing.  Please set to the appropriate pricing template.",
-                };
-
                 List<CustomersGridViewModel> customerGridVM = await (
                                                     from cg in _context.CustomerInfoByGroup
                                                     join c in _context.Customers on cg.CustomerId equals c.Oid
@@ -739,8 +733,8 @@ namespace FBOLinx.Web.Controllers
                                                         FleetSize = ca == null ? 0 : ca.Count,
                                                         AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
                                                         PricingTemplateId = pt.Oid,
-                                                        cg.PricingTemplateRemoved,
-                                                        NeedsAttention = cna != null
+                                                        NeedsAttention = cna != null,
+                                                        NeedsAttentionReason = cna == null ? null : cna.NeedsAttentionReason,
                                                     }
                                                     into resultsGroup
                                                     select new CustomersGridViewModel()
@@ -759,16 +753,13 @@ namespace FBOLinx.Web.Controllers
                                                         PricingTemplateId = resultsGroup.Key.PricingTemplateId,
                                                         PricingTemplateName = resultsGroup.Key.PricingTemplateName,
                                                         NeedsAttention = resultsGroup.Key.NeedsAttention,
-                                                        NeedsAttentionReason = resultsGroup.Key.PricingTemplateRemoved.Equals(true)
-                                                            ? customerNeedsAttentionReasons[1]
-                                                            : (resultsGroup.Key.PricingTemplateId.Equals(defaultPricingTemplate.Oid) ? customerNeedsAttentionReasons[0] : ""),
+                                                        NeedsAttentionReason = resultsGroup.Key.NeedsAttentionReason,
                                                         SelectAll = false,
                                                     })
                                                     .GroupBy(p => p.CustomerId)
                                                     .Select(g => g.FirstOrDefault())
                                                     .OrderByDescending(s => s.FleetSize.GetValueOrDefault())
                                                     .ToListAsync();
-
 
                 await _context.SaveChangesAsync();
 
