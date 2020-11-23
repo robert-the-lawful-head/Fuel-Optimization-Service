@@ -8,7 +8,7 @@ namespace FBOLinx.Web.ViewModels
     public class CustomerPricingTemplateViewModel
     {
         public int id { get; set; }
-        public string customerMarginName { get; set; }
+        public int pricingTemplateId { get; set; }
         public int fboid { get; set; }
     }
 }
