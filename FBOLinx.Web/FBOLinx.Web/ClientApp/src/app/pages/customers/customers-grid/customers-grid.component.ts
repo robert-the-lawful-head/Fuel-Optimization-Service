@@ -64,7 +64,7 @@ export class CustomersGridComponent implements OnInit {
         'fleetSize',
         'delete',
     ];
-    customerFilterType = 0;
+    customerFilterType: number = undefined;
     selectAll = false;
     selectedRows: number;
     pageIndex = 0;
@@ -314,22 +314,19 @@ export class CustomersGridComponent implements OnInit {
         this.refreshCustomerDataSource();
     }
 
-    onMarginChange(newValue: any, customer: any) {
-        const changedPricingTemplate = find(this.pricingTemplatesData, (p) => {
-            return customer.pricingTemplateName === p.name;
-        });
+    onMarginChange(changedPricingTemplateId: any, customer: any) {
+        const changedPricingTemplate = find(this.pricingTemplatesData, p => p.oid === parseInt(changedPricingTemplateId));
 
-        customer.needsAttention = changedPricingTemplate.default ||
-            (customer.customerCompanyTypeName !== 'FuelerLinx' && !customer.contactExists);
+        customer.needsAttention = changedPricingTemplate.default;
         customer.allInPrice = changedPricingTemplate.intoPlanePrice;
 
-        if (changedPricingTemplate.default) {
-            customer.needsAttentionReason = 'This customer was given the default template and has not been changed yet.';
+        if (customer.needsAttention) {
+            customer.needsAttentionReason = 'Customer was assigned to the default template and has not been changed yet.';
         }
 
         const vm = {
             id: customer.customerId,
-            customerMarginName: newValue,
+            pricingTemplateId: changedPricingTemplate.oid,
             fboid: this.sharedService.currentUser.fboId,
         };
         this.customerMarginsService
@@ -344,13 +341,12 @@ export class CustomersGridComponent implements OnInit {
 
         forEach(this.customersData, (customer) => {
             if (customer.selectAll === true) {
-                customer.needsAttention = event.value.default ||
-                    (customer.customerCompanyTypeName !== 'FuelerLinx' && !customer.contactExists);
+                customer.needsAttention = event.value.default;
                 customer.pricingTemplateName = event.value.name;
                 customer.allInPrice = event.value.intoPlanePrice;
                 listCustomers.push({
                     id: customer.customerId,
-                    customerMarginName: event.value.name,
+                    pricingTemplateId: event.value.oid,
                     fboid: this.sharedService.currentUser.fboId,
                 });
             }
@@ -518,7 +514,7 @@ export class CustomersGridComponent implements OnInit {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.customersDataSource = new MatTableDataSource(
             this.customersData.filter((element: any) => {
-                    if (this.customerFilterType === 0) {
+                    if (this.customerFilterType !== 1) {
                         return true;
                     }
                     return element.needsAttention;
