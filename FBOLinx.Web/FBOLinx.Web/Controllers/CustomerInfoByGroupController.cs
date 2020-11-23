@@ -385,14 +385,9 @@ namespace FBOLinx.Web.Controllers
                                                && custAircrafts.ToList().Select(x => x.TailNumber).Contains(ca.TailNumber)
                                                select new
                                                {
-                                                   CustomerId = ca.CustomerId,
-                                                   TailNumber = ca.TailNumber
+                                                   ca.CustomerId,
+                                                   ca.TailNumber
                                                }).ToList();
-
-                            //var checkOtheraircrafts = _context.CustomerAircrafts.Where(s => custAircrafts.Contains(s.TailNumber) && s.GroupId == groupId && s.CustomerId != customerId).Select(s => s.CustomerId).ToList();
-
-                            //var duplicates = ooAircrafts.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count() == custAircrafts.Count).Where(s => s.Value == true).Select(x => x.Key).ToList();
-                            //var duplicates = ooAircrafts.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count() == custAircrafts.Count).Where(s => s.Value == true).Select(x => x.Key).ToList();
 
                             var result = (from f in custAircrafts
                                           join o in ooAircrafts
@@ -403,7 +398,6 @@ namespace FBOLinx.Web.Controllers
                             {
                                 newCustomerMatch.AircraftTails = result.Select(s => s.TailNumber).ToList();
                                 newCustomerMatch.CurrentCustomerId = customerId;
-                                //     var currentCustomerName = _context.Customers.FirstOrDefault(s => s.Oid == customerId).Company;
                                 newCustomerMatch.CurrentCustomerName = custAircrafts[0].Customer;
 
                                 var matchCustomerName = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == result[0].CustomerId && s.GroupId == groupId);
@@ -681,6 +675,12 @@ namespace FBOLinx.Web.Controllers
 
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
+                var customerNeedsAttentionReasons = new List<string> {
+                    "Customer was assigned to the default template and has not been changed yet.",
+                    "The ITP Margin Template for this customer was deleted and the customer has been assigned to the default template.",
+                    "This FuelerLinx customer was added and set to your default pricing.  Please set to the appropriate pricing template.",
+                };
+
                 List<CustomersGridViewModel> customerGridVM = await (
                                                     from cg in _context.CustomerInfoByGroup
                                                     join c in _context.Customers on cg.CustomerId equals c.Oid
@@ -759,7 +759,9 @@ namespace FBOLinx.Web.Controllers
                                                         PricingTemplateId = resultsGroup.Key.PricingTemplateId,
                                                         PricingTemplateName = resultsGroup.Key.PricingTemplateName,
                                                         NeedsAttention = resultsGroup.Key.NeedsAttention,
-                                                        NeedsAttentionReason = resultsGroup.Key.PricingTemplateRemoved.Equals(true) ? "The pricing template was deleted for this customer and has been set to the default template." : (resultsGroup.Key.PricingTemplateId.Equals(defaultPricingTemplate.Oid) ? "This customer was given the default template and has not been changed yet." : ""),
+                                                        NeedsAttentionReason = resultsGroup.Key.PricingTemplateRemoved.Equals(true)
+                                                            ? customerNeedsAttentionReasons[1]
+                                                            : (resultsGroup.Key.PricingTemplateId.Equals(defaultPricingTemplate.Oid) ? customerNeedsAttentionReasons[0] : ""),
                                                         SelectAll = false,
                                                     })
                                                     .GroupBy(p => p.CustomerId)
