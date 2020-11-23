@@ -53,6 +53,7 @@ export class PriceBreakdownComponent implements OnInit {
     public internationalPrivateFeesAndTaxes: Array<any>;
     public domesticCommercialFeesAndTaxes: Array<any>;
     public domesticPrivateFeesAndTaxes: Array<any>;
+    public feeAndTaxCloneForPopOver: Array<any>;
     public priceBreakdownDisplayType: PriceBreakdownDisplayTypes = PriceBreakdownDisplayTypes.SingleColumnAllFlights;
     public priceBreakdownLoader = 'price-breakdown-loader';
     public activeHoverPriceItem: any = {};
@@ -186,7 +187,9 @@ export class PriceBreakdownComponent implements OnInit {
             this.internationalCommercialPricing = responseList[0];
             this.internationalPrivatePricing = responseList[1];
             this.domesticCommercialPricing = responseList[2];
-            this.domesticPrivatePricing = responseList[3];
+                this.domesticPrivatePricing = responseList[3];
+                this.feeAndTaxCloneForPopOver = [];
+                this.feesAndTaxes.forEach(val => this.feeAndTaxCloneForPopOver.push(Object.assign({}, val)));
             if (this.feeAndTaxBreakdown) {
                 this.feeAndTaxBreakdown.performRecalculation();
             }

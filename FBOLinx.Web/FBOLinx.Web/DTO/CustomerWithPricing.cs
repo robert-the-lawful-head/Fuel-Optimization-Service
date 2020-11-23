@@ -95,7 +95,7 @@ namespace FBOLinx.Web.DTO
             if (FeesAndTaxes == null)
                 return result;
             
-            foreach (var feeAndTax in FeesAndTaxes.Where(x => x.WhenToApply == Enums.FeeCalculationApplyingTypes.PreMargin).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.Percentage ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2))
+            foreach (var feeAndTax in FeesAndTaxes.Where(x => x.WhenToApply == Enums.FeeCalculationApplyingTypes.PreMargin && !x.IsOmitted).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.Percentage ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2))
             {
                 result += feeAndTax.GetCalculatedValue(basePrice, result);
             }
@@ -124,7 +124,7 @@ namespace FBOLinx.Web.DTO
             if (FeesAndTaxes == null)
                 return result;
 
-            foreach (var feeAndTax in FeesAndTaxes.Where(x => x.WhenToApply == Enums.FeeCalculationApplyingTypes.PostMargin).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.Percentage ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2))
+            foreach (var feeAndTax in FeesAndTaxes.Where(x => x.WhenToApply == Enums.FeeCalculationApplyingTypes.PostMargin && !x.IsOmitted).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.Percentage ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2))
             {
                 result += feeAndTax.GetCalculatedValue(subTotalWithMargin, result);
             }
