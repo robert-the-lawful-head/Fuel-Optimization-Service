@@ -6,27 +6,17 @@
     </div>
 
     <div *ngIf="pricingTemplateForm" [formGroup]="pricingTemplateForm">
+    <div class="ml-1 mb-1 text-success" *ngIf="isSaving">Saving Changes <i class="fa fa-spinner fa-spin"></i></div>
+    <div class="ml-1 mb-1 text-success" *ngIf="hasSaved">Changes Saved!</div>
         <div class="card-wrap">
             <h3 class="card-header h5">
                 <div class="row">
                     <div class="col-12">
                         <span class="card-header-title">{{ pricingTemplateForm.value.name }}</span>
-                        <button
-                            (click)="cancelPricingTemplateEdit()"
-                            class="float-right close-btn"
-                            mat-icon-button
-                        >
+                        <button (click)="cancelPricingTemplateEdit()"
+                                class="float-right close-btn"
+                                mat-icon-button>
                             <mat-icon>close</mat-icon>
-                        </button>
-                        <button
-                            (click)="savePricingTemplate()"
-                            [disabled]="!canSave"
-                            class="mr-1 float-right"
-                            color="green"
-                            mat-stroked-button
-                        >
-                            <mat-icon>save</mat-icon>
-                            Save Changes
                         </button>
                     </div>
                 </div>
@@ -44,25 +34,19 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="d-inline-block pr-2" style="width:300px;">
+                        <div class="d-inline-block pr-2" style="width: 300px;">
                             <mat-form-field>
-                                <input
-                                    matInput
-                                    placeholder="Name"
-                                    formControlName="name"
-                                />
+                                <input matInput
+                                       placeholder="Name"
+                                       formControlName="name" />
                             </mat-form-field>
                         </div>
-                        <div class="d-block pl-3" style="width:300px;">
+                        <div class="d-block pl-3" style="width: 300px;">
                             <mat-form-field>
-                                <mat-select
-                                    placeholder="Type"
-                                    formControlName="marginType"
-                                >
-                                    <mat-option
-                                        *ngFor="let marginType of marginTypeDataSource"
-                                        [value]="marginType.value"
-                                    >
+                                <mat-select placeholder="Type"
+                                            formControlName="marginType">
+                                    <mat-option *ngFor="let marginType of marginTypeDataSource"
+                                                [value]="marginType.value">
                                         {{ marginType.text }}
                                     </mat-option>
                                 </mat-select>
@@ -88,7 +72,7 @@
                                         <div class="">Discount</div>
                                     </th>
                                     <th>
-                                        <div class="volume-tiers-header">Your ITP <br /> <span style="margin-left:4px;">Margin</span></div>
+                                        <div class="volume-tiers-header">Your ITP <br /> <span style="margin-left: 4px;">Margin</span></div>
                                     </th>
                                     <th>
                                         <div class="">All-in</div>
@@ -107,31 +91,27 @@
                                     <td class="" [formGroupName]="i">
                                         <div class="volume-tiers-width">
                                             <mat-form-field class="">
-                                                <input matInput formControlName="min"/>
+                                                <input matInput formControlName="min" />
                                             </mat-form-field>
                                         </div>
                                     </td>
                                     <td class="">
                                         <div class="volume-tiers-width">
                                             <mat-form-field>
-                                                <input
-                                                    matInput
-                                                    disabled="disabled"
-                                                    value="{{customerMargin.value.max == 0 ? 99999 : customerMargin.value.max}}"
-                                                />
+                                                <input matInput
+                                                       disabled="disabled"
+                                                       value="{{customerMargin.value.max == 0 ? 99999 : customerMargin.value.max}}" />
                                             </mat-form-field>
                                         </div>
                                     </td>
                                     <td *ngIf="pricingTemplateForm.value.marginType == 1" [formGroupName]="i">
                                         <div class="volume-tiers-width">
                                             <mat-form-field>
-                                                <input
-                                                    matInput
-                                                    type="number"
-                                                    step="0.01"
-                                                    formControlName="amount"
-                                                    (click)="$event.target.select()"
-                                                />
+                                                <input matInput
+                                                       type="number"
+                                                       step="0.01"
+                                                       formControlName="amount"
+                                                       (click)="$event.target.select()" />
                                                 <span matPrefix class="prefixDollar">$</span>
                                             </mat-form-field>
                                         </div>
@@ -143,13 +123,11 @@
                                             </div>
                                             <div class="volume-tiers-width">
                                                 <mat-form-field *ngIf="pricingTemplateForm.value.marginType == 0">
-                                                    <input
-                                                        matInput
-                                                        type="number"
-                                                        step="0.01"
-                                                        formControlName="amount"
-                                                        (click)="$event.target.select()"
-                                                    />
+                                                    <input matInput
+                                                           type="number"
+                                                           step="0.01"
+                                                           formControlName="amount"
+                                                           (click)="$event.target.select()" />
                                                     <span matPrefix class="prefixDollar">$</span>
                                                 </mat-form-field>
                                             </div>
@@ -176,16 +154,30 @@
                     </div>
 
                     <div class="row mt-2">
+                        <div class="col-4">
+                            <h5>Template Prices</h5>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <price-breakdown #priceBreakdownPreview
+                                             [priceTemplateId]="pricingTemplate.oid"
+                                             [hideFeeAndTaxGeneralBreakdown]="true">
+
+                            </price-breakdown>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
                         <div class="sub-title">
                             <h5 class="mb-0 mt-0">Fuel Uplift Notes</h5>
                         </div>
                     </div>
                     <div class="row">
-                        <ejs-richtexteditor
-                            #typeRTE
-                            id="rteNotes"
-                            formControlName="notes"
-                        ></ejs-richtexteditor>
+                        <ejs-richtexteditor #typeRTE
+                                            id="rteNotes"
+                                            formControlName="notes"></ejs-richtexteditor>
                     </div>
                     <div class="row">
                         <br />
@@ -199,26 +191,22 @@
                     </div>
                     <div class="row">
                         <mat-form-field style="max-width: 600px;">
-                            <input
-                                matInput
-                                placeholder="Subject"
-                                formControlName="subject"
-                                aria-label="Subject"
-                            />
+                            <input matInput
+                                   placeholder="Subject"
+                                   formControlName="subject"
+                                   aria-label="Subject" />
                         </mat-form-field>
                     </div>
                     <div class="row">
-                        <ejs-richtexteditor
-                            #typeEmail
-                            placeholder="Enter email body here..."
-                            id="rteEmail"
-                            formControlName="email"
-                        ></ejs-richtexteditor>
+                        <ejs-richtexteditor #typeEmail
+                                            placeholder="Enter email body here..."
+                                            id="rteEmail"
+                                            formControlName="email"></ejs-richtexteditor>
                     </div>
                     <div class="row">
                         <br />
                     </div>
-            </div>
+                </div>
             </div>
         </div>
     </div>

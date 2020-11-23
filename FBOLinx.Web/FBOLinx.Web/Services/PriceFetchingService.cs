@@ -91,12 +91,19 @@ namespace FBOLinx.Web.Services
                 int defaultPricingTemplateId = 0;
                 if (defaultPricingTemplate != null)
                     defaultPricingTemplateId = defaultPricingTemplate.Oid;
+                var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(x => x.Oid == customerInfoByGroupId);
 
                 //Prepare fees/taxes based on the provided departure type and flight type
                 if (feesAndTaxes == null)
                 {
-                    feesAndTaxes = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId && (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications)).ToListAsync();
+                    feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Where(x => x.Fboid == fboId && (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications)).ToListAsync();
                     feesAndTaxes = feesAndTaxes.Where(x => x.DepartureType == departureType || departureType == Enums.ApplicableTaxFlights.All).ToList();
+                    feesAndTaxes.ForEach(x =>
+                    {
+                        if (x.OmitsByCustomer == null)
+                            return;
+                        x.OmitsByCustomer.RemoveAll(o => o.CustomerId != customerInfoByGroup.CustomerId);
+                    });
                 }
                 else {
                     feesAndTaxes = feesAndTaxes.Where(x => (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications) && (x.DepartureType == departureType || departureType == Enums.ApplicableTaxFlights.All || x.DepartureType == Enums.ApplicableTaxFlights.All)).ToList();

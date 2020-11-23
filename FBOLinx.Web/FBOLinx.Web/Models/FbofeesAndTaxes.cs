@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FBOLinx.Web.Models;
 
 namespace FBOLinx.Web
 {
@@ -21,6 +22,22 @@ namespace FBOLinx.Web
         public FBOLinx.Web.Enums.FlightTypeClassifications? FlightTypeClassification { get; set; }
         public FBOLinx.Web.Enums.ApplicableTaxFlights? DepartureType { get; set; }
         public FBOLinx.Web.Enums.FeeCalculationApplyingTypes? WhenToApply { get; set; }
+
+        [NotMapped]
+        public bool IsOmitted
+        {
+            get
+            {
+                if (OmitsByCustomer == null || OmitsByCustomer.Count == 0)
+                    return false;
+                return true;
+            }
+        }
+
+        #region Relationships
+        [InverseProperty("FboFeeAndTax")]
+        public List<FboFeeAndTaxOmitsByCustomer> OmitsByCustomer { get; set; }
+        #endregion
 
         public double GetCalculatedValue(double basePrice, double allInPrice)
         {

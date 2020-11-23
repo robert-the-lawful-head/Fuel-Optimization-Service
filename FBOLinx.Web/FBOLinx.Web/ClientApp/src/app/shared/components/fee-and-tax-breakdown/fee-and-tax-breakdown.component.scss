@@ -4,3 +4,28 @@ body {
 div.row div.col:first-child {
     min-width: 175px;
 }
+
+.live-pricing-container {
+    color: #6c757d;
+    font-size: 0.75rem;
+}
+
+.live-pricing-container {
+    padding-right: 0px;
+}
+
+.live-pricing-container .d-inline-block.text-nowrap {
+    max-width: 100px;
+    text-overflow:ellipsis;
+    overflow: hidden;
+}
+
+.live-pricing-container .col {
+    padding-right: 0px;
+}
+
+
+.live-pricing-container hr {
+    border: 1px solid;
+    margin: -1px -8px -1px -1px;
+}

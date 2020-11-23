@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web;
 using FBOLinx.Web.Data;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -49,6 +50,21 @@ namespace FBOLinx.Web.Controllers
             var fboFeesandTaxes = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).ToListAsync();
 
             return Ok(fboFeesandTaxes);
+        }
+
+        // GET api/<controller>/fbo/5
+        [HttpGet("fbo/{fboId}/customer/{customerId}")]
+        public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndCustomer([FromRoute] int fboId, [FromRoute] int customerId)
+        {
+            var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).Include(x => x.OmitsByCustomer).ToListAsync();
+            result.ForEach(x =>
+            {
+                if (x.OmitsByCustomer == null)
+                    return;
+                x.OmitsByCustomer.RemoveAll(o => o.CustomerId != customerId);
+            });
+            //var result = await _context.FboFeeAndTaxOmitsByCustomer.FirstOrDefaultAsync(x => x.Oid == id);
+            return Ok(result);
         }
 
         // PUT: api/FboFeesAndTaxes/5

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit } from '@angular/core';
 
 
 export enum FeeAndTaxBreakdownDisplayModes {
@@ -12,7 +12,7 @@ export enum FeeAndTaxBreakdownDisplayModes {
     templateUrl: './fee-and-tax-breakdown.component.html',
     styleUrls: ['./fee-and-tax-breakdown.component.scss']
 })
-export class FeeAndTaxBreakdownComponent implements OnInit {
+export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
     @Input()
     feesAndTaxes: Array<any>;
     @Input()
@@ -47,6 +47,10 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         this.calculatePrices();
     }
 
+    ngAfterViewInit(): void {
+        
+    }
+
     public omitChanged(fee: any): void {
         this.omitCheckChanged.emit(fee);
     }
@@ -74,11 +78,6 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         let result = this.fboPrice;
         let basePrice = this.fboPrice;
 
-        if (this.marginType == 1) {
-            this.preMarginSubTotal = result;
-            return;
-        }
-
         this.aboveTheLineTaxes.forEach((fee) => {
             if (fee.calculationType == 0) {
                 fee.amount = fee.value;
@@ -90,7 +89,11 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
             }
         });
 
-        this.preMarginSubTotal = result;
+        if (this.marginType == 1) {
+            this.preMarginSubTotal = this.fboPrice;
+        } else {
+            this.preMarginSubTotal = result;
+        }
     }
 
     private calculateSubTotalWithMargin() {
