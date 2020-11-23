@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
+using FBOLinx.Web.Enums;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -197,7 +198,7 @@ namespace FBOLinx.Web.Services
 
                 //Add domestic-departure-only price options
                 List<CustomerWithPricing> domesticOptions = new List<CustomerWithPricing>();
-                if (feesAndTaxes.Any(x => x.DepartureType == Enums.ApplicableTaxFlights.DomesticOnly))
+                if ((feesAndTaxes.Any(x => x.DepartureType == Enums.ApplicableTaxFlights.DomesticOnly) && departureType == ApplicableTaxFlights.All) || departureType == ApplicableTaxFlights.DomesticOnly)
                 {
                     domesticOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     domesticOptions.ForEach(x => {
@@ -208,7 +209,7 @@ namespace FBOLinx.Web.Services
 
                 //Add international-departure-only price options
                 List<CustomerWithPricing> internationalOptions = new List<CustomerWithPricing>();
-                if (feesAndTaxes.Any(x => x.DepartureType == Enums.ApplicableTaxFlights.InternationalOnly))
+                if ((feesAndTaxes.Any(x => x.DepartureType == Enums.ApplicableTaxFlights.InternationalOnly) && departureType == ApplicableTaxFlights.All) || departureType == ApplicableTaxFlights.InternationalOnly)
                 {
                     domesticOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     domesticOptions.ForEach(x => {
@@ -219,7 +220,7 @@ namespace FBOLinx.Web.Services
 
                 //Add price options for all departure types
                 List<CustomerWithPricing> allDepartureOptions = new List<CustomerWithPricing>();
-                if (feesAndTaxes.Any(x => x.DepartureType == Enums.ApplicableTaxFlights.All) || (domesticOptions.Count == 0 && internationalOptions.Count == 0))
+                if ((feesAndTaxes.Any(x => x.DepartureType == Enums.ApplicableTaxFlights.All) && departureType == ApplicableTaxFlights.All) || (domesticOptions.Count == 0 && internationalOptions.Count == 0))
                 {
                     allDepartureOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     allDepartureOptions.ForEach(x => {
