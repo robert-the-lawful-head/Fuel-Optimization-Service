@@ -385,14 +385,9 @@ namespace FBOLinx.Web.Controllers
                                                && custAircrafts.ToList().Select(x => x.TailNumber).Contains(ca.TailNumber)
                                                select new
                                                {
-                                                   CustomerId = ca.CustomerId,
-                                                   TailNumber = ca.TailNumber
+                                                   ca.CustomerId,
+                                                   ca.TailNumber
                                                }).ToList();
-
-                            //var checkOtheraircrafts = _context.CustomerAircrafts.Where(s => custAircrafts.Contains(s.TailNumber) && s.GroupId == groupId && s.CustomerId != customerId).Select(s => s.CustomerId).ToList();
-
-                            //var duplicates = ooAircrafts.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count() == custAircrafts.Count).Where(s => s.Value == true).Select(x => x.Key).ToList();
-                            //var duplicates = ooAircrafts.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count() == custAircrafts.Count).Where(s => s.Value == true).Select(x => x.Key).ToList();
 
                             var result = (from f in custAircrafts
                                           join o in ooAircrafts
@@ -403,7 +398,6 @@ namespace FBOLinx.Web.Controllers
                             {
                                 newCustomerMatch.AircraftTails = result.Select(s => s.TailNumber).ToList();
                                 newCustomerMatch.CurrentCustomerId = customerId;
-                                //     var currentCustomerName = _context.Customers.FirstOrDefault(s => s.Oid == customerId).Company;
                                 newCustomerMatch.CurrentCustomerName = custAircrafts[0].Customer;
 
                                 var matchCustomerName = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == result[0].CustomerId && s.GroupId == groupId);
@@ -739,8 +733,8 @@ namespace FBOLinx.Web.Controllers
                                                         FleetSize = ca == null ? 0 : ca.Count,
                                                         AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
                                                         PricingTemplateId = pt.Oid,
-                                                        cg.PricingTemplateRemoved,
-                                                        NeedsAttention = cna != null
+                                                        NeedsAttention = cna != null,
+                                                        NeedsAttentionReason = cna == null ? null : cna.NeedsAttentionReason,
                                                     }
                                                     into resultsGroup
                                                     select new CustomersGridViewModel()
@@ -759,14 +753,13 @@ namespace FBOLinx.Web.Controllers
                                                         PricingTemplateId = resultsGroup.Key.PricingTemplateId,
                                                         PricingTemplateName = resultsGroup.Key.PricingTemplateName,
                                                         NeedsAttention = resultsGroup.Key.NeedsAttention,
-                                                        NeedsAttentionReason = resultsGroup.Key.PricingTemplateRemoved.Equals(true) ? "The pricing template was deleted for this customer and has been set to the default template." : (resultsGroup.Key.PricingTemplateId.Equals(defaultPricingTemplate.Oid) ? "This customer was given the default template and has not been changed yet." : ""),
+                                                        NeedsAttentionReason = resultsGroup.Key.NeedsAttentionReason,
                                                         SelectAll = false,
                                                     })
                                                     .GroupBy(p => p.CustomerId)
                                                     .Select(g => g.FirstOrDefault())
                                                     .OrderByDescending(s => s.FleetSize.GetValueOrDefault())
                                                     .ToListAsync();
-
 
                 await _context.SaveChangesAsync();
 

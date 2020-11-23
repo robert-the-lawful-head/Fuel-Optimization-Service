@@ -201,7 +201,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerMarginObject = _context.PricingTemplate.FirstOrDefault(s => s.Name == model.customerMarginName && s.Fboid == model.fboid);
+            var customerMarginObject = _context.PricingTemplate.FirstOrDefault(s => s.Oid == model.pricingTemplateId && s.Fboid == model.fboid);
 
             if (customerMarginObject != null)
             {
@@ -248,7 +248,7 @@ namespace FBOLinx.Web.Controllers
 
             foreach(var m in model)
             {
-                var customerMarginObject = _context.PricingTemplate.FirstOrDefault(s => s.Name == m.customerMarginName && s.Fboid == m.fboid);
+                var customerMarginObject = _context.PricingTemplate.FirstOrDefault(s => s.Oid == m.pricingTemplateId && s.Fboid == m.fboid);
 
                 if (customerMarginObject != null)
                 {
@@ -267,9 +267,18 @@ namespace FBOLinx.Web.Controllers
                         _context.CustomCustomerTypes.Add(newType);
                     }
 
-                    await _context.SaveChangesAsync();
+                    var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == m.fboid).GroupId;
+                    var customerInfo = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == m.id && s.GroupId == groupInfo);
+
+                    if (customerInfo != null)
+                    {
+                        customerInfo.PricingTemplateRemoved = false;
+                        _context.CustomerInfoByGroup.Update(customerInfo);
+                    }
                 }
             }
+
+            await _context.SaveChangesAsync();
 
             return Ok("");
         }

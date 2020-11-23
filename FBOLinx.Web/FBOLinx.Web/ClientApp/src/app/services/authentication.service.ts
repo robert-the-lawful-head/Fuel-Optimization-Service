@@ -17,9 +17,8 @@ export class AuthenticationService {
       'Content-Type': 'application/json; charset=utf-8',
     });
     this.accessPointUrl = baseUrl + 'api/users';
-    this.currentUserSubject = new BehaviorSubject<User>(
-      JSON.parse(localStorage.getItem('currentUser'))
-    );
+    const user: User = JSON.parse(localStorage.getItem('currentUser'));
+    this.currentUserSubject = new BehaviorSubject<User>(user);
     this.currentUser = this.currentUserSubject.asObservable();
   }
 

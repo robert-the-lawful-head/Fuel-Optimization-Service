@@ -321,13 +321,26 @@ namespace FBOLinx.Web.Controllers
             {
                 CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == request.Oid);
 
-                AircraftPrices aircraftPrice = _context.AircraftPrices.FirstOrDefault(a => a.CustomerAircraftId.Equals(custAircraft.Oid));
-                CustomCustomerTypes customerTemplate = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == request.CustomerId && s.Fboid == fboid);
+                AircraftPrices aircraftPrice = (from ca in _context.CustomerAircrafts
+                                                join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
+                                                join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
+                                                where ca.Oid == request.Oid
+                                                    && pt.Fboid == fboid
+                                                select ap).FirstOrDefault();
+
                 PricingTemplate pricingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Oid == request.PricingTemplateId && s.Fboid == fboid);
+
                 if (aircraftPrice != null)
                 {
-                    aircraftPrice.PriceTemplateId = pricingTemplate?.Oid;
-                    _context.AircraftPrices.Update(aircraftPrice);
+                    if (request.PricingTemplateId == null)
+                    {
+                        _context.AircraftPrices.Remove(aircraftPrice);
+                    }
+                    else
+                    {
+                        aircraftPrice.PriceTemplateId = pricingTemplate?.Oid;
+                        _context.AircraftPrices.Update(aircraftPrice);
+                    }
                 }
                 else
                 {

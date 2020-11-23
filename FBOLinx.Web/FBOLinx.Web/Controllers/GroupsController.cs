@@ -344,11 +344,38 @@ namespace FBOLinx.Web.Controllers
                             replacingCustomerContacts.ForEach(c => c.CustomerId = groupedResult.First().CustomerId);
                             _context.CustomerContacts.UpdateRange(replacingCustomerContacts);
                             _context.CustomerInfoByGroup.RemoveRange(groupedResult.Skip(1));
+
+                            var duplicatedCustomerAircrafts = _context.CustomerAircrafts.Where(ca => customerIds.Contains(ca.CustomerId)).ToList();
+                            duplicatedCustomerAircrafts.ForEach(ca => ca.CustomerId = groupedResult.First().CustomerId);
+                            _context.CustomerAircrafts.UpdateRange(duplicatedCustomerAircrafts);
                         }
                     });
 
                     var removingGroups = _context.Group.Where(a => changeableGroups.Contains(a.Oid));
                     _context.Group.RemoveRange(removingGroups);
+
+                    await _context.SaveChangesAsync();
+
+                    var baseCustomerAircrafts = _context.CustomerAircrafts
+                       .Where(a => a.GroupId == request.BaseGroupId)
+                       .ToList();
+                    var distinctedCustomerAircrafts = baseCustomerAircrafts
+                        .GroupBy(ca => new { ca.GroupId, ca.CustomerId, ca.TailNumber })
+                        .Select(g => g.First())
+                        .ToList();
+                    var duplicatedCustomerAircrafts = baseCustomerAircrafts
+                        .Except(distinctedCustomerAircrafts)
+                        .ToList();
+
+                    duplicatedCustomerAircrafts.ForEach(ca =>
+                    {
+                        var aircraftPrices = _context.AircraftPrices.Where(ap => ap.CustomerAircraftId == ca.Oid).ToList();
+                        var baseCustomerAircraft = distinctedCustomerAircrafts.Where(dca => dca.GroupId == ca.GroupId && dca.CustomerId == ca.CustomerId && dca.TailNumber == ca.TailNumber).First();
+                        aircraftPrices.ForEach(ap => ap.CustomerAircraftId = baseCustomerAircraft.Oid);
+                        _context.AircraftPrices.UpdateRange(aircraftPrices);
+                    });
+
+                    _context.CustomerAircrafts.RemoveRange(duplicatedCustomerAircrafts);
 
                     await _context.SaveChangesAsync();
 
