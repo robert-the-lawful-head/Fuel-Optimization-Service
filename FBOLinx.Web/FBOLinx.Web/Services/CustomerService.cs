@@ -131,14 +131,14 @@ namespace FBOLinx.Web.Services
                     g.Key.CustomerInfoByGroupID,
                     NeedsAttention = g.Max(a => a.IsDefaultPricingTemplate) == true ||
                                     //(g.Max(a => a.ContactInfoByGroupId) == 0 && g.Max(a => a.FuelerlinxId) <= 0) ||
-                                    g.Max(a => a.IsPricingTemplateRemoved) == true
+                                    g.Max(a => a.IsPricingTemplateRemoved) == true ? 1: 0
                 })
                 .GroupBy(g => new { g.GroupId, g.FboId })
                 .Select(g => new NeedsAttentionCustomersCountModel
                 {
                     GroupId = g.Key.GroupId,
                     FboId = g.Key.FboId,
-                    CustomersNeedingAttention = g.Sum(a => a.NeedsAttention ? 1 : 0),
+                    CustomersNeedingAttention = g.Sum(a => a.NeedsAttention),
                     Customers = g.Count()
                 })
                 .OrderBy(g => g.GroupId)

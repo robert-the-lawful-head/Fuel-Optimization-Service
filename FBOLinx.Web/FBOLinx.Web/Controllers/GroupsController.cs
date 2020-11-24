@@ -114,7 +114,7 @@ namespace FBOLinx.Web.Controllers
             fbos.ForEach(f =>
             {
                 f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
-                f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Count();
+                f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Sum(c => c.CustomersNeedingAttention);
             });
 
             return Ok(new GroupFboViewModel
