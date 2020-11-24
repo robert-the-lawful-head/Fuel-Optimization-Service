@@ -31,7 +31,7 @@ namespace FBOLinx.Web.ViewModels
         public string PhoneNumber { get; set; }
         public string PricingTemplateName { get; set; }
 
-        public void CastFromComplexType(IO.Swagger.Model.TransactionDTO item)
+        public void CastFromFuelerLinxTransaction(IO.Swagger.Model.TransactionDTO item)
         {
             Oid = 0;
             ActualPpg = 0;
@@ -54,13 +54,13 @@ namespace FBOLinx.Web.ViewModels
             TailNumber = item.TailNumber;
             FboName = item.Fbo;
             Email = "";
-            PhoneNumber = ""; 
+            PhoneNumber = "";
         }
 
         public static FuelReqsGridViewModel Cast(IO.Swagger.Model.TransactionDTO item)
         {
             FuelReqsGridViewModel result = new FuelReqsGridViewModel();
-            result.CastFromComplexType(item);
+            result.CastFromFuelerLinxTransaction(item);
             return result;
         }
     }

@@ -133,13 +133,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     );
 
     this.selectAll = false;
-    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-    this.marginTemplateDataSource = new MatTableDataSource(
-      this.pricingTemplatesData
-    );
-    this.marginTemplateDataSource.sort = this.sort;
-    this.marginTemplateDataSource.paginator = this.paginator;
-    this.resultsLength = this.pricingTemplatesData.length;
+    this.prepareDataSource();
   }
 
   public openNavbar(event) {
@@ -380,5 +374,18 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
       dialogRef.afterClosed().subscribe();
       this.pricesExpired = true;
     }
-  }
+    }
+
+    private prepareDataSource(): void {
+        if (!this.pricingTemplatesData || !this.sort) {
+            return;
+        }
+        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.marginTemplateDataSource = new MatTableDataSource(
+            this.pricingTemplatesData
+        );
+        this.marginTemplateDataSource.sort = this.sort;
+        this.marginTemplateDataSource.paginator = this.paginator;
+        this.resultsLength = this.pricingTemplatesData.length;
+    }
 }

@@ -172,6 +172,7 @@ namespace FBOLinx.Web.Controllers
             {
                 transaction.CustomerName = customers.Where(x => x.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault();
                 fuelReqsFromFuelerLinx.Add(FuelReqsGridViewModel.Cast(transaction));
+                
             }
 
             List<FuelReqsGridViewModel> fuelReqVM = await
@@ -207,7 +208,7 @@ namespace FBOLinx.Web.Controllers
                      FboName = f.Fbo,
                      fr.Email,
                      fr.PhoneNumber,
-                     PricingTemplateName = frp == null ? "" : frp.PricingTemplateName,
+                     PricingTemplateName = frp == null ? "" : frp.PricingTemplateName
                  }
                  into results
                  select new FuelReqsGridViewModel

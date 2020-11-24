@@ -50,7 +50,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         'tailNumber',
         'email',
         'phoneNumber',
-        'source',
+        'source'
     ];
     public dashboardSettings: any;
 
