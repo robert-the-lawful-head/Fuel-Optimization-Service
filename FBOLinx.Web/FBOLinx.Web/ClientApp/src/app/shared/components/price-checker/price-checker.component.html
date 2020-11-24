@@ -5,7 +5,7 @@
         <mat-tab-group (selectedTabChange)="onTabChanged($event);">
           <!--Price template searching tab-->
           <mat-tab label="Template">
-            <div>
+            <div class="mt-4">
               <mat-form-field>
                 <mat-label>ITP Template</mat-label>
                 <mat-select class="font-weight-bold" placeholder="ITP Template" [(ngModel)]="pricingTemplateId" (selectionChange)="priceTemplateChanged()">
@@ -19,7 +19,7 @@
 
           <!--Customer searching tab-->
           <mat-tab label="Customer">
-            <div class="container-fluid">
+            <div class="container-fluid mt-4">
               <div class="row">
                 <div class="col">
                   <mat-form-field>
@@ -46,8 +46,8 @@
           </mat-tab>
 
           <!--Aircraft searching tab-->
-          <mat-tab label="Aircraft">
-            <div class="container-fluid">
+          <mat-tab class="mb-4" label="Aircraft">
+            <div class="container-fluid mt-4">
               <div class="row">
                 <div class="col">
                   <mat-form-field>
@@ -123,7 +123,7 @@
 
 
 
-<div class="container-fluid pb-4" *ngIf="sampleCalculation">
+<div class="container-fluid pb-4 sub-widget" *ngIf="sampleCalculation">
   <div class="row mt-4 mb-2">
       <div class="col font-weight-bold" style="padding-left: 43px;">
           Taxes and Fees
