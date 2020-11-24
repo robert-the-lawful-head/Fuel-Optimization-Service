@@ -40,6 +40,8 @@ export class PriceBreakdownComponent implements OnInit {
     hidePriceTierBreakdown: boolean = false;
     @Input()
     feeAndTaxDisplayMode: FeeAndTaxBreakdownDisplayModes = FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
+    @Input()
+    showFeeAndTaxLineSeparator: boolean = false;
     @Output()
     omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output()

@@ -97,7 +97,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
     }
 
     private calculateSubTotalWithMargin() {
-        if (!this.customerMargin) {
+        if (!this.customerMargin && this.customerMargin != 0) {
             return this.preMarginSubTotal;
         }
 

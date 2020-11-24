@@ -138,9 +138,13 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
   }
 
   public sampleCalculationChanged(): void {
-    if (this.priceBreakdownPreview) {
-      this.priceBreakdownPreview.performRecalculation();
-    }
+      if (this.priceBreakdownPreview) {
+          //Use a timeout here as the child component won't know of the template change until after the cycle
+          var self = this;
+          setTimeout(() => {
+              self.priceBreakdownPreview.performRecalculation();
+          });
+      }
   }
 
   public feeValueChanged(feeAndTax, value) {

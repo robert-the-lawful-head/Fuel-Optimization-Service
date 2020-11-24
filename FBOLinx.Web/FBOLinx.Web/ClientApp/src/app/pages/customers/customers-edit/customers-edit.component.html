@@ -78,7 +78,7 @@
                                 </tbody>
                             </table>
 
-                            <div *ngIf="feesAndTaxes">
+                            <div *ngIf="feesAndTaxes" class="sub-widget">
                                 <price-breakdown #priceBreakdownPreview [customerInfoByGroupId]="customerInfoByGroup.oid" [priceTemplateId]="customCustomerType.customerType"
                                                  [feesAndTaxes]="feesAndTaxes"
                                                  [feeAndTaxDisplayMode]="1"

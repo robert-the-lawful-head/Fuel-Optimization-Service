@@ -1,8 +1,20 @@
 <div>
+    
     <!--START DISPLAY MODES 0 and 1 - Standard calculations with name on left and cost on right-->
     <div class="container-fluid" *ngIf="displayMode == 0 || displayMode == 1">
+        <div class="row font-weight-bold mb-3 pb-1">
+            <div class="col">
+                <div class="d-inline-block ml-n2">Omit</div>
+                <div class="d-inline-block ml-4 pl-1">Name</div>
+            </div>
+            <div class="col text-right">Amount</div>
+        </div>
+
         <!--Top row for Cost/Retail Price - Display mode 0 and 1-->
         <div class="row mb-3">
+            <div class="col-1" *ngIf="displayMode == 1">
+
+            </div>
             <div class="col">
                 {{marginType == 0 ? 'Cost' : 'Retail'}}
             </div>
@@ -11,13 +23,14 @@
             <div class="col text-right">
                 ${{fboPrice | number: "1.4-4"}}
             </div>
-            <div class="col" *ngIf="displayMode == 1">
-
-            </div>
+            
         </div>
 
         <!--Above the line taxes - Display mode 0 and 1-->
         <div class="row font-italic" *ngFor="let aboveLineTax of aboveTheLineTaxes">
+            <div class="col-1" *ngIf="displayMode == 1">
+                <mat-checkbox type="checkbox" (change)="omitChanged(aboveLineTax)" [(ngModel)]="aboveLineTax.isOmitted"></mat-checkbox>
+            </div>
             <div class="col" [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}">
                 {{aboveLineTax.name}}
             </div>
@@ -28,27 +41,29 @@
                 <span *ngIf="marginType == 0">${{ aboveLineTax.amount | number: "1.4-4" }}</span>
                 <span *ngIf="marginType == 1">Applied</span>
             </div>
-            <div class="col" *ngIf="displayMode == 1">
-                <mat-checkbox type="checkbox" (change)="omitChanged(aboveLineTax)" [(ngModel)]="aboveLineTax.isOmitted"></mat-checkbox>
-            </div>
+            
         </div>
 
         <!--Sub-total-->
-        <div class="row mt-3 mb-3" *ngIf="customerMargin">
-            <div class="col">
+        <div class="row mt-3 mb-3" *ngIf="customerMargin != null">
+            <div class="col-1" *ngIf="displayMode == 1">
+
+            </div>
+            <div class="col font-weight-bold">
                 Sub-total
             </div>
             <div class="col"></div>
-            <div class="col text-right">
+            <div class="col text-right font-weight-bold">
                 ${{ preMarginSubTotal | number: "1.4-4" }}
             </div>
-            <div class="col" *ngIf="displayMode == 1">
-
-            </div>
+            
         </div>
 
         <!--ITP Margin-->
-        <div class="row" *ngIf="customerMargin">
+        <div class="row" *ngIf="customerMargin != null">
+            <div class="col-1" *ngIf="displayMode == 1">
+
+            </div>
             <div class="col">
                 ITP-Margin
             </div>
@@ -56,23 +71,22 @@
             <div class="col text-right">
                 ${{ customerMargin | number: "1.4-4" }}
             </div>
-            <div class="col" *ngIf="displayMode == 1">
-
-            </div>
+            
         </div>
 
         <!--Sub-total with Margin-->
-        <div class="row mb-3 mt-3" *ngIf="customerMargin">
-            <div class="col">
+        <div class="row mb-3 mt-3" *ngIf="customerMargin != null">
+            <div class="col-1" *ngIf="displayMode == 1">
+
+            </div>
+            <div class="col font-weight-bold">
                 Sub-total w/ Margin
             </div>
             <div class="col"></div>
-            <div class="col text-right">
+            <div class="col text-right font-weight-bold">
                 ${{ subTotalWithMargin | number: "1.4-4" }}
             </div>
-            <div class="col" *ngIf="displayMode == 1">
-
-            </div>
+            
         </div>
 
         <hr *ngIf="showLineSeparator" />
@@ -80,6 +94,9 @@
         <!--Below the line taxes - Display mode 0 and 1-->
         <div class="row font-italic" *ngFor="let belowLineTax of belowTheLineTaxes">
 
+            <div class="col-1" *ngIf="displayMode == 1">
+                <mat-checkbox type="checkbox" (change)="omitChanged(belowLineTax)" [(ngModel)]="belowLineTax.isOmitted"></mat-checkbox>
+            </div>
             <div class="col" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}">
                 {{belowLineTax.name}}
             </div>
@@ -89,13 +106,14 @@
             <div class="col text-right" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}">
                 <span *ngIf="belowLineTax.amount">${{ belowLineTax.amount | number: "1.4-4" }}</span>
             </div>
-            <div class="col" *ngIf="displayMode == 1">
-                <mat-checkbox type="checkbox" (change)="omitChanged(belowLineTax)" [(ngModel)]="belowLineTax.isOmitted"></mat-checkbox>
-            </div>
+            
         </div>
 
         <!--Total-->
-        <div class="row font-weight-bold mb-3" *ngIf="customerMargin">
+        <div class="row font-weight-bold mb-3" *ngIf="customerMargin != null">
+            <div class="col-1" *ngIf="displayMode == 1">
+
+            </div>
             <div class="col">
                 Total
             </div>
@@ -103,21 +121,18 @@
             <div class="col text-right">
                 ${{ total | number: "1.4-4" }}
             </div>
-            <div class="col" *ngIf="displayMode == 1">
-
-            </div>
         </div>
     </div>
 
     <!--START DISPLAY MODE 2 - No margin shown and reverse horizontal order-->
-    <div class="container-fluid live-pricing-container" *ngIf="displayMode == 2">
+    <div class="container-fluid" *ngIf="displayMode == 2">
         <!--Top row for Cost/Retail Price - Display mode 0 and-->
         <div class="row font-weight-bold" *ngIf="displayMode == 2">
             <div class="col">
                 <div class="d-inline-block" style="width:60px; overflow:hidden;">
                     ${{fboPrice | number: "1.4-4"}}
                 </div>
-                <div class="d-inline-block text-nowrap">
+                <div class="d-inline-block text-nowrap" style="overflow: hidden;">
                     {{marginType == 0 ? 'Cost' : 'Posted Retail'}}
                 </div>
             </div>
@@ -147,12 +162,12 @@
 
         <!--Below the line taxes - Display mode 2-->
         <div class="row" *ngFor="let belowLineTax of belowTheLineTaxes">
-            <div class="col">
+            <div class="col" style="padding-right: 0px;">
                 <div class="d-inline-block" style="width:60px; overflow:hidden;" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}">
                     <div *ngIf="belowLineTax.calculationType == 1">{{ belowLineTax.value | number }}%</div>
                     <div *ngIf="belowLineTax.calculationType == 0 && belowLineTax.amount">${{ belowLineTax.amount | number: "1.4-4" }}</div>
                 </div>
-                <div class="d-inline-block text-nowrap" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}">
+                <div class="d-inline-block text-nowrap" style="overflow: hidden; max-width: 100px; text-overflow: ellipsis;" [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}">
                     {{belowLineTax.name}}
                 </div>
             </div>

@@ -27,6 +27,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
 import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
 import { FeeAndTaxBreakdownComponent } from '../../../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
+import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
 
 import * as SharedEvents from '../../../models/sharedEvents';
 
@@ -107,7 +108,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
   layoutChanged: boolean;
 
   @ViewChild('retailFeeAndTaxBreakdown') private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-  @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
 
   constructor(
       private feesAndTaxesService: FbofeesandtaxesService,
@@ -333,7 +335,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
       .afterClosed()
       .subscribe((result) => {
           this.loadFeesAndTaxes();
-        if (!result) {
+          if (this.priceChecker) {
+              this.priceChecker.refresh();
+          }
+          if (!result) {
           return;
         }
       });
