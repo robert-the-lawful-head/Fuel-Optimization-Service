@@ -156,13 +156,13 @@ namespace FBOLinx.Web.Services
             {
                 return "This FuelerLinx customer was added and set to your default pricing.  Please set to the appropriate pricing template.";
             }
-            if (isDefaultPricingTemplate)
-            {
-                return "Customer was assigned to the default template and has not been changed yet.";
-            }
             if (isPricingTemplateRemoved)
             {
                 return "The ITP Margin Template for this customer was deleted and the customer has been assigned to the default template.";
+            }
+            if (isDefaultPricingTemplate)
+            {
+                return "Customer was assigned to the default template and has not been changed yet.";
             }
             return null;
         }
