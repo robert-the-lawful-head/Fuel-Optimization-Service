@@ -45,7 +45,7 @@
         </div>
 
         <!--Sub-total-->
-        <div class="row mt-3 mb-3" *ngIf="customerMargin">
+        <div class="row mt-3 mb-3" *ngIf="customerMargin != null">
             <div class="col-1" *ngIf="displayMode == 1">
 
             </div>
@@ -60,7 +60,7 @@
         </div>
 
         <!--ITP Margin-->
-        <div class="row" *ngIf="customerMargin">
+        <div class="row" *ngIf="customerMargin != null">
             <div class="col-1" *ngIf="displayMode == 1">
 
             </div>
@@ -75,7 +75,7 @@
         </div>
 
         <!--Sub-total with Margin-->
-        <div class="row mb-3 mt-3" *ngIf="customerMargin">
+        <div class="row mb-3 mt-3" *ngIf="customerMargin != null">
             <div class="col-1" *ngIf="displayMode == 1">
 
             </div>
@@ -110,7 +110,7 @@
         </div>
 
         <!--Total-->
-        <div class="row font-weight-bold mb-3" *ngIf="customerMargin">
+        <div class="row font-weight-bold mb-3" *ngIf="customerMargin != null">
             <div class="col-1" *ngIf="displayMode == 1">
 
             </div>
