@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row" *ngIf="domesticPrivatePricing">
     <!--Fee and tax breakdown-->
-    <div class="col" *ngIf="!hideFeeAndTaxGeneralBreakdown && domesticPrivatePricing && domesticPrivatePricing.pricingList && domesticPrivatePricing.pricingList.length > 0 && domesticPrivatePricing.pricingList[0].fboPrice">
+    <div class="col fee-and-tax-breakdown-container" *ngIf="!hideFeeAndTaxGeneralBreakdown && domesticPrivatePricing && domesticPrivatePricing.pricingList && domesticPrivatePricing.pricingList.length > 0 && domesticPrivatePricing.pricingList[0].fboPrice">
       <fee-and-tax-breakdown #feeAndTaxBreakdown
                              [feesAndTaxes]="feesAndTaxes"
                              [marginType]="domesticPrivatePricing.pricingList[0].marginType"

@@ -19,7 +19,7 @@
           </div>
           <div class="row">
               <div class="col-2"></div>
-              <div class="col-5">
+              <div class="col-5 live-pricing-container">
                   <div *ngIf="feesAndTaxes && currentFboPriceJetARetail">
                       <fee-and-tax-breakdown #retailFeeAndTaxBreakdown
                                              [showLineSeparator]="true"
@@ -31,7 +31,7 @@
                                              [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
                   </div>
               </div>
-              <div class="col-5">
+              <div class="col-5 live-pricing-container">
                   <div *ngIf="feesAndTaxes && currentFboPriceJetACost">
                       <fee-and-tax-breakdown #costFeeAndTaxBreakdown
                                              [showLineSeparator]="true"
