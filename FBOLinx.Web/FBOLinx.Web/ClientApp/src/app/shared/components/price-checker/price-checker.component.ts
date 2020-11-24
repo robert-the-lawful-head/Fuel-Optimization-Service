@@ -166,6 +166,10 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
         this.priceLookupInfo = calculationResults[0];
     }
 
+    public priceTemplateChanged(): void {
+        this.lookupPricing();
+    }
+
     public customerForLookupTailChanged(): void {
         this.lookupPricing();
     }
