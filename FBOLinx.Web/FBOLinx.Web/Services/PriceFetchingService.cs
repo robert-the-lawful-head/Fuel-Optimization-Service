@@ -98,7 +98,8 @@ namespace FBOLinx.Web.Services
                 if (feesAndTaxes == null)
                 {
                     feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Where(x => x.Fboid == fboId && (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications)).ToListAsync();
-                    feesAndTaxes = feesAndTaxes.Where(x => x.DepartureType == departureType || departureType == Enums.ApplicableTaxFlights.All).ToList();
+                    if (departureType != ApplicableTaxFlights.All)
+                        feesAndTaxes = feesAndTaxes.Where(x => x.DepartureType == departureType || x.DepartureType == Enums.ApplicableTaxFlights.All).ToList();
                     feesAndTaxes.ForEach(x =>
                     {
                         if (x.OmitsByCustomer == null)

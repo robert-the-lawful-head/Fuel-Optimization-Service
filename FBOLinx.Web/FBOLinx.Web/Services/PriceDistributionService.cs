@@ -292,8 +292,8 @@ namespace FBOLinx.Web.Services
         {
             PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
             var commercialInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.InternationalOnly);
-            var privateInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.DomesticOnly);
-            var commercialDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.InternationalOnly);
+            var privateInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.InternationalOnly);
+            var commercialDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.DomesticOnly);
             var privateDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.DomesticOnly);
 
             commercialInternationalPricingResults = commercialInternationalPricingResults.OrderBy(s => s.MinGallons).ToList();

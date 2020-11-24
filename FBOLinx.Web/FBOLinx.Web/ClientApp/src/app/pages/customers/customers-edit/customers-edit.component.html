@@ -79,7 +79,7 @@
                             </table>
 
                             <div *ngIf="feesAndTaxes">
-                                <price-breakdown #priceBreakdownPreview [priceTemplateId]="customCustomerType.customerType"
+                                <price-breakdown #priceBreakdownPreview [customerInfoByGroupId]="customerInfoByGroup.oid" [priceTemplateId]="customCustomerType.customerType"
                                                  [feesAndTaxes]="feesAndTaxes"
                                                  [feeAndTaxDisplayMode]="1"
                                                  (omitCheckChanged)="omitFeeAndTaxCheckChanged($event)"
