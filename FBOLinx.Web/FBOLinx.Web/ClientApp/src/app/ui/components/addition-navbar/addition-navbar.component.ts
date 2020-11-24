@@ -22,11 +22,12 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { SharedService } from '../../../layouts/shared-service';
 import { DistributionService } from '../../../services/distribution.service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
-import { PricingExpiredNotificationComponent } from '../../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 
 // Components
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
+import { PricingExpiredNotificationComponent } from '../../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
+import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 
 @Component({
   selector: 'addition-navbar',
@@ -176,25 +177,44 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     this.checkExpiredPrices(this.filteredTemplate);
 
     if (!this.pricesExpired) {
-      const dialogRef = this.templateDialog.open(
-        DistributionWizardReviewComponent,
-        {
-          data: this.previewEmail,
-          panelClass: 'wizard',
-        }
-      );
+      this.customerContactsService
+        .getCustomerEmailCountByGroupAndFBOAndPricing(
+          this.sharedService.currentUser.groupId,
+          this.sharedService.currentUser.fboId,
+          templateId
+        ).subscribe((data: number) => {
+          if (data > 0) {
+            const dialogRef = this.templateDialog.open(
+              DistributionWizardReviewComponent,
+              {
+                data: this.previewEmail,
+                panelClass: 'wizard',
+              }
+            );
 
-      dialogRef.afterClosed().subscribe((result) => {
-        if (!result) {
-          return;
-        }
+            dialogRef.afterClosed().subscribe((result) => {
+              if (!result) {
+                return;
+              }
 
-        this.previewEmail = result;
-        const request = this.GetSendDistributionRequest(this.filteredTemplate);
-        this.distributionService
-          .previewDistribution(request)
-          .subscribe((data: any) => { });
-      });
+              this.previewEmail = result;
+              const request = this.GetSendDistributionRequest(this.filteredTemplate);
+              this.distributionService
+                .previewDistribution(request)
+                .subscribe((data: any) => { });
+            });
+          }
+          else {
+            const dialogRef = this.templateDialog.open(
+              NotificationComponent,
+              {
+                data: {text: "Please assign the template to a customer before proceeding."}
+              }
+            );
+
+            dialogRef.afterClosed().subscribe();
+          }
+        });
     }
   }
 
@@ -272,7 +292,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
           alert('No customers found for the selected distributions.');
         }
         for (let responseIndex in responseList) {
-          templatesWithCustomerCount.push(this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex] + (responseList[responseIndex]== 1 ? " email" : " emails"));
+          templatesWithCustomerCount.push(this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex] + (responseList[responseIndex] == 1 ? " email" : " emails"));
         }
 
         const dialogRef = this.proceedConfirmationDialog.open(
