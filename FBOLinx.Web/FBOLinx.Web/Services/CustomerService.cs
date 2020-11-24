@@ -152,13 +152,13 @@ namespace FBOLinx.Web.Services
         #region Private Methods
         private string GetNeedsAttentionReason(bool isDefaultPricingTemplate, bool isPricingTemplateRemoved, bool isNewFuelerlinxCustomer)
         {
-            if (isDefaultPricingTemplate && isNewFuelerlinxCustomer)
-            {
-                return "This FuelerLinx customer was added and set to your default pricing.  Please set to the appropriate pricing template.";
-            }
             if (isPricingTemplateRemoved)
             {
                 return "The ITP Margin Template for this customer was deleted and the customer has been assigned to the default template.";
+            }
+            if (isDefaultPricingTemplate && isNewFuelerlinxCustomer)
+            {
+                return "This FuelerLinx customer was added and set to your default pricing.  Please set to the appropriate pricing template.";
             }
             if (isDefaultPricingTemplate)
             {

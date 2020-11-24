@@ -377,10 +377,11 @@ namespace FBOLinx.Web.Controllers
                 var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == fboId).GroupId;
                 _context.CustomerInfoByGroup.Where(s => customers.Contains(s.CustomerId) && s.GroupId == groupInfo).ToList().ForEach(s => s.PricingTemplateRemoved = true);
 
-                _context.CustomCustomerTypes
+                var customCustomerTypes = _context.CustomCustomerTypes
                     .Where(c => c.Fboid.Equals(fboId) && c.CustomerType.Equals(oid))
-                    .ToList()
-                    .ForEach(c => c.CustomerType = defaultPricingTemplate.Oid);
+                    .ToList();
+
+                customCustomerTypes.ForEach(c => c.CustomerType = defaultPricingTemplate.Oid);
 
                 await _context.SaveChangesAsync();
             }

@@ -179,6 +179,23 @@ namespace FBOLinx.Web.Controllers
                 {
                     _context.PricingTemplate.Remove(currentDefault);
                 }
+
+                if (newDefault != null && currentDefault != null)
+                {
+                    var customers = _context.CustomCustomerTypes
+                    .Where(c => c.Fboid.Equals(updateTemplate.fboid) && c.CustomerType.Equals(updateTemplate.currenttemplate))
+                    .Select(s => s.CustomerId)
+                    .ToList();
+
+                    var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == updateTemplate.fboid).GroupId;
+                    _context.CustomerInfoByGroup.Where(s => customers.Contains(s.CustomerId) && s.GroupId == groupInfo).ToList().ForEach(s => s.PricingTemplateRemoved = true);
+
+                    var customCustomerTypes = _context.CustomCustomerTypes
+                        .Where(c => c.Fboid.Equals(updateTemplate.fboid) && c.CustomerType.Equals(updateTemplate.currenttemplate))
+                        .ToList();
+
+                    customCustomerTypes.ForEach(c => c.CustomerType = newDefault.Oid);
+                }
                 
                 _context.PricingTemplate.Update(newDefault);
 
