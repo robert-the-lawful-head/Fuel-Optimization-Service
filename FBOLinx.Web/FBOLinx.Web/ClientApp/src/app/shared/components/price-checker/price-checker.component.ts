@@ -62,7 +62,6 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
         EnumOptions.strictApplicableTaxFlightOptions;
     public strictFlightTypeClassificationOptions: Array<EnumOptions.EnumOption> =
         EnumOptions.strictFlightTypeClassificationOptions;
-    public hasChangedTabsSinceCalculation: boolean = false;
 
     public sampleCalculation: PriceLookupRequest;
 
@@ -154,7 +153,6 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
 
     public onTabChanged(event: any): void {
         this.priceCheckerLookupType = event.index;
-        this.hasChangedTabsSinceCalculation = true;
         this.priceLookupInfo = null;
         this.sampleCalculation = null;
         this.lookupPricing();
@@ -165,10 +163,11 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
             this.priceLookupInfo = null;
             return;
         }
-        if (!this.hasChangedTabsSinceCalculation) {
-            this.priceLookupInfo = calculationResults[0];
-        }
-        this.hasChangedTabsSinceCalculation = false;
+        this.priceLookupInfo = calculationResults[0];
+    }
+
+    public priceTemplateChanged(): void {
+        this.lookupPricing();
     }
 
     public customerForLookupTailChanged(): void {
@@ -226,7 +225,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
         if (this.priceCheckerLookupType == PriceCheckerLookupTypes.ByCustomer) {
             return (!this.customerForCustomerLookup ? 0 : this.customerForCustomerLookup.customerInfoByGroupId);
         } else if (this.priceCheckerLookupType == PriceCheckerLookupTypes.ByTail) {
-            return (!this.customerForTailLookup ? 0 : this.customerForTailLookup.id);
+            return (!this.customerForTailLookup ? 0 : this.customerForTailLookup.oid);
         } else {
             return 0;
         }

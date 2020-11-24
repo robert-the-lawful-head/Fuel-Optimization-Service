@@ -8,7 +8,7 @@
             <div>
               <mat-form-field>
                 <mat-label>ITP Template</mat-label>
-                <mat-select class="font-weight-bold" placeholder="ITP Template" [(ngModel)]="pricingTemplateId">
+                <mat-select class="font-weight-bold" placeholder="ITP Template" [(ngModel)]="pricingTemplateId" (selectionChange)="priceTemplateChanged()">
                   <mat-option *ngFor="let pricingTemplate of pricingTemplates" [value]="pricingTemplate.oid">
                     {{pricingTemplate.name}}
                   </mat-option>
