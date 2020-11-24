@@ -143,7 +143,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
                 customerInfoByGroupId: customerInfoByGroupId
             };
             var self = this;
-            setTimeout(function() {
+            setTimeout(function () {
+                self.priceBreakdownPreview.feesAndTaxes = null;
                 if (self.priceBreakdownPreview) {
                     self.priceBreakdownPreview.performRecalculation();
                 }
@@ -178,6 +179,10 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
         this.lookupPricing();
     }
 
+    public refresh(): void {
+        this.loadPricingTemplates();
+    }
+
     // Private Methods
     private loadPricingTemplates(): void {
         this.NgxUiLoader.startLoader(this.tailLoader);
@@ -187,14 +192,17 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
         ).subscribe((response: any) => {
             this.NgxUiLoader.stopLoader(this.tailLoader);
             this.pricingTemplates = response;
-            for (const pricingTemplate of this.pricingTemplates) {
-                if (pricingTemplate.default) {
-                    this.pricingTemplateId = pricingTemplate.oid;
+            if (!this.pricingTemplateId || this.pricingTemplateId == 0) {
+                for (const pricingTemplate of this.pricingTemplates) {
+                    if (pricingTemplate.default) {
+                        this.pricingTemplateId = pricingTemplate.oid;
+                    }
+                }
+                if (this.pricingTemplateId === 0 && this.pricingTemplates.length > 0) {
+                    this.pricingTemplateId = this.pricingTemplates[0].oid;
                 }
             }
-            if (this.pricingTemplateId === 0 && this.pricingTemplates.length > 0) {
-                this.pricingTemplateId = this.pricingTemplates[0].oid;
-            }
+
             this.lookupPricing();
         });
     }

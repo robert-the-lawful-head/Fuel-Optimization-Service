@@ -10,6 +10,7 @@
                              [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
                              [validDepartureTypes]="defaultValidDepartureTypes"
                              [validFlightTypes]="defaultValidFlightTypes"
+                             [showLineSeparator]="showFeeAndTaxLineSeparator"
                              (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
     </div>
 
@@ -154,7 +155,7 @@
             <!--Popover combinations-->
             <popover-content #feeAndTaxPopover
                              title="Fee/Tax Breakdown"
-                             placement="left"
+                             placement="top-left"
                              [closeOnMouseOutside]="true">
                 <div *ngIf="activeHoverPriceItem && activeHoverPriceItem.fboPrice && feeAndTaxCloneForPopOver">
                     <fee-and-tax-breakdown #dynamicFeeAndTaxBreakdown [feesAndTaxes]="feeAndTaxCloneForPopOver"
