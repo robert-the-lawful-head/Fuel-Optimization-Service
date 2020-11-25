@@ -269,7 +269,7 @@ namespace FBOLinx.Web.Controllers
                              join cg in _context.CustomerInfoByGroup on
                                  new { CustomerId = c.Oid, c.FuelerlinxId, Active = true }
                                  equals
-                                 new { cg.CustomerId, FuelerlinxId = request.SourceId, Active = cg.Active ?? false }
+                                 new { cg.CustomerId, FuelerlinxId = request.CompanyId, Active = cg.Active ?? false }
                              join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
                              join pt in _context.PricingTemplate on new { cct.CustomerType, Fboid = fboId } equals new { CustomerType = pt.Oid, pt.Fboid }
                              join f in _context.Fbos on

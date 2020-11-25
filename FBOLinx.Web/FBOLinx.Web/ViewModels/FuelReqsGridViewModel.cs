@@ -48,7 +48,7 @@ namespace FBOLinx.Web.ViewModels
             QuotedPpg = 0;
             QuotedVolume = item.DispatchedVolume.Amount;
             Source = item.FuelVendor;
-            SourceId = item.FuelVendorId;
+            SourceId = item.Id;
             TimeStandard = item.TimeStandard.GetValueOrDefault().ToString();
             CustomerName = item.CustomerName;
             TailNumber = item.TailNumber;
