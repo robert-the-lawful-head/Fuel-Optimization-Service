@@ -343,6 +343,7 @@ export class CustomersGridComponent implements OnInit {
             if (customer.selectAll === true) {
                 customer.needsAttention = event.value.default;
                 customer.pricingTemplateName = event.value.name;
+                customer.pricingTemplateId = event.value.oid;
                 customer.allInPrice = event.value.intoPlanePrice;
                 listCustomers.push({
                     id: customer.customerId,
