@@ -5,7 +5,7 @@
         <mat-tab-group (selectedTabChange)="onTabChanged($event);">
           <!--Price template searching tab-->
           <mat-tab label="Template">
-            <div>
+            <div class="mt-4">
               <mat-form-field>
                 <mat-label>ITP Template</mat-label>
                 <mat-select class="font-weight-bold" placeholder="ITP Template" [(ngModel)]="pricingTemplateId" (selectionChange)="priceTemplateChanged()">
@@ -19,7 +19,7 @@
 
           <!--Customer searching tab-->
           <mat-tab label="Customer">
-            <div class="container-fluid">
+            <div class="container-fluid mt-4">
               <div class="row">
                 <div class="col">
                   <mat-form-field>
@@ -46,8 +46,8 @@
           </mat-tab>
 
           <!--Aircraft searching tab-->
-          <mat-tab label="Aircraft">
-            <div class="container-fluid">
+          <mat-tab class="mb-4" label="Aircraft">
+            <div class="container-fluid mt-4">
               <div class="row">
                 <div class="col">
                   <mat-form-field>
@@ -87,30 +87,30 @@
       </div>-->
 
       <!--Pricing template/company information-->
-      <div class="col">
+      <div class="col" style="font-size:14px;">
         <div *ngIf="tailLookupError" class="h6 mt-0 mb-0 text-danger pl-5">No Tail Price Found!</div>
 
         <div *ngIf="priceLookupInfo && !tailLookupError && priceCheckerLookupType != 0">
           <div class="container-fluid">
-            <div class="row">
-              <div class="col text-muted">Pricing Template: </div>
+            <div class="row pb-2">
+              <div class="col-4 font-weight-bold">Pricing Template: </div>
               <div class="col">{{ priceLookupInfo?.template ? priceLookupInfo.template : 'N/A' }}</div>
             </div>
-            <div class="row">
-              <div class="col text-muted">Company: </div>
+            <div class="row pb-2">
+              <div class="col-4 font-weight-bold">Company: </div>
               <div class="col">{{ priceLookupInfo?.company ? priceLookupInfo.company: 'N/A' }}</div>
             </div>
-            <div class="row">
-              <div class="col text-muted">Make/Model: </div>
+            <div class="row pb-2">
+              <div class="col-4 font-weight-bold">Make/Model: </div>
               <div class="col">{{ priceLookupInfo?.makeModel ? priceLookupInfo.makeModel : 'N/A' }}</div>
             </div>
-            <div class="row">
-              <div class="col text-muted">Ramp Fee:</div>
+            <div class="row pb-2">
+              <div class="col-4 font-weight-bold">Ramp Fee:</div>
               <div class="col" *ngIf="priceLookupInfo?.rampFee">${{priceLookupInfo?.rampFee.price | number: "1.2-4" }} waived at {{priceLookupInfo.rampFee.waived | number: "1.0"}} gal.</div>
               <div class="col" *ngIf="!priceLookupInfo?.rampFee">N/A</div>
             </div>
             <div class="row" *ngIf="priceLookupInfo?.rampFee">
-              <div class="col text-muted">Ramp Fee Rule: </div>
+              <div class="col-4 font-weight-bold">Ramp Fee Rule: </div>
               <div class="col">{{priceLookupInfo.rampFee.categorizationDescription}}</div>
             </div>
           </div>
@@ -123,7 +123,7 @@
 
 
 
-<div class="container-fluid pb-4" *ngIf="sampleCalculation">
+<div class="container-fluid pb-4 sub-widget" *ngIf="sampleCalculation">
   <div class="row mt-4 mb-2">
       <div class="col font-weight-bold" style="padding-left: 43px;">
           Taxes and Fees
@@ -139,6 +139,8 @@
                        (calculationsComplated)="priceBreakdownCalculationsCompleted($event)"
                        [priceTemplateId]="sampleCalculation.pricingTemplateId"
                        [customerInfoByGroupId]="sampleCalculation.customerInfoByGroupId"
+                       [feeAndTaxDisplayMode]="2"
+                       [showFeeAndTaxLineSeparator]="true"
                        [tailNumber]="sampleCalculation.tailNumber">
 
       </price-breakdown>

@@ -71,6 +71,7 @@ export class PricingTemplatesEditComponent implements OnInit {
     jetARetail: number;
     public isSaving: boolean = false;
     public hasSaved: boolean = false;
+    public isSaveQueued: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -134,9 +135,7 @@ export class PricingTemplatesEditComponent implements OnInit {
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
                 this.canSave = true;
-                if (!this.isSaving) {
-                    this.savePricingTemplate();
-                }
+                this.savePricingTemplate();
             });
 
             //Margin type change event
@@ -163,6 +162,11 @@ export class PricingTemplatesEditComponent implements OnInit {
     public savePricingTemplate(): void {
         let self = this;
         if (this.isSaving) {
+            //Save already in queue - no need to double-up the queue
+            if (this.isSaveQueued) {
+                return;
+            }
+            this.isSaveQueued = true;
             setTimeout(function() {
                 self.savePricingTemplate();
                 },
@@ -170,6 +174,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             return;
         }
 
+        this.isSaveQueued = false;
         this.isSaving = true;
         this.hasSaved = false;
         const removedCustomerMargins =

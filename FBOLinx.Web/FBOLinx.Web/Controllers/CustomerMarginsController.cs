@@ -172,12 +172,23 @@ namespace FBOLinx.Web.Controllers
         [HttpPost("bulkremove")]
         public async Task<IActionResult> DeleteBulkCustomerMargins([FromBody] List<CustomerMargins> margins)
         {
-            var pricetierIds = margins.Select(margin => margin.PriceTierId).Where(id => id > 0).ToList();
+            try
+            {
+                var priceTierIds = margins.Select(x => x.PriceTierId).Where(x => x > 0);
+                var customerMarginIds = margins.Select(x => x.Oid).Where(x => x > 0);
+                var priceTiersToDelete = _context.PriceTiers.Where(x => priceTierIds.Any(p => p == x.Oid));
+                var customerMarginsToDelete = _context.CustomerMargins.Where(x => customerMarginIds.Any(c => c == x.Oid));
 
-            _context.CustomerMargins.RemoveRange(margins);
-            _context.PriceTiers.RemoveRange(_context.PriceTiers.Where(pricetier => pricetierIds.Contains(pricetier.Oid)));
+                _context.CustomerMargins.RemoveRange(customerMarginsToDelete);
+                _context.PriceTiers.RemoveRange(priceTiersToDelete);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (System.Exception exception)
+            {
+                //Do nothing - concurrency error due to fast-removal of margins that already occurred
+                //TODO: find a better way of handling this.  Looks to occur during the auto-save in the UI.  Not causing any actual issues.
+            }
 
             return Ok();
         }

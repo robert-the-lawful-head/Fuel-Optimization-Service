@@ -154,9 +154,9 @@ export class CustomersEditComponent implements OnInit {
                 this.customerCompanyTypeChanged();
             }
         });
-        this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe(() => {
-            this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
-            this.priceBreakdownPreview.performRecalculation();
+        this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe((selectedValue) => {
+            this.customCustomerType.customerType = selectedValue;
+            this.recalculatePriceBreakdown();
         });
 
         this.loadCustomerFeesAndTaxes();
@@ -377,17 +377,25 @@ export class CustomersEditComponent implements OnInit {
         if (feeAndTax.isOmitted) {
             this.fboFeeAndTaxOmitsbyCustomerService.add(omitRecord).subscribe((response: any) => {
                 omitRecord.oid = response.oid;
-                this.priceBreakdownPreview.performRecalculation();
+                this.recalculatePriceBreakdown();
             });
         } else {
             this.fboFeeAndTaxOmitsbyCustomerService.remove(omitRecord).subscribe((response: any) => {
                 feeAndTax.omitsByCustomer = [];
-                this.priceBreakdownPreview.performRecalculation();
+                this.recalculatePriceBreakdown();
             });
         }
     }
 
     // Private Methods
+    private recalculatePriceBreakdown(): void {
+        //Set a timeout so the child component is aware of model changes
+        var self = this;
+        setTimeout(() => {
+            self.priceBreakdownPreview.performRecalculation();
+        });
+    }
+
     private loadCustomerContacts() {
         this.contactInfoByGroupsService
             .getCustomerContactInfoByGroup(
