@@ -603,16 +603,16 @@ namespace FBOLinx.Web.Controllers
 
                 if (!string.IsNullOrEmpty(request.TailNumber))
                 {
-                    var customerInfoByGroup = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid == request.CustomerInfoByGroupId);
+                    var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(c => c.Oid == request.CustomerInfoByGroupId);
                     if (customerInfoByGroup == null)
                         return Ok(null);
 
-                    var customerAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID && s.CustomerId == customerInfoByGroup.CustomerId);
+                    var customerAircraft = await _context.CustomerAircrafts.FirstOrDefaultAsync(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID && s.CustomerId == customerInfoByGroup.CustomerId);
                     if (customerAircraft == null)
                         return Ok(null);
 
                     var validPricingList =
-                        await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customerAircraft.CustomerId, (Enums.FlightTypeClassifications)request.FlightTypeClassification);
+                        await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customerAircraft.CustomerId, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes, request.FBOID);
                     if (validPricingList == null)
                         return Ok(null);
 
@@ -620,7 +620,7 @@ namespace FBOLinx.Web.Controllers
                         !string.IsNullOrEmpty(x.TailNumbers) &&
                         x.TailNumbers.ToUpper().Split(',').Contains(request.TailNumber.ToUpper())  && x.FboId == request.FBOID &&
                         (request.CustomerInfoByGroupId == x.CustomerInfoByGroupId)).ToList();
-                    var custAircraftMakeModel = _aircraftService.GetAllAircrafts().FirstOrDefault(s => s.AircraftId == customerAircraft.AircraftId);
+                    var custAircraftMakeModel = await _aircraftService.GetAllAircraftsAsQueryable().FirstOrDefaultAsync(s => s.AircraftId == customerAircraft.AircraftId);
 
                     if (custAircraftMakeModel != null)
                     {
@@ -630,7 +630,7 @@ namespace FBOLinx.Web.Controllers
                 } 
                 else
                 {
-                    var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == request.GroupID && x.Active.HasValue && x.Active.Value).FirstOrDefaultAsync();
+                    var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == request.GroupID && ((x.Active.HasValue && x.Active.Value && request.CustomerInfoByGroupId == 0) || (request.CustomerInfoByGroupId > 0 && x.Oid == request.CustomerInfoByGroupId))).FirstOrDefaultAsync();
                     validPricing.PricingList = await priceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, customerInfoByGroup?.Oid > 0 ? customerInfoByGroup.Oid : 0, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
                 }
 

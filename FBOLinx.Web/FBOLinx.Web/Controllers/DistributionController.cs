@@ -50,9 +50,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            //if (fboId != UserService.GetClaimedFboId(_HttpContextAccessor))
-            //    return BadRequest(ModelState);
-
             var distributionLog = await (from dl in _context.DistributionLog
                 join cg in _context.CustomerInfoByGroup on new
                     {
@@ -94,7 +91,6 @@ namespace FBOLinx.Web.Controllers
                     PricingTemplateName = pt != null ? pt.Name : "All",
                     CustomerCompanyTypeName = cct != null ? cct.Name : "All"
                 }).OrderByDescending(x => x.DateSent).ToListAsync();
-            //var distributionLog = _context.DistributionLog.Where((x => x.Fboid == fboId)).OrderByDescending((x => x.DateSent)).Take(resultCount);
 
             return Ok(distributionLog);
         }
@@ -130,8 +126,7 @@ namespace FBOLinx.Web.Controllers
             if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
                 return BadRequest(ModelState);
 
-            await Task.Run(() =>
-                PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context, _fuelerLinxContext, request, _FileProvider, _HttpContextAccessor, _jwtManager, _PriceDistributionService));
+            await _PriceDistributionService.DistributePricing(request, false);
 
             return Ok();
         }
@@ -148,9 +143,9 @@ namespace FBOLinx.Web.Controllers
             if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
                 return BadRequest(ModelState);
 
-            string preview = await _PriceDistributionService.GeneratePreview(request);
+            await _PriceDistributionService.DistributePricing(request, true);
 
-            return Ok(new {preview = preview});
+            return Ok();
         }
     }
 }

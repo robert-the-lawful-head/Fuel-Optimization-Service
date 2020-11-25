@@ -7,30 +7,27 @@ import {
   QueryList,
   HostListener,
   Input,
+  ViewChild
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Observable } from 'rxjs';
-import 'rxjs/add/operator/debounceTime';
 import * as moment from 'moment';
 
 // Services
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
-import { AircraftsService } from '../../../services/aircrafts.service';
 import { SharedService } from '../../../layouts/shared-service';
 
-// Enums
-import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
-import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
-import { EnumOptions } from '../../../models/enum-options';
 
 // Components
 import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
 import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
+import { FeeAndTaxBreakdownComponent } from '../../../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
+import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
 
 import * as SharedEvents from '../../../models/sharedEvents';
 
@@ -67,29 +64,17 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
   @ViewChildren('tooltip') priceTooltips: QueryList<any>;
   // Members
   pricingLoader = 'pricing-loader';
-  tailLoader = 'tail-loader';
+  //tailLoader = 'tail-loader';
 
   currentPrices: any[];
   currentPricingEffectiveFrom = new Date();
   currentPricingEffectiveTo: any;
   pricingTemplates: any[];
+  public feesAndTaxes: Array<any>;
   jtCost: any;
   jtRetail: any;
   isLoadingRetail = false;
   isLoadingCost = false;
-  tailNumber: string;
-  customerForTailLookup: any;
-  flightTypeClassification: FlightTypeClassifications = FlightTypeClassifications.Private;
-  departureType: ApplicableTaxFlights = ApplicableTaxFlights.DomesticOnly;
-  strictApplicableTaxFlightOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictApplicableTaxFlightOptions;
-  strictFlightTypeClassificationOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictFlightTypeClassificationOptions;
-  customersForTail: Array<any>;
-
-  tailLookupInfo: TailLookupResponse;
-  tailLookupError: boolean;
-
-  tailNumberForLookupControl: FormControl = new FormControl();
-
 
   TempValueJet: number;
   TempValueId = 0;
@@ -122,7 +107,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
   layoutChanged: boolean;
 
+  @ViewChild('retailFeeAndTaxBreakdown') private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
+
   constructor(
+      private feesAndTaxesService: FbofeesandtaxesService,
     private fboPricesService: FbopricesService,
     private pricingTemplateService: PricingtemplatesService,
     private sharedService: SharedService,
@@ -130,26 +120,9 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     private temporaryAddOnMargin: TemporaryAddOnMarginService,
     private NgxUiLoader: NgxUiLoaderService,
     private fboPricesSelectDefaultTemplateDialog: MatDialog,
-    private fboFeesAndTaxesDialog: MatDialog,
-    private aircraftsService: AircraftsService
+    private fboFeesAndTaxesDialog: MatDialog
   ) {
 
-    // Register change subscription for tail number entry
-    this.tailNumberFormControlSubscription = this.tailNumberForLookupControl.valueChanges.debounceTime(1000).subscribe(tailValue => {
-      this.customerForTailLookup = null;
-      this.tailNumber = tailValue;
-      this.aircraftsService.getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumber).subscribe((response: any) => {
-        if (!response) {
-          this.customersForTail = [];
-          this.customerForTailLookup = null;
-          return;
-        }
-        this.customersForTail = response;
-        if (this.customersForTail.length > 0) {
-          this.customerForTailLookup = this.customersForTail[0];
-        }
-      });
-    });
   }
 
   ngOnInit(): void {
@@ -197,6 +170,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     this.loadFboPrices().subscribe(() => {
       this.NgxUiLoader.stopLoader(this.pricingLoader);
     });
+    this.loadFeesAndTaxes();
     this.checkDefaultTemplate();
   }
 
@@ -350,31 +324,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     }
   }
 
-  lookupTail() {
-    const tailLookupData = {
-      icao: this.sharedService.currentUser.icao,
-      tailNumber: this.tailNumber,
-      fboId: this.sharedService.currentUser.fboId,
-      groupId: this.sharedService.currentUser.groupId,
-      customerInfoByGroupId: this.customerForTailLookup.oid
-    };
-    this.tailLookupError = false;
-    this.tailLookupInfo = undefined;
-    this.NgxUiLoader.startLoader(this.tailLoader);
-    this.fboPricesService.getFuelPricesForCompany(tailLookupData).subscribe((data: TailLookupResponse) => {
-      if (data) {
-        this.tailLookupInfo = data;
-        this.tailLookupError = false;
-      } else {
-        this.tailLookupError = true;
-      }
-      this.NgxUiLoader.stopLoader(this.tailLoader);
-    }, (err) => {
-      this.tailLookupError = true;
-      this.NgxUiLoader.stopLoader(this.tailLoader);
-    });
-  }
-
   editFeesAndTaxes(): void {
     const dialogRef = this.fboFeesAndTaxesDialog.open(
       FeeAndTaxSettingsDialogComponent, {
@@ -385,7 +334,11 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     dialogRef
       .afterClosed()
       .subscribe((result) => {
-        if (!result) {
+          this.loadFeesAndTaxes();
+          if (this.priceChecker) {
+              this.priceChecker.refresh();
+          }
+          if (!result) {
           return;
         }
       });
@@ -519,6 +472,20 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
       tooltipsArr[this.tooltipIndex].open();
       this.tooltipIndex--;
     }, 400);
+  }
+
+  private loadFeesAndTaxes() {
+      this.feesAndTaxesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((response: any) => {
+        this.feesAndTaxes = response;
+        if (this.retailFeeAndTaxBreakdown) {
+            this.retailFeeAndTaxBreakdown.feesAndTaxes = this.feesAndTaxes;
+          this.retailFeeAndTaxBreakdown.performRecalculation();
+        }
+        if (this.costFeeAndTaxBreakdown) {
+            this.costFeeAndTaxBreakdown.feesAndTaxes = this.feesAndTaxes;
+            this.costFeeAndTaxBreakdown.performRecalculation();
+        }
+      });
   }
 
   @HostListener('window:resize', ['$event'])

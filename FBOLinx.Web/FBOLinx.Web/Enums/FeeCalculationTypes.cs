@@ -17,7 +17,7 @@ namespace FBOLinx.Web.Enums
         /// Percentage (%)
         /// </summary>
         [Description("Percentage of Base")]
-        PercentageOfBase = 1,
+        Percentage = 1,
         /// <summary>
         /// 
         /// </summary>

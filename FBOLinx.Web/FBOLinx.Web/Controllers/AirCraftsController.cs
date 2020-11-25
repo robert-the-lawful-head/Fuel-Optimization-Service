@@ -28,9 +28,10 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/AirCrafts
         [HttpGet]
-        public IEnumerable<AirCrafts> GetAirCrafts()
+        public async Task<ActionResult<IEnumerable<AirCrafts>>> GetAirCrafts()
         {
-            return _aircraftService.GetAllAircrafts().OrderBy(x => x.Make).ThenBy(x => x.Model);
+            var result = await _aircraftService.GetAllAircrafts();
+            return Ok(result.OrderBy(x => x.Make).ThenBy(x => x.Model));
         }
 
         [HttpGet("Sizes")]
@@ -48,9 +49,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            var aircrafts = await _aircraftService.GetAllAircrafts();
             var customerAircrafts = await (from ca in _context.CustomerAircrafts
                                            join c in _context.Customers on ca.CustomerId equals c.Oid
-                                           join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
+                                           join ac in aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
                                            from ac in leftJoinAircrafts.DefaultIfEmpty()
                                            where ca.Oid == id
                                            select new
@@ -139,7 +141,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var airCrafts = _aircraftService.GetAircrafts(id);
+            var airCrafts = await _aircraftService.GetAircrafts(id);
             if (airCrafts == null)
             {
                 return NotFound();

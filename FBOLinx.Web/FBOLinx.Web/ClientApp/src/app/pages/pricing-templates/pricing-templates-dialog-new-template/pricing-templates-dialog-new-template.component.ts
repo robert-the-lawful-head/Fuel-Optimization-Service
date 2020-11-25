@@ -184,7 +184,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     const templatePayload = {
       fboId: this.data.fboId,
       name: this.form.value.firstStep.templateName,
-      default: this.form.value.firstStep.default,
+      default: this.form.value.firstStep.templateDefault,
       marginType: this.form.value.secondStep.marginType,
       subject: this.form.value.thirdStep.subject,
       email: this.form.value.thirdStep.email,

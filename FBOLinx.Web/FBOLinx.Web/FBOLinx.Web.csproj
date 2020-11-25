@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\enums\applicable-tax-flights.ts" />
+    <None Remove="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <None Remove="ClientApp\src\app\enums\flight-type-classifications.ts" />
     <None Remove="ClientApp\src\app\guards\auth.guard.ts" />
@@ -53,11 +54,15 @@
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <None Remove="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofeesandtaxes.service.ts" />
     <None Remove="ClientApp\src\app\services\index.ts" />
     <None Remove="ClientApp\src\app\services\paremeters.service.ts" />
     <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
+    <None Remove="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
+    <None Remove="ClientApp\src\app\shared\components\price-breakdown\price-breakdown.component.ts" />
+    <None Remove="ClientApp\src\app\shared\components\price-checker\price-checker.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\proceed-confirmation\proceed-confirmation.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\table-column-filter\table-column-filter.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\table-global-search\table-global-search.component.ts" />
@@ -76,6 +81,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\enums\applicable-tax-flights.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\flight-type-classifications.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\guards\auth.guard.ts" />
@@ -94,11 +100,15 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\fbofeesandtaxes.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\paremeters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\price-breakdown\price-breakdown.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\price-checker\price-checker.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\proceed-confirmation\proceed-confirmation.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\table-column-filter\table-column-filter.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\table-global-search\table-global-search.component.ts" />

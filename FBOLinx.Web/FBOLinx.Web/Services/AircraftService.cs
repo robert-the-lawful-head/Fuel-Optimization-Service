@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace FBOLinx.Web.Services
 {
@@ -19,15 +20,20 @@ namespace FBOLinx.Web.Services
             _degaContext = degaContext;
         }
 
-        public List<AirCrafts> GetAllAircrafts()
+        public async Task<List<AirCrafts>> GetAllAircrafts()
         {
-            var aircrafts = _degaContext.AirCrafts.Include(a => a.AFSAircraft).Include(a => a.AircraftSpecifications).ToList();
+            var aircrafts = await _degaContext.AirCrafts.Include(a => a.AFSAircraft).Include(a => a.AircraftSpecifications).ToListAsync();
             return aircrafts;
         }
 
-        public AirCrafts GetAircrafts(int oid)
+        public IIncludableQueryable<AirCrafts, AircraftSpecifications> GetAllAircraftsAsQueryable()
         {
-            return _degaContext.AirCrafts.Include(a => a.AFSAircraft).Include(a => a.AircraftSpecifications).Where(a => a.AircraftId == oid).FirstOrDefault();
+            return _degaContext.AirCrafts.Include(a => a.AFSAircraft).Include(a => a.AircraftSpecifications);
+        }
+
+        public async Task<AirCrafts> GetAircrafts(int oid)
+        {
+            return await _degaContext.AirCrafts.Include(a => a.AFSAircraft).Include(a => a.AircraftSpecifications).FirstOrDefaultAsync(a => a.AircraftId == oid);
         }
 
         public async Task AddAirCrafts(AirCrafts airCrafts)

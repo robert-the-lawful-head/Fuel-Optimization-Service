@@ -47,15 +47,8 @@ namespace FBOLinx.Web.DTO
         {
             get
             {
-                double result = 0;
-                if (!MarginType.HasValue)
-                    result = 0;
-                else if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
-                    result = (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
-                else if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
-                    result = (FboPrice.GetValueOrDefault() - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
-                else if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
-                    result = Math.Abs(CustomerMarginAmount.GetValueOrDefault());
+                double result = GetPreMarginSubTotal();
+                result = GetSubtotalWithMargin(result);
                 return result;
             }
         }
@@ -64,33 +57,7 @@ namespace FBOLinx.Web.DTO
         {
             get
             {
-                double result = 0;
-                if (!MarginType.HasValue)
-                    result = 0;
-                else if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
-                    result = (FboPrice.GetValueOrDefault() + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
-                else if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
-                    result = (FboPrice.GetValueOrDefault() - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
-                else if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
-                    result = Math.Abs(CustomerMarginAmount.GetValueOrDefault());
-
-                if (FeesAndTaxes == null)
-                    return result;
-
-                //Calculate the fee totals, adding in flat first, then percentage of base, then percentage of total after the others have been totalled
-                double resultWithBaseFees = result;
-                foreach(var feeAndTax in FeesAndTaxes.Where(x => x.CalculationType != Enums.FeeCalculationTypes.PercentageOfTotal).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.PercentageOfBase ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2))
-                {
-                    resultWithBaseFees += feeAndTax.GetCalculatedValue(result, resultWithBaseFees);
-                }
-
-                double resultWithAllFees = resultWithBaseFees;
-                foreach(var feeAndTax in FeesAndTaxes.Where(x => x.CalculationType == Enums.FeeCalculationTypes.PercentageOfTotal))
-                {
-                    resultWithAllFees += feeAndTax.GetCalculatedValue(result, resultWithBaseFees);
-                }
-
-                return resultWithAllFees;
+                return GetAllInPrice();
             }
         }
 
@@ -103,5 +70,67 @@ namespace FBOLinx.Web.DTO
         }
 
         public List<FboFeesAndTaxes> FeesAndTaxes { get; set; }
+
+        #region Private Methods
+        private double GetAllInPrice()
+        {
+            //Start by calculating the total before the margin including pre-margin taxes and fees
+            double result = GetPreMarginSubTotal();
+
+            //Next apply the margin to the pre-margin subtotal
+            result = GetSubtotalWithMargin(result);
+
+            //Finally add the post-margin fees and taxes
+            result = GetPostMarginTotal(result);
+
+            return result;
+        }
+
+        private double GetPreMarginSubTotal()
+        {
+            if (!MarginType.HasValue || MarginType == PricingTemplate.MarginTypes.RetailMinus || MarginType == PricingTemplate.MarginTypes.FlatFee)
+                return (FboPrice.GetValueOrDefault());
+            double result = FboPrice.GetValueOrDefault();
+            double basePrice = FboPrice.GetValueOrDefault();
+            if (FeesAndTaxes == null)
+                return result;
+            
+            foreach (var feeAndTax in FeesAndTaxes.Where(x => x.WhenToApply == Enums.FeeCalculationApplyingTypes.PreMargin && !x.IsOmitted).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.Percentage ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2))
+            {
+                result += feeAndTax.GetCalculatedValue(basePrice, result);
+            }
+
+            return result;
+        }
+
+        private double GetSubtotalWithMargin(double preMarginSubTotal)
+        {
+            double result = 0;
+            if (!MarginType.HasValue)
+                result = 0;
+            else if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
+                result = (preMarginSubTotal + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
+            else if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
+                result = (preMarginSubTotal - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
+            else if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
+                result = preMarginSubTotal;
+            return result;
+        }
+
+        private double GetPostMarginTotal(double subTotalWithMargin)
+        {
+            double result = subTotalWithMargin;
+
+            if (FeesAndTaxes == null)
+                return result;
+
+            foreach (var feeAndTax in FeesAndTaxes.Where(x => x.WhenToApply == Enums.FeeCalculationApplyingTypes.PostMargin && !x.IsOmitted).OrderBy(x => x.CalculationType == Enums.FeeCalculationTypes.Percentage ? 1 : 2).ThenBy(x => x.CalculationType == Enums.FeeCalculationTypes.FlatPerGallon ? 1 : 2))
+            {
+                result += feeAndTax.GetCalculatedValue(subTotalWithMargin, result);
+            }
+
+            return result;
+        }
+        #endregion
     }
 }

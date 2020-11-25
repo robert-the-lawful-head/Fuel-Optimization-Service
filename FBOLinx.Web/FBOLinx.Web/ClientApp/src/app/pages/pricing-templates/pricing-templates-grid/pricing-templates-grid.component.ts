@@ -49,8 +49,6 @@ export class PricingTemplatesGridComponent implements OnInit {
         'isInvalid',
         'name',
         'marginTypeDescription',
-        'yourMargin',
-        'intoPlanePrice',
         'customersAssigned',
         'copy',
         'delete',

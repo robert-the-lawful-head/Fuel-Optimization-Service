@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
@@ -8,12 +8,14 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
 import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
 import { FeeCalculationTypes } from '../../../enums/fee-calculation-types';
+import { FeeCalculationApplyingTypes } from '../../../enums/fee-calculation-applying-types';
 import { MatTableDataSource } from '@angular/material/table';
 import { EnumOptions } from '../../../models/enum-options';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { FbopricesService } from '../../../services/fboprices.service';
+import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 
 
 export interface FeeAndTaxDialogData {
@@ -25,6 +27,7 @@ export interface FeeAndTaxDialogData {
   flightTypeClassification: FlightTypeClassifications;
   departureType: ApplicableTaxFlights;
   requiresUpdate: boolean;
+  whenToApply: FeeCalculationApplyingTypes;
 }
 
 export interface SampleCalculation {
@@ -47,12 +50,13 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
   public calculationLoader = 'calculation-loader';
 
   public feeAndTaxDatasource: MatTableDataSource<any> = null;
-  public displayedColumns: string[] = ['name', 'calculationType', 'value', 'flightTypeClassification', 'departureType', 'delete'];
+  public displayedColumns: string[] = ['name', 'calculationType', 'whenToApply', 'value', 'flightTypeClassification', 'departureType', 'delete'];
   public feeCalculationTypes: Array<EnumOptions.EnumOption> = EnumOptions.feeCalculationTypeOptions;
   public flightTypeClassifications: Array<EnumOptions.EnumOption> = EnumOptions.flightTypeClassificationOptions;
   public applicableTaxFlightOptions: Array<EnumOptions.EnumOption> = EnumOptions.applicableTaxFlightOptions;
   public strictApplicableTaxFlightOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictApplicableTaxFlightOptions;
   public strictFlightTypeClassificationOptions: Array<EnumOptions.EnumOption> = EnumOptions.strictFlightTypeClassificationOptions;
+  public feeCalculationApplyingTypes: Array<EnumOptions.EnumOption> = EnumOptions.feeCalculationApplyingTypeOptions;
   public deletedFeesAndTaxes: Array<FeeAndTaxDialogData> = [];
   public pricingTemplates: Array<any>;
   public sampleCalculation: SampleCalculation = {
@@ -65,14 +69,14 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
   };
   public requiresSaving = false;
 
+  @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Array<FeeAndTaxDialogData>,
     public dialogRef: MatDialogRef<FeeAndTaxSettingsDialogComponent>,
     private feesAndTaxesService: FbofeesandtaxesService,
     private sharedService: SharedService,
-    private pricingTemplateService: PricingtemplatesService,
-    private fbopricesService: FbopricesService,
-    private NgxUiLoader: NgxUiLoaderService
+    private pricingTemplateService: PricingtemplatesService
   ) {}
 
   public ngOnInit(): void {
@@ -111,6 +115,10 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     this.deletedFeesAndTaxes.push(feeAndTax);
     this.requiresSaving = true;
     this.prepareDataSource();
+    if (this.priceBreakdownPreview) {
+      this.priceBreakdownPreview.feesAndTaxes = this.data;
+      this.priceBreakdownPreview.performRecalculation();
+    }
   }
 
   public feeAndTaxAdded(): void {
@@ -122,35 +130,30 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
       calculationType: 0,
       value: 0,
       flightTypeClassification: 3,
-      departureType: 3
+      departureType: 3,
+      whenToApply: 0
     });
     this.prepareDataSource();
     this.requiresSaving = true;
   }
 
   public sampleCalculationChanged(): void {
-    this.NgxUiLoader.startLoader(this.calculationLoader);
-    this.fbopricesService.getFuelPricesForCompany({
-      flightTypeClassification: this.sampleCalculation.flightTypeClassification,
-      DepartureType: this.sampleCalculation.departureType,
-      fboid: this.sharedService.currentUser.fboId,
-      groupId: this.sharedService.currentUser.groupId,
-      replacementFeesAndTaxes: this.data,
-      pricingTemplateId: this.sampleCalculation.pricingTemplateId
-    }).subscribe((response: any) => {
-      if (response != null && response.pricingList != null && response.pricingList.length > 0) {
-        this.sampleCalculation.inclusivePrice = response.pricingList[0].allInPrice;
-        this.sampleCalculation.exclusivePrice = response.pricingList[0].basePrice;
-      } else {
-        this.sampleCalculation.inclusivePrice = 0;
-        this.sampleCalculation.exclusivePrice = 0;
+      if (this.priceBreakdownPreview) {
+          //Use a timeout here as the child component won't know of the template change until after the cycle
+          var self = this;
+          setTimeout(() => {
+              self.priceBreakdownPreview.performRecalculation();
+          });
       }
-      this.NgxUiLoader.stopLoader(this.calculationLoader);
-    });
   }
 
   public feeValueChanged(feeAndTax, value) {
-    feeAndTax.value = value;
+    try {
+        feeAndTax.value = parseFloat(value);
+    } catch (e) {
+        feeAndTax.value = 0;
+    }
+    
     this.feeAndTaxChanged(feeAndTax);
   }
 
@@ -202,7 +205,6 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
       if (this.sampleCalculation.pricingTemplateId === 0 && this.pricingTemplates.length > 0) {
         this.sampleCalculation.pricingTemplateId = this.pricingTemplates[0].oid;
       }
-      this.sampleCalculationChanged();
     });
   }
 }

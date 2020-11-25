@@ -42,6 +42,9 @@ import { NgxUiLoaderModule } from 'ngx-ui-loader';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { GridModule, PageService, SortService, FilterService, GroupService, ToolbarService } from '@syncfusion/ej2-angular-grids';
 
+// Popover
+import { PopoverModule } from "ngx-smart-popover";
+
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
 import { LoginComponent } from './auth/login/login.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
@@ -115,6 +118,8 @@ import { ManageConfirmationComponent } from '../shared/components/manage-confirm
 import { NotificationComponent } from '../shared/components/notification/notification.component';
 import { PricingExpiredNotificationComponent } from '../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 import { PricingExpiredNotificationGroupComponent } from '../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component';
+import { PriceBreakdownComponent } from '../shared/components/price-breakdown/price-breakdown.component';
+import { PriceCheckerComponent } from '../shared/components/price-checker/price-checker.component';
 import { TemporaryAddOnMarginComponent } from '../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
 import { StatisticsOrdersByLocationComponent } from '../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 import { StatisticsTotalAircraftComponent } from '../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
@@ -131,10 +136,12 @@ import { FuelReqsExportModalComponent } from '../shared/components/fuelreqs-expo
 import { CustomerMatchDialogComponent } from './customers/customer-match-dialog/customer-match-dialog.component';
 import { TableColumnFilterComponent } from '../shared/components/table-column-filter/table-column-filter.component';
 import { TableGlobalSearchComponent } from '../shared/components/table-global-search/table-global-search.component';
+import { FeeAndTaxBreakdownComponent } from '../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 // Pipes
 import { AppPipesModule } from '../app-pipes.module';
 
 import { ClickStopPropagationDirective } from '../shared/directives/click-stop-propagation.directive';
+
 
 @NgModule({
   imports: [
@@ -180,7 +187,8 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     NgbPopoverModule,
     NgxUiLoaderModule,
     GridModule,
-    RouterModule
+    RouterModule,
+    PopoverModule
   ],
   declarations: [
     AuthtokenComponent,
@@ -255,6 +263,8 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     ForgotPasswordDialogComponent,
     ManageConfirmationComponent,
     NotificationComponent,
+    PriceBreakdownComponent,
+    PriceCheckerComponent,
     PricingExpiredNotificationComponent,
     PricingExpiredNotificationGroupComponent,
     TemporaryAddOnMarginComponent,
@@ -271,6 +281,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     TableGlobalSearchComponent,
     GroupAnalyticsHomeComponent,
     GroupAnalyticsGenerateDialogComponent,
+    FeeAndTaxBreakdownComponent
   ],
   exports: [
     ClickStopPropagationDirective,

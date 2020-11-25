@@ -172,6 +172,7 @@ namespace FBOLinx.Web.Controllers
             {
                 transaction.CustomerName = customers.Where(x => x.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault();
                 fuelReqsFromFuelerLinx.Add(FuelReqsGridViewModel.Cast(transaction));
+                
             }
 
             List<FuelReqsGridViewModel> fuelReqVM = await
@@ -207,7 +208,7 @@ namespace FBOLinx.Web.Controllers
                      FboName = f.Fbo,
                      fr.Email,
                      fr.PhoneNumber,
-                     PricingTemplateName = frp == null ? "" : frp.PricingTemplateName,
+                     PricingTemplateName = frp == null ? "" : frp.PricingTemplateName
                  }
                  into results
                  select new FuelReqsGridViewModel
@@ -617,7 +618,7 @@ namespace FBOLinx.Web.Controllers
                 var fuelReqsByAircraftSizeVM = await (from f in _context.FuelReq
                                                       join ca in
                                                           (from ca in _context.CustomerAircrafts
-                                                           join ac in _aircraftService.GetAllAircrafts() on ca.AircraftId equals ac.AircraftId
+                                                           join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
                                                            select new
                                                            {
                                                                Size = (ca.Size.HasValue && ca.Size.Value != AirCrafts.AircraftSizes.NotSet

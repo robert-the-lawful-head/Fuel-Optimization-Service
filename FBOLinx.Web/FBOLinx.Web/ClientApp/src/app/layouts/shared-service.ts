@@ -50,6 +50,10 @@ export class SharedService {
     if (!this._currentUser.impersonatedRole && sessionStorage.getItem('impersonatedrole')) {
       this._currentUser.impersonatedRole = Number(sessionStorage.getItem('impersonatedrole'));
     }
+    const sessionGroupId = sessionStorage.getItem('groupId');
+    if (sessionGroupId && (!this._currentUser.groupId || this._currentUser.groupId !== Number(sessionGroupId))) {
+      this._currentUser.groupId = Number(sessionGroupId);
+    }
     if (!this._currentUser.groupId && sessionStorage.getItem('groupId')) {
       this._currentUser.groupId = Number(sessionStorage.getItem('groupId'));
     }
