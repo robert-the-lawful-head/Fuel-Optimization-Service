@@ -12,7 +12,7 @@ import {MatSort, SortDirection} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSelectChange} from '@angular/material/select';
-import {find, forEach, forOwn, map, sortBy} from 'lodash';
+import {find, forEach, map, sortBy} from 'lodash';
 import FlatFileImporter from 'flatfile-csv-importer';
 import * as XLSX from 'xlsx';
 
