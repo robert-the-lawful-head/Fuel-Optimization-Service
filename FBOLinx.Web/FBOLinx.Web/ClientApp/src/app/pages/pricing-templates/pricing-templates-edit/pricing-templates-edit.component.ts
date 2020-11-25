@@ -187,8 +187,12 @@ export class PricingTemplatesEditComponent implements OnInit {
                 ...this.pricingTemplate,
                 ...this.pricingTemplateForm.value,
             }),
-        ]).subscribe(() => {
+        ]).subscribe(([bulkRemoveResponse, customerMarginsUpdateResponse, priceTemplatesResponse]) => {
             //this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
+            this.pricingTemplate.customerMargins = customerMarginsUpdateResponse;
+            for (let i = 0; i < this.pricingTemplateForm.value.customerMargins.length; i++) {
+                this.pricingTemplateForm.value.customerMargins[i].oid = this.pricingTemplate.customerMargins[i].oid;
+            }
             this.isSaving = false;
             this.hasSaved = true;
             this.priceBreakdownPreview.performRecalculation();
