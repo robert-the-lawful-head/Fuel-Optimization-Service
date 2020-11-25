@@ -29,6 +29,14 @@ namespace FBOLinx.Web.Services
 {
     public class PriceDistributionService
     {
+        public enum PriceBreakdownDisplayTypes : short
+        {
+            SingleColumnAllFlights = 0,
+            TwoColumnsDomesticInternationalOnly = 1,
+            TwoColumnsApplicableFlightTypesOnly = 2,
+            FourColumnsAllRules = 3
+        }
+
         private MailSettings _MailSettings;
         private DistributePricingRequest _DistributePricingRequest;
         private FboLinxContext _context;
@@ -296,13 +304,48 @@ namespace FBOLinx.Web.Services
             var commercialDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.DomesticOnly);
             var privateDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.DomesticOnly);
 
-            commercialInternationalPricingResults = commercialInternationalPricingResults.OrderBy(s => s.MinGallons).ToList();
+            bool hasDepartureTypeRule = false;
+            bool hasFlightTypeRule = false;
+            var priceBreakdownDisplayType = PriceBreakdownDisplayTypes.SingleColumnAllFlights;
 
-            string priceBreakdownTemplate = GetPriceBreakdownTemplate();
-            string rowHTMLTemplate = GetPriceBreakdownRowTemplate();
+            var taxesAndFees = await _context.FbofeesAndTaxes.Where(x => x.Fboid == _DistributePricingRequest.FboId).ToListAsync();
+            foreach(FboFeesAndTaxes fee in taxesAndFees)
+            {
+                if (fee.DepartureType == Enums.ApplicableTaxFlights.DomesticOnly || fee.DepartureType == Enums.ApplicableTaxFlights.InternationalOnly)
+                {
+                    hasDepartureTypeRule = true;
+                }
+                if (fee.FlightTypeClassification == Enums.FlightTypeClassifications.Private || fee.FlightTypeClassification == Enums.FlightTypeClassifications.Commercial)
+                {
+                    hasFlightTypeRule = true;
+                }
+            }
+
+            if (!hasDepartureTypeRule && !hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.SingleColumnAllFlights;
+            }
+            else if (!hasDepartureTypeRule && hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly;
+            }
+            else if (hasDepartureTypeRule && !hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly;
+            }
+            else if (hasDepartureTypeRule && hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.FourColumnsAllRules;
+            }
+
+            privateDomesticPricingResults = privateDomesticPricingResults.OrderBy(s => s.MinGallons).ToList();
+
+            string priceBreakdownTemplate = GetPriceBreakdownTemplate(priceBreakdownDisplayType);
+            string rowHTMLTemplate = GetPriceBreakdownRowTemplate(priceBreakdownDisplayType);
             StringBuilder rowsHTML = new StringBuilder();
             int loopIndex = 0;
-            foreach (DTO.CustomerWithPricing model in commercialInternationalPricingResults)
+
+            foreach (DTO.CustomerWithPricing model in privateDomesticPricingResults)
             {
                 string row = rowHTMLTemplate;
 
@@ -332,7 +375,8 @@ namespace FBOLinx.Web.Services
                     row = row.Replace("-", "");
                 }
                    
-                row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", (model.AllInPrice.GetValueOrDefault())));
+                row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice.GetValueOrDefault())));
+                row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", (commercialInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
                 row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", (privateInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
                 row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", (commercialDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
                 row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", (privateDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
@@ -343,16 +387,36 @@ namespace FBOLinx.Web.Services
             return priceBreakdownTemplate.Replace("%PRICE_BREAKDOWN_ROWS%", rowsHTML.ToString());
         }
 
-        private string GetPriceBreakdownTemplate()
+        private string GetPriceBreakdownTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
         {
-            return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
-                "PriceBreakdown" + ".html");
+            if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
+                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                    "PriceBreakdownSingleColumnAllFlights.html");
+            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                    "PriceBreakdownTwoColumnsApplicableFlightTypesOnly.html");
+            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
+                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                    "PriceBreakdownTwoColumnsDepartureOnly.html");
+            else
+                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                    "PriceBreakdownFourColumnsAllRules.html");
         }
 
-        private string GetPriceBreakdownRowTemplate()
+        private string GetPriceBreakdownRowTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
         {
-            return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
-                "PriceBreakdownRow" + ".html");
+            if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
+                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                    "PriceBreakdownRowSingleColumnAllFlights.html");
+            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                    "PriceBreakdownRowTwoColumnsApplicableFlightTypesOnly.html");
+            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
+                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                    "PriceBreakdownRowTwoColumnsDepartureOnly.html");
+            else
+                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                    "PriceBreakdownRowFourColumnsAllRules.html");
         }
 
         private List<Models.ContactInfoByGroup> GetRecipientsForCustomer(Models.CustomerInfoByGroup customer)
