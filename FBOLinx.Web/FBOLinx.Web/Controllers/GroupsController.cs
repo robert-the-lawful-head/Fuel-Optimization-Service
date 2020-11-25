@@ -360,7 +360,7 @@ namespace FBOLinx.Web.Controllers
                        .Where(a => a.GroupId == request.BaseGroupId)
                        .ToList();
                     var distinctedCustomerAircrafts = baseCustomerAircrafts
-                        .GroupBy(ca => new { ca.GroupId, ca.CustomerId, ca.TailNumber })
+                        .GroupBy(ca => new { ca.GroupId, ca.CustomerId, ca.TailNumber, ca.AircraftId, ca.Size })
                         .Select(g => g.First())
                         .ToList();
                     var duplicatedCustomerAircrafts = baseCustomerAircrafts
@@ -370,7 +370,12 @@ namespace FBOLinx.Web.Controllers
                     duplicatedCustomerAircrafts.ForEach(ca =>
                     {
                         var aircraftPrices = _context.AircraftPrices.Where(ap => ap.CustomerAircraftId == ca.Oid).ToList();
-                        var baseCustomerAircraft = distinctedCustomerAircrafts.Where(dca => dca.GroupId == ca.GroupId && dca.CustomerId == ca.CustomerId && dca.TailNumber == ca.TailNumber).First();
+                        var baseCustomerAircraft = distinctedCustomerAircrafts.Where(dca => dca.GroupId == ca.GroupId
+                            && dca.CustomerId == ca.CustomerId
+                            && dca.TailNumber == ca.TailNumber
+                            && dca.AircraftId == ca.AircraftId
+                            && dca.Size == ca.Size
+                        ).First();
                         aircraftPrices.ForEach(ap => ap.CustomerAircraftId = baseCustomerAircraft.Oid);
                         _context.AircraftPrices.UpdateRange(aircraftPrices);
                     });
