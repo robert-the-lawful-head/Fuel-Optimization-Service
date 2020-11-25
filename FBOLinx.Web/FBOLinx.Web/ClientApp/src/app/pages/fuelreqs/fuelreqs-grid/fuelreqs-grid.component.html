@@ -124,6 +124,11 @@
                 <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.source }}</td>
             </ng-container>
 
+            <ng-container matColumnDef="sourceId">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>FuelerLinx ID</th>
+                <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.sourceId }}</td>
+            </ng-container>
+
             <ng-container matColumnDef="delete">
                 <th mat-header-cell *matHeaderCellDef>
                     <div class="pull-right">
