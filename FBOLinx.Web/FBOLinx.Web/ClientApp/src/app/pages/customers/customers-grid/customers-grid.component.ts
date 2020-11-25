@@ -345,6 +345,9 @@ export class CustomersGridComponent implements OnInit {
                 customer.pricingTemplateName = event.value.name;
                 customer.pricingTemplateId = event.value.oid;
                 customer.allInPrice = event.value.intoPlanePrice;
+                if (customer.needsAttention) {
+                    customer.needsAttentionReason = 'Customer was assigned to the default template and has not been changed yet.';
+                }
                 listCustomers.push({
                     id: customer.customerId,
                     pricingTemplateId: event.value.oid,
