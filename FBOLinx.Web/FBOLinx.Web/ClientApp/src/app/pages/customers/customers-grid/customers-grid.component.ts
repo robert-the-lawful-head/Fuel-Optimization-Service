@@ -211,11 +211,6 @@ export class CustomersGridComponent implements OnInit {
         });
     }
 
-    applyFilter(event: any) {
-      this.customerSearch = event.target.value.trim();
-      this.customersDataSource.filter = this.customerSearch.toLowerCase();
-    }
-
     exportCustomersToExcel() {
         // Export the filtered results to an excel spreadsheet
         const filteredList = this.customersDataSource.filteredData.filter((item) => {
