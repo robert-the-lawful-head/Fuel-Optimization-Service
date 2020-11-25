@@ -25,8 +25,20 @@ export class TableGlobalSearchComponent implements OnInit {
     this.setupFilterPredicate();
     if (!this.matDataSource.filterCollection) {
       this.matDataSource.filterCollection = [];
-    }
-    this.matDataSource.filterCollection.push(this.globalFilter);
+      }
+    let hasGlobal: boolean = false;
+    for (const filter of this.matDataSource.filterCollection) {
+        if (filter.isGlobal) {
+            hasGlobal = true;
+            this.globalFilter = filter;
+            break;
+        }
+      }
+      if (!hasGlobal) {
+          this.matDataSource.filterCollection.push(this.globalFilter);
+      }
+
+      this.applyFilter(this.globalFilter.filterValue);
   }
 
   public applyFilter(filterValue: any) {
