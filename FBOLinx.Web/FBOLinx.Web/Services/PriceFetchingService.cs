@@ -124,12 +124,6 @@ namespace FBOLinx.Web.Services
                             .TemplateId
                         into leftJoinPPT
                     from ppt in leftJoinPPT.DefaultIfEmpty()
-                    join ff in _context.Fbofees on new {fboId = _FboId, feeType = 8} equals new
-                    {
-                        fboId = ff.Fboid,
-                        feeType = ff.FeeType
-                    } into leftJoinFF
-                    from ff in leftJoinFF.DefaultIfEmpty()
                     join fp in _context.Fboprices.Where(x =>
                         (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.UtcNow) &&
                         x.Expired != true) on new
@@ -176,7 +170,6 @@ namespace FBOLinx.Web.Services
                         MarginType = pt.MarginType,
                         FboPrice = fp.Price,
                         CustomerMarginAmount = pt.MarginTypeProduct == "JetA Retail" && tmp.MarginJet.HasValue ? ppt.CustomerMargin.Amount + (double)tmp.MarginJet.Value ?? 0 : ppt.CustomerMargin.Amount,
-                        FboFeeAmount = ff.FeeAmount,
                         Suspended = cg.Suspended,
                         FuelerLinxId = c.FuelerlinxId,
                         Network = cg.Network,
