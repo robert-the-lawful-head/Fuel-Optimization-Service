@@ -12,7 +12,7 @@ import {MatSort, SortDirection} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSelectChange} from '@angular/material/select';
-import {find, forEach, forOwn, map, sortBy} from 'lodash';
+import {find, forEach, map, sortBy} from 'lodash';
 import FlatFileImporter from 'flatfile-csv-importer';
 import * as XLSX from 'xlsx';
 
@@ -51,7 +51,7 @@ export class CustomersGridComponent implements OnInit {
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
     @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-    customersDataSource: MatTableDataSource<any> = null;
+    customersDataSource: any = null;
     displayedColumns: string[] = [
         'selectAll',
         'needsAttention',
@@ -100,7 +100,7 @@ export class CustomersGridComponent implements OnInit {
         this.refreshCustomerDataSource();
 
         if (this.customerGridState.filter) {
-            this.customersDataSource.filter = this.customerGridState.filter;
+            this.customersDataSource.filterCollection = JSON.parse(this.customerGridState.filter);
         }
         if (this.customerGridState.page) {
             this.paginator.pageIndex = this.customerGridState.page;
@@ -209,11 +209,6 @@ export class CustomersGridComponent implements OnInit {
                     });
             });
         });
-    }
-
-    applyFilter(event: any) {
-      this.customerSearch = event.target.value.trim();
-      this.customersDataSource.filter = this.customerSearch.toLowerCase();
     }
 
     exportCustomersToExcel() {
@@ -345,6 +340,9 @@ export class CustomersGridComponent implements OnInit {
                 customer.pricingTemplateName = event.value.name;
                 customer.pricingTemplateId = event.value.oid;
                 customer.allInPrice = event.value.intoPlanePrice;
+                if (customer.needsAttention) {
+                    customer.needsAttentionReason = 'Customer was assigned to the default template and has not been changed yet.';
+                }
                 listCustomers.push({
                     id: customer.customerId,
                     pricingTemplateId: event.value.oid,
@@ -513,31 +511,18 @@ export class CustomersGridComponent implements OnInit {
 
     private refreshCustomerDataSource() {
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.customersDataSource = new MatTableDataSource(
-            this.customersData.filter((element: any) => {
-                    if (this.customerFilterType !== 1) {
-                        return true;
-                    }
-                    return element.needsAttention;
+        if (!this.customersDataSource) {
+            this.customersDataSource = new MatTableDataSource();
+        }
+        this.customersDataSource.data = this.customersData.filter((element: any) => {
+                if (this.customerFilterType !== 1) {
+                    return true;
                 }
-            )
+                return element.needsAttention;
+            }
         );
         this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
         this.customersDataSource.paginator = this.paginator;
-        this.customersDataSource.filterPredicate = (data: any, filter: string) => {
-            if (filter === 'needs attention') {
-                return data.needsAttention === true;
-            } else {
-                let found = false;
-                forOwn(data, (value) => {
-                    if (value && value.toString().toLowerCase().includes(filter)) {
-                        found = true;
-                        return false;
-                    }
-                });
-                return found;
-            }
-        };
     }
 }

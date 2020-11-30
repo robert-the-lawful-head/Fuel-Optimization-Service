@@ -730,6 +730,7 @@ namespace FBOLinx.Web.Controllers
                                                         PricingTemplateName = string.IsNullOrEmpty(pt.Name) ? defaultPricingTemplate.Name : pt.Name,
                                                         IsPricingExpired = ai == null ? false : ai.IsPricingExpired,
                                                         Active = cg.Active.GetValueOrDefault(),
+                                                        ca.Tails,
                                                         FleetSize = ca == null ? 0 : ca.Count,
                                                         AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
                                                         PricingTemplateId = pt.Oid,
@@ -755,6 +756,7 @@ namespace FBOLinx.Web.Controllers
                                                         NeedsAttention = resultsGroup.Key.NeedsAttention,
                                                         NeedsAttentionReason = resultsGroup.Key.NeedsAttentionReason,
                                                         SelectAll = false,
+                                                        TailNumbers = resultsGroup.Key.Tails,
                                                     })
                                                     .GroupBy(p => p.CustomerId)
                                                     .Select(g => g.FirstOrDefault())

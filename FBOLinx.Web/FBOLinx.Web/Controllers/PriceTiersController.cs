@@ -156,9 +156,11 @@ namespace FBOLinx.Web.Controllers
                     _context.CustomerMargins.Add(customerMargin);
 
                 await _context.SaveChangesAsync();
+
+                customerMarginsGridViewModel.Oid = customerMargin.Oid;
             }
 
-            return NoContent();
+            return Ok(customerMargins);
         }
 
         // DELETE: api/PriceTiers/5
