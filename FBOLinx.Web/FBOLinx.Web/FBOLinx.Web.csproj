@@ -34,6 +34,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\FbofeesController.cs" />
+    <Compile Remove="Models\Fbofees.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="ClientApp\src\app\enums\applicable-tax-flights.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-types.ts" />
@@ -55,6 +60,8 @@
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <None Remove="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
     <None Remove="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />
+    <None Remove="ClientApp\src\app\services\fbofees.service.ts" />
+    <None Remove="ClientApp\src\app\services\fbofees.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofeesandtaxes.service.ts" />
     <None Remove="ClientApp\src\app\services\index.ts" />
     <None Remove="ClientApp\src\app\services\paremeters.service.ts" />

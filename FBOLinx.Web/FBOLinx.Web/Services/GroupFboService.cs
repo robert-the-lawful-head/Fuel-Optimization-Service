@@ -145,9 +145,6 @@ namespace FBOLinx.Web.Services
             var fbocontacts = _context.Fbocontacts.Where(c => c.Fboid.Equals(fboId));
             _context.Fbocontacts.RemoveRange(fbocontacts);
 
-            var fbofees = _context.Fbofees.Where(c => c.Fboid.Equals(fboId));
-            _context.Fbofees.RemoveRange(fbofees);
-
             var fbopreferences = _context.Fbopreferences.Where(c => c.Fboid.Equals(fboId));
             _context.Fbopreferences.RemoveRange(fbopreferences);
 
@@ -304,9 +301,6 @@ namespace FBOLinx.Web.Services
 
             var fbocontacts = _context.Fbocontacts.Where(c => fboIds.Contains(c.Fboid));
             _context.Fbocontacts.RemoveRange(fbocontacts);
-
-            var fbofees = _context.Fbofees.Where(c => fboIds.Contains(c.Fboid));
-            _context.Fbofees.RemoveRange(fbofees);
 
             var fbopreferences = _context.Fbopreferences.Where(c => fboIds.Contains(c.Fboid));
             _context.Fbopreferences.RemoveRange(fbopreferences);

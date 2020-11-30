@@ -22,7 +22,6 @@ namespace FBOLinx.Web.DTO
         public PricingTemplate.MarginTypes? MarginType { get; set; }
         public double? FboPrice { get; set; }
         public double? CustomerMarginAmount { get; set; }
-        public double? FboFeeAmount { get; set; }
         public bool NeedsAttention { get; set; }
         public string PricingTemplateName { get; set; }
         public Models.CustomerInfoByGroup.CertificateTypes? CertificateType { get; set; }

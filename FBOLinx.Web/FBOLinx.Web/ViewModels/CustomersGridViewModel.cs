@@ -21,7 +21,6 @@ namespace FBOLinx.Web.ViewModels
         public PricingTemplate.MarginTypes? MarginType { get; set; }
         public double? FboPrice { get; set; }
         public double? CustomerMarginAmount { get; set; }
-        public double? FboFeeAmount { get; set; }
         public bool NeedsAttention { get; set; }
         public string NeedsAttentionReason { get; set; }
         public string PricingTemplateName { get; set; }
