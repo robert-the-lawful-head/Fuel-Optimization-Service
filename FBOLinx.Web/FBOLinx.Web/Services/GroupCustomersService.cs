@@ -33,8 +33,18 @@ namespace FBOLinx.Web.Services
             {
                 var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null && s.GroupId == null).ToList();
                 var aircrafts = _fuelerLinxService.GetAircraftsFromFuelerinx();
+
+                System.Collections.ArrayList customerExistsList = new System.Collections.ArrayList();
                 foreach (var cust in listWithCustomers)
                 {
+                    var customerExists = _context.CustomerInfoByGroup.Where(s => s.CustomerId == cust.Oid && s.GroupId == groupId).Count();
+
+                    if (customerExists > 0)
+                    {
+                        customerExistsList.Add(cust.Oid);
+                        continue;
+                    }
+
                     CustomerInfoByGroup cibg = new CustomerInfoByGroup();
                     cibg.GroupId = groupId;
                     cibg.CustomerId = cust.Oid;
@@ -63,6 +73,11 @@ namespace FBOLinx.Web.Services
 
                 foreach (var cust in listWithCustomers)
                 {
+                    var customerAircrafts = _context.CustomerAircrafts.Where(s => s.GroupId == groupId && s.CustomerId == cust.Oid).Count();
+
+                    if (customerExistsList.Contains(cust.Oid) || customerAircrafts > 0)
+                        continue;
+
                     var filteredAircraftsByCompany = aircrafts.Result.Where(s => s.CompanyId == cust.FuelerlinxId).ToList();
                     
                     foreach(var aircraft in filteredAircraftsByCompany)
@@ -76,31 +91,12 @@ namespace FBOLinx.Web.Services
                         _context.CustomerAircrafts.Add(ca);
                         _context.SaveChanges();
                     }
-
-                    //foreach (var airplane in listOfAirplanes)
-                    //{
-                    //    var singleAirplane = airplane;
-                    //    CustomerAircrafts ca = new CustomerAircrafts();
-                    //    ca.AircraftId = airplane.Key;
-                    //    ca.CustomerId = cust.Oid;
-                    //    ca.GroupId = groupId;
-                    //    ca.TailNumber = airplane.First().TailNumber;
-                    //    ca.Size = airplane.First().Size;
-                    //    ca.NetworkCode = airplane.First().NetworkCode;
-                    //    ca.AddedFrom = airplane.First().AddedFrom;
-
-                    //    _context.CustomerAircrafts.Add(ca);
-                    //    _context.SaveChanges();
-                    //}
                 }
             }
             catch(Exception ex)
             {
                 var eee = ex.Message;
             }
-
-
-            
         }
     }
 }
