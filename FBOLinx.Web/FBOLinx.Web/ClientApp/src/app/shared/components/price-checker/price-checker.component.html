@@ -125,7 +125,7 @@
 
 <div class="container-fluid pb-4 sub-widget" *ngIf="sampleCalculation">
   <div class="row mt-4 mb-2">
-      <div class="col font-weight-bold" style="padding-left: 43px;">
+      <div class="col font-weight-bold" style="padding-left: 53px;">
           Taxes and Fees
       </div>
       <div class="col font-weight-bold" style="padding-left: 16px;">
@@ -133,7 +133,7 @@
       </div>
   </div>
 
-  <div class="row mt-4">
+  <div class="row mt-4 price-lookup-breakdown">
     <div class="col-12" style="font-size:14px;">
       <price-breakdown #priceBreakdownPreview
                        (calculationsComplated)="priceBreakdownCalculationsCompleted($event)"
