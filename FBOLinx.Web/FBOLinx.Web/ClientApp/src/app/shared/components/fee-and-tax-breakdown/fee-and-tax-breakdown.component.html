@@ -4,8 +4,11 @@
     <div class="container-fluid" *ngIf="displayMode == 0 || displayMode == 1">
         <div class="row font-weight-bold mb-3 pb-1">
             <div class="col">
-                <div *ngIf="displayMode == 1" class="d-inline-block ml-n2">Omit</div>
-                <div class="d-inline-block ml-4 pl-1">Name</div>
+                <div *ngIf="displayMode == 1" class="d-inline-block">
+                    <div class="ml-n2">Omit</div>
+                </div>
+                <div  *ngIf="displayMode == 1"  class="d-inline-block ml-4 pl-1">Name</div>
+                <div   *ngIf="displayMode == 0" class="d-inline-block">Name</div>
             </div>
             <div class="col text-right">Amount</div>
         </div>

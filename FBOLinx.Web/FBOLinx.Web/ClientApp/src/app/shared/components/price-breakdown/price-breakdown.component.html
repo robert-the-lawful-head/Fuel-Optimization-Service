@@ -187,7 +187,7 @@
             <!--Popover combinations-->
             <popover-content #feeAndTaxPopover
                              title="Fee/Tax Breakdown"
-                             placement="top-left"
+                             [placement]="tooltipPlacement"
                              [closeOnMouseOutside]="true">
                 <div *ngIf="activeHoverPriceItem && activeHoverPriceItem.fboPrice && feeAndTaxCloneForPopOver">
                     <fee-and-tax-breakdown #dynamicFeeAndTaxBreakdown [feesAndTaxes]="feeAndTaxCloneForPopOver"
