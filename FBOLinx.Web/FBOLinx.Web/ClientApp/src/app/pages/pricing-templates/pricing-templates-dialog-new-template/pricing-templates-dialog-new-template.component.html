@@ -93,9 +93,6 @@
                                         <span>Your ITP Margin</span>
                                     </th>
                                     <th class="text-center mat-header-cell">
-                                        All-in
-                                    </th>
-                                    <th class="text-center mat-header-cell">
                                         <button
                                             ni-button
                                             size="small"
@@ -167,10 +164,6 @@
                                         *ngIf="marginType === 1"
                                     >
                                         <div>${{ customerMargin.value.itp | number: "1.4-4" }}</div>
-                                    </td>
-
-                                    <td class="mat-cell text-center font-weight-bold font-italic text-right">
-                                        <div>${{ customerMargin.value.allin | number: "1.4-4" }}</div>
                                     </td>
 
                                     <td class="text-right mat-cell">

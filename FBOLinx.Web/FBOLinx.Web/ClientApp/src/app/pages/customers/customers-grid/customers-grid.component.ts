@@ -60,7 +60,6 @@ export class CustomersGridComponent implements OnInit {
         'isFuelerLinxCustomer',
         'certificateTypeDescription',
         'pricingTemplateName',
-        'allInPrice',
         'fleetSize',
         'delete',
     ];
