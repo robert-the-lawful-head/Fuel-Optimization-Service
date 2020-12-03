@@ -31,7 +31,7 @@
                     </div>
                 </div>
             </h3>
-            <div class="card-content">
+            <div class="card-content edit-customer-content">
                 <mat-tab-group>
                     <mat-tab label="Customer Details">
                         <div class="container-fluid">
@@ -82,6 +82,7 @@
                                 <price-breakdown #priceBreakdownPreview [customerInfoByGroupId]="customerInfoByGroup.oid" [priceTemplateId]="customCustomerType.customerType"
                                                  [feesAndTaxes]="feesAndTaxes"
                                                  [feeAndTaxDisplayMode]="1"
+                                                 tooltipPlacement="left"
                                                  (omitCheckChanged)="omitFeeAndTaxCheckChanged($event)"
                                                  ></price-breakdown>
                             </div>

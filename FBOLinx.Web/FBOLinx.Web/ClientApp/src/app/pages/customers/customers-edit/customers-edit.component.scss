@@ -38,3 +38,15 @@
         }
     }
 }
+
+.edit-customer-content .mat-tab-body-content {
+    overflow: initial !important;
+}
+
+.edit-customer-content .mat-tab-body.mat-tab-body-active {
+    overflow-x: initial !important;
+    overflow-y: initial !important;
+}
+.edit-customer-content .mat-tab-body {
+    overflow: initial !important;
+}
