@@ -7,7 +7,7 @@ import {
   EventEmitter,
   OnDestroy,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 import * as _ from 'lodash';
@@ -72,6 +72,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     private customerInfoByGroupService: CustomerinfobygroupService,
     private sharedService: SharedService,
     private router: Router,
+    private route: ActivatedRoute,
     private accountProfileDialog: MatDialog,
     private userService: UserService,
     private fboPricesService: FbopricesService,
@@ -351,8 +352,12 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     this.needsAttentionMenu.isOpened = false;
     this.sharedService.currentUser.fboId = this.fboAirport.fboid;
     this.loadFboInfo();
-    sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
-    this.sharedService.emitChange(SharedEvents.locationChangedEvent);
+      sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+      if (this.isOnDashboard()) {
+          this.sharedService.emitChange(SharedEvents.locationChangedEvent);
+      } else {
+          this.router.navigate(['/default-layout/dashboard/']).then();
+      }
   }
 
   toggleProfileMenu() {
@@ -386,5 +391,21 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
 
   get notificationVisible() {
     return this.sharedService.currentUser.fboId > 0 && this.sharedService.currentUser.role !== 5;
-  }
+    }
+
+  // Private Methods
+    private isOnDashboard(): boolean {
+        if (!this.route || !this.route.url) {
+            return false;
+        }
+        var urlInfo: any = !this.route.url;
+        if (!urlInfo.value) {
+            return false;
+        }
+        var dashboardResults = urlInfo.value.filter(value => value && value.toLowerCase().indexOf('dashboard') > -1);
+        if (!dashboardResults || dashboardResults.length == 0) {
+            return false;
+        }
+        return true;
+    }
 }
