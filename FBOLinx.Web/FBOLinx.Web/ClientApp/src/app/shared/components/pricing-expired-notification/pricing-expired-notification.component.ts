@@ -14,15 +14,16 @@ import * as moment from 'moment';
     styleUrls: ['./pricing-expired-notification.component.scss'],
 })
 export class PricingExpiredNotificationComponent {
-  @Input() hideRemindMeButton: boolean = false;
+  @Input() hideRemindMeButton = false;
 
     constructor(
         private router: Router,
         public dialogRef: MatDialogRef<PricingExpiredNotificationComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-      if (data.hideRemindMeButton)
+      if (data.hideRemindMeButton) {
         this.hideRemindMeButton = data.hideRemindMeButton;
+      }
     }
 
     public onConfirmClicked() {

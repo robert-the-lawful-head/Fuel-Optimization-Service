@@ -2,16 +2,18 @@
   <div class="row" *ngIf="domesticPrivatePricing">
     <!--Fee and tax breakdown-->
     <div class="col fee-and-tax-breakdown-container" *ngIf="!hideFeeAndTaxGeneralBreakdown && domesticPrivatePricing && domesticPrivatePricing.pricingList && domesticPrivatePricing.pricingList.length > 0 && domesticPrivatePricing.pricingList[0].fboPrice">
-      <fee-and-tax-breakdown #feeAndTaxBreakdown
-                             [feesAndTaxes]="feesAndTaxes"
-                             [marginType]="domesticPrivatePricing.pricingList[0].marginType"
-                             [customerMargin]="domesticPrivatePricing.pricingList[0].customerMarginAmount"
-                             [displayMode]="feeAndTaxDisplayMode"
-                             [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
-                             [validDepartureTypes]="defaultValidDepartureTypes"
-                             [validFlightTypes]="defaultValidFlightTypes"
-                             [showLineSeparator]="showFeeAndTaxLineSeparator"
-                             (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
+        <fee-and-tax-breakdown
+            #feeAndTaxBreakdown
+            [feesAndTaxes]="feesAndTaxes"
+            [marginType]="domesticPrivatePricing.pricingList[0].marginType"
+            [customerMargin]="domesticPrivatePricing.pricingList[0].customerMarginAmount"
+            [displayMode]="feeAndTaxDisplayMode"
+            [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
+            [validDepartureTypes]="defaultValidDepartureTypes"
+            [validFlightTypes]="defaultValidFlightTypes"
+            [showLineSeparator]="showFeeAndTaxLineSeparator"
+            (omitCheckChanged)="omitChanged($event)"
+        ></fee-and-tax-breakdown>
     </div>
 
     <!--Price breakdown-->

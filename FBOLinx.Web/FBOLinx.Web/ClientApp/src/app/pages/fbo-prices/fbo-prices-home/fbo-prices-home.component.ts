@@ -64,7 +64,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
   @ViewChildren('tooltip') priceTooltips: QueryList<any>;
   // Members
   pricingLoader = 'pricing-loader';
-  //tailLoader = 'tail-loader';
+  // tailLoader = 'tail-loader';
 
   currentPrices: any[];
   currentPricingEffectiveFrom = new Date();
@@ -113,14 +113,14 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
   constructor(
       private feesAndTaxesService: FbofeesandtaxesService,
-    private fboPricesService: FbopricesService,
-    private pricingTemplateService: PricingtemplatesService,
-    private sharedService: SharedService,
-    private customCustomerService: CustomcustomertypesService,
-    private temporaryAddOnMargin: TemporaryAddOnMarginService,
-    private NgxUiLoader: NgxUiLoaderService,
-    private fboPricesSelectDefaultTemplateDialog: MatDialog,
-    private fboFeesAndTaxesDialog: MatDialog
+      private fboPricesService: FbopricesService,
+      private pricingTemplateService: PricingtemplatesService,
+      private sharedService: SharedService,
+      private customCustomerService: CustomcustomertypesService,
+      private temporaryAddOnMargin: TemporaryAddOnMarginService,
+      private NgxUiLoader: NgxUiLoaderService,
+      private fboPricesSelectDefaultTemplateDialog: MatDialog,
+      private fboFeesAndTaxesDialog: MatDialog
   ) {
 
   }
@@ -479,7 +479,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         this.feesAndTaxes = response;
         if (this.retailFeeAndTaxBreakdown) {
             this.retailFeeAndTaxBreakdown.feesAndTaxes = this.feesAndTaxes;
-          this.retailFeeAndTaxBreakdown.performRecalculation();
+            this.retailFeeAndTaxBreakdown.performRecalculation();
         }
         if (this.costFeeAndTaxBreakdown) {
             this.costFeeAndTaxBreakdown.feesAndTaxes = this.feesAndTaxes;

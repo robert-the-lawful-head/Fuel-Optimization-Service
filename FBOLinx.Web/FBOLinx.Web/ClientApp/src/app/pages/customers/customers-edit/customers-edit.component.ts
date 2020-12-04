@@ -389,8 +389,8 @@ export class CustomersEditComponent implements OnInit {
 
     // Private Methods
     private recalculatePriceBreakdown(): void {
-        //Set a timeout so the child component is aware of model changes
-        var self = this;
+        // Set a timeout so the child component is aware of model changes
+        const self = this;
         setTimeout(() => {
             self.priceBreakdownPreview.performRecalculation();
         });

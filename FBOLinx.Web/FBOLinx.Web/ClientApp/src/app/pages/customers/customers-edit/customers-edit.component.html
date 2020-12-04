@@ -79,12 +79,15 @@
                             </table>
 
                             <div *ngIf="feesAndTaxes" class="sub-widget">
-                                <price-breakdown #priceBreakdownPreview [customerInfoByGroupId]="customerInfoByGroup.oid" [priceTemplateId]="customCustomerType.customerType"
-                                                 [feesAndTaxes]="feesAndTaxes"
-                                                 [feeAndTaxDisplayMode]="1"
-                                                 tooltipPlacement="left"
-                                                 (omitCheckChanged)="omitFeeAndTaxCheckChanged($event)"
-                                                 ></price-breakdown>
+                                <price-breakdown
+                                    #priceBreakdownPreview
+                                    [customerInfoByGroupId]="customerInfoByGroup.oid"
+                                    [priceTemplateId]="customCustomerType.customerType"
+                                    [feesAndTaxes]="feesAndTaxes"
+                                    [feeAndTaxDisplayMode]="1"
+                                    tooltipPlacement="left"
+                                    (omitCheckChanged)="omitFeeAndTaxCheckChanged($event)"
+                                ></price-breakdown>
                             </div>
 
 

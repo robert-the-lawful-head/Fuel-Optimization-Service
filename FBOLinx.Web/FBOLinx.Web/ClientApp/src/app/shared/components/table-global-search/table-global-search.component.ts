@@ -26,7 +26,7 @@ export class TableGlobalSearchComponent implements OnInit {
     if (!this.matDataSource.filterCollection) {
       this.matDataSource.filterCollection = [];
       }
-    let hasGlobal: boolean = false;
+    let hasGlobal = false;
     for (const filter of this.matDataSource.filterCollection) {
         if (filter.isGlobal) {
             hasGlobal = true;
@@ -34,11 +34,11 @@ export class TableGlobalSearchComponent implements OnInit {
             break;
         }
       }
-      if (!hasGlobal) {
+    if (!hasGlobal) {
           this.matDataSource.filterCollection.push(this.globalFilter);
       }
 
-      this.applyFilter(this.globalFilter.filterValue);
+    this.applyFilter(this.globalFilter.filterValue);
   }
 
   public applyFilter(filterValue: any) {

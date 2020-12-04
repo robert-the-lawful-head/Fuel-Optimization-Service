@@ -21,7 +21,7 @@ import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 
-//Components
+// Components
 import { PriceBreakdownComponent} from '../../../shared/components/price-breakdown/price-breakdown.component';
 
 const BREADCRUMBS: any[] = [
@@ -69,9 +69,9 @@ export class PricingTemplatesEditComponent implements OnInit {
     canSave: boolean;
     jetACost: number;
     jetARetail: number;
-    public isSaving: boolean = false;
-    public hasSaved: boolean = false;
-    public isSaveQueued: boolean = false;
+    public isSaving = false;
+    public hasSaved = false;
+    public isSaveQueued = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -127,7 +127,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 name: [this.pricingTemplate.name],
                 default: [this.pricingTemplate.default],
                 marginType: [this.pricingTemplate.marginType],
-                customerMargins: customerMargins,
+                customerMargins,
                 notes: [this.pricingTemplate.notes],
                 subject: [this.pricingTemplate.subject],
                 email: [this.pricingTemplate.email]
@@ -138,7 +138,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 this.savePricingTemplate();
             });
 
-            //Margin type change event
+            // Margin type change event
             this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(type => {
                 const updatedMargins =
                     this.updateMargins(this.pricingTemplateForm.value.customerMargins, type);
@@ -160,17 +160,16 @@ export class PricingTemplatesEditComponent implements OnInit {
     }
 
     public savePricingTemplate(): void {
-        let self = this;
+        const self = this;
         if (this.isSaving) {
-            //Save already in queue - no need to double-up the queue
+            // Save already in queue - no need to double-up the queue
             if (this.isSaveQueued) {
                 return;
             }
             this.isSaveQueued = true;
-            setTimeout(function() {
+            setTimeout(() => {
                 self.savePricingTemplate();
-                },
-                250);
+            }, 250);
             return;
         }
 
@@ -188,7 +187,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 ...this.pricingTemplateForm.value,
             }),
         ]).subscribe(([bulkRemoveResponse, customerMarginsUpdateResponse, priceTemplatesResponse]) => {
-            //this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
+            // this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
             this.pricingTemplate.customerMargins = customerMarginsUpdateResponse;
             for (let i = 0; i < this.pricingTemplateForm.value.customerMargins.length; i++) {
                 this.pricingTemplateForm.value.customerMargins[i].oid = this.pricingTemplate.customerMargins[i].oid;

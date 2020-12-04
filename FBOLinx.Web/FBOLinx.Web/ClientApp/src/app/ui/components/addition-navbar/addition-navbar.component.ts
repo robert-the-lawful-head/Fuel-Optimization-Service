@@ -53,7 +53,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   public timeLeft = 0;
   public interval: any;
   public selectAll: boolean;
-  public previewEmail: string = "";
+  public previewEmail = '';
   labelPosition = 'before';
   buttontext = 'Distribute Pricing';
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -195,14 +195,14 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
               const request = this.GetSendDistributionRequest(this.filteredTemplate);
               this.distributionService
                 .previewDistribution(request)
-                .subscribe((data: any) => { });
+                .subscribe(() => { });
             });
           }
           else {
             const dialogRef = this.templateDialog.open(
               NotificationComponent,
               {
-                data: {text: "Please assign the template to a customer before proceeding."}
+                data: {text: 'Please assign the template to a customer before proceeding.'}
               }
             );
 
@@ -271,29 +271,34 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
 
   public confirmSendEmails() {
     this.pricesExpired = false;
-    for (let template of this.pricingTemplatesData) {
+    for (const template of this.pricingTemplatesData) {
       if (template.toSend) {
         this.checkExpiredPrices(template);
-        if (this.pricesExpired)
+        if (this.pricesExpired) {
           return;
+        }
       }
     }
 
     if (!this.pricesExpired) {
-      let templatesWithCustomerCount: any[] = [];
+      const templatesWithCustomerCount: any[] = [];
       this.getTemplatesWithCustomerCount().subscribe((responseList: any[]) => {
         if (!responseList) {
           alert('No customers found for the selected distributions.');
         }
-        for (let responseIndex in responseList) {
-          templatesWithCustomerCount.push(this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex] + (responseList[responseIndex] == 1 ? " email" : " emails"));
+        for (const responseIndex in responseList) {
+          templatesWithCustomerCount.push(
+            this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex] +
+              (responseList[responseIndex] === 1 ? ' email' : ' emails')
+          );
         }
 
         const dialogRef = this.proceedConfirmationDialog.open(
           ProceedConfirmationComponent,
           {
             data: {
-              description: "You are about to distribute the following templates to the customers assigned to them. Are you sure?", itemsList: templatesWithCustomerCount
+              description: 'You are about to distribute the following templates to the customers assigned to them. Are you sure?',
+              itemsList: templatesWithCustomerCount
             },
             autoFocus: false
           }
@@ -310,7 +315,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   public getTemplatesWithCustomerCount(): Observable<any[]> {
-    let result: any[] = [];
+    const result: any[] = [];
     this.priceTemplatesForSending = [];
 
     this.pricingTemplatesData.forEach((x) => {
@@ -331,10 +336,10 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         this.pricingTemplatesData.forEach((x) => {
             if (x.toSend) {
               const request = this.GetSendDistributionRequest(x);
-                this.distributionService
+              this.distributionService
                     .distributePricing(request)
                     .subscribe((data: any) => {});
-                this.interval = setInterval(() => {
+              this.interval = setInterval(() => {
                     if (this.timeLeft <= 3) {
                         this.timeLeft++;
                         x.val =
@@ -346,13 +351,13 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                         }
                     }
                 }, 1000);
-                this.delay(8000).then(() => {
+              this.delay(8000).then(() => {
                     x.sent = false;
                 });
-                x.text =
+              x.text =
                     'Last sent ' +
                     moment(new Date()).format('MM/DD/YYYY HH:mm');
-                this.buttontext = 'Sent!';
+              this.buttontext = 'Sent!';
             }
 
             setTimeout(() => {
@@ -371,7 +376,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         alert('refresh results');
   }
 
-  //Private Methods
+  // Private Methods
   private GetSendDistributionRequest(template) {
     return {
       fboId: this.sharedService.currentUser.fboId,
@@ -382,7 +387,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   private checkExpiredPrices(template) {
-    if (template.intoPlanePrice == 0 || template.intoPlanePrice == null) {
+    if (template.intoPlanePrice === 0 || template.intoPlanePrice === null) {
       const dialogRef = this.expiredPricingDialog.open(
         PricingExpiredNotificationComponent, {
           data: {
@@ -394,18 +399,18 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
       dialogRef.afterClosed().subscribe();
       this.pricesExpired = true;
     }
-    }
+  }
 
-    private prepareDataSource(): void {
-        if (!this.pricingTemplatesData || !this.sort) {
-            return;
-        }
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.marginTemplateDataSource = new MatTableDataSource(
-            this.pricingTemplatesData
-        );
-        this.marginTemplateDataSource.sort = this.sort;
-        this.marginTemplateDataSource.paginator = this.paginator;
-        this.resultsLength = this.pricingTemplatesData.length;
+  private prepareDataSource(): void {
+    if (!this.pricingTemplatesData || !this.sort) {
+      return;
     }
+    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+    this.marginTemplateDataSource = new MatTableDataSource(
+      this.pricingTemplatesData
+    );
+    this.marginTemplateDataSource.sort = this.sort;
+    this.marginTemplateDataSource.paginator = this.paginator;
+    this.resultsLength = this.pricingTemplatesData.length;
+  }
 }
