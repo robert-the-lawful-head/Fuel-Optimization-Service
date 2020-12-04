@@ -43,7 +43,7 @@ import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor'
 import { GridModule, PageService, SortService, FilterService, GroupService, ToolbarService } from '@syncfusion/ej2-angular-grids';
 
 // Popover
-import { PopoverModule } from "ngx-smart-popover";
+import { PopoverModule } from 'ngx-smart-popover';
 
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
 import { LoginComponent } from './auth/login/login.component';

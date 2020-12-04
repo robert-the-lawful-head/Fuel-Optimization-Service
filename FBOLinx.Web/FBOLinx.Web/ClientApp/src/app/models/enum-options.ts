@@ -3,7 +3,7 @@
 import { ApplicableTaxFlights } from '../enums/applicable-tax-flights';
 import { FlightTypeClassifications } from '../enums/flight-type-classifications';
 import { FeeCalculationTypes } from '../enums/fee-calculation-types';
-import { FeeCalculationApplyingTypes }  from '../enums/fee-calculation-applying-types';
+import { FeeCalculationApplyingTypes } from '../enums/fee-calculation-applying-types';
 
 export namespace EnumOptions {
 
