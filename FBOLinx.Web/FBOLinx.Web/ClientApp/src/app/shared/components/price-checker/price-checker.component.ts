@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 
@@ -13,6 +13,9 @@ import { PriceBreakdownComponent } from '../../../shared/components/price-breakd
 
 // Enums
 import { EnumOptions } from '../../../models/enum-options';
+
+//Model
+import * as SharedEvents from '../../../models/sharedEvents';
 
 export interface TailLookupResponse {
   template?: string;
@@ -39,13 +42,14 @@ export enum PriceCheckerLookupTypes {
     templateUrl: './price-checker.component.html',
     styleUrls: ['./price-checker.component.scss']
 })
-export class PriceCheckerComponent implements OnInit, OnDestroy {
+export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     public customerForTailLookup: any;
     public tailNumberForTailLookup = '';
     public customersForTail: Array<any>;
     public tailNumberForLookupControl: FormControl = new FormControl();
     public tailNumberFormControlSubscription: any;
+    public locationChangedSubscription: any;
 
     public customerForCustomerLookup: any;
     public tailNumberForCustomerLookup = '';
@@ -102,14 +106,32 @@ export class PriceCheckerComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.loadPricingTemplates();
-        this.loadAllCustomers();
+        this.resetAll();
+    }
+
+    ngAfterViewInit(): void {
+        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
+            (message) => {
+                if (message === SharedEvents.locationChangedEvent) {
+                    this.pricingTemplateId = 0;
+                    this.resetAll();
+                }
+            }
+        );
     }
 
     ngOnDestroy(): void {
+        if (this.locationChangedSubscription) {
+            this.locationChangedSubscription.unsubscribe();
+        }
         if (this.tailNumberFormControlSubscription) {
             this.tailNumberFormControlSubscription.unsubscribe();
         }
+    }
+
+    public resetAll(): void {
+        this.loadPricingTemplates();
+        this.loadAllCustomers();
     }
 
     public customerForLookupChanged() {
