@@ -599,43 +599,56 @@ namespace FBOLinx.Web.Controllers
                               where cig.GroupId == groupId
                               select new
                               {
+                                  CustomerInfoByGroupId = cig.Oid,
                                   cig.Company,
-                                  fbo.Oid,
+                                  FboId = fbo.Oid,
                                   fa.Icao,
                                   PricingTemplateId = pt == null ? 0 : pt.Oid,
-                                  PricingTemplateName = pt == null ? "" : pt.Name,
                                   PricingTemplateNote = pt == null ? "" : pt.Notes,
                               })
                               .GroupBy(cf => cf.Company)
                               .ToListAsync();
 
             var result = new List<GroupCustomerAnalyticsResponse>();
-            var pricingTemplates = await _priceFetchingService.GetPricingTemplatesByGroup(groupId);
-            var groupFbos = _context.Fbos.Where(fbo => fbo.GroupId == groupId);
-            var fboPrices = _context.Fboprices.Where(fp => fp.EffectiveTo > DateTime.UtcNow
-                                && groupFbos.Any(fbo => fbo.Oid == fp.Fboid) && fp.Price != null && fp.Expired != true && fp.Product == "JetA Retail").ToList();
 
             foreach (var customerfbo in customerFbos)
             {
                 var record = new GroupCustomerAnalyticsResponse
                 {
                     Company = customerfbo.Key,
-                    GroupCustomerFbos = new List<GroupCustomerFbos>()
+                    GroupCustomerFbos = new List<GroupedFboPrices>()
                 };
                 var customerfbosData = customerfbo.ToList();
-                foreach(var fbo in customerfbosData)
+                foreach(var customerFbo in customerfbosData)
                 {
-                    var ai = pricingTemplates.Where(ai => ai.Oid == fbo.PricingTemplateId && ai.Fboid == fbo.Oid).FirstOrDefault();
-                    var fboPrice = fboPrices.Where(fp => fp.Fboid == fbo.Oid).FirstOrDefault();
-
-                    record.GroupCustomerFbos.Add(new GroupCustomerFbos
+                    var groupFboPrices = new GroupedFboPrices
                     {
-                        Icao = fbo.Icao,
-                        Retail = fboPrice == null ? null : fboPrice.Price,
-                        AllIn = ai == null ? null : ai.IntoPlanePrice,
-                        ExpiryDate = fboPrice == null ? null : fboPrice.EffectiveTo,
-                        Notes = fbo.PricingTemplateNote,
-                    });
+                        Icao = customerFbo.Icao,
+                        Prices = new List<Prices>(),
+                    };
+                    PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
+                    var commercialInternationalPricingResults = await priceFetchingService
+                        .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId}, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.InternationalOnly);
+                    var privateInternationalPricingResults = await priceFetchingService
+                        .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.InternationalOnly);
+                    var commercialDomesticPricingResults = await priceFetchingService
+                        .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.DomesticOnly);
+                    var privateDomesticPricingResults = await priceFetchingService
+                        .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.DomesticOnly);
+                    privateDomesticPricingResults = privateDomesticPricingResults.OrderBy(s => s.MinGallons).ToList();
+
+                    foreach (CustomerWithPricing model in privateDomesticPricingResults)
+                    {
+                        groupFboPrices.Prices.Add(new Prices
+                        {
+                            IntComm = (commercialInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
+                            IntPrivate = (privateInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
+                            DomComm = (commercialDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
+                            DomPrivate = (privateDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
+                        });
+                    }
+
+                    record.GroupCustomerFbos.Add(groupFboPrices);
                 }
                 result.Add(record);
             }
