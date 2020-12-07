@@ -352,8 +352,8 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     this.needsAttentionMenu.isOpened = false;
     this.sharedService.currentUser.fboId = this.fboAirport.fboid;
     this.loadFboInfo();
-      sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
-      if (this.isOnDashboard()) {
+    sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+    if (this.isOnDashboard()) {
           this.sharedService.emitChange(SharedEvents.locationChangedEvent);
       } else {
           this.router.navigate(['/default-layout/dashboard/']).then();
@@ -398,12 +398,12 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         if (!this.route || !this.route.url) {
             return false;
         }
-        var urlInfo: any = !this.route.url;
+        const urlInfo: any = !this.route.url;
         if (!urlInfo.value) {
             return false;
         }
-        var dashboardResults = urlInfo.value.filter(value => value && value.toLowerCase().indexOf('dashboard') > -1);
-        if (!dashboardResults || dashboardResults.length == 0) {
+        const dashboardResults = urlInfo.value.filter(value => value && value.toLowerCase().indexOf('dashboard') > -1);
+        if (!dashboardResults || dashboardResults.length === 0) {
             return false;
         }
         return true;

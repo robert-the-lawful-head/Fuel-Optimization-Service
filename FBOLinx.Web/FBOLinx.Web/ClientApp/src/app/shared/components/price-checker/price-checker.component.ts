@@ -14,7 +14,7 @@ import { PriceBreakdownComponent } from '../../../shared/components/price-breakd
 // Enums
 import { EnumOptions } from '../../../models/enum-options';
 
-//Model
+// Model
 import * as SharedEvents from '../../../models/sharedEvents';
 
 export interface TailLookupResponse {
