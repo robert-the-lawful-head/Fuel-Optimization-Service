@@ -71,6 +71,7 @@ export class GroupAnalyticsGenerateDialogComponent {
         for (let i = 0; i < fboPrice.prices.length; i++) {
           exportData.push({
             FBO: i === 0 ? fboPrice.icao : '',
+            'Volume Tier': fboPrice.prices[i].volumeTier,
             'Int/Comm': fboPrice.prices[i].intComm?.toFixed(4),
             'Int/Private': fboPrice.prices[i].intPrivate?.toFixed(4),
             'Dom/Comm': fboPrice.prices[i].domComm?.toFixed(4),
@@ -80,6 +81,7 @@ export class GroupAnalyticsGenerateDialogComponent {
         if (!fboPrice.prices.length) {
           exportData.push({
             FBO: fboPrice.icao,
+            'Volume Tier': '',
             'Int/Comm': '',
             'Int/Private': '',
             'Dom/Comm': '',

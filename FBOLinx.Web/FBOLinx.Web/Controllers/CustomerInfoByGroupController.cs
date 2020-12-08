@@ -16,6 +16,7 @@ using FBOLinx.Web.Services;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Responses;
 using static FBOLinx.Web.Models.PricingTemplate;
+using System.Globalization;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -637,10 +638,37 @@ namespace FBOLinx.Web.Controllers
                         .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.DomesticOnly);
                     privateDomesticPricingResults = privateDomesticPricingResults.OrderBy(s => s.MinGallons).ToList();
 
+                    int loopIndex = 0;
                     foreach (CustomerWithPricing model in privateDomesticPricingResults)
                     {
+                        string volumeTier;
+                        if ((loopIndex + 1) < commercialInternationalPricingResults.Count)
+                        {
+                            string minGallon, maxGallon;
+                            minGallon = model.MinGallons.GetValueOrDefault().ToString();
+                            var next = commercialInternationalPricingResults[loopIndex + 1];
+                            Double maxValue = Convert.ToDouble(next.MinGallons) - 1;
+
+                            if (maxValue > 999)
+                            {
+                                string output = Convert.ToDouble(next.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+                                maxGallon = output;
+                            }
+                            else
+                            {
+                                maxGallon = maxValue.ToString();
+                            }
+                            volumeTier = minGallon + " - " + maxGallon;
+                        }
+                        else
+                        {
+                            string output = Convert.ToDouble(model.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+
+                            volumeTier = output + "+";
+                        }
                         groupFboPrices.Prices.Add(new Prices
                         {
+                            VolumeTier = volumeTier,
                             IntComm = (commercialInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
                             IntPrivate = (privateInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
                             DomComm = (commercialDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
