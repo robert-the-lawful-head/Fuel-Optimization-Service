@@ -20,6 +20,7 @@ namespace FBOLinx.Web.Models.Responses
 
     public class Prices
     {
+        public string VolumeTier { get; set; }
         public double? IntComm { get; set; }
         public double? IntPrivate { get; set; }
         public double? DomComm { get; set; }
