@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 // Services
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
@@ -22,17 +21,12 @@ export class StatisticsTotalCustomersComponent implements OnInit {
     public totalCustomers: number;
 
     constructor(
-        private router: Router,
         private customerinfobygroupService: CustomerinfobygroupService,
         private sharedService: SharedService
     ) {}
 
     ngOnInit() {
         this.refreshData();
-    }
-
-    public redirectClicked() {
-        this.router.navigate(['/default-layout/customers']);
     }
 
     public refreshData() {

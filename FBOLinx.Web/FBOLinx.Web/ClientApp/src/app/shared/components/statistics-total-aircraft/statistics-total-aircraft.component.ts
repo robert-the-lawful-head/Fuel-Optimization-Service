@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 // Services
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
@@ -23,17 +22,12 @@ export class StatisticsTotalAircraftComponent implements OnInit {
     public totalAircraft: number;
 
     constructor(
-        private router: Router,
         private customeraircraftService: CustomeraircraftsService,
         private sharedService: SharedService
     ) {}
 
     ngOnInit() {
         this.refreshData();
-    }
-
-    public redirectClicked() {
-        this.router.navigate(['/default-layout/customers']);
     }
 
     public refreshData() {
