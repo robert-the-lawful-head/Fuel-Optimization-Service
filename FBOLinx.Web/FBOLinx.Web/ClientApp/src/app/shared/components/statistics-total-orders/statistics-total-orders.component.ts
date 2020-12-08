@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
@@ -26,7 +25,6 @@ export class StatisticsTotalOrdersComponent implements OnInit {
     public startDateString: string;
 
     constructor(
-        private router: Router,
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService
     ) {
@@ -37,10 +35,6 @@ export class StatisticsTotalOrdersComponent implements OnInit {
 
     ngOnInit() {
         this.refreshData();
-    }
-
-    public redirectClicked() {
-        this.router.navigate(['/default-layout/fuelreqs']);
     }
 
     public refreshData() {
