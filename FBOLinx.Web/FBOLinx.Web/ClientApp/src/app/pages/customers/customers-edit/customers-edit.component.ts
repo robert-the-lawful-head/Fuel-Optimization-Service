@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup} from '@angular/forms';
@@ -64,6 +64,7 @@ export class CustomersEditComponent implements OnInit {
     customerForm: FormGroup;
     canSave: boolean;
     public feesAndTaxes: Array<any>;
+    public locationChangedSubscription: any;
 
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
@@ -389,8 +390,8 @@ export class CustomersEditComponent implements OnInit {
 
     // Private Methods
     private recalculatePriceBreakdown(): void {
-        //Set a timeout so the child component is aware of model changes
-        var self = this;
+        // Set a timeout so the child component is aware of model changes
+        const self = this;
         setTimeout(() => {
             self.priceBreakdownPreview.performRecalculation();
         });

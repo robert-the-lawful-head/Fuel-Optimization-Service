@@ -25,12 +25,14 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private IServiceScopeFactory _serviceScopeFactory;
         private GroupFboService _groupFboService;
+        private readonly FboService _fboService;
 
-        public FbosController(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService)
+        public FbosController(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, FboService fboService)
         {
             _groupFboService = groupFboService;
             _context = context;
             _serviceScopeFactory = serviceScopeFactory;
+            _fboService = fboService;
         }
 
         // GET: api/Fbos/group/5
@@ -215,6 +217,43 @@ namespace FBOLinx.Web.Controllers
             {
                 return Ok(exception.Message);
             }
+        }
+
+        [HttpPost("manage/{id}")]
+        public async Task<IActionResult> ManageFbo([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbo = _context.Fbos.Find(id);
+            if (fbo == null)
+            {
+                return NotFound("FBO Not Found");
+            }
+
+            try
+            {
+                var group = _context.Group.Find(fbo.GroupId);
+
+                if (group.IsLegacyAccount == true)
+                {
+                    await _fboService.DoLegacyGroupTransition(group.Oid);
+
+                    group.IsLegacyAccount = false;
+                    await _context.SaveChangesAsync();
+                }
+
+                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
+
+                await pricingTemplateService.FixDefaultPricingTemplate(fbo.Oid);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw ex;
+            }
+            return Ok();
         }
 
         // DELETE: api/Fbos/5

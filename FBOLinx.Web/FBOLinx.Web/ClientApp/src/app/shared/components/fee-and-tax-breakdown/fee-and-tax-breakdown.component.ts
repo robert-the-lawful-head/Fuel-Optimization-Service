@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 
 
 export enum FeeAndTaxBreakdownDisplayModes {
@@ -12,7 +12,7 @@ export enum FeeAndTaxBreakdownDisplayModes {
     templateUrl: './fee-and-tax-breakdown.component.html',
     styleUrls: ['./fee-and-tax-breakdown.component.scss']
 })
-export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
+export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
     feesAndTaxes: Array<any>;
     @Input()
@@ -20,7 +20,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
     @Input()
     customerMargin: number;
     @Input()
-    showLineSeparator: boolean = false;
+    showLineSeparator = false;
     @Input()
     displayMode: FeeAndTaxBreakdownDisplayModes = FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
     @Input()
@@ -34,21 +34,14 @@ export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
 
     public aboveTheLineTaxes: Array<any> = [];
     public belowTheLineTaxes: Array<any> = [];
-    public preMarginSubTotal: number = 0;
-    public subTotalWithMargin: number = 0;
-    public total: number = 0;
+    public preMarginSubTotal = 0;
+    public subTotalWithMargin = 0;
+    public total = 0;
 
-    constructor() {
-
-    }
+    constructor() {}
 
     ngOnInit(): void {
-        this.prepareTaxes();
-        this.calculatePrices();
-    }
-
-    ngAfterViewInit(): void {
-        
+        this.performRecalculation();
     }
 
     public omitChanged(fee: any): void {
@@ -62,10 +55,11 @@ export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
 
     // Private Methods
     private prepareTaxes() {
-        if (!this.feesAndTaxes)
+        if (!this.feesAndTaxes) {
             return;
-        this.aboveTheLineTaxes = this.feesAndTaxes.filter((tax) => tax.whenToApply == 0);
-        this.belowTheLineTaxes = this.feesAndTaxes.filter((tax) => tax.whenToApply == 1);
+        }
+        this.aboveTheLineTaxes = this.feesAndTaxes.filter((tax) => tax.whenToApply === 0);
+        this.belowTheLineTaxes = this.feesAndTaxes.filter((tax) => tax.whenToApply === 1);
     }
 
     private calculatePrices(): void {
@@ -76,12 +70,12 @@ export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
 
     private calculatePreMarginSubTotal(): void {
         let result = this.fboPrice;
-        let basePrice = this.fboPrice;
+        const basePrice = this.fboPrice;
 
         this.aboveTheLineTaxes.forEach((fee) => {
-            if (fee.calculationType == 0) {
+            if (fee.calculationType === 0) {
                 fee.amount = fee.value;
-            } else if (fee.calculationType == 1) {
+            } else if (fee.calculationType === 1) {
                 fee.amount = (fee.value / 100.0) * basePrice;
             }
             if (this.isFeeValidForTotal(fee)) {
@@ -89,7 +83,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
             }
         });
 
-        if (this.marginType == 1) {
+        if (this.marginType === 1) {
             this.preMarginSubTotal = this.fboPrice;
         } else {
             this.preMarginSubTotal = result;
@@ -97,14 +91,14 @@ export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
     }
 
     private calculateSubTotalWithMargin() {
-        if (!this.customerMargin && this.customerMargin != 0) {
+        if (!this.customerMargin && this.customerMargin !== 0) {
             return this.preMarginSubTotal;
         }
 
         this.subTotalWithMargin = 0;
-        if (this.marginType == 0) {
+        if (this.marginType === 0) {
             this.subTotalWithMargin = this.preMarginSubTotal + this.customerMargin;
-        } else if (this.marginType == 1) {
+        } else if (this.marginType === 1) {
             this.subTotalWithMargin = this.preMarginSubTotal - this.customerMargin;
         }
     }
@@ -113,9 +107,9 @@ export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
         let result = this.subTotalWithMargin;
 
         this.belowTheLineTaxes.forEach((fee) => {
-            if (fee.calculationType == 0) {
+            if (fee.calculationType === 0) {
                 fee.amount = fee.value;
-            } else if (fee.calculationType == 1) {
+            } else if (fee.calculationType === 1) {
                 fee.amount = (fee.value / 100.0) * this.subTotalWithMargin;
             }
             if (this.isFeeValidForTotal(fee)) {
@@ -130,10 +124,10 @@ export class FeeAndTaxBreakdownComponent implements OnInit, AfterViewInit {
         if (fee.isOmitted) {
             return false;
         }
-        if (this.validDepartureTypes.indexOf(fee.departureType) == -1) {
+        if (this.validDepartureTypes.indexOf(fee.departureType) === -1) {
             return false;
         }
-        if (this.validFlightTypes.indexOf(fee.flightTypeClassification) == -1) {
+        if (this.validFlightTypes.indexOf(fee.flightTypeClassification) === -1) {
             return false;
         }
         return true;

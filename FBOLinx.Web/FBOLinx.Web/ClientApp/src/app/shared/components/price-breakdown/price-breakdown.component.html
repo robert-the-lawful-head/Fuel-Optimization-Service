@@ -2,16 +2,18 @@
   <div class="row" *ngIf="domesticPrivatePricing">
     <!--Fee and tax breakdown-->
     <div class="col fee-and-tax-breakdown-container" *ngIf="!hideFeeAndTaxGeneralBreakdown && domesticPrivatePricing && domesticPrivatePricing.pricingList && domesticPrivatePricing.pricingList.length > 0 && domesticPrivatePricing.pricingList[0].fboPrice">
-      <fee-and-tax-breakdown #feeAndTaxBreakdown
-                             [feesAndTaxes]="feesAndTaxes"
-                             [marginType]="domesticPrivatePricing.pricingList[0].marginType"
-                             [customerMargin]="domesticPrivatePricing.pricingList[0].customerMarginAmount"
-                             [displayMode]="feeAndTaxDisplayMode"
-                             [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
-                             [validDepartureTypes]="defaultValidDepartureTypes"
-                             [validFlightTypes]="defaultValidFlightTypes"
-                             [showLineSeparator]="showFeeAndTaxLineSeparator"
-                             (omitCheckChanged)="omitChanged($event)"></fee-and-tax-breakdown>
+        <fee-and-tax-breakdown
+            #feeAndTaxBreakdown
+            [feesAndTaxes]="feesAndTaxes"
+            [marginType]="domesticPrivatePricing.pricingList[0].marginType"
+            [customerMargin]="domesticPrivatePricing.pricingList[0].customerMarginAmount"
+            [displayMode]="feeAndTaxDisplayMode"
+            [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
+            [validDepartureTypes]="defaultValidDepartureTypes"
+            [validFlightTypes]="defaultValidFlightTypes"
+            [showLineSeparator]="showFeeAndTaxLineSeparator"
+            (omitCheckChanged)="omitChanged($event)"
+        ></fee-and-tax-breakdown>
     </div>
 
     <!--Price breakdown-->
@@ -39,7 +41,11 @@
                                     <div>{{domesticPrivatePricing.pricingList[indexOfRow].minGallons}} - {{domesticPrivatePricing.pricingList[indexOfRow].maxGallons}}</div>
                                 </td>
                                 <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
-                                    <div>${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                    <div>
+                                        <div class="d-inline-block">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                        <div class="d-inline-block"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
+                                    </div>
+
                                 </td>
                             </tr>
                         </tbody>
@@ -66,11 +72,19 @@
                                 <td>
                                     <div>{{domesticPrivatePricing.pricingList[indexOfRow].minGallons}} - {{domesticPrivatePricing.pricingList[indexOfRow].maxGallons}}</div>
                                 </td>
-                                <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
-                                    <div>${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                <td class="hover-mouseenter" (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
+                                    <div>
+                                        <div class="d-inline-block">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                        <div class="d-inline-block"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
+                                    </div>
+                                   
                                 </td>
-                                <td (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow], [0,2,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
-                                    <div>${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                <td class="hover-mouseenter" (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow], [0,2,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
+                                    <div>
+                                        <div class="d-inline-block">${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                        <div class="d-inline-block"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
+                                    </div>
+          
                                 </td>
                             </tr>
                         </tbody>
@@ -97,11 +111,15 @@
                                 <td>
                                     <div>{{internationalCommercialPricing.pricingList[indexOfRow].minGallons}} - {{internationalCommercialPricing.pricingList[indexOfRow].maxGallons}}</div>
                                 </td>
-                                <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
-                                    <div>${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                <td class="hover-mouseenter" (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
+                                    <div>
+                                        <div class="d-inline-block">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                        <div class="d-inline-block"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
+                                    </div>
+
                                 </td>
-                                <td (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow], [0,1,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
-                                    <div>${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                <td class="hover-mouseenter" (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow], [0,1,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
+                                    <div>${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div><i class="fa fa-info-circle" aria-hidden="true"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -134,17 +152,33 @@
                                 <td>
                                     <div>{{internationalCommercialPricing.pricingList[indexOfRow].minGallons}} - {{internationalCommercialPricing.pricingList[indexOfRow].maxGallons}}</div>
                                 </td>
-                                <td (mouseenter)="mouseEnterPriceItem(internationalCommercialPricing.pricingList[indexOfRow], [0,2,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
-                                    <div>${{internationalCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                <td class="hover-mouseenter" (mouseenter)="mouseEnterPriceItem(internationalCommercialPricing.pricingList[indexOfRow], [0,2,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
+                                    <div>
+                                        <div class="d-inline-block">${{internationalCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                        <div class="d-inline-block"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
+                                    </div>
+                                   
                                 </td>
-                                <td (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow], [0,2,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
-                                    <div>${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                <td class="hover-mouseenter" (mouseenter)="mouseEnterPriceItem(internationalPrivatePricing.pricingList[indexOfRow], [0,2,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
+                                    <div>
+                                        <div class="d-inline-block">${{internationalPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                        <div class="d-inline-block"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
+                                    </div>
+                                    
                                 </td>
-                                <td (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow], [0,1,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
-                                    <div>${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                <td class="hover-mouseenter" (mouseenter)="mouseEnterPriceItem(domesticCommercialPricing.pricingList[indexOfRow], [0,1,3], [0,2,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
+                                    <div>
+                                        <div class="d-inline-block">${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                        <div class="d-inline-block"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
+                                    </div>
+                                    
                                 </td>
-                                <td (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
-                                    <div>${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                <td class="hover-mouseenter" (mouseenter)="mouseEnterPriceItem(domesticPrivatePricing.pricingList[indexOfRow], [0,1,3], [0,1,3])" [popover]="feeAndTaxPopover" [popoverOnHover]="true">
+                                    <div>
+                                        <div class="d-inline-block">${{domesticPrivatePricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
+                                        <div class="d-inline-block"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
+                                    </div>
+                                    
                                 </td>
                             </tr>
                         </tbody>
@@ -155,7 +189,7 @@
             <!--Popover combinations-->
             <popover-content #feeAndTaxPopover
                              title="Fee/Tax Breakdown"
-                             placement="top-left"
+                             [placement]="tooltipPlacement"
                              [closeOnMouseOutside]="true">
                 <div *ngIf="activeHoverPriceItem && activeHoverPriceItem.fboPrice && feeAndTaxCloneForPopOver">
                     <fee-and-tax-breakdown #dynamicFeeAndTaxBreakdown [feesAndTaxes]="feeAndTaxCloneForPopOver"

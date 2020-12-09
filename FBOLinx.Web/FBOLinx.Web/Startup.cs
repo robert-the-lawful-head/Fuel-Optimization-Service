@@ -93,6 +93,7 @@ namespace FBOLinx.Web
             services.AddTransient<GroupFboService, GroupFboService>();
             services.AddTransient<CustomerService, CustomerService>();
             services.AddTransient<AircraftService, AircraftService>();
+            services.AddTransient<FboService, FboService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

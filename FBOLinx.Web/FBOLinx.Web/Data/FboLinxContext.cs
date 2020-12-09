@@ -31,7 +31,6 @@ namespace FBOLinx.Web.Data
         public virtual DbSet<CustomCustomerTypes> CustomCustomerTypes { get; set; }
         public virtual DbSet<CustomerMargins> CustomerMargins { get; set; }
         public virtual DbSet<CustomersViewedByFbo> CustomersViewedByFbo { get; set; }
-        public virtual DbSet<Fbofees> Fbofees { get; set; }
         public virtual DbSet<Fboprices> Fboprices { get; set; }
         public virtual DbSet<PriceTiers> PriceTiers { get; set; }
         public virtual DbSet<PricingTemplate> PricingTemplate { get; set; }
@@ -318,11 +317,6 @@ namespace FBOLinx.Web.Data
             {
                 entity.HasIndex(e => new { e.CustomerId, e.CustomerType, e.Fboid })
                     .HasName("indx_CustomCustomerTypes_FBOID");
-            });
-
-            modelBuilder.Entity<Fbofees>(entity =>
-            {
-                entity.Property(e => e.DisplayText).IsUnicode(false);
             });
 
             modelBuilder.Entity<Fboprices>(entity =>

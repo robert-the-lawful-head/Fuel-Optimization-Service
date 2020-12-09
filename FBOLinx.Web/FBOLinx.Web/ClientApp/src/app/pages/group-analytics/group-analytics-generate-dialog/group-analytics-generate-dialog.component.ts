@@ -64,16 +64,31 @@ export class GroupAnalyticsGenerateDialogComponent {
     this.selectedCustomers = this.grid.getSelectedRecords();
   }
 
-  exportReportForCustomer(company: string, data: any[]) {
+  exportReportForCustomer(company: string, data: any) {
     return new Promise((resolve) => {
-      const allInKey = 'All-In For ' + company;
-      const exportData = data.map(fboData => ({
-        FBO: fboData.icao,
-        Retail: fboData.retail,
-        [allInKey]: fboData.allIn,
-        'Expiry Date': fboData.expiryDate,
-        Notes: fboData.notes,
-      }));
+      const exportData: any[] = [];
+      for (const fboPrice of data) {
+        for (let i = 0; i < fboPrice.prices.length; i++) {
+          exportData.push({
+            FBO: i === 0 ? fboPrice.icao : '',
+            'Volume Tier': fboPrice.prices[i].volumeTier,
+            'Int/Comm': fboPrice.prices[i].intComm?.toFixed(4),
+            'Int/Private': fboPrice.prices[i].intPrivate?.toFixed(4),
+            'Dom/Comm': fboPrice.prices[i].domComm?.toFixed(4),
+            'Dom/Private': fboPrice.prices[i].domPrivate?.toFixed(4),
+          });
+        }
+        if (!fboPrice.prices.length) {
+          exportData.push({
+            FBO: fboPrice.icao,
+            'Volume Tier': '',
+            'Int/Comm': '',
+            'Int/Private': '',
+            'Dom/Comm': '',
+            'Dom/Private': '',
+          });
+        }
+      }
 
       // TODO
       const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet

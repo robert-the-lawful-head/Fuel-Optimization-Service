@@ -60,7 +60,6 @@ export class CustomersGridComponent implements OnInit {
         'isFuelerLinxCustomer',
         'certificateTypeDescription',
         'pricingTemplateName',
-        'allInPrice',
         'fleetSize',
         'delete',
     ];
@@ -310,7 +309,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     onMarginChange(changedPricingTemplateId: any, customer: any) {
-        const changedPricingTemplate = find(this.pricingTemplatesData, p => p.oid === parseInt(changedPricingTemplateId));
+        const changedPricingTemplate = find(this.pricingTemplatesData, p => p.oid === parseInt(changedPricingTemplateId, 10));
 
         customer.needsAttention = changedPricingTemplate.default;
         customer.allInPrice = changedPricingTemplate.intoPlanePrice;

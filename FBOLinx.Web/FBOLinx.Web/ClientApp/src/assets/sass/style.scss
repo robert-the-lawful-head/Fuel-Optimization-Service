@@ -325,3 +325,84 @@ button.mat-icon-button {
     padding: 10px;
 }
 
+/*Tax and Fee Breakdown*/
+
+   /*Price Lookup*/
+.price-lookup-breakdown .d-inline-block.text-nowrap {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.price-lookup-breakdown .label-tax-fees > div.d-inline-block {
+    margin-left: 10px !important;
+}
+
+.price-lookup-breakdown .label-tax-fees > div.d-inline-block.no-padding-label {
+    margin-left: -1px !important;
+}
+
+.price-lookup-breakdown .col > div.d-inline-block {
+    width: 100px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+
+.price-lookup-breakdown .col > div.d-inline-block.text-nowrap {
+    width: 150px !important;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.price-lookup-breakdown .col {
+    padding-right: 0px;
+}
+
+
+.price-lookup-breakdown hr {
+   width: 270px;
+}
+
+/*END Price Lookup*/
+
+
+/*Live Pricing*/
+
+.live-pricing-container {
+    color: #6c757d;
+    font-size: 0.75rem;
+}
+
+.live-pricing-container {
+    padding-right: 0px;
+}
+
+.live-pricing-container .col > div.d-inline-block {
+    width: 60px;
+    overflow: hidden;
+}
+
+
+.live-pricing-container .col > div.d-inline-block.text-nowrap {
+    width: 100px !important;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.live-pricing-container .col {
+    padding-right: 0px;
+}
+
+
+.live-pricing-container hr {
+    border: 1px solid;
+    margin: -1px -8px -1px -1px;
+}
+
+/*END Live Pricing*/
+
+/*END Tax and Fee Breakdown*/
+

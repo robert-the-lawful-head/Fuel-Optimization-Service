@@ -139,8 +139,8 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
 
   public sampleCalculationChanged(): void {
       if (this.priceBreakdownPreview) {
-          //Use a timeout here as the child component won't know of the template change until after the cycle
-          var self = this;
+          // Use a timeout here as the child component won't know of the template change until after the cycle
+          const self = this;
           setTimeout(() => {
               self.priceBreakdownPreview.performRecalculation();
           });
@@ -153,7 +153,7 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     } catch (e) {
         feeAndTax.value = 0;
     }
-    
+
     this.feeAndTaxChanged(feeAndTax);
   }
 

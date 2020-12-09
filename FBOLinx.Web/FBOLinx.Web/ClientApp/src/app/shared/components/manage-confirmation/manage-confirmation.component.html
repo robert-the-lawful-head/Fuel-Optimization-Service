@@ -5,13 +5,15 @@
     </div>
 </div>
 <div mat-dialog-actions>
-    <div class="text-center col-12">
-        <button
-            mat-flat-button
-            color="accent"
-            [mat-dialog-close]="true"
-            class="mr-1"
-        >Confirm</button>
-        <button mat-stroked-button [mat-dialog-close]="false">Cancel</button>
-    </div>
+    <button
+        mat-raised-button
+        color="accent"
+        (click)="onConfirm()"
+        class="mr-1 confirm-btn"
+        [disabled]="loading"
+    >
+        {{ !loading ? "Confirm" : "" }}
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    </button>
+    <button mat-stroked-button [mat-dialog-close]="false">Cancel</button>
 </div>

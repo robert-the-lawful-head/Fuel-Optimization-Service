@@ -30,7 +30,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { PopoverModule } from "ngx-smart-popover";
+import { PopoverModule } from 'ngx-smart-popover';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -72,7 +72,6 @@ import { FboairportsService } from './services/fboairports.service';
 import { FbocontactsService } from './services/fbocontacts.service';
 import { FbofeesandtaxesService } from './services/fbofeesandtaxes.service';
 import { FbofeeandtaxomitsbycustomerService } from './services/fbofeeandtaxomitsbycustomer.service';
-import { FbofeesService } from './services/fbofees.service';
 import { FbopreferencesService } from './services/fbopreferences.service';
 import { FbopricesService } from './services/fboprices.service';
 import { FbosService } from './services/fbos.service';
@@ -174,7 +173,6 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
       FbocontactsService,
       FbofeesandtaxesService,
     FbofeeandtaxomitsbycustomerService,
-    FbofeesService,
     FbopreferencesService,
     FbopricesService,
     FbosService,
