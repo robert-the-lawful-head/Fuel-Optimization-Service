@@ -52,4 +52,10 @@ export class FbosService {
             headers: this.headers,
         });
     }
+
+    public manageFbo(id: number) {
+        return this.http.post(this.accessPointUrl + '/manage/' + id, {}, {
+            headers: this.headers,
+        });
+    }
 }
