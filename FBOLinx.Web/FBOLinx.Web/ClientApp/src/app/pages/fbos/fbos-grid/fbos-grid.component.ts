@@ -269,7 +269,8 @@ export class FbosGridComponent implements OnInit {
                     width: '450px',
                     data: {
                         title: 'Manage FBO?',
-                        description: 'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?'
+                        description: 'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?',
+                        fboId: fbo.oid,
                     },
                     autoFocus: false,
                 }

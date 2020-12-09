@@ -27,9 +27,10 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFileProvider _fileProvider;
         private readonly MailSettings _MailSettings;
+        private readonly FboService _fboService;
         private IServiceProvider _Services;
 
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services)
+        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService)
         {
             _userService = userService;
             _context = context;
@@ -37,6 +38,7 @@ namespace FBOLinx.Web.Controllers
             _MailSettings = mailSettings.Value;
             _fileProvider = fileProvider;
             _Services = services;
+            _fboService = fboService;
         }
 
         [HttpGet("current")]
@@ -74,7 +76,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (group.IsLegacyAccount == true)
                 {
-                    await DoLegacyGroupTransition(group.Oid);
+                    await _fboService.DoLegacyGroupTransition(group.Oid);
 
                     group.IsLegacyAccount = false;
                     await _context.SaveChangesAsync();
@@ -416,27 +418,6 @@ namespace FBOLinx.Web.Controllers
             return _context.Group.Any(e => e.Oid == id);
         }
 
-        private async Task DoLegacyGroupTransition(int groupId)
-        {
-            var customerMargins = await (from cm in _context.CustomerMargins
-                                         join pt in _context.PricingTemplate on new { cm.TemplateId, marginType = (short)1 } equals new { TemplateId = pt.Oid, marginType = (short)pt.MarginType }
-                                         where cm.Amount < 0
-                                         select cm).ToListAsync();
-            foreach (var cm in customerMargins)
-            {
-                cm.Amount = -cm.Amount;
-            }
-            _context.CustomerMargins.UpdateRange(customerMargins);
-            await _context.SaveChangesAsync();
-
-            var deleteAircraftPricesTask = Task.Run(async () =>
-            {
-                using (var scope = _Services.CreateScope())
-                {
-                    var groupTransitionService = scope.ServiceProvider.GetRequiredService<GroupTransitionService>();
-                    await groupTransitionService.PerformLegacyGroupTransition(groupId);                    
-                }
-            });
-        }
+        
     }
 }

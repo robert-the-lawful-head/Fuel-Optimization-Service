@@ -3,6 +3,7 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { FbosService } from 'src/app/services/fbos.service';
 
 @Component({
     selector: 'app-manage-confirmation',
@@ -10,10 +11,22 @@ import {
     styleUrls: ['./manage-confirmation.component.scss'],
 })
 export class ManageConfirmationComponent {
+    loading = false;
+
     constructor(
         public dialogRef: MatDialogRef<ManageConfirmationComponent>,
+        private fboService: FbosService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
+
+    onConfirm(): void {
+        this.loading = true;
+        this.fboService.manageFbo(this.data.fboId)
+            .subscribe(() => {
+                this.loading = false;
+                this.dialogRef.close(true);
+            });
+    }
 
     onCancelClick(): void {
         this.dialogRef.close();
