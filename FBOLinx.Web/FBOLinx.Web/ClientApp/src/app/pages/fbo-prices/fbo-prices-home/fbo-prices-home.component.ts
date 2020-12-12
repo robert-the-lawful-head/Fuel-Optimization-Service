@@ -122,7 +122,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
       private fboPricesSelectDefaultTemplateDialog: MatDialog,
       private fboFeesAndTaxesDialog: MatDialog
   ) {
-
   }
 
   ngOnInit(): void {
@@ -224,8 +223,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   updatePricing() {
-    const effectiveFrom = moment(this.currentPricingEffectiveFrom).format('MM/DD/YYYY');
-    const effectiveTo = moment(this.currentPricingEffectiveTo).format('MM/DD/YYYY');
+    const effectiveFrom = moment.utc(this.currentPricingEffectiveFrom).format();
+    const effectiveTo = moment.utc(this.currentPricingEffectiveTo).format();
     const newPrices = [];
     for (const price of this.currentPrices) {
       if (price.product === 'JetA Retail' && this.jtRetail > 0) {
@@ -358,12 +357,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
           if (this.currentFboPriceJetARetail.effectiveTo) {
             this.currentFboPriceJetARetail.effectiveTo =
-              moment(this.currentFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
+              moment(moment.utc(this.currentFboPriceJetARetail.effectiveTo)).local().format('MM/DD/YYYY');
           }
 
           if (this.currentFboPriceJetACost.effectiveTo) {
             this.currentFboPriceJetACost.effectiveTo =
-              moment(this.currentFboPriceJetACost.effectiveTo).format('MM/DD/YYYY');
+              moment(moment.utc(this.currentFboPriceJetACost.effectiveTo)).local().format('MM/DD/YYYY');
           }
 
           if (data.length > 0) {
