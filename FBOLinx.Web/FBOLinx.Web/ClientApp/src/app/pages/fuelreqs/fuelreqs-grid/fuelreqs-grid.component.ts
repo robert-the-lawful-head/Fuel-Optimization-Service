@@ -40,7 +40,6 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
     displayedColumns: string[] = [
-        'oid',
         'customer',
         'pricingTemplateName',
         'eta',
@@ -48,9 +47,10 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         'quotedVolume',
         'quotedPpg',
         'tailNumber',
-        'email',
         'phoneNumber',
         'source',
+        'email',
+        'oid',
         'sourceId'
     ];
     public dashboardSettings: any;

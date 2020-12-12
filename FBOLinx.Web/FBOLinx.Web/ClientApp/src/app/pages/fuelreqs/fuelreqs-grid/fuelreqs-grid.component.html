@@ -57,11 +57,6 @@
                 matSort
                 matSortActive="oid"
                 matSortDirection="desc">
-            <ng-container matColumnDef="oid">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-                <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.oid }}</td>
-            </ng-container>
-
             <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     Flight Dept.
@@ -109,11 +104,6 @@
                 <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.tailNumber }}</td>
             </ng-container>
 
-            <ng-container matColumnDef="email">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-                <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.email }}</td>
-            </ng-container>
-
             <ng-container matColumnDef="phoneNumber">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone</th>
                 <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.phoneNumber }}</td>
@@ -122,6 +112,16 @@
             <ng-container matColumnDef="source">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Source</th>
                 <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.source }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+                <td mat-cell *matCellDef="let fuelreq" [matTooltip]="fuelreq.email">{{ fuelreq.email }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="oid">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                <td mat-cell *matCellDef="let fuelreq">{{ fuelreq.oid }}</td>
             </ng-container>
 
             <ng-container matColumnDef="sourceId">
