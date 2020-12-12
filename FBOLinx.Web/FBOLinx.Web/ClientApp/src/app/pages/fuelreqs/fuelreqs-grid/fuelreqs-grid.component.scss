@@ -16,3 +16,10 @@
 .table-container {
     height: calc(100vh - 320px);
 }
+
+.mat-column-email {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
