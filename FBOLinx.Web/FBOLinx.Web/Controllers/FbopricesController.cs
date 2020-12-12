@@ -266,23 +266,17 @@ namespace FBOLinx.Web.Controllers
 
             foreach (Fboprices price in fboprices)
             {
-                price.Timestamp = DateTime.Now;
-                if (price.Oid > 0)
+                price.Timestamp = DateTime.UtcNow;
+                List<Fboprices> oldPrices = _context.Fboprices
+                                            .Where(f => f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product))
+                                            .ToList();
+                foreach (Fboprices oldPrice in oldPrices)
                 {
-                    _context.Fboprices.Update(price);
+                    oldPrice.Expired = true;
+                    _context.Fboprices.Update(oldPrice);
                 }
-                else if (price.Price != null)
-                {
-                    List<Fboprices> oldPrices = _context.Fboprices
-                                               .Where(f => f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product))
-                                               .ToList();
-                    foreach (Fboprices oldPrice in oldPrices)
-                    {
-                        oldPrice.Expired = true;
-                        _context.Fboprices.Update(oldPrice);
-                    }
-                    _context.Fboprices.Add(price);
-                }
+
+                _context.Fboprices.Add(price);
                 await _context.SaveChangesAsync();
             }
 
