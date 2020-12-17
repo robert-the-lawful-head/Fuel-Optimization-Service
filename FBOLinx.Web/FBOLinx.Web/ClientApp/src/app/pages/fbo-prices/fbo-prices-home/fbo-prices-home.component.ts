@@ -224,7 +224,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
   updatePricing() {
     const effectiveFrom = moment.utc(this.currentPricingEffectiveFrom).format();
-    const effectiveTo = moment.utc(this.currentPricingEffectiveTo).format();
+    const effectiveTo = moment.utc(this.currentPricingEffectiveTo).add(1, 'day').format();
     const newPrices = [];
     for (const price of this.currentPrices) {
       if (price.product === 'JetA Retail' && this.jtRetail > 0) {
@@ -357,12 +357,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
           if (this.currentFboPriceJetARetail.effectiveTo) {
             this.currentFboPriceJetARetail.effectiveTo =
-              moment(moment.utc(this.currentFboPriceJetARetail.effectiveTo)).local().format('MM/DD/YYYY');
+              moment(moment.utc(this.currentFboPriceJetARetail.effectiveTo).subtract(1, 'day')).local().format('MM/DD/YYYY');
           }
 
           if (this.currentFboPriceJetACost.effectiveTo) {
             this.currentFboPriceJetACost.effectiveTo =
-              moment(moment.utc(this.currentFboPriceJetACost.effectiveTo)).local().format('MM/DD/YYYY');
+              moment(moment.utc(this.currentFboPriceJetACost.effectiveTo).subtract(1, 'day')).local().format('MM/DD/YYYY');
           }
 
           if (data.length > 0) {
