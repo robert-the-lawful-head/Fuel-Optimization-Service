@@ -2,6 +2,14 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { A11yModule } from '@angular/cdk/a11y';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { PortalModule } from '@angular/cdk/portal';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CdkStepperModule } from '@angular/cdk/stepper';
+import { CdkTableModule } from '@angular/cdk/table';
+import { CdkTreeModule } from '@angular/cdk/tree';
 
 import { NiComponentsModule } from '../ni-components/ni-components.module';
 
@@ -137,6 +145,7 @@ import { CustomerMatchDialogComponent } from './customers/customer-match-dialog/
 import { TableColumnFilterComponent } from '../shared/components/table-column-filter/table-column-filter.component';
 import { TableGlobalSearchComponent } from '../shared/components/table-global-search/table-global-search.component';
 import { FeeAndTaxBreakdownComponent } from '../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
+import { TableSettingsComponent } from '../shared/components/table-settings/table-settings.component';
 // Pipes
 import { AppPipesModule } from '../app-pipes.module';
 
@@ -147,6 +156,14 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
   imports: [
     CommonModule,
     FormsModule,
+    DragDropModule,
+    A11yModule,
+    ClipboardModule,
+    PortalModule,
+    ScrollingModule,
+    CdkStepperModule,
+    CdkTableModule,
+    CdkTreeModule,
     ReactiveFormsModule,
     NiComponentsModule,
     MatAutocompleteModule,
@@ -281,7 +298,8 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
     TableGlobalSearchComponent,
     GroupAnalyticsHomeComponent,
     GroupAnalyticsGenerateDialogComponent,
-    FeeAndTaxBreakdownComponent
+    FeeAndTaxBreakdownComponent,
+    TableSettingsComponent,
   ],
   exports: [
     ClickStopPropagationDirective,

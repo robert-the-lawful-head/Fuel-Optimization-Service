@@ -40,13 +40,13 @@
                 </mat-form-field>
             </div>
             <div class="actions col-6 col-md-2">
-                <button class="export-btn"
-                        ni-button
-                        [view]="'accent'"
-                        beforeIcon="fa fa-file-excel-o"
-                        (click)="export()">
-                    Export
+                <button mat-icon-button [matMenuTriggerFor]="gridActions">
+                  <mat-icon class="mat-icon material-icons" role="img" aria-hidden="true">more_vert</mat-icon>
                 </button>
+                <mat-menu #gridActions="matMenu" xPosition="before" class="switch-nested-menu-left-arrows">
+                    <button mat-menu-item (click)="export()">Export</button>
+                    <button mat-menu-item (click)="openSettings()">Settings</button>
+                </mat-menu>
             </div>
         </div>
     </div>
@@ -54,9 +54,7 @@
         <table mat-table
                 [dataSource]="fuelreqsDataSource"
                 class="col-12 mb-0"
-                matSort
-                matSortActive="oid"
-                matSortDirection="desc">
+                matSort>
             <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     Flight Dept.
@@ -142,8 +140,8 @@
                 </td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            <tr mat-header-row *matHeaderRowDef="getTableColumns(); sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: getTableColumns()"></tr>
         </table>
         <mat-paginator [length]="resultsLength"
                         [pageSize]="pageSize"

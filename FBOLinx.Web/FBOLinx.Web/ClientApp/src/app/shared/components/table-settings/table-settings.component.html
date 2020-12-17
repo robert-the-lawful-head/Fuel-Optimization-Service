@@ -1,0 +1,47 @@
+<h1 mat-dialog-title>Table Settings</h1>
+<div mat-dialog-content class="mt-1 mb-2">
+    <div class="columns-container">
+        <h5>Visible Columns</h5>
+      
+        <div
+          cdkDropList
+          #visibleList="cdkDropList"
+          [cdkDropListData]="visibleColumns"
+          [cdkDropListConnectedTo]="[invisibleList]"
+          class="columns-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+            <div class="columns-box" *ngFor="let column of visibleColumns" cdkDrag>
+              {{column.name}}
+              <mat-button-toggle-group appearance="legacy" aria-label="Sort Order">
+                <mat-button-toggle (change)="onSortChange(column)" [checked]="column.sort === 'asc' || column.sort === 'desc'">
+                    <mat-icon *ngIf="!column.sort">swap_vert</mat-icon>
+                    <mat-icon *ngIf="column.sort === 'asc'">arrow_upward</mat-icon>
+                    <mat-icon *ngIf="column.sort === 'desc'">arrow_downward</mat-icon>
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+        </div>
+      </div>
+      
+      <div class="columns-container">
+        <h5>Invisible Columns</h5>
+        
+        <div
+            cdkDropList
+            #invisibleList="cdkDropList"
+            [cdkDropListData]="invisibleColumns"
+            [cdkDropListConnectedTo]="[visibleList]"
+            class="columns-list"
+            (cdkDropListDropped)="drop($event)"
+        >
+            <div class="columns-box" *ngFor="let column of invisibleColumns" cdkDrag>{{column.name}}</div>
+        </div>
+      </div>
+</div>
+<div mat-dialog-actions>
+    <div class="text-center col-12">
+        <button mat-raised-button color="accent" (click)="onSave()" class="mr-1">Save</button>
+        <button mat-stroked-button (click)="onCancel()">Dismiss</button>
+    </div>
+</div>
