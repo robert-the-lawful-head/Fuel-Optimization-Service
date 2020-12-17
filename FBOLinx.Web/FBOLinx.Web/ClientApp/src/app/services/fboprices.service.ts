@@ -69,9 +69,19 @@ export class FbopricesService {
         );
     }
 
-    public checkifExistFrboPrice(fboId, payload) {
+    public checkifExistFboPrice(fboId, payload) {
         return this.http.post(
             this.accessPointUrl + '/fbo/' + fboId + '/check/',
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public checkifExistStagedFboPrice(fboId, payload) {
+        return this.http.post(
+            this.accessPointUrl + '/fbo/' + fboId + '/checkstaged/',
             payload,
             {
                 headers: this.headers,
