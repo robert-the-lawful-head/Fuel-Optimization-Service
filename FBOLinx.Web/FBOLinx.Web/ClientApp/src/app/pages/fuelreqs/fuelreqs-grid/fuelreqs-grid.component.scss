@@ -1,12 +1,8 @@
 .actions {
     position: relative;
-}
-
-.export-btn {
-    position: absolute;
-    bottom: 1.25em;
-    left: 50%;
-    transform: translateX(-50%);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .paddingTop {
