@@ -8,7 +8,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatSort, SortDirection} from '@angular/material/sort';
+import {MatSort, MatSortHeader, SortDirection} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSelectChange} from '@angular/material/select';
@@ -17,19 +17,60 @@ import FlatFileImporter from 'flatfile-csv-importer';
 import * as XLSX from 'xlsx';
 
 // Services
-import {CustomersService} from '../../../services/customers.service';
-import {CustomerinfobygroupService} from '../../../services/customerinfobygroup.service';
-import {SharedService} from '../../../layouts/shared-service';
+import { CustomersService } from '../../../services/customers.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 // Components
-import {CustomersDialogNewCustomerComponent} from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
-import {DeleteConfirmationComponent} from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
 
-import {CustomermarginsService} from '../../../services/customermargins.service';
-import {CustomersviewedbyfboService} from '../../../services/customersviewedbyfbo.service';
-import {CustomerGridState} from '../../../store/reducers/customer';
+import { CustomermarginsService } from '../../../services/customermargins.service';
+import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
+import { CustomerGridState } from '../../../store/reducers/customer';
 
 import * as SharedEvents from '../../../models/sharedEvents';
+
+const initialColumns: ColumnType[] = [
+    {
+        id: 'selectAll',
+        name: 'Select All',
+    },
+    {
+        id: 'needsAttention',
+        name: 'Needs Attention',
+    },
+    {
+        id: 'company',
+        name: 'Company',
+        sort: 'asc',
+    },
+    {
+        id: 'customerCompanyTypeName',
+        name: 'Customer Type',
+    },
+    {
+        id: 'isFuelerLinxCustomer',
+        name: 'FuelerLinx Network',
+    },
+    {
+        id: 'certificateTypeDescription',
+        name: 'Certificate Type',
+    },
+    {
+        id: 'pricingTemplateName',
+        name: 'ITP Margin Template',
+    },
+    {
+        id: 'fleetSize',
+        name: 'Fleet Size',
+    },
+    {
+        id: 'delete',
+        name: 'Actions',
+    },
+];
 
 @Component({
     selector: 'app-customers-grid',
@@ -51,26 +92,18 @@ export class CustomersGridComponent implements OnInit {
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
     @ViewChild(MatSort, {static: true}) sort: MatSort;
 
+    tableLocalStorageKey = 'customer-manager-table-settings';
+
     customersDataSource: any = null;
-    displayedColumns: string[] = [
-        'selectAll',
-        'needsAttention',
-        'company',
-        'customerCompanyTypeName',
-        'isFuelerLinxCustomer',
-        'certificateTypeDescription',
-        'pricingTemplateName',
-        'fleetSize',
-        'delete',
-    ];
     customerFilterType: number = undefined;
     selectAll = false;
     selectedRows: number;
     pageIndex = 0;
     pageSize = 100;
-    tableSort = 'company';
-    tableSortOrder = 'asc';
-    public customerSearch = '';
+    customerSearch = '';
+
+    visibleColumns: ColumnType[] = [];
+    invisibleColumns: ColumnType[] = [];
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
@@ -81,6 +114,7 @@ export class CustomersGridComponent implements OnInit {
     constructor(
         private newCustomerDialog: MatDialog,
         private deleteCustomerDialog: MatDialog,
+        private tableSettingsDialog: MatDialog,
         private customersService: CustomersService,
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
@@ -94,6 +128,15 @@ export class CustomersGridComponent implements OnInit {
 
         if (this.customerGridState.filterType) {
             this.customerFilterType = this.customerGridState.filterType;
+        }
+
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            const { visibleColumns, invisibleColumns } = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+            this.visibleColumns = visibleColumns;
+            this.invisibleColumns = invisibleColumns;
+        } else {
+            this.visibleColumns = initialColumns;
+            this.invisibleColumns = [];
         }
 
         this.refreshCustomerDataSource();
@@ -243,19 +286,6 @@ export class CustomersGridComponent implements OnInit {
 
         /* save to file */
         XLSX.writeFile(wb, 'Customers.xlsx');
-    }
-
-    alertHeader(value) {
-        if (value) {
-            sessionStorage.setItem('tableSortValue', value);
-        }
-
-        if (this.sort.direction) {
-            sessionStorage.setItem(
-                'tableSortValueDirection',
-                this.sort.direction
-            );
-        }
     }
 
     exportCustomerAircraftToExcel() {
@@ -508,8 +538,18 @@ export class CustomersGridComponent implements OnInit {
         });
     }
 
+    getTableColumns() {
+        return this.visibleColumns.map(column => column.id);
+    }
+
     private refreshCustomerDataSource() {
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.sort.sortChange.subscribe(() => {
+            this.visibleColumns = this.visibleColumns.map(column =>
+                column.id === this.sort.active ? { ...column, sort: this.sort.direction} : { id: column.id, name: column.name }
+            );
+            this.paginator.pageIndex = 0
+            this.saveSettings();
+        });
         if (!this.customersDataSource) {
             this.customersDataSource = new MatTableDataSource();
         }
@@ -523,5 +563,37 @@ export class CustomersGridComponent implements OnInit {
         this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
         this.customersDataSource.paginator = this.paginator;
+    }
+
+    private refreshSort() {
+        const sortedColumn = this.visibleColumns.find(column => column.sort);
+        this.sort.sort({ id: null, start: sortedColumn?.sort || "asc", disableClear: false });
+        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || "asc", disableClear: false });
+        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
+    }
+
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
+            data: {
+                visibleColumns: this.visibleColumns,
+                invisibleColumns: this.invisibleColumns,
+            }
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                const { visibleColumns, invisibleColumns } = result;
+                this.visibleColumns = visibleColumns;
+                this.invisibleColumns = invisibleColumns;
+                this.refreshSort();
+                this.saveSettings();
+            }
+        })
+    }
+
+    saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify({
+            visibleColumns: this.visibleColumns,
+            invisibleColumns: this.invisibleColumns,
+        }));
     }
 }
