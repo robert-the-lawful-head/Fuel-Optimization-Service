@@ -121,7 +121,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
             this.visibleColumns = this.visibleColumns.map(column =>
                 column.id === this.sort.active ? { ...column, sort: this.sort.direction} : { id: column.id, name: column.name }
             );
-            this.paginator.pageIndex = 0
+            this.paginator.pageIndex = 0;
             this.saveSettings();
         });
 
@@ -168,8 +168,8 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
 
     refreshSort() {
         const sortedColumn = this.visibleColumns.find(column => column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || "asc", disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || "asc", disableClear: false });
+        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
         (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
     }
 
@@ -225,7 +225,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
                 this.refreshSort();
                 this.saveSettings();
             }
-        })
+        });
     }
 
     saveSettings() {
