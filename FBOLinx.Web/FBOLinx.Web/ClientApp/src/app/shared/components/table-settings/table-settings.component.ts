@@ -10,7 +10,7 @@ export type ColumnType = {
     id: string;
     name: string;
     sort?: SortDirection;
-}
+};
 
 @Component({
     selector: 'app-table-settings',
@@ -28,7 +28,7 @@ export class TableSettingsComponent {
         this.visibleColumns = [...data.visibleColumns];
         this.invisibleColumns = [...data.invisibleColumns];
     }
-    
+
     drop(event: CdkDragDrop<string[]>) {
         if (event.previousContainer === event.container) {
             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
