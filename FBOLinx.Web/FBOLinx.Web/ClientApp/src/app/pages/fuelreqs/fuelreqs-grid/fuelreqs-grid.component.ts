@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { isEqual } from 'lodash';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -94,8 +95,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
 
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
-    visibleColumns: ColumnType[] = [];
-    invisibleColumns: ColumnType[] = [];
+    columns: ColumnType[] = [];
 
     dashboardSettings: any;
 
@@ -111,18 +111,21 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.fuelreqsData) {
+        if (changes.fuelreqsData && !isEqual(changes.fuelreqsData.currentValue, changes.fuelreqsData.previousValue)) {
             this.refreshTable();
         }
     }
 
     ngOnInit() {
         this.sort.sortChange.subscribe(() => {
-            this.visibleColumns = this.visibleColumns.map(column =>
-                column.id === this.sort.active ? { ...column, sort: this.sort.direction} : { id: column.id, name: column.name }
+            this.columns = this.columns.map(column =>
+                column.id === this.sort.active
+                    ? { ...column, sort: this.sort.direction}
+                    : { id: column.id, name: column.name, hidden: column.hidden }
             );
-            this.paginator.pageIndex = 0;
+
             this.saveSettings();
+            this.paginator.pageIndex = 0;
         });
 
         if (localStorage.getItem('pageIndexFuelReqs')) {
@@ -138,18 +141,15 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         }
 
         if (localStorage.getItem(this.tableLocalStorageKey)) {
-            const { visibleColumns, invisibleColumns } = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
-            this.visibleColumns = visibleColumns;
-            this.invisibleColumns = invisibleColumns;
+            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
         } else {
-            this.visibleColumns = initialColumns;
-            this.invisibleColumns = [];
+            this.columns = initialColumns;
         }
         this.refreshTable();
     }
 
     getTableColumns() {
-        return this.visibleColumns.map(column => column.id);
+        return this.columns.filter(column => !column.hidden).map(column => column.id);
     }
 
     refreshTable() {
@@ -167,7 +167,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     }
 
     refreshSort() {
-        const sortedColumn = this.visibleColumns.find(column => column.sort);
+        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
         this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
         this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
         (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
@@ -212,26 +212,21 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
 
     openSettings() {
         const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
-            data: {
-                visibleColumns: this.visibleColumns,
-                invisibleColumns: this.invisibleColumns,
-            }
+            data: this.columns
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                const { visibleColumns, invisibleColumns } = result;
-                this.visibleColumns = visibleColumns;
-                this.invisibleColumns = invisibleColumns;
-                this.refreshSort();
-                this.saveSettings();
+            if (!result) {
+                return;
             }
+
+            this.columns = [...result];
+
+            this.refreshSort();
+            this.saveSettings();
         });
     }
 
     saveSettings() {
-        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify({
-            visibleColumns: this.visibleColumns,
-            invisibleColumns: this.invisibleColumns,
-        }));
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
     }
 }
