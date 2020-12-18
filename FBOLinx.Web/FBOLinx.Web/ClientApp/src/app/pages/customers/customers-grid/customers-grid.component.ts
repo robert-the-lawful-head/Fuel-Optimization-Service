@@ -102,8 +102,7 @@ export class CustomersGridComponent implements OnInit {
     pageSize = 100;
     customerSearch = '';
 
-    visibleColumns: ColumnType[] = [];
-    invisibleColumns: ColumnType[] = [];
+    columns: ColumnType[] = [];
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
@@ -131,12 +130,9 @@ export class CustomersGridComponent implements OnInit {
         }
 
         if (localStorage.getItem(this.tableLocalStorageKey)) {
-            const { visibleColumns, invisibleColumns } = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
-            this.visibleColumns = visibleColumns;
-            this.invisibleColumns = invisibleColumns;
+            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
         } else {
-            this.visibleColumns = initialColumns;
-            this.invisibleColumns = [];
+            this.columns = initialColumns;
         }
 
         this.refreshCustomerDataSource();
@@ -539,13 +535,15 @@ export class CustomersGridComponent implements OnInit {
     }
 
     getTableColumns() {
-        return this.visibleColumns.map(column => column.id);
+        return this.columns.filter(column => !column.hidden).map(column => column.id);
     }
 
     private refreshCustomerDataSource() {
         this.sort.sortChange.subscribe(() => {
-            this.visibleColumns = this.visibleColumns.map(column =>
-                column.id === this.sort.active ? { ...column, sort: this.sort.direction} : { id: column.id, name: column.name }
+            this.columns = this.columns.map(column =>
+                column.id === this.sort.active
+                    ? { ...column, sort: this.sort.direction}
+                    : { id: column.id, name: column.name, hidden: column.hidden }
             );
             this.paginator.pageIndex = 0;
             this.saveSettings();
@@ -566,7 +564,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     private refreshSort() {
-        const sortedColumn = this.visibleColumns.find(column => column.sort);
+        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
         this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
         this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
         (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
@@ -574,16 +572,11 @@ export class CustomersGridComponent implements OnInit {
 
     openSettings() {
         const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
-            data: {
-                visibleColumns: this.visibleColumns,
-                invisibleColumns: this.invisibleColumns,
-            }
+            data: this.columns
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                const { visibleColumns, invisibleColumns } = result;
-                this.visibleColumns = visibleColumns;
-                this.invisibleColumns = invisibleColumns;
+                this.columns = [...result];
                 this.refreshSort();
                 this.saveSettings();
             }
@@ -591,9 +584,6 @@ export class CustomersGridComponent implements OnInit {
     }
 
     saveSettings() {
-        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify({
-            visibleColumns: this.visibleColumns,
-            invisibleColumns: this.invisibleColumns,
-        }));
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
     }
 }

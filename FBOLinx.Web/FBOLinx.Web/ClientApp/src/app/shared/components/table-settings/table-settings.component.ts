@@ -10,6 +10,7 @@ export type ColumnType = {
     id: string;
     name: string;
     sort?: SortDirection;
+    hidden?: boolean;
 };
 
 @Component({
@@ -18,15 +19,13 @@ export type ColumnType = {
     styleUrls: ['./table-settings.component.scss'],
 })
 export class TableSettingsComponent {
-    visibleColumns: ColumnType[] = [];
-    invisibleColumns: ColumnType[] = [];
+    columns: ColumnType[] = [];
 
     constructor(
         private dialogRef: MatDialogRef<TableSettingsComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { visibleColumns: ColumnType[], invisibleColumns: ColumnType[] }
+        @Inject(MAT_DIALOG_DATA) public data: ColumnType[]
     ) {
-        this.visibleColumns = [...data.visibleColumns];
-        this.invisibleColumns = [...data.invisibleColumns];
+        this.columns = [].concat(data);
     }
 
     drop(event: CdkDragDrop<string[]>) {
@@ -40,22 +39,16 @@ export class TableSettingsComponent {
                 event.currentIndex
             );
         }
-        this.invisibleColumns = this.invisibleColumns.map(column => ({ id: column.id, name: column.name }));
-        if (!this.visibleColumns.find(column => column.sort) && this.visibleColumns.length) {
-            this.visibleColumns[0] = {
-                ...this.visibleColumns[0],
-                sort: 'asc',
-            };
-        }
     }
 
     onSortChange(column: ColumnType) {
         if (!column.sort) {
             column.sort = 'asc';
-            this.visibleColumns = this.visibleColumns.map(vc =>
+            this.columns = this.columns.map(vc =>
                 vc.id === column.id ? column : {
                     id: vc.id,
                     name: vc.name,
+                    hidden: vc.hidden,
                 }
             );
         } else if (column.sort === 'asc') {
@@ -65,11 +58,12 @@ export class TableSettingsComponent {
         }
     }
 
+    toggleColumnVisible(column: ColumnType) {
+        column.hidden = !column.hidden;
+    }
+
     onSave() {
-        this.dialogRef.close({
-            visibleColumns: this.visibleColumns,
-            invisibleColumns: this.invisibleColumns,
-        });
+        this.dialogRef.close(this.columns);
     }
 
     onCancel() {
