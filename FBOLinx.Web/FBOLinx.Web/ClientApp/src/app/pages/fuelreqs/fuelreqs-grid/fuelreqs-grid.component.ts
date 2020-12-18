@@ -11,14 +11,68 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { isEqual } from 'lodash';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 
 // Shared components
 import { FuelReqsExportModalComponent } from '../../../shared/components/fuelreqs-export/fuelreqs-export.component';
+import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
+
+const initialColumns: ColumnType[] = [
+    {
+        id: 'customer',
+        name: 'Flight Dept.',
+    },
+    {
+        id: 'pricingTemplateName',
+        name: 'ITP Margin Template',
+    },
+    {
+        id: 'eta',
+        name: 'ETA',
+        sort: 'desc',
+    },
+    {
+        id: 'etd',
+        name: 'ETD',
+    },
+    {
+        id: 'quotedVolume',
+        name: 'Volume (gal.)',
+    },
+    {
+        id: 'quotedPpg',
+        name: 'PPG',
+    },
+    {
+        id: 'tailNumber',
+        name: 'Tail #',
+    },
+    {
+        id: 'phoneNumber',
+        name: 'Phone',
+    },
+    {
+        id: 'source',
+        name: 'Source',
+    },
+    {
+        id: 'email',
+        name: 'Email',
+    },
+    {
+        id: 'oid',
+        name: 'ID',
+    },
+    {
+        id: 'sourceId',
+        name: 'Fuelerlinx ID',
+    },
+];
 
 @Component({
     selector: 'app-fuelreqs-grid',
@@ -33,46 +87,46 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
 
-    public pageIndex = 0;
-    public pageSize = 100;
+    tableLocalStorageKey = 'fuel-req-table-settings';
+
+    pageIndex = 0;
+    pageSize = 100;
 
 
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
-    displayedColumns: string[] = [
-        'oid',
-        'customer',
-        'pricingTemplateName',
-        'eta',
-        'etd',
-        'quotedVolume',
-        'quotedPpg',
-        'tailNumber',
-        'email',
-        'phoneNumber',
-        'source',
-        'sourceId'
-    ];
-    public dashboardSettings: any;
+    columns: ColumnType[] = [];
+
+    dashboardSettings: any;
 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(
         private sharedService: SharedService,
-        public exportDialog: MatDialog
+        private exportDialog: MatDialog,
+        private tableSettingsDialog: MatDialog,
     ) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
     }
+
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.fuelreqsData) {
+        if (changes.fuelreqsData && !isEqual(changes.fuelreqsData.currentValue, changes.fuelreqsData.previousValue)) {
             this.refreshTable();
         }
     }
 
     ngOnInit() {
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.sort.active = 'eta';
+        this.sort.sortChange.subscribe(() => {
+            this.columns = this.columns.map(column =>
+                column.id === this.sort.active
+                    ? { ...column, sort: this.sort.direction}
+                    : { id: column.id, name: column.name, hidden: column.hidden }
+            );
+
+            this.saveSettings();
+            this.paginator.pageIndex = 0;
+        });
 
         if (localStorage.getItem('pageIndexFuelReqs')) {
             this.paginator.pageIndex = localStorage.getItem('pageIndexFuelReqs') as any;
@@ -85,10 +139,20 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         } else {
             this.pageSize = 100;
         }
+
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+        } else {
+            this.columns = initialColumns;
+        }
         this.refreshTable();
     }
 
-    public refreshTable() {
+    getTableColumns() {
+        return this.columns.filter(column => !column.hidden).map(column => column.id);
+    }
+
+    refreshTable() {
         let filter = '';
         if (this.fuelreqsDataSource) {
             filter = this.fuelreqsDataSource.filter;
@@ -98,20 +162,29 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         this.fuelreqsDataSource.paginator = this.paginator;
         this.fuelreqsDataSource.filter = filter;
         this.resultsLength = this.fuelreqsData.length;
+
+        this.refreshSort();
     }
 
-    public applyFilter(filterValue: string) {
+    refreshSort() {
+        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
+        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
+    }
+
+    applyFilter(filterValue: string) {
         this.fuelreqsDataSource.filter = filterValue.trim().toLowerCase();
     }
 
-    public applyDateFilterChange() {
+    applyDateFilterChange() {
         this.dateFilterChanged.emit({
             filterStartDate: this.filterStartDate,
             filterEndDate: this.filterEndDate,
         });
     }
 
-    public export() {
+    export() {
         const dialogRef = this.exportDialog.open(
             FuelReqsExportModalComponent,
             {
@@ -135,5 +208,25 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
             'pageSizeValueFuelReqs',
             this.paginator.pageSize.toString()
         );
+    }
+
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
+            data: this.columns
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.columns = [...result];
+
+            this.refreshSort();
+            this.saveSettings();
+        });
+    }
+
+    saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
     }
 }

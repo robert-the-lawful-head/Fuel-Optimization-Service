@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
+	<PackageReference Include="Microsoft.NET.Sdk.Razor" Version="2.2.0" />
     <PackageReference Include="CoreHtmlToImage" Version="1.0.5" />
     <PackageReference Include="EFCore.BulkExtensions" Version="2.4.4" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />

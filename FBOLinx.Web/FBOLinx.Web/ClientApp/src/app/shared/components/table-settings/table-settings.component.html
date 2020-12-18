@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>Table Settings</h1>
+<div mat-dialog-content class="mt-1 mb-2">
+    <div class="columns-container">
+        <h5>Columns</h5>
+      
+        <div
+          cdkDropList
+          #visibleList="cdkDropList"
+          [cdkDropListData]="columns"
+          class="columns-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+            <div class="columns-box" *ngFor="let column of columns" cdkDrag>
+                <mat-icon>drag_indicator</mat-icon>
+                <mat-checkbox [checked]="!column.hidden" (change)="toggleColumnVisible(column)"></mat-checkbox>
+                <span class="column-name">{{column.name}}</span>
+                <mat-button-toggle-group appearance="legacy" aria-label="Sort Order">
+                    <mat-button-toggle (change)="onSortChange(column)" [checked]="column.sort === 'asc' || column.sort === 'desc'">
+                        <mat-icon *ngIf="!column.sort">swap_vert</mat-icon>
+                        <mat-icon *ngIf="column.sort === 'asc'">arrow_upward</mat-icon>
+                        <mat-icon *ngIf="column.sort === 'desc'">arrow_downward</mat-icon>
+                    </mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+        </div>
+      </div>
+</div>
+<div mat-dialog-actions>
+    <div class="text-center col-12">
+        <button mat-raised-button color="accent" (click)="onSave()" class="mr-1">Save</button>
+        <button mat-stroked-button (click)="onCancel()">Dismiss</button>
+    </div>
+</div>
