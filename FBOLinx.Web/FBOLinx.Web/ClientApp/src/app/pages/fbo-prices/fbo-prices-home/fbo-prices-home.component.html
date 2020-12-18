@@ -445,18 +445,18 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div *ngIf="stagedJetARetailExists() || stagedJetACostExists()" class="row">
                     <div class="col-2"></div>
-                    <div class="col-5 text-center">
+                    <div class="col-5 text-center" *ngIf="stagedJetARetailExists()">
                         <div class="h5 mt-0 mb-2 text-muted">Retail</div>
                     </div>
-                    <div class="col-5 text-center">
+                    <div class="col-5 text-center" *ngIf="stagedJetACostExists()">
                         <div class="h5 mt-0 mb-2 text-muted">Cost</div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-2"></div>
-                    <div class="col-5 stage-pricing-container">
+                    <div class="col-5 live-pricing-container" *ngIf="stagedJetARetailExists()">
                         <div *ngIf="feesAndTaxes && stagedFboPriceJetARetail">
                             <fee-and-tax-breakdown #retailFeeAndTaxBreakdown
                                                    [showLineSeparator]="true"
@@ -468,7 +468,7 @@
                                                    [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
                         </div>
                     </div>
-                    <div class="col-5 live-pricing-container">
+                    <div class="col-5 live-pricing-container" *ngIf="stagedJetACostExists()">
                         <div *ngIf="feesAndTaxes && stagedFboPriceJetACost">
                             <fee-and-tax-breakdown #costFeeAndTaxBreakdown
                                                    [showLineSeparator]="true"
@@ -481,7 +481,7 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="stagedPrices"
+                <div *ngIf="stagedJetARetailExists() || stagedJetACostExists()"
                      class="row">
                     <div class="col-2">
                         <div class="text-center">
@@ -501,7 +501,7 @@
                             </h4>
                             <h6 *ngIf="stagedJetARetailExists()"
                                 class="expire-date mt-0 mb-2 text-muted">
-                                Expires: {{ stagedFboPriceJetARetail.effectiveTo | date }}
+                                {{ stagedFboPriceJetARetail.effectiveFrom | date }} - {{ stagedFboPriceJetARetail.effectiveTo | date }}
                             </h6>
                             <button *ngIf="stagedJetARetailExists()"
                                     mat-raised-button
@@ -515,15 +515,15 @@
                     </div>
 
                     <!--Cost Pricing Display-->
-                    <div class="col-5">
+                    <div class="col-5" *ngIf="stagedJetACostExists()">
                         <div class="text-center">
-                            <h4 *ngIf="stagedJetACostExists()"
+                            <h4
                                 class="mt-0 mb-1">
                                 ${{ stagedFboPriceJetACost.price | number: "1.4-4" }}
                             </h4>
                             <h6 *ngIf="stagedJetACostExists()"
                                 class="expire-date mt-0 mb-2 text-muted">
-                                Expires: {{ stagedFboPriceJetACost.effectiveTo | date }}
+                                {{ stagedFboPriceJetACost.effectiveFrom | date }} - {{ stagedFboPriceJetACost.effectiveTo | date }}
                             </h6>
                             <button *ngIf="stagedJetACostExists()"
                                     mat-raised-button
