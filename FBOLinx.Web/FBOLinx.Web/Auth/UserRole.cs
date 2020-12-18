@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +14,7 @@ namespace FBOLinx.Web.Auth
 {
     public class UserRoleAttribute : TypeFilterAttribute
     {
-        public UserRoleAttribute(params Models.User.UserRoles[] roles) : base(typeof(UserRoleActionFilter))
+        public UserRoleAttribute(params User.UserRoles[] roles) : base(typeof(UserRoleActionFilter))
         {
             Arguments = new object[] {roles};
         }
@@ -21,9 +22,9 @@ namespace FBOLinx.Web.Auth
 
     public class UserRoleActionFilter : IAsyncActionFilter
     {
-        private readonly Models.User.UserRoles[] _Roles;
+        private readonly User.UserRoles[] _Roles;
 
-        public UserRoleActionFilter(Models.User.UserRoles[] roles)
+        public UserRoleActionFilter(User.UserRoles[] roles)
         {
             _Roles = roles;
         }

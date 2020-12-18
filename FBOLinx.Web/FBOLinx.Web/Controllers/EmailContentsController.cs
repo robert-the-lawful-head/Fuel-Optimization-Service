@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +38,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest();
             }
@@ -48,7 +50,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fbo/{fboId}")]
         public async Task<ActionResult<List<EmailContent>>> GetEmailContentForFbo([FromRoute] int fboId)
         {
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest();
             }
@@ -72,7 +74,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest();
             }
@@ -102,7 +104,7 @@ namespace FBOLinx.Web.Controllers
         [HttpPost]
         public async Task<ActionResult<EmailContent>> PostEmailContent(EmailContent emailContent)
         {
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest();
             }
@@ -123,7 +125,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (UserService.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest();
             }

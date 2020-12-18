@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +11,7 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using static FBOLinx.Web.Models.AirCrafts;
+using static FBOLinx.DB.Models.AirCrafts;
 using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
@@ -171,7 +173,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (custWithAircrafts.Count > 0)
                 {
-                    var aircraftSizes = Utilities.Enum.GetDescriptions(typeof(Models.AirCrafts.AircraftSizes));
+                    var aircraftSizes = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
 
                     foreach (var custPlane in custWithAircrafts)
                     {

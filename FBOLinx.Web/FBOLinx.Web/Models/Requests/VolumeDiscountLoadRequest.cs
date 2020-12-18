@@ -13,6 +13,6 @@ namespace FBOLinx.Web.Models.Requests
         [Required]
         public string ICAO { get; set; }
         [Required]
-        public Enums.StrictFlightTypeClassifications FlightTypeClassification { get; set; }
+        public FBOLinx.Core.Enums.StrictFlightTypeClassifications FlightTypeClassification { get; set; }
     }
 }

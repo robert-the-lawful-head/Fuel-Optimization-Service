@@ -3,14 +3,14 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses;
-using Microsoft.AspNetCore.Authentication.Twitter;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 
 namespace FBOLinx.Web.Services
 {

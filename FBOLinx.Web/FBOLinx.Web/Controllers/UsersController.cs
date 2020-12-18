@@ -14,6 +14,10 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices;
+using FBOLinx.ServiceLayer.BusinessServices.Auth;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -29,9 +33,13 @@ namespace FBOLinx.Web.Controllers
         private readonly MailSettings _MailSettings;
         private readonly FboService _fboService;
         private IServiceProvider _Services;
+        private EncryptionService _encryptionService;
+        private ResetPasswordService _ResetPasswordService;
 
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService)
+        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService, EncryptionService encryptionService, ResetPasswordService resetPasswordService)
         {
+            _ResetPasswordService = resetPasswordService;
+            _encryptionService = encryptionService;
             _userService = userService;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -107,17 +115,17 @@ namespace FBOLinx.Web.Controllers
 
             var currentRole = UserService.GetClaimedRole(_httpContextAccessor);
 
-            if (currentRole == Models.User.UserRoles.Conductor)
+            if (currentRole == DB.Models.User.UserRoles.Conductor)
                 return Ok(user);
 
             if (UserService.GetClaimedUserId(_httpContextAccessor) == id)
                 return Ok(user);
 
-            if (currentRole == Models.User.UserRoles.GroupAdmin &&
+            if (currentRole == DB.Models.User.UserRoles.GroupAdmin &&
                 UserService.GetClaimedGroupId(_httpContextAccessor) == user.GroupId)
                 return Ok(user);
 
-            if (currentRole == Models.User.UserRoles.Primary &&
+            if (currentRole == DB.Models.User.UserRoles.Primary &&
                 UserService.GetClaimedFboId(_httpContextAccessor) == user.FboId)
                 return Ok(user);
 
@@ -126,7 +134,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/users/group/5
         [HttpGet("group/{groupId}")]
-        [UserRole(new User.UserRoles[] { Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin })]
+        [UserRole(new User.UserRoles[] { DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin })]
         public async Task<IActionResult> GetUsersByGroupId([FromRoute] int groupId)
         {
             if (!ModelState.IsValid)
@@ -146,7 +154,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/users/fbo/5
         [HttpGet("fbo/{fboId}")]
-        [UserRole(new User.UserRoles[] { Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin, Models.User.UserRoles.Primary })]
+        [UserRole(new User.UserRoles[] { DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin, DB.Models.User.UserRoles.Primary })]
         public async Task<IActionResult> GetUsersByFboId([FromRoute] int fboId)
         {
             if (!ModelState.IsValid)
@@ -173,7 +181,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var roles = Utilities.Enum.GetDescriptions(typeof(Models.User.UserRoles));
+            var roles = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(User.UserRoles));
 
             return Ok(roles);
         }
@@ -192,7 +200,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            if (id != UserService.GetClaimedUserId(_httpContextAccessor) && UserService.GetClaimedRole(_httpContextAccessor) != Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (id != UserService.GetClaimedUserId(_httpContextAccessor) && UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return BadRequest(ModelState);
             }
@@ -220,7 +228,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/users
         [HttpPost]
-        [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin, Models.User.UserRoles.Primary)]
+        [UserRole(DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin, DB.Models.User.UserRoles.Primary)]
         public async Task<IActionResult> PostUser([FromBody] User user)
         {
             if (!ModelState.IsValid)
@@ -228,7 +236,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedRole(_httpContextAccessor) != Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }
@@ -261,8 +269,7 @@ namespace FBOLinx.Web.Controllers
                 user.ResetPasswordTokenExpiration = DateTime.UtcNow.AddDays(7);
                 await _context.SaveChangesAsync();
 
-                ResetPasswordService service = new ResetPasswordService(_MailSettings, _context, _fileProvider, _httpContextAccessor);
-                await service.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, token);
+                await _ResetPasswordService.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, token);
             }
 
             return Ok();
@@ -301,11 +308,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            Utilities.Hash hashUtility = new Utilities.Hash();
 
             user.ResetPasswordToken = null;
             user.ResetPasswordTokenExpiration = null;
-            user.Password = hashUtility.HashPassword(request.Password);
+            user.Password = _encryptionService.HashPassword(request.Password);
 
             await _context.SaveChangesAsync();
             return Ok();
@@ -320,12 +326,11 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedRole(_httpContextAccessor) != Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != request.User.GroupId)
+            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != request.User.GroupId)
             {
                 return Unauthorized();
             }
-            Utilities.Hash hashUtility = new Utilities.Hash();
-            request.User.Password = hashUtility.HashPassword(request.NewPassword);
+            request.User.Password = _encryptionService.HashPassword(request.NewPassword);
             _context.Entry(request.User).State = EntityState.Modified;
 
             try
@@ -374,7 +379,7 @@ namespace FBOLinx.Web.Controllers
 
         // DELETE: api/users/5
         [HttpDelete("{id}")]
-        [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin, Models.User.UserRoles.Primary)]
+        [UserRole(DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin, DB.Models.User.UserRoles.Primary)]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -388,7 +393,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            if (UserService.GetClaimedRole(_httpContextAccessor) != Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }

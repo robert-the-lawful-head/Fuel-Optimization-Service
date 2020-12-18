@@ -8,9 +8,11 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.ViewModels;
-using static FBOLinx.Web.Models.RampFees;
+using static FBOLinx.DB.Models.RampFees;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
@@ -57,8 +59,8 @@ namespace FBOLinx.Web.Controllers
         public async Task<ActionResult<IEnumerable<RampFees>>> GetRampFeesForFbo([FromRoute] int fboId)
         {
             //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
-            IEnumerable<Utilities.Enum.EnumDescriptionValue> sizes =
-                Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+            IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> sizes =
+                FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
             List<RampFeesGridViewModel> result = (
                 from s in sizes
                 join r in _context.RampFees on new

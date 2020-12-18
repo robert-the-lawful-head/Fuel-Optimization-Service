@@ -13,7 +13,6 @@ namespace FBOLinx.Web.Services
     public class MailService
     {
         private readonly FBOLinx.Web.Configurations.MailSettings _MailSettings;
-        private Guid _SendToken; 
 
         public MailService(FBOLinx.Web.Configurations.MailSettings mailSettings)
         {

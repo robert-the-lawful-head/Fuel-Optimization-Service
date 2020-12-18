@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +13,6 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Remotion.Linq.Clauses.ResultOperators;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Web.Models.Requests;
@@ -47,10 +48,11 @@ namespace FBOLinx.Web.Controllers
             int groupId = UserService.GetClaimedGroupId(_HttpContextAccessor);
             var role = UserService.GetClaimedRole(_HttpContextAccessor);
 
-            return _context.Group
-                        .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == Models.User.UserRoles.Conductor))
+            return await _context.Group
+                        .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == DB.Models.User.UserRoles.Conductor))
                         .Include(x => x.Users)
-                        .OrderBy((x => x.GroupName));
+                        .OrderBy((x => x.GroupName))
+                        .ToListAsync();
         }
 
         [HttpGet("group-fbo")]
@@ -80,7 +82,7 @@ namespace FBOLinx.Web.Controllers
                             })
                             .ToListAsync();
 
-            var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
+            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
 
             var fboPrices = (from f in _context.Fboprices
                              where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
@@ -126,7 +128,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin)]
+        [UserRole(DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin)]
         public async Task<IActionResult> GetGroup([FromRoute] int id)
         {
             try
@@ -136,7 +138,7 @@ namespace FBOLinx.Web.Controllers
                     return BadRequest(ModelState);
                 }
 
-                if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+                if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
                 {
                     return BadRequest(ModelState);
                 }
@@ -159,7 +161,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/Groups/5
         [HttpPut("{id}")]
-        [UserRole(new User.UserRoles[] {Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin})]
+        [UserRole(new User.UserRoles[] {DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin})]
         public async Task<IActionResult> PutGroup([FromRoute] int id, [FromBody] Group @group)
         {
             if (!ModelState.IsValid)
@@ -167,7 +169,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
             {
                 return BadRequest(ModelState);
             }
@@ -237,7 +239,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/Groups
         [HttpPost]
-        [UserRole(Models.User.UserRoles.Conductor)]
+        [UserRole(DB.Models.User.UserRoles.Conductor)]
         public async Task<IActionResult> PostGroup([FromBody] Group group)
         {
             if (!ModelState.IsValid)
@@ -258,7 +260,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("merge-groups")]
-        [UserRole(Models.User.UserRoles.Conductor)]
+        [UserRole(DB.Models.User.UserRoles.Conductor)]
         public async Task<IActionResult> MergeGroups([FromBody] MergeGroupRequest request)
         {
             if (!ModelState.IsValid)
@@ -399,7 +401,7 @@ namespace FBOLinx.Web.Controllers
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
-        [UserRole(Models.User.UserRoles.Conductor)]
+        [UserRole(DB.Models.User.UserRoles.Conductor)]
         public async Task<IActionResult> DeleteGroup([FromRoute] int id)
         {
             if (!ModelState.IsValid)

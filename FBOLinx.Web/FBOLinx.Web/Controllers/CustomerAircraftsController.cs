@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +12,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using static FBOLinx.Web.Models.AirCrafts;
+using static FBOLinx.DB.Models.AirCrafts;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Requests;
 
@@ -46,7 +48,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var aircrafts = await _aircraftService.GetAllAircrafts();
+            var aircrafts = _aircraftService.GetAllAircraftsAsQueryable();
             var customerAircrafts = await (from ca in _context.CustomerAircrafts
                                            join ac in aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
                                            from ac in leftJoinAircrafts.DefaultIfEmpty()
@@ -56,9 +58,9 @@ namespace FBOLinx.Web.Controllers
                                                ca.CustomerId,
                                                ca.AircraftId,
                                                ca.Oid,
-                                               Size = (ca.Size.HasValue && ca.Size.Value != Models.AirCrafts.AircraftSizes.NotSet) || ac == null
+                                               Size = (ca.Size.HasValue && ca.Size.Value != AirCrafts.AircraftSizes.NotSet) || ac == null
                                                    ? ca.Size
-                                                   : (AirCrafts.AircraftSizes)ac.Size.GetValueOrDefault(),
+                                                   : (AirCrafts.AircraftSizes)(ac.Size ?? 0),
                                                ca.AddedFrom,
                                                ca.NetworkCode,
                                                ca.BasedPaglocation,
@@ -113,10 +115,10 @@ namespace FBOLinx.Web.Controllers
                     TailNumber = ca.TailNumber,
                     Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet
                                 ? ca.Size
-                                 : subacjoin.Size.GetValueOrDefault(),
+                                 : (subacjoin.Size ?? AircraftSizes.NotSet),
                     BasedPaglocation = ca.BasedPaglocation,
                     NetworkCode = ca.NetworkCode,
-                    AddedFrom = ca.AddedFrom.GetValueOrDefault(),
+                    AddedFrom = ca.AddedFrom ?? 0,
                     PricingTemplateId = pt == null ? 0 : pt.Oid,
                     PricingTemplateName = pt == null ? "" : pt.Name,
                     Make = subacjoin.Make,
@@ -151,22 +153,22 @@ namespace FBOLinx.Web.Controllers
                 into leftJoinPricingTemplate
                 from p in leftJoinPricingTemplate.DefaultIfEmpty()
                 join cg in _context.CustomerInfoByGroup on new {groupId, ca.CustomerId} equals new {groupId = cg.GroupId, cg.CustomerId}
-                where ca.GroupId.GetValueOrDefault() == groupId
+                where ca.GroupId == groupId
                 select new CustomerAircraftsGridViewModel
                 {
                     Oid = ca.Oid,
-                    GroupId = ca.GroupId.GetValueOrDefault(),
+                    GroupId = ca.GroupId ?? 0,
                     CustomerId = ca.CustomerId,
                     Company = cg == null ? "" : cg.Company,
                     AircraftId = ca.AircraftId,
                     TailNumber = ca.TailNumber,
                     Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet
                         ? ca.Size
-                        : ac.Size.GetValueOrDefault(),
+                        : (ac.Size ?? AircraftSizes.NotSet),
                     BasedPaglocation = ca.BasedPaglocation,
                     NetworkCode = ca.NetworkCode,
-                    AddedFrom = ca.AddedFrom.GetValueOrDefault(),
-                    PricingTemplateId = a == null ? 0 : a.PriceTemplateId.GetValueOrDefault(),
+                    AddedFrom = ca.AddedFrom ?? 0,
+                    PricingTemplateId = a == null ? 0 : (a.PriceTemplateId ?? 0),
                     PricingTemplateName = p == null ? "" : p.Name,
                     Make = ac.Make,
                     Model = ac.Model,
@@ -210,10 +212,10 @@ namespace FBOLinx.Web.Controllers
                    TailNumber = ca.TailNumber,
                    Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet
                                ? ca.Size
-                                : subacjoin.Size.GetValueOrDefault(),
+                                : (subacjoin.Size ?? AircraftSizes.NotSet),
                    BasedPaglocation = ca.BasedPaglocation,
                    NetworkCode = ca.NetworkCode,
-                   AddedFrom = ca.AddedFrom.GetValueOrDefault(),
+                   AddedFrom = ca.AddedFrom ?? 0,
                    PricingTemplateId = pt == null ? 0 : pt.Oid,
                    PricingTemplateName = pt == null ? "" : pt.Name,
                    Make = subacjoin.Make,
@@ -234,10 +236,11 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            var aircrafts = _aircraftService.GetAllAircraftsAsQueryable();
             var customerAircraftCount = (from ca in _context.CustomerAircrafts
                                          join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
                                          join c in _context.Customers on cg.CustomerId equals c.Oid
-                                         join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
+                                         join ac in aircrafts on ca.AircraftId equals ac.AircraftId
                                          into acjoin
                                          from subacjoin in acjoin.DefaultIfEmpty()
                                          where ca.GroupId == groupId
@@ -246,23 +249,6 @@ namespace FBOLinx.Web.Controllers
                                              Oid = ca.Oid
                                          }).Count();
 
-            //var customerAircraftCount = (from ca in _context.CustomerAircrafts
-            //                             join cg in _context.CustomerInfoByGroup on new
-            //                             {
-            //                                 ca.CustomerId,
-            //                                 GroupId = ca.GroupId.GetValueOrDefault()
-            //                             }
-            //                                 equals new
-            //                                 {
-            //                                     cg.CustomerId,
-            //                                     cg.GroupId
-            //                                 }
-            //                             where ca.GroupId == groupId
-
-            //                             select new
-            //                             {
-            //                                 Oid = ca.Oid
-            //                             }).Count();
 
             return Ok(customerAircraftCount);
         }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -35,9 +37,9 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("Sizes")]
-        public IEnumerable<Utilities.Enum.EnumDescriptionValue> GetAircraftSizes()
+        public IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> GetAircraftSizes()
         {
-            return Utilities.Enum.GetDescriptions(typeof(Models.AirCrafts.AircraftSizes));
+            return Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
         }
 
         // GET: api/AirCrafts/5

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.DTO;
 
 namespace FBOLinx.Web.Models.Responses

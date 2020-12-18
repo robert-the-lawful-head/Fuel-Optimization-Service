@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
-using FBOLinx.Web.Enums;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using static FBOLinx.Web.Models.PricingTemplate;
-using static FBOLinx.Web.Utilities.Extensions.ListExtensions;
+using static FBOLinx.DB.Models.PricingTemplate;
+using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
 
 namespace FBOLinx.Web.Services
 {
@@ -27,7 +29,7 @@ namespace FBOLinx.Web.Services
 
         #region Public Methods
 
-        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId, Enums.FlightTypeClassifications flightTypeClassifications, Enums.ApplicableTaxFlights departureType = Enums.ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId, Core.Enums.FlightTypeClassifications flightTypeClassifications, Core.Enums.ApplicableTaxFlights departureType = Core.Enums.ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
         {
             List<string> airports = icao.Split(',').Select(x => x.Trim()).ToList();
             List<CustomerWithPricing> result = new List<CustomerWithPricing>();
@@ -80,7 +82,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        public async Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId, int customerInfoByGroupId, List<int> pricingTemplateIds, Enums.FlightTypeClassifications flightTypeClassifications, Enums.ApplicableTaxFlights departureType = Enums.ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null)
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId, int customerInfoByGroupId, List<int> pricingTemplateIds, FBOLinx.Core.Enums.FlightTypeClassifications flightTypeClassifications, ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null)
         {
             _FboId = fboId;
             _GroupId = groupId;
@@ -88,7 +90,7 @@ namespace FBOLinx.Web.Services
             try
             {
                 var defaultPricingTemplate = await _context.PricingTemplate
-                    .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
+                    .Where(x => x.Fboid == fboId && x.Default.HasValue && x.Default.Value).FirstOrDefaultAsync();
                 if (flightTypeClassifications == FlightTypeClassifications.NotSet || flightTypeClassifications == FlightTypeClassifications.All)
                     flightTypeClassifications = FlightTypeClassifications.Private;
                 if (departureType == ApplicableTaxFlights.Never)
@@ -101,9 +103,9 @@ namespace FBOLinx.Web.Services
                 //Prepare fees/taxes based on the provided departure type and flight type
                 if (feesAndTaxes == null)
                 {
-                    feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Where(x => x.Fboid == fboId && (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications || flightTypeClassifications == FlightTypeClassifications.All)).ToListAsync();
+                    feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Where(x => x.Fboid == fboId && (x.FlightTypeClassification == FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications || flightTypeClassifications == FlightTypeClassifications.All)).ToListAsync();
                     if (departureType != ApplicableTaxFlights.All)
-                        feesAndTaxes = feesAndTaxes.Where(x => x.DepartureType == departureType || x.DepartureType == Enums.ApplicableTaxFlights.All).ToList();
+                        feesAndTaxes = feesAndTaxes.Where(x => x.DepartureType == departureType || x.DepartureType == ApplicableTaxFlights.All).ToList();
                     feesAndTaxes.ForEach(x =>
                     {
                         if (x.OmitsByCustomer == null)
@@ -112,7 +114,7 @@ namespace FBOLinx.Web.Services
                     });
                 }
                 else {
-                    feesAndTaxes = feesAndTaxes.Where(x => (x.FlightTypeClassification == Enums.FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications) && (x.DepartureType == departureType || departureType == Enums.ApplicableTaxFlights.All || x.DepartureType == Enums.ApplicableTaxFlights.All)).ToList();
+                    feesAndTaxes = feesAndTaxes.Where(x => (x.FlightTypeClassification == FlightTypeClassifications.All || x.FlightTypeClassification == flightTypeClassifications) && (x.DepartureType == departureType || departureType == FBOLinx.Core.Enums.ApplicableTaxFlights.All || x.DepartureType == FBOLinx.Core.Enums.ApplicableTaxFlights.All)).ToList();
                 }
 
                 //Fetch the customer pricing results
@@ -132,7 +134,7 @@ namespace FBOLinx.Web.Services
                         product = (pt != null ? pt.MarginTypeProduct : "")
                     } equals new
                     {
-                        fboId = fp.Fboid.GetValueOrDefault(),
+                        fboId = fp.Fboid ?? 0,
                         product = fp.Product
                     } 
                     join tmp in _context.TempAddOnMargin.Where((x =>
@@ -151,7 +153,7 @@ namespace FBOLinx.Web.Services
                         cvf.Fboid
                     } into letJoinCVF
                     from cvf in letJoinCVF.DefaultIfEmpty()
-                    join ccot in _context.CustomerCompanyTypes on new { CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(), cg.GroupId} equals new {CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId } 
+                    join ccot in _context.CustomerCompanyTypes on new { CustomerCompanyType = cg.CustomerCompanyType ?? 0, cg.GroupId} equals new {CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId } 
                     into leftJoinCCOT
                     from ccot in leftJoinCCOT.DefaultIfEmpty()
                     join fbo in _context.Fbos on pt.Fboid equals fbo.Oid
@@ -196,29 +198,29 @@ namespace FBOLinx.Web.Services
 
                 //Add domestic-departure-only price options
                 List<CustomerWithPricing> domesticOptions = new List<CustomerWithPricing>();
-                if ((feesAndTaxes.Any(x => x.DepartureType == Enums.ApplicableTaxFlights.DomesticOnly) && departureType == ApplicableTaxFlights.All) || departureType == ApplicableTaxFlights.DomesticOnly)
+                if ((feesAndTaxes.Any(x => x.DepartureType == ApplicableTaxFlights.DomesticOnly) && departureType == ApplicableTaxFlights.All) || departureType == ApplicableTaxFlights.DomesticOnly)
                 {
                     domesticOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     domesticOptions.ForEach(x => {
                         x.Product = "JetA (Domestic Departure)";
-                        x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == Enums.ApplicableTaxFlights.DomesticOnly || fee.DepartureType == Enums.ApplicableTaxFlights.All).ToList();
+                        x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.DomesticOnly || fee.DepartureType == ApplicableTaxFlights.All).ToList();
                     });
                 }
 
                 //Add international-departure-only price options
                 List<CustomerWithPricing> internationalOptions = new List<CustomerWithPricing>();
-                if ((feesAndTaxes.Any(x => x.DepartureType == Enums.ApplicableTaxFlights.InternationalOnly) && departureType == ApplicableTaxFlights.All) || departureType == ApplicableTaxFlights.InternationalOnly)
+                if ((feesAndTaxes.Any(x => x.DepartureType == ApplicableTaxFlights.InternationalOnly) && departureType == ApplicableTaxFlights.All) || departureType == ApplicableTaxFlights.InternationalOnly)
                 {
                     internationalOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     internationalOptions.ForEach(x => {
                         x.Product = "JetA (International Departure)";
-                        x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == Enums.ApplicableTaxFlights.InternationalOnly || fee.DepartureType == Enums.ApplicableTaxFlights.All).ToList();
+                        x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.InternationalOnly || fee.DepartureType == ApplicableTaxFlights.All).ToList();
                     });
                 }
 
                 //Add price options for all departure types
                 List<CustomerWithPricing> allDepartureOptions = new List<CustomerWithPricing>();
-                if ((feesAndTaxes.Any(x => x.DepartureType == Enums.ApplicableTaxFlights.All) && departureType == ApplicableTaxFlights.All) && (domesticOptions.Count == 0 || internationalOptions.Count == 0))
+                if ((feesAndTaxes.Any(x => x.DepartureType == ApplicableTaxFlights.All) && departureType == ApplicableTaxFlights.All) && (domesticOptions.Count == 0 || internationalOptions.Count == 0))
                 {
                     allDepartureOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     allDepartureOptions.ForEach(x =>
@@ -229,7 +231,7 @@ namespace FBOLinx.Web.Services
                         else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
                             productName += " (International Departure)";
                         x.Product = productName;
-                        x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == Enums.ApplicableTaxFlights.All).ToList();
+                        x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.All).ToList();
                     });
                 }
 

@@ -22,6 +22,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using MailSettings = FBOLinx.Web.Configurations.MailSettings;
 using Microsoft.Extensions.Options;
 
@@ -40,26 +43,18 @@ namespace FBOLinx.Web.Services
         private MailSettings _MailSettings;
         private DistributePricingRequest _DistributePricingRequest;
         private FboLinxContext _context;
-        private FuelerLinxContext _fuelerLinxContext;
-        private IFileProvider _FileProvider;
         private bool _IsPreview = false;
         private int _DistributionLogID = 0;
         private IHttpContextAccessor _HttpContextAccessor;
-        private JwtManager _jwtManager;
-        private RampFeesService _RampFeesService;
-        private AircraftService _aircraftService;
+        private MailTemplateService _MailTemplateService;
 
         #region Constructors
-        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, FuelerLinxContext fuelerLinxContext, IFileProvider fileProvider, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService)
+        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService)
         {
+            _MailTemplateService = mailTemplateService;
             _HttpContextAccessor = httpContextAccessor;
-            _FileProvider = fileProvider;
             _context = context;
-            _fuelerLinxContext = fuelerLinxContext;
             _MailSettings = mailSettings.Value;
-            _jwtManager = jwtManager;
-            _RampFeesService = rampFeesService;
-            _aircraftService = aircraftService;
         }
         #endregion
 
@@ -93,7 +88,7 @@ namespace FBOLinx.Web.Services
         #region Private Methods
         private List<CustomerInfoByGroup> GetCustomersForDistribution(DistributePricingRequest request)
         {
-            List<Models.CustomerInfoByGroup> customers;
+            List<CustomerInfoByGroup> customers;
             if (request.Customer == null || request.Customer.Oid == 0)
             {
                 customers = GetCustomersForDistribution();
@@ -109,7 +104,7 @@ namespace FBOLinx.Web.Services
             return customers.Where((x => x.CustomerCompanyType == _DistributePricingRequest.CustomerCompanyType)).ToList();
         }
 
-        private List<Models.CustomerInfoByGroup> GetCustomersForDistribution()
+        private List<CustomerInfoByGroup> GetCustomersForDistribution()
         {
             var result = (from cg in _context.CustomerInfoByGroup
                           join c in _context.Customers on cg.CustomerId equals c.Oid
@@ -121,7 +116,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task GenerateDistributionMailMessage(Models.CustomerInfoByGroup customer)
+        private async Task GenerateDistributionMailMessage(CustomerInfoByGroup customer)
         {
             DistributionQueue distributionQueueRecord = new DistributionQueue();
             try
@@ -274,7 +269,7 @@ namespace FBOLinx.Web.Services
             _context.SaveChanges();
         }
 
-        private async Task<List<Models.PricingTemplate>> GetValidPricingTemplates(Models.CustomerInfoByGroup customer)
+        private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroup customer)
         {
             PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
 
@@ -284,7 +279,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task<byte[]> GetPriceBreakdownImage(Models.CustomerInfoByGroup customer, List<Models.PricingTemplate> pricingTemplates)
+        private async Task<byte[]> GetPriceBreakdownImage(CustomerInfoByGroup customer, List<PricingTemplate> pricingTemplates)
         {
             StringBuilder result = new StringBuilder();
             foreach (var pricingTemplate in pricingTemplates)
@@ -293,16 +288,16 @@ namespace FBOLinx.Web.Services
                 result.Append(html);
             }
             string priceBreakdownHTML = result.ToString();
-            return Utilities.HTML.CreateImageFromHTML(priceBreakdownHTML);
+            return FBOLinx.Core.Utilities.HTML.CreateImageFromHTML(priceBreakdownHTML);
         }
 
-        private async Task<string> GetPriceBreakdownHTML(Models.CustomerInfoByGroup customer, Models.PricingTemplate pricingTemplate)
+        private async Task<string> GetPriceBreakdownHTML(CustomerInfoByGroup customer, PricingTemplate pricingTemplate)
         {
             PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-            var commercialInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.InternationalOnly);
-            var privateInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.InternationalOnly);
-            var commercialDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Commercial, Enums.ApplicableTaxFlights.DomesticOnly);
-            var privateDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, Enums.FlightTypeClassifications.Private, Enums.ApplicableTaxFlights.DomesticOnly);
+            var commercialInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
+            var privateInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
+            var commercialDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
+            var privateDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
 
             bool hasDepartureTypeRule = false;
             bool hasFlightTypeRule = false;
@@ -311,11 +306,11 @@ namespace FBOLinx.Web.Services
             var taxesAndFees = await _context.FbofeesAndTaxes.Where(x => x.Fboid == _DistributePricingRequest.FboId).ToListAsync();
             foreach(FboFeesAndTaxes fee in taxesAndFees)
             {
-                if (fee.DepartureType == Enums.ApplicableTaxFlights.DomesticOnly || fee.DepartureType == Enums.ApplicableTaxFlights.InternationalOnly)
+                if (fee.DepartureType == FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly || fee.DepartureType == FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly)
                 {
                     hasDepartureTypeRule = true;
                 }
-                if (fee.FlightTypeClassification == Enums.FlightTypeClassifications.Private || fee.FlightTypeClassification == Enums.FlightTypeClassifications.Commercial)
+                if (fee.FlightTypeClassification == FBOLinx.Core.Enums.FlightTypeClassifications.Private || fee.FlightTypeClassification == FBOLinx.Core.Enums.FlightTypeClassifications.Commercial)
                 {
                     hasFlightTypeRule = true;
                 }
@@ -390,36 +385,36 @@ namespace FBOLinx.Web.Services
         private string GetPriceBreakdownTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
         {
             if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
-                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownSingleColumnAllFlights.html");
             else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
-                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownTwoColumnsApplicableFlightTypesOnly.html");
             else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
-                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownTwoColumnsDepartureOnly.html");
             else
-                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownFourColumnsAllRules.html");
         }
 
         private string GetPriceBreakdownRowTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
         {
             if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
-                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownRowSingleColumnAllFlights.html");
             else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
-                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownRowTwoColumnsApplicableFlightTypesOnly.html");
             else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
-                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownRowTwoColumnsDepartureOnly.html");
             else
-                return Utilities.FileLocater.GetTemplatesFileContent(_FileProvider, "PriceDistribution",
+                return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownRowFourColumnsAllRules.html");
         }
 
-        private List<Models.ContactInfoByGroup> GetRecipientsForCustomer(Models.CustomerInfoByGroup customer)
+        private List<ContactInfoByGroup> GetRecipientsForCustomer(CustomerInfoByGroup customer)
         {
             var result = (from cc in _context.CustomerContacts
                 join c in _context.Contacts on cc.ContactId equals c.Oid
@@ -462,7 +457,7 @@ namespace FBOLinx.Web.Services
                 }
                 _context.SaveChanges();
             }
-            catch (System.Exception exception)
+            catch (System.Exception)
             {
                 //Do nothing
             }
