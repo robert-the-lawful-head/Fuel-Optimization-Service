@@ -91,7 +91,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = await GetPrices(fboId);
 
-            var filteredResult = result.Where(f => f.EffectiveFrom > DateTime.Today.ToUniversalTime()).ToList();
+            var filteredResult = result.Where(f => f.EffectiveFrom > DateTime.Today.ToUniversalTime() || f.EffectiveTo == null).ToList();
             return Ok(filteredResult);
         }
 
@@ -117,55 +117,20 @@ namespace FBOLinx.Web.Controllers
             return Ok(null);
         }
 
-        [HttpPost("fbo/{fboId}/suspendpricing/jet")]
-        public async Task<IActionResult> SuspendJetPricing([FromRoute] int fboId)
+        [HttpPost("suspendpricing/{oid}")]
+        public async Task<IActionResult> SuspendPricing([FromRoute] int oid)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            List<Fboprices> oldPrices = _context.Fboprices
-                                                .Where(f => f.Fboid.Equals(fboId) && f.Product.Equals("JetA Cost") && f.Expired != true)
-                                                .ToList();
-            foreach (Fboprices oldPrice in oldPrices)
-            {
-                oldPrice.Expired = true;
-                _context.Fboprices.Update(oldPrice);
-                List<MappingPrices> checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == oldPrice.Oid).ToList();
-                if (checkForMappingPrices != null)
-                {
-                    _context.MappingPrices.RemoveRange(checkForMappingPrices);
-                }
-            }
+
+            Fboprices price = _context.Fboprices.Where(f => f.Oid == oid).FirstOrDefault();
+            _context.Fboprices.Remove(price);
 
             await _context.SaveChangesAsync();
 
-            return Ok(fboId);
-        }
-
-        [HttpPost("fbo/{fboId}/suspendpricing/retail")]
-        public async Task<IActionResult> SuspendRetailPricing([FromRoute] int fboId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            List<Fboprices> oldPrices = _context.Fboprices
-                                               .Where(f => f.Fboid.Equals(fboId) && f.Product.Equals("JetA Retail") && f.Expired != true)
-                                               .ToList();
-            foreach (Fboprices oldPrice in oldPrices)
-            {
-                oldPrice.Expired = true;
-                _context.Fboprices.Update(oldPrice);
-                List<MappingPrices> checkForMappingPrices = _context.MappingPrices.Where(s => s.FboPriceId == oldPrice.Oid).ToList();
-                if (checkForMappingPrices != null)
-                {
-                    _context.MappingPrices.RemoveRange(checkForMappingPrices);
-                }
-            }
-
-            await _context.SaveChangesAsync();
-            return Ok(fboId);
+            return Ok();
         }
 
         [HttpGet("fbo/{fboId}/product/{product}/current")]

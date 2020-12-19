@@ -87,6 +87,15 @@ namespace FBOLinx.Web.Services
 
             try
             {
+                //Mark old prices as expired
+                var oldPrices = _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true);
+                foreach (var p in oldPrices)
+                {
+                    p.Expired = true;
+                    _context.Fboprices.Update(p);
+                }
+                await _context.SaveChangesAsync();
+
                 var defaultPricingTemplate = await _context.PricingTemplate
                     .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
                 if (flightTypeClassifications == FlightTypeClassifications.NotSet || flightTypeClassifications == FlightTypeClassifications.All)
@@ -559,5 +568,6 @@ namespace FBOLinx.Web.Services
             return result;
         }
         #endregion
+
     }
 }
