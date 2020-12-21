@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 
 // Angular Material Modules
 import { MatIconModule } from '@angular/material/icon';
@@ -104,6 +106,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
+    DragDropModule,
     ReactiveFormsModule,
     MatIconModule,
     MatAutocompleteModule,

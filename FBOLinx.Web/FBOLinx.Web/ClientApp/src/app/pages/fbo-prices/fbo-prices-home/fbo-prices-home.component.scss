@@ -3,47 +3,47 @@
     border: 1px solid #e5e6e9;
     margin-bottom: 20px;
     position: relative;
+}
 
-    .pricing-display-board {
+.prices-board {
+    display: flex;
+    flex-wrap: wrap;
+
+    .prices-board-item {
+        margin: 15px 15px 15px 0;
+    }
+
+    .prices-board-first-column {
         min-width: 495px;
         width: 495px;
     }
 
-    .pricing-update-board {
-        width: calc(100% - 510px);
+    .prices-board-second-column {
+        flex-basis: 100px;
+        flex-grow: 1;
+    }
 
-        .pricing-name {
-            min-width: 47px;
-        }
-    
-        .mat-form-field {
-            min-width: 120px;
-            max-width: 180px;
-    
+    .updateBtn {
+        &.cdk-keyboard-focused {
             ::ng-deep {
-                .mat-form-field-infix {
-                    width: auto;
+                .mat-button-focus-overlay {
+                    background: white;
+                    opacity: 0.1;
                 }
             }
         }
     }
 
-    .add-on-margin-board {
-        min-width: 495px;
-        width: 495px;
-    }
-
-    @media (max-width: 1425px) {
-        .pricing-page {
-            flex-direction: column;
+    .add-on-margin-input {
+        input.mat-input-element, .bigPrefix {
+            font-size: 24px;
+            font-weight: bold;
         }
 
-        .pricing-update-board {
-            width: 100%;
-        }
-
-        .add-on-margin-board {
-            margin-top: 0 !important;
+        ::ng-deep {
+            label.mat-form-field-label {
+                font-size: 18px;
+            }
         }
     }
 
@@ -81,68 +81,35 @@
         color: red;
     }
 
-    .add-on-margin-input {
-        input.mat-input-element, .bigPrefix {
-            font-size: 24px;
-            font-weight: bold;
+    .live-pricing-container {
+        color: #6c757d;
+        font-size: 0.75rem;
+        padding-right: 0px;
+
+        .d-inline-block.text-nowrap {
+            max-width: 100px;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
+
+        .col {
+            padding-right: 0px;
+        }
+
+        hr {
+            border: 1px solid;
+            margin: -1px -8px -1px -1px;
+        }
+    }
+
+    .price-form-input {
+        min-width: 120px;
+        max-width: 180px;
 
         ::ng-deep {
-            label.mat-form-field-label {
-                font-size: 18px;
+            .mat-form-field-infix {
+                width: auto;
             }
         }
     }
-
-    .updateBtn {
-        &.cdk-keyboard-focused {
-            ::ng-deep {
-                .mat-button-focus-overlay {
-                    background: white;
-                    opacity: 0.1;
-                }
-            }
-        }
-    }
-
-    .tailLookupInfo {
-        display: flex;
-        align-items: center;
-        margin-left: 3rem;
-
-        &>div:first-child {
-            width: 130px;
-        }
-    }
-
-    .w-full {
-        width: 100% !important;
-        max-width: 900px !important;
-    }
 }
-
-.live-pricing-container {
-    color: #6c757d;
-    font-size: 0.75rem;
-}
-
-.live-pricing-container {
-    padding-right: 0px;
-}
-
-.live-pricing-container .d-inline-block.text-nowrap {
-    max-width: 100px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-.live-pricing-container .col {
-    padding-right: 0px;
-}
-
-
-.live-pricing-container hr {
-    border: 1px solid;
-    margin: -1px -8px -1px -1px;
-}
-
