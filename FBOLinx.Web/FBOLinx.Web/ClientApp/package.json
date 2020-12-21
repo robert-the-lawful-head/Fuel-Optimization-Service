@@ -35,8 +35,8 @@
     "lodash": "^4.17.20",
     "moment": "^2.29.0",
     "ngx-smart-popover": "^1.4.0",
-    "ngx-ui-loader": "^9.1.1",
-    "rxjs": "~6.5.5",
+    "ngx-ui-loader": "^10.0.0",
+    "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
     "xlsx": "^0.16.7",
     "zone.js": "~0.10.3"
