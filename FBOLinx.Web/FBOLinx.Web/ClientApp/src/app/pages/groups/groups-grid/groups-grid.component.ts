@@ -246,7 +246,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
           width: '450px',
           data: {
             title: 'Manage Group?',
-            description: 'This will temporarily switch your account to a group admin for this group.  Would you like to continue?'
+            description: 'This will temporarily switch your account to a group admin for this group.  Would you like to continue?',
+            group: true
           },
           autoFocus: false,
         }
