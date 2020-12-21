@@ -35,62 +35,6 @@
                 <mat-tab-group>
                     <mat-tab label="Customer Details">
                         <div class="container-fluid">
-                            <h5>Price &amp; Margin Information</h5>
-
-                            <div class="row mb-2">
-                                <div class="col-md-3">
-                                    <mat-slide-toggle color="accent"
-                                                      *ngIf="hasContactForPriceDistribution"
-                                                      formControlName="distribute">
-                                        {{customerInfoByGroup.customerType == 1? "Push pricing into FuelerLinx": "Distribute fuel pricing email"}}
-                                    </mat-slide-toggle>
-                                </div>
-                                <div class="col-md-3">
-                                    <mat-slide-toggle color="accent"
-                                                      formControlName="showJetA">Show JetA Pricing</mat-slide-toggle>
-                                </div>
-                                <div class="col-md-3">
-                                    <mat-slide-toggle color="accent"
-                                                      formControlName="show100Ll">Show 100LL Pricing</mat-slide-toggle>
-                                </div>
-                            </div>
-
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th>Margin Template</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr *ngIf="customCustomerType">
-                                    <td>
-                                        <mat-form-field class="template-dropdown">
-                                            <mat-select placeholder="Margin Template"
-                                                        formControlName="customerMarginTemplate">
-                                                <mat-option *ngFor="let pricingTemplate of pricingTemplatesData"
-                                                            [value]="pricingTemplate.oid">
-                                                    {{ pricingTemplate.name }}
-                                                </mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                            <div *ngIf="feesAndTaxes" class="sub-widget">
-                                <price-breakdown
-                                    #priceBreakdownPreview
-                                    [customerInfoByGroupId]="customerInfoByGroup.oid"
-                                    [priceTemplateId]="customCustomerType.customerType"
-                                    [feesAndTaxes]="feesAndTaxes"
-                                    [feeAndTaxDisplayMode]="1"
-                                    tooltipPlacement="left"
-                                    (omitCheckChanged)="omitFeeAndTaxCheckChanged($event)"
-                                ></price-breakdown>
-                            </div>
-
-
                             <h5>General Information</h5>
 
                             <div class="row mb-2">
@@ -206,6 +150,65 @@
                                 [customer]="customerInfoByGroup"
                                 (updateCustomerPricingTemplate)="updateCustomerPricingTemplate($event)"
                             ></app-customer-aircrafts-grid>
+                        </div>
+                    </mat-tab>
+
+                    <mat-tab label="Pricing">
+                        <div class="container-fluid">
+                            <h5>Price & Margin Information</h5>
+
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <mat-slide-toggle color="accent"
+                                                      *ngIf="hasContactForPriceDistribution"
+                                                      formControlName="distribute">
+                                        {{customerInfoByGroup.customerType == 1? "Push pricing into FuelerLinx": "Distribute fuel pricing email"}}
+                                    </mat-slide-toggle>
+                                </div>
+                                <div class="col-md-3">
+                                    <mat-slide-toggle color="accent"
+                                                      formControlName="showJetA">Show JetA Pricing</mat-slide-toggle>
+                                </div>
+                                <div class="col-md-3">
+                                    <mat-slide-toggle color="accent"
+                                                      formControlName="show100Ll">Show 100LL Pricing</mat-slide-toggle>
+                                </div>
+                            </div>
+
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Margin Template</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngIf="customCustomerType">
+                                    <td>
+                                        <mat-form-field class="template-dropdown">
+                                            <mat-select placeholder="Margin Template"
+                                                        formControlName="customerMarginTemplate">
+                                                <mat-option *ngFor="let pricingTemplate of pricingTemplatesData"
+                                                            [value]="pricingTemplate.oid">
+                                                    {{ pricingTemplate.name }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <div *ngIf="feesAndTaxes" class="sub-widget">
+                                <price-breakdown
+                                    #priceBreakdownPreview
+                                    [customerInfoByGroupId]="customerInfoByGroup.oid"
+                                    [priceTemplateId]="customCustomerType.customerType"
+                                    [feesAndTaxes]="feesAndTaxes"
+                                    [feeAndTaxDisplayMode]="1"
+                                    tooltipPlacement="left"
+                                    (omitCheckChanged)="omitFeeAndTaxCheckChanged($event)"
+                                ></price-breakdown>
+                            </div>
                         </div>
                     </mat-tab>
                 </mat-tab-group>
