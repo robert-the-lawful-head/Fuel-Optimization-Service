@@ -72,7 +72,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     currentPricingEffectiveFrom = new Date();
     currentPricingEffectiveTo: any;
     stagedPrices: any[];
-    stagedPricingEffectiveFrom: any;
+    stagedPricingEffectiveFrom = new Date();
     stagedPricingEffectiveTo: any;
     currentDate = new Date();
     pricingTemplates: any[];
@@ -196,7 +196,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             return;
         }
         this.isLoadingCost = true;
-        this.suspendPricing(price.oid, "cost");
+        this.suspendPricing(price.oid, 'cost');
     }
 
     suspendRetailPricing(price) {
@@ -204,7 +204,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             return;
         }
         this.isLoadingRetail = true;
-        this.suspendPricing(price.oid, "retail");
+        this.suspendPricing(price.oid, 'retail');
     }
 
     suspendStagedJetPricing(price) {
@@ -212,7 +212,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             return;
         }
         this.isLoadingStagedCost = true;
-        this.suspendPricing(price.oid, "stagedcost");
+        this.suspendPricing(price.oid, 'stagedcost');
     }
 
     suspendStagedRetailPricing(price) {
@@ -220,7 +220,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             return;
         }
         this.isLoadingStagedRetail = true;
-        this.suspendPricing(price.oid, "stagedretail");
+        this.suspendPricing(price.oid, 'stagedretail');
     }
 
     fboPriceRequiresUpdate(price: number, vl: string) {
@@ -304,7 +304,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     }
 
     checkDates() {
-        let effectiveFrom = moment(this.stagedPricingEffectiveFrom).format('MM/DD/YYYY');
+        const effectiveFrom = moment(this.stagedPricingEffectiveFrom).format('MM/DD/YYYY');
 
         if (this.stagedJetACostExists() && this.stagedJetACostExists()) {
             if (effectiveFrom > this.currentFboPriceJetARetail.effectiveTo) {
@@ -312,7 +312,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     ProceedConfirmationComponent,
                     {
                         data: {
-                            description: "This effective date is after your current prices' expiration date.",
+                            description: 'This effective date is after your current prices\' expiration date.',
                             buttonText: 'Proceed',
                             title: ' '
                         },
@@ -332,7 +332,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     ProceedConfirmationComponent,
                     {
                         data: {
-                            description: "Your staged price will take effect before your current price expires.",
+                            description: 'Your staged price will take effect before your current price expires.',
                             buttonText: 'Proceed',
                             title: ' '
                         },
@@ -347,13 +347,17 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.updateStagedPricing();
                 });
             }
-            else
+            else {
                 this.updateStagedPricing();
+ }
         }
     }
 
     canStagePricing() {
-        return this.stagedPricingEffectiveFrom && this.stagedPricingEffectiveTo && (this.stagedJetRetail || this.stagedJetCost) && !this.priceEntryError.length;
+        return this.stagedPricingEffectiveFrom &&
+            this.stagedPricingEffectiveTo &&
+            (this.stagedJetRetail || this.stagedJetCost)
+            && !this.priceEntryError.length;
     }
 
     marginValueChanged(margin: number) {
@@ -456,15 +460,17 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     // Private Methods
     private suspendPricing(oid, product) {
-        if (product.indexOf("staged") > -1) {
+        if (product.indexOf('staged') > -1) {
             this.fboPricesService
                 .suspendPricing(oid)
                 .subscribe(() => {
                     this.loadStagedFboPrices().subscribe(() => {
-                        if (product == "stagedretail")
+                        if (product === 'stagedretail') {
                             this.isLoadingStagedRetail = false;
-                        else
+                        }
+                        else {
                             this.isLoadingStagedCost = false;
+                        }
                     });
                 });
         }
@@ -473,10 +479,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 .suspendPricing(oid)
                 .subscribe(() => {
                     this.loadCurrentFboPrices().subscribe(() => {
-                        if (product == "retail")
+                        if (product === 'retail') {
                             this.isLoadingRetail = false;
-                        else (product == "cost")
-                            this.isLoadingCost = false;
+                        }
+                        this.isLoadingCost = false;
                     });
                 });
         }
@@ -498,15 +504,16 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                             moment(moment.utc(this.currentFboPriceJetARetail.effectiveTo).subtract(1, 'day')).local().format('MM/DD/YYYY');
                         this.currentPricingEffectiveFrom = this.currentFboPriceJetARetail.effectiveTo;
 
-                        this.stagedPricingEffectiveFrom = this.currentFboPriceJetARetail.effectiveTo;
+                        this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetARetail.effectiveTo);
                     }
 
                     if (this.currentFboPriceJetACost.effectiveTo) {
                         this.currentFboPriceJetACost.effectiveTo =
                             moment(moment.utc(this.currentFboPriceJetACost.effectiveTo).subtract(1, 'day')).local().format('MM/DD/YYYY');
 
-                        if (!this.stagedPricingEffectiveFrom)
-                            this.stagedPricingEffectiveFrom = this.currentFboPriceJetACost.effectiveTo;
+                        if (!this.stagedPricingEffectiveFrom) {
+                            this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetACost.effectiveTo);
+                        }
                     }
 
                     if (data.length > 0) {
@@ -543,7 +550,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                         this.stagedFboPriceJetARetail.effectiveTo =
                             moment(this.stagedFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
 
-                        this.stagedPricingEffectiveFrom = this.stagedFboPriceJetARetail.effectiveTo;
+                        this.stagedPricingEffectiveFrom = new Date(this.stagedFboPriceJetARetail.effectiveTo);
                     }
 
                     if (this.stagedFboPriceJetACost.effectiveTo) {
@@ -563,8 +570,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         const effectiveTo = moment(this.stagedPricingEffectiveTo).format('MM/DD/YYYY');
 
         const newPrices = [];
-        var addRetail = true;
-        var addCost = true;
+        let addRetail = true;
+        let addCost = true;
         for (const price of this.stagedPrices) {
             if (price.product === 'JetA Retail' && this.stagedJetRetail > 0) {
                 price.price = this.stagedJetRetail;
@@ -583,26 +590,26 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         }
 
         if (addRetail) {
-            let price = {
+            const price = {
                 oid: 0,
                 price: this.stagedJetRetail,
                 product: 'JetA Retail',
-                effectiveFrom: effectiveFrom,
-                effectiveTo: effectiveTo,
+                effectiveFrom,
+                effectiveTo,
                 fboid: this.sharedService.currentUser.fboId
-            }
+            };
             newPrices.push(price);
         }
 
         if (addCost) {
-            let price = {
+            const price = {
                 oid: 0,
                 price: this.stagedJetCost,
                 product: 'JetA Cost',
-                effectiveFrom: effectiveFrom,
-                effectiveTo: effectiveTo,
+                effectiveFrom,
+                effectiveTo,
                 fboid: this.sharedService.currentUser.fboId
-            }
+            };
             newPrices.push(price);
         }
 
@@ -610,7 +617,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
         this.stagedJetRetail = '';
         this.stagedJetCost = '';
-        this.stagedPricingEffectiveFrom = null;
+        this.stagedPricingEffectiveFrom = new Date();
         this.stagedPricingEffectiveTo = null;
     }
 

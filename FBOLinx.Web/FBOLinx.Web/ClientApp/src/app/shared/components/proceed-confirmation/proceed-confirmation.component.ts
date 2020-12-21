@@ -24,11 +24,13 @@ export class ProceedConfirmationComponent {
         public dialogRef: MatDialogRef<ProceedConfirmationComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ProceedConfirmationData
     ) {
-        if (data.buttonText)
+        if (data.buttonText) {
             this.buttonText = data.buttonText;
+        }
 
-        if (data.title)
+        if (data.title) {
             this.title = data.title;
+        }
     }
 
   onCancelClick(): void {
