@@ -161,7 +161,7 @@ namespace FBOLinx.Web.Controllers
             {
                 price.Timestamp = DateTime.UtcNow;
                 List<Fboprices> oldPrices = _context.Fboprices
-                                            .Where(f => f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product) && !f.Expired.Equals(true))
+                                            .Where(f => f.EffectiveFrom <= DateTime.UtcNow && f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product) && !f.Expired.Equals(true))
                                             .ToList();
                 foreach (Fboprices oldPrice in oldPrices)
                 {

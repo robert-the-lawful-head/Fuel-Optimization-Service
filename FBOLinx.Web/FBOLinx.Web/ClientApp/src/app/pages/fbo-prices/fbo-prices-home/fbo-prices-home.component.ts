@@ -276,7 +276,14 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         const effectiveFrom = moment(this.currentPricingEffectiveFrom).format('MM/DD/YYYY');
         const effectiveTo = moment.utc(this.currentPricingEffectiveTo).add(1, 'day').format();
         const newPrices = [];
+        let isRetailExist = false;
+        let isCostExist = false;
         for (const price of this.currentPrices) {
+            if (price.product == "JetA Retail")
+                isRetailExist = true;
+            else if (price.product == "Jet A Cost")
+                isCostExist = true;
+
             if (price.product === 'JetA Retail' && this.jtRetail > 0) {
                 price.oid = 0;
                 price.price = this.jtRetail;
@@ -291,6 +298,30 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 price.effectiveTo = effectiveTo;
                 newPrices.push(price);
             }
+        }
+
+        if (!isRetailExist) {
+            const price = {
+                oid: 0,
+                price: this.jtRetail,
+                product: 'JetA Retail',
+                effectiveFrom,
+                effectiveTo,
+                fboid: this.sharedService.currentUser.fboId
+            };
+            newPrices.push(price);
+        }
+
+        if (isCostExist) {
+            const price = {
+                oid: 0,
+                price: this.jtCost,
+                product: 'JetA Cost',
+                effectiveFrom,
+                effectiveTo,
+                fboid: this.sharedService.currentUser.fboId
+            };
+            newPrices.push(price);
         }
         this.savePriceChangesAll(newPrices);
 
@@ -349,7 +380,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             }
             else {
                 this.updateStagedPricing();
- }
+            }
+        }
+        else {
+            this.updateStagedPricing();
         }
     }
 
