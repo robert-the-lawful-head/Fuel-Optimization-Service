@@ -236,11 +236,9 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var aircrafts = _aircraftService.GetAllAircraftsAsQueryable();
             var customerAircraftCount = (from ca in _context.CustomerAircrafts
                                          join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
                                          join c in _context.Customers on cg.CustomerId equals c.Oid
-                                         join ac in aircrafts on ca.AircraftId equals ac.AircraftId
                                          into acjoin
                                          from subacjoin in acjoin.DefaultIfEmpty()
                                          where ca.GroupId == groupId

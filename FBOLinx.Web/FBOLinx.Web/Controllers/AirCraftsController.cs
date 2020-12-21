@@ -51,32 +51,27 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var aircrafts = await _aircraftService.GetAllAircrafts();
-            var customerAircrafts = await (from ca in _context.CustomerAircrafts
-                                           join c in _context.Customers on ca.CustomerId equals c.Oid
-                                           join ac in aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
-                                           from ac in leftJoinAircrafts.DefaultIfEmpty()
-                                           where ca.Oid == id
-                                           select new
-                                           {
-                                               ca.Oid,
-                                               ca.AircraftId,
-                                               ca.TailNumber,
-                                               ca.GroupId,
-                                               ca.CustomerId,
-                                               ac.Make,
-                                               ac.Model,
-                                               ca.Size
-                                           }).FirstOrDefaultAsync();
+            var customerAircraft = await _context.CustomerAircrafts.Where(x => x.Oid == id).FirstOrDefaultAsync();
 
-           // var airCrafts = await _context.Aircrafts.FindAsync(id);
-
-            if (customerAircrafts == null)
+            if (customerAircraft == null)
             {
                 return NotFound();
             }
 
-            return Ok(customerAircrafts);
+            var aircraft = await _aircraftService.GetAircrafts(customerAircraft.AircraftId);
+            var result = new
+            {
+                customerAircraft.Oid,
+                customerAircraft.AircraftId,
+                customerAircraft.TailNumber,
+                customerAircraft.GroupId,
+                customerAircraft.CustomerId,
+                aircraft.Make,
+                aircraft.Model,
+                customerAircraft.Size
+            };
+
+           return Ok(result);
         }
 
         [HttpGet("customers-by-tail/group/{groupId}/tail/{tailNumber}")]

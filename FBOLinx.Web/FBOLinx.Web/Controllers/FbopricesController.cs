@@ -92,9 +92,10 @@ namespace FBOLinx.Web.Controllers
             }
             await _context.SaveChangesAsync();
 
+            DateTime universalTime = DateTime.Today.ToUniversalTime();
             var addOnMargins = await (
                             from s in _context.TempAddOnMargin
-                            where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
+                            where s.FboId == fboId && s.EffectiveTo >= universalTime
                             select s).ToListAsync();
 
             var result = (from p in products

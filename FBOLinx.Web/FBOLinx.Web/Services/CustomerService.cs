@@ -21,7 +21,7 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId)
         {
-            var query = from f in _context.Fbos
+            var query = await (from f in _context.Fbos
                 join cg in _context.CustomerInfoByGroup on new {GroupId = f.GroupId ?? 0, Active = true} equals new
                         {cg.GroupId, Active = cg.Active ?? false}
                     into leftJoinCg
@@ -39,9 +39,6 @@ namespace FBOLinx.Web.Services
                 join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
                     into leftJoinCC
                 from cc in leftJoinCC.DefaultIfEmpty()
-                //join cibg in _context.ContactInfoByGroup on new { cc.ContactId, cg.GroupId, CopyAlerts = true } equals new { cibg.ContactId, cibg.GroupId, CopyAlerts = cibg.CopyAlerts ?? false }
-                //into leftJoinCibg
-                //from cibg in leftJoinCibg.DefaultIfEmpty()
                 join cvf in _context.CustomersViewedByFbo on new {Fboid = fboId, cg.CustomerId} equals new
                         {cvf.Fboid, cvf.CustomerId}
                     into leftJoinCvf
@@ -59,7 +56,7 @@ namespace FBOLinx.Web.Services
                     //ContactInfoByGroupId = cibg == null ? 0 : cibg.Oid,
                     FuelerlinxId = c == null ? 0 : c.FuelerlinxId ?? 0,
                     CustomersViewedByFboId = cvf == null ? 0 : cvf.Oid
-                };
+                }).ToListAsync();
 
             var result = (query
                 .GroupBy(g => new { g.CustomerInfoByGroupID , g.Company})
@@ -77,7 +74,7 @@ namespace FBOLinx.Web.Services
                     )
                 })
                 .Where(g => g.NeedsAttention == true));
-            return await result.ToListAsync();
+            return result.ToList();
         }
 
         public async Task<List<NeedsAttentionCustomersCountModel>> GetNeedsAttentionCustomersCountByGroupFbo()
