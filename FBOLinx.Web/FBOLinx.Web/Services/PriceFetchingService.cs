@@ -9,6 +9,7 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using static FBOLinx.DB.Models.PricingTemplate;
@@ -342,110 +343,94 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<PricingTemplatesGridViewModel>> GetPricingTemplates(int fboId, int groupId)
         {
+            //Load customer assignments by template ID
+            var customerAssignments = await _context.CustomCustomerTypes.Where(x => x.Fboid == fboId).ToListAsync();
+            
+            //Separate inner queries first for FBO Prices and Margin Tiers
             var tempFboPrices = await _context.Fboprices
-                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true)
-                                                .ToListAsync();
+                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
 
-            var customerMarginTiers = await (from c in _context.CustomerMargins
+            var tempMarginTiers = await (from c in _context.CustomerMargins
                                              join tm in _context.PriceTiers on c.PriceTierId equals tm.Oid
                                              group c by c.TemplateId into cmGroupResult
                                              select new
                                              {
                                                  TemplateId = cmGroupResult.Key,
-                                                 MaxPriceTierValue = cmGroupResult.Max(c => Math.Abs(c.Amount ?? 0)),
-                                                 MinPriceTierValue = cmGroupResult.Min(c => Math.Abs(c.Amount ?? 0))
+                                                 MaxPriceTierValue = cmGroupResult.Max(c => Math.Abs(c.Amount.HasValue ? c.Amount.Value : 0)),
+                                                 MinPriceTierValue = cmGroupResult.Min(c => Math.Abs(c.Amount.HasValue ? c.Amount.Value : 0))
                                              }).ToListAsync();
+            var tempPricingTemplates = await (_context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync());
+            
+            //Join the inner queries on the pricing templates
+            var pricingTemplates = (from p in tempPricingTemplates
+                join cm in tempMarginTiers on p.Oid equals cm.TemplateId
+                    into leftJoinCmTiers
+                from cm in leftJoinCmTiers.DefaultIfEmpty()
+                join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
+                    into leftJoinFp
+                from fp in leftJoinFp.DefaultIfEmpty()
+                where p.Fboid == fboId
+                              select new
+                              {
+                                  p.CustomerId,
+                                  p.Default,
+                                  p.Fboid,
+                                  Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
+                                  p.MarginType,
+                                  p.Name,
+                                  p.Notes,
+                                  p.Oid,
+                                  p.Type,
+                                  p.Subject,
+                                  p.Email,
+                                  IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
+                                  IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) :
+                                      p.MarginType == MarginTypes.CostPlus ? fp.Price + cm.MaxPriceTierValue :
+                                      (p.MarginType == MarginTypes.RetailMinus ? fp.Price - cm.MinPriceTierValue : 0),
+                                  TemplateId = cm == null ? 0 : cm.TemplateId
+                              }).ToList();
 
-            var result = (from pt in (from p in _context.PricingTemplate
-                                      join f in _context.Fbos on p.Fboid equals f.Oid
-                                      into leftJoinFBOs
-                                      from f in leftJoinFBOs.DefaultIfEmpty()
-                                      join cm in customerMarginTiers on p.Oid equals cm.TemplateId
-                                      into leftJoinCmTiers
-                                      from cm in leftJoinCmTiers.DefaultIfEmpty()
-                                      join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
-                                      into leftJoinFp
-                                      from fp in leftJoinFp.DefaultIfEmpty()
-                                      join cct in _context.CustomCustomerTypes on p.Oid equals cct.CustomerType
-                                      into leftJoinCct
-                                      from cct in leftJoinCct.DefaultIfEmpty()
-                                      join cig in _context.CustomerInfoByGroup on new { CustomerId = cct == null ? 0 : cct.CustomerId, GroupId = groupId } equals new { cig.CustomerId, cig.GroupId }
-                                      into leftJoinCig
-                                      from cig in leftJoinCig.DefaultIfEmpty()
-                                      where p.Fboid == fboId
-                                      group p by new
-                                      {
-                                          p.CustomerId,
-                                          p.Default,
-                                          p.Fboid,
-                                          Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
-                                          p.MarginType,
-                                          p.Name,
-                                          p.Notes,
-                                          p.Oid,
-                                          p.Type,
-                                          p.Subject,
-                                          p.Email,
-                                          IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
-                                          IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) : p.MarginType == MarginTypes.CostPlus ? fp.Price + cm.MaxPriceTierValue : (p.MarginType == MarginTypes.RetailMinus ? fp.Price - cm.MinPriceTierValue : 0),
-                                          TemplateId = cm == null ? 0 : cm.TemplateId,
-                                          CustomerInfoByGroupId = cig == null ? 0 : cig.Oid
-                                      } into groupedResult
-                                      select new
-                                      {
-                                          groupedResult.Key.CustomerId,
-                                          groupedResult.Key.Default,
-                                          groupedResult.Key.Fboid,
-                                          groupedResult.Key.Margin,
-                                          groupedResult.Key.MarginType,
-                                          groupedResult.Key.Name,
-                                          groupedResult.Key.Notes,
-                                          groupedResult.Key.Oid,
-                                          groupedResult.Key.Type,
-                                          groupedResult.Key.Subject,
-                                          groupedResult.Key.Email,
-                                          groupedResult.Key.IsPricingExpired,
-                                          groupedResult.Key.IntoPlanePrice,
-                                          groupedResult.Key.TemplateId,
-                                          groupedResult.Key.CustomerInfoByGroupId
-                                      })
-                          group pt by new
-                          {
-                              pt.CustomerId,
-                              pt.Default,
-                              pt.Fboid,
-                              pt.Margin,
-                              pt.MarginType,
-                              pt.Name,
-                              pt.Notes,
-                              pt.Oid,
-                              pt.Type,
-                              pt.Subject,
-                              pt.Email,
-                              pt.IsPricingExpired,
-                              pt.IntoPlanePrice,
-                              pt.TemplateId,
-                          } into groupedPt
-                          select new PricingTemplatesGridViewModel
-                          {
-                              CustomerId = groupedPt.Key.CustomerId,
-                              Default = groupedPt.Key.Default,
-                              Fboid = groupedPt.Key.Fboid,
-                              Margin = groupedPt.Key.Margin,
-                              YourMargin = groupedPt.Key.Margin,
-                              MarginType = groupedPt.Key.MarginType,
-                              Name = groupedPt.Key.Name,
-                              Notes = groupedPt.Key.Notes,
-                              Oid = groupedPt.Key.Oid,
-                              Type = groupedPt.Key.Type,
-                              Subject = groupedPt.Key.Subject,
-                              Email = groupedPt.Key.Email,
-                              IsPricingExpired = groupedPt.Key.IsPricingExpired,
-                              IntoPlanePrice = groupedPt.Key.IntoPlanePrice,
-                              CustomersAssigned = groupedPt.Count(g => g.CustomerInfoByGroupId != 0)
-                          })
-                          .OrderBy(pt => pt.Name)
-                          .ToList();
+
+            //Group the final result
+            var result = (from pt in pricingTemplates
+                    group pt by new
+                    {
+                        pt.CustomerId,
+                        pt.Default,
+                        pt.Fboid,
+                        pt.Margin,
+                        pt.MarginType,
+                        pt.Name,
+                        pt.Notes,
+                        pt.Oid,
+                        pt.Type,
+                        pt.Subject,
+                        pt.Email,
+                        pt.IsPricingExpired,
+                        pt.IntoPlanePrice,
+                        pt.TemplateId,
+                    }
+                    into groupedPt
+                    select new PricingTemplatesGridViewModel
+                    {
+                        CustomerId = groupedPt.Key.CustomerId,
+                        Default = groupedPt.Key.Default,
+                        Fboid = groupedPt.Key.Fboid,
+                        Margin = groupedPt.Key.Margin,
+                        YourMargin = groupedPt.Key.Margin,
+                        MarginType = groupedPt.Key.MarginType,
+                        Name = groupedPt.Key.Name,
+                        Notes = groupedPt.Key.Notes,
+                        Oid = groupedPt.Key.Oid,
+                        Type = groupedPt.Key.Type,
+                        Subject = groupedPt.Key.Subject,
+                        Email = groupedPt.Key.Email,
+                        IsPricingExpired = groupedPt.Key.IsPricingExpired,
+                        IntoPlanePrice = groupedPt.Key.IntoPlanePrice,
+                        CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == groupedPt.Key.TemplateId ? 1 : 0)
+                    })
+                .OrderBy(pt => pt.Name)
+                .ToList();
 
             return result;
         }

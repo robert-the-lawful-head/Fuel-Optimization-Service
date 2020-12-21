@@ -111,7 +111,7 @@ namespace FBOLinx.Web.Services
                           join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
                           join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
                           where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid
-                          && !c.Suspended.GetValueOrDefault()
+                          && !(c.Suspended ?? false)
                           select cg).ToList();
             return result;
         }
@@ -133,7 +133,7 @@ namespace FBOLinx.Web.Services
                     x.CustomerId == customer.CustomerId && x.Fboid == _DistributePricingRequest.FboId &&
                     x.GroupId == _DistributePricingRequest.GroupId && x.DistributionLogId == _DistributionLogID)).FirstOrDefault();
 
-                var recipients = GetRecipientsForCustomer(customer);
+                var recipients = await GetRecipientsForCustomer(customer);
                 if (!_IsPreview && recipients.Count == 0)
                 {
                     MarkDistributionRecordAsComplete(distributionQueueRecord);
@@ -145,11 +145,11 @@ namespace FBOLinx.Web.Services
                 var priceDate = new DateTime();
                 if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Retail"))
                 {
-                    priceDate = _context.Fboprices.Where(f => f.Fboid == _DistributePricingRequest.FboId && f.Product == "JetA Retail").LastOrDefault().EffectiveTo.GetValueOrDefault();
+                    priceDate = (await _context.Fboprices.LastOrDefaultAsync(f => f.Fboid == _DistributePricingRequest.FboId && f.Product == "JetA Retail")).EffectiveTo.GetValueOrDefault();
                 }
                 else if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Cost"))
                 {
-                    priceDate = _context.Fboprices.Where(f => f.Fboid == _DistributePricingRequest.FboId && f.Product == "JetA Cost").LastOrDefault().EffectiveTo.GetValueOrDefault();
+                    priceDate = (await _context.Fboprices.LastOrDefaultAsync(f => f.Fboid == _DistributePricingRequest.FboId && f.Product == "JetA Cost")).EffectiveTo.GetValueOrDefault();
                 }
 
                 if (priceDate != null)
@@ -414,16 +414,16 @@ namespace FBOLinx.Web.Services
                     "PriceBreakdownRowFourColumnsAllRules.html");
         }
 
-        private List<ContactInfoByGroup> GetRecipientsForCustomer(CustomerInfoByGroup customer)
+        private async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroup customer)
         {
-            var result = (from cc in _context.CustomerContacts
+            var result = await (from cc in _context.CustomerContacts
                 join c in _context.Contacts on cc.ContactId equals c.Oid
                 join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
                 where cibg.GroupId == _DistributePricingRequest.GroupId
                       && cc.CustomerId == customer.CustomerId
-                      && cibg.CopyAlerts.GetValueOrDefault()
+                      && (cibg.CopyAlerts ?? false)
                       && !string.IsNullOrEmpty(cibg.Email)
-                select cibg).ToList();
+                select cibg).ToListAsync();
             return result;
         }
 

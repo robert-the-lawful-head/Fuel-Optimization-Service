@@ -19,7 +19,7 @@ namespace FBOLinx.Web.Services
 {
     public interface IUserService
     {
-        User Authenticate(string username, string password, bool resetPassword);
+        Task<User> Authenticate(string username, string password, bool resetPassword);
         User CheckUserByCredentials(string username, string password);
         System.Collections.Generic.IEnumerable<User> GetAll();
         User CreateFBOLoginIfNeeded(Fbos fboRecord);
@@ -40,7 +40,7 @@ namespace FBOLinx.Web.Services
             _AppSettings = appSettings.Value;
         }
 
-        public User Authenticate(string username, string password, bool resetPassword = false)
+        public async Task<User> Authenticate(string username, string password, bool resetPassword = false)
         {
             var user = _Context.User.SingleOrDefault(x => x.Username == username);
 
@@ -53,7 +53,7 @@ namespace FBOLinx.Web.Services
             }
             else
             {
-                var groupRecord = _Context.Group.Where(x => x.Oid == user.GroupId).FirstOrDefault();
+                var groupRecord = await _Context.Group.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
 
                 //return null if Paragon
                 if (groupRecord.Isfbonetwork.GetValueOrDefault())

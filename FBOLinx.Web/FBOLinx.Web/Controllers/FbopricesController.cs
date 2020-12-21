@@ -101,7 +101,7 @@ namespace FBOLinx.Web.Controllers
                           join f in fboprices on
                                 new { Product = p.Description, FboId = fboId }
                                 equals
-                                new { f.Product, FboId = f.Fboid.GetValueOrDefault() }
+                                new { f.Product, FboId = (f.Fboid ?? 0) }
                           into leftJoinFBOPrices
                           from f in leftJoinFBOPrices.DefaultIfEmpty()
                           join s in addOnMargins on new { FboId = fboId } equals new { s.FboId }
@@ -227,7 +227,7 @@ namespace FBOLinx.Web.Controllers
                                            }
                                     into leftJoinFBOPrices
                                 from f in leftJoinFBOPrices.DefaultIfEmpty()
-                                join m in mappingPrices on (f?.Oid).GetValueOrDefault() equals m.FboPriceId
+                                join m in mappingPrices on ((f?.Oid) ?? 0) equals m.FboPriceId
                                 select new
                                 {
                                     Oid = f?.Oid ?? 0,
@@ -383,7 +383,7 @@ namespace FBOLinx.Web.Controllers
                                           && f.EffectiveFrom <= request.EndDateTime
                                     group f by new
                                     {
-                                        f.EffectiveFrom.GetValueOrDefault().Month,
+                                        f.EffectiveFrom.Value.Month,
                                         f.EffectiveFrom.Value.Year
                                     }
                 into results
@@ -567,17 +567,17 @@ namespace FBOLinx.Web.Controllers
                         Iata = p.Iata,
                         FboId = p.FboId,
                         Fbo = p.Fbo,
-                        GroupId = p.GroupId.GetValueOrDefault(),
+                        GroupId = (p.GroupId ?? 0),
                         Group = p.Group,
                         Product = p.Product,
-                        MinVolume = p.MinGallons.GetValueOrDefault(),
+                        MinVolume = (p.MinGallons ?? 0),
                         Notes = p.Notes,
                         Default = string.IsNullOrEmpty(p.TailNumbers),
-                        Price = p.AllInPrice.GetValueOrDefault(),
+                        Price = (p.AllInPrice ?? 0),
                         TailNumberList = p.TailNumbers,
                         ExpirationDate = p.ExpirationDate,
-                        PricingTemplateId = p.PricingTemplateId.GetValueOrDefault() == 0 ? ct.CustomerType : p.PricingTemplateId.GetValueOrDefault(),
-                        PricingTemplateName = p.PricingTemplateId.GetValueOrDefault() == 0 ? ct.PricingTemplateName : p.PricingTemplateName,
+                        PricingTemplateId = (p.PricingTemplateId ?? 0) == 0 ? ct.CustomerType : (p.PricingTemplateId ?? 0),
+                        PricingTemplateName = (p.PricingTemplateId ?? 0) == 0 ? ct.PricingTemplateName : p.PricingTemplateName,
                         FuelDeskEmail = p.FuelDeskEmail,
                         CopyEmails = p.CopyEmails
                     }).Distinct();

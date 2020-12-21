@@ -274,19 +274,19 @@ namespace FBOLinx.Web.Controllers
                 {
                     var changeableGroups = request.Groups.Where(group => group.Oid != request.BaseGroupId).Select(group => group.Oid).ToList();
 
-                    var users = _context.User.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var fbos = _context.Fbos.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var adminEmails = _context.AdminEmails.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var companiesByGroups = _context.CompaniesByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var contactInfoByGroups = _context.ContactInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var customerAircrafts = _context.CustomerAircrafts.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var customerAircraftViewedByGroups = _context.CustomerAircraftViewedByGroup.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var customerCompanyTypes = _context.CustomerCompanyTypes.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var customerInfoByGroups = _context.CustomerInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var customerNotes = _context.CustomerNotes.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var customerSchedulingSoftwareByGroups = _context.CustomerSchedulingSoftwareByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var distributionLogs = _context.DistributionLog.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var distributionQueues = _context.DistributionQueue.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
+                    var users = await _context.User.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var fbos = await _context.Fbos.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var adminEmails = await _context.AdminEmails.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var companiesByGroups = await _context.CompaniesByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var contactInfoByGroups = await _context.ContactInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerAircrafts = await _context.CustomerAircrafts.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var customerAircraftViewedByGroups = await _context.CustomerAircraftViewedByGroup.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var customerCompanyTypes = await _context.CustomerCompanyTypes.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerInfoByGroups = await _context.CustomerInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerNotes = await _context.CustomerNotes.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerSchedulingSoftwareByGroups = await _context.CustomerSchedulingSoftwareByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var distributionLogs = await _context.DistributionLog.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var distributionQueues = await _context.DistributionQueue.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
 
                     users.ForEach(a => a.GroupId = request.BaseGroupId);
                     fbos.ForEach(a => a.GroupId = request.BaseGroupId);

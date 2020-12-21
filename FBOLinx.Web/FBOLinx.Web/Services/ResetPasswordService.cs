@@ -9,6 +9,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using SendGrid.Helpers.Mail;
 
 namespace FBOLinx.Web.Services
@@ -19,11 +20,11 @@ namespace FBOLinx.Web.Services
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private MailTemplateService _MailTemplateService;
 
-        public ResetPasswordService(FBOLinx.Web.Configurations.MailSettings mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService)
+        public ResetPasswordService(IOptions< FBOLinx.Web.Configurations.MailSettings> mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService)
         {
             _MailTemplateService = mailTemplateService;
             _HttpContextAccessor = httpContextAccessor;
-            _MailSettings = mailSettings;
+            _MailSettings = mailSettings.Value;
         }
 
         #region Public Methods

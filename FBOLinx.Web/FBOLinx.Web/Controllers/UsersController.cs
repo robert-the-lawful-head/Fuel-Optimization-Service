@@ -64,14 +64,14 @@ namespace FBOLinx.Web.Controllers
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
 
-            var user = _userService.Authenticate(userParam.Username, userParam.Password, false);
+            var user = await _userService.Authenticate(userParam.Username, userParam.Password, false);
 
             if (user == null)
             {
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
 
-            var fbo = _context.Fbos.FirstOrDefault(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
+            var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
             if (fbo != null)
             {
                 fbo.LastLogin = DateTime.UtcNow;
@@ -80,7 +80,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                var group = _context.Group.Find(user.GroupId);
+                var group = await _context.Group.FindAsync(user.GroupId);
 
                 if (group.IsLegacyAccount == true)
                 {

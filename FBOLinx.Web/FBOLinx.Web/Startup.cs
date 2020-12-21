@@ -78,14 +78,25 @@ namespace FBOLinx.Web
             services.AddDbContext<FuelerLinxContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("FuelerLinxContext")));
 
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("CorsPolicy",
+            //        builder => builder.AllowAnyOrigin()
+            //            .AllowAnyMethod()
+            //            .AllowAnyHeader()
+            //            .AllowCredentials());
+            //});
+
             services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
+                {
+                    options.AddPolicy("CorsPolicy", builder => builder
+                        .SetIsOriginAllowedToAllowWildcardSubdomains()
+                        .WithOrigins("https://*.fbolinx.com")
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
-            });
+                        .AllowAnyHeader());
+                    options.AddPolicy("LocalHost", builder => builder.WithOrigins("https://localhost:5001").AllowAnyMethod().AllowAnyHeader());
+                }
+            );
 
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             var appParnterSDKSettings = Configuration.GetSection("AppPartnerSDKSettings");
@@ -142,12 +153,19 @@ namespace FBOLinx.Web
             //app.UseIdentityServer();
 
             // global cors policy
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            if (env.IsDevelopment())
+                app.UseCors("LocalHost");
+            else
+                app.UseCors("CorsPolicy");
 
+            app.UseRouting();
+            
             app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+            });
 
             //app.UseMvc(routes =>
             //{
