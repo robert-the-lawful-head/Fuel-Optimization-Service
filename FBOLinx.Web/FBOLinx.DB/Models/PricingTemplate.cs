@@ -60,5 +60,8 @@ namespace FBOLinx.DB.Models
         [InverseProperty("PricingTemplates")]
         [ForeignKey("Fboid")]
         public Models.Fbos Fbo { get; set; }
+        
+        [InverseProperty("PricingTemplate")]
+        public ICollection<CustomCustomerTypes> CustomCustomerTypes { get; set; }
     }
 }

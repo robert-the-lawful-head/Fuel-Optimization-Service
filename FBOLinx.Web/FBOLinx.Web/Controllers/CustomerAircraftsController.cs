@@ -192,15 +192,12 @@ namespace FBOLinx.Web.Controllers
                                        ap.CustomerAircraftId
                                    }).Distinct().ToListAsync();
 
+            var allAircraft = await _aircraftService.GetAllAircrafts();
+
             List<CustomerAircraftsGridViewModel> customerAircraftVM = await (
                from ca in _context.CustomerAircrafts
                join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
                join c in _context.Customers on cg.CustomerId equals c.Oid
-               join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
-               into acjoin from subacjoin in acjoin.DefaultIfEmpty()
-               join pt in pricingTemplates on ca.Oid equals pt.CustomerAircraftId
-               into leftJoinPt
-               from pt in leftJoinPt.DefaultIfEmpty()
                where ca.GroupId == groupId
                select new CustomerAircraftsGridViewModel
                {
@@ -210,20 +207,27 @@ namespace FBOLinx.Web.Controllers
                    Company = cg.Company,
                    AircraftId = ca.AircraftId,
                    TailNumber = ca.TailNumber,
-                   Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet
-                               ? ca.Size
-                                : (subacjoin.Size ?? AircraftSizes.NotSet),
+                   Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet ? ca.Size : (AircraftSizes.NotSet),
                    BasedPaglocation = ca.BasedPaglocation,
                    NetworkCode = ca.NetworkCode,
                    AddedFrom = ca.AddedFrom ?? 0,
-                   PricingTemplateId = pt == null ? 0 : pt.Oid,
-                   PricingTemplateName = pt == null ? "" : pt.Name,
-                   Make = subacjoin.Make,
-                   Model = subacjoin.Model,
                    IsFuelerlinxNetwork = c.FuelerlinxId > 0
                })
                .OrderBy(x => x.TailNumber)
                .ToListAsync();
+
+            customerAircraftVM.ForEach(x =>
+            {
+                var pricingTemplate = pricingTemplates.FirstOrDefault(x => x.CustomerAircraftId == x.Oid);
+                x.PricingTemplateId = pricingTemplate?.Oid;
+                x.PricingTemplateName = pricingTemplate?.Name;
+
+                var aircraft = allAircraft.FirstOrDefault(a => a.AircraftId == x.AircraftId);
+                x.Make = aircraft?.Make;
+                x.Model = aircraft?.Model;
+                if (x.Size == AircraftSizes.NotSet && aircraft?.Size.GetValueOrDefault() != AircraftSizes.NotSet)
+                    x.Size = aircraft?.Size;
+            });
 
             return Ok(customerAircraftVM);
         }

@@ -17,5 +17,9 @@ namespace FBOLinx.DB.Models
         [InverseProperty("CustomCustomerType")]
         [ForeignKey("CustomerId")]
         public Customers Customer { get; set; }
+        
+        [InverseProperty("CustomCustomerTypes")]
+        [ForeignKey("CustomerType")]
+        public PricingTemplate PricingTemplate { get; set; }
     }
 }

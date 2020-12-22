@@ -78,7 +78,8 @@ namespace FBOLinx.Web.Controllers
 
             var result = await GetPrices(fboId);
 
-            var filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.Today.ToUniversalTime() || f.EffectiveTo == null).ToList();
+            var universalTime = DateTime.Today.ToUniversalTime();
+            var filteredResult = result.Where(f => f.EffectiveFrom <= universalTime || f.EffectiveTo == null).ToList();
             return Ok(filteredResult);
         }
 
@@ -93,7 +94,8 @@ namespace FBOLinx.Web.Controllers
 
             var result = await GetPrices(fboId);
 
-            var filteredResult = result.Where(f => f.EffectiveFrom > DateTime.Today.ToUniversalTime() || f.EffectiveTo == null).ToList();
+            var universalTime = DateTime.Today.ToUniversalTime();
+            var filteredResult = result.Where(f => f.EffectiveFrom > universalTime || f.EffectiveTo == null).ToList();
             return Ok(filteredResult);
         }
 
@@ -601,7 +603,8 @@ namespace FBOLinx.Web.Controllers
 
         private async Task<List<FbopricesResult>> GetPrices(int fboId)
         {
-            var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
+            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
+            var universalTime = DateTime.Today.ToUniversalTime();
 
             var fboprices = await(
                             from f in _context.Fboprices
@@ -609,7 +612,7 @@ namespace FBOLinx.Web.Controllers
                             && f.Fboid == fboId && f.Price != null && f.Expired != true
                             select f).ToListAsync();
 
-            var oldPrices = _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true);
+            var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true).ToListAsync();
             foreach (var p in oldPrices)
             {
                 p.Expired = true;
@@ -619,7 +622,7 @@ namespace FBOLinx.Web.Controllers
 
             var addOnMargins = await(
                             from s in _context.TempAddOnMargin
-                            where s.FboId == fboId && s.EffectiveTo >= DateTime.Today.ToUniversalTime()
+                            where s.FboId == fboId && s.EffectiveTo >= universalTime
                             select s).ToListAsync();
 
             var result = (from p in products
