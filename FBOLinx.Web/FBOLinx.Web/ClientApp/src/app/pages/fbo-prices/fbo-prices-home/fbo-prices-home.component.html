@@ -73,7 +73,8 @@
                         </h4>
                         <h6 *ngIf="jetARetailExists()"
                             class="expire-date mt-0 mb-2 text-muted">
-                            Expires: {{ currentFboPriceJetARetail.effectiveTo | date }}
+                            Expires: {{ currentFboPriceJetARetail.effectiveTo | date }}<br />
+                            23:59 UTC
                         </h6>
                         <button *ngIf="jetARetailExists()"
                                 mat-raised-button
@@ -99,7 +100,8 @@
                         </h4>
                         <h6 *ngIf="jetACostExists()"
                             class="expire-date mt-0 mb-2 text-muted">
-                            Expires: {{ currentFboPriceJetACost.effectiveTo | date }}
+                            Expires: {{ currentFboPriceJetACost.effectiveTo | date }}<br />
+                            23:59 UTC
                         </h6>
                         <button *ngIf="jetACostExists()"
                                 mat-raised-button

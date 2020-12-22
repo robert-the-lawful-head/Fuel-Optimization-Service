@@ -338,7 +338,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         const effectiveFrom = moment(this.stagedPricingEffectiveFrom).format('MM/DD/YYYY');
 
         if (this.stagedJetRetail || this.stagedJetCost) {
-            if (effectiveFrom > this.currentFboPriceJetARetail.effectiveTo) {
+            if (effectiveFrom > moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'days').format('MM/DD/YYYY')) {
                 const dialogRef = this.proceedConfirmationDialog.open(
                     ProceedConfirmationComponent,
                     {
@@ -538,7 +538,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                         this.currentFboPriceJetARetail.effectiveTo =
                             moment(moment.utc(this.currentFboPriceJetARetail.effectiveTo).subtract(1, 'day')).local().format('MM/DD/YYYY');
 
-                        this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetARetail.effectiveTo);
+                        var tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'days');
+                        this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
                     }
 
                     if (this.currentFboPriceJetACost.effectiveTo) {
@@ -656,13 +657,17 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         this.stagedJetCost = '';
 
         if (this.currentFboPriceJetARetail.effectiveTo) {
-            this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetARetail.effectiveTo);
+            var tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'days');
+            this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
         }
         else if (!this.stagedPricingEffectiveFrom && this.currentFboPriceJetACost.effectiveTo) {
-            this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetACost.effectiveTo);
+            var tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetACost.effectiveTo).add(1, 'days');
+            this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
         }
-        else
-            this.stagedPricingEffectiveFrom = new Date(this.stagedFboPriceJetARetail.effectiveTo);
+        else {
+            var tempStagedPricingEffectiveFrom = moment(this.stagedFboPriceJetARetail.effectiveTo).add(1, 'days');
+            this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
+        }
 
         this.stagedPricingEffectiveTo = null;
     }
