@@ -312,7 +312,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             newPrices.push(price);
         }
 
-        if (isCostExist) {
+        if (!isCostExist) {
             const price = {
                 oid: 0,
                 price: this.jtCost,
@@ -334,10 +334,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         return this.currentPricingEffectiveTo && (this.jtRetail || this.jtCost) && !this.priceEntryError.length;
     }
 
-    checkDates() {
+    checkDatesForStaging() {
         const effectiveFrom = moment(this.stagedPricingEffectiveFrom).format('MM/DD/YYYY');
 
-        if (this.stagedJetACostExists() && this.stagedJetACostExists()) {
+        if (this.stagedJetRetail || this.stagedJetCost) {
             if (effectiveFrom > this.currentFboPriceJetARetail.effectiveTo) {
                 const dialogRef = this.proceedConfirmationDialog.open(
                     ProceedConfirmationComponent,
@@ -364,7 +364,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     {
                         data: {
                             description: 'Your staged price will take effect before your current price expires.',
-                            buttonText: 'Proceed',
+                            buttonText: 'Make effective date match current expiration date',
                             title: ' '
                         },
                         autoFocus: false
@@ -375,6 +375,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     if (!result) {
                         return;
                     }
+                    this.stagedPricingEffectiveFrom = this.currentFboPriceJetARetail.effectiveTo;
                     this.updateStagedPricing();
                 });
             }
@@ -536,7 +537,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     if (this.currentFboPriceJetARetail.effectiveTo) {
                         this.currentFboPriceJetARetail.effectiveTo =
                             moment(moment.utc(this.currentFboPriceJetARetail.effectiveTo).subtract(1, 'day')).local().format('MM/DD/YYYY');
-                        this.currentPricingEffectiveFrom = this.currentFboPriceJetARetail.effectiveTo;
 
                         this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetARetail.effectiveTo);
                     }
@@ -580,17 +580,20 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.stagedFboPriceJetACost = this.getStagedPriceByProduct('JetA Cost');
                     this.stagedFboPriceJetARetail = this.getStagedPriceByProduct('JetA Retail');
 
-                    if (this.stagedFboPriceJetARetail.effectiveTo) {
-                        this.stagedFboPriceJetARetail.effectiveTo =
-                            moment(this.stagedFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
+                    
 
-                        this.stagedPricingEffectiveFrom = new Date(this.stagedFboPriceJetARetail.effectiveTo);
-                    }
+                    //if (this.stagedFboPriceJetARetail.effectiveTo) {
+                    //    this.stagedFboPriceJetARetail.effectiveTo =
+                    //        moment(this.stagedFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
 
-                    if (this.stagedFboPriceJetACost.effectiveTo) {
-                        this.stagedFboPriceJetACost.effectiveTo =
-                            moment(this.stagedFboPriceJetACost.effectiveTo).format('MM/DD/YYYY');
-                    }
+                    //    if (!this.stagedPricingEffectiveFrom)
+                    //        this.stagedPricingEffectiveFrom = new Date(this.stagedFboPriceJetARetail.effectiveTo);
+                    //}
+
+                    //if (this.stagedFboPriceJetACost.effectiveTo) {
+                    //    this.stagedFboPriceJetACost.effectiveTo =
+                    //        moment(this.stagedFboPriceJetACost.effectiveTo).format('MM/DD/YYYY');
+                    //}
 
                     observer.next();
                 }, (error: any) => {
@@ -651,7 +654,16 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
         this.stagedJetRetail = '';
         this.stagedJetCost = '';
-        this.stagedPricingEffectiveFrom = new Date();
+
+        if (this.currentFboPriceJetARetail.effectiveTo) {
+            this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetARetail.effectiveTo);
+        }
+        else if (!this.stagedPricingEffectiveFrom && this.currentFboPriceJetACost.effectiveTo) {
+            this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetACost.effectiveTo);
+        }
+        else
+            this.stagedPricingEffectiveFrom = new Date(this.stagedFboPriceJetARetail.effectiveTo);
+
         this.stagedPricingEffectiveTo = null;
     }
 
