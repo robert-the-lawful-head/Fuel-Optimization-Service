@@ -51,7 +51,8 @@
             }
 
             &.warning-card-header {
-                background: $warning-color;
+                background: rgb(255, 224, 130);
+                color: rgba(0, 0, 0, .87);
             }
 
             &.danger-card-header {
@@ -148,8 +149,8 @@
         }
 
         &.warning-card {
-            background: $warning-color;
-            border-color: $warning-color;
+            background: rgb(255, 224, 130);
+            border-color: rgb(255, 224, 130);
 
             &:not(.outline-card) {
                 color: #fff;
@@ -187,7 +188,7 @@
         }
 
         &.warning-color-card {
-            color: $warning-color;
+            color: rgb(255, 224, 130);
         }
 
         &.danger-color-card {

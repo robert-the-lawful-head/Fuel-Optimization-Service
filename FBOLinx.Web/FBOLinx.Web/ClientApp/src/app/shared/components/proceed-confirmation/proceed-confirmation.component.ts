@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
@@ -6,7 +6,9 @@ import {
 
 export interface ProceedConfirmationData {
   description: string;
-  itemsList: string[];
+    itemsList: string[];
+    buttonText: string;
+    title: string;
 }
 
 @Component({
@@ -15,10 +17,21 @@ export interface ProceedConfirmationData {
   styleUrls: ['./proceed-confirmation.component.scss'],
 })
 export class ProceedConfirmationComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ProceedConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ProceedConfirmationData
-  ) { }
+    @Input() buttonText = 'Confirm';
+    @Input() title = 'Distribute?';
+
+    constructor(
+        public dialogRef: MatDialogRef<ProceedConfirmationComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: ProceedConfirmationData
+    ) {
+        if (data.buttonText) {
+            this.buttonText = data.buttonText;
+        }
+
+        if (data.title) {
+            this.title = data.title;
+        }
+    }
 
   onCancelClick(): void {
     this.dialogRef.close();
