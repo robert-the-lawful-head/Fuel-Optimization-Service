@@ -1,4 +1,5 @@
 GO
+use [paragon_test]
 update fp
 set EffectiveTo = dateadd(dd, 1, fp.EffectiveTo)
 from fbos f
