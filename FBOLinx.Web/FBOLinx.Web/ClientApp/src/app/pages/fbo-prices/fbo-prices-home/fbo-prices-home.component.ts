@@ -274,7 +274,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     updatePricing() {
         const effectiveFrom = moment(this.currentPricingEffectiveFrom).format('MM/DD/YYYY');
-        const effectiveTo = moment.utc(this.currentPricingEffectiveTo).add(1, 'day').format();
+        const effectiveTo = moment(this.currentPricingEffectiveTo).add(1, 'day').format();
         const newPrices = [];
         let isRetailExist = false;
         let isCostExist = false;
@@ -535,20 +535,20 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
 
                     if (this.currentFboPriceJetARetail.effectiveTo) {
-                        this.currentFboPriceJetARetail.effectiveTo =
-                            moment(moment.utc(this.currentFboPriceJetARetail.effectiveTo).subtract(1, 'day')).local().format('MM/DD/YYYY');
-
-                        var tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'days');
+                        var tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo);
                         this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
+
+                        this.currentFboPriceJetARetail.effectiveTo =
+                            moment(this.currentFboPriceJetARetail.effectiveTo).subtract(1, 'minutes');
                     }
 
                     if (this.currentFboPriceJetACost.effectiveTo) {
-                        this.currentFboPriceJetACost.effectiveTo =
-                            moment(moment.utc(this.currentFboPriceJetACost.effectiveTo).subtract(1, 'day')).local().format('MM/DD/YYYY');
-
                         if (!this.stagedPricingEffectiveFrom) {
                             this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetACost.effectiveTo);
                         }
+
+                        this.currentFboPriceJetACost.effectiveTo =
+                            moment(this.currentFboPriceJetACost.effectiveTo).subtract(1, 'minutes');
                     }
 
                     if (data.length > 0) {
