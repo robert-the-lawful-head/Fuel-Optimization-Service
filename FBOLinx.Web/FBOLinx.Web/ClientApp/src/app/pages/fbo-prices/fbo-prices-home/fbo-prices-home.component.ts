@@ -274,7 +274,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     updatePricing() {
         const effectiveFrom = moment(this.currentPricingEffectiveFrom).format('MM/DD/YYYY');
-        const effectiveTo = moment(this.currentPricingEffectiveTo).add(1, 'day').format();
+        const effectiveTo = moment(this.currentPricingEffectiveTo).add(1, 'day').format('MM/DD/YYYY');
         const newPrices = [];
         let isRetailExist = false;
         let isCostExist = false;
