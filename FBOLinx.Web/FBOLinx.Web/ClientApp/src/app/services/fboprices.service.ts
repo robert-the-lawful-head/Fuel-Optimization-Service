@@ -69,7 +69,7 @@ export class FbopricesService {
         );
     }
 
-    public checkifExistFrboPrice(fboId, payload) {
+    public checkifExistFboPrice(fboId, payload) {
         return this.http.post(
             this.accessPointUrl + '/fbo/' + fboId + '/check/',
             payload,
@@ -79,32 +79,25 @@ export class FbopricesService {
         );
     }
 
-    public suspendAllPricing(fboId) {
+    public checkifExistStagedFboPrice(fboId, payload) {
         return this.http.post(
-            this.accessPointUrl + '/fbo/' + fboId + '/suspendpricing',
+            this.accessPointUrl + '/fbo/' + fboId + '/checkstaged/',
+            payload,
             {
                 headers: this.headers,
             }
         );
     }
 
-    public suspendJetPricing(fboId) {
+    public suspendPricing(oid) {
         return this.http.post(
-            this.accessPointUrl + '/fbo/' + fboId + '/suspendpricing/jet',
+            this.accessPointUrl + '/suspendpricing/' + oid,
             {
                 headers: this.headers,
             }
         );
     }
 
-    public suspendRetailPricing(fboId) {
-        return this.http.post(
-            this.accessPointUrl + '/fbo/' + fboId + '/suspendpricing/retail',
-            {
-                headers: this.headers,
-            }
-        );
-    }
 
     public getPricesByMonthForFbo(fboId, payload) {
         return this.http.post(

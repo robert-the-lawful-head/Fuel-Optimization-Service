@@ -87,6 +87,15 @@ namespace FBOLinx.Web.Services
 
             try
             {
+                //Mark old prices as expired
+                var oldPrices = _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true);
+                foreach (var p in oldPrices)
+                {
+                    p.Expired = true;
+                    _context.Fboprices.Update(p);
+                }
+                await _context.SaveChangesAsync();
+
                 var defaultPricingTemplate = await _context.PricingTemplate
                     .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
                 if (flightTypeClassifications == FlightTypeClassifications.NotSet || flightTypeClassifications == FlightTypeClassifications.All)
@@ -126,7 +135,7 @@ namespace FBOLinx.Web.Services
                     from ppt in leftJoinPPT.DefaultIfEmpty()
                     join fp in _context.Fboprices.Where(x =>
                         (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.UtcNow) &&
-                        x.Expired != true) on new
+                        x.Expired != true && x.EffectiveFrom <= DateTime.Today.ToUniversalTime()) on new
                     {
                         fboId = (pt != null ? pt.Fboid : 0),
                         product = (pt != null ? pt.MarginTypeProduct : "")
@@ -370,7 +379,7 @@ namespace FBOLinx.Web.Services
                                       join cig in _context.CustomerInfoByGroup on new { CustomerId = cct == null ? 0 : cct.CustomerId, GroupId = groupId } equals new { cig.CustomerId, cig.GroupId }
                                       into leftJoinCig
                                       from cig in leftJoinCig.DefaultIfEmpty()
-                                      where p.Fboid == fboId
+                                      where p.Fboid == fboId && fp.EffectiveFrom <= DateTime.Today.ToUniversalTime()
                                       group p by new
                                       {
                                           p.CustomerId,
@@ -559,5 +568,6 @@ namespace FBOLinx.Web.Services
             return result;
         }
         #endregion
+
     }
 }

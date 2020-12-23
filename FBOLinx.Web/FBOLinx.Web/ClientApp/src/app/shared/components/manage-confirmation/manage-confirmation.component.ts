@@ -20,12 +20,16 @@ export class ManageConfirmationComponent {
     ) {}
 
     onConfirm(): void {
-        this.loading = true;
-        this.fboService.manageFbo(this.data.fboId)
-            .subscribe(() => {
-                this.loading = false;
-                this.dialogRef.close(true);
-            });
+        if (this.data.group) {
+            this.dialogRef.close(true);
+        } else {
+            this.loading = true;
+            this.fboService.manageFbo(this.data.fboId)
+                .subscribe(() => {
+                    this.loading = false;
+                    this.dialogRef.close(true);
+                });
+        }
     }
 
     onCancelClick(): void {
