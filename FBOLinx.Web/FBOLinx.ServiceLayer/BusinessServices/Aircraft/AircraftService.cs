@@ -1,15 +1,12 @@
-﻿using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Web;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 {
     public class AircraftService
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -138,6 +139,20 @@ namespace FBOLinx.Web.Services
                 .ThenBy(g => g.FboId)
                 .ToListAsync();
             return result;
+        }
+
+        public async Task<List<CustomerInfoByGroup>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
+        {
+            var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && (customerInfoByGroupId == 0 || x.Oid == customerInfoByGroupId))
+                .Include(x => x.Customer)
+                .Include(x => x.Customer.CustomCustomerType)
+                .Where(x => x.Customer.CustomCustomerType.Fboid == fboId)
+                .Include(x => x.Customer.CustomCustomerType.PricingTemplate)
+                .Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
+                .Include(x => x.Customer.CustomerContacts)
+                .ToListAsync();
+
+            return customerInfoByGroup;
         }
 
         #endregion

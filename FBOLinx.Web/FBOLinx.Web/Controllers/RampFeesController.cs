@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
@@ -61,9 +62,12 @@ namespace FBOLinx.Web.Controllers
             //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
             IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> sizes =
                 FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+            var rampFees = await _context.RampFees.Where(x => x.Fboid == fboId).ToListAsync();
+            var allAircraft = await _aircraftService.GetAllAircrafts();
+
             List<RampFeesGridViewModel> result = (
                 from s in sizes
-                join r in _context.RampFees on new
+                join r in rampFees on new
                     {
                         size = (int?) ((short?) ((AirCrafts.AircraftSizes) s.Value)),
                         fboId = (int?) fboId
@@ -94,8 +98,8 @@ namespace FBOLinx.Web.Controllers
                 }).ToList();
 
             // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
-            List<RampFeesGridViewModel> customRampFees = await (from r in _context.RampFees
-                join a in _aircraftService.GetAllAircraftsAsQueryable() on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
+            List<RampFeesGridViewModel> customRampFees = (from r in rampFees
+                join a in allAircraft on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
                 from a in leftJoinAircrafts.DefaultIfEmpty()
                 where r.Fboid == fboId && r.CategoryType.HasValue &&
                       r.CategoryType.Value != RampFeeCategories.AircraftSize
@@ -113,7 +117,7 @@ namespace FBOLinx.Web.Controllers
                     AircraftModel = a == null ? "" : a.Model,
                     CategoryStringValue = r.CategoryStringValue,
                     LastUpdated = r.LastUpdated
-                }).ToListAsync();
+                }).ToList();
 
             result.AddRange(customRampFees);
             return Ok(result);

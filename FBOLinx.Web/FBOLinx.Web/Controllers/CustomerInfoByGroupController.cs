@@ -33,11 +33,11 @@ namespace FBOLinx.Web.Controllers
         private readonly PriceFetchingService _priceFetchingService;
         private readonly CustomerService _customerService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, PriceFetchingService priceFetchingService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
-            _priceFetchingService = new PriceFetchingService(_context);
+            _priceFetchingService = priceFetchingService;
             _customerService = customerService;
         }
 
@@ -631,14 +631,13 @@ namespace FBOLinx.Web.Controllers
                         Icao = customerFbo.Icao,
                         Prices = new List<Prices>(),
                     };
-                    PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-                    var commercialInternationalPricingResults = await priceFetchingService
+                    var commercialInternationalPricingResults = await _priceFetchingService
                         .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId}, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
-                    var privateInternationalPricingResults = await priceFetchingService
+                    var privateInternationalPricingResults = await _priceFetchingService
                         .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
-                    var commercialDomesticPricingResults = await priceFetchingService
+                    var commercialDomesticPricingResults = await _priceFetchingService
                         .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
-                    var privateDomesticPricingResults = await priceFetchingService
+                    var privateDomesticPricingResults = await _priceFetchingService
                         .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
                     privateDomesticPricingResults = privateDomesticPricingResults.OrderBy(s => s.MinGallons).ToList();
 
@@ -724,11 +723,7 @@ namespace FBOLinx.Web.Controllers
 
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
-                var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId)
-                    .Include(x => x.Customer)
-                    .Include(x => x.Customer.CustomCustomerType)
-                    .Include(x => x.Customer.CustomCustomerType.PricingTemplate)
-                    .Include(x => x.Customer.CustomerContacts).ToListAsync();
+                var customerInfoByGroup = await _customerService.GetCustomersByGroupAndFbo(groupId, fboId);
                 var contactInfoByGroupForAlerts =
                     await _context.ContactInfoByGroup.Where(x => x.GroupId == groupId && x.CopyAlerts == true).Include(x => x.Contact).ToListAsync();
 
@@ -798,7 +793,7 @@ namespace FBOLinx.Web.Controllers
                     .OrderByDescending(s => (s.FleetSize ?? 0))
                     .ToList();
 
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
 
                 customerGridVM.ForEach(x =>
                 {

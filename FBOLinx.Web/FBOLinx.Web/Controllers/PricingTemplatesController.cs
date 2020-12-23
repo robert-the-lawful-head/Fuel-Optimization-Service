@@ -24,10 +24,10 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly PriceFetchingService _priceFetchingService;
 
-        public PricingTemplatesController(FboLinxContext context)
+        public PricingTemplatesController(FboLinxContext context, PriceFetchingService priceFetchingService)
         {
             _context = context;
-            _priceFetchingService = new PriceFetchingService(_context);
+            _priceFetchingService = priceFetchingService;
         }
 
         // GET: api/PricingTemplates

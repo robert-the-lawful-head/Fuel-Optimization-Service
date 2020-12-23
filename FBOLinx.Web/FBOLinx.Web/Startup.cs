@@ -1,6 +1,7 @@
 using System.Text;
 using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.BusinessServices;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.Web.Auth;
@@ -112,13 +113,15 @@ namespace FBOLinx.Web
 
             services.AddTransient<GroupFboService, GroupFboService>();
             services.AddTransient<CustomerService, CustomerService>();
-            services.AddTransient<AircraftService, AircraftService>();
             services.AddTransient<FboService, FboService>();
+            services.AddTransient<PriceFetchingService, PriceFetchingService>();
             services.AddTransient<ResetPasswordService, ResetPasswordService>();
 
             //Business Services
+            services.AddTransient<AircraftService, AircraftService>();
             services.AddTransient<EncryptionService, EncryptionService>();
             services.AddTransient<MailTemplateService, MailTemplateService>();
+            services.AddTransient<CustomerAircraftService, CustomerAircraftService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -1062,9 +1063,11 @@ namespace FBOLinx.Web.Controllers
             {
                 string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
                 List<int> airportfbos = await _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid).ToListAsync();
+                var validTransactions = await _context.FuelReq.Where(fr =>
+                    fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && fr.Fboid > 0 &&
+                    airportfbos.Contains(fr.Fboid ?? 0)).ToListAsync();
 
-                var fuelReqs = await (from fr in _context.FuelReq
-                                      where fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && airportfbos.Any(a => a == fr.Fboid)
+                var fuelReqs = (from fr in validTransactions
                                       group fr by fr.CustomerId
                                 into groupedFuelReqs
                                       select new
@@ -1074,7 +1077,7 @@ namespace FBOLinx.Web.Controllers
                                           TotalVolume = groupedFuelReqs.Sum(fr => (fr.ActualVolume ?? 0) * (fr.ActualPpg ?? 0) > 0 ?
                                                        fr.ActualVolume * fr.ActualPpg :
                                                        (fr.QuotedVolume ?? 0) * (fr.QuotedPpg ?? 0)) ?? 0
-                                      }).ToListAsync();
+                                      }).ToList();
 
                 var pricingLogs = await (from cpl in _context.CompanyPricingLog
                                          join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId

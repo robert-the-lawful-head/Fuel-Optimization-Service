@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -31,9 +32,11 @@ namespace FBOLinx.Web.Controllers
         private readonly JwtManager _jwtManager;
         private readonly RampFeesService _RampFeesService;
         private readonly AircraftService _aircraftService;
+        private PriceFetchingService _PriceFetchingService;
 
-        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService)
+        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService, PriceFetchingService priceFetchingService)
         {
+            _PriceFetchingService = priceFetchingService;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _jwtManager = jwtManager;
@@ -454,9 +457,9 @@ namespace FBOLinx.Web.Controllers
                 if (customer == null)
                     return Ok(null);
 
-                PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
+                
                 List<CustomerWithPricing> validPricing =
-                    await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid, (FBOLinx.Core.Enums.FlightTypeClassifications) request.FlightTypeClassification);
+                    await _PriceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid, (FBOLinx.Core.Enums.FlightTypeClassifications) request.FlightTypeClassification);
                 if (validPricing == null)
                     return Ok(null);
 
@@ -515,7 +518,6 @@ namespace FBOLinx.Web.Controllers
             }
             try
             {
-                PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
                 PriceLookupResponse validPricing = new PriceLookupResponse();
 
                 if (!string.IsNullOrEmpty(request.TailNumber))
@@ -529,7 +531,7 @@ namespace FBOLinx.Web.Controllers
                         return Ok(null);
 
                     var validPricingList =
-                        await priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customerAircraft.CustomerId, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes, request.FBOID);
+                        await _PriceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customerAircraft.CustomerId, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes, request.FBOID);
                     if (validPricingList == null)
                         return Ok(null);
 
@@ -548,7 +550,7 @@ namespace FBOLinx.Web.Controllers
                 else
                 {
                     var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == request.GroupID && ((x.Active.HasValue && x.Active.Value && request.CustomerInfoByGroupId == 0) || (request.CustomerInfoByGroupId > 0 && x.Oid == request.CustomerInfoByGroupId))).FirstOrDefaultAsync();
-                    validPricing.PricingList = await priceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, customerInfoByGroup?.Oid > 0 ? customerInfoByGroup.Oid : 0, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
+                    validPricing.PricingList = await _PriceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, customerInfoByGroup?.Oid > 0 ? customerInfoByGroup.Oid : 0, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
                 }
 
                 if (validPricing.PricingList == null || validPricing.PricingList.Count == 0)

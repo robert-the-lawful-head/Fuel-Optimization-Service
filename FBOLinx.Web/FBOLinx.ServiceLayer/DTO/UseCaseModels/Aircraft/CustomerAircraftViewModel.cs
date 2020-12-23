@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Models;
 
-namespace FBOLinx.Web.ViewModels
+namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
 {
-    public class CustomerAircraftsGridViewModel
+    public class CustomerAircraftsViewModel
     {
         public int Oid { get; set; }
         public int? GroupId { get; set; }

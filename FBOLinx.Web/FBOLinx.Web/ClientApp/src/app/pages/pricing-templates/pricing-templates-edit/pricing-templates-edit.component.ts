@@ -99,8 +99,14 @@ export class PricingTemplatesEditComponent implements OnInit {
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(id),
             this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId),
         ]).subscribe(([pricingTemplateData, customerMarginsData, fboPricesData]) => {
-            this.jetACost = (fboPricesData as any).filter(item => item.product === 'JetA Cost')[0].price;
-            this.jetARetail = (fboPricesData as any).filter(item => item.product === 'JetA Retail')[0].price;
+            let jetACostRecords = (fboPricesData as any).filter(item => item.product === 'JetA Cost');
+            let jetARetailRecords = (fboPricesData as any).filter(item => item.product === 'JetA Retail');
+            if (jetACostRecords && jetACostRecords.length > 0) {
+                this.jetACost = jetACostRecords[0].price;
+            }
+            if (jetARetailRecords && jetARetailRecords.length > 0) {
+                this.jetARetail = jetARetailRecords[0].price;
+            }
 
             this.pricingTemplate = pricingTemplateData;
             this.pricingTemplate.customerMargins =

@@ -47,10 +47,12 @@ namespace FBOLinx.Web.Services
         private int _DistributionLogID = 0;
         private IHttpContextAccessor _HttpContextAccessor;
         private MailTemplateService _MailTemplateService;
+        private PriceFetchingService _PriceFetchingService;
 
         #region Constructors
-        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService)
+        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService, PriceFetchingService priceFetchingService)
         {
+            _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
@@ -271,9 +273,8 @@ namespace FBOLinx.Web.Services
 
         private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroup customer)
         {
-            PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
 
-            var result = await priceFetchingService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
+            var result = await _PriceFetchingService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
                 _DistributePricingRequest.GroupId, _DistributePricingRequest.PricingTemplate.Oid);
             
             return result;
@@ -293,11 +294,10 @@ namespace FBOLinx.Web.Services
 
         private async Task<string> GetPriceBreakdownHTML(CustomerInfoByGroup customer, PricingTemplate pricingTemplate)
         {
-            PriceFetchingService priceFetchingService = new PriceFetchingService(_context);
-            var commercialInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
-            var privateInternationalPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
-            var commercialDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
-            var privateDomesticPricingResults = await priceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
+            var commercialInternationalPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
+            var privateInternationalPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
+            var commercialDomesticPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
+            var privateDomesticPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
 
             bool hasDepartureTypeRule = false;
             bool hasFlightTypeRule = false;
