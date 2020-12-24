@@ -135,7 +135,7 @@ namespace FBOLinx.Web.Services
                     from ppt in leftJoinPPT.DefaultIfEmpty()
                     join fp in _context.Fboprices.Where(x =>
                         (!x.EffectiveTo.HasValue || x.EffectiveTo > DateTime.UtcNow) &&
-                        x.Expired != true && x.EffectiveFrom <= DateTime.Today.ToUniversalTime()) on new
+                        x.Expired != true && x.EffectiveFrom <= DateTime.UtcNow) on new
                     {
                         fboId = (pt != null ? pt.Fboid : 0),
                         product = (pt != null ? pt.MarginTypeProduct : "")
@@ -145,8 +145,8 @@ namespace FBOLinx.Web.Services
                         product = fp.Product
                     } 
                     join tmp in _context.TempAddOnMargin.Where((x =>
-                                                        x.EffectiveFrom < DateTime.Now &&
-                                                         x.EffectiveTo > DateTime.Now)) on new
+                                                        x.EffectiveFrom < DateTime.UtcNow &&
+                                                         x.EffectiveTo > DateTime.UtcNow)) on new
                                                         {
                                                             fboId = (pt != null ? pt.Fboid : 0)
                                                         } equals new
@@ -379,7 +379,7 @@ namespace FBOLinx.Web.Services
                                       join cig in _context.CustomerInfoByGroup on new { CustomerId = cct == null ? 0 : cct.CustomerId, GroupId = groupId } equals new { cig.CustomerId, cig.GroupId }
                                       into leftJoinCig
                                       from cig in leftJoinCig.DefaultIfEmpty()
-                                      where p.Fboid == fboId && fp.EffectiveFrom <= DateTime.Today.ToUniversalTime()
+                                      where p.Fboid == fboId && fp.EffectiveFrom <= DateTime.UtcNow
                                       group p by new
                                       {
                                           p.CustomerId,

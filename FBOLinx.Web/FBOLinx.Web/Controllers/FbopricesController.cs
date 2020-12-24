@@ -76,7 +76,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = await GetPrices(fboId);
 
-            var filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.Today.ToUniversalTime() || f.EffectiveTo == null).ToList();
+            var filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null).ToList();
             return Ok(filteredResult);
         }
 
@@ -91,7 +91,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = await GetPrices(fboId);
 
-            var filteredResult = result.Where(f => f.EffectiveFrom > DateTime.Today.ToUniversalTime() || f.EffectiveTo == null).ToList();
+            var filteredResult = result.Where(f => f.EffectiveFrom > DateTime.UtcNow || f.EffectiveTo == null).ToList();
             return Ok(filteredResult);
         }
 
