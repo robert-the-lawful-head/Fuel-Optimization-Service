@@ -170,10 +170,10 @@ namespace FBOLinx.Web.Controllers
                         oldPrice.Expired = true;
                         _context.Fboprices.Update(oldPrice);
                     }
-                }
 
-                _context.Fboprices.Add(price);
-                await _context.SaveChangesAsync();
+                    _context.Fboprices.Add(price);
+                    await _context.SaveChangesAsync();
+                }
             }
 
             return Ok(null);
