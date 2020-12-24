@@ -159,14 +159,17 @@ namespace FBOLinx.Web.Controllers
 
             foreach (Fboprices price in fboprices)
             {
-                price.Timestamp = DateTime.UtcNow;
-                List<Fboprices> oldPrices = _context.Fboprices
-                                            .Where(f => f.EffectiveFrom <= DateTime.UtcNow && f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product) && !f.Expired.Equals(true))
-                                            .ToList();
-                foreach (Fboprices oldPrice in oldPrices)
+                if (price.Price != null)
                 {
-                    oldPrice.Expired = true;
-                    _context.Fboprices.Update(oldPrice);
+                    price.Timestamp = DateTime.UtcNow;
+                    List<Fboprices> oldPrices = _context.Fboprices
+                                                .Where(f => f.EffectiveFrom <= DateTime.UtcNow && f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product) && !f.Expired.Equals(true))
+                                                .ToList();
+                    foreach (Fboprices oldPrice in oldPrices)
+                    {
+                        oldPrice.Expired = true;
+                        _context.Fboprices.Update(oldPrice);
+                    }
                 }
 
                 _context.Fboprices.Add(price);
@@ -186,16 +189,19 @@ namespace FBOLinx.Web.Controllers
 
             foreach (Fboprices price in fboprices)
             {
-                price.Timestamp = DateTime.Now;
-                if (price.Oid > 0)
+                if (price.Price != null)
                 {
-                    _context.Fboprices.Update(price);
+                    price.Timestamp = DateTime.Now;
+                    if (price.Oid > 0)
+                    {
+                        _context.Fboprices.Update(price);
+                    }
+                    else if (price.Price != null)
+                    {
+                        _context.Fboprices.Add(price);
+                    }
+                    await _context.SaveChangesAsync();
                 }
-                else if (price.Price != null)
-                {
-                    _context.Fboprices.Add(price);
-                }
-                await _context.SaveChangesAsync();
             }
 
             return Ok(null);
