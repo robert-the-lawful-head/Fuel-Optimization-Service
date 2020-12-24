@@ -97,9 +97,6 @@ namespace FBOLinx.Web.Services
                     join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
                     into leftJoinCC
                     from cc in leftJoinCC.DefaultIfEmpty()
-                    //join cibg in _context.ContactInfoByGroup on new { cc.ContactId, cg.GroupId, CopyAlerts = true } equals new { cibg.ContactId, cibg.GroupId, CopyAlerts = cibg.CopyAlerts ?? false }
-                    //into leftJoinCibg
-                    //from cibg in leftJoinCibg.DefaultIfEmpty()
                     join cvf in _context.CustomersViewedByFbo on new { Fboid = f.Oid, cg.CustomerId } equals new { cvf.Fboid, cvf.CustomerId }
                     into leftJoinCvf
                     from cvf in leftJoinCvf.DefaultIfEmpty()
@@ -112,7 +109,6 @@ namespace FBOLinx.Web.Services
                         PricingTemplateId = pt == null ? 0 : pt.Oid,
                         IsDefaultPricingTemplate = pt == null ? true : pt.Default,
                         IsPricingTemplateRemoved = cg.PricingTemplateRemoved,
-                        //ContactInfoByGroupId = cibg == null ? 0 : cibg.Oid,
                         FuelerlinxId = c == null ? 0 : c.FuelerlinxId ?? 0,
                         CustomersViewedByFboId = cvf == null ? 0 : cvf.Oid
                     }
@@ -123,9 +119,8 @@ namespace FBOLinx.Web.Services
                     g.Key.GroupId,
                     g.Key.FboId,
                     g.Key.CustomerInfoByGroupID,
-                    NeedsAttention = g.Max(a => a.IsDefaultPricingTemplate) == true ||
-                                    //(g.Max(a => a.ContactInfoByGroupId) == 0 && g.Max(a => a.FuelerlinxId) <= 0) ||
-                                    g.Max(a => a.IsPricingTemplateRemoved) == true ? 1: 0
+                    NeedsAttention = g.Max(a => a.IsDefaultPricingTemplate == true ? 1 : 0) == 1 ||
+                                    g.Max(a => a.IsPricingTemplateRemoved == true ? 1 : 0) == 1 ? 1: 0
                 })
                 .GroupBy(g => new { g.GroupId, g.FboId })
                 .Select(g => new NeedsAttentionCustomersCountModel

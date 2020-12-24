@@ -78,23 +78,22 @@ namespace FBOLinx.Web.Controllers
                                 IsLegacyAccount = x.IsLegacyAccount,
                                 Users = x.Users,
                                 LastLogin = x.Fbos.Max(f => f.LastLogin),
-                                NeedAttentionCustomers = customersNeedAttention.Where(c => c.GroupId == x.Oid).Sum(c => c.CustomersNeedingAttention)
                             })
                             .ToListAsync();
 
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
+            foreach(var group in groups)
+            {
+                var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Oid).ToList();
+                group.NeedAttentionCustomers = needingAttentions.Count > 0 ? needingAttentions.Sum(c => c.CustomersNeedingAttention) : 0;
+            }
 
-            var fboPrices = (from f in _context.Fboprices
-                             where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
-                             group f by f.Fboid into g
-                             select new {
-                                 fboId = g.Key,
-                                 lastEffectiveDate = g.Max(t => t.EffectiveTo),
-                                 product = g.Select(t => t.Product),
-                                 expired = g.Select(t => t.Expired)
-                             });
-
-            var users = await _context.User.GroupBy(t => t.FboId).ToListAsync();
+            var fboPrices = from f in _context.Fboprices
+                            where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
+                            group f by f.Fboid into g
+                            select new
+                            {
+                                fboId = g.Key
+                            };
 
             //FbosViewModel used to display FBO info in the grid
             var fbos = await (from f in _context.Fbos
@@ -109,10 +108,11 @@ namespace FBOLinx.Web.Controllers
                                   Icao = fairports.Icao,
                                   Oid = f.Oid,
                                   GroupId = f.GroupId ?? 0,
-                                  PricingExpired = fprices == null,
+                                  PricingExpired = fprices.fboId == null,
                                   LastLogin = f.LastLogin
                               }).ToListAsync();
 
+            var users = (await _context.User.ToListAsync()).GroupBy(t => t.FboId);
             fbos.ForEach(f =>
             {
                 f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
