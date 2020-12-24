@@ -284,6 +284,60 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        [HttpPost("update/stage")]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        public async Task<IActionResult> UpdateStagePricing([FromBody] PricingUpdateRequest request)
+        {
+            if (request.Retail == null && request.Cost == null)
+            {
+                return BadRequest(new { message = "Invalid body request!" });
+            }
+            try
+            {
+                var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var claimPrincipal = _jwtManager.GetPrincipal(token);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+
+                var user = await _context.User.FindAsync(claimedId);
+
+                var effectiveFrom = request.EffectiveDate != null ? request.EffectiveDate : DateTime.UtcNow;
+                var effectiveTo = request.ExpirationDate != null ? request.ExpirationDate : DateTime.MaxValue;
+
+                if (request.Retail != null)
+                {
+                    var retailPrice = new Fboprices
+                    {
+                        EffectiveFrom = effectiveFrom,
+                        EffectiveTo = effectiveTo,
+                        Product = "JetA Retail",
+                        Price = request.Retail,
+                        Fboid = user.FboId
+                    };
+
+                    _context.Fboprices.Add(retailPrice);
+                }
+                if (request.Cost != null)
+                {
+                    var costPrice = new Fboprices
+                    {
+                        EffectiveFrom = effectiveFrom,
+                        EffectiveTo = effectiveTo,
+                        Product = "JetA Cost",
+                        Price = request.Cost,
+                        Fboid = user.FboId
+                    };
+                    _context.Fboprices.Add(costPrice);
+                }
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         // POST: api/Fboprices/analysis/prices-by-month/fbo/5
         [HttpPost("analysis/prices-by-month/fbo/{fboId}")]
         public async Task<IActionResult> GetPricesByMonthForFbo([FromRoute] int fboId,
