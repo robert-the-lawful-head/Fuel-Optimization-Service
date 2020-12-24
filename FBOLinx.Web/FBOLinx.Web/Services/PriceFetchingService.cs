@@ -379,7 +379,7 @@ namespace FBOLinx.Web.Services
                                       join cig in _context.CustomerInfoByGroup on new { CustomerId = cct == null ? 0 : cct.CustomerId, GroupId = groupId } equals new { cig.CustomerId, cig.GroupId }
                                       into leftJoinCig
                                       from cig in leftJoinCig.DefaultIfEmpty()
-                                      where p.Fboid == fboId && fp.EffectiveFrom <= DateTime.UtcNow
+                                      where p.Fboid == fboId && (fp.EffectiveFrom <= DateTime.UtcNow || fp.EffectiveFrom == null)
                                       group p by new
                                       {
                                           p.CustomerId,
