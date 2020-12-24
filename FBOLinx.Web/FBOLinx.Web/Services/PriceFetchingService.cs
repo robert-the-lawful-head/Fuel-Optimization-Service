@@ -428,7 +428,7 @@ namespace FBOLinx.Web.Services
                 join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
                     into leftJoinFp
                 from fp in leftJoinFp.DefaultIfEmpty()
-                where p.Fboid == fboId
+                where p.Fboid == fboId && (fp.EffectiveFrom <= DateTime.UtcNow || fp.EffectiveFrom == null)
                               select new
                               {
                                   p.CustomerId,

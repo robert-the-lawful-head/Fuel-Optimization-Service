@@ -81,8 +81,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = await GetPrices(fboId);
 
-            var universalTime = DateTime.Today.ToUniversalTime();
-            var filteredResult = result.Where(f => f.EffectiveFrom <= universalTime || f.EffectiveTo == null).ToList();
+            var filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null).ToList();
             return Ok(filteredResult);
         }
 
@@ -97,8 +96,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = await GetPrices(fboId);
 
-            var universalTime = DateTime.Today.ToUniversalTime();
-            var filteredResult = result.Where(f => f.EffectiveFrom > universalTime || f.EffectiveTo == null).ToList();
+            var filteredResult = result.Where(f => f.EffectiveFrom > DateTime.UtcNow || f.EffectiveTo == null).ToList();
             return Ok(filteredResult);
         }
 
@@ -166,18 +164,21 @@ namespace FBOLinx.Web.Controllers
 
             foreach (Fboprices price in fboprices)
             {
-                price.Timestamp = DateTime.UtcNow;
-                List<Fboprices> oldPrices = await _context.Fboprices
+                if (price.Price != null)
+                {
+                    price.Timestamp = DateTime.UtcNow;
+                    List<Fboprices> oldPrices = await _context.Fboprices
                                             .Where(f => f.EffectiveFrom <= DateTime.UtcNow && f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product) && !f.Expired.Equals(true))
                                             .ToListAsync();
-                foreach (Fboprices oldPrice in oldPrices)
-                {
-                    oldPrice.Expired = true;
-                    _context.Fboprices.Update(oldPrice);
-                }
+                    foreach (Fboprices oldPrice in oldPrices)
+                    {
+                        oldPrice.Expired = true;
+                        _context.Fboprices.Update(oldPrice);
+                    }
 
-                _context.Fboprices.Add(price);
-                await _context.SaveChangesAsync();
+                    _context.Fboprices.Add(price);
+                    await _context.SaveChangesAsync();
+                }
             }
 
             return Ok(null);
@@ -193,16 +194,19 @@ namespace FBOLinx.Web.Controllers
 
             foreach (Fboprices price in fboprices)
             {
-                price.Timestamp = DateTime.Now;
-                if (price.Oid > 0)
+                if (price.Price != null)
                 {
-                    _context.Fboprices.Update(price);
+                    price.Timestamp = DateTime.Now;
+                    if (price.Oid > 0)
+                    {
+                        _context.Fboprices.Update(price);
+                    }
+                    else if (price.Price != null)
+                    {
+                        _context.Fboprices.Add(price);
+                    }
+                    await _context.SaveChangesAsync();
                 }
-                else if (price.Price != null)
-                {
-                    _context.Fboprices.Add(price);
-                }
-                await _context.SaveChangesAsync();
             }
 
             return Ok(null);
@@ -273,6 +277,60 @@ namespace FBOLinx.Web.Controllers
                         oldPrice.Expired = true;
                         _context.Fboprices.Update(oldPrice);
                     }
+                    _context.Fboprices.Add(costPrice);
+                }
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("update/stage")]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        public async Task<IActionResult> UpdateStagePricing([FromBody] PricingUpdateRequest request)
+        {
+            if (request.Retail == null && request.Cost == null)
+            {
+                return BadRequest(new { message = "Invalid body request!" });
+            }
+            try
+            {
+                var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var claimPrincipal = _jwtManager.GetPrincipal(token);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+
+                var user = await _context.User.FindAsync(claimedId);
+
+                var effectiveFrom = request.EffectiveDate != null ? request.EffectiveDate : DateTime.UtcNow;
+                var effectiveTo = request.ExpirationDate != null ? request.ExpirationDate : DateTime.MaxValue;
+
+                if (request.Retail != null)
+                {
+                    var retailPrice = new Fboprices
+                    {
+                        EffectiveFrom = effectiveFrom,
+                        EffectiveTo = effectiveTo,
+                        Product = "JetA Retail",
+                        Price = request.Retail,
+                        Fboid = user.FboId
+                    };
+
+                    _context.Fboprices.Add(retailPrice);
+                }
+                if (request.Cost != null)
+                {
+                    var costPrice = new Fboprices
+                    {
+                        EffectiveFrom = effectiveFrom,
+                        EffectiveTo = effectiveTo,
+                        Product = "JetA Cost",
+                        Price = request.Cost,
+                        Fboid = user.FboId
+                    };
                     _context.Fboprices.Add(costPrice);
                 }
                 await _context.SaveChangesAsync();
