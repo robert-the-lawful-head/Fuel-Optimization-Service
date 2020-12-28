@@ -273,13 +273,13 @@ export class FbosGridComponent implements OnInit {
                     return;
                 }
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
-                sessionStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
+                localStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
                 this.sharedService.currentUser.groupId = fbo.groupId;
-                sessionStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
+                localStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.impersonatedRole = 1;
-                sessionStorage.setItem('impersonatedrole', '1');
+                localStorage.setItem('impersonatedrole', '1');
                 this.sharedService.currentUser.fboId = fbo.oid;
-                sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+                localStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
                 this.sharedService.emitChange(fboChangedEvent);
                 this.router.navigate(['/default-layout/dashboard-fbo/']);
             });
@@ -302,7 +302,7 @@ export class FbosGridComponent implements OnInit {
                         if (result && result.fboId) {
                             this.sharedService.currentUser.impersonatedRole = 1;
                             this.sharedService.currentUser.fboId = result.fboId;
-                            sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+                            localStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
                             this.sharedService.emitChange(fboChangedEvent);
                             this.router.navigate(['/default-layout/dashboard-fbo/']);
                         }

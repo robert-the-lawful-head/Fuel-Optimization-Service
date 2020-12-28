@@ -165,8 +165,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
             };
             const self = this;
             setTimeout(() => {
-                self.priceBreakdownPreview.feesAndTaxes = null;
                 if (self.priceBreakdownPreview) {
+                    self.priceBreakdownPreview.feesAndTaxes = null;
                     self.priceBreakdownPreview.performRecalculation();
                 }
             });

@@ -61,24 +61,24 @@ export class SharedService {
   }
   // Public Members
   get currentUser(): User {
-    if (!this._currentUser.fboId && sessionStorage.getItem('fboId')) {
-      this._currentUser.fboId = Number(sessionStorage.getItem('fboId'));
+    if (!this._currentUser.fboId && localStorage.getItem('fboId')) {
+      this._currentUser.fboId = Number(localStorage.getItem('fboId'));
     }
-    if (!this._currentUser.managerGroupId && sessionStorage.getItem('managerGroupId')) {
-      this._currentUser.managerGroupId = Number(sessionStorage.getItem('managerGroupId'));
+    if (!this._currentUser.managerGroupId && localStorage.getItem('managerGroupId')) {
+      this._currentUser.managerGroupId = Number(localStorage.getItem('managerGroupId'));
     }
-    if (!this._currentUser.impersonatedRole && sessionStorage.getItem('impersonatedrole')) {
-      this._currentUser.impersonatedRole = Number(sessionStorage.getItem('impersonatedrole'));
+    if (!this._currentUser.impersonatedRole && localStorage.getItem('impersonatedrole')) {
+      this._currentUser.impersonatedRole = Number(localStorage.getItem('impersonatedrole'));
     }
-    const sessionGroupId = sessionStorage.getItem('groupId');
+    const sessionGroupId = localStorage.getItem('groupId');
     if (sessionGroupId && (!this._currentUser.groupId || this._currentUser.groupId !== Number(sessionGroupId))) {
       this._currentUser.groupId = Number(sessionGroupId);
     }
-    if (!this._currentUser.groupId && sessionStorage.getItem('groupId')) {
-      this._currentUser.groupId = Number(sessionStorage.getItem('groupId'));
+    if (!this._currentUser.groupId && localStorage.getItem('groupId')) {
+      this._currentUser.groupId = Number(localStorage.getItem('groupId'));
     }
-    if (!this._currentUser.conductorFbo && sessionStorage.getItem('conductorFbo')) {
-      this._currentUser.conductorFbo = Boolean(sessionStorage.getItem('conductorFbo'));
+    if (!this._currentUser.conductorFbo && localStorage.getItem('conductorFbo')) {
+      this._currentUser.conductorFbo = Boolean(localStorage.getItem('conductorFbo'));
     }
     return this._currentUser;
   }
