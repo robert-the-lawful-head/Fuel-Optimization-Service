@@ -1,5 +1,4 @@
 import {
-  OnInit,
   Component,
   Inject,
   EventEmitter,
@@ -15,20 +14,18 @@ import { SharedService } from '../../../../layouts/shared-service';
   styleUrls: ['./distribution-wizard-review.component.scss'],
   providers: [SharedService],
 })
-export class DistributionWizardReviewComponent implements OnInit {
+export class DistributionWizardReviewComponent {
+  @Output() idChanged1: EventEmitter<any> = new EventEmitter();
+
   public navigationSubscription: any;
   public previewEmail: string;
-
-  @Output() idChanged1: EventEmitter<any> = new EventEmitter();
 
   constructor(
     public dialogRef: MatDialogRef<DistributionWizardReviewComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router
   ) {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => {
-      return false;
-    };
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
 
     this.router.events.subscribe((evt) => {
       if (evt instanceof NavigationEnd) {
@@ -38,10 +35,6 @@ export class DistributionWizardReviewComponent implements OnInit {
         window.scrollTo(0, 0);
       }
     });
-  }
-
-  ngOnInit() {
-
   }
 
   public closeDialog() {

@@ -87,7 +87,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public initRampfees() {
         this.rampFeesService
-            .getForFbo({ oid: this.sharedService.currentUser.fboId })
+            .getForFbo({oid: this.sharedService.currentUser.fboId})
             .subscribe((data: any) => {
                 this.rampFees = data;
 
@@ -97,9 +97,9 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 this.messageService.updateMessage(this.expirationDate);
                 this.messageService
-                        .getMessage()
-                        .subscribe(
-                            (mymessage: any) => (this.expirationDate = mymessage)
+                    .getMessage()
+                    .subscribe(
+                        (mymessage: any) => (this.expirationDate = mymessage)
                     );
 
 
@@ -158,32 +158,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.requiresUpdate = false;
     }
 
-    // Private Methods
-    private updateRampFee(fee) {
-        if (!fee.fboid) {
-            fee.fboid = this.sharedService.currentUser.fboId;
-        }
-        if (fee.oid && fee.oid > 0) {
-            this.rampFeesService.update(fee).subscribe((data: any) => {});
-        } else {
-            this.rampFeesService.add(fee).subscribe((data: any) => {
-                fee.oid = data.oid;
-            });
-        }
-    }
-
-    private loadRampFees() {
-        this.rampFees = undefined;
-        this.rampFeesService
-            .getForFbo({ oid: this.sharedService.currentUser.fboId })
-            .subscribe((data: any) => {
-                this.rampFees = data;
-                if (this.customRampFeeCat) {
-                    this.customRampFeeCat.refreshData();
-                }
-            });
-    }
-
     public informForRampFees() {
         const dialogRef = this.importFeesInfoDialog.open(
             RampFeesImportInformationComponent,
@@ -193,8 +167,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
                 return;
-            }
-            else {
+            } else {
                 this.launchImporter();
             }
 
@@ -228,7 +201,8 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     });
             }
-        } catch (e) { }
+        } catch (e) {
+        }
     }
 
     initializeImporter() {
@@ -307,5 +281,32 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             allowCustom: true,
             disableManualInput: false,
         });
+    }
+
+    // Private Methods
+    private updateRampFee(fee) {
+        if (!fee.fboid) {
+            fee.fboid = this.sharedService.currentUser.fboId;
+        }
+        if (fee.oid && fee.oid > 0) {
+            this.rampFeesService.update(fee).subscribe((data: any) => {
+            });
+        } else {
+            this.rampFeesService.add(fee).subscribe((data: any) => {
+                fee.oid = data.oid;
+            });
+        }
+    }
+
+    private loadRampFees() {
+        this.rampFees = undefined;
+        this.rampFeesService
+            .getForFbo({oid: this.sharedService.currentUser.fboId})
+            .subscribe((data: any) => {
+                this.rampFees = data;
+                if (this.customRampFeeCat) {
+                    this.customRampFeeCat.refreshData();
+                }
+            });
     }
 }

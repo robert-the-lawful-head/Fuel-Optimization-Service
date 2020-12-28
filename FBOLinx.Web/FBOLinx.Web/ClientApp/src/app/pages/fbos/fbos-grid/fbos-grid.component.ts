@@ -1,11 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    Output,
-    OnInit,
-    ViewChild
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -39,6 +32,8 @@ export class FbosGridComponent implements OnInit {
     @Output() editFboClicked = new EventEmitter<any>();
     @Input() fbosData: Array<any>;
     @Input() groupInfo: any;
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     // Public Members
     public pageTitle = 'FBOs';
@@ -55,9 +50,6 @@ export class FbosGridComponent implements OnInit {
 
     public tableSortFbos = 'icao';
     public tableSortOrderFbos = 'asc';
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(
         private newFboDialog: MatDialog,
@@ -150,7 +142,7 @@ export class FbosGridComponent implements OnInit {
         const dialogRef = this.deleteFboDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: record, description: 'FBO' },
+                data: {item: record, description: 'FBO'},
                 autoFocus: false,
             }
         );

@@ -1,9 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
 import { ContactsDialogConfirmContactDeleteComponent } from '../contact-confirm-delete-modal/contact-confirm-delete-modal.component';
 
 export interface NewContactDialogData {
@@ -55,7 +51,8 @@ export class ContactsDialogNewContactComponent {
         public dialogRef: MatDialogRef<ContactsDialogNewContactComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewContactDialogData,
         public dialogContactDeleteRef: MatDialog
-    ) {}
+    ) {
+    }
 
     // Public Methods
     public onCancelClick(): void {

@@ -19,6 +19,15 @@ import { StatisticsOrdersByLocationComponent } from '../../../shared/components/
     styleUrls: ['./dashboard-fbo.component.scss'],
 })
 export class DashboardFboComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('statisticsTotalOrders')
+  private statisticsTotalOrders: StatisticsTotalOrdersComponent;
+  @ViewChild('statisticsTotalCustomers')
+  private statisticsTotalCustomers: StatisticsTotalCustomersComponent;
+  @ViewChild('statisticsTotalAircraft')
+  private statisticsTotalAircraft: StatisticsTotalAircraftComponent;
+  @ViewChild('statisticsOrdersByLocation')
+  private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
+
   public breadcrumb: any[];
   public pageTitle = 'Dashboard';
   public fboid: any;
@@ -28,15 +37,6 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
   public filterStartDate: Date;
   public filterEndDate: Date;
   public pastThirtyDaysStartDate: Date;
-
-  @ViewChild('statisticsTotalOrders')
-  private statisticsTotalOrders: StatisticsTotalOrdersComponent;
-  @ViewChild('statisticsTotalCustomers')
-  private statisticsTotalCustomers: StatisticsTotalCustomersComponent;
-  @ViewChild('statisticsTotalAircraft')
-  private statisticsTotalAircraft: StatisticsTotalAircraftComponent;
-  @ViewChild('statisticsOrdersByLocation')
-  private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
 
   constructor(private sharedService: SharedService) {
     this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));

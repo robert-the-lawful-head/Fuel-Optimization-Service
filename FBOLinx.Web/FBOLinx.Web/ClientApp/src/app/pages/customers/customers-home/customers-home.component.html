@@ -6,12 +6,12 @@
             <div class="table-container">
                 <div *ngIf="customersData && pricingTemplatesData">
                     <app-customers-grid
-                        [customersData]="customersData"
-                        [pricingTemplatesData]="pricingTemplatesData"
+                        (customerDeleted)="customerDeleted()"
+                        (editCustomerClicked)="editCustomerClicked($event)"
                         [aircraftData]="aircraftData"
                         [customerGridState]="customerGridState"
-                        (editCustomerClicked)="editCustomerClicked($event)"
-                        (customerDeleted)="customerDeleted()"
+                        [customersData]="customersData"
+                        [pricingTemplatesData]="pricingTemplatesData"
                     ></app-customers-grid>
                 </div>
                 <div *ngIf="!customersData || !pricingTemplatesData">
@@ -23,8 +23,8 @@
             <div class="table-container">
                 <div *ngIf="pricingTemplatesData && aircraftData">
                     <app-aircrafts-grid
-                        [pricingTemplatesData]="pricingTemplatesData"
                         [aircraftsData]="aircraftData"
+                        [pricingTemplatesData]="pricingTemplatesData"
                     ></app-aircrafts-grid>
                 </div>
                 <div *ngIf="!pricingTemplatesData || !aircraftData">

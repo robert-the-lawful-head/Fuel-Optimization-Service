@@ -1,9 +1,9 @@
 <div class="site-container" [ngClass]="layoutClasses">
-  <horizontal-navbar [title]="pageTitle" (sidebarState)="sidebarState()"></horizontal-navbar>
+  <app-horizontal-navbar [title]="pageTitle" (sidebarState)="sidebarState()"></app-horizontal-navbar>
 
-  <vertical-navbar [ngClass]="{ 'hideSidebar': isConductorGroup() }"></vertical-navbar>
+  <app-vertical-navbar [ngClass]="{ 'hideSidebar': isConductorGroup() }"></app-vertical-navbar>
   <div *ngIf="pricingTemplatesData">
-    <addition-navbar #insideElement [templatelst]="pricingTemplatesData"></addition-navbar>
+    <app-addition-navbar #insideElement [templatelst]="pricingTemplatesData"></app-addition-navbar>
   </div>
 
   <app-fbo-prices-panel

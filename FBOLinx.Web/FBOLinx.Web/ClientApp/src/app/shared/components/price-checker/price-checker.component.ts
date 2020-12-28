@@ -43,6 +43,8 @@ export enum PriceCheckerLookupTypes {
     styleUrls: ['./price-checker.component.scss']
 })
 export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
 
     public customerForTailLookup: any;
     public tailNumberForTailLookup = '';
@@ -70,9 +72,6 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     public sampleCalculation: PriceLookupRequest;
 
     public tailLoader = 'tail-loader';
-
-    @ViewChild('priceBreakdownPreview')
-    private priceBreakdownPreview: PriceBreakdownComponent;
 
     constructor(private sharedService: SharedService,
                 private aircraftsService: AircraftsService,

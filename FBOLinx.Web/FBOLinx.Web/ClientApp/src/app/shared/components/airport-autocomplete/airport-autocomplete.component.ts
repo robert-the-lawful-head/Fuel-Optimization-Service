@@ -67,9 +67,7 @@ export class AirportAutocompleteComponent implements OnInit {
             // map the item property of the github results as our return object
             map((results) => results),
             // catch errors
-            catchError((_) => {
-                return of(null);
-            })
+            catchError((_) => of(null))
         );
     }
 

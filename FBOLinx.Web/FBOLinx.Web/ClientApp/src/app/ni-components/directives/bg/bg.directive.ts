@@ -26,6 +26,14 @@ export class BgDirective implements OnInit {
         this.outlineColor = this.defaultBg;
     }
 
+    @HostListener('mouseenter') onMouseEnter() {
+        this.currentBg = this.hoveredBg;
+    }
+
+    @HostListener('mouseleave') onMouseLeave() {
+        this.currentBg = !this.outline ? this.defaultBg : 'transparent';
+    }
+
     @HostBinding('style.background') get getBg() {
         return this.currentBg;
     }
@@ -36,13 +44,5 @@ export class BgDirective implements OnInit {
 
     @HostBinding('class.custom-bg') get getClass() {
         return true;
-    }
-
-    @HostListener('mouseenter') onMouseEnter() {
-        this.currentBg = this.hoveredBg;
-    }
-
-    @HostListener('mouseleave') onMouseLeave() {
-        this.currentBg = !this.outline ? this.defaultBg : 'transparent';
     }
 }

@@ -5,14 +5,14 @@ import { Injectable } from '@angular/core';
  * @author: Zoho SalesIQ
  */
 
-function _window(): any {
+const getWindow = () =>
    // return the global native browser window object
-   return window;
-}
+    window;
+
 
 @Injectable()
 export class WindowRef {
    get nativeWindow(): any {
-      return _window();
+      return getWindow();
    }
 }

@@ -1,18 +1,10 @@
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild,
-} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort, MatSortHeader, SortDirection} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatDialog} from '@angular/material/dialog';
-import {MatSelectChange} from '@angular/material/select';
-import {find, forEach, map, sortBy} from 'lodash';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
+import { find, forEach, map, sortBy } from 'lodash';
 import FlatFileImporter from 'flatfile-csv-importer';
 import * as XLSX from 'xlsx';
 
@@ -251,17 +243,14 @@ export class CustomersGridComponent implements OnInit {
 
     exportCustomersToExcel() {
         // Export the filtered results to an excel spreadsheet
-        const filteredList = this.customersDataSource.filteredData.filter((item) => {
-            return item.selectAll === true;
-        });
+        const filteredList = this.customersDataSource.filteredData.filter((item) => item.selectAll === true);
         let exportData;
         if (filteredList.length > 0) {
             exportData = filteredList;
         } else {
             exportData = this.customersDataSource.filteredData;
         }
-        exportData = map(exportData, (item) => {
-            return {
+        exportData = map(exportData, (item) => ({
                 Company: item.company,
                 Source:
                     item.customerCompanyTypeName === 'FuelerLinx'
@@ -269,12 +258,9 @@ export class CustomersGridComponent implements OnInit {
                         : item.customerCompanyTypeName,
                 'Assigned Price Tier': item.pricingTemplateName,
                 Price: item.allInPrice,
-            };
-        });
+            }));
         exportData = sortBy(exportData, [
-            (item) => {
-                return item.Company.toLowerCase();
-            },
+            (item) => item.Company.toLowerCase(),
         ]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -289,18 +275,14 @@ export class CustomersGridComponent implements OnInit {
         let exportData = map(this.aircraftData, (item) => {
             let pricingTemplateName = item.pricingTemplateName;
             if (!pricingTemplateName) {
-                const customer = find(this.customersData, (c) => {
-                    return c.customerId === item.customerId;
-                });
+                const customer = find(this.customersData, (c) => c.customerId === item.customerId);
                 if (customer) {
                     pricingTemplateName = customer.pricingTemplateName;
                 }
             }
             const matchingPricingTemplate = find(
                 this.pricingTemplatesData,
-                (pricing) => {
-                    return pricing.name === pricingTemplateName;
-                }
+                (pricing) => pricing.name === pricingTemplateName
             );
             return {
                 Company: item.company,
@@ -315,12 +297,8 @@ export class CustomersGridComponent implements OnInit {
             };
         });
         exportData = sortBy(exportData, [
-            (item) => {
-                return item.Company.toLowerCase();
-            },
-            (item) => {
-                return item.Tail.toLowerCase();
-            },
+            (item) => item.Company.toLowerCase(),
+            (item) => item.Tail.toLowerCase(),
         ]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -384,9 +362,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     anySelected() {
-        const filteredList = this.customersData.filter((item) => {
-            return item.selectAll === true;
-        });
+        const filteredList = this.customersData.filter((item) => item.selectAll === true);
         return filteredList.length > 0;
     }
 
@@ -538,12 +514,29 @@ export class CustomersGridComponent implements OnInit {
         return this.columns.filter(column => !column.hidden).map(column => column.id);
     }
 
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
+            data: this.columns
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.columns = [...result];
+                this.refreshSort();
+                this.saveSettings();
+            }
+        });
+    }
+
+    saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+    }
+
     private refreshCustomerDataSource() {
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
-                    ? { ...column, sort: this.sort.direction}
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    ? {...column, sort: this.sort.direction}
+                    : {id: column.id, name: column.name, hidden: column.hidden}
             );
             this.paginator.pageIndex = 0;
             this.saveSettings();
@@ -565,25 +558,8 @@ export class CustomersGridComponent implements OnInit {
 
     private refreshSort() {
         const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
-        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
-    }
-
-    openSettings() {
-        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
-            data: this.columns
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                this.columns = [...result];
-                this.refreshSort();
-                this.saveSettings();
-            }
-        });
-    }
-
-    saveSettings() {
-        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+        this.sort.sort({id: null, start: sortedColumn?.sort || 'asc', disableClear: false});
+        this.sort.sort({id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false});
+        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({toState: 'active'});
     }
 }

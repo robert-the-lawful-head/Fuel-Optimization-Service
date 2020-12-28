@@ -42,6 +42,8 @@ export class PricingTemplatesGridComponent implements OnInit {
     @Output() copyPricingTemplateClicked = new EventEmitter<any>();
     @Output() newPricingTemplateAdded = new EventEmitter<any>();
     @Input() pricingTemplatesData: Array<any>;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     // Public Members
     public pricingTemplatesDataSource: MatTableDataSource<any> = null;
@@ -62,9 +64,6 @@ export class PricingTemplatesGridComponent implements OnInit {
         fboid: 0,
         newtemplate: 0,
     };
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(
         private store: Store<State>,

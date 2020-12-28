@@ -63,15 +63,15 @@ export class NiCardComponent implements AfterContentChecked {
         this.checkSubtitleVisible();
     }
 
-    public headerClick() {
-        if (this.collapsible) {
-            this.opened = !this.opened;
-        }
-    }
-
     @HostListener('window:resize')
     onResize() {
         this.checkSubtitleVisible();
+    }
+
+    headerClick() {
+        if (this.collapsible) {
+            this.opened = !this.opened;
+        }
     }
 
     private checkSubtitleVisible() {
