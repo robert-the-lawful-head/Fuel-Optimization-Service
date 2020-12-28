@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
-import {combineLatest} from 'rxjs';
+import {combineLatest, EMPTY, of} from 'rxjs';
 import {find} from 'lodash';
 
 // Services
@@ -24,6 +25,7 @@ import {SharedService} from '../../../layouts/shared-service';
 import {CustomerCompanyTypeDialogComponent} from '../customer-company-type-dialog/customer-company-type-dialog.component';
 import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
+import { catchError, debounceTime, switchMap } from 'rxjs/operators';
 
 const BREADCRUMBS: any[] = [
     {
@@ -62,7 +64,6 @@ export class CustomersEditComponent implements OnInit {
     customerCompanyTypes: any[];
     hasContactForPriceDistribution = false;
     customerForm: FormGroup;
-    canSave: boolean;
     public feesAndTaxes: Array<any>;
     public locationChangedSubscription: any;
 
@@ -86,8 +87,8 @@ export class CustomersEditComponent implements OnInit {
         private dialog: MatDialog,
         private newContactDialog: MatDialog,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
-        private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService
-
+        private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService,
+        private snackBar: MatSnackBar,
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
@@ -147,9 +148,31 @@ export class CustomersEditComponent implements OnInit {
             show100Ll: [this.customerInfoByGroup.show100Ll],
             customerMarginTemplate: [this.customCustomerType.customerType],
         });
-        this.customerForm.valueChanges.subscribe(() => {
-            this.canSave = true;
-        });
+        this.customerForm.valueChanges.pipe(
+            debounceTime(1000),
+            switchMap(async () => {
+                const customerInfoByGroup = {
+                    ...this.customerInfoByGroup,
+                    ...this.customerForm.value,
+                };
+                this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
+        
+                await this.customerInfoByGroupService.update(customerInfoByGroup).toPromise();
+                if (!this.customCustomerType.oid || this.customCustomerType.oid === 0) {
+                    await this.customCustomerTypesService.add(this.customCustomerType).toPromise();
+                } else {
+                    await this.customCustomerTypesService.update(this.customCustomerType).toPromise();
+                }
+            }),
+            catchError((err: Error) => {
+                console.error(err);
+                this.snackBar.open(err.message, '', {
+                    duration: 5000,
+                    panelClass: ['blue-snackbar'],
+                });
+                return of(EMPTY);
+            })
+        ).subscribe();
         this.customerForm.controls.customerCompanyType.valueChanges.subscribe(type => {
             if (type < 0) {
                 this.customerCompanyTypeChanged();
