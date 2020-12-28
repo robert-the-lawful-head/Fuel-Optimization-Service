@@ -47,7 +47,7 @@ export class DefaultLayoutComponent implements OnInit {
         .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
         .subscribe((data: any) => (this.pricingTemplatesData = data));
       sharedService.titleChanged$.subscribe((title) => {
-        this.pageTitle = title;
+        setTimeout(() => this.pageTitle = title, 100);
       });
     }
   }

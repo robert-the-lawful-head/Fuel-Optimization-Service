@@ -92,8 +92,6 @@ export class CustomersGridComponent implements OnInit {
     selectedRows: number;
     pageIndex = 0;
     pageSize = 100;
-    customerSearch = '';
-
     columns: ColumnType[] = [];
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';

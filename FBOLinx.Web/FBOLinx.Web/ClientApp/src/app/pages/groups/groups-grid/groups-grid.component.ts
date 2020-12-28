@@ -265,11 +265,11 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 }
 
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
-                sessionStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
+                localStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
                 this.sharedService.currentUser.groupId = group.oid;
-                sessionStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
+                localStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.impersonatedRole = 2;
-                sessionStorage.setItem('impersonatedrole', '2');
+                localStorage.setItem('impersonatedrole', '2');
                 this.router.navigate(['/default-layout/fbos/']);
             });
         }
@@ -304,15 +304,15 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 }
 
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
-                sessionStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
+                localStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
                 this.sharedService.currentUser.groupId = fbo.groupId;
-                sessionStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
+                localStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.impersonatedRole = 1;
-                sessionStorage.setItem('impersonatedrole', '1');
+                localStorage.setItem('impersonatedrole', '1');
                 this.sharedService.currentUser.conductorFbo = true;
-                sessionStorage.setItem('conductorFbo', 'true');
+                localStorage.setItem('conductorFbo', 'true');
                 this.sharedService.currentUser.fboId = fbo.oid;
-                sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+                localStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
                 this.sharedService.emitChange(fboChangedEvent);
                 this.router.navigate(['/default-layout/dashboard-fbo/']);
             });
