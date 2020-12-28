@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
 import { UserService } from '../../../services/user.service';
@@ -26,7 +26,8 @@ export class UsersEditComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private userService: UserService
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         if (this.userInfo) {
@@ -34,7 +35,7 @@ export class UsersEditComponent implements OnInit {
         } else {
             const id = this.route.snapshot.paramMap.get('id');
             this.requiresRouting = true;
-            this.userService.get({ oid: id }).subscribe((data: any) => {
+            this.userService.get({oid: id}).subscribe((data: any) => {
                 this.userInfo = data;
                 this.loadAvailableRoles();
             });

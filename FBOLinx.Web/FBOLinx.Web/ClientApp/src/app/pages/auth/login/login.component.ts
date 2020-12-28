@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 // Services
 import { OAuthService } from '../../../services/oauth.service';
@@ -40,21 +40,22 @@ export class LoginComponent implements OnInit {
     }
 
     public onSubmit() {
-        if (this.submit) { return; }
+        if (this.submit) {
+            return;
+        }
 
         this.error = '';
         if (this.loginForm.valid) {
             this.submit = true;
             this.oauthService.login(this.loginForm.value.username, this.loginForm.value.password, this.partner)
-              .subscribe((token: any) => {
-                  let tokenQueryString = 'accessToken=' + encodeURIComponent(token.accessToken);
-                  if (this.redirectTo.indexOf('?') === -1) {
-                    tokenQueryString = '?' + tokenQueryString;
-                  }
-                  else {
-                    tokenQueryString = '&' + tokenQueryString;
-                  }
-                  window.location.href = this.redirectTo + tokenQueryString;
+                .subscribe((token: any) => {
+                    let tokenQueryString = 'accessToken=' + encodeURIComponent(token.accessToken);
+                    if (this.redirectTo.indexOf('?') === -1) {
+                        tokenQueryString = '?' + tokenQueryString;
+                    } else {
+                        tokenQueryString = '&' + tokenQueryString;
+                    }
+                    window.location.href = this.redirectTo + tokenQueryString;
                 }, (err: any) => {
                     console.log(err);
                     this.error = err;

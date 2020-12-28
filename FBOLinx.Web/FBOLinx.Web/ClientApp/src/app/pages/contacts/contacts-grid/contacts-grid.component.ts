@@ -1,11 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    Output,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -29,6 +22,8 @@ export class ContactsGridComponent implements OnInit {
     @Output() newContactClicked = new EventEmitter<any>();
     @Output() editContactClicked = new EventEmitter<any>();
     @Input() contactsData: Array<any>;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
+
     public currentContactInfoByGroup: any;
     contactsDataSource: MatTableDataSource<any> = null;
     displayedColumns: string[] = [
@@ -41,8 +36,6 @@ export class ContactsGridComponent implements OnInit {
         'delete',
     ];
     public copyAll = false;
-
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
@@ -57,18 +50,18 @@ export class ContactsGridComponent implements OnInit {
         private customerContactsService: CustomercontactsService,
         public newContactDialog: MatDialog,
         private route: ActivatedRoute
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         if (!this.contactsData) {
             return;
         }
 
-        const foundedIndex = _.findIndex(this.contactsData, (contact) => {
-            return !contact.copyAlerts;
-        });
+        const foundedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
         this.copyAll = foundedIndex >= 0 ? false : true;
-        this.sort.sortChange.subscribe(() => {});
+        this.sort.sortChange.subscribe(() => {
+        });
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
 
@@ -143,7 +136,7 @@ export class ContactsGridComponent implements OnInit {
                 } else {
                     if (record.firstName) {
                         this.contactInfoByGroupsService
-                            .get({ oid: record.contactInfoByGroupId })
+                            .get({oid: record.contactInfoByGroupId})
                             .subscribe((data: any) => {
                                 if (data) {
                                     this.currentContactInfoByGroup = data;
@@ -167,7 +160,8 @@ export class ContactsGridComponent implements OnInit {
                                             .update(
                                                 this.currentContactInfoByGroup
                                             )
-                                            .subscribe(() => {});
+                                            .subscribe(() => {
+                                            });
                                     }
                                 }
                             });
@@ -187,16 +181,15 @@ export class ContactsGridComponent implements OnInit {
         } else {
             value.copyAlerts = true;
         }
-        const unselectedIndex = _.findIndex(this.contactsData, (contact) => {
-            return !contact.copyAlerts;
-        });
+        const unselectedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
         this.copyAll = unselectedIndex >= 0 ? false : true;
 
         value.groupId = this.sharedService.currentUser.groupId;
 
         this.contactInfoByGroupsService
             .update(value)
-            .subscribe((data: any) => {});
+            .subscribe((data: any) => {
+            });
     }
 
     public UpdateAllCopyAlertsValues() {
@@ -206,7 +199,8 @@ export class ContactsGridComponent implements OnInit {
             contact.GroupId = this.sharedService.currentUser.groupId;
             this.contactInfoByGroupsService
                 .update(contact)
-                .subscribe((data: any) => {});
+                .subscribe((data: any) => {
+                });
         });
     }
 
@@ -242,7 +236,8 @@ export class ContactsGridComponent implements OnInit {
                         }
                     });
             }
-        } catch (e) { }
+        } catch (e) {
+        }
     }
 
     initializeImporter() {

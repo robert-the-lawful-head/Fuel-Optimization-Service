@@ -1,12 +1,12 @@
 <nav class="main-menu">
     <ul>
         <li
-            class="menu-item"
+            #rla="routerLinkActive"
             *ngFor="let item of menuItems"
             [ngClass]="getLiClasses(item, rla.isActive)"
-            #rla="routerLinkActive"
-            routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
+            class="menu-item"
+            routerLinkActive="active"
         >
             <div *ngIf="item.groupTitle; then group; else default"></div>
 
@@ -21,30 +21,30 @@
                 <div *ngIf="!item.sub; then simple; else sub"></div>
 
                 <ng-template #simple>
-                    <a *ngIf="item.routing"
-                       href="#"
+                    <a (click)="toggle($event, item, this)"
+                       *ngIf="item.routing"
                        class="item-link"
-                       routerLink="{{ item.routing }}"
-                       (click)="toggle($event, item, this)">
+                       href="#"
+                       routerLink="{{ item.routing }}">
                         <span *ngIf="isHidden(item) != true" class="text">
                             {{
                             item.title
                             }}
                         </span>
 
-                        <span class="item-badge"
-                              *ngIf="item.badge && item.badge.text"
-                              [ngStyle]="getStyles(item.badge)">{{ item.badge.text }}</span>
+                        <span *ngIf="item.badge && item.badge.text"
+                              [ngStyle]="getStyles(item.badge)"
+                              class="item-badge">{{ item.badge.text }}</span>
 
                         <span class="icon">
-                            <i class="icon-wrap {{ item.icon.class }}"
-                               *ngIf="item.icon && item.icon.class"
-                               [ngStyle]="getStyles(item.icon)"></i>
+                            <i *ngIf="item.icon && item.icon.class"
+                               [ngStyle]="getStyles(item.icon)"
+                               class="icon-wrap {{ item.icon.class }}"></i>
                         </span>
                     </a>
                     <a *ngIf="item.href"
-                       href="{{ item.href}}"
                        class="item-link"
+                       href="{{ item.href}}"
                        target="{{item.target}}">
                         <span *ngIf="isHidden(item) != true" class="text">
                             {{
@@ -52,24 +52,24 @@
                             }}
                         </span>
 
-                        <span class="item-badge"
-                              *ngIf="item.badge && item.badge.text"
-                              [ngStyle]="getStyles(item.badge)">{{ item.badge.text }}</span>
+                        <span *ngIf="item.badge && item.badge.text"
+                              [ngStyle]="getStyles(item.badge)"
+                              class="item-badge">{{ item.badge.text }}</span>
 
                         <span class="icon">
-                            <i class="icon-wrap {{ item.icon.class }}"
-                               *ngIf="item.icon && item.icon.class"
-                               [ngStyle]="getStyles(item.icon)"></i>
+                            <i *ngIf="item.icon && item.icon.class"
+                               [ngStyle]="getStyles(item.icon)"
+                               class="icon-wrap {{ item.icon.class }}"></i>
                         </span>
                     </a>
-                    <button *ngIf="isHidden(item) != true"
-                            class="tooltip-button"
-                            #tooltip="ngbPopover"
-                            [popoverTitle]="item.title"
+                    <button #tooltip="ngbPopover"
+                            (hidden)="tooltipHidden()"
+                            *ngIf="isHidden(item) != true"
                             [ngbPopover]="tooltipContent"
-                            triggers="manual"
+                            [popoverTitle]="item.title"
+                            class="tooltip-button"
                             placement="right"
-                            (hidden)="tooltipHidden()"></button>
+                            triggers="manual"></button>
                     <ng-template #tooltipContent>
                         {{ item.tooltip }}
                         <div class="popover-actions">
@@ -81,43 +81,43 @@
                 <ng-template #sub>
                     <!-- Item with sub -->
                     <a
-                        href="#"
-                        class="item-link"
                         (click)="toggle($event, item, this)"
+                        class="item-link"
+                        href="#"
                     >
                         <span class="text">{{ item.title }}</span>
 
                         <span
-                            class="item-badge"
                             *ngIf="item.badge && item.badge.text"
                             [ngStyle]="getStyles(item.badge)"
-                            >{{ item.badge.text }}</span
+                            class="item-badge"
+                        >{{ item.badge.text }}</span
                         >
 
-                        <span class="caret" *ngIf="item.sub"></span>
+                        <span *ngIf="item.sub" class="caret"></span>
 
                         <span class="icon">
                             <i
-                                class="icon-wrap {{ item.icon.class }}"
                                 *ngIf="item.icon && item.icon.class"
                                 [ngStyle]="getStyles(item.icon)"
+                                class="icon-wrap {{ item.icon.class }}"
                             ></i>
                         </span>
                     </a>
 
                     <!-- Menu sub -->
-                    <ul class="sub" *ngIf="!item.groupTitle && item.sub">
+                    <ul *ngIf="!item.groupTitle && item.sub" class="sub">
                         <li
-                            class="menu-item"
+                            #rla="routerLinkActive"
                             *ngFor="let itemSub of item.sub"
                             [ngClass]="getLiClasses(itemSub, rla.isActive)"
-                            #rla="routerLinkActive"
+                            class="menu-item"
                             routerLinkActive="active"
                         >
                             <a
+                                class="item-link"
                                 href="#"
                                 routerLink="{{ itemSub.routing }}"
-                                class="item-link"
                             >
                                 <span class="text">{{ itemSub.title }}</span>
                             </a>

@@ -1,10 +1,4 @@
-import {
-    Component,
-    OnInit,
-    ViewChildren,
-    QueryList,
-    AfterViewInit,
-} from '@angular/core';
+import { AfterViewInit, Component, OnInit, QueryList, ViewChildren, } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IMenuItem } from './menu-item';
 import { MenuService } from './menu.service';
@@ -30,7 +24,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
         private menuService: MenuService,
         private sharedService: SharedService,
         private userService: UserService
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         this.getMenuItems();
@@ -127,7 +122,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
         const tooltipsArr = this.priceTooltips.toArray();
         if (this.tooltipIndex === 1) {
             this.user.goOverTutorial = true;
-            this.userService.update(this.user).subscribe(() => {});
+            this.userService.update(this.user).subscribe(() => {
+            });
         }
         if (tooltipsArr.length > this.tooltipIndex) {
             setTimeout(() => {

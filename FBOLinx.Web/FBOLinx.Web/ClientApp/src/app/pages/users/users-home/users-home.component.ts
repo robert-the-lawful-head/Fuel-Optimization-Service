@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import {
-    MatDialog,
-} from '@angular/material/dialog';
+import { MatDialog, } from '@angular/material/dialog';
 
 // Services
 import { UserService } from '../../../services/user.service';
@@ -23,7 +21,8 @@ export class UsersHomeComponent implements OnInit {
     constructor(
         public newUserDialog: MatDialog,
         private userService: UserService
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         this.loadInitialData();

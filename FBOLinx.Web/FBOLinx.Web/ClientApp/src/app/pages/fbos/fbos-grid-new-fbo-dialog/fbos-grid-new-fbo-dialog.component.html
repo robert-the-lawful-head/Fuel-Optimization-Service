@@ -1,32 +1,32 @@
 <h1 mat-dialog-title>New FBO</h1>
 <div mat-dialog-content>
-    <app-airport-autocomplete [airportContainerModel]="data"
-                              (valueChange)="airportValueChanged($event)"></app-airport-autocomplete>
+    <app-airport-autocomplete (valueChange)="airportValueChanged($event)"
+                              [airportContainerModel]="data"></app-airport-autocomplete>
     <mat-form-field *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0">
-        <mat-select placeholder="FBO"
+        <mat-select (ngModelChange)="fboSelectionChange()"
                     [(ngModel)]="data.acukwikFbo"
-                    (ngModelChange)="fboSelectionChange()">
+                    placeholder="FBO">
             <mat-option *ngFor="let acukwikFbo of dataSources.acukwikFbos"
                         [value]="acukwikFbo">{{ acukwikFbo.handlerLongName }}</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field *ngIf="data.acukwikFbo">
         <mat-label>Group</mat-label>
-        <input matInput
+        <input [(ngModel)]="data.group"
                [value]="data.group"
-               [(ngModel)]="data.group">
+               matInput>
     </mat-form-field>
 </div>
-<div class="mt-2 text-center" style="color:red;" *ngIf="errorHappened">
+<div *ngIf="errorHappened" class="mt-2 text-center" style="color:red;">
     <p>FBO not saved, please contact us to investigate the issue.</p>
 </div>
 <div class="mt-2 text-right">
-    <button mat-flat-button
-            color="accent"
-            (click)="onSaveClick(data)"
+    <button (click)="onSaveClick(data)"
+            [disabled]="!data.acukwikFboHandlerId"
             class="mr-1"
-            [disabled]="!data.acukwikFboHandlerId">
+            color="accent"
+            mat-flat-button>
         Add FBO
     </button>
-    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

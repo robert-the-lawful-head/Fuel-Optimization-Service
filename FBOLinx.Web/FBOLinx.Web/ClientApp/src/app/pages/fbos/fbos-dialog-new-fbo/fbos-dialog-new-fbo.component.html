@@ -1,35 +1,35 @@
 <h1 mat-dialog-title>New FBO</h1>
 <div mat-dialog-content>
     <app-airport-autocomplete
-        [airportContainerModel]="data"
         (valueChange)="airportValueChanged($event)"
+        [airportContainerModel]="data"
     ></app-airport-autocomplete>
     <mat-form-field
         *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0"
     >
         <mat-select
+            (ngModelChange)="fboSelectionChange()"
+            [(ngModel)]="data.acukwikFbo"
             id="newFbo"
             name="ddlNewFbo"
-            [(ngModel)]="data.acukwikFbo"
-            (ngModelChange)="fboSelectionChange()"
         >
             <mat-option
                 *ngFor="let acukwikFbo of dataSources.acukwikFbos"
                 [value]="acukwikFbo"
-                >{{ acukwikFbo.handlerLongName }}</mat-option
+            >{{ acukwikFbo.handlerLongName }}</mat-option
             >
         </mat-select>
     </mat-form-field>
 </div>
 <div class="mt-2 text-center">
     <button
-        mat-flat-button
-        color="accent"
         (click)="onSaveChanges()"
-        class="mr-1"
         [disabled]="!data.acukwikFboHandlerId"
+        class="mr-1"
+        color="accent"
+        mat-flat-button
     >
         Add FBO
     </button>
-    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

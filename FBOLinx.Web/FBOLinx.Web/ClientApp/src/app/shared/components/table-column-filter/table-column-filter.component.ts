@@ -167,7 +167,7 @@ export class TableColumnFilterComponent implements OnInit {
         return true;
       }
 
-      function filterCallback(element, index, array): boolean {
+      const filterCallback = (element, index, array): boolean => {
         if (element.isGlobal) {
           if (!element.columns) {
             if (!data) {
@@ -254,7 +254,7 @@ export class TableColumnFilterComponent implements OnInit {
             -1
           );
         }
-      }
+      };
 
       const trueFilters = parsedFilters.filter(filterCallback);
 

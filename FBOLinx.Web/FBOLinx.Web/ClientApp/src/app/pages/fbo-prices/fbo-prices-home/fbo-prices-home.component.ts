@@ -5,7 +5,6 @@ import {
   AfterViewInit,
   ViewChildren,
   QueryList,
-  HostListener,
   Input,
   ViewChild
 } from '@angular/core';
@@ -61,8 +60,11 @@ export interface TailLookupResponse {
 })
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() isCsr?: boolean;
-
     @ViewChildren('tooltip') priceTooltips: QueryList<any>;
+    @ViewChild('retailFeeAndTaxBreakdown') private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
+
     // Members
     pricingLoader = 'pricing-loader';
     stagedPricingLoader = 'staged-pricing-loader';
@@ -117,12 +119,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     tooltipSubscription: any;
     tailNumberFormControlSubscription: any;
 
-    layoutChanged: boolean;
-
-    @ViewChild('retailFeeAndTaxBreakdown') private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-    @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-    @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
-
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
         private fboPricesService: FbopricesService,
@@ -140,11 +136,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     ngOnInit(): void {
         this.resetAll();
-        this.onResize({
-            target: {
-                innerWidth: window.innerWidth
-            }
-        });
     }
 
     ngAfterViewInit(): void {
@@ -279,10 +270,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         let isRetailExist = false;
         let isCostExist = false;
         for (const price of this.currentPrices) {
-            if (price.product == "JetA Retail")
+            if (price.product === 'JetA Retail') {
                 isRetailExist = true;
-            else if (price.product == "Jet A Cost")
+            }
+            else if (price.product === 'Jet A Cost') {
                 isCostExist = true;
+ }
 
             if (price.product === 'JetA Retail' && this.jtRetail > 0) {
                 price.oid = 0;
@@ -535,7 +528,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
 
                     if (this.currentFboPriceJetARetail.effectiveTo) {
-                        var tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo);
+                        const tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo);
                         this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
 
                         this.currentFboPriceJetARetail.effectiveTo =
@@ -581,20 +574,20 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.stagedFboPriceJetACost = this.getStagedPriceByProduct('JetA Cost');
                     this.stagedFboPriceJetARetail = this.getStagedPriceByProduct('JetA Retail');
 
-                    
 
-                    //if (this.stagedFboPriceJetARetail.effectiveTo) {
+
+                    // if (this.stagedFboPriceJetARetail.effectiveTo) {
                     //    this.stagedFboPriceJetARetail.effectiveTo =
                     //        moment(this.stagedFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
 
                     //    if (!this.stagedPricingEffectiveFrom)
                     //        this.stagedPricingEffectiveFrom = new Date(this.stagedFboPriceJetARetail.effectiveTo);
-                    //}
+                    // }
 
-                    //if (this.stagedFboPriceJetACost.effectiveTo) {
+                    // if (this.stagedFboPriceJetACost.effectiveTo) {
                     //    this.stagedFboPriceJetACost.effectiveTo =
                     //        moment(this.stagedFboPriceJetACost.effectiveTo).format('MM/DD/YYYY');
-                    //}
+                    // }
 
                     observer.next();
                 }, (error: any) => {
@@ -657,15 +650,15 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         this.stagedJetCost = '';
 
         if (this.currentFboPriceJetARetail.effectiveTo) {
-            var tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'days');
+            const tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'days');
             this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
         }
         else if (!this.stagedPricingEffectiveFrom && this.currentFboPriceJetACost.effectiveTo) {
-            var tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetACost.effectiveTo).add(1, 'days');
+            const tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetACost.effectiveTo).add(1, 'days');
             this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
         }
         else {
-            var tempStagedPricingEffectiveFrom = moment(this.stagedFboPriceJetARetail.effectiveTo).add(1, 'days');
+            const tempStagedPricingEffectiveFrom = moment(this.stagedFboPriceJetARetail.effectiveTo).add(1, 'days');
             this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
         }
 
@@ -797,14 +790,5 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 this.costFeeAndTaxBreakdown.performRecalculation();
             }
         });
-    }
-
-    @HostListener('window:resize', ['$event'])
-    private onResize(event: any) {
-        if (event.target.innerWidth <= 1425) {
-            this.layoutChanged = true;
-        } else {
-            this.layoutChanged = false;
-        }
     }
 }

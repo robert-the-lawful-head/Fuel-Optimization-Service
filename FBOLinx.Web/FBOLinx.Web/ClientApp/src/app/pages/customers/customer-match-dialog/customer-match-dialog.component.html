@@ -2,24 +2,30 @@
 <div mat-dialog-content>
     <div *ngIf="data.isAircraftMatch">
         <h6>Match by Aircraft Tails</h6>
-        <p *ngIf="data.matchCustomerName">Company name: <a style="color: #007bff !important;" href="/default-layout/customers/{{data.matchCustomerOid}}" target="_blank">{{data.matchCustomerName}}</a></p>
+        <p *ngIf="data.matchCustomerName">Company name: <a href="/default-layout/customers/{{data.matchCustomerOid}}"
+                                                           style="color: #007bff !important;"
+                                                           target="_blank">{{data.matchCustomerName}}</a></p>
         <p>List of Aircraft Tails</p>
         <ul>
             <li *ngFor="let number of data.aircraftTails">
                 {{number}}
             </li>
         </ul>
-        <hr />
+        <hr/>
     </div>
     <div *ngIf="data.isNameMatch">
         <h6>Match by Company Name</h6>
-        <p *ngIf="data.matchCustomerName">Company name: <a style="color: #007bff !important;" href="/default-layout/customers/{{data.matchNameCustomerOid}}" target="_blank">{{data.matchNameCustomer}}</a></p>
-        <hr />
+        <p *ngIf="data.matchCustomerName">Company name: <a href="/default-layout/customers/{{data.matchNameCustomerOid}}"
+                                                           style="color: #007bff !important;"
+                                                           target="_blank">{{data.matchNameCustomer}}</a></p>
+        <hr/>
     </div>
     <div *ngIf="data.isContactMatch">
         <h6>Match by Company Contact</h6>
-        <p *ngIf="data.matchCustomerName">Company name: <a style="color: #007bff !important;" href="/default-layout/customers/{{data.matchContactCustomerOid}}" target="_blank">{{data.matchNameCustomer}}</a></p>
-        <hr />
+        <p *ngIf="data.matchCustomerName">Company name: <a href="/default-layout/customers/{{data.matchContactCustomerOid}}"
+                                                           style="color: #007bff !important;"
+                                                           target="_blank">{{data.matchNameCustomer}}</a></p>
+        <hr/>
     </div>
     <div style="margin-top:10px; margin-bottom:10px;">
         <span>
@@ -29,7 +35,7 @@
     </div>
 </div>
 <div class="mt-2 text-center">
-    <button ni-button [view]="'basic'" (click)="onCancelClick()" class="mr-1">Remind Me Later</button>
-    <button ni-button [view]="'accent'" (click)="keepSeparate()" class="mr-1">Keep Separate</button>
-    <button ni-button [view]="'primary'" (click)="mergeCustomers()" class="mr-1">Merge Customers</button>    
+    <button (click)="onCancelClick()" [view]="'basic'" class="mr-1" ni-button>Remind Me Later</button>
+    <button (click)="keepSeparate()" [view]="'accent'" class="mr-1" ni-button>Keep Separate</button>
+    <button (click)="mergeCustomers()" [view]="'primary'" class="mr-1" ni-button>Merge Customers</button>
 </div>

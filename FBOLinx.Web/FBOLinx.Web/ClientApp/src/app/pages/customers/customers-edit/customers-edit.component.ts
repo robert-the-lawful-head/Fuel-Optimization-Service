@@ -1,29 +1,31 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-import {combineLatest} from 'rxjs';
-import {find} from 'lodash';
+import { combineLatest, EMPTY, of } from 'rxjs';
+import { find } from 'lodash';
 
 // Services
-import {CustomcustomertypesService} from '../../../services/customcustomertypes.service';
-import {CustomeraircraftsService} from '../../../services/customeraircrafts.service';
-import {ContactinfobygroupsService} from '../../../services/contactinfobygroups.service';
-import {ContactsService} from '../../../services/contacts.service';
-import {CustomerinfobygroupService} from '../../../services/customerinfobygroup.service';
-import {CustomerCompanyTypesService} from '../../../services/customer-company-types.service';
-import {CustomercontactsService} from '../../../services/customercontacts.service';
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
+import { ContactsService } from '../../../services/contacts.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { CustomerCompanyTypesService } from '../../../services/customer-company-types.service';
+import { CustomercontactsService } from '../../../services/customercontacts.service';
 import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbofeeandtaxomitsbycustomerService } from '../../../services/fbofeeandtaxomitsbycustomer.service';
-import {PricingtemplatesService} from '../../../services/pricingtemplates.service';
-import {SharedService} from '../../../layouts/shared-service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 // Components
-import {CustomerCompanyTypeDialogComponent} from '../customer-company-type-dialog/customer-company-type-dialog.component';
+import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
 import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
+import { catchError, debounceTime, switchMap } from 'rxjs/operators';
 
 const BREADCRUMBS: any[] = [
     {
@@ -46,6 +48,9 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./customers-edit.component.scss'],
 })
 export class CustomersEditComponent implements OnInit {
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
+
     // Members
     pageTitle = 'Edit Customer';
     breadcrumb = BREADCRUMBS;
@@ -62,12 +67,8 @@ export class CustomersEditComponent implements OnInit {
     customerCompanyTypes: any[];
     hasContactForPriceDistribution = false;
     customerForm: FormGroup;
-    canSave: boolean;
-    public feesAndTaxes: Array<any>;
-    public locationChangedSubscription: any;
-
-    @ViewChild('priceBreakdownPreview')
-    private priceBreakdownPreview: PriceBreakdownComponent;
+    feesAndTaxes: Array<any>;
+    locationChangedSubscription: any;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -86,8 +87,8 @@ export class CustomersEditComponent implements OnInit {
         private dialog: MatDialog,
         private newContactDialog: MatDialog,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
-        private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService
-
+        private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService,
+        private snackBar: MatSnackBar,
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
@@ -147,9 +148,31 @@ export class CustomersEditComponent implements OnInit {
             show100Ll: [this.customerInfoByGroup.show100Ll],
             customerMarginTemplate: [this.customCustomerType.customerType],
         });
-        this.customerForm.valueChanges.subscribe(() => {
-            this.canSave = true;
-        });
+        this.customerForm.valueChanges.pipe(
+            debounceTime(1000),
+            switchMap(async () => {
+                const customerInfoByGroup = {
+                    ...this.customerInfoByGroup,
+                    ...this.customerForm.value,
+                };
+                this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
+
+                await this.customerInfoByGroupService.update(customerInfoByGroup).toPromise();
+                if (!this.customCustomerType.oid || this.customCustomerType.oid === 0) {
+                    await this.customCustomerTypesService.add(this.customCustomerType).toPromise();
+                } else {
+                    await this.customCustomerTypesService.update(this.customCustomerType).toPromise();
+                }
+            }),
+            catchError((err: Error) => {
+                console.error(err);
+                this.snackBar.open(err.message, '', {
+                    duration: 5000,
+                    panelClass: ['blue-snackbar'],
+                });
+                return of(EMPTY);
+            })
+        ).subscribe();
         this.customerForm.controls.customerCompanyType.valueChanges.subscribe(type => {
             if (type < 0) {
                 this.customerCompanyTypeChanged();
@@ -360,7 +383,7 @@ export class CustomersEditComponent implements OnInit {
         }
     }
 
-    public omitFeeAndTaxCheckChanged(feeAndTax: any): void {
+    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
         if (!feeAndTax.omitsByCustomer) {
             feeAndTax.omitsByCustomer = [];
         }
@@ -453,8 +476,8 @@ export class CustomersEditComponent implements OnInit {
     private loadCustomerFeesAndTaxes(): void {
         this.fboFeesAndTaxesService
             .getByFboAndCustomer(this.sharedService.currentUser.fboId, this.customerInfoByGroup.customerId).subscribe(
-                (response: any[]) => {
-                    this.feesAndTaxes = response;
-                });
+            (response: any[]) => {
+                this.feesAndTaxes = response;
+            });
     }
 }

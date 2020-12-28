@@ -1,27 +1,27 @@
 ﻿:host {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
-  form {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    flex: 1 1 auto;
+    height: 100%;
 
-    .mat-dialog-content {
-      flex: 1 1 auto;
-
-      .copyAlerts {
-        height: 100%;
+    form {
         display: flex;
-        align-items: flex-end;
-        padding-bottom: 1.25em;
-      }
-    }
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 1 1 auto;
 
-    .mat-dialog-actions {
-      margin-bottom: 0;
+        .mat-dialog-content {
+            flex: 1 1 auto;
+
+            .copyAlerts {
+                height: 100%;
+                display: flex;
+                align-items: flex-end;
+                padding-bottom: 1.25em;
+            }
+        }
+
+        .mat-dialog-actions {
+            margin-bottom: 0;
+        }
     }
-  }
 }

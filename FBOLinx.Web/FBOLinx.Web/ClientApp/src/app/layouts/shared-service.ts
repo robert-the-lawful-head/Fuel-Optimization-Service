@@ -18,6 +18,26 @@ export class DashboardSettings {
 
 @Injectable()
 export class SharedService {
+  dashboardSettings: DashboardSettings = new DashboardSettings();
+
+  priceTemplateMessageSource = new BehaviorSubject(
+    'Update Pricing Template'
+  );
+  currentMessage = this.priceTemplateMessageSource.asObservable();
+
+  priceUpdateMessage = new BehaviorSubject('Enable button');
+  priceMessage = this.priceUpdateMessage.asObservable();
+
+  // Observable string sources
+  titleChangeSource = new Subject();
+  emitChangeSource = new Subject();
+  valueChangeSource = new Subject();
+
+  // Observable string streams
+  titleChanged$ = this.titleChangeSource.asObservable();
+  changeEmitted$ = this.emitChangeSource.asObservable();
+  valueChanged$ = this.valueChangeSource.asObservable();
+
   // Private members
   private _currentUser: User;
 
@@ -66,26 +86,6 @@ export class SharedService {
   set currentUser(user: User) {
     this._currentUser = user;
   }
-
-  dashboardSettings: DashboardSettings = new DashboardSettings();
-
-  public priceTemplateMessageSource = new BehaviorSubject(
-    'Update Pricing Template'
-  );
-  currentMessage = this.priceTemplateMessageSource.asObservable();
-
-  public priceUpdateMessage = new BehaviorSubject('Enable button');
-  priceMessage = this.priceUpdateMessage.asObservable();
-
-  // Observable string sources
-  public titleChangeSource = new Subject();
-  public emitChangeSource = new Subject();
-  public valueChangeSource = new Subject();
-
-  // Observable string streams
-  titleChanged$ = this.titleChangeSource.asObservable();
-  changeEmitted$ = this.emitChangeSource.asObservable();
-  valueChanged$ = this.valueChangeSource.asObservable();
 
   NotifyPricingTemplateComponent(message: string) {
     this.priceTemplateMessageSource.next(message);
