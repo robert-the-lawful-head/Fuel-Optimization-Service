@@ -135,9 +135,8 @@ export class DefaultLayoutComponent implements OnInit {
       });
   }
 
-  isConductorGroup() {
-    return this.sharedService.currentUser.role === 3 &&
-      (window.location.pathname.startsWith('/default-layout/groups') || window.location.pathname.startsWith('/default-layout/fbos'));
+  isSidebarInvisible() {
+    return this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole;
   }
 
   get isCsr() {

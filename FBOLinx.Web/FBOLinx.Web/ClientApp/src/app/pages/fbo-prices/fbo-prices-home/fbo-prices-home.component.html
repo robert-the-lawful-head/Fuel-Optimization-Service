@@ -246,7 +246,8 @@
             </div>
         </ni-card>
 
-        <ni-card class="prices-board-item prices-board-first-column"
+        <ni-card *ngIf="!isCsr"
+                 class="prices-board-item prices-board-first-column"
                  title="Staged Pricing"
                  subtitle="Costs are always kept confidential"
                  bgColor="warning"
@@ -361,7 +362,8 @@
                            overlayColor="rgba(0, 0, 0, 0.03)"></ngx-ui-loader>
         </ni-card>
 
-        <ni-card class="prices-board-item prices-board-second-column"
+        <ni-card *ngIf="!isCsr"
+                 class="prices-board-item prices-board-second-column"
                  title="Stage A Price"
                  bgColor="warning"
                  headerBgColor="warning"
