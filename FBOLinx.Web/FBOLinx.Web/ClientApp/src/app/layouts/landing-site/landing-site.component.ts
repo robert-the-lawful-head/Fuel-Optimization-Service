@@ -98,6 +98,11 @@ export class LandingSiteLayoutComponent {
     private requestDemoSuccessDialog: MatDialog
   ) {}
 
+  @HostListener('window:scroll', ['$event'])
+  checkScroll(): void {
+    this.isSticky = window.pageYOffset >= 171;
+  }
+
   onLogin() {
     const data = {};
     const dialogRef = this.loginDialog.open(
@@ -250,10 +255,5 @@ export class LandingSiteLayoutComponent {
       default:
         break;
     }
-  }
-
-  @HostListener('window:scroll', ['$event'])
-  checkScroll(): void {
-    this.isSticky = window.pageYOffset >= 171;
   }
 }

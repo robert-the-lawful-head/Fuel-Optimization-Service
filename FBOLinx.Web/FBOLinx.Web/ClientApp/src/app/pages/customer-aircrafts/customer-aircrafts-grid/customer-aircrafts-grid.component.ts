@@ -36,6 +36,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
     @Input() customer: any;
     @Input() customerAircraftsData: Array<any>;
     @Input() pricingTemplatesData: Array<any>;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     // Public Members
     public customerAircraftsDataSource: MatTableDataSource<any> = null;
@@ -51,9 +53,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
     public aircraftTypes: Array<any>;
     public isLoadingAircraftTypes = false;
     public pageIndex = 0;
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 

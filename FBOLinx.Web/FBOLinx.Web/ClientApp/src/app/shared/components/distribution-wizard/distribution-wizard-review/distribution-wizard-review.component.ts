@@ -15,11 +15,11 @@ import { SharedService } from '../../../../layouts/shared-service';
   styleUrls: ['./distribution-wizard-review.component.scss'],
   providers: [SharedService],
 })
-export class DistributionWizardReviewComponent implements OnInit {
+export class DistributionWizardReviewComponent {
+  @Output() idChanged1: EventEmitter<any> = new EventEmitter();
+
   public navigationSubscription: any;
   public previewEmail: string;
-
-  @Output() idChanged1: EventEmitter<any> = new EventEmitter();
 
   constructor(
     public dialogRef: MatDialogRef<DistributionWizardReviewComponent>,
@@ -36,10 +36,6 @@ export class DistributionWizardReviewComponent implements OnInit {
         window.scrollTo(0, 0);
       }
     });
-  }
-
-  ngOnInit() {
-
   }
 
   public closeDialog() {

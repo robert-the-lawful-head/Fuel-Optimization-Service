@@ -61,8 +61,11 @@ export interface TailLookupResponse {
 })
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() isCsr?: boolean;
-
     @ViewChildren('tooltip') priceTooltips: QueryList<any>;
+    @ViewChild('retailFeeAndTaxBreakdown') private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
+
     // Members
     pricingLoader = 'pricing-loader';
     stagedPricingLoader = 'staged-pricing-loader';
@@ -117,12 +120,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     tooltipSubscription: any;
     tailNumberFormControlSubscription: any;
 
-    layoutChanged: boolean;
-
-    @ViewChild('retailFeeAndTaxBreakdown') private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-    @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-    @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
-
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
         private fboPricesService: FbopricesService,
@@ -140,11 +137,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     ngOnInit(): void {
         this.resetAll();
-        this.onResize({
-            target: {
-                innerWidth: window.innerWidth
-            }
-        });
     }
 
     ngAfterViewInit(): void {
@@ -799,14 +791,5 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 this.costFeeAndTaxBreakdown.performRecalculation();
             }
         });
-    }
-
-    @HostListener('window:resize', ['$event'])
-    private onResize(event: any) {
-        if (event.target.innerWidth <= 1425) {
-            this.layoutChanged = true;
-        } else {
-            this.layoutChanged = false;
-        }
     }
 }

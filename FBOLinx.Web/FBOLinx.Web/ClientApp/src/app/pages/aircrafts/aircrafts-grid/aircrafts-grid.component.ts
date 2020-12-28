@@ -21,6 +21,8 @@ export class AircraftsGridComponent implements OnInit {
     @Output() editAircraftClicked = new EventEmitter<any>();
     @Input() aircraftsData: Array<any>;
     @Input() pricingTemplatesData: Array<any>;
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     // Public Members
     public aircraftsDataSource: MatTableDataSource<any> = null;
@@ -36,9 +38,6 @@ export class AircraftsGridComponent implements OnInit {
     public aircraftTypes: Array<any>;
     public isLoadingAircraftTypes = false;
     public pageIndex = 0;
-
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,

@@ -48,6 +48,9 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./customers-edit.component.scss'],
 })
 export class CustomersEditComponent implements OnInit {
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
+
     // Members
     pageTitle = 'Edit Customer';
     breadcrumb = BREADCRUMBS;
@@ -64,11 +67,8 @@ export class CustomersEditComponent implements OnInit {
     customerCompanyTypes: any[];
     hasContactForPriceDistribution = false;
     customerForm: FormGroup;
-    public feesAndTaxes: Array<any>;
-    public locationChangedSubscription: any;
-
-    @ViewChild('priceBreakdownPreview')
-    private priceBreakdownPreview: PriceBreakdownComponent;
+    feesAndTaxes: Array<any>;
+    locationChangedSubscription: any;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -383,7 +383,7 @@ export class CustomersEditComponent implements OnInit {
         }
     }
 
-    public omitFeeAndTaxCheckChanged(feeAndTax: any): void {
+    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
         if (!feeAndTax.omitsByCustomer) {
             feeAndTax.omitsByCustomer = [];
         }

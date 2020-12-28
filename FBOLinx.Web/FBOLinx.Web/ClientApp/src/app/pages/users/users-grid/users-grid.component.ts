@@ -21,6 +21,8 @@ export class UsersGridComponent implements OnInit {
     @Input() usersData: Array<any>;
     @Input() fboInfo: any;
     @Input() groupInfo: any;
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     public usersDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [
@@ -32,9 +34,6 @@ export class UsersGridComponent implements OnInit {
         'delete',
     ];
     public resultsLength = 0;
-
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     constructor(
         private userService: UserService,

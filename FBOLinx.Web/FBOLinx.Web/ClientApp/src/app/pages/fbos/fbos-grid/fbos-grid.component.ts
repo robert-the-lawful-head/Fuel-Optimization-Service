@@ -32,6 +32,8 @@ export class FbosGridComponent implements OnInit {
     @Output() editFboClicked = new EventEmitter<any>();
     @Input() fbosData: Array<any>;
     @Input() groupInfo: any;
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     // Public Members
     public pageTitle = 'FBOs';
@@ -48,9 +50,6 @@ export class FbosGridComponent implements OnInit {
 
     public tableSortFbos = 'icao';
     public tableSortOrderFbos = 'asc';
-
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     constructor(
         private newFboDialog: MatDialog,

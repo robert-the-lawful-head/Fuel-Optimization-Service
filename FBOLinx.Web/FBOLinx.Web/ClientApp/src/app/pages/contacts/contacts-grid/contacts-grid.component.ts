@@ -22,6 +22,8 @@ export class ContactsGridComponent implements OnInit {
     @Output() newContactClicked = new EventEmitter<any>();
     @Output() editContactClicked = new EventEmitter<any>();
     @Input() contactsData: Array<any>;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
+
     public currentContactInfoByGroup: any;
     contactsDataSource: MatTableDataSource<any> = null;
     displayedColumns: string[] = [
@@ -34,8 +36,6 @@ export class ContactsGridComponent implements OnInit {
         'delete',
     ];
     public copyAll = false;
-
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 

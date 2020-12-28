@@ -25,6 +25,14 @@ export class ColorDirective implements OnInit {
         this.currentColor = this.defaultColor;
     }
 
+    @HostListener('mouseenter') onMouseEnter() {
+        this.currentColor = this.hoveredColor;
+    }
+
+    @HostListener('mouseleave') onMouseLeave() {
+        this.currentColor = this.defaultColor;
+    }
+
     @HostBinding('style.color') get getColor() {
         return this.currentColor;
     }
@@ -33,11 +41,5 @@ export class ColorDirective implements OnInit {
         return true;
     }
 
-    @HostListener('mouseenter') onMouseEnter() {
-        this.currentColor = this.hoveredColor;
-    }
 
-    @HostListener('mouseleave') onMouseLeave() {
-        this.currentColor = this.defaultColor;
-    }
 }

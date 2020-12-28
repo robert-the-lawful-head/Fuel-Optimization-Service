@@ -46,6 +46,7 @@ export interface SampleCalculation {
   providers: [SharedService, PricingtemplatesService, FbopricesService, NgxUiLoaderService]
 })
 export class FeeAndTaxSettingsDialogComponent implements OnInit {
+  @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
 
   public calculationLoader = 'calculation-loader';
 
@@ -68,8 +69,6 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     inclusivePrice: 0
   };
   public requiresSaving = false;
-
-  @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Array<FeeAndTaxDialogData>,

@@ -86,6 +86,8 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     tableLocalStorageKey = 'fuel-req-table-settings';
 
@@ -98,9 +100,6 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     columns: ColumnType[] = [];
 
     dashboardSettings: any;
-
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     constructor(
         private sharedService: SharedService,

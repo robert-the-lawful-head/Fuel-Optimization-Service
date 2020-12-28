@@ -59,7 +59,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     // Members
     pageTitle = 'Groups';
     searchValue = '';
-    pageSettings: object = {
+    pageSettings: any = {
         pageSizes: [25, 50, 100, 'All'],
         pageSize: 25,
     };
@@ -109,7 +109,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 (this as GridComponent).parentDetails.parentKeyFieldValue
                     = ((this as GridComponent).parentDetails.parentRowData as { oid?: string }).oid;
             },
-            recordClick(args: RecordClickEventArgs) {
+            recordClick: (args: RecordClickEventArgs) => {
                 self.editFboClicked.emit(args.rowData);
             },
         };
