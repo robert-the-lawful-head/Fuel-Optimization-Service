@@ -1,7 +1,4 @@
-import {
-    Component,
-    Input,
-} from '@angular/core';
+import { Component, Input, } from '@angular/core';
 
 @Component({
     selector: 'app-contacts-home',
@@ -11,5 +8,6 @@ import {
 export class ContactsHomeComponent {
     @Input() contactsData: Array<any>;
 
-    constructor() {}
+    constructor() {
+    }
 }

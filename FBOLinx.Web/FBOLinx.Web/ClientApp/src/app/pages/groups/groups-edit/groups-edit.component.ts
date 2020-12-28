@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
@@ -47,7 +47,7 @@ export class GroupsEditComponent implements OnInit {
     ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
         if (id) {
-            this.groupsService.get({ oid: id }).subscribe((data: any) => {
+            this.groupsService.get({oid: id}).subscribe((data: any) => {
                 this.groupInfo = data;
             });
         }

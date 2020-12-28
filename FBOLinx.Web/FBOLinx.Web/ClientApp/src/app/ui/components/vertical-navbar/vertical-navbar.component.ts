@@ -18,5 +18,6 @@ export class VerticalNavbarComponent implements OnInit {
                 window.location.pathname.startsWith('/default-layout/fbos'));
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+    }
 }

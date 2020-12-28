@@ -39,7 +39,7 @@
     button[mat-menu-item] {
         padding-left: 32px;
         padding-right: 16px;
-        
+
         &.mat-menu-item-submenu-trigger::after {
             border-width: 5px 5px 5px 0;
             border-color: transparent currentColor transparent transparent;
@@ -50,15 +50,15 @@
 }
 
 .table-column-filter {
-  position: absolute;
-  right: 0;
-  top: -10px;
+    position: absolute;
+    right: 0;
+    top: -10px;
 }
 
 .export-import-menu {
-  position: absolute;
-  right: -40px;
-  top: 60px;
+    position: absolute;
+    right: -40px;
+    top: 60px;
 }
 
 

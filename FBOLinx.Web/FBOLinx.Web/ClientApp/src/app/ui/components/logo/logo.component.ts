@@ -7,7 +7,9 @@ import { Component, OnInit } from '@angular/core';
     host: {class: 'app-logo'},
 })
 export class LogoComponent implements OnInit {
-    constructor() {}
+    constructor() {
+    }
 
-    ngOnInit() {}
+    ngOnInit() {
+    }
 }

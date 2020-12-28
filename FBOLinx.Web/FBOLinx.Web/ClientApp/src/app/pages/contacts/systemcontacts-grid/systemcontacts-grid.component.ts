@@ -1,11 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    Output,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -41,7 +34,7 @@ export class SystemcontactsGridComponent implements OnInit {
     ];
     public copyAll = false;
 
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
@@ -57,7 +50,8 @@ export class SystemcontactsGridComponent implements OnInit {
         private contactInfoByGroupsService: ContactinfobygroupsService,
         private sharedService: SharedService,
         public newContactDialog: MatDialog
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         if (!this.contactsData) {
@@ -76,7 +70,8 @@ export class SystemcontactsGridComponent implements OnInit {
 
     // Public Methods
     public refreshTable() {
-        this.sort.sortChange.subscribe(() => {});
+        this.sort.sortChange.subscribe(() => {
+        });
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
         const unselectedIndex = _.findIndex(this.contactsData, (contact) => {
@@ -104,7 +99,7 @@ export class SystemcontactsGridComponent implements OnInit {
                     .subscribe(() => {
                         this.contactsData = this.contactsData.filter(c => c.oid !== record.oid);
                         this.refreshTable();
-                        this.fbocontactsService.updateFuelvendor({ fboId: this.sharedService.currentUser.fboId }).subscribe();
+                        this.fbocontactsService.updateFuelvendor({fboId: this.sharedService.currentUser.fboId}).subscribe();
                     });
             } else {
                 const updatedContact = {
@@ -120,7 +115,7 @@ export class SystemcontactsGridComponent implements OnInit {
                         }
                     }
                     this.refreshTable();
-                    this.fbocontactsService.updateFuelvendor({ fboId: this.sharedService.currentUser.fboId }).subscribe();
+                    this.fbocontactsService.updateFuelvendor({fboId: this.sharedService.currentUser.fboId}).subscribe();
                 });
             }
         });
@@ -210,7 +205,8 @@ export class SystemcontactsGridComponent implements OnInit {
                         }
                     });
             }
-        } catch (e) { }
+        } catch (e) {
+        }
     }
 
     initializeImporter() {

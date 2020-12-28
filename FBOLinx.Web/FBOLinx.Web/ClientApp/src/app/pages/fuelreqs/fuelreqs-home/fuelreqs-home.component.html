@@ -3,11 +3,11 @@
 <div class="after-breadcrumb">
     <div *ngIf="fuelreqsData">
         <app-fuelreqs-grid
-            [fuelreqsData]="fuelreqsData"
-            [filterStartDate]="filterStartDate"
-            [filterEndDate]="filterEndDate"
             (dateFilterChanged)="dateFilterChanged($event)"
             (exportTriggered)="export($event)"
+            [filterEndDate]="filterEndDate"
+            [filterStartDate]="filterStartDate"
+            [fuelreqsData]="fuelreqsData"
         ></app-fuelreqs-grid>
     </div>
     <div *ngIf="!(fuelreqsData)">

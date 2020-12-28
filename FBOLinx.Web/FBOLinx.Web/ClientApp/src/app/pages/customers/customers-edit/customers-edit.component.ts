@@ -1,28 +1,28 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-import {combineLatest, EMPTY, of} from 'rxjs';
-import {find} from 'lodash';
+import { combineLatest, EMPTY, of } from 'rxjs';
+import { find } from 'lodash';
 
 // Services
-import {CustomcustomertypesService} from '../../../services/customcustomertypes.service';
-import {CustomeraircraftsService} from '../../../services/customeraircrafts.service';
-import {ContactinfobygroupsService} from '../../../services/contactinfobygroups.service';
-import {ContactsService} from '../../../services/contacts.service';
-import {CustomerinfobygroupService} from '../../../services/customerinfobygroup.service';
-import {CustomerCompanyTypesService} from '../../../services/customer-company-types.service';
-import {CustomercontactsService} from '../../../services/customercontacts.service';
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
+import { ContactsService } from '../../../services/contacts.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { CustomerCompanyTypesService } from '../../../services/customer-company-types.service';
+import { CustomercontactsService } from '../../../services/customercontacts.service';
 import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbofeeandtaxomitsbycustomerService } from '../../../services/fbofeeandtaxomitsbycustomer.service';
-import {PricingtemplatesService} from '../../../services/pricingtemplates.service';
-import {SharedService} from '../../../layouts/shared-service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 // Components
-import {CustomerCompanyTypeDialogComponent} from '../customer-company-type-dialog/customer-company-type-dialog.component';
+import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
 import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 import { catchError, debounceTime, switchMap } from 'rxjs/operators';
@@ -156,7 +156,7 @@ export class CustomersEditComponent implements OnInit {
                     ...this.customerForm.value,
                 };
                 this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
-        
+
                 await this.customerInfoByGroupService.update(customerInfoByGroup).toPromise();
                 if (!this.customCustomerType.oid || this.customCustomerType.oid === 0) {
                     await this.customCustomerTypesService.add(this.customCustomerType).toPromise();
@@ -476,8 +476,8 @@ export class CustomersEditComponent implements OnInit {
     private loadCustomerFeesAndTaxes(): void {
         this.fboFeesAndTaxesService
             .getByFboAndCustomer(this.sharedService.currentUser.fboId, this.customerInfoByGroup.customerId).subscribe(
-                (response: any[]) => {
-                    this.feesAndTaxes = response;
-                });
+            (response: any[]) => {
+                this.feesAndTaxes = response;
+            });
     }
 }

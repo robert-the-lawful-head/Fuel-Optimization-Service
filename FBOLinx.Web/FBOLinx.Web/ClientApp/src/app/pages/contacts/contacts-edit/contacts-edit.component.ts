@@ -31,7 +31,8 @@ export class ContactsEditComponent {
         /\d/,
     ];
 
-    constructor() {}
+    constructor() {
+    }
 
     public saveEdit() {
         this.saveEditClicked.emit();

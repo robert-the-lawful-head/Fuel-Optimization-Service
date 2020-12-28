@@ -7,10 +7,10 @@
     </div>
 
     <ni-card
-        title="FBO: {{ fboInfo.fbo }}"
+        *ngIf="fboInfo && fboAirportInfo"
         [headerBgColor]="'info'"
         class="mb-0"
-        *ngIf="fboInfo && fboAirportInfo"
+        title="FBO: {{ fboInfo.fbo }}"
     >
         <div>
             <mat-tab-group>
@@ -24,72 +24,72 @@
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <input
+                                        [(ngModel)]="fboInfo.fbo"
                                         matInput
                                         placeholder="FBO Name"
-                                        [(ngModel)]="fboInfo.fbo"
                                     />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <input
+                                        [(ngModel)]="fboInfo.address"
                                         matInput
                                         placeholder="Address"
-                                        [(ngModel)]="fboInfo.address"
                                     />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <input
+                                        [(ngModel)]="fboAirportInfo.icao"
                                         matInput
                                         placeholder="ICAO"
-                                        [(ngModel)]="fboAirportInfo.icao"
                                     />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <input
+                                        [(ngModel)]="fboInfo.city"
                                         matInput
                                         placeholder="City"
-                                        [(ngModel)]="fboInfo.city"
                                     />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <input
+                                        [(ngModel)]="fboInfo.state"
                                         matInput
                                         placeholder="State"
-                                        [(ngModel)]="fboInfo.state"
                                     />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <input
+                                        [(ngModel)]="fboInfo.country"
                                         matInput
                                         placeholder="Country"
-                                        [(ngModel)]="fboInfo.country"
                                     />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <input
+                                        [(ngModel)]="fboInfo.zipCode"
                                         matInput
                                         placeholder="Zip Code"
-                                        [(ngModel)]="fboInfo.zipCode"
                                     />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <input
+                                        [(ngModel)]="fboInfo.website"
                                         matInput
                                         placeholder="Website"
-                                        [(ngModel)]="fboInfo.website"
                                     />
                                 </mat-form-field>
                             </div>
@@ -101,8 +101,8 @@
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <mat-select
-                                        placeholder="Group"
                                         [(ngModel)]="fboInfo.groupId"
+                                        placeholder="Group"
                                     >
                                         <mat-option
                                             *ngFor="let group of groups"
@@ -116,41 +116,43 @@
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <input
+                                        [(ngModel)]="fboInfo.fuelDeskEmail"
                                         matInput
                                         placeholder="Fuel Desk Email"
-                                        [(ngModel)]="fboInfo.fuelDeskEmail"
                                     />
                                 </mat-form-field>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-4">
                                 <mat-slide-toggle
-                                    color="accent"
                                     [(ngModel)]="fboInfo.active"
-                                    >Active</mat-slide-toggle
+                                    color="accent"
+                                >Active
+                                </mat-slide-toggle
                                 >
                             </div>
                             <div class="col-md-4">
                                 <mat-slide-toggle
-                                    color="warn"
                                     [(ngModel)]="fboInfo.suspended"
-                                    >Suspended</mat-slide-toggle
+                                    color="warn"
+                                >Suspended
+                                </mat-slide-toggle
                                 >
                             </div>
                         </div>
                         <div class="row mt-2">
                             <button
-                                mat-stroked-button
-                                color="green"
                                 (click)="saveEdit()"
                                 class="mr-1"
+                                color="green"
+                                mat-stroked-button
                             >
                                 <mat-icon>save</mat-icon>
                                 Save Changes
                             </button>
-                            <button mat-stroked-button (click)="cancelEdit()">
+                            <button (click)="cancelEdit()" mat-stroked-button>
                                 Cancel
                             </button>
                         </div>
@@ -161,8 +163,8 @@
                 <mat-tab label="Users">
                     <div class="mt-2">
                         <app-users-home
-                            [groupInfo]="groupInfo"
                             [fboInfo]="fboInfo"
+                            [groupInfo]="groupInfo"
                         ></app-users-home>
                     </div>
                 </mat-tab>

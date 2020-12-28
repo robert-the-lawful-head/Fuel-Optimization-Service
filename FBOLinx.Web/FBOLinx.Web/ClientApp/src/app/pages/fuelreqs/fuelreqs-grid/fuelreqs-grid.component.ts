@@ -1,13 +1,13 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     EventEmitter,
     Input,
-    Output,
-    OnInit,
-    ViewChild,
-    ChangeDetectionStrategy,
     OnChanges,
-    SimpleChanges
+    OnInit,
+    Output,
+    SimpleChanges,
+    ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -99,8 +99,8 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
 
     dashboardSettings: any;
 
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     constructor(
         private sharedService: SharedService,
@@ -120,8 +120,8 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
-                    ? { ...column, sort: this.sort.direction}
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    ? {...column, sort: this.sort.direction}
+                    : {id: column.id, name: column.name, hidden: column.hidden}
             );
 
             this.saveSettings();
@@ -168,9 +168,9 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
 
     refreshSort() {
         const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
-        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
+        this.sort.sort({id: null, start: sortedColumn?.sort || 'asc', disableClear: false});
+        this.sort.sort({id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false});
+        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({toState: 'active'});
     }
 
     applyFilter(filterValue: string) {

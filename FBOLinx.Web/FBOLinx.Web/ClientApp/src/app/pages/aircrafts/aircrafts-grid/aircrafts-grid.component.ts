@@ -1,11 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    Output,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -44,8 +37,8 @@ export class AircraftsGridComponent implements OnInit {
     public isLoadingAircraftTypes = false;
     public pageIndex = 0;
 
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,
@@ -178,7 +171,7 @@ export class AircraftsGridComponent implements OnInit {
                     });
 
                 this.customerAircraftsService
-                    .get({ oid: result.oid })
+                    .get({oid: result.oid})
                     .subscribe((data: any) => {
                         if (data) {
                             const selectedAircraft = this.aircraftsData.find(

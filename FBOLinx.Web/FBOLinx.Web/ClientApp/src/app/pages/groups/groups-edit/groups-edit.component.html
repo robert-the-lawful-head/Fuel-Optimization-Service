@@ -6,7 +6,7 @@
         <mat-spinner></mat-spinner>
     </div>
 
-    <ni-card title="Group: {{groupInfo.groupName}}" class="mb-0" *ngIf="groupInfo">
+    <ni-card *ngIf="groupInfo" class="mb-0" title="Group: {{groupInfo.groupName}}">
         <div>
             <mat-tab-group>
 
@@ -15,7 +15,7 @@
                     <div class="mt-2">
                         <app-fbos-home [embed]="true" [groupInfo]="groupInfo"></app-fbos-home>
                     </div>
-                    
+
                 </mat-tab>
 
                 <!--User Tab-->
@@ -34,25 +34,26 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <mat-form-field>
-                                    <input matInput placeholder="Group Name" [(ngModel)]="groupInfo.groupName" />
+                                    <input [(ngModel)]="groupInfo.groupName" matInput placeholder="Group Name"/>
                                 </mat-form-field>
                             </div>
                             <div class="col-md-4 text-center">
-                                <mat-slide-toggle color="accent"
-                                                [(ngModel)]="groupInfo.active">Active</mat-slide-toggle>
+                                <mat-slide-toggle [(ngModel)]="groupInfo.active"
+                                                  color="accent">Active
+                                </mat-slide-toggle>
                             </div>
                         </div>
                         <div class="row mt-4 mb-5 pull-right">
                             <button
-                                mat-stroked-button
-                                color="green"
                                 (click)="saveEdit()"
                                 class="mr-1"
+                                color="green"
+                                mat-stroked-button
                             >
                                 <mat-icon>save</mat-icon>
                                 Save Changes
                             </button>
-                            <button mat-stroked-button (click)="cancelEdit()">
+                            <button (click)="cancelEdit()" mat-stroked-button>
                                 Cancel
                             </button>
                         </div>

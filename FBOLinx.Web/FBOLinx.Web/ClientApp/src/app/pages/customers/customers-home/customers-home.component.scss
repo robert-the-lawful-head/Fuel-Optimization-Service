@@ -3,7 +3,7 @@
 :host {
     display: block;
     position: relative;
-    
+
     .table-container {
         min-height: 300px;
         padding-top: 20px;
@@ -16,6 +16,7 @@
             width: 100%;
             z-index: 1001;
         }
+
         .mat-tab-body-wrapper {
             margin-top: 49px;
         }

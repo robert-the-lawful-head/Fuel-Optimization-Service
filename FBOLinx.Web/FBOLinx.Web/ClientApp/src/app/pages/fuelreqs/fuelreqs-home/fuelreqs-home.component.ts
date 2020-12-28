@@ -55,15 +55,15 @@ export class FuelreqsHomeComponent implements OnDestroy {
     public startFuelReqDataServe() {
         this.timer = interval(5000).subscribe(() => {
             this.fuelReqService
-            .getForGroupFboAndDateRange(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                this.filterStartDate,
-                this.filterEndDate
-            )
-            .subscribe((data: any) => {
-                this.fuelreqsData = data;
-            });
+                .getForGroupFboAndDateRange(
+                    this.sharedService.currentUser.groupId,
+                    this.sharedService.currentUser.fboId,
+                    this.filterStartDate,
+                    this.filterEndDate
+                )
+                .subscribe((data: any) => {
+                    this.fuelreqsData = data;
+                });
         });
     }
 

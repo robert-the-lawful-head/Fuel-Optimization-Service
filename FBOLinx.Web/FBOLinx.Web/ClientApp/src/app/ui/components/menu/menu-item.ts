@@ -16,6 +16,7 @@ export interface IMenuItemIcon {
     color?: string;
     bg?: string;
 }
+
 export interface IMenuItemSub {
     title: string;
     icon?: string;
@@ -26,6 +27,7 @@ export interface IMenuItemSub {
     externalLink?: string;
     sub?: IMenuItemSub[];
 }
+
 export interface IMenuItemBadge {
     text?: string;
     color?: string;

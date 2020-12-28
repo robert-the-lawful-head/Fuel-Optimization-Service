@@ -3,7 +3,7 @@
 :host {
     background: main-color(50);
     bottom: 0;
-    box-shadow: -5px 0 5px -4px rgba(#000,.25);
+    box-shadow: -5px 0 5px -4px rgba(#000, .25);
     color: main-contrast(50);
     position: fixed;
     right: 0;
@@ -104,6 +104,7 @@
             width: 100%;
         }
     }
+
     ::-webkit-scrollbar {
         width: 15px;
     }
