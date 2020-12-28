@@ -13,9 +13,7 @@ export class VerticalNavbarComponent implements OnInit {
     }
 
     menuVisible() {
-        return this.sharedService.currentUser.role !== 3 ||
-            !(window.location.pathname.startsWith('/default-layout/groups') ||
-                window.location.pathname.startsWith('/default-layout/fbos'));
+        return this.sharedService.currentUser.role !== 3 || this.sharedService.currentUser.impersonatedRole;
     }
 
     ngOnInit() {

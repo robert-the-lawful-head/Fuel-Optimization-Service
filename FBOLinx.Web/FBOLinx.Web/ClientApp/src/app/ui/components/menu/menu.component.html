@@ -18,9 +18,7 @@
 
             <!-- Default item -->
             <ng-template #default>
-                <div *ngIf="!item.sub; then simple; else sub"></div>
-
-                <ng-template #simple>
+                <div>
                     <a (click)="toggle($event, item, this)"
                        *ngIf="item.routing"
                        class="item-link"
@@ -76,54 +74,7 @@
                             <button>Got it</button>
                         </div>
                     </ng-template>
-                </ng-template>
-
-                <ng-template #sub>
-                    <!-- Item with sub -->
-                    <a
-                        (click)="toggle($event, item, this)"
-                        class="item-link"
-                        href="#"
-                    >
-                        <span class="text">{{ item.title }}</span>
-
-                        <span
-                            *ngIf="item.badge && item.badge.text"
-                            [ngStyle]="getStyles(item.badge)"
-                            class="item-badge"
-                        >{{ item.badge.text }}</span
-                        >
-
-                        <span *ngIf="item.sub" class="caret"></span>
-
-                        <span class="icon">
-                            <i
-                                *ngIf="item.icon && item.icon.class"
-                                [ngStyle]="getStyles(item.icon)"
-                                class="icon-wrap {{ item.icon.class }}"
-                            ></i>
-                        </span>
-                    </a>
-
-                    <!-- Menu sub -->
-                    <ul *ngIf="!item.groupTitle && item.sub" class="sub">
-                        <li
-                            #rla="routerLinkActive"
-                            *ngFor="let itemSub of item.sub"
-                            [ngClass]="getLiClasses(itemSub, rla.isActive)"
-                            class="menu-item"
-                            routerLinkActive="active"
-                        >
-                            <a
-                                class="item-link"
-                                href="#"
-                                routerLink="{{ itemSub.routing }}"
-                            >
-                                <span class="text">{{ itemSub.title }}</span>
-                            </a>
-                        </li>
-                    </ul>
-                </ng-template>
+                </div>
             </ng-template>
         </li>
     </ul>
