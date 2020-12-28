@@ -74,9 +74,7 @@ export class SystemcontactsGridComponent implements OnInit {
         });
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
-        const unselectedIndex = _.findIndex(this.contactsData, (contact) => {
-            return !contact.copyAlerts;
-        });
+        const unselectedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
         this.copyAll = this.contactsData.length && unselectedIndex === -1 ? true : false;
     }
 
@@ -149,9 +147,7 @@ export class SystemcontactsGridComponent implements OnInit {
     }
 
     public updateCopyAlertsValue(value: any) {
-        const unselectedIndex = _.findIndex(this.contactsData, (contact) => {
-            return !contact.copyAlerts;
-        });
+        const unselectedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
         this.copyAll = unselectedIndex >= 0 ? false : true;
 
         value.groupId = this.sharedService.currentUser.groupId;

@@ -19,7 +19,7 @@ export class RequestDemoModalComponent {
     }
 
     @HostListener('window:message', ['$event'])
-    MessageUpdated(event: MessageEvent) {
+    messageUpdated(event: MessageEvent) {
         if (event.isTrusted && event.returnValue) {
             this.data.succeed = true;
             this.dialogRef.close(this.data);

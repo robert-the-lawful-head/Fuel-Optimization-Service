@@ -32,10 +32,10 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
     public refreshData() {
         this.fuelreqsService
             .getOrdersByLocation({
-                StartDateTime: this.startDate,
-                EndDateTime: this.endDate,
-                ICAO: '',
-                FboId: this.sharedService.currentUser.fboId,
+                startDateTime: this.startDate,
+                endDateTime: this.endDate,
+                icao: '',
+                fboId: this.sharedService.currentUser.fboId,
             })
             .subscribe((data: any) => {
                 this.totalOrders = 0;

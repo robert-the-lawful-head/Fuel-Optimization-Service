@@ -58,9 +58,7 @@ export class ContactsGridComponent implements OnInit {
             return;
         }
 
-        const foundedIndex = _.findIndex(this.contactsData, (contact) => {
-            return !contact.copyAlerts;
-        });
+        const foundedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
         this.copyAll = foundedIndex >= 0 ? false : true;
         this.sort.sortChange.subscribe(() => {
         });
@@ -183,9 +181,7 @@ export class ContactsGridComponent implements OnInit {
         } else {
             value.copyAlerts = true;
         }
-        const unselectedIndex = _.findIndex(this.contactsData, (contact) => {
-            return !contact.copyAlerts;
-        });
+        const unselectedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
         this.copyAll = unselectedIndex >= 0 ? false : true;
 
         value.groupId = this.sharedService.currentUser.groupId;

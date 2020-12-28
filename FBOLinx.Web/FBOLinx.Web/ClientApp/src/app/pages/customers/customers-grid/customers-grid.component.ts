@@ -243,17 +243,14 @@ export class CustomersGridComponent implements OnInit {
 
     exportCustomersToExcel() {
         // Export the filtered results to an excel spreadsheet
-        const filteredList = this.customersDataSource.filteredData.filter((item) => {
-            return item.selectAll === true;
-        });
+        const filteredList = this.customersDataSource.filteredData.filter((item) => item.selectAll === true);
         let exportData;
         if (filteredList.length > 0) {
             exportData = filteredList;
         } else {
             exportData = this.customersDataSource.filteredData;
         }
-        exportData = map(exportData, (item) => {
-            return {
+        exportData = map(exportData, (item) => ({
                 Company: item.company,
                 Source:
                     item.customerCompanyTypeName === 'FuelerLinx'
@@ -261,12 +258,9 @@ export class CustomersGridComponent implements OnInit {
                         : item.customerCompanyTypeName,
                 'Assigned Price Tier': item.pricingTemplateName,
                 Price: item.allInPrice,
-            };
-        });
+            }));
         exportData = sortBy(exportData, [
-            (item) => {
-                return item.Company.toLowerCase();
-            },
+            (item) => item.Company.toLowerCase(),
         ]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -281,18 +275,14 @@ export class CustomersGridComponent implements OnInit {
         let exportData = map(this.aircraftData, (item) => {
             let pricingTemplateName = item.pricingTemplateName;
             if (!pricingTemplateName) {
-                const customer = find(this.customersData, (c) => {
-                    return c.customerId === item.customerId;
-                });
+                const customer = find(this.customersData, (c) => c.customerId === item.customerId);
                 if (customer) {
                     pricingTemplateName = customer.pricingTemplateName;
                 }
             }
             const matchingPricingTemplate = find(
                 this.pricingTemplatesData,
-                (pricing) => {
-                    return pricing.name === pricingTemplateName;
-                }
+                (pricing) => pricing.name === pricingTemplateName
             );
             return {
                 Company: item.company,
@@ -307,12 +297,8 @@ export class CustomersGridComponent implements OnInit {
             };
         });
         exportData = sortBy(exportData, [
-            (item) => {
-                return item.Company.toLowerCase();
-            },
-            (item) => {
-                return item.Tail.toLowerCase();
-            },
+            (item) => item.Company.toLowerCase(),
+            (item) => item.Tail.toLowerCase(),
         ]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -376,9 +362,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     anySelected() {
-        const filteredList = this.customersData.filter((item) => {
-            return item.selectAll === true;
-        });
+        const filteredList = this.customersData.filter((item) => item.selectAll === true);
         return filteredList.length > 0;
     }
 

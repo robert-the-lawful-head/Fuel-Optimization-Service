@@ -9,7 +9,7 @@
 <div *ngIf="pricingTemplatesData.length > 0" class="navbar-wrap">
     <div class="navbar-header">
         {{ title }}
-        <mat-slide-toggle (change)="SelectAllTemplates($event);" [checked]="selectAll" [labelPosition]="labelPosition"
+        <mat-slide-toggle (change)="selectAllTemplates()" [checked]="selectAll" [labelPosition]="labelPosition"
                           color="accent" style="margin-left:217px;">All
         </mat-slide-toggle>
     </div>
@@ -25,7 +25,7 @@
                                 {{pricingTemplate.name}}
                             </div>
                             <div class="col-4" style="padding-left:0px !important">
-                                <button (click)="OpenMarginInfo(pricingTemplate.oid)" *ngIf="pricingTemplate.changeText && !pricingTemplate.sent"
+                                <button (click)="openMarginInfo(pricingTemplate.oid)" *ngIf="pricingTemplate.changeText && !pricingTemplate.sent"
                                         [view]="'accent'" ni-button
                                         size="small">Preview
                                 </button>

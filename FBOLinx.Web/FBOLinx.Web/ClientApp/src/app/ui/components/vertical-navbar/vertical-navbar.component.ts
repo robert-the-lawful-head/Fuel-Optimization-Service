@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
-    selector: 'vertical-navbar',
+    selector: 'app-vertical-navbar',
     templateUrl: 'vertical-navbar.component.html',
     styleUrls: ['vertical-navbar.component.scss']
 })

@@ -26,9 +26,7 @@ export class DistributionWizardReviewComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router
   ) {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => {
-      return false;
-    };
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
 
     this.router.events.subscribe((evt) => {
       if (evt instanceof NavigationEnd) {

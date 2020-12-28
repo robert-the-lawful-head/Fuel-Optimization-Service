@@ -1,4 +1,4 @@
-/* tslint:disable:no-namespace */
+/* eslint-disable @typescript-eslint/no-namespace */
 
 import { ApplicableTaxFlights } from '../enums/applicable-tax-flights';
 import { FlightTypeClassifications } from '../enums/flight-type-classifications';

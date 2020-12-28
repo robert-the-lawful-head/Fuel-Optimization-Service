@@ -21,7 +21,7 @@ import { AccountProfileComponent } from '../../../shared/components/account-prof
 import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 
 @Component({
-    selector: 'horizontal-navbar',
+    selector: 'app-horizontal-navbar',
     templateUrl: 'horizontal-navbar.component.html',
     styleUrls: ['horizontal-navbar.component.scss'],
     host: {
