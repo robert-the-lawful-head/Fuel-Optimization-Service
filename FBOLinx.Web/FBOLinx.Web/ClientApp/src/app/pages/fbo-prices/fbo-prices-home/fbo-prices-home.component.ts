@@ -5,7 +5,6 @@ import {
   AfterViewInit,
   ViewChildren,
   QueryList,
-  HostListener,
   Input,
   ViewChild
 } from '@angular/core';

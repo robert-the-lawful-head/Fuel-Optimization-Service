@@ -1,5 +1,4 @@
 import {
-  OnInit,
   Component,
   Inject,
   EventEmitter,
