@@ -1,23 +1,29 @@
 table > tbody {
-    border:1px solid #000;
+    border: 1px solid #000;
 }
+
 td {
-    border:none;
+    border: none;
 }
-tr.mat-header-row{
-    height:inherit !important;
+
+tr.mat-header-row {
+    height: inherit !important;
 }
+
 tr.mat-footer-row, tr.mat-row {
     height: inherit !important;
 }
+
 .mat-dialog-title {
-   font: 500 15px/27px Roboto, "Helvetica Neue", sans-serif;
-   margin-bottom:10px;
+    font: 500 15px/27px Roboto, "Helvetica Neue", sans-serif;
+    margin-bottom: 10px;
 }
+
 .mat-dialog-content {
     font: 500 13px/25px Roboto, "Helvetica Neue", sans-serif;
-    overflow:initial;
+    overflow: initial;
 }
-.mat-dialog-container{
-    padding-top:12px !important;
+
+.mat-dialog-container {
+    padding-top: 12px !important;
 }

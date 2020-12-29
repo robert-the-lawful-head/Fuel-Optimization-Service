@@ -14,15 +14,15 @@ import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/custome
 @Component({
     selector: 'app-aircrafts-grid',
     templateUrl: './aircrafts-grid.component.html',
-    styleUrls: ['./aircrafts-grid.component.scss'],
+    styleUrls: [ './aircrafts-grid.component.scss' ],
 })
 export class AircraftsGridComponent implements OnInit {
     // Input/Output Bindings
     @Output() editAircraftClicked = new EventEmitter<any>();
     @Input() aircraftsData: Array<any>;
     @Input() pricingTemplatesData: Array<any>;
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     // Public Members
     public aircraftsDataSource: MatTableDataSource<any> = null;
@@ -170,7 +170,7 @@ export class AircraftsGridComponent implements OnInit {
                     });
 
                 this.customerAircraftsService
-                    .get({oid: result.oid})
+                    .get({ oid: result.oid })
                     .subscribe((data: any) => {
                         if (data) {
                             const selectedAircraft = this.aircraftsData.find(

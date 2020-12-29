@@ -9,9 +9,9 @@ import { menuTooltipShowedEvent } from '../../../models/sharedEvents';
 @Component({
     selector: 'app-menu',
     templateUrl: './menu.component.html',
-    styleUrls: ['./menu.component.scss'],
-    providers: [MenuService],
-    host: {class: 'app-menu'},
+    styleUrls: [ './menu.component.scss' ],
+    providers: [ MenuService ],
+    host: { class: 'app-menu' },
 })
 export class MenuComponent implements OnInit, AfterViewInit {
     @ViewChildren('tooltip') priceTooltips: QueryList<any>;

@@ -24,7 +24,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-groups-edit',
     templateUrl: './groups-edit.component.html',
-    styleUrls: ['./groups-edit.component.scss'],
+    styleUrls: [ './groups-edit.component.scss' ],
 })
 export class GroupsEditComponent implements OnInit {
     @Output() cancelClicked = new EventEmitter<any>();
@@ -47,7 +47,7 @@ export class GroupsEditComponent implements OnInit {
     ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
         if (id) {
-            this.groupsService.get({oid: id}).subscribe((data: any) => {
+            this.groupsService.get({ oid: id }).subscribe((data: any) => {
                 this.groupInfo = data;
             });
         }
@@ -61,13 +61,13 @@ export class GroupsEditComponent implements OnInit {
         this.groupsService.update(this.groupInfo).subscribe(() => {
             this.snackBar.open('Successfully updated!', '', {
                 duration: 2000,
-                panelClass: ['blue-snackbar'],
+                panelClass: [ 'blue-snackbar' ],
             });
-            this.router.navigate(['/default-layout/groups/']);
+            this.router.navigate([ '/default-layout/groups/' ]);
         });
     }
 
     public cancelEdit() {
-        this.router.navigate(['/default-layout/groups/']);
+        this.router.navigate([ '/default-layout/groups/' ]);
     }
 }

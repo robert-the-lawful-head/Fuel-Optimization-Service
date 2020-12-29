@@ -25,7 +25,8 @@
                                 {{pricingTemplate.name}}
                             </div>
                             <div class="col-4" style="padding-left:0px !important">
-                                <button (click)="openMarginInfo(pricingTemplate.oid)" *ngIf="pricingTemplate.changeText && !pricingTemplate.sent"
+                                <button (click)="openMarginInfo(pricingTemplate.oid)"
+                                        *ngIf="pricingTemplate.changeText && !pricingTemplate.sent"
                                         [view]="'accent'" ni-button
                                         size="small">Preview
                                 </button>
@@ -62,7 +63,8 @@
                 <p class="mb-1">Backbone.js</p>
                 <mat-progress-bar mode="determinate" color="accent" [value]="38"></mat-progress-bar>-->
                 <tr mat-header-row></tr>
-                <tr (mouseenter)="row.changeText=true" (mouseleave)="row.changeText=false" *matRowDef="let row; columns: displayedColumns;"
+                <tr (mouseenter)="row.changeText=true" (mouseleave)="row.changeText=false"
+                    *matRowDef="let row; columns: displayedColumns;"
                     mat-row></tr>
             </table>
         </div>

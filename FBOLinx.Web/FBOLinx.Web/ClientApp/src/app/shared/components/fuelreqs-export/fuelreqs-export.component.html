@@ -1,18 +1,18 @@
 <h1 mat-dialog-title>Fuel Orders Export</h1>
-<div mat-dialog-content class="mt-1 mb-2">
+<div class="mt-1 mb-2" mat-dialog-content>
     <div class="row">
         <div class="col-6">
             <mat-form-field>
                 <input
-                    matInput
-                    [max]="data.filterEndDate"
                     [(ngModel)]="data.filterStartDate"
                     [matDatepicker]="dashboardSettingsStartDateFilter"
+                    [max]="data.filterEndDate"
+                    matInput
                     placeholder="Start Date"
                 />
                 <mat-datepicker-toggle
-                    matSuffix
                     [for]="dashboardSettingsStartDateFilter"
+                    matSuffix
                 ></mat-datepicker-toggle>
                 <mat-datepicker
                     #dashboardSettingsStartDateFilter
@@ -23,15 +23,15 @@
         <div class="col-6">
             <mat-form-field>
                 <input
-                    matInput
-                    [min]="data.filterStartDate"
                     [(ngModel)]="data.filterEndDate"
                     [matDatepicker]="dashboardSettingsEndDateFilter"
+                    [min]="data.filterStartDate"
+                    matInput
                     placeholder="End Date"
                 />
                 <mat-datepicker-toggle
-                    matSuffix
                     [for]="dashboardSettingsEndDateFilter"
+                    matSuffix
                 ></mat-datepicker-toggle>
                 <mat-datepicker
                     #dashboardSettingsEndDateFilter
@@ -43,7 +43,7 @@
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button mat-flat-button color="accent" [mat-dialog-close]="data" class="mr-1">Export</button>
-        <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+        <button [mat-dialog-close]="data" class="mr-1" color="accent" mat-flat-button>Export</button>
+        <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
     </div>
 </div>

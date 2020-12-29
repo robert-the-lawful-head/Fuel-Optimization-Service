@@ -18,7 +18,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-analytics-home',
     templateUrl: './analytics-home.component.html',
-    styleUrls: ['./analytics-home.component.scss'],
+    styleUrls: [ './analytics-home.component.scss' ],
 })
 export class AnalyticsHomeComponent {
     public pageTitle = 'Analytics';

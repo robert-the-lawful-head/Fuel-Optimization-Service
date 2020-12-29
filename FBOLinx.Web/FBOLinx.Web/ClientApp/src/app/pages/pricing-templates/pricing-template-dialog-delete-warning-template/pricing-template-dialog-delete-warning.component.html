@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>Warning Message</h1>
-<div mat-dialog-content class="mt-1 mb-2">
+<div class="mt-1 mb-2" mat-dialog-content>
     <div class="text-center">
         You are deleting your current default margin template. Please select
         another margin template below. Your default template will be used for
@@ -9,8 +9,8 @@
     <div class="text-center">
         <mat-form-field>
             <mat-select
-                placeholder="Margin Template"
                 [(ngModel)]="selectedTemplate"
+                placeholder="Margin Template"
                 required
             >
                 <mat-option
@@ -26,10 +26,11 @@
 <div mat-dialog-actions>
     <div class="text-center col-12">
         <button
-            mat-stroked-button
-            color="green"
             (click)="onSelect()"
-        >Change Default Template</button>
-        <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+            color="green"
+            mat-stroked-button
+        >Change Default Template
+        </button>
+        <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
     </div>
 </div>

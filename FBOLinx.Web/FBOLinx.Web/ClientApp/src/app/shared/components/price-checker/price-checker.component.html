@@ -1,156 +1,169 @@
 <div class="d-flex justify-content-around">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col">
-        <mat-tab-group (selectedTabChange)="onTabChanged($event);">
-          <!--Price template searching tab-->
-          <mat-tab label="Template">
-            <div class="mt-4">
-              <mat-form-field>
-                <mat-label>ITP Template</mat-label>
-                <mat-select class="font-weight-bold" placeholder="ITP Template" [(ngModel)]="pricingTemplateId" (selectionChange)="priceTemplateChanged()">
-                  <mat-option *ngFor="let pricingTemplate of pricingTemplates" [value]="pricingTemplate.oid">
-                    {{pricingTemplate.name}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </mat-tab>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <mat-tab-group (selectedTabChange)="onTabChanged($event);">
+                    <!--Price template searching tab-->
+                    <mat-tab label="Template">
+                        <div class="mt-4">
+                            <mat-form-field>
+                                <mat-label>ITP Template</mat-label>
+                                <mat-select (selectionChange)="priceTemplateChanged()" [(ngModel)]="pricingTemplateId"
+                                            class="font-weight-bold" placeholder="ITP Template">
+                                    <mat-option *ngFor="let pricingTemplate of pricingTemplates"
+                                                [value]="pricingTemplate.oid">
+                                        {{pricingTemplate.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </mat-tab>
 
-          <!--Customer searching tab-->
-          <mat-tab label="Customer">
-            <div class="container-fluid mt-4">
-              <div class="row">
-                <div class="col">
-                  <mat-form-field>
-                    <mat-label>Customer</mat-label>
-                    <mat-select placeholder="Customer" [(ngModel)]="customerForCustomerLookup" (selectionChange)="customerForLookupChanged()">
-                      <mat-option *ngFor="let customer of allCustomers" [value]="customer">
-                        {{customer.company}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-                <div class="col">
-                  <mat-form-field>
-                    <mat-label>Tail Number</mat-label>
-                    <mat-select placeholder="Customer" [(ngModel)]="tailNumberForCustomerLookup" (selectionChange)="customerForLookupTailChanged()" [disabled]="!customerForCustomerLookup">
-                      <mat-option *ngFor="let aircraft of aircraftForCustomer" [value]="aircraft.tailNumber">
-                        {{aircraft.tailNumber}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
+                    <!--Customer searching tab-->
+                    <mat-tab label="Customer">
+                        <div class="container-fluid mt-4">
+                            <div class="row">
+                                <div class="col">
+                                    <mat-form-field>
+                                        <mat-label>Customer</mat-label>
+                                        <mat-select (selectionChange)="customerForLookupChanged()"
+                                                    [(ngModel)]="customerForCustomerLookup"
+                                                    placeholder="Customer">
+                                            <mat-option *ngFor="let customer of allCustomers" [value]="customer">
+                                                {{customer.company}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col">
+                                    <mat-form-field>
+                                        <mat-label>Tail Number</mat-label>
+                                        <mat-select (selectionChange)="customerForLookupTailChanged()"
+                                                    [(ngModel)]="tailNumberForCustomerLookup"
+                                                    [disabled]="!customerForCustomerLookup"
+                                                    placeholder="Customer">
+                                            <mat-option *ngFor="let aircraft of aircraftForCustomer"
+                                                        [value]="aircraft.tailNumber">
+                                                {{aircraft.tailNumber}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
+
+                    <!--Aircraft searching tab-->
+                    <mat-tab class="mb-4" label="Aircraft">
+                        <div class="container-fluid mt-4">
+                            <div class="row">
+                                <div class="col">
+                                    <mat-form-field>
+                                        <input [formControl]="tailNumberForLookupControl"
+                                               aria-label="Aircraft Tail Number"
+                                               matInput
+                                               placeholder="Tail Number*"/>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col">
+                                    <mat-form-field>
+                                        <mat-label>Customer</mat-label>
+                                        <mat-select (selectionChange)="tailNumberLookupCustomerChanged()"
+                                                    [(ngModel)]="customerForTailLookup"
+                                                    [disabled]="!customerForTailLookup || !customersForTail"
+                                                    placeholder="Customer">
+                                            <mat-option *ngFor="let customer of customersForTail" [value]="customer">
+                                                {{customer.company}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
+
+                </mat-tab-group>
+            </div>
+
+            <!--"Check Pricing" button column-->
+            <!--<div class="col-2 mt-5">
+              <div class="text-center">
+                <button mat-raised-button
+                        color="accent"
+                        class="mr-1 updateBtn"
+                        (click)="lookupPricing()">
+                  Check Pricing
+                </button>
               </div>
-            </div>
-          </mat-tab>
+            </div>-->
 
-          <!--Aircraft searching tab-->
-          <mat-tab class="mb-4" label="Aircraft">
-            <div class="container-fluid mt-4">
-              <div class="row">
-                <div class="col">
-                  <mat-form-field>
-                    <input matInput
-                           placeholder="Tail Number*"
-                           [formControl]="tailNumberForLookupControl"
-                           aria-label="Aircraft Tail Number" />
-                  </mat-form-field>
+            <!--Pricing template/company information-->
+            <div class="col" style="font-size:14px;">
+                <div *ngIf="tailLookupError" class="h6 mt-0 mb-0 text-danger pl-5">No Tail Price Found!</div>
+
+                <div *ngIf="priceLookupInfo && !tailLookupError && priceCheckerLookupType != 0">
+                    <div class="container-fluid">
+                        <div class="row pb-2">
+                            <div class="col-4 font-weight-bold">Pricing Template:</div>
+                            <div class="col">{{ priceLookupInfo?.template ? priceLookupInfo.template : 'N/A' }}</div>
+                        </div>
+                        <div class="row pb-2">
+                            <div class="col-4 font-weight-bold">Company:</div>
+                            <div class="col">{{ priceLookupInfo?.company ? priceLookupInfo.company : 'N/A' }}</div>
+                        </div>
+                        <div class="row pb-2">
+                            <div class="col-4 font-weight-bold">Make/Model:</div>
+                            <div class="col">{{ priceLookupInfo?.makeModel ? priceLookupInfo.makeModel : 'N/A' }}</div>
+                        </div>
+                        <div class="row pb-2">
+                            <div class="col-4 font-weight-bold">Ramp Fee:</div>
+                            <div *ngIf="priceLookupInfo?.rampFee" class="col">
+                                ${{priceLookupInfo?.rampFee.price | number: "1.2-4" }} waived
+                                at {{priceLookupInfo.rampFee.waived | number: "1.0"}} gal.
+                            </div>
+                            <div *ngIf="!priceLookupInfo?.rampFee" class="col">N/A</div>
+                        </div>
+                        <div *ngIf="priceLookupInfo?.rampFee" class="row">
+                            <div class="col-4 font-weight-bold">Ramp Fee Rule:</div>
+                            <div class="col">{{priceLookupInfo.rampFee.categorizationDescription}}</div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="col">
-                  <mat-form-field>
-                    <mat-label>Customer</mat-label>
-                    <mat-select placeholder="Customer" [(ngModel)]="customerForTailLookup" (selectionChange)="tailNumberLookupCustomerChanged()" [disabled]="!customerForTailLookup || !customersForTail">
-                      <mat-option *ngFor="let customer of customersForTail" [value]="customer">
-                        {{customer.company}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-              </div>
             </div>
-          </mat-tab>
-          
-        </mat-tab-group>
-      </div>
-
-      <!--"Check Pricing" button column-->
-      <!--<div class="col-2 mt-5">
-        <div class="text-center">
-          <button mat-raised-button
-                  color="accent"
-                  class="mr-1 updateBtn"
-                  (click)="lookupPricing()">
-            Check Pricing
-          </button>
         </div>
-      </div>-->
-
-      <!--Pricing template/company information-->
-      <div class="col" style="font-size:14px;">
-        <div *ngIf="tailLookupError" class="h6 mt-0 mb-0 text-danger pl-5">No Tail Price Found!</div>
-
-        <div *ngIf="priceLookupInfo && !tailLookupError && priceCheckerLookupType != 0">
-          <div class="container-fluid">
-            <div class="row pb-2">
-              <div class="col-4 font-weight-bold">Pricing Template: </div>
-              <div class="col">{{ priceLookupInfo?.template ? priceLookupInfo.template : 'N/A' }}</div>
-            </div>
-            <div class="row pb-2">
-              <div class="col-4 font-weight-bold">Company: </div>
-              <div class="col">{{ priceLookupInfo?.company ? priceLookupInfo.company: 'N/A' }}</div>
-            </div>
-            <div class="row pb-2">
-              <div class="col-4 font-weight-bold">Make/Model: </div>
-              <div class="col">{{ priceLookupInfo?.makeModel ? priceLookupInfo.makeModel : 'N/A' }}</div>
-            </div>
-            <div class="row pb-2">
-              <div class="col-4 font-weight-bold">Ramp Fee:</div>
-              <div class="col" *ngIf="priceLookupInfo?.rampFee">${{priceLookupInfo?.rampFee.price | number: "1.2-4" }} waived at {{priceLookupInfo.rampFee.waived | number: "1.0"}} gal.</div>
-              <div class="col" *ngIf="!priceLookupInfo?.rampFee">N/A</div>
-            </div>
-            <div class="row" *ngIf="priceLookupInfo?.rampFee">
-              <div class="col-4 font-weight-bold">Ramp Fee Rule: </div>
-              <div class="col">{{priceLookupInfo.rampFee.categorizationDescription}}</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 
-
-<div class="container-fluid pb-4 sub-widget" *ngIf="sampleCalculation">
-  <div class="row mt-4 mb-2">
-      <div class="col font-weight-bold" style="padding-left: 53px;">
-          Taxes and Fees
-      </div>
-      <div class="col font-weight-bold" style="padding-left: 16px;">
-          Customer's All-In Rate
-      </div>
-  </div>
-
-  <div class="row mt-4 price-lookup-breakdown">
-    <div class="col-12" style="font-size:14px;">
-      <price-breakdown #priceBreakdownPreview
-                       (calculationsComplated)="priceBreakdownCalculationsCompleted($event)"
-                       [priceTemplateId]="sampleCalculation.pricingTemplateId"
-                       [customerInfoByGroupId]="sampleCalculation.customerInfoByGroupId"
-                       [feeAndTaxDisplayMode]="2"
-                       [showFeeAndTaxLineSeparator]="true"
-                       [tailNumber]="sampleCalculation.tailNumber">
-
-      </price-breakdown>
+<div *ngIf="sampleCalculation" class="container-fluid pb-4 sub-widget">
+    <div class="row mt-4 mb-2">
+        <div class="col font-weight-bold" style="padding-left: 53px;">
+            Taxes and Fees
+        </div>
+        <div class="col font-weight-bold" style="padding-left: 16px;">
+            Customer's All-In Rate
+        </div>
     </div>
-  </div>
+
+    <div class="row mt-4 price-lookup-breakdown">
+        <div class="col-12" style="font-size:14px;">
+            <price-breakdown #priceBreakdownPreview
+                             (calculationsComplated)="priceBreakdownCalculationsCompleted($event)"
+                             [customerInfoByGroupId]="sampleCalculation.customerInfoByGroupId"
+                             [feeAndTaxDisplayMode]="2"
+                             [priceTemplateId]="sampleCalculation.pricingTemplateId"
+                             [showFeeAndTaxLineSeparator]="true"
+                             [tailNumber]="sampleCalculation.tailNumber">
+
+            </price-breakdown>
+        </div>
+    </div>
 </div>
 
 <ngx-ui-loader [loaderId]="tailLoader"
                bgsPosition="center-center"
-               fgsType="fading-circle"
                fgsColor="#252d47"
-               pbColor="#252d47"
-               overlayColor="rgba(0, 0, 0, 0.06)"></ngx-ui-loader>
+               fgsType="fading-circle"
+               overlayColor="rgba(0, 0, 0, 0.06)"
+               pbColor="#252d47"></ngx-ui-loader>

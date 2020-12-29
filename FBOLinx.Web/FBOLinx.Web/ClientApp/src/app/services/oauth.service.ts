@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class OAuthService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
@@ -20,7 +20,7 @@ export class OAuthService {
                 password,
                 partnerId,
             },
-            { headers: this.headers }
+            {headers: this.headers}
         );
     }
 }

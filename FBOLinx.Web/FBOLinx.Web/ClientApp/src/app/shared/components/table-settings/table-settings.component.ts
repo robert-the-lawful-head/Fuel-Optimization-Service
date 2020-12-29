@@ -1,9 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import {
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 import { SortDirection } from '@angular/material/sort';
 
 export type ColumnType = {
@@ -16,7 +13,7 @@ export type ColumnType = {
 @Component({
     selector: 'app-table-settings',
     templateUrl: './table-settings.component.html',
-    styleUrls: ['./table-settings.component.scss'],
+    styleUrls: [ './table-settings.component.scss' ],
 })
 export class TableSettingsComponent {
     columns: ColumnType[] = [];

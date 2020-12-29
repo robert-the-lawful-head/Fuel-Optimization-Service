@@ -1,13 +1,13 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-login-modal',
     templateUrl: './login-modal.component.html',
-    styleUrls: ['./login-modal.component.scss'],
+    styleUrls: [ './login-modal.component.scss' ],
 })
 export class LoginModalComponent {
     loginForm: FormGroup;
@@ -43,10 +43,9 @@ export class LoginModalComponent {
                     .subscribe(() => {
                         this.dialogRef.close();
                         if (data.role === 3) {
-                            this.router.navigate(['/default-layout/groups/']);
-                        }
-                        else if (data.role === 2) {
-                            this.router.navigate(['/default-layout/fbos/']);
+                            this.router.navigate([ '/default-layout/groups/' ]);
+                        } else if (data.role === 2) {
+                            this.router.navigate([ '/default-layout/fbos/' ]);
                         } else if (data.role === 5) {
                             this.router.navigate([
                                 '/default-layout/dashboard-csr/',

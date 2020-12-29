@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import FlatfileImporter from 'flatfile-csv-importer';
@@ -30,7 +30,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-ramp-fees-home',
     templateUrl: './ramp-fees-home.component.html',
-    styleUrls: ['./ramp-fees-home.component.scss'],
+    styleUrls: [ './ramp-fees-home.component.scss' ],
 })
 export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('customRampFeeCat')
@@ -87,7 +87,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public initRampfees() {
         this.rampFeesService
-            .getForFbo({oid: this.sharedService.currentUser.fboId})
+            .getForFbo({ oid: this.sharedService.currentUser.fboId })
             .subscribe((data: any) => {
                 this.rampFees = data;
 
@@ -210,67 +210,67 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             fields: [
                 {
                     label: 'ICAO',
-                    alternates: ['Icao'],
+                    alternates: [ 'Icao' ],
                     key: 'icao',
                     description: 'Icao',
                 },
                 {
                     label: 'FBO',
-                    alternates: ['fbo'],
+                    alternates: [ 'fbo' ],
                     key: 'fbo',
                     description: 'FBO',
                 },
                 {
                     label: 'Make',
-                    alternates: ['make'],
+                    alternates: [ 'make' ],
                     key: 'Make',
                     description: 'Aircraft Make',
                 },
                 {
                     label: 'Model',
-                    alternates: ['model'],
+                    alternates: [ 'model' ],
                     key: 'Model',
                     description: 'Tail',
                 },
                 {
                     label: 'Ramp Fee ($)',
-                    alternates: ['Ramp Fee', 'ramp fee'],
+                    alternates: [ 'Ramp Fee', 'ramp fee' ],
                     key: 'RampFee',
                     description: 'Ramp Fee',
                 },
                 {
                     label: 'Waived At (gal)',
-                    alternates: ['Waived At', 'waived at'],
+                    alternates: [ 'Waived At', 'waived at' ],
                     key: 'WaivedAt',
                     description: 'Waived Fees',
                 },
                 {
                     label: 'Landing',
-                    alternates: ['landing'],
+                    alternates: [ 'landing' ],
                     key: 'Landing',
                     description: 'Landing Fees',
                 },
                 {
                     label: 'Overnight',
-                    alternates: ['overnight', 'overnight fees'],
+                    alternates: [ 'overnight', 'overnight fees' ],
                     key: 'Overnight',
                     description: 'Overnight Fees',
                 },
                 {
                     label: 'Tail Number',
-                    alternates: ['tail number', 'tail-number'],
+                    alternates: [ 'tail number', 'tail-number' ],
                     key: 'TailNumber',
                     description: 'Tail Number',
                 },
                 {
                     label: 'Aircraft Size',
-                    alternates: ['aircreft size'],
+                    alternates: [ 'aircreft size' ],
                     key: 'aircraftsize',
                     description: 'Aircraft Size',
                 },
                 {
                     label: 'Avoidance',
-                    alternates: ['avoidance'],
+                    alternates: [ 'avoidance' ],
                     key: 'avoidance',
                     description: 'Avoidance',
                 },
@@ -301,7 +301,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private loadRampFees() {
         this.rampFees = undefined;
         this.rampFeesService
-            .getForFbo({oid: this.sharedService.currentUser.fboId})
+            .getForFbo({ oid: this.sharedService.currentUser.fboId })
             .subscribe((data: any) => {
                 this.rampFees = data;
                 if (this.customRampFeeCat) {

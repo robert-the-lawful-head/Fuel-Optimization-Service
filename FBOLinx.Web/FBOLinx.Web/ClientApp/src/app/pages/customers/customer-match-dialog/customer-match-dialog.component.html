@@ -15,16 +15,18 @@
     </div>
     <div *ngIf="data.isNameMatch">
         <h6>Match by Company Name</h6>
-        <p *ngIf="data.matchCustomerName">Company name: <a href="/default-layout/customers/{{data.matchNameCustomerOid}}"
-                                                           style="color: #007bff !important;"
-                                                           target="_blank">{{data.matchNameCustomer}}</a></p>
+        <p *ngIf="data.matchCustomerName">Company name: <a
+            href="/default-layout/customers/{{data.matchNameCustomerOid}}"
+            style="color: #007bff !important;"
+            target="_blank">{{data.matchNameCustomer}}</a></p>
         <hr/>
     </div>
     <div *ngIf="data.isContactMatch">
         <h6>Match by Company Contact</h6>
-        <p *ngIf="data.matchCustomerName">Company name: <a href="/default-layout/customers/{{data.matchContactCustomerOid}}"
-                                                           style="color: #007bff !important;"
-                                                           target="_blank">{{data.matchNameCustomer}}</a></p>
+        <p *ngIf="data.matchCustomerName">Company name: <a
+            href="/default-layout/customers/{{data.matchContactCustomerOid}}"
+            style="color: #007bff !important;"
+            target="_blank">{{data.matchNameCustomer}}</a></p>
         <hr/>
     </div>
     <div style="margin-top:10px; margin-bottom:10px;">

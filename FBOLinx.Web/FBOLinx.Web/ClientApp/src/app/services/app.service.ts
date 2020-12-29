@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
@@ -14,6 +14,6 @@ export class AppService {
     }
 
     public getVersion() {
-        return this.http.get(this.accessPointUrl + '/version', { headers: this.headers });
+        return this.http.get(this.accessPointUrl + '/version', {headers: this.headers});
     }
 }

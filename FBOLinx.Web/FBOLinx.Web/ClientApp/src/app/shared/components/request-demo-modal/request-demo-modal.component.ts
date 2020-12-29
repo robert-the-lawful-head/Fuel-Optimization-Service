@@ -1,11 +1,11 @@
-import { Component, Inject, HostListener } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, HostListener, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-request-demo-modal',
     templateUrl: './request-demo-modal.component.html',
-    styleUrls: ['./request-demo-modal.component.scss'],
+    styleUrls: [ './request-demo-modal.component.scss' ],
 })
 export class RequestDemoModalComponent {
     public zohoLoader = 'Zoho loader';
@@ -18,7 +18,7 @@ export class RequestDemoModalComponent {
         this.ngxLoader.startLoader(this.zohoLoader);
     }
 
-    @HostListener('window:message', ['$event'])
+    @HostListener('window:message', [ '$event' ])
     messageUpdated(event: MessageEvent) {
         if (event.isTrusted && event.returnValue) {
             this.data.succeed = true;

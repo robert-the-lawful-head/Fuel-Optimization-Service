@@ -6,13 +6,13 @@ import { Injectable } from '@angular/core';
  */
 
 const getWindow = () =>
-   // return the global native browser window object
+    // return the global native browser window object
     window;
 
 
 @Injectable()
 export class WindowRef {
-   get nativeWindow(): any {
-      return getWindow();
-   }
+    get nativeWindow(): any {
+        return getWindow();
+    }
 }

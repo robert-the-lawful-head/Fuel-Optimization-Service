@@ -9,7 +9,7 @@ import { User } from '../../../models/user';
 @Component({
     selector: 'app-reset-password',
     templateUrl: './reset-password.component.html',
-    styleUrls: ['./reset-password.component.scss'],
+    styleUrls: [ './reset-password.component.scss' ],
 })
 export class ResetPasswordComponent implements OnInit {
     token: string;
@@ -32,7 +32,7 @@ export class ResetPasswordComponent implements OnInit {
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
             if (!params.token) {
-                this.router.navigate(['/']);
+                this.router.navigate([ '/' ]);
             }
 
             this.token = params.token;
@@ -79,7 +79,7 @@ export class ResetPasswordComponent implements OnInit {
             }).subscribe(() => {
                 this.reset = true;
                 setTimeout(() => {
-                    this.router.navigate(['/']);
+                    this.router.navigate([ '/' ]);
                 }, 2000);
             }, () => {
                 this.error = 'Failed to reset the password. Please contact the FBOLinx team!';

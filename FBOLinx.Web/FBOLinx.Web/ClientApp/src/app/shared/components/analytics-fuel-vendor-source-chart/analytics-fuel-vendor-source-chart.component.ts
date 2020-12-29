@@ -42,7 +42,7 @@ export class AnalyticsFuelVendorSourceChartComponent implements OnInit {
     ) {
         this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
-        this.fbosService.get({ oid: this.sharedService.currentUser.fboId }).subscribe(
+        this.fbosService.get({oid: this.sharedService.currentUser.fboId}).subscribe(
             (data: any) => {
                 this.fbo = data.fbo;
             }

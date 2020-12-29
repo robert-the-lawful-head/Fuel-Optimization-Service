@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -29,7 +29,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-pricing-templates-home',
     templateUrl: './pricing-templates-home.component.html',
-    styleUrls: ['./pricing-templates-home.component.scss'],
+    styleUrls: [ './pricing-templates-home.component.scss' ],
 })
 export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     // Public Members
@@ -84,7 +84,8 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
         }));
         this.router.navigate([
             '/default-layout/pricing-templates/' + $event.pricingTemplateId,
-        ]).then(() => {});
+        ]).then(() => {
+        });
     }
 
     public deletePricingTemplateClicked(pricingTemplate) {

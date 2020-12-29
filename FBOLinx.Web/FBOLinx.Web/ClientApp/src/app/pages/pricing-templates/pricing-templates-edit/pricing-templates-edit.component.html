@@ -6,8 +6,8 @@
     </div>
 
     <div *ngIf="pricingTemplateForm" [formGroup]="pricingTemplateForm">
-    <div class="ml-1 mb-1 text-success" *ngIf="isSaving">Saving Changes <i class="fa fa-spinner fa-spin"></i></div>
-    <div class="ml-1 mb-1 text-success" *ngIf="hasSaved">Changes Saved!</div>
+        <div *ngIf="isSaving" class="ml-1 mb-1 text-success">Saving Changes <i class="fa fa-spinner fa-spin"></i></div>
+        <div *ngIf="hasSaved" class="ml-1 mb-1 text-success">Changes Saved!</div>
         <div class="card-wrap">
             <h3 class="card-header h5">
                 <div class="row">
@@ -36,15 +36,15 @@
                     <div class="row">
                         <div class="d-inline-block pr-2" style="width: 300px;">
                             <mat-form-field>
-                                <input matInput
-                                       placeholder="Name"
-                                       formControlName="name" />
+                                <input formControlName="name"
+                                       matInput
+                                       placeholder="Name"/>
                             </mat-form-field>
                         </div>
                         <div class="d-block pl-3" style="width: 300px;">
                             <mat-form-field>
-                                <mat-select placeholder="Type"
-                                            formControlName="marginType">
+                                <mat-select formControlName="marginType"
+                                            placeholder="Type">
                                     <mat-option *ngFor="let marginType of marginTypeDataSource"
                                                 [value]="marginType.value">
                                         {{ marginType.text }}
@@ -61,88 +61,90 @@
                     <div class="row">
                         <table class="mat-table table-responsive volume-tiers-table">
                             <thead>
-                                <tr class="mat-header-row">
-                                    <th>
-                                        <div class="">Min. (gal)</div>
-                                    </th>
-                                    <th>
-                                        <div class="">Max. (gal)</div>
-                                    </th>
-                                    <th *ngIf="pricingTemplateForm.value.marginType == 1">
-                                        <div class="">Discount</div>
-                                    </th>
-                                    <th>
-                                        <div class="volume-tiers-header">Your ITP Margin</div>
-                                    </th>
-                                    <th>
-                                        <div class="ml-4">
-                                            <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addCustomerMargin()">
-                                                Add New
-                                            </button>
-                                        </div>
-                                    </th>
-                                </tr>
+                            <tr class="mat-header-row">
+                                <th>
+                                    <div class="">Min. (gal)</div>
+                                </th>
+                                <th>
+                                    <div class="">Max. (gal)</div>
+                                </th>
+                                <th *ngIf="pricingTemplateForm.value.marginType == 1">
+                                    <div class="">Discount</div>
+                                </th>
+                                <th>
+                                    <div class="volume-tiers-header">Your ITP Margin</div>
+                                </th>
+                                <th>
+                                    <div class="ml-4">
+                                        <button (click)="addCustomerMargin()" [view]="'accent'" beforeIcon="fa fa-plus"
+                                                ni-button>
+                                            Add New
+                                        </button>
+                                    </div>
+                                </th>
+                            </tr>
                             </thead>
                             <tbody formArrayName="customerMargins">
-                                <tr class="mat-row" *ngFor="let customerMargin of customerMarginsFormArray.controls; let i = index">
-                                    <td class="" [formGroupName]="i">
-                                        <div class="volume-tiers-width">
-                                            <mat-form-field class="">
-                                                <input matInput formControlName="min" />
-                                            </mat-form-field>
+                            <tr *ngFor="let customerMargin of customerMarginsFormArray.controls; let i = index"
+                                class="mat-row">
+                                <td [formGroupName]="i" class="">
+                                    <div class="volume-tiers-width">
+                                        <mat-form-field class="">
+                                            <input formControlName="min" matInput/>
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td class="">
+                                    <div class="volume-tiers-width">
+                                        <mat-form-field>
+                                            <input disabled="disabled"
+                                                   matInput
+                                                   value="{{customerMargin.value.max == 0 ? 99999 : customerMargin.value.max}}"/>
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td *ngIf="pricingTemplateForm.value.marginType == 1" [formGroupName]="i">
+                                    <div class="volume-tiers-width">
+                                        <mat-form-field>
+                                            <input (click)="$event.target.select()"
+                                                   formControlName="amount"
+                                                   matInput
+                                                   step="0.01"
+                                                   type="number"/>
+                                            <span class="prefixDollar" matPrefix>$</span>
+                                        </mat-form-field>
+                                    </div>
+                                </td>
+                                <td [formGroupName]="i" class="font-weight-bold font-italic">
+                                    <div>
+                                        <div *ngIf="pricingTemplateForm.value.marginType == 1">
+                                            ${{ customerMargin.value.itp | number: "1.4-4" }}
                                         </div>
-                                    </td>
-                                    <td class="">
                                         <div class="volume-tiers-width">
-                                            <mat-form-field>
-                                                <input matInput
-                                                       disabled="disabled"
-                                                       value="{{customerMargin.value.max == 0 ? 99999 : customerMargin.value.max}}" />
-                                            </mat-form-field>
-                                        </div>
-                                    </td>
-                                    <td *ngIf="pricingTemplateForm.value.marginType == 1" [formGroupName]="i">
-                                        <div class="volume-tiers-width">
-                                            <mat-form-field>
-                                                <input matInput
-                                                       type="number"
-                                                       step="0.01"
+                                            <mat-form-field *ngIf="pricingTemplateForm.value.marginType == 0">
+                                                <input (click)="$event.target.select()"
                                                        formControlName="amount"
-                                                       (click)="$event.target.select()" />
-                                                <span matPrefix class="prefixDollar">$</span>
+                                                       matInput
+                                                       step="0.01"
+                                                       type="number"/>
+                                                <span class="prefixDollar" matPrefix>$</span>
                                             </mat-form-field>
                                         </div>
-                                    </td>
-                                    <td class="font-weight-bold font-italic" [formGroupName]="i">
-                                        <div>
-                                            <div *ngIf="pricingTemplateForm.value.marginType == 1">
-                                                ${{ customerMargin.value.itp | number: "1.4-4" }}
-                                            </div>
-                                            <div class="volume-tiers-width">
-                                                <mat-form-field *ngIf="pricingTemplateForm.value.marginType == 0">
-                                                    <input matInput
-                                                           type="number"
-                                                           step="0.01"
-                                                           formControlName="amount"
-                                                           (click)="$event.target.select()" />
-                                                    <span matPrefix class="prefixDollar">$</span>
-                                                </mat-form-field>
-                                            </div>
 
-                                        </div>
-                                    </td>
-                                    <td class="">
-                                        <div class="ml-4">
-                                            <button ni-button
-                                                    [view]="'error'"
-                                                    size="small"
-                                                    beforeIcon="fa fa-trash"
-                                                    (click)="deleteCustomerMargin(i)">
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                    </div>
+                                </td>
+                                <td class="">
+                                    <div class="ml-4">
+                                        <button (click)="deleteCustomerMargin(i)"
+                                                [view]="'error'"
+                                                beforeIcon="fa fa-trash"
+                                                ni-button
+                                                size="small">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -156,8 +158,8 @@
                     <div class="row">
                         <div class="col sub-widget">
                             <price-breakdown #priceBreakdownPreview
-                                             [priceTemplateId]="pricingTemplate.oid"
-                                             [hideFeeAndTaxGeneralBreakdown]="true">
+                                             [hideFeeAndTaxGeneralBreakdown]="true"
+                                             [priceTemplateId]="pricingTemplate.oid">
 
                             </price-breakdown>
                         </div>
@@ -170,11 +172,11 @@
                     </div>
                     <div class="row">
                         <ejs-richtexteditor #typeRTE
-                                            id="rteNotes"
-                                            formControlName="notes"></ejs-richtexteditor>
+                                            formControlName="notes"
+                                            id="rteNotes"></ejs-richtexteditor>
                     </div>
                     <div class="row">
-                        <br />
+                        <br/>
                     </div>
 
                     <div class="row mt-2">
@@ -185,20 +187,20 @@
                     </div>
                     <div class="row">
                         <mat-form-field style="max-width: 600px;">
-                            <input matInput
-                                   placeholder="Subject"
+                            <input aria-label="Subject"
                                    formControlName="subject"
-                                   aria-label="Subject" />
+                                   matInput
+                                   placeholder="Subject"/>
                         </mat-form-field>
                     </div>
                     <div class="row">
                         <ejs-richtexteditor #typeEmail
-                                            placeholder="Enter email body here..."
+                                            formControlName="email"
                                             id="rteEmail"
-                                            formControlName="email"></ejs-richtexteditor>
+                                            placeholder="Enter email body here..."></ejs-richtexteditor>
                     </div>
                     <div class="row">
-                        <br />
+                        <br/>
                     </div>
                 </div>
             </div>

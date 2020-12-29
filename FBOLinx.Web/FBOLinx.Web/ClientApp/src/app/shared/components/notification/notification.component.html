@@ -1,9 +1,9 @@
 <h1 mat-dialog-title>{{ data.title }}</h1>
-<div mat-dialog-content class="mt-1 mb-2">
-    <div class="text-center" *ngIf="data.text">
+<div class="mt-1 mb-2" mat-dialog-content>
+    <div *ngIf="data.text" class="text-center">
         {{data.text}}
     </div>
 </div>
-<div mat-dialog-actions class="pull-right">
-    <button mat-stroked-button (click)="onCancelClick()">Ok</button>&nbsp;
+<div class="pull-right" mat-dialog-actions>
+    <button (click)="onCancelClick()" mat-stroked-button>Ok</button>&nbsp;
 </div>

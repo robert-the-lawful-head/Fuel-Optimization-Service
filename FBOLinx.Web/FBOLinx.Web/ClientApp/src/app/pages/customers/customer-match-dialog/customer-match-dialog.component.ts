@@ -23,7 +23,7 @@ export interface CustomerMatchDialogComponent {
 @Component({
     selector: 'customer-match-dialog',
     templateUrl: './customer-match-dialog.component.html',
-    styleUrls: ['./customer-match-dialog.component.scss'],
+    styleUrls: [ './customer-match-dialog.component.scss' ],
 })
 export class CustomerMatchDialogComponent implements OnInit {
 

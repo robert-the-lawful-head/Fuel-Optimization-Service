@@ -3,14 +3,14 @@
 <div class="after-breadcrumb">
     <div *ngIf="pricingTemplatesData">
         <app-pricing-templates-grid
-            [pricingTemplatesData]="pricingTemplatesData"
-            (newPricingTemplateAdded)="newPricingTemplateAdded()"
-            (editPricingTemplateClicked)="
-                editPricingTemplateClicked($event)
-            "
             (deletePricingTemplateClicked)="
                 deletePricingTemplateClicked($event)
             "
+            (editPricingTemplateClicked)="
+                editPricingTemplateClicked($event)
+            "
+            (newPricingTemplateAdded)="newPricingTemplateAdded()"
+            [pricingTemplatesData]="pricingTemplatesData"
         ></app-pricing-templates-grid>
     </div>
     <div *ngIf="!pricingTemplatesData">

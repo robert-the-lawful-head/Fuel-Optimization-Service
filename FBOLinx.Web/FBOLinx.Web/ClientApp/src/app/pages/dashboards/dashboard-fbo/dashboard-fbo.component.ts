@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 
 import * as moment from 'moment';
 
@@ -16,78 +16,77 @@ import { StatisticsOrdersByLocationComponent } from '../../../shared/components/
 @Component({
     selector: 'app-dashboard-fbo',
     templateUrl: './dashboard-fbo.component.html',
-    styleUrls: ['./dashboard-fbo.component.scss'],
+    styleUrls: [ './dashboard-fbo.component.scss' ],
 })
 export class DashboardFboComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('statisticsTotalOrders')
-  private statisticsTotalOrders: StatisticsTotalOrdersComponent;
-  @ViewChild('statisticsTotalCustomers')
-  private statisticsTotalCustomers: StatisticsTotalCustomersComponent;
-  @ViewChild('statisticsTotalAircraft')
-  private statisticsTotalAircraft: StatisticsTotalAircraftComponent;
-  @ViewChild('statisticsOrdersByLocation')
-  private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
+    public breadcrumb: any[];
+    public pageTitle = 'Dashboard';
+    public fboid: any;
+    public groupid: any;
+    public updatedPrice: any;
+    public locationChangedSubscription: any;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
+    public pastThirtyDaysStartDate: Date;
+    @ViewChild('statisticsTotalOrders')
+    private statisticsTotalOrders: StatisticsTotalOrdersComponent;
+    @ViewChild('statisticsTotalCustomers')
+    private statisticsTotalCustomers: StatisticsTotalCustomersComponent;
+    @ViewChild('statisticsTotalAircraft')
+    private statisticsTotalAircraft: StatisticsTotalAircraftComponent;
+    @ViewChild('statisticsOrdersByLocation')
+    private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
 
-  public breadcrumb: any[];
-  public pageTitle = 'Dashboard';
-  public fboid: any;
-  public groupid: any;
-  public updatedPrice: any;
-  public locationChangedSubscription: any;
-  public filterStartDate: Date;
-  public filterEndDate: Date;
-  public pastThirtyDaysStartDate: Date;
+    constructor(private sharedService: SharedService) {
+        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+        this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
+        this.fboid = this.sharedService.currentUser.fboId;
+        this.groupid = this.sharedService.currentUser.groupId;
+        this.sharedService.titleChange(this.pageTitle);
 
-  constructor(private sharedService: SharedService) {
-    this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
-    this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
-    this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
-    this.fboid = this.sharedService.currentUser.fboId;
-    this.groupid = this.sharedService.currentUser.groupId;
-    this.sharedService.titleChange(this.pageTitle);
-
-    this.breadcrumb = [{
-        title: 'Main',
-        link: '/default-layout',
-      },
-    ];
-    if (!this.isCsr) {
-      this.breadcrumb.push({
-        title: 'Dashboard',
-        link: '/default-layout/dashboard-fbo',
-      });
-    } else {
-      this.breadcrumb.push({
-        title: 'CSR Dashboard',
-        link: '/default-layout/dashboard-csr',
-      });
-    }
-  }
-
-  ngAfterViewInit() {
-    this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-      (message) => {
-        if (message === SharedEvents.locationChangedEvent) {
-          this.applyDateFilterChange();
+        this.breadcrumb = [ {
+            title: 'Main',
+            link: '/default-layout',
+        },
+        ];
+        if (!this.isCsr) {
+            this.breadcrumb.push({
+                title: 'Dashboard',
+                link: '/default-layout/dashboard-fbo',
+            });
+        } else {
+            this.breadcrumb.push({
+                title: 'CSR Dashboard',
+                link: '/default-layout/dashboard-csr',
+            });
         }
-      }
-    );
-  }
-
-  ngOnDestroy() {
-    if (this.locationChangedSubscription) {
-      this.locationChangedSubscription.unsubscribe();
     }
-  }
 
-  applyDateFilterChange() {
-    this.statisticsTotalOrders.refreshData();
-    this.statisticsTotalCustomers.refreshData();
-    this.statisticsTotalAircraft.refreshData();
-    this.statisticsOrdersByLocation.refreshData();
-  }
+    get isCsr() {
+        return this.sharedService.currentUser.role === 5;
+    }
 
-  get isCsr() {
-    return this.sharedService.currentUser.role === 5;
-  }
+    ngAfterViewInit() {
+        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
+            (message) => {
+                if (message === SharedEvents.locationChangedEvent) {
+                    this.applyDateFilterChange();
+                }
+            }
+        );
+    }
+
+    ngOnDestroy() {
+        if (this.locationChangedSubscription) {
+            this.locationChangedSubscription.unsubscribe();
+        }
+    }
+
+    applyDateFilterChange() {
+        this.statisticsTotalOrders.refreshData();
+        this.statisticsTotalCustomers.refreshData();
+        this.statisticsTotalAircraft.refreshData();
+        this.statisticsOrdersByLocation.refreshData();
+    }
 }
