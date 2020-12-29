@@ -5,8 +5,8 @@ import * as moment from 'moment';
 @Component({
     selector: 'app-footer',
     templateUrl: './footer.component.html',
-    styleUrls: ['./footer.component.scss'],
-    host: {class: 'app-footer'},
+    styleUrls: [ './footer.component.scss' ],
+    host: { class: 'app-footer' },
 })
 export class FooterComponent implements OnInit {
     public version: string;

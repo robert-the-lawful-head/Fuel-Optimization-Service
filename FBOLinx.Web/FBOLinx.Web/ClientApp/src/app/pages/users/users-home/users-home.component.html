@@ -1,7 +1,8 @@
 <div>
     <div *ngIf="usersData || currentUser">
         <div *ngIf="currentUser">
-            <app-users-edit (cancelClicked)="cancelUserEditClicked()" (saveClicked)="saveUserEditClicked()" [fboInfo]="fboInfo"
+            <app-users-edit (cancelClicked)="cancelUserEditClicked()" (saveClicked)="saveUserEditClicked()"
+                            [fboInfo]="fboInfo"
                             [groupInfo]="groupInfo"
                             [userInfo]="currentUser"></app-users-edit>
         </div>

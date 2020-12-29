@@ -23,7 +23,8 @@ export class StatisticsTotalCustomersComponent implements OnInit {
     constructor(
         private customerinfobygroupService: CustomerinfobygroupService,
         private sharedService: SharedService
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         this.refreshData();

@@ -1,14 +1,6 @@
-import { ActionReducerMap, MetaReducer} from '@ngrx/store';
-import {
-    pricingTemplateFeatureKey,
-    PricingTemplateGridState,
-    pricingTemplateReducer,
-} from './pricing-template';
-import {
-    customerFeatureKey,
-    CustomerGridState,
-    customerReducer
-} from './customer';
+import { ActionReducerMap, MetaReducer } from '@ngrx/store';
+import { pricingTemplateFeatureKey, PricingTemplateGridState, pricingTemplateReducer, } from './pricing-template';
+import { customerFeatureKey, CustomerGridState, customerReducer } from './customer';
 
 export interface State {
     [pricingTemplateFeatureKey]: PricingTemplateGridState;

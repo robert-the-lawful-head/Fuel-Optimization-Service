@@ -1,24 +1,24 @@
-<div class="site-container" [ngClass]="layoutClasses">
-  <app-horizontal-navbar [title]="pageTitle" (sidebarState)="sidebarState()"></app-horizontal-navbar>
+<div [ngClass]="layoutClasses" class="site-container">
+    <app-horizontal-navbar (sidebarState)="sidebarState()" [title]="pageTitle"></app-horizontal-navbar>
 
-  <app-vertical-navbar [ngClass]="{ 'hideSidebar': isSidebarInvisible() }"></app-vertical-navbar>
-  <div *ngIf="pricingTemplatesData">
-    <app-addition-navbar #insideElement [templatelst]="pricingTemplatesData"></app-addition-navbar>
-  </div>
-
-  <app-fbo-prices-panel
-    class="sticky-panel"
-    *ngIf="isPricePanelVisible()"
-    [retail]="retail"
-    [cost]="cost"
-  ></app-fbo-prices-panel>
-
-  <main class="main-content" [ngClass]="{ 'full-width': isSidebarInvisible() }">
-    <div class="main-content-wrap">
-      <router-outlet></router-outlet>
+    <app-vertical-navbar [ngClass]="{ 'hideSidebar': isSidebarInvisible() }"></app-vertical-navbar>
+    <div *ngIf="pricingTemplatesData">
+        <app-addition-navbar #insideElement [templatelst]="pricingTemplatesData"></app-addition-navbar>
     </div>
-    <app-footer></app-footer>
-  </main>
 
-  <div class="app-overlay"></div>
+    <app-fbo-prices-panel
+        *ngIf="isPricePanelVisible()"
+        [cost]="cost"
+        [retail]="retail"
+        class="sticky-panel"
+    ></app-fbo-prices-panel>
+
+    <main [ngClass]="{ 'full-width': isSidebarInvisible() }" class="main-content">
+        <div class="main-content-wrap">
+            <router-outlet></router-outlet>
+        </div>
+        <app-footer></app-footer>
+    </main>
+
+    <div class="app-overlay"></div>
 </div>

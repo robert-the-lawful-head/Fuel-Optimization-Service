@@ -1,16 +1,9 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-  OnInit,
-} from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 import { combineLatest } from 'rxjs';
-import { forOwn, differenceBy } from 'lodash';
+import { differenceBy, forOwn } from 'lodash';
 
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
@@ -22,27 +15,27 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { SharedService } from '../../../layouts/shared-service';
 
 // Components
-import { PriceBreakdownComponent} from '../../../shared/components/price-breakdown/price-breakdown.component';
+import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 
 const BREADCRUMBS: any[] = [
-  {
-    title: 'Main',
-    link: '/default-layout',
-  },
-  {
-    title: 'ITP Margin Templates',
-    link: '/default-layout/pricing-templates',
-  },
-  {
-    title: 'Edit Margin Template',
-    link: '',
-  },
+    {
+        title: 'Main',
+        link: '/default-layout',
+    },
+    {
+        title: 'ITP Margin Templates',
+        link: '/default-layout/pricing-templates',
+    },
+    {
+        title: 'Edit Margin Template',
+        link: '',
+    },
 ];
 
 @Component({
     selector: 'app-pricing-templates-edit',
     templateUrl: './pricing-templates-edit.component.html',
-    styleUrls: ['./pricing-templates-edit.component.scss'],
+    styleUrls: [ './pricing-templates-edit.component.scss' ],
 })
 export class PricingTemplatesEditComponent implements OnInit {
     // Input/Output Bindings
@@ -54,11 +47,7 @@ export class PricingTemplatesEditComponent implements OnInit {
     rteObj: RichTextEditorComponent;
     @ViewChild('typeEmail')
     rteEmail: RichTextEditorComponent;
-    @ViewChild('priceBreakdownPreview')
-    private priceBreakdownPreview: PriceBreakdownComponent;
-
     pricingTemplateForm: FormGroup;
-
     // Members
     pageTitle = 'Edit Margin Template';
     breadcrumb: any[] = BREADCRUMBS;
@@ -72,6 +61,8 @@ export class PricingTemplatesEditComponent implements OnInit {
     public isSaving = false;
     public hasSaved = false;
     public isSaveQueued = false;
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
 
     constructor(
         private route: ActivatedRoute,
@@ -98,7 +89,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             this.pricingTemplatesService.get({ oid: id }),
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(id),
             this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId),
-        ]).subscribe(([pricingTemplateData, customerMarginsData, fboPricesData]) => {
+        ]).subscribe(([ pricingTemplateData, customerMarginsData, fboPricesData ]) => {
             this.jetACost = (fboPricesData as any).filter(item => item.product === 'JetA Cost')[0].price;
             this.jetARetail = (fboPricesData as any).filter(item => item.product === 'JetA Retail')[0].price;
 
@@ -116,7 +107,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                         };
                         forOwn(customerMargin,
                             (value, key) => {
-                                group[key] = [value];
+                                group[key] = [ value ];
                             });
                         return this.formBuilder.group(group, { updateOn: 'blur' });
                     })
@@ -124,13 +115,13 @@ export class PricingTemplatesEditComponent implements OnInit {
             }
 
             this.pricingTemplateForm = this.formBuilder.group({
-                name: [this.pricingTemplate.name],
-                default: [this.pricingTemplate.default],
-                marginType: [this.pricingTemplate.marginType],
+                name: [ this.pricingTemplate.name ],
+                default: [ this.pricingTemplate.default ],
+                marginType: [ this.pricingTemplate.marginType ],
                 customerMargins,
-                notes: [this.pricingTemplate.notes],
-                subject: [this.pricingTemplate.subject],
-                email: [this.pricingTemplate.email]
+                notes: [ this.pricingTemplate.notes ],
+                subject: [ this.pricingTemplate.subject ],
+                email: [ this.pricingTemplate.email ]
             });
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
@@ -186,7 +177,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 ...this.pricingTemplate,
                 ...this.pricingTemplateForm.value,
             }),
-        ]).subscribe(([bulkRemoveResponse, customerMarginsUpdateResponse, priceTemplatesResponse]) => {
+        ]).subscribe(([ bulkRemoveResponse, customerMarginsUpdateResponse, priceTemplatesResponse ]) => {
             // this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
             this.pricingTemplate.customerMargins = customerMarginsUpdateResponse;
             for (let i = 0; i < this.pricingTemplateForm.value.customerMargins.length; i++) {
@@ -201,7 +192,8 @@ export class PricingTemplatesEditComponent implements OnInit {
     }
 
     cancelPricingTemplateEdit() {
-        this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
+        this.router.navigate([ '/default-layout/pricing-templates/' ]).then(() => {
+        });
     }
 
     deleteCustomerMargin(index: number) {
@@ -237,15 +229,14 @@ export class PricingTemplatesEditComponent implements OnInit {
         const group = {};
         forOwn(customerMargin,
             (value, key) => {
-                group[key] = [value];
+                group[key] = [ value ];
             });
         this.customerMarginsFormArray.push(this.formBuilder.group(group, { updateOn: 'blur' }));
     }
 
     private updateMargins(oldMargins, marginType) {
-        const margins = [...oldMargins];
-        for (let i = 0; i < margins?.length; i++)
-        {
+        const margins = [ ...oldMargins ];
+        for (let i = 0; i < margins?.length; i++) {
             if (i > 0) {
                 margins[i - 1].max = Math.abs(margins[i].min - 1);
             }

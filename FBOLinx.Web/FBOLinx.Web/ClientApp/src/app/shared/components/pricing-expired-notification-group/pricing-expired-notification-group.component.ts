@@ -1,8 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import {
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 // Components
@@ -18,7 +15,8 @@ export class PricingExpiredNotificationGroupComponent {
         private router: Router,
         public dialogRef: MatDialogRef<PricingExpiredNotificationGroupComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) {}
+    ) {
+    }
 
     public onConfirmClicked() {
         this.router.navigate(['/default-layout/dashboard-fbo']);

@@ -12,7 +12,7 @@ import { SharedService } from '../../../layouts/shared-service';
 @Component({
     selector: 'app-fbos-edit',
     templateUrl: './fbos-edit.component.html',
-    styleUrls: ['./fbos-edit.component.scss'],
+    styleUrls: [ './fbos-edit.component.scss' ],
 })
 export class FbosEditComponent implements OnInit {
     @Output() saveClicked = new EventEmitter<any>();
@@ -47,7 +47,7 @@ export class FbosEditComponent implements OnInit {
     ngOnInit() {
         if (!this.embed) {
             if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
-                this.breadcrumb = [{
+                this.breadcrumb = [ {
                     title: 'Main',
                     link: '/default-layout',
                 },
@@ -61,7 +61,7 @@ export class FbosEditComponent implements OnInit {
                     },
                 ];
             } else {
-                this.breadcrumb = [{
+                this.breadcrumb = [ {
                     title: 'Main',
                     link: '/default-layout',
                 },
@@ -106,9 +106,9 @@ export class FbosEditComponent implements OnInit {
                 .subscribe(() => {
                     this.saveClicked.emit(this.fboInfo);
                     if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
-                        this.router.navigate(['/default-layout/groups/']);
+                        this.router.navigate([ '/default-layout/groups/' ]);
                     } else {
-                        this.router.navigate(['/default-layout/fbos/']);
+                        this.router.navigate([ '/default-layout/fbos/' ]);
                     }
                 });
         });
@@ -122,9 +122,9 @@ export class FbosEditComponent implements OnInit {
             });
         } else {
             if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
-                this.router.navigate(['/default-layout/groups/']);
+                this.router.navigate([ '/default-layout/groups/' ]);
             } else {
-                this.router.navigate(['/default-layout/fbos/']);
+                this.router.navigate([ '/default-layout/fbos/' ]);
             }
         }
     }

@@ -29,7 +29,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-customers-home',
     templateUrl: './customers-home.component.html',
-    styleUrls: ['./customers-home.component.scss'],
+    styleUrls: [ './customers-home.component.scss' ],
 })
 export class CustomersHomeComponent implements OnInit, OnDestroy {
     // Public Members

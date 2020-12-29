@@ -16,14 +16,14 @@ import { SystemcontactsNewContactModalComponent } from '../systemcontacts-new-co
 @Component({
     selector: 'app-systemcontacts-grid',
     templateUrl: './systemcontacts-grid.component.html',
-    styleUrls: ['./systemcontacts-grid.component.scss'],
+    styleUrls: [ './systemcontacts-grid.component.scss' ],
 })
 export class SystemcontactsGridComponent implements OnInit {
     @Output() contactDeleted = new EventEmitter<any>();
     @Output() newContactClicked = new EventEmitter<any>();
     @Output() editContactClicked = new EventEmitter<any>();
     @Input() contactsData: Array<any>;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     public currentContactInfoByGroup: any;
     contactsDataSource: MatTableDataSource<any> = null;
@@ -97,7 +97,7 @@ export class SystemcontactsGridComponent implements OnInit {
                     .subscribe(() => {
                         this.contactsData = this.contactsData.filter(c => c.oid !== record.oid);
                         this.refreshTable();
-                        this.fbocontactsService.updateFuelvendor({fboId: this.sharedService.currentUser.fboId}).subscribe();
+                        this.fbocontactsService.updateFuelvendor({ fboId: this.sharedService.currentUser.fboId }).subscribe();
                     });
             } else {
                 const updatedContact = {
@@ -113,7 +113,7 @@ export class SystemcontactsGridComponent implements OnInit {
                         }
                     }
                     this.refreshTable();
-                    this.fbocontactsService.updateFuelvendor({fboId: this.sharedService.currentUser.fboId}).subscribe();
+                    this.fbocontactsService.updateFuelvendor({ fboId: this.sharedService.currentUser.fboId }).subscribe();
                 });
             }
         });
@@ -210,7 +210,7 @@ export class SystemcontactsGridComponent implements OnInit {
             fields: [
                 {
                     label: 'First Name',
-                    alternates: ['first name'],
+                    alternates: [ 'first name' ],
                     key: 'FirstName',
                     description: 'Contact First Name',
                     validators: [
@@ -222,7 +222,7 @@ export class SystemcontactsGridComponent implements OnInit {
                 },
                 {
                     label: 'Last Name',
-                    alternates: ['last name'],
+                    alternates: [ 'last name' ],
                     key: 'LastName',
                     description: 'Contact Last Name',
                     validators: [
@@ -234,73 +234,73 @@ export class SystemcontactsGridComponent implements OnInit {
                 },
                 {
                     label: 'Title',
-                    alternates: ['title'],
+                    alternates: [ 'title' ],
                     key: 'Title',
                     description: 'Contact Title',
                 },
                 {
                     label: 'Email',
-                    alternates: ['email', 'email address'],
+                    alternates: [ 'email', 'email address' ],
                     key: 'Email',
                     description: 'Email Address',
                 },
                 {
                     label: 'Phone Number',
-                    alternates: ['phone', 'phone number'],
+                    alternates: [ 'phone', 'phone number' ],
                     key: 'PhoneNumber',
                     description: 'Phone Number',
                 },
                 {
                     label: 'Extension',
-                    alternates: ['extension'],
+                    alternates: [ 'extension' ],
                     key: 'Extension',
                     description: 'Phone Extension',
                 },
                 {
                     label: 'Mobile',
-                    alternates: ['mobile', 'cell', 'mobile phone', 'cell phone'],
+                    alternates: [ 'mobile', 'cell', 'mobile phone', 'cell phone' ],
                     key: 'MobilePhone',
                     description: 'Mobile Phone',
                 },
                 {
                     label: 'Fax',
-                    alternates: ['fax'],
+                    alternates: [ 'fax' ],
                     key: 'Fax',
                     description: 'Fax',
                 },
                 {
                     label: 'Address',
-                    alternates: ['address', 'street address'],
+                    alternates: [ 'address', 'street address' ],
                     key: 'Address',
                     description: 'Street Address',
                 },
                 {
                     label: 'City',
-                    alternates: ['city', 'town'],
+                    alternates: [ 'city', 'town' ],
                     key: 'City',
                     description: 'City',
                 },
                 {
                     label: 'State',
-                    alternates: ['state'],
+                    alternates: [ 'state' ],
                     key: 'State',
                     description: 'State',
                 },
                 {
                     label: 'Country',
-                    alternates: ['country'],
+                    alternates: [ 'country' ],
                     key: 'Country',
                     description: 'Country',
                 },
                 {
                     label: 'Primary',
-                    alternates: ['primary'],
+                    alternates: [ 'primary' ],
                     key: 'PrimaryContact',
                     description: 'Primary',
                 },
                 {
                     label: 'Copy on Distribution',
-                    alternates: ['copy on distribution'],
+                    alternates: [ 'copy on distribution' ],
                     key: 'CopyAlertsContact',
                     description: 'Copy Contact on Distribution',
                 },

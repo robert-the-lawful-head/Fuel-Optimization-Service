@@ -36,15 +36,15 @@ import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-
 @Component({
     selector: 'app-groups-grid',
     templateUrl: './groups-grid.component.html',
-    styleUrls: ['./groups-grid.component.scss'],
-    providers: [DetailRowService],
+    styleUrls: [ './groups-grid.component.scss' ],
+    providers: [ DetailRowService ],
 })
 export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('grid') public grid: GridComponent;
-    @ViewChild('fboManageTemplate', {static: true}) public fboManageTemplate: any;
-    @ViewChild('needAttentionTemplate', {static: true}) public needAttentionTemplate: any;
-    @ViewChild('lastLoginTemplate', {static: true}) public lastLoginTemplate: any;
-    @ViewChild('pricingExpiredTemplate', {static: true}) public pricingExpiredTemplate: any;
+    @ViewChild('fboManageTemplate', { static: true }) public fboManageTemplate: any;
+    @ViewChild('needAttentionTemplate', { static: true }) public needAttentionTemplate: any;
+    @ViewChild('lastLoginTemplate', { static: true }) public lastLoginTemplate: any;
+    @ViewChild('pricingExpiredTemplate', { static: true }) public pricingExpiredTemplate: any;
 
     // Input/Output Bindings
     @Input() groupsFbosData: any;
@@ -60,7 +60,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     pageTitle = 'Groups';
     searchValue = '';
     pageSettings: any = {
-        pageSizes: [25, 50, 100, 'All'],
+        pageSizes: [ 25, 50, 100, 'All' ],
         pageSize: 25,
     };
 
@@ -96,13 +96,13 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             dataSource: this.fboDataSource,
             queryString: 'groupId',
             columns: [
-                {field: 'icao', headerText: 'ICAO', width: 100},
-                {field: 'fbo', headerText: 'FBO'},
-                {template: this.pricingExpiredTemplate},
-                {template: this.needAttentionTemplate},
-                {template: this.lastLoginTemplate, headerText: 'Last Login Date', width: 200},
-                {field: 'active', headerText: 'Active', width: 100},
-                {template: this.fboManageTemplate, width: 150},
+                { field: 'icao', headerText: 'ICAO', width: 100 },
+                { field: 'fbo', headerText: 'FBO' },
+                { template: this.pricingExpiredTemplate },
+                { template: this.needAttentionTemplate },
+                { template: this.lastLoginTemplate, headerText: 'Last Login Date', width: 200 },
+                { field: 'active', headerText: 'Active', width: 100 },
+                { template: this.fboManageTemplate, width: 150 },
             ],
             load() {
                 this.registeredTemplate = {};   // set registertemplate value as empty in load event
@@ -149,7 +149,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.groupsFbosData.groups.splice(deleteIndex, 1);
                 this.snackBar.open(record.groupName + ' is deleted', '', {
                     duration: 2000,
-                    panelClass: ['blue-snackbar'],
+                    panelClass: [ 'blue-snackbar' ],
                 });
                 this.grid.refresh();
             });
@@ -177,7 +177,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.groupsFbosData.fbos.splice(fboIndex, 1);
                 this.snackBar.open(record.fbo + ' is deleted', '', {
                     duration: 2000,
-                    panelClass: ['blue-snackbar'],
+                    panelClass: [ 'blue-snackbar' ],
                 });
                 this.grid.refresh();
             });
@@ -270,7 +270,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 localStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.impersonatedRole = 2;
                 localStorage.setItem('impersonatedrole', '2');
-                this.router.navigate(['/default-layout/fbos/']);
+                this.router.navigate([ '/default-layout/fbos/' ]);
             });
         }
     }
@@ -314,7 +314,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.sharedService.currentUser.fboId = fbo.oid;
                 localStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
                 this.sharedService.emitChange(fboChangedEvent);
-                this.router.navigate(['/default-layout/dashboard-fbo/']);
+                this.router.navigate([ '/default-layout/dashboard-fbo/' ]);
             });
         }
     }
@@ -431,7 +431,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         if (!expired) {
             return 'All Pricing Live';
         }
-        return `${expired} of ${all} Expired`;
+        return `${ expired } of ${ all } Expired`;
     }
 
     ifStringContains(str1: string, str2: string) {

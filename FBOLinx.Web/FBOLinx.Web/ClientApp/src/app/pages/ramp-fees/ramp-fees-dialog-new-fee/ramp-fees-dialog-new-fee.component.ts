@@ -1,8 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import {
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
@@ -24,7 +21,7 @@ export interface NewRampFeeDialogData {
 @Component({
     selector: 'app-ramp-fees-dialog-new-fee',
     templateUrl: './ramp-fees-dialog-new-fee.component.html',
-    styleUrls: ['./ramp-fees-dialog-new-fee.component.scss'],
+    styleUrls: [ './ramp-fees-dialog-new-fee.component.scss' ],
 })
 export class RampFeesDialogNewFeeComponent {
     public categoryTypes: any[] = [

@@ -5,7 +5,7 @@ import { GroupsService } from '../../../services/groups.service';
 @Component({
     selector: 'app-groups-merge-dialog',
     templateUrl: './groups-merge-dialog.component.html',
-    styleUrls: ['./groups-merge-dialog.component.scss'],
+    styleUrls: [ './groups-merge-dialog.component.scss' ],
 })
 export class GroupsMergeDialogComponent {
     baseGroup: number;

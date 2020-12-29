@@ -45,12 +45,9 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-customers-edit',
     templateUrl: './customers-edit.component.html',
-    styleUrls: ['./customers-edit.component.scss'],
+    styleUrls: [ './customers-edit.component.scss' ],
 })
 export class CustomersEditComponent implements OnInit {
-    @ViewChild('priceBreakdownPreview')
-    private priceBreakdownPreview: PriceBreakdownComponent;
-
     // Members
     pageTitle = 'Edit Customer';
     breadcrumb = BREADCRUMBS;
@@ -69,6 +66,8 @@ export class CustomersEditComponent implements OnInit {
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
     locationChangedSubscription: any;
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -96,7 +95,7 @@ export class CustomersEditComponent implements OnInit {
 
     async ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
-        this.customerInfoByGroup = await this.customerInfoByGroupService.get({oid: id}).toPromise();
+        this.customerInfoByGroup = await this.customerInfoByGroupService.get({ oid: id }).toPromise();
         const results = await combineLatest([
             this.customerInfoByGroupService.getCertificateTypes(),
             this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId),
@@ -132,21 +131,21 @@ export class CustomersEditComponent implements OnInit {
         }
 
         this.customerForm = this.formBuilder.group({
-            active: [this.customerInfoByGroup.active],
-            company: [this.customerInfoByGroup.company],
-            customerCompanyType: [this.customerInfoByGroup.customerCompanyType],
-            certificateType: [this.customerInfoByGroup.certificateType],
-            mainPhone: [this.customerInfoByGroup.mainPhone],
-            address: [this.customerInfoByGroup.address],
-            city: [this.customerInfoByGroup.city],
-            state: [this.customerInfoByGroup.state],
-            zipCode: [this.customerInfoByGroup.zipCode],
-            country: [this.customerInfoByGroup.country],
-            website: [this.customerInfoByGroup.website],
-            distribute: [this.customerInfoByGroup.distribute],
-            showJetA: [this.customerInfoByGroup.showJetA],
-            show100Ll: [this.customerInfoByGroup.show100Ll],
-            customerMarginTemplate: [this.customCustomerType.customerType],
+            active: [ this.customerInfoByGroup.active ],
+            company: [ this.customerInfoByGroup.company ],
+            customerCompanyType: [ this.customerInfoByGroup.customerCompanyType ],
+            certificateType: [ this.customerInfoByGroup.certificateType ],
+            mainPhone: [ this.customerInfoByGroup.mainPhone ],
+            address: [ this.customerInfoByGroup.address ],
+            city: [ this.customerInfoByGroup.city ],
+            state: [ this.customerInfoByGroup.state ],
+            zipCode: [ this.customerInfoByGroup.zipCode ],
+            country: [ this.customerInfoByGroup.country ],
+            website: [ this.customerInfoByGroup.website ],
+            distribute: [ this.customerInfoByGroup.distribute ],
+            showJetA: [ this.customerInfoByGroup.showJetA ],
+            show100Ll: [ this.customerInfoByGroup.show100Ll ],
+            customerMarginTemplate: [ this.customCustomerType.customerType ],
         });
         this.customerForm.valueChanges.pipe(
             debounceTime(1000),
@@ -168,7 +167,7 @@ export class CustomersEditComponent implements OnInit {
                 console.error(err);
                 this.snackBar.open(err.message, '', {
                     duration: 5000,
-                    panelClass: ['blue-snackbar'],
+                    panelClass: [ 'blue-snackbar' ],
                 });
                 return of(EMPTY);
             })
@@ -201,20 +200,20 @@ export class CustomersEditComponent implements OnInit {
                     this.customCustomerTypesService
                         .add(this.customCustomerType)
                         .subscribe(() => {
-                            this.router.navigate(['/default-layout/customers/']).then();
+                            this.router.navigate([ '/default-layout/customers/' ]).then();
                         });
                 } else {
                     this.customCustomerTypesService
                         .update(this.customCustomerType)
                         .subscribe(() => {
-                            this.router.navigate(['/default-layout/customers/']).then();
+                            this.router.navigate([ '/default-layout/customers/' ]).then();
                         });
                 }
             });
     }
 
     cancelCustomerEdit() {
-        this.router.navigate(['/default-layout/customers/']).then();
+        this.router.navigate([ '/default-layout/customers/' ]).then();
     }
 
     contactDeleted(contact) {
@@ -253,7 +252,7 @@ export class CustomersEditComponent implements OnInit {
             if (result !== 'cancel') {
                 if (this.currentContactInfoByGroup.contactId === 0) {
                     this.contactsService
-                        .add({oid: 0})
+                        .add({ oid: 0 })
                         .subscribe((data: any) => {
                             this.currentContactInfoByGroup.contactId = data.oid;
                             this.saveContactInfoByGroup();
@@ -290,7 +289,7 @@ export class CustomersEditComponent implements OnInit {
                 } else {
                     this.selectedContactRecord = contact;
                     this.contactInfoByGroupsService
-                        .get({oid: contact.contactInfoByGroupId})
+                        .get({ oid: contact.contactInfoByGroupId })
                         .subscribe((data: any) => {
                             if (data) {
                                 this.currentContactInfoByGroup = data;
@@ -323,7 +322,7 @@ export class CustomersEditComponent implements OnInit {
     saveEditContactClicked() {
         // this.saveCustomerEdit();
         if (this.currentContactInfoByGroup.contactId === 0) {
-            this.contactsService.add({oid: 0}).subscribe((data: any) => {
+            this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
                 this.currentContactInfoByGroup.contactId = data.oid;
                 this.saveContactInfoByGroup();
             });

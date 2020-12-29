@@ -23,7 +23,7 @@ export interface NewContactDialogData {
 @Component({
     selector: 'app-contacts-dialog-new-contact',
     templateUrl: './contacts-edit-modal.component.html',
-    styleUrls: ['./contacts-edit-modal.component.scss'],
+    styleUrls: [ './contacts-edit-modal.component.scss' ],
 })
 export class ContactsDialogNewContactComponent {
     // Masks

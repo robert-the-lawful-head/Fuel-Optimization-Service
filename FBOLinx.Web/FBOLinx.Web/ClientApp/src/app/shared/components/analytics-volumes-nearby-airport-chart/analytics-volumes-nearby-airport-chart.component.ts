@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as _ from 'lodash';
 import { MatSliderChange } from '@angular/material/slider';
 import * as moment from 'moment';
 // Services

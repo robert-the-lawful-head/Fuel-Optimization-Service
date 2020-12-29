@@ -23,7 +23,8 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
     constructor(
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         this.refreshData();

@@ -1,12 +1,14 @@
 <h1 mat-dialog-title>Pricing Expired</h1>
-<div mat-dialog-content class="mt-1 mb-2">
+<div class="mt-1 mb-2" mat-dialog-content>
     <div class="text-center">
-        Your fuel pricing has expired.  Please update your cost/retail values.
+        Your fuel pricing has expired. Please update your cost/retail values.
     </div>
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button mat-flat-button color="orange" (click)="onRemindMeLaterClick()" class="mr-1" *ngIf="!hideRemindMeButton">Remind Me Later</button>
-        <button mat-stroked-button (click)="onCancelClick()">Dismiss</button>
+        <button (click)="onRemindMeLaterClick()" *ngIf="!hideRemindMeButton" class="mr-1" color="orange"
+                mat-flat-button>Remind Me Later
+        </button>
+        <button (click)="onCancelClick()" mat-stroked-button>Dismiss</button>
     </div>
 </div>

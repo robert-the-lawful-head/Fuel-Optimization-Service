@@ -12,7 +12,7 @@ export interface NewCustomerCompanyTypeDialogData {
 @Component({
     selector: 'app-customer-company-type-dialog',
     templateUrl: './customer-company-type-dialog.component.html',
-    styleUrls: ['./customer-company-type-dialog.component.scss'],
+    styleUrls: [ './customer-company-type-dialog.component.scss' ],
 })
 export class CustomerCompanyTypeDialogComponent {
     constructor(

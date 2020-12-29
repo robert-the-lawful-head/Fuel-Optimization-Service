@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
     styleUrls: ['./email-content-selection.component.scss'],
 })
 export class EmailContentSelectionComponent {
-    constructor() {}
+    constructor() {
+    }
 }

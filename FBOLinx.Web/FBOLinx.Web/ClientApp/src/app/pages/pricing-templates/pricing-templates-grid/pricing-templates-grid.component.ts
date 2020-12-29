@@ -1,16 +1,9 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    Output,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import {MatSort, SortDirection} from '@angular/material/sort';
+import { MatSort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import {Store} from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -33,7 +26,7 @@ export interface DefaultTemplateUpdate {
 @Component({
     selector: 'app-pricing-templates-grid',
     templateUrl: './pricing-templates-grid.component.html',
-    styleUrls: ['./pricing-templates-grid.component.scss'],
+    styleUrls: [ './pricing-templates-grid.component.scss' ],
 })
 export class PricingTemplatesGridComponent implements OnInit {
     // Input/Output Bindings
@@ -72,7 +65,8 @@ export class PricingTemplatesGridComponent implements OnInit {
         public deleteTemplateWarningDialog: MatDialog,
         private sharedService: SharedService,
         public customCustomerService: CustomcustomertypesService
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         if (!this.pricingTemplatesData) {
@@ -172,7 +166,8 @@ export class PricingTemplatesGridComponent implements OnInit {
                 }
             );
 
-            dialogRef.afterClosed().subscribe((result) => {});
+            dialogRef.afterClosed().subscribe((result) => {
+            });
         }
     }
 

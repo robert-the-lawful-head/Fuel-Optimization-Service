@@ -67,7 +67,7 @@ const initialColumns: ColumnType[] = [
 @Component({
     selector: 'app-customers-grid',
     templateUrl: './customers-grid.component.html',
-    styleUrls: ['./customers-grid.component.scss'],
+    styleUrls: [ './customers-grid.component.scss' ],
 })
 export class CustomersGridComponent implements OnInit {
     // Input/Output Bindings
@@ -81,8 +81,8 @@ export class CustomersGridComponent implements OnInit {
 
     // Members
     @ViewChild('customerTableContainer') table: ElementRef;
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     tableLocalStorageKey = 'customer-manager-table-settings';
 
@@ -158,7 +158,7 @@ export class CustomersGridComponent implements OnInit {
         const dialogRef = this.deleteCustomerDialog.open(
             DeleteConfirmationComponent,
             {
-                data: {item: customer, description: 'customer'},
+                data: { item: customer, description: 'customer' },
                 autoFocus: false,
             }
         );
@@ -168,7 +168,7 @@ export class CustomersGridComponent implements OnInit {
                 return;
             }
             this.customerInfoByGroupService
-                .remove({oid: result.item.customerInfoByGroupId})
+                .remove({ oid: result.item.customerInfoByGroupId })
                 .subscribe(() => {
                     this.customerDeleted.emit();
                 });
@@ -202,7 +202,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     newCustomer() {
-        const customerInfo = {oid: 0};
+        const customerInfo = { oid: 0 };
         const dialogRef = this.newCustomerDialog.open(
             CustomersDialogNewCustomerComponent,
             {
@@ -249,14 +249,14 @@ export class CustomersGridComponent implements OnInit {
             exportData = this.customersDataSource.filteredData;
         }
         exportData = map(exportData, (item) => ({
-                Company: item.company,
-                Source:
-                    item.customerCompanyTypeName === 'FuelerLinx'
-                        ? 'FBOLinx Network'
-                        : item.customerCompanyTypeName,
-                'Assigned Price Tier': item.pricingTemplateName,
-                Price: item.allInPrice,
-            }));
+            Company: item.company,
+            Source:
+                item.customerCompanyTypeName === 'FuelerLinx'
+                    ? 'FBOLinx Network'
+                    : item.customerCompanyTypeName,
+            'Assigned Price Tier': item.pricingTemplateName,
+            Price: item.allInPrice,
+        }));
         exportData = sortBy(exportData, [
             (item) => item.Company.toLowerCase(),
         ]);
@@ -400,13 +400,13 @@ export class CustomersGridComponent implements OnInit {
             fields: [
                 {
                     label: 'Company Id',
-                    alternates: ['Id', 'CompanyId'],
+                    alternates: [ 'Id', 'CompanyId' ],
                     key: 'CompanyId',
                     description: 'Company Id Value',
                 },
                 {
                     label: 'CompanyName',
-                    alternates: ['Company Name', 'Name'],
+                    alternates: [ 'Company Name', 'Name' ],
                     key: 'CompanyName',
                     description: 'Company Name Value',
                     validators: [
@@ -418,13 +418,13 @@ export class CustomersGridComponent implements OnInit {
                 },
                 {
                     label: 'Activate',
-                    alternates: ['activate'],
+                    alternates: [ 'activate' ],
                     key: 'Activate',
                     description: 'Activate Flag',
                 },
                 {
                     label: 'Tail',
-                    alternates: ['tail', 'plane tail', 'N-number', 'Nnumber'],
+                    alternates: [ 'tail', 'plane tail', 'N-number', 'Nnumber' ],
                     key: 'Tail',
                     description: 'Tail',
                 },
@@ -455,43 +455,43 @@ export class CustomersGridComponent implements OnInit {
                 },
                 {
                     label: 'Size',
-                    alternates: ['Aircraft Size', 'Plane Size'],
+                    alternates: [ 'Aircraft Size', 'Plane Size' ],
                     key: 'AircraftSize',
                     description: 'Aircraft Size',
                 },
                 {
                     label: 'First Name',
-                    alternates: ['first name', 'name'],
+                    alternates: [ 'first name', 'name' ],
                     key: 'FirstName',
                     description: 'First Name',
                 },
                 {
                     label: 'Last Name',
-                    alternates: ['last name', 'lname'],
+                    alternates: [ 'last name', 'lname' ],
                     key: 'LastName',
                     description: 'Last Name',
                 },
                 {
                     label: 'Title',
-                    alternates: ['title'],
+                    alternates: [ 'title' ],
                     key: 'Title',
                     description: 'Title',
                 },
                 {
                     label: 'Email',
-                    alternates: ['email address', 'email'],
+                    alternates: [ 'email address', 'email' ],
                     key: 'Email',
                     description: 'Email',
                 },
                 {
                     label: 'Mobile',
-                    alternates: ['mobile', 'cell', 'cell phone'],
+                    alternates: [ 'mobile', 'cell', 'cell phone' ],
                     key: 'Mobile',
                     description: 'Mobile',
                 },
                 {
                     label: 'Phone',
-                    alternates: ['phone'],
+                    alternates: [ 'phone' ],
                     key: 'Phone',
                     description: 'Phone',
                 },
@@ -518,7 +518,7 @@ export class CustomersGridComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.columns = [...result];
+                this.columns = [ ...result ];
                 this.refreshSort();
                 this.saveSettings();
             }
@@ -533,8 +533,8 @@ export class CustomersGridComponent implements OnInit {
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
-                    ? {...column, sort: this.sort.direction}
-                    : {id: column.id, name: column.name, hidden: column.hidden}
+                    ? { ...column, sort: this.sort.direction }
+                    : { id: column.id, name: column.name, hidden: column.hidden }
             );
             this.paginator.pageIndex = 0;
             this.saveSettings();
@@ -556,8 +556,8 @@ export class CustomersGridComponent implements OnInit {
 
     private refreshSort() {
         const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({id: null, start: sortedColumn?.sort || 'asc', disableClear: false});
-        this.sort.sort({id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false});
-        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({toState: 'active'});
+        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
     }
 }
