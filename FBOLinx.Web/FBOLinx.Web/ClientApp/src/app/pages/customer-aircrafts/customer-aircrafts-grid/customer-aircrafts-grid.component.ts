@@ -248,11 +248,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
             });
         }
     }
-
-    public deleteCustomerAircraft(customerAircraft: any) {
-        // TODO: add delete prompt and logic
-    }
-
     public applyFilter(filterValue: string) {
         this.customerAircraftsDataSource.filter = filterValue
             .trim()

@@ -56,16 +56,13 @@ export class CustomersEditComponent implements OnInit {
     pricingTemplatesData: any[];
     customerAircraftsData: any[];
     selectedContactRecord: any;
-    selectedCustomerAircraftRecord: any;
     currentContactInfoByGroup: any;
     customCustomerType: any;
-    isSaving = false;
     certificateTypes: any[];
     customerCompanyTypes: any[];
     hasContactForPriceDistribution = false;
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
-    locationChangedSubscription: any;
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
 
@@ -186,32 +183,6 @@ export class CustomersEditComponent implements OnInit {
     }
 
     // Methods
-    saveDirectCustomerEdit() {
-        const customerInfoByGroup = {
-            ...this.customerInfoByGroup,
-            ...this.customerForm.value,
-        };
-        this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
-
-        this.customerInfoByGroupService
-            .update(customerInfoByGroup)
-            .subscribe(() => {
-                if (!this.customCustomerType.oid || this.customCustomerType.oid === 0) {
-                    this.customCustomerTypesService
-                        .add(this.customCustomerType)
-                        .subscribe(() => {
-                            this.router.navigate([ '/default-layout/customers/' ]).then();
-                        });
-                } else {
-                    this.customCustomerTypesService
-                        .update(this.customCustomerType)
-                        .subscribe(() => {
-                            this.router.navigate([ '/default-layout/customers/' ]).then();
-                        });
-                }
-            });
-    }
-
     cancelCustomerEdit() {
         this.router.navigate([ '/default-layout/customers/' ]).then();
     }
@@ -265,77 +236,6 @@ export class CustomersEditComponent implements OnInit {
             }
         });
     }
-
-    editContactClicked(contact) {
-        const dialogRef = this.newContactDialog.open(
-            ContactsDialogNewContactComponent,
-            {
-                data: contact,
-            }
-        );
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result !== 'cancel') {
-                if (result.toDelete) {
-                    this.customerContactsService
-                        .remove(result.customerContactId)
-                        .subscribe(() => {
-                            this.contactInfoByGroupsService
-                                .remove(contact.contactInfoByGroupId)
-                                .subscribe(() => {
-                                    this.loadCustomerContacts();
-                                });
-                        });
-                } else {
-                    this.selectedContactRecord = contact;
-                    this.contactInfoByGroupsService
-                        .get({ oid: contact.contactInfoByGroupId })
-                        .subscribe((data: any) => {
-                            if (data) {
-                                this.currentContactInfoByGroup = data;
-                                if (this.currentContactInfoByGroup.oid) {
-                                    data.email = contact.email;
-                                    data.firstName = contact.firstName;
-                                    data.lastName = contact.lastName;
-                                    data.title = contact.title;
-                                    data.phone = contact.phone;
-                                    data.extension = contact.extension;
-                                    data.mobile = contact.mobile;
-                                    data.fax = contact.fax;
-                                    data.address = contact.address;
-                                    data.city = contact.city;
-                                    data.state = contact.state;
-                                    data.country = contact.country;
-                                    data.primary = contact.primary;
-                                    data.copyAlerts = contact.copyAlerts;
-                                    this.saveContactInfoByGroup();
-                                }
-                            }
-                        });
-                }
-            } else {
-                this.loadCustomerContacts();
-            }
-        });
-    }
-
-    saveEditContactClicked() {
-        // this.saveCustomerEdit();
-        if (this.currentContactInfoByGroup.contactId === 0) {
-            this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
-                this.currentContactInfoByGroup.contactId = data.oid;
-                this.saveContactInfoByGroup();
-            });
-        } else {
-            // this.saveCustomerEdit();
-            this.saveContactInfoByGroup();
-        }
-    }
-
-    cancelEditContactClicked() {
-        this.currentContactInfoByGroup = null;
-    }
-
     updateCustomerPricingTemplate(pricingTemplateId: number) {
         if (this.customCustomerType) {
             this.customCustomerType.customerType = pricingTemplateId;
@@ -365,11 +265,6 @@ export class CustomersEditComponent implements OnInit {
                 });
         });
     }
-
-    pricingTemplateSelectionChanged(customCustomerType) {
-        customCustomerType.requiresUpdate = true;
-    }
-
     toggleChange($event) {
         if ($event.checked) {
             this.customerInfoByGroup.showJetA = true;
@@ -403,7 +298,7 @@ export class CustomersEditComponent implements OnInit {
                 this.recalculatePriceBreakdown();
             });
         } else {
-            this.fboFeeAndTaxOmitsbyCustomerService.remove(omitRecord).subscribe((response: any) => {
+            this.fboFeeAndTaxOmitsbyCustomerService.remove(omitRecord).subscribe(() => {
                 feeAndTax.omitsByCustomer = [];
                 this.recalculatePriceBreakdown();
             });
@@ -451,7 +346,7 @@ export class CustomersEditComponent implements OnInit {
         } else {
             this.contactInfoByGroupsService
                 .update(this.currentContactInfoByGroup)
-                .subscribe((data: any) => {
+                .subscribe(() => {
                     this.saveCustomerContact();
                 });
         }
