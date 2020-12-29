@@ -250,12 +250,12 @@ export class CustomersGridComponent implements OnInit {
         }
         exportData = map(exportData, (item) => ({
             Company: item.company,
-            Source:
-                item.customerCompanyTypeName === 'FuelerLinx'
-                    ? 'FBOLinx Network'
-                    : item.customerCompanyTypeName,
-            'Assigned Price Tier': item.pricingTemplateName,
-            Price: item.allInPrice,
+            'Needs Attention': item.needsAttention ? 'Needs Attention' : '',
+            'Customer Type': item.customerCompanyTypeName,
+            'FuelerLinx Network': item.isFuelerLinxCustomer ? 'YES' : 'NO',
+            'Certificate Type': item.certificateTypeDescription,
+            'ITP Margin Template': item.pricingTemplateName,
+            'Fleet Size': item.fleetSize,
         }));
         exportData = sortBy(exportData, [
             (item) => item.Company.toLowerCase(),
@@ -271,27 +271,12 @@ export class CustomersGridComponent implements OnInit {
     exportCustomerAircraftToExcel() {
         // Export the filtered results to an excel spreadsheet
         let exportData = map(this.aircraftData, (item) => {
-            let pricingTemplateName = item.pricingTemplateName;
-            if (!pricingTemplateName) {
-                const customer = find(this.customersData, (c) => c.customerId === item.customerId);
-                if (customer) {
-                    pricingTemplateName = customer.pricingTemplateName;
-                }
-            }
-            const matchingPricingTemplate = find(
-                this.pricingTemplatesData,
-                (pricing) => pricing.name === pricingTemplateName
-            );
             return {
-                Company: item.company,
                 Tail: item.tailNumber,
-                Make: item.make,
-                Model: item.model,
+                Type: item.make + ' ' + item.model,
                 Size: item.aircraftSizeDescription,
-                'Margin Template': pricingTemplateName,
-                Pricing: matchingPricingTemplate
-                    ? matchingPricingTemplate.intoPlanePrice
-                    : '',
+                Company: item.company,
+                'Company Pricing': item.pricingTemplateName,
             };
         });
         exportData = sortBy(exportData, [
