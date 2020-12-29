@@ -335,10 +335,10 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     }
 
     checkDatesForStaging() {
-        const effectiveFrom = moment(this.stagedPricingEffectiveFrom).format('MM/DD/YYYY');
+        const effectiveFrom = moment(this.stagedPricingEffectiveFrom);
 
         if (this.stagedJetRetail || this.stagedJetCost) {
-            if (effectiveFrom > moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'days').format('MM/DD/YYYY')) {
+            if (effectiveFrom > moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'days')) {
                 const dialogRef = this.proceedConfirmationDialog.open(
                     ProceedConfirmationComponent,
                     {
