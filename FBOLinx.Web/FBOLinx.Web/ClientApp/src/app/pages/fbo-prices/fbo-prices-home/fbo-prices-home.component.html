@@ -1,133 +1,134 @@
 <div class="container-fluid pr-0">
     <div class="prices-board">
-        <ni-card *ngIf="!isCsr"
-                 bgColor="success"
-                 class="prices-board-item prices-board-first-column"
-                 customStyle="
-                min-height: 160px;
-                padding-top: 15px;
-                padding-bottom: 15px;
-            "
-                 headerBgColor="success"
-                 outline="true"
-                 subtitle="Costs are always kept confidential"
-                 theme="small"
-                 title="Live Pricing">
-            <div class="row">
-                <div class="col-2"></div>
-                <div class="col-5 text-center">
-                    <div class="h5 mt-0 mb-2 text-muted">Retail</div>
-                </div>
-                <div class="col-5 text-center">
-                    <div class="h5 mt-0 mb-2 text-muted">Cost</div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-2"></div>
-                <div class="col-5 live-pricing-container">
-                    <div *ngIf="feesAndTaxes && currentFboPriceJetARetail">
-                        <fee-and-tax-breakdown #retailFeeAndTaxBreakdown
-                                               [displayMode]="2"
-                                               [fboPrice]="currentFboPriceJetARetail.price"
-                                               [feesAndTaxes]="feesAndTaxes"
-                                               [marginType]="1"
-                                               [showLineSeparator]="true"
-                                               [validDepartureTypes]="[0,1,2,3]"
-                                               [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
+        <div class="prices-board-row">
+            <ni-card *ngIf="!isCsr"
+                     bgColor="success"
+                     class="prices-board-item prices-board-first-column"
+                     customStyle="
+                    min-height: 160px;
+                    padding-top: 15px;
+                    padding-bottom: 15px;
+                "
+                     headerBgColor="success"
+                     outline="true"
+                     subtitle="Costs are always kept confidential"
+                     theme="small"
+                     title="Live Pricing">
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-5 text-center">
+                        <div class="h5 mt-0 mb-2 text-muted">Retail</div>
+                    </div>
+                    <div class="col-5 text-center">
+                        <div class="h5 mt-0 mb-2 text-muted">Cost</div>
                     </div>
                 </div>
-                <div class="col-5 live-pricing-container">
-                    <div *ngIf="feesAndTaxes && currentFboPriceJetACost">
-                        <fee-and-tax-breakdown #costFeeAndTaxBreakdown
-                                               [displayMode]="2"
-                                               [fboPrice]="currentFboPriceJetACost.price"
-                                               [feesAndTaxes]="feesAndTaxes"
-                                               [marginType]="0"
-                                               [showLineSeparator]="true"
-                                               [validDepartureTypes]="[0,1,2,3]"
-                                               [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-5 live-pricing-container">
+                        <div *ngIf="feesAndTaxes && currentFboPriceJetARetail">
+                            <fee-and-tax-breakdown #retailFeeAndTaxBreakdown
+                                                   [displayMode]="2"
+                                                   [fboPrice]="currentFboPriceJetARetail.price"
+                                                   [feesAndTaxes]="feesAndTaxes"
+                                                   [marginType]="1"
+                                                   [showLineSeparator]="true"
+                                                   [validDepartureTypes]="[0,1,2,3]"
+                                                   [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
+                        </div>
+                    </div>
+                    <div class="col-5 live-pricing-container">
+                        <div *ngIf="feesAndTaxes && currentFboPriceJetACost">
+                            <fee-and-tax-breakdown #costFeeAndTaxBreakdown
+                                                   [displayMode]="2"
+                                                   [fboPrice]="currentFboPriceJetACost.price"
+                                                   [feesAndTaxes]="feesAndTaxes"
+                                                   [marginType]="0"
+                                                   [showLineSeparator]="true"
+                                                   [validDepartureTypes]="[0,1,2,3]"
+                                                   [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div *ngIf="currentPrices"
-                 class="row">
-                <div class="col-2">
-                    <div class="text-center">
-                        <div class="h5 mt-0 mb-2">&nbsp;</div>
-                        <h4 class="mt-0">
-                            <span class="h5 mt-0 text-muted">Jet-A</span>
-                        </h4>
+                <div *ngIf="currentPrices"
+                     class="row">
+                    <div class="col-2">
+                        <div class="text-center">
+                            <div class="h5 mt-0 mb-2">&nbsp;</div>
+                            <h4 class="mt-0">
+                                <span class="h5 mt-0 text-muted">Jet-A</span>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <!--Retail Pricing Display-->
+                    <div class="col-5">
+                        <div class="text-center">
+                            <h4 *ngIf="jetARetailExists()"
+                                class="mt-0 mb-1">
+                                ${{ currentFboPriceJetARetail.price | number: "1.4-4" }}
+                            </h4>
+                            <h4 *ngIf="!jetARetailExists()"
+                                class="font-italic">
+                                Expired
+                            </h4>
+                            <h6 *ngIf="jetARetailExists()"
+                                class="expire-date mt-0 mb-2 text-muted">
+                                Expires: {{ currentFboPriceJetARetail.effectiveTo | date }}<br/>
+                                {{ currentFboPriceJetARetail.effectiveTo | date:'HH:mm' }} UTC
+                            </h6>
+                            <button (click)="suspendRetailPricing(currentFboPriceJetARetail)"
+                                    *ngIf="jetARetailExists()"
+                                    class="clear-btn"
+                                    color="warn"
+                                    mat-raised-button>
+                                <span *ngIf="!isLoadingRetail">Clear</span>
+                                <mat-icon *ngIf="isLoadingRetail">
+                                    <mat-spinner diameter="20"></mat-spinner>
+                                </mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!--Cost Pricing Display-->
+                    <div class="col-5">
+                        <div class="text-center">
+                            <h4 *ngIf="jetACostExists()"
+                                class="mt-0 mb-1">
+                                ${{ currentFboPriceJetACost.price | number: "1.4-4" }}
+                            </h4>
+                            <h4 *ngIf="!jetACostExists()"
+                                class="font-italic">
+                                Expired
+                            </h4>
+                            <h6 *ngIf="jetACostExists()"
+                                class="expire-date mt-0 mb-2 text-muted">
+                                Expires: {{ currentFboPriceJetACost.effectiveTo | date }}<br/>
+                                {{ currentFboPriceJetACost.effectiveTo | date:'HH:mm' }} UTC
+                            </h6>
+                            <button (click)="suspendCostPricing(currentFboPriceJetACost)"
+                                    *ngIf="jetACostExists()"
+                                    class="clear-btn"
+                                    color="warn"
+                                    mat-raised-button>
+                                <span *ngIf="!isLoadingCost">Clear</span>
+                                <mat-icon *ngIf="isLoadingCost">
+                                    <mat-spinner diameter="20"></mat-spinner>
+                                </mat-icon>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!--Retail Pricing Display-->
-                <div class="col-5">
-                    <div class="text-center">
-                        <h4 *ngIf="jetARetailExists()"
-                            class="mt-0 mb-1">
-                            ${{ currentFboPriceJetARetail.price | number: "1.4-4" }}
-                        </h4>
-                        <h4 *ngIf="!jetARetailExists()"
-                            class="font-italic">
-                            Expired
-                        </h4>
-                        <h6 *ngIf="jetARetailExists()"
-                            class="expire-date mt-0 mb-2 text-muted">
-                            Expires: {{ currentFboPriceJetARetail.effectiveTo | date }}<br/>
-                            {{ currentFboPriceJetARetail.effectiveTo | date:'HH:mm' }} UTC
-                        </h6>
-                        <button (click)="suspendRetailPricing(currentFboPriceJetARetail)"
-                                *ngIf="jetARetailExists()"
-                                class="clear-btn"
-                                color="warn"
-                                mat-raised-button>
-                            <span *ngIf="!isLoadingRetail">Clear</span>
-                            <mat-icon *ngIf="isLoadingRetail">
-                                <mat-spinner diameter="20"></mat-spinner>
-                            </mat-icon>
-                        </button>
-                    </div>
-                </div>
+                <ngx-ui-loader [loaderId]="pricingLoader"
+                               bgsPosition="center-center"
+                               fgsColor="#81C784"
+                               fgsType="pulse"
+                               overlayColor="rgba(0, 0, 0, 0.03)"
+                               pbColor="#81C784"></ngx-ui-loader>
+            </ni-card>
 
-                <!--Cost Pricing Display-->
-                <div class="col-5">
-                    <div class="text-center">
-                        <h4 *ngIf="jetACostExists()"
-                            class="mt-0 mb-1">
-                            ${{ currentFboPriceJetACost.price | number: "1.4-4" }}
-                        </h4>
-                        <h4 *ngIf="!jetACostExists()"
-                            class="font-italic">
-                            Expired
-                        </h4>
-                        <h6 *ngIf="jetACostExists()"
-                            class="expire-date mt-0 mb-2 text-muted">
-                            Expires: {{ currentFboPriceJetACost.effectiveTo | date }}<br/>
-                            {{ currentFboPriceJetACost.effectiveTo | date:'HH:mm' }} UTC
-                        </h6>
-                        <button (click)="suspendCostPricing(currentFboPriceJetACost)"
-                                *ngIf="jetACostExists()"
-                                class="clear-btn"
-                                color="warn"
-                                mat-raised-button>
-                            <span *ngIf="!isLoadingCost">Clear</span>
-                            <mat-icon *ngIf="isLoadingCost">
-                                <mat-spinner diameter="20"></mat-spinner>
-                            </mat-icon>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <ngx-ui-loader [loaderId]="pricingLoader"
-                           bgsPosition="center-center"
-                           fgsColor="#81C784"
-                           fgsType="pulse"
-                           overlayColor="rgba(0, 0, 0, 0.03)"
-                           pbColor="#81C784"></ngx-ui-loader>
-        </ni-card>
-
-        <ni-card *ngIf="!isCsr"
+            <ni-card *ngIf="!isCsr"
                  bgColor="dead"
                  class="prices-board-item prices-board-second-column"
                  customStyle="min-height: 160px;"
@@ -249,131 +250,133 @@
                 </div>
             </div>
         </ni-card>
+        </div>
 
-        <ni-card *ngIf="!isCsr"
-                 [collapsible]="true"
-                 [opened]="false"
-                 bgColor="warning"
-                 class="prices-board-item prices-board-first-column"
-                 customStyle="padding-top: 15px; padding-bottom: 15px;"
-                 headerBgColor="warning"
-                 outline="true"
-                 subtitle="Costs are always kept confidential"
-                 theme="small"
-                 title="Staged Pricing">
-            <div style="min-height: 127px;">
-                <div class="row">
-                    <div class="col-2"></div>
-                    <div class="col-5 text-center">
-                        <div class="h5 mt-0 mb-2 text-muted">Retail</div>
+        <div class="prices-board-row">
+            <ni-card *ngIf="!isCsr"
+                     [collapsible]="true"
+                     [opened]="false"
+                     bgColor="warning"
+                     class="prices-board-item prices-board-first-column"
+                     customStyle="padding-top: 15px; padding-bottom: 15px;"
+                     headerBgColor="warning"
+                     outline="true"
+                     subtitle="Costs are always kept confidential"
+                     theme="small"
+                     title="Staged Pricing">
+                <div style="min-height: 127px;">
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col-5 text-center">
+                            <div class="h5 mt-0 mb-2 text-muted">Retail</div>
+                        </div>
+                        <div class="col-5 text-center">
+                            <div class="h5 mt-0 mb-2 text-muted">Cost</div>
+                        </div>
                     </div>
-                    <div class="col-5 text-center">
-                        <div class="h5 mt-0 mb-2 text-muted">Cost</div>
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col-5 live-pricing-container">
+                            <div *ngIf="feesAndTaxes && stagedFboPriceJetARetail">
+                                <fee-and-tax-breakdown #retailFeeAndTaxBreakdown
+                                                       [displayMode]="2"
+                                                       [fboPrice]="stagedFboPriceJetARetail.price"
+                                                       [feesAndTaxes]="feesAndTaxes"
+                                                       [marginType]="1"
+                                                       [showLineSeparator]="true"
+                                                       [validDepartureTypes]="[0,1,2,3]"
+                                                       [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
+                            </div>
+                        </div>
+                        <div class="col-5 live-pricing-container">
+                            <div *ngIf="feesAndTaxes && stagedFboPriceJetACost">
+                                <fee-and-tax-breakdown #costFeeAndTaxBreakdown
+                                                       [displayMode]="2"
+                                                       [fboPrice]="stagedFboPriceJetACost.price"
+                                                       [feesAndTaxes]="feesAndTaxes"
+                                                       [marginType]="0"
+                                                       [showLineSeparator]="true"
+                                                       [validDepartureTypes]="[0,1,2,3]"
+                                                       [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                            <div class="text-center">
+                                <div class="h5 mt-0 mb-2">&nbsp;</div>
+                                <h4 class="mt-0">
+                                    <span class="h5 mt-0 text-muted">Jet-A</span>
+                                </h4>
+                            </div>
+                        </div>
+
+                        <!--Retail Pricing Display-->
+                        <div class="col-5">
+                            <div class="text-center">
+                                <h4 *ngIf="stagedJetARetailExists()" class="mt-0 mb-1">
+                                    ${{ stagedFboPriceJetARetail.price | number: "1.4-4" }}
+                                </h4>
+                                <h4 *ngIf="!stagedJetARetailExists()"
+                                    class="font-italic">
+                                    None
+                                </h4>
+                                <h6 *ngIf="stagedJetARetailExists()" class="expire-date mt-0 mb-2 text-muted">
+                                    {{ stagedFboPriceJetARetail.effectiveFrom | date }}
+                                    - {{ stagedFboPriceJetARetail.effectiveTo | date }}
+                                </h6>
+                                <button (click)="suspendStagedRetailPricing(stagedFboPriceJetARetail)"
+                                        *ngIf="stagedJetARetailExists()"
+                                        class="clear-btn"
+                                        color="warn"
+                                        mat-raised-button>
+                                    <span *ngIf="!isLoadingStagedRetail">Clear</span>
+                                    <mat-icon *ngIf="isLoadingStagedRetail">
+                                        <mat-spinner diameter="20"></mat-spinner>
+                                    </mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!--Cost Pricing Display-->
+                        <div class="col-5">
+                            <div class="text-center">
+                                <h4 *ngIf="stagedJetACostExists()" class="mt-0 mb-1">
+                                    ${{ stagedFboPriceJetACost.price | number: "1.4-4" }}
+                                </h4>
+                                <h4 *ngIf="!stagedJetACostExists()"
+                                    class="font-italic">
+                                    None
+                                </h4>
+                                <h6 *ngIf="stagedJetACostExists()"
+                                    class="expire-date mt-0 mb-2 text-muted">
+                                    {{ stagedFboPriceJetACost.effectiveFrom | date }}
+                                    - {{ stagedFboPriceJetACost.effectiveTo | date }}
+                                </h6>
+                                <button (click)="suspendStagedJetPricing(stagedFboPriceJetACost)"
+                                        *ngIf="stagedJetACostExists()"
+                                        class="clear-btn"
+                                        color="warn"
+                                        mat-raised-button>
+                                    <span *ngIf="!isLoadingStagedCost">Clear</span>
+                                    <mat-icon *ngIf="isLoadingStagedCost">
+                                        <mat-spinner diameter="20"></mat-spinner>
+                                    </mat-icon>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-2"></div>
-                    <div class="col-5 live-pricing-container">
-                        <div *ngIf="feesAndTaxes && stagedFboPriceJetARetail">
-                            <fee-and-tax-breakdown #retailFeeAndTaxBreakdown
-                                                   [displayMode]="2"
-                                                   [fboPrice]="stagedFboPriceJetARetail.price"
-                                                   [feesAndTaxes]="feesAndTaxes"
-                                                   [marginType]="1"
-                                                   [showLineSeparator]="true"
-                                                   [validDepartureTypes]="[0,1,2,3]"
-                                                   [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
-                        </div>
-                    </div>
-                    <div class="col-5 live-pricing-container">
-                        <div *ngIf="feesAndTaxes && stagedFboPriceJetACost">
-                            <fee-and-tax-breakdown #costFeeAndTaxBreakdown
-                                                   [displayMode]="2"
-                                                   [fboPrice]="stagedFboPriceJetACost.price"
-                                                   [feesAndTaxes]="feesAndTaxes"
-                                                   [marginType]="0"
-                                                   [showLineSeparator]="true"
-                                                   [validDepartureTypes]="[0,1,2,3]"
-                                                   [validFlightTypes]="[0,1,2,3]"></fee-and-tax-breakdown>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-2">
-                        <div class="text-center">
-                            <div class="h5 mt-0 mb-2">&nbsp;</div>
-                            <h4 class="mt-0">
-                                <span class="h5 mt-0 text-muted">Jet-A</span>
-                            </h4>
-                        </div>
-                    </div>
 
-                    <!--Retail Pricing Display-->
-                    <div class="col-5">
-                        <div class="text-center">
-                            <h4 *ngIf="stagedJetARetailExists()" class="mt-0 mb-1">
-                                ${{ stagedFboPriceJetARetail.price | number: "1.4-4" }}
-                            </h4>
-                            <h4 *ngIf="!stagedJetARetailExists()"
-                                class="font-italic">
-                                None
-                            </h4>
-                            <h6 *ngIf="stagedJetARetailExists()" class="expire-date mt-0 mb-2 text-muted">
-                                {{ stagedFboPriceJetARetail.effectiveFrom | date }}
-                                - {{ stagedFboPriceJetARetail.effectiveTo | date }}
-                            </h6>
-                            <button (click)="suspendStagedRetailPricing(stagedFboPriceJetARetail)"
-                                    *ngIf="stagedJetARetailExists()"
-                                    class="clear-btn"
-                                    color="warn"
-                                    mat-raised-button>
-                                <span *ngIf="!isLoadingStagedRetail">Clear</span>
-                                <mat-icon *ngIf="isLoadingStagedRetail">
-                                    <mat-spinner diameter="20"></mat-spinner>
-                                </mat-icon>
-                            </button>
-                        </div>
-                    </div>
+                <ngx-ui-loader [loaderId]="stagedPricingLoader"
+                               bgsPosition="center-center"
+                               fgsColor="#81C784"
+                               fgsType="pulse"
+                               overlayColor="rgba(0, 0, 0, 0.03)"
+                               pbColor="#81C784"></ngx-ui-loader>
+            </ni-card>
 
-                    <!--Cost Pricing Display-->
-                    <div class="col-5">
-                        <div class="text-center">
-                            <h4 *ngIf="stagedJetACostExists()" class="mt-0 mb-1">
-                                ${{ stagedFboPriceJetACost.price | number: "1.4-4" }}
-                            </h4>
-                            <h4 *ngIf="!stagedJetACostExists()"
-                                class="font-italic">
-                                None
-                            </h4>
-                            <h6 *ngIf="stagedJetACostExists()"
-                                class="expire-date mt-0 mb-2 text-muted">
-                                {{ stagedFboPriceJetACost.effectiveFrom | date }}
-                                - {{ stagedFboPriceJetACost.effectiveTo | date }}
-                            </h6>
-                            <button (click)="suspendStagedJetPricing(stagedFboPriceJetACost)"
-                                    *ngIf="stagedJetACostExists()"
-                                    class="clear-btn"
-                                    color="warn"
-                                    mat-raised-button>
-                                <span *ngIf="!isLoadingStagedCost">Clear</span>
-                                <mat-icon *ngIf="isLoadingStagedCost">
-                                    <mat-spinner diameter="20"></mat-spinner>
-                                </mat-icon>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <ngx-ui-loader [loaderId]="stagedPricingLoader"
-                           bgsPosition="center-center"
-                           fgsColor="#81C784"
-                           fgsType="pulse"
-                           overlayColor="rgba(0, 0, 0, 0.03)"
-                           pbColor="#81C784"></ngx-ui-loader>
-        </ni-card>
-
-        <ni-card *ngIf="!isCsr"
+            <ni-card *ngIf="!isCsr"
                  [collapsible]="true"
                  [opened]="false"
                  bgColor="warning"
@@ -463,103 +466,105 @@
                 </div>
             </div>
         </ni-card>
+        </div>
 
-        <ni-card *ngIf="!isCsr"
-                 [collapsible]="true"
-                 [opened]="true"
-                 bgColor="danger"
-                 class="prices-board-item prices-board-first-column"
-                 headerBgColor="danger"
-                 outline="true"
-                 subtitle="This margin is applies to all customers"
-                 theme="small"
-                 title="Add On Margin">
-            <div class="row">
-                <div class="col-2">
-                    <div class="text-center">
-                        <div class="h5 mt-0 mb-2">&nbsp;</div>
-                        <h4 class="mt-0">
-                            <span class="h5 mt-0 text-muted">Jet-A</span>
-                        </h4>
+        <div class="prices-board-row">
+            <ni-card *ngIf="!isCsr"
+                     [collapsible]="true"
+                     [opened]="true"
+                     bgColor="danger"
+                     class="prices-board-item prices-board-first-column"
+                     headerBgColor="danger"
+                     outline="true"
+                     subtitle="This margin is applies to all customers"
+                     theme="small"
+                     title="Add On Margin">
+                <div class="row">
+                    <div class="col-2">
+                        <div class="text-center">
+                            <div class="h5 mt-0 mb-2">&nbsp;</div>
+                            <h4 class="mt-0">
+                                <span class="h5 mt-0 text-muted">Jet-A</span>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="text-center">
+                            <mat-form-field>
+                                <input (focus)="addOnMarginEffectiveFromDatePicker.open()"
+                                       [(ngModel)]="TempDateFrom"
+                                       [matDatepicker]="addOnMarginEffectiveFromDatePicker"
+                                       [min]="currentPricingEffectiveFrom"
+                                       matInput
+                                       placeholder="From"/>
+                                <mat-datepicker-toggle [for]="addOnMarginEffectiveFromDatePicker"
+                                                       matSuffix></mat-datepicker-toggle>
+                                <mat-datepicker #addOnMarginEffectiveFromDatePicker
+                                                disabled="false"></mat-datepicker>
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <input (focus)="addOnMarginEffectiveToDatePicker.open()"
+                                       [(ngModel)]="TempDateTo"
+                                       [matDatepicker]="addOnMarginEffectiveToDatePicker"
+                                       [min]="TempDateFrom"
+                                       matInput
+                                       placeholder="To"/>
+                                <mat-datepicker-toggle [for]="addOnMarginEffectiveToDatePicker"
+                                                       matSuffix></mat-datepicker-toggle>
+                                <mat-datepicker #addOnMarginEffectiveToDatePicker
+                                                disabled="false"></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <div class="d-flex h-100 align-items-end text-center">
+                            <mat-form-field class="add-on-margin-input">
+                                <input (click)="$event.target.select()"
+                                       (ngModelChange)="marginValueChanged($event)"
+                                       [ngModelOptions]="{updateOn: 'blur'}"
+                                       [ngModel]="TempValueJet | number: '1.4-4'"
+                                       matInput
+                                       placeholder="Margin"
+                                       step="0.01"
+                                       type="number"/>
+                                <span class="prefixDollar bigPrefix" matPrefix>$</span>
+                            </mat-form-field>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-5">
-                    <div class="text-center">
-                        <mat-form-field>
-                            <input (focus)="addOnMarginEffectiveFromDatePicker.open()"
-                                   [(ngModel)]="TempDateFrom"
-                                   [matDatepicker]="addOnMarginEffectiveFromDatePicker"
-                                   [min]="currentPricingEffectiveFrom"
-                                   matInput
-                                   placeholder="From"/>
-                            <mat-datepicker-toggle [for]="addOnMarginEffectiveFromDatePicker"
-                                                   matSuffix></mat-datepicker-toggle>
-                            <mat-datepicker #addOnMarginEffectiveFromDatePicker
-                                            disabled="false"></mat-datepicker>
-                        </mat-form-field>
-
-                        <mat-form-field>
-                            <input (focus)="addOnMarginEffectiveToDatePicker.open()"
-                                   [(ngModel)]="TempDateTo"
-                                   [matDatepicker]="addOnMarginEffectiveToDatePicker"
-                                   [min]="TempDateFrom"
-                                   matInput
-                                   placeholder="To"/>
-                            <mat-datepicker-toggle [for]="addOnMarginEffectiveToDatePicker"
-                                                   matSuffix></mat-datepicker-toggle>
-                            <mat-datepicker #addOnMarginEffectiveToDatePicker
-                                            disabled="false"></mat-datepicker>
-                        </mat-form-field>
+                <div class="row">
+                    <div class="col-12 text-right">
+                        <button (click)="clearMargin()"
+                                *ngIf="TempValueId"
+                                class="mr-3 clear-btn"
+                                color="warn"
+                                mat-raised-button
+                                style="min-width: 125px;">
+                            <span *ngIf="!isClearingMargin">Clear Add On</span>
+                            <mat-icon *ngIf="isClearingMargin">
+                                <mat-spinner diameter="20"></mat-spinner>
+                            </mat-icon>
+                        </button>
+                        <button (click)="updateMargin()"
+                                [disabled]="!canUpdateMargin()"
+                                class="mr-1 clear-btn"
+                                color="accent"
+                                mat-raised-button
+                                style="min-width: 125px;">
+                            <span *ngIf="!isUpdatingMargin">Update Margin</span>
+                            <mat-icon *ngIf="isUpdatingMargin">
+                                <mat-spinner diameter="20"></mat-spinner>
+                            </mat-icon>
+                        </button>
                     </div>
                 </div>
+            </ni-card>
 
-                <div class="col-5">
-                    <div class="d-flex h-100 align-items-end text-center">
-                        <mat-form-field class="add-on-margin-input">
-                            <input (click)="$event.target.select()"
-                                   (ngModelChange)="marginValueChanged($event)"
-                                   [ngModelOptions]="{updateOn: 'blur'}"
-                                   [ngModel]="TempValueJet | number: '1.4-4'"
-                                   matInput
-                                   placeholder="Margin"
-                                   step="0.01"
-                                   type="number"/>
-                            <span class="prefixDollar bigPrefix" matPrefix>$</span>
-                        </mat-form-field>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 text-right">
-                    <button (click)="clearMargin()"
-                            *ngIf="TempValueId"
-                            class="mr-3 clear-btn"
-                            color="warn"
-                            mat-raised-button
-                            style="min-width: 125px;">
-                        <span *ngIf="!isClearingMargin">Clear Add On</span>
-                        <mat-icon *ngIf="isClearingMargin">
-                            <mat-spinner diameter="20"></mat-spinner>
-                        </mat-icon>
-                    </button>
-                    <button (click)="updateMargin()"
-                            [disabled]="!canUpdateMargin()"
-                            class="mr-1 clear-btn"
-                            color="accent"
-                            mat-raised-button
-                            style="min-width: 125px;">
-                        <span *ngIf="!isUpdatingMargin">Update Margin</span>
-                        <mat-icon *ngIf="isUpdatingMargin">
-                            <mat-spinner diameter="20"></mat-spinner>
-                        </mat-icon>
-                    </button>
-                </div>
-            </div>
-        </ni-card>
-
-        <ni-card [collapsible]="true"
+            <ni-card [collapsible]="true"
                  [opened]="true"
                  bgColor="dead"
                  class="prices-board-item prices-board-second-column"
@@ -569,5 +574,6 @@
                  title="Price Lookup">
             <price-checker #priceChecker></price-checker>
         </ni-card>
+        </div>
     </div>
 </div>
