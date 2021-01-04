@@ -31,7 +31,7 @@ import { NotificationComponent } from '../../../shared/components/notification/n
 @Component({
     selector: 'app-addition-navbar',
     templateUrl: './addition-navbar.component.html',
-    styleUrls: ['./addition-navbar.component.scss'],
+    styleUrls: [ './addition-navbar.component.scss' ],
     host: {
         '[class.addition-navbar]': 'true',
         '[class.open]': 'open',
@@ -39,8 +39,8 @@ import { NotificationComponent } from '../../../shared/components/notification/n
 })
 export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() templatelst: any[];
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild('marginTableContainer') table: ElementRef;
     @ViewChild('nodeInput') fileInput: ElementRef;
     @ViewChild('insideElement') insideElement;
@@ -48,7 +48,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     title: string;
     open: boolean;
     // Public Members
-    displayedColumns: string[] = ['template', 'toggle'];
+    displayedColumns: string[] = [ 'template', 'toggle' ];
     resultsLength: any;
     marginTemplateDataSource: MatTableDataSource<any> = null;
     pricingTemplatesData: any[];
@@ -94,7 +94,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         }
     }
 
-    @HostListener('document:click', ['$event'])
+    @HostListener('document:click', [ '$event' ])
     onClick(targetElement) {
         if (
             this.open && ((targetElement.target.innerText === 'Clear') ||
@@ -164,15 +164,15 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
 
         this.pricingTemplatesData = this.templatelst.filter(
             (element: any, index: number, array: any[]) => (
-                    array.indexOf(
-                        array.find(
-                            (t) =>
-                                t.oid === element.oid &&
-                                t.text === element.text &&
-                                t.name === element.name
-                        )
-                    ) === index
-                )
+                array.indexOf(
+                    array.find(
+                        (t) =>
+                            t.oid === element.oid &&
+                            t.text === element.text &&
+                            t.name === element.name
+                    )
+                ) === index
+            )
         );
 
         this.selectAll = false;
@@ -207,7 +207,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     openMarginInfo(templateId) {
         this.pricesExpired = false;
         this.filteredTemplate = this.pricingTemplatesData.find(
-            ({oid}) => oid === templateId
+            ({ oid }) => oid === templateId
         );
 
         this.checkExpiredPrices(this.filteredTemplate);
@@ -244,7 +244,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                     const dialogRef = this.templateDialog.open(
                         NotificationComponent,
                         {
-                            data: {text: 'Please assign the template to a customer before proceeding.'}
+                            data: { text: 'Please assign the template to a customer before proceeding.' }
                         }
                     );
 

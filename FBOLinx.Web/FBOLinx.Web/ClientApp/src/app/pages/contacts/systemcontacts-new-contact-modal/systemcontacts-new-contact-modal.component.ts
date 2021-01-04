@@ -13,7 +13,7 @@ export interface NewContactDialogData {
 @Component({
     selector: 'app-systemcontacts-new-contact-modal',
     templateUrl: './systemcontacts-new-contact-modal.component.html',
-    styleUrls: ['./systemcontacts-new-contact-modal.component.scss'],
+    styleUrls: [ './systemcontacts-new-contact-modal.component.scss' ],
 })
 export class SystemcontactsNewContactModalComponent implements OnInit {
     contactForm: FormGroup;

@@ -38,12 +38,14 @@
     </div>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.confirmPassword" aria-label="Confirm Password" matInput placeholder="Confirm Password"
+            <input [(ngModel)]="data.confirmPassword" aria-label="Confirm Password" matInput
+                   placeholder="Confirm Password"
                    type="password">
         </mat-form-field>
     </div>
-    <div *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword != data.confirmPassword"
-         class="text-danger">
+    <div
+        *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword != data.confirmPassword"
+        class="text-danger">
         Passwords must match
     </div>
 </div>

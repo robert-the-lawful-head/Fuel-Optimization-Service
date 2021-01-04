@@ -19,7 +19,7 @@ export interface NewFBODialogData {
 @Component({
     selector: 'app-fbos-dialog-new-fbo',
     templateUrl: './fbos-dialog-new-fbo.component.html',
-    styleUrls: ['./fbos-dialog-new-fbo.component.scss'],
+    styleUrls: [ './fbos-dialog-new-fbo.component.scss' ],
 })
 export class FbosDialogNewFboComponent {
     @Output() contactAdded = new EventEmitter<any>();

@@ -20,7 +20,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-fbos-home',
     templateUrl: './fbos-home.component.html',
-    styleUrls: ['./fbos-home.component.scss'],
+    styleUrls: [ './fbos-home.component.scss' ],
 })
 export class FbosHomeComponent implements OnInit {
     @Input() groupInfo: any;
@@ -52,7 +52,7 @@ export class FbosHomeComponent implements OnInit {
 
     public editFboClicked(record) {
         if (!this.groupInfo) {
-            this.router.navigate(['/default-layout/fbos/' + record.oid]);
+            this.router.navigate([ '/default-layout/fbos/' + record.oid ]);
         } else {
             this.fboService
                 .get(record)

@@ -7,7 +7,7 @@ import { UserService } from '../../../services/user.service';
 @Component({
     selector: 'app-users-home',
     templateUrl: './users-home.component.html',
-    styleUrls: ['./users-home.component.scss'],
+    styleUrls: [ './users-home.component.scss' ],
 })
 export class UsersHomeComponent implements OnInit {
     // Input/Output Bindings

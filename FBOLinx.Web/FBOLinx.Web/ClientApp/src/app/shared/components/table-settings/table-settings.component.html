@@ -1,21 +1,22 @@
 <h1 mat-dialog-title>Table Settings</h1>
-<div mat-dialog-content class="mt-1 mb-2">
+<div class="mt-1 mb-2" mat-dialog-content>
     <div class="columns-container">
         <h5>Columns</h5>
-      
+
         <div
-          cdkDropList
-          #visibleList="cdkDropList"
-          [cdkDropListData]="columns"
-          class="columns-list"
-          (cdkDropListDropped)="drop($event)"
+            #visibleList="cdkDropList"
+            (cdkDropListDropped)="drop($event)"
+            [cdkDropListData]="columns"
+            cdkDropList
+            class="columns-list"
         >
-            <div class="columns-box" *ngFor="let column of columns" cdkDrag>
+            <div *ngFor="let column of columns" cdkDrag class="columns-box">
                 <mat-icon>drag_indicator</mat-icon>
-                <mat-checkbox [checked]="!column.hidden" (change)="toggleColumnVisible(column)"></mat-checkbox>
+                <mat-checkbox (change)="toggleColumnVisible(column)" [checked]="!column.hidden"></mat-checkbox>
                 <span class="column-name">{{column.name}}</span>
                 <mat-button-toggle-group appearance="legacy" aria-label="Sort Order">
-                    <mat-button-toggle (change)="onSortChange(column)" [checked]="column.sort === 'asc' || column.sort === 'desc'">
+                    <mat-button-toggle (change)="onSortChange(column)"
+                                       [checked]="column.sort === 'asc' || column.sort === 'desc'">
                         <mat-icon *ngIf="!column.sort">swap_vert</mat-icon>
                         <mat-icon *ngIf="column.sort === 'asc'">arrow_upward</mat-icon>
                         <mat-icon *ngIf="column.sort === 'desc'">arrow_downward</mat-icon>
@@ -23,11 +24,11 @@
                 </mat-button-toggle-group>
             </div>
         </div>
-      </div>
+    </div>
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button mat-raised-button color="accent" (click)="onSave()" class="mr-1">Save</button>
-        <button mat-stroked-button (click)="onCancel()">Dismiss</button>
+        <button (click)="onSave()" class="mr-1" color="accent" mat-raised-button>Save</button>
+        <button (click)="onCancel()" mat-stroked-button>Dismiss</button>
     </div>
 </div>

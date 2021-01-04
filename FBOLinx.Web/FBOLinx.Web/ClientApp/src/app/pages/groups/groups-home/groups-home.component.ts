@@ -19,7 +19,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-groups-home',
     templateUrl: './groups-home.component.html',
-    styleUrls: ['./groups-home.component.scss'],
+    styleUrls: [ './groups-home.component.scss' ],
 })
 export class GroupsHomeComponent implements OnInit {
     // Members
@@ -42,11 +42,11 @@ export class GroupsHomeComponent implements OnInit {
         if (this.sharedService.currentUser.role === 3) {
             this.sharedService.currentUser.groupId = record.oid;
         }
-        this.router.navigate(['/default-layout/groups/' + record.oid]);
+        this.router.navigate([ '/default-layout/groups/' + record.oid ]);
     }
 
     editFboClicked(record) {
-        this.router.navigate(['/default-layout/fbos/' + record.oid]);
+        this.router.navigate([ '/default-layout/fbos/' + record.oid ]);
     }
 
     deleteFboClicked() {

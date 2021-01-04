@@ -1,14 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import {
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 import { FbosService } from 'src/app/services/fbos.service';
 
 @Component({
     selector: 'app-manage-confirmation',
     templateUrl: './manage-confirmation.component.html',
-    styleUrls: ['./manage-confirmation.component.scss'],
+    styleUrls: [ './manage-confirmation.component.scss' ],
 })
 export class ManageConfirmationComponent {
     loading = false;
@@ -17,7 +14,8 @@ export class ManageConfirmationComponent {
         public dialogRef: MatDialogRef<ManageConfirmationComponent>,
         private fboService: FbosService,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) {}
+    ) {
+    }
 
     onConfirm(): void {
         if (this.data.group) {

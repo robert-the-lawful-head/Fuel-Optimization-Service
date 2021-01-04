@@ -15,7 +15,6 @@ body > div {
 }
 
 
-
 div.citation-background {
     background-size: cover !important;
 }
@@ -89,7 +88,6 @@ div.citation-background {
 }
 
 
-
 /* The sticky class is added to the header with JS when it reaches its scroll position */
 
 .theme-header-fixed.sticky {
@@ -102,9 +100,8 @@ div.citation-background {
 }
 
 
-
 .screenshot-container .title-container {
-    text-align:center;
+    text-align: center;
 }
 
 .navbar-nav .nav-item a {
@@ -144,93 +141,91 @@ div.citation-background {
 }
 
 
+.seperating-line:after {
+    border-bottom: 4px solid black;
+    width: 50px;
+    content: "";
+    height: 3px;
+    left: 0;
+    margin: 0 auto;
+    position: absolute;
+    right: 0;
+    bottom: -12px;
+    width: 30px;
+    background-color: #ecf0f1;
+}
 
 
-    .seperating-line:after {
-        border-bottom: 4px solid black;
-        width: 50px;
-        content: "";
-        height: 3px;
-        left: 0;
-        margin: 0 auto;
-        position: absolute;
-        right: 0;
-        bottom: -12px;
-        width: 30px;
-        background-color: #ecf0f1;
-    }
+.divider-container hr {
+    margin-right: auto;
+    margin-left: auto;
+    width: 30%;
+    height: 1px;
+    background-color: #04131d;
+    border-width: 0
+}
 
 
-    .divider-container hr {
-        margin-right: auto;
-        margin-left: auto;
-        width: 30%;
-        height: 1px;
-        background-color: #04131d;
-        border-width: 0
-    }
+.small-divider-container hr {
+    margin-right: auto;
+    margin-left: auto;
+    width: 1.75%;
+    height: 3px;
+    background-color: #04131d;
+    border-width: 0
+}
 
+.btn-group-lg > .btn {
+    padding: 10px 30px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    border-radius: 0;
+    background-color: #acb0b2;
+    color: #04131d;
+    border: 1px solid #04131d;
+}
 
-    .small-divider-container hr {
-        margin-right: auto;
-        margin-left: auto;
-        width: 1.75%;
-        height: 3px;
-        background-color: #04131d;
-        border-width: 0
-    }
+.btn-group-lg > .btn:first-child {
+    border-left: 1px solid #04131d;
+    border-bottom-left-radius: 50px;
+    border-top-left-radius: 50px;
+}
 
-    .btn-group-lg > .btn {
-        padding: 10px 30px;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 1.5;
-        border-radius: 0;
-        background-color: #acb0b2;
-        color: #04131d;
-        border: 1px solid #04131d;
-    }
+.btn-group-lg > .btn:last-child {
+    border-bottom-right-radius: 50px;
+    border-top-right-radius: 50px;
+    border: 1px solid #04131d;
+    border-left: none;
+}
 
-    .btn-group-lg > .btn:first-child {
-        border-left: 1px solid #04131d;
-        border-bottom-left-radius: 50px;
-        border-top-left-radius: 50px;
-    }
+.btn-group-lg > .btn:hover {
+    background-color: #04131d;
+    color: white;
+}
 
-    .btn-group-lg > .btn:last-child {
-        border-bottom-right-radius: 50px;
-        border-top-right-radius: 50px;
-        border: 1px solid #04131d;
-        border-left: none;
-    }
+.btn-group-lg > .btn.no-border-btn {
+    border-left: none;
+    border-right: none;
+}
 
-    .btn-group-lg > .btn:hover {
-        background-color: #04131d;
-        color: white;
-    }
+.btn-group-lg > .btn:focus {
+    background-color: #04131d;
+    color: white;
+}
 
-    .btn-group-lg > .btn.no-border-btn {
-        border-left: none;
-        border-right: none;
-    }
+.btn:focus,
+.btn.focus {
+    box-shadow: none !important;
+}
 
-    .btn-group-lg > .btn:focus {
-        background-color: #04131d;
-        color: white;
-    }
-
-    .btn:focus,
-    .btn.focus {
-        box-shadow: none !important;
-    }
-
-    .contact-us-container hr {
-        margin-right: auto;
-        margin-left: auto;
-        height: 1px;
-        background-color: #04131d;
-        border-width: 0
-    }
+.contact-us-container hr {
+    margin-right: auto;
+    margin-left: auto;
+    height: 1px;
+    background-color: #04131d;
+    border-width: 0
+}
 
 .zpcontainer {
     padding: 0 15px;
@@ -238,9 +233,8 @@ div.citation-background {
 }
 
 .bulleted-content {
-font-size:16px;
+    font-size: 16px;
 }
-
 
 
 .zpelement {
@@ -274,96 +268,98 @@ font-size:16px;
 // Small devices (landscape phones, 576px and up)
 @media (min-width: 576px) {
 }
-    // Medium devices (tablets, 768px and up)
-    @media (min-width: 768px) {
 
-        .zpcontainer {
-            padding: 1em;
-        }
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
 
-        .xl-title {
-            line-height: 1.6;
-            font-size: 3em;
-        }
-
-        .page-footer {
-            margin: 0 auto;
-        }
-        .zpcontainer {
-            padding: 1em;
-        }
+    .zpcontainer {
+        padding: 1em;
     }
-    // Large devices (desktops, 992px and up)
-    @media (min-width: 992px) {
 
-        .fbolinx-screenshots img {
-            height: 258px !important;
-            width: 540px !important;
-        }
-
-        .screenshot-container .title-container {
-            text-align: left;
-        }
-
-        .bulleted-content .zpelement div {
-            text-align: left;
-        }
-
-        .plane-image img {
-            height: 358px !important;
-            width: 540px !important;
-        }
-
-        .large-title {
-            font-weight: 400;
-            font-size: 50px;
-        }
-
-        .xl-title {
-            font-weight: 700;
-            font-size: 4.3em;
-            line-height: 1.2;
-            font-family: "Poppins-Bold";
-        }
-
-        .theme-container {
-            padding-bottom: 80px;
-        }
-
-        .navbar-expand-lg .navbar-collapse {
-         
-            flex-flow: row-reverse;
-        }
-
-
-        .zpcontainer {
-            width: 992px;
-            margin: 0 auto;
-            height: 100%;
-            padding: 1em;
-        }
-        .title-container {
-            padding-top: 80px;
-        }
-
+    .xl-title {
+        line-height: 1.6;
+        font-size: 3em;
     }
-    // Extra large devices (large desktops, 1200px and up)
-    @media (min-width: 1200px) {
 
-        .xl-title {
-            font-weight: 700;
-            font-size: 4.3em;
-            line-height: 1.2;
-            font-family: "Poppins-Bold";
-        }
-
-    
-
-        .zpcontainer {
-            width: 1140px;
-            margin: 0 auto;
-        }
+    .page-footer {
+        margin: 0 auto;
     }
+    .zpcontainer {
+        padding: 1em;
+    }
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+
+    .fbolinx-screenshots img {
+        height: 258px !important;
+        width: 540px !important;
+    }
+
+    .screenshot-container .title-container {
+        text-align: left;
+    }
+
+    .bulleted-content .zpelement div {
+        text-align: left;
+    }
+
+    .plane-image img {
+        height: 358px !important;
+        width: 540px !important;
+    }
+
+    .large-title {
+        font-weight: 400;
+        font-size: 50px;
+    }
+
+    .xl-title {
+        font-weight: 700;
+        font-size: 4.3em;
+        line-height: 1.2;
+        font-family: "Poppins-Bold";
+    }
+
+    .theme-container {
+        padding-bottom: 80px;
+    }
+
+    .navbar-expand-lg .navbar-collapse {
+
+        flex-flow: row-reverse;
+    }
+
+
+    .zpcontainer {
+        width: 992px;
+        margin: 0 auto;
+        height: 100%;
+        padding: 1em;
+    }
+    .title-container {
+        padding-top: 80px;
+    }
+
+}
+
+// Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+
+    .xl-title {
+        font-weight: 700;
+        font-size: 4.3em;
+        line-height: 1.2;
+        font-family: "Poppins-Bold";
+    }
+
+
+    .zpcontainer {
+        width: 1140px;
+        margin: 0 auto;
+    }
+}
 
 .integration-partners {
     ::ng-deep {

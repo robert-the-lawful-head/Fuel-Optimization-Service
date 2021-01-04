@@ -8,7 +8,7 @@ import { OAuthService } from '../../../services/oauth.service';
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
+    styleUrls: [ './login.component.scss' ],
 })
 export class LoginComponent implements OnInit {
     partner: string;
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
             if (!params.partner || !params.redirectTo) {
-                this.router.navigate(['/']);
+                this.router.navigate([ '/' ]);
             }
             this.partner = params.partner;
             this.redirectTo = params.redirectTo;

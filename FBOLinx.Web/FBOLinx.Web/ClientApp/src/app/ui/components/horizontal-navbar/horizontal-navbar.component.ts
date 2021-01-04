@@ -23,12 +23,12 @@ import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 @Component({
     selector: 'app-horizontal-navbar',
     templateUrl: 'horizontal-navbar.component.html',
-    styleUrls: ['horizontal-navbar.component.scss'],
+    styleUrls: [ 'horizontal-navbar.component.scss' ],
     host: {
         '[class.app-navbar]': 'true',
         '[class.show-overlay]': 'showOverlay',
     },
-    providers: [WindowRef],
+    providers: [ WindowRef ],
 })
 export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() title: string;
@@ -158,13 +158,13 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     logout() {
-        sessionStorage.removeItem('impersonatedrole');
-        sessionStorage.removeItem('fboId');
-        sessionStorage.removeItem('managerGroupId');
-        sessionStorage.removeItem('groupId');
-        sessionStorage.removeItem('conductorFbo');
+        localStorage.removeItem('impersonatedrole');
+        localStorage.removeItem('fboId');
+        localStorage.removeItem('managerGroupId');
+        localStorage.removeItem('groupId');
+        localStorage.removeItem('conductorFbo');
         this.authenticationService.logout();
-        this.router.navigate(['/landing-site-layout']);
+        this.router.navigate([ '/landing-site-layout' ]);
     }
 
     accountProfileClicked() {
@@ -196,40 +196,40 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     stopManagingFBOClicked() {
-        sessionStorage.removeItem('fboId');
-        sessionStorage.removeItem('managerGroupId');
-        sessionStorage.removeItem('impersonatedrole');
+        localStorage.removeItem('fboId');
+        localStorage.removeItem('managerGroupId');
+        localStorage.removeItem('impersonatedrole');
         this.sharedService.currentUser.fboId = 0;
         this.sharedService.currentUser.impersonatedRole = null;
         if (this.sharedService.currentUser.managerGroupId && this.sharedService.currentUser.managerGroupId > 0) {
             this.sharedService.currentUser.groupId = this.sharedService.currentUser.managerGroupId;
-            sessionStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
+            localStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
         } else {
-            sessionStorage.removeItem('groupId');
+            localStorage.removeItem('groupId');
         }
         this.locations = [];
         this.fboAirport = null;
         this.fbo = null;
         this.close();
         if (this.sharedService.currentUser.conductorFbo) {
-            sessionStorage.removeItem('conductorFbo');
+            localStorage.removeItem('conductorFbo');
             this.sharedService.currentUser.conductorFbo = false;
-            this.router.navigate(['/default-layout/groups/']);
+            this.router.navigate([ '/default-layout/groups/' ]);
         } else {
             if (this.sharedService.currentUser.role === 3) {
                 this.sharedService.currentUser.impersonatedRole = 2;
-                sessionStorage.setItem('impersonatedrole', '2');
+                localStorage.setItem('impersonatedrole', '2');
             }
-            this.router.navigate(['/default-layout/fbos/']);
+            this.router.navigate([ '/default-layout/fbos/' ]);
         }
     }
 
     stopManagingGroupClicked() {
         this.sharedService.currentUser.impersonatedRole = null;
-        sessionStorage.removeItem('impersonatedrole');
-        sessionStorage.removeItem('fboId');
-        sessionStorage.removeItem('managerGroupId');
-        sessionStorage.removeItem('groupId');
+        localStorage.removeItem('impersonatedrole');
+        localStorage.removeItem('fboId');
+        localStorage.removeItem('managerGroupId');
+        localStorage.removeItem('groupId');
         this.sharedService.currentUser.fboId = 0;
         if (this.sharedService.currentUser.managerGroupId && this.sharedService.currentUser.managerGroupId > 0) {
             this.sharedService.currentUser.groupId = this.sharedService.currentUser.managerGroupId;
@@ -239,24 +239,24 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.fbo = null;
         this.close();
 
-        this.router.navigate(['/default-layout/groups/']);
+        this.router.navigate([ '/default-layout/groups/' ]);
     }
 
     updatePricingClicked() {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(['/default-layout/dashboard-fbo']);
+        this.router.navigate([ '/default-layout/dashboard-fbo' ]);
         this.close();
     }
 
     gotoCustomer(customer: any) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(['/default-layout/customers/' + customer.oid]);
+        this.router.navigate([ '/default-layout/customers/' + customer.oid ]);
         this.close();
     }
 
     viewAllNotificationsClicked() {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(['/default-layout/customers']);
+        this.router.navigate([ '/default-layout/customers' ]);
         this.close();
     }
 
@@ -305,12 +305,12 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     loadFboInfo() {
-        if (!this.currentUser.fboId && !sessionStorage.getItem('fboId')) {
+        if (!this.currentUser.fboId && !localStorage.getItem('fboId')) {
             return;
         }
 
         if (!this.currentUser.fboId) {
-            this.currentUser.fboId = sessionStorage.getItem('fboId');
+            this.currentUser.fboId = localStorage.getItem('fboId');
         }
 
         this.fboAirportsService
@@ -348,11 +348,11 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.needsAttentionMenu.isOpened = false;
         this.sharedService.currentUser.fboId = this.fboAirport.fboid;
         this.loadFboInfo();
-        sessionStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+        localStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
         if (this.isOnDashboard()) {
             this.sharedService.emitChange(SharedEvents.locationChangedEvent);
         } else {
-            this.router.navigate(['/default-layout/dashboard/']).then();
+            this.router.navigate([ '/default-layout/dashboard/' ]).then();
         }
     }
 

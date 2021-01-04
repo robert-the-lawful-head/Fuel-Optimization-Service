@@ -19,7 +19,7 @@ export interface NewFboModel {
 @Component({
     selector: 'app-fbos-grid-new-fbo-dialog',
     templateUrl: './fbos-grid-new-fbo-dialog.component.html',
-    styleUrls: ['./fbos-grid-new-fbo-dialog.component.scss'],
+    styleUrls: [ './fbos-grid-new-fbo-dialog.component.scss' ],
 })
 export class FbosGridNewFboDialogComponent {
     @Output() contactAdded = new EventEmitter<any>();
@@ -54,7 +54,7 @@ export class FbosGridNewFboDialogComponent {
     public fboSelectionChange() {
         this.data.fbo = this.data.acukwikFbo.handlerLongName;
         this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
-        this.data.group = `${this.data.fbo} - ${this.data.icao}`;
+        this.data.group = `${ this.data.fbo } - ${ this.data.icao }`;
     }
 
     public onCancelClick(): void {

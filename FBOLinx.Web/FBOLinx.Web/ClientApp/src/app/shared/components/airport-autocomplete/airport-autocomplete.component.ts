@@ -1,15 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { FormControl } from '@angular/forms';
-import {
-    startWith,
-    map,
-    debounceTime,
-    switchMap,
-    catchError,
-} from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs';
+import { catchError, debounceTime, map, startWith, switchMap, } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 // Services
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';

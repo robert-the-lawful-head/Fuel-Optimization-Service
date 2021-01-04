@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as _ from 'lodash';
 import * as moment from 'moment';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';

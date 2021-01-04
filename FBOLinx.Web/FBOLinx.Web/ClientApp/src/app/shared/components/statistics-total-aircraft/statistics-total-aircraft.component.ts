@@ -24,7 +24,8 @@ export class StatisticsTotalAircraftComponent implements OnInit {
     constructor(
         private customeraircraftService: CustomeraircraftsService,
         private sharedService: SharedService
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         this.refreshData();

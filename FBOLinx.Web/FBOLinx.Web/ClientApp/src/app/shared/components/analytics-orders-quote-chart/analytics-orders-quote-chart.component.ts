@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import * as _ from 'lodash';
 import * as moment from 'moment';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';

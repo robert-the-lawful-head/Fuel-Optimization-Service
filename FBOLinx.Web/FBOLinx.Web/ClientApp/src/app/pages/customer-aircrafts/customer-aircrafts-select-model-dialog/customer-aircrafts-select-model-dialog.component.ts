@@ -1,8 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import {
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 
@@ -12,7 +9,7 @@ import { CustomeraircraftsService } from '../../../services/customeraircrafts.se
 @Component({
     selector: 'app-customer-aircraft-select-model-dialog',
     templateUrl: './customer-aircrafts-select-model-dialog.component.html',
-    styleUrls: ['./customer-aircrafts-select-model-dialog.component.scss'],
+    styleUrls: [ './customer-aircrafts-select-model-dialog.component.scss' ],
 })
 export class CustomerAircraftSelectModelComponent implements OnInit {
     // Public Members
@@ -21,12 +18,14 @@ export class CustomerAircraftSelectModelComponent implements OnInit {
 
     public customerAircraftsDataSource: MatTableDataSource<any> = null;
 
-    displayedColumns: string[] = ['tailNumber', 'model', 'otherOptions'];
+    displayedColumns: string[] = [ 'tailNumber', 'model', 'otherOptions' ];
+
     constructor(
         public dialogRef: MatDialogRef<CustomerAircraftSelectModelComponent>,
         @Inject(MAT_DIALOG_DATA) public data,
         private customerAircraftsService: CustomeraircraftsService
-    ) { }
+    ) {
+    }
 
     ngOnInit() {
         console.log(this.data);

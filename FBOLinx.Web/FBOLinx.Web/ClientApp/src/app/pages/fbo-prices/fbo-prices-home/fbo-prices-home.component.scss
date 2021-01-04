@@ -6,20 +6,24 @@
 }
 
 .prices-board {
-    display: flex;
-    flex-wrap: wrap;
+    .prices-board-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        width: 100%;
+    }
 
     .prices-board-item {
         margin: 15px 15px 15px 0;
     }
 
     .prices-board-first-column {
-        min-width: 495px;
-        width: 495px;
+        flex-basis: 495px;
+        flex-shrink: 0;
     }
 
     .prices-board-second-column {
-        flex-basis: 100px;
+        //flex-basis: 100px;
         flex-grow: 1;
     }
 

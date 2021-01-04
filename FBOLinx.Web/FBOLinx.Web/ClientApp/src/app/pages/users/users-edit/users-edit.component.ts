@@ -7,7 +7,7 @@ import { UserService } from '../../../services/user.service';
 @Component({
     selector: 'app-users-edit',
     templateUrl: './users-edit.component.html',
-    styleUrls: ['./users-edit.component.scss'],
+    styleUrls: [ './users-edit.component.scss' ],
 })
 export class UsersEditComponent implements OnInit {
     @Output() saveClicked = new EventEmitter<any>();
@@ -35,7 +35,7 @@ export class UsersEditComponent implements OnInit {
         } else {
             const id = this.route.snapshot.paramMap.get('id');
             this.requiresRouting = true;
-            this.userService.get({oid: id}).subscribe((data: any) => {
+            this.userService.get({ oid: id }).subscribe((data: any) => {
                 this.userInfo = data;
                 this.loadAvailableRoles();
             });
@@ -60,7 +60,7 @@ export class UsersEditComponent implements OnInit {
 
     public cancelEdit() {
         if (this.requiresRouting) {
-            this.router.navigate(['/default-layout/fbos/']);
+            this.router.navigate([ '/default-layout/fbos/' ]);
         } else {
             this.cancelClicked.emit();
         }
@@ -69,12 +69,12 @@ export class UsersEditComponent implements OnInit {
     // Private Methods
     private loadAvailableRoles() {
         this.userService.getRoles().subscribe((data: any) => {
-            let supportedRoleValues = [4];
+            let supportedRoleValues = [ 4 ];
             this.availableroles = [];
             if (this.userInfo.fboId > 0) {
-                supportedRoleValues = [1, 4, 5];
+                supportedRoleValues = [ 1, 4, 5 ];
             } else if (this.userInfo.groupId > 0) {
-                supportedRoleValues = [2];
+                supportedRoleValues = [ 2 ];
             }
             for (const role of data) {
                 if (supportedRoleValues.indexOf(role.value) > -1) {

@@ -12,7 +12,7 @@ import { UsersDialogNewUserComponent } from '../users-dialog-new-user/users-dial
 @Component({
     selector: 'app-users-grid',
     templateUrl: './users-grid.component.html',
-    styleUrls: ['./users-grid.component.scss'],
+    styleUrls: [ './users-grid.component.scss' ],
 })
 export class UsersGridComponent implements OnInit {
     @Output() userDeleted = new EventEmitter<any>();
@@ -21,8 +21,8 @@ export class UsersGridComponent implements OnInit {
     @Input() usersData: Array<any>;
     @Input() fboInfo: any;
     @Input() groupInfo: any;
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     public usersDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [
@@ -58,7 +58,7 @@ export class UsersGridComponent implements OnInit {
         const dialogRef = this.deleteUserDialog.open(
             DeleteConfirmationComponent,
             {
-                data: {item: record, description: 'user'},
+                data: { item: record, description: 'user' },
                 autoFocus: false,
             }
         );
@@ -105,7 +105,7 @@ export class UsersGridComponent implements OnInit {
     }
 
     public newRecord() {
-        const newUser = {oid: 0, fboId: 0, groupId: 0};
+        const newUser = { oid: 0, fboId: 0, groupId: 0 };
         if (this.fboInfo) {
             newUser.fboId = this.fboInfo.oid;
             newUser.groupId = this.fboInfo.groupId;

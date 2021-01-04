@@ -1,8 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 
 export enum FeeAndTaxBreakdownDisplayModes {
-  PriceTaxBreakdown = 0,
+    PriceTaxBreakdown = 0,
     CustomerOmitting = 1,
     PricingPanel = 2
 }
@@ -38,7 +38,8 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     public subTotalWithMargin = 0;
     public total = 0;
 
-    constructor() {}
+    constructor() {
+    }
 
     ngOnInit(): void {
         this.performRecalculation();

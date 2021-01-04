@@ -105,10 +105,10 @@ namespace FBOLinx.Web.Services
                 {
                     p.Expired = true;
                     _context.Fboprices.Update(p);
+
+                    await _context.SaveChangesAsync();
                 }
-
-                await _context.SaveChangesAsync();
-
+                
                 var defaultPricingTemplate = await _context.PricingTemplate
                     .Where(x => x.Fboid == fboId && x.Default.HasValue && x.Default.Value).FirstOrDefaultAsync();
                 if (flightTypeClassifications == FlightTypeClassifications.NotSet ||

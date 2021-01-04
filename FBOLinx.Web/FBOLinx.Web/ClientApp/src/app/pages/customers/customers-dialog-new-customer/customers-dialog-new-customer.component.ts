@@ -23,7 +23,7 @@ export interface NewCustomerDialogData {
 @Component({
     selector: 'app-customers-dialog-new-customer',
     templateUrl: './customers-dialog-new-customer.component.html',
-    styleUrls: ['./customers-dialog-new-customer.component.scss'],
+    styleUrls: [ './customers-dialog-new-customer.component.scss' ],
 })
 export class CustomersDialogNewCustomerComponent {
     constructor(
