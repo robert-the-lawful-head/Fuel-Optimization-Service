@@ -270,15 +270,13 @@ export class CustomersGridComponent implements OnInit {
 
     exportCustomerAircraftToExcel() {
         // Export the filtered results to an excel spreadsheet
-        let exportData = map(this.aircraftData, (item) => {
-            return {
+        let exportData = map(this.aircraftData, (item) => ({
                 Tail: item.tailNumber,
                 Type: item.make + ' ' + item.model,
                 Size: item.aircraftSizeDescription,
                 Company: item.company,
                 'Company Pricing': item.pricingTemplateName,
-            };
-        });
+            }));
         exportData = sortBy(exportData, [
             (item) => item.Company.toLowerCase(),
             (item) => item.Tail.toLowerCase(),

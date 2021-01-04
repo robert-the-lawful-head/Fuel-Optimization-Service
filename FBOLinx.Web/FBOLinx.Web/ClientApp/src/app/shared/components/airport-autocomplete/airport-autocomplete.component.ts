@@ -18,7 +18,7 @@ export declare type AirportAutoCompleteDataSource = AirportAutoCompleteData[];
 @Component({
     selector: 'app-airport-autocomplete',
     templateUrl: './airport-autocomplete.component.html',
-    styleUrls: ['./airport-autocomplete.component.scss'],
+    styleUrls: [ './airport-autocomplete.component.scss' ],
 })
 export class AirportAutocompleteComponent implements OnInit {
     @Input() airportContainerModel: any;

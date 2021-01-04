@@ -10,7 +10,7 @@ export enum FeeAndTaxBreakdownDisplayModes {
 @Component({
     selector: 'fee-and-tax-breakdown',
     templateUrl: './fee-and-tax-breakdown.component.html',
-    styleUrls: ['./fee-and-tax-breakdown.component.scss']
+    styleUrls: [ './fee-and-tax-breakdown.component.scss' ]
 })
 export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
@@ -26,9 +26,9 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
     fboPrice: number;
     @Input()
-    validDepartureTypes: Array<number> = [0, 1, 2, 3];
+    validDepartureTypes: Array<number> = [ 0, 1, 2, 3 ];
     @Input()
-    validFlightTypes: Array<number> = [0, 1, 2, 3];
+    validFlightTypes: Array<number> = [ 0, 1, 2, 3 ];
     @Output()
     omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
 

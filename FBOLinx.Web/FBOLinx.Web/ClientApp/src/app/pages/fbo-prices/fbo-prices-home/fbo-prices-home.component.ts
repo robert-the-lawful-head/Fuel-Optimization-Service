@@ -36,14 +36,6 @@ export interface TemporaryAddOnMargin {
     MarginJet?: any;
 }
 
-export interface TailLookupResponse {
-    template?: string;
-    company?: string;
-    makeModel?: string;
-    pricingList: Array<any>;
-    rampFee: any;
-}
-
 @Component({
     selector: 'app-fbo-prices-home',
     templateUrl: './fbo-prices-home.component.html',
@@ -52,19 +44,21 @@ export interface TailLookupResponse {
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() isCsr?: boolean;
     @ViewChildren('tooltip') priceTooltips: QueryList<any>;
+    @ViewChild('retailFeeAndTaxBreakdown') private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
     // Members
     pricingLoader = 'pricing-loader';
     stagedPricingLoader = 'staged-pricing-loader';
     currentPrices: any[];
     currentPricingEffectiveFrom = new Date();
     currentPricingEffectiveTo: any;
-    // tailLoader = 'tail-loader';
     stagedPrices: any[];
     stagedPricingEffectiveFrom = new Date();
     stagedPricingEffectiveTo: any;
     currentDate = new Date();
     pricingTemplates: any[];
-    public feesAndTaxes: Array<any>;
+    feesAndTaxes: Array<any>;
     jtCost: any;
     jtRetail: any;
     stagedJetRetail: any;
@@ -98,9 +92,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     locationChangedSubscription: any;
     tooltipSubscription: any;
     tailNumberFormControlSubscription: any;
-    @ViewChild('retailFeeAndTaxBreakdown') private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-    @ViewChild('costFeeAndTaxBreakdown') private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-    @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
 
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
@@ -348,7 +339,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     if (!result) {
                         return;
                     }
-                    this.stagedPricingEffectiveFrom = this.currentFboPriceJetARetail.effectiveTo;
+                    this.stagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'days').toDate();
                     this.updateStagedPricing();
                 });
             } else {
@@ -549,21 +540,6 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.stagedPrices = data;
                     this.stagedFboPriceJetACost = this.getStagedPriceByProduct('JetA Cost');
                     this.stagedFboPriceJetARetail = this.getStagedPriceByProduct('JetA Retail');
-
-
-                    // if (this.stagedFboPriceJetARetail.effectiveTo) {
-                    //    this.stagedFboPriceJetARetail.effectiveTo =
-                    //        moment(this.stagedFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
-
-                    //    if (!this.stagedPricingEffectiveFrom)
-                    //        this.stagedPricingEffectiveFrom = new Date(this.stagedFboPriceJetARetail.effectiveTo);
-                    // }
-
-                    // if (this.stagedFboPriceJetACost.effectiveTo) {
-                    //    this.stagedFboPriceJetACost.effectiveTo =
-                    //        moment(this.stagedFboPriceJetACost.effectiveTo).format('MM/DD/YYYY');
-                    // }
-
                     observer.next();
                 }, (error: any) => {
                     observer.error(error);

@@ -236,6 +236,7 @@ export class CustomersEditComponent implements OnInit {
             }
         });
     }
+
     updateCustomerPricingTemplate(pricingTemplateId: number) {
         if (this.customCustomerType) {
             this.customCustomerType.customerType = pricingTemplateId;
@@ -265,6 +266,7 @@ export class CustomersEditComponent implements OnInit {
                 });
         });
     }
+
     toggleChange($event) {
         if ($event.checked) {
             this.customerInfoByGroup.showJetA = true;
