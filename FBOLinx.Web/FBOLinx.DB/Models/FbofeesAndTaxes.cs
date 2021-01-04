@@ -24,15 +24,7 @@ namespace FBOLinx.Web
         public FBOLinx.Core.Enums.FeeCalculationApplyingTypes? WhenToApply { get; set; }
 
         [NotMapped]
-        public bool IsOmitted
-        {
-            get
-            {
-                if (OmitsByCustomer == null || OmitsByCustomer.Count == 0)
-                    return false;
-                return true;
-            }
-        }
+        public bool IsOmitted { get;set; }
 
         #region Relationships
         [InverseProperty("FboFeeAndTax")]

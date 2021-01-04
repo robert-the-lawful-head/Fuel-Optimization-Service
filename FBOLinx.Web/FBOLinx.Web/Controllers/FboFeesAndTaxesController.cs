@@ -60,9 +60,7 @@ namespace FBOLinx.Web.Controllers
             var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).Include(x => x.OmitsByCustomer).ToListAsync();
             result.ForEach(x =>
             {
-                if (x.OmitsByCustomer == null)
-                    return;
-                x.OmitsByCustomer.RemoveAll(o => o.CustomerId != customerId);
+                x.IsOmitted = (x.OmitsByCustomer != null && x.OmitsByCustomer.Any(o => o.CustomerId == customerId));
             });
             //var result = await _context.FboFeeAndTaxOmitsByCustomer.FirstOrDefaultAsync(x => x.Oid == id);
             return Ok(result);

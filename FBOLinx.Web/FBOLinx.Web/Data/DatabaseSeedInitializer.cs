@@ -20,7 +20,7 @@ namespace FBOLinx.Web.Data
                     Task.Run(async () =>
                     {
                         var dataseed = new DatabaseInitializer();
-                        dataseed.InitializeDataAsync(serviceProvider);
+                        await dataseed.InitializeDataAsync(serviceProvider);
                     }).Wait();
 
                 }
