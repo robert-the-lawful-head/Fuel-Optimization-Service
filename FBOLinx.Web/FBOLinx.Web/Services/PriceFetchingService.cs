@@ -45,6 +45,9 @@ namespace FBOLinx.Web.Services
                                                             .ToListAsync();
             if (fboAirports == null)
                 return result;
+
+            await UpdateExpiredPrices(fboAirports.Select(x => x.Fboid).ToList());
+
             foreach (var fboAirport in fboAirports)
             {
                 //Do not include Paragon results from the Paragon Network
@@ -97,18 +100,6 @@ namespace FBOLinx.Web.Services
 
             try
             {
-                //Mark old prices as expired
-                var oldPrices = await _context.Fboprices.Where(f =>
-                        f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true)
-                    .ToListAsync();
-                foreach (var p in oldPrices)
-                {
-                    p.Expired = true;
-                    _context.Fboprices.Update(p);
-
-                    await _context.SaveChangesAsync();
-                }
-                
                 var defaultPricingTemplate = await _context.PricingTemplate
                     .Where(x => x.Fboid == fboId && x.Default.HasValue && x.Default.Value).FirstOrDefaultAsync();
                 if (flightTypeClassifications == FlightTypeClassifications.NotSet ||
@@ -155,10 +146,7 @@ namespace FBOLinx.Web.Services
                             x.DepartureType == departureType || x.DepartureType == ApplicableTaxFlights.All).ToList();
                     feesAndTaxes.ForEach(x =>
                     {
-                        if (x.OmitsByCustomer == null)
-                            return;
-                        x.OmitsByCustomer.RemoveAll(o =>
-                            o.CustomerId != customerInfoByGroup.FirstOrDefault()?.CustomerId);
+                        x.IsOmitted = (x.OmitsByCustomer != null && x.OmitsByCustomer.Any(o => o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId));
                     });
                 }
                 else
@@ -495,5 +483,20 @@ namespace FBOLinx.Web.Services
         }
         #endregion
 
+        #region Private Methods
+        private async Task UpdateExpiredPrices(List<int> fboIds)
+        {
+            //Mark old prices as expired
+            var oldPrices = await _context.Fboprices.Where(f =>
+                    f.EffectiveTo <= DateTime.UtcNow && (f.Fboid.HasValue && fboIds.Contains(f.Fboid.Value)) && f.Price != null && f.Expired != true)
+                .ToListAsync();
+            foreach (var p in oldPrices)
+            {
+                p.Expired = true;
+                _context.Fboprices.Update(p);
+            }
+            await _context.SaveChangesAsync();
+        }
+        #endregion
     }
 }
