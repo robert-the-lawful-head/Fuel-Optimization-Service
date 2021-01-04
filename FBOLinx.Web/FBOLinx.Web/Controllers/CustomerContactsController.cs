@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -135,10 +137,9 @@ namespace FBOLinx.Web.Controllers
                              join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                              join co in _context.Contacts on custc.ContactId equals co.Oid
                              join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
-                             where cg.Active.GetValueOrDefault()
-                                 && cg.Active.GetValueOrDefault()
+                             where (cg.Active ?? false)
                                    && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
-                                   && cibg.CopyAlerts.GetValueOrDefault() == true
+                                   && (cibg.CopyAlerts ?? false) == true
                                    && !string.IsNullOrEmpty(cibg.Email)
                              select co).Count();
 

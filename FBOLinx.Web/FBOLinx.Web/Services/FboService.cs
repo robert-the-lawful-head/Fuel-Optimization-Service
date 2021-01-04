@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
 
 namespace FBOLinx.Web.Services
 {
@@ -39,6 +40,13 @@ namespace FBOLinx.Web.Services
                     await groupTransitionService.PerformLegacyGroupTransition(groupId);
                 }
             });
+        }
+
+        public async Task<FBOLinx.DB.Models.Fbos> GetFbo(int fboId)
+        {
+            var result = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.Group)
+                .Include(x => x.fboAirport).FirstOrDefaultAsync();
+            return result;
         }
     }
 }

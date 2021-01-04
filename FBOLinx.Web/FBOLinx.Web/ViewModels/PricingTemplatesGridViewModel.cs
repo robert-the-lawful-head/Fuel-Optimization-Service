@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Models;
 
 namespace FBOLinx.Web.ViewModels
@@ -21,7 +22,7 @@ namespace FBOLinx.Web.ViewModels
 
         public string MarginTypeDescription
         {
-            get { return Utilities.Enum.GetDescription(MarginType ?? PricingTemplate.MarginTypes.CostPlus); }
+            get { return FBOLinx.Core.Utilities.Enum.GetDescription(MarginType ?? PricingTemplate.MarginTypes.CostPlus); }
         }
         public double Margin { get; set; }
         public double? IntoPlanePrice { get; set; }

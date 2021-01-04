@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +11,6 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Remotion.Linq.Clauses;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Services;
 
@@ -23,10 +24,10 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly PriceFetchingService _priceFetchingService;
 
-        public PricingTemplatesController(FboLinxContext context)
+        public PricingTemplatesController(FboLinxContext context, PriceFetchingService priceFetchingService)
         {
             _context = context;
-            _priceFetchingService = new PriceFetchingService(_context);
+            _priceFetchingService = priceFetchingService;
         }
 
         // GET: api/PricingTemplates
@@ -161,7 +162,7 @@ namespace FBOLinx.Web.Controllers
                     into cmResults
                     select new CustomerMarginModel {
                         TemplateId = cmResults.Key.TemplateId,
-                        MaxPrice = cmResults.Max(x => x.Amount.GetValueOrDefault())
+                        MaxPrice = cmResults.Max(x => (x.Amount ?? 0))
                     }) on p.Oid equals cm.TemplateId
                 into leftJoinCustomerMargins
                 from cm in leftJoinCustomerMargins.DefaultIfEmpty()
@@ -171,7 +172,7 @@ namespace FBOLinx.Web.Controllers
                     select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
                 from fp in leftJoinFboPrices.DefaultIfEmpty()
                 where p.Fboid == fboId
-                    && p.Default.GetValueOrDefault()
+                    && (p.Default ?? false)
                 select new PricingTemplatesGridViewModel
                 {
                     CustomerId = p.CustomerId,
@@ -185,7 +186,7 @@ namespace FBOLinx.Web.Controllers
                     Email = p.Email,
                     Oid = p.Oid,
                     Type = p.Type,
-                    IntoPlanePrice = (fp == null ? 0 : fp.Price.GetValueOrDefault()) +
+                    IntoPlanePrice = (fp == null ? 0 : (fp.Price ?? 0)) +
                                      (cm == null ? 0 : cm.MaxPrice)
                 }).ToListAsync();
 
@@ -366,7 +367,7 @@ namespace FBOLinx.Web.Controllers
             _context.PricingTemplate.Remove(pricingTemplate);
             await _context.SaveChangesAsync();
 
-            PricingTemplate defaultPricingTemplate = _context.PricingTemplate.Where(p => p.Fboid.Equals(fboId) && p.Default.GetValueOrDefault()).FirstOrDefault();
+            PricingTemplate defaultPricingTemplate = await _context.PricingTemplate.FirstOrDefaultAsync(p => p.Fboid.Equals(fboId) && (p.Default ?? false));
             if (defaultPricingTemplate != null)
             {
                 var customers = _context.CustomCustomerTypes
@@ -399,7 +400,7 @@ namespace FBOLinx.Web.Controllers
             if (pricingTemplate.Default.GetValueOrDefault())
             {
                 var otherDefaults = _context.PricingTemplate.Where(x =>
-                    x.Fboid == pricingTemplate.Fboid && x.Default.GetValueOrDefault() && x.Oid != pricingTemplate.Oid);
+                    x.Fboid == pricingTemplate.Fboid && (x.Default ?? false) && x.Oid != pricingTemplate.Oid);
                 foreach (var otherDefault in otherDefaults)
                 {
                     otherDefault.Default = false;

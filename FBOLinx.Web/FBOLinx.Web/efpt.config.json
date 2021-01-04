@@ -14,7 +14,7 @@
    "Tables": [
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[AircraftSpecifications]"
+         "Name": "[dbo].[AirportWatchHistoricalData]"
       }
    ],
    "UseDatabaseNames": false,

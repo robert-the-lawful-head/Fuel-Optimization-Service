@@ -4,8 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using IO.Swagger.Model;
 using IO.Swagger.Api;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.Web.Services
 {
@@ -37,7 +40,7 @@ namespace FBOLinx.Web.Services
                 System.Collections.ArrayList customerExistsList = new System.Collections.ArrayList();
                 foreach (var cust in listWithCustomers)
                 {
-                    var customerExists = _context.CustomerInfoByGroup.Where(s => s.CustomerId == cust.Oid && s.GroupId == groupId).Count();
+                    var customerExists = await _context.CustomerInfoByGroup.CountAsync(s => s.CustomerId == cust.Oid && s.GroupId == groupId);
 
                     if (customerExists > 0)
                     {
@@ -68,12 +71,12 @@ namespace FBOLinx.Web.Services
                     cibg.CertificateType = cust.CertificateType;
 
                     _context.CustomerInfoByGroup.Add(cibg);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
 
                 foreach (var cust in listWithCustomers)
                 {
-                    var customerAircrafts = _context.CustomerAircrafts.Where(s => s.GroupId == groupId && s.CustomerId == cust.Oid).Count();
+                    var customerAircrafts = await _context.CustomerAircrafts.CountAsync(s => s.GroupId == groupId && s.CustomerId == cust.Oid);
 
                     if (customerExistsList.Contains(cust.Oid) || customerAircrafts > 0)
                         continue;
@@ -89,7 +92,7 @@ namespace FBOLinx.Web.Services
                         ca.TailNumber = aircraft.TailNumber;
                         
                         _context.CustomerAircrafts.Add(ca);
-                        _context.SaveChanges();
+                        await _context.SaveChangesAsync();
                     }
                 }
             }

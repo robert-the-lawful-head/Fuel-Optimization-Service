@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Models;
 
 namespace FBOLinx.Web.ViewModels
@@ -13,7 +14,7 @@ namespace FBOLinx.Web.ViewModels
 
         public string AircraftSizeDescription
         {
-            get { return Utilities.Enum.GetDescription(Size ?? AirCrafts.AircraftSizes.NotSet); }
+            get { return FBOLinx.Core.Utilities.Enum.GetDescription(Size ?? AirCrafts.AircraftSizes.NotSet); }
         }
     }
 }

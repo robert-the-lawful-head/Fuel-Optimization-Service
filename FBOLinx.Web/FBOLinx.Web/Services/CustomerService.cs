@@ -2,15 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Data;
-using FBOLinx.Web.DTO;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Models.Requests;
-using FBOLinx.Web.ViewModels;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Remotion.Linq.Clauses;
 
 namespace FBOLinx.Web.Services
 {
@@ -27,44 +22,44 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId)
         {
-            var result = await (
-                    from f in _context.Fbos
-                    join cg in _context.CustomerInfoByGroup on new { GroupId = f.GroupId ?? 0, Active = true } equals new { cg.GroupId, Active = cg.Active ?? false }
+            var query = await (from f in _context.Fbos
+                join cg in _context.CustomerInfoByGroup on new {GroupId = f.GroupId ?? 0, Active = true} equals new
+                        {cg.GroupId, Active = cg.Active ?? false}
                     into leftJoinCg
-                    from cg in leftJoinCg.DefaultIfEmpty()
-                    join c in _context.Customers on cg.CustomerId equals c.Oid
+                from cg in leftJoinCg.DefaultIfEmpty()
+                join c in _context.Customers on cg.CustomerId equals c.Oid
                     into leftJoinCustomer
-                    from c in leftJoinCustomer.DefaultIfEmpty()
-                    join cct in _context.CustomCustomerTypes on new { cg.CustomerId, Fboid = fboId } equals new { cct.CustomerId, cct.Fboid }
+                from c in leftJoinCustomer.DefaultIfEmpty()
+                join cct in _context.CustomCustomerTypes on new {cg.CustomerId, Fboid = fboId} equals new
+                        {cct.CustomerId, cct.Fboid}
                     into leftJoinCCT
-                    from cct in leftJoinCCT.DefaultIfEmpty()
-                    join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
+                from cct in leftJoinCCT.DefaultIfEmpty()
+                join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
                     into leftJoinPT
-                    from pt in leftJoinPT.DefaultIfEmpty()
-                    join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
+                from pt in leftJoinPT.DefaultIfEmpty()
+                join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
                     into leftJoinCC
-                    from cc in leftJoinCC.DefaultIfEmpty()
-                    //join cibg in _context.ContactInfoByGroup on new { cc.ContactId, cg.GroupId, CopyAlerts = true } equals new { cibg.ContactId, cibg.GroupId, CopyAlerts = cibg.CopyAlerts ?? false }
-                    //into leftJoinCibg
-                    //from cibg in leftJoinCibg.DefaultIfEmpty()
-                    join cvf in _context.CustomersViewedByFbo on new { Fboid = fboId, cg.CustomerId } equals new { cvf.Fboid, cvf.CustomerId }
+                from cc in leftJoinCC.DefaultIfEmpty()
+                join cvf in _context.CustomersViewedByFbo on new {Fboid = fboId, cg.CustomerId} equals new
+                        {cvf.Fboid, cvf.CustomerId}
                     into leftJoinCvf
-                    from cvf in leftJoinCvf.DefaultIfEmpty()
-                    where cg.GroupId == groupId && f.Oid == fboId && c.Suspended != true
-                    select new
-                    {
-                        GroupId = f.GroupId ?? 0,
-                        FboId = f.Oid,
-                        CustomerInfoByGroupID = cg == null ? 0 : cg.Oid,
-                        Company = cg == null ? null : cg.Company,
-                        PricingTemplateId = pt == null ? 0 : pt.Oid,
-                        IsDefaultPricingTemplate = pt == null ? true : pt.Default,
-                        IsPricingTemplateRemoved = cg.PricingTemplateRemoved,
-                        //ContactInfoByGroupId = cibg == null ? 0 : cibg.Oid,
-                        FuelerlinxId = c == null ? 0 : c.FuelerlinxId ?? 0,
-                        CustomersViewedByFboId = cvf == null ? 0 : cvf.Oid
-                    }
-                )
+                from cvf in leftJoinCvf.DefaultIfEmpty()
+                where cg.GroupId == groupId && f.Oid == fboId && c.Suspended != true
+                select new
+                {
+                    GroupId = f.GroupId ?? 0,
+                    FboId = f.Oid,
+                    CustomerInfoByGroupID = cg == null ? 0 : cg.Oid,
+                    Company = cg == null ? null : cg.Company,
+                    PricingTemplateId = pt == null ? 0 : pt.Oid,
+                    IsDefaultPricingTemplate = pt == null ? true : pt.Default,
+                    IsPricingTemplateRemoved = cg.PricingTemplateRemoved,
+                    //ContactInfoByGroupId = cibg == null ? 0 : cibg.Oid,
+                    FuelerlinxId = c == null ? 0 : c.FuelerlinxId ?? 0,
+                    CustomersViewedByFboId = cvf == null ? 0 : cvf.Oid
+                }).ToListAsync();
+
+            var result = (query
                 .GroupBy(g => new { g.CustomerInfoByGroupID , g.Company})
                 .Select(g => new CustomerNeedsAttentionModel
                 {
@@ -79,9 +74,8 @@ namespace FBOLinx.Web.Services
                         g.Max(a => a.CustomersViewedByFboId) == 0 && g.Max(a => a.FuelerlinxId) > 0
                     )
                 })
-                .Where(g => g.NeedsAttention == true)
-                .ToListAsync();
-            return result;
+                .Where(g => g.NeedsAttention == true));
+            return result.ToList();
         }
 
         public async Task<List<NeedsAttentionCustomersCountModel>> GetNeedsAttentionCustomersCountByGroupFbo()
@@ -103,9 +97,6 @@ namespace FBOLinx.Web.Services
                     join cc in _context.CustomerContacts on cg.CustomerId equals cc.CustomerId
                     into leftJoinCC
                     from cc in leftJoinCC.DefaultIfEmpty()
-                    //join cibg in _context.ContactInfoByGroup on new { cc.ContactId, cg.GroupId, CopyAlerts = true } equals new { cibg.ContactId, cibg.GroupId, CopyAlerts = cibg.CopyAlerts ?? false }
-                    //into leftJoinCibg
-                    //from cibg in leftJoinCibg.DefaultIfEmpty()
                     join cvf in _context.CustomersViewedByFbo on new { Fboid = f.Oid, cg.CustomerId } equals new { cvf.Fboid, cvf.CustomerId }
                     into leftJoinCvf
                     from cvf in leftJoinCvf.DefaultIfEmpty()
@@ -118,7 +109,6 @@ namespace FBOLinx.Web.Services
                         PricingTemplateId = pt == null ? 0 : pt.Oid,
                         IsDefaultPricingTemplate = pt == null ? true : pt.Default,
                         IsPricingTemplateRemoved = cg.PricingTemplateRemoved,
-                        //ContactInfoByGroupId = cibg == null ? 0 : cibg.Oid,
                         FuelerlinxId = c == null ? 0 : c.FuelerlinxId ?? 0,
                         CustomersViewedByFboId = cvf == null ? 0 : cvf.Oid
                     }
@@ -129,9 +119,8 @@ namespace FBOLinx.Web.Services
                     g.Key.GroupId,
                     g.Key.FboId,
                     g.Key.CustomerInfoByGroupID,
-                    NeedsAttention = g.Max(a => a.IsDefaultPricingTemplate) == true ||
-                                    //(g.Max(a => a.ContactInfoByGroupId) == 0 && g.Max(a => a.FuelerlinxId) <= 0) ||
-                                    g.Max(a => a.IsPricingTemplateRemoved) == true ? 1: 0
+                    NeedsAttention = g.Max(a => a.IsDefaultPricingTemplate == true ? 1 : 0) == 1 ||
+                                    g.Max(a => a.IsPricingTemplateRemoved == true ? 1 : 0) == 1 ? 1: 0
                 })
                 .GroupBy(g => new { g.GroupId, g.FboId })
                 .Select(g => new NeedsAttentionCustomersCountModel
@@ -145,6 +134,20 @@ namespace FBOLinx.Web.Services
                 .ThenBy(g => g.FboId)
                 .ToListAsync();
             return result;
+        }
+
+        public async Task<List<CustomerInfoByGroup>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
+        {
+            var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && (customerInfoByGroupId == 0 || x.Oid == customerInfoByGroupId))
+                .Include(x => x.Customer)
+                .Include(x => x.Customer.CustomCustomerType)
+                .Where(x => x.Customer.CustomCustomerType.Fboid == fboId)
+                .Include(x => x.Customer.CustomCustomerType.PricingTemplate)
+                .Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
+                .Include(x => x.Customer.CustomerContacts)
+                .ToListAsync();
+
+            return customerInfoByGroup;
         }
 
         #endregion

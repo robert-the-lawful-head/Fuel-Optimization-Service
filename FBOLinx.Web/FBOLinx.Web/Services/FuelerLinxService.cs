@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Json;
+using FBOLinx.Core.Utilities.Http;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses;
@@ -35,28 +36,39 @@ namespace FBOLinx.Web.Services
         #region Public Methods
         public async Task<FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(FuelerLinxUpliftsByLocationRequestContent request)
         {
-            var authToken = await GetAuthenticationTokenFromService();
-            string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl + "/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
-            if (string.IsNullOrEmpty(authToken))
-                return null;
-
-            request.UserServiceKey = authToken;
-            using (HttpClient client = new HttpClient())
+            try
             {
-                client.DefaultRequestHeaders.Add("APIKey", _APIKey);
-                using (HttpResponseMessage response = await client.PostAsync(upliftsByLocationURL,
-                    new Utilities.JsonContent(new FuelerLinxUpliftsByLocationRequest()
-                    {
-                        request = request
-                    })))
+                var authToken = await GetAuthenticationTokenFromService();
+                string upliftsByLocationURL = _appSettings.Value.FuelerLinxUrl +
+                                              "/integratedservices/vendors/fbolinx.asmx/GetOrderCountByLocation";
+                if (string.IsNullOrEmpty(authToken))
+                    return null;
+
+                request.UserServiceKey = authToken;
+                using (HttpClient client = new HttpClient())
                 {
-                    Task<FuelerLinxUpliftsByLocationResponse> upliftsResult = response.Content.ReadAsAsync<FuelerLinxUpliftsByLocationResponse>();
-                    if (upliftsResult == null || upliftsResult.Result == null || upliftsResult.Result.d == null)
-                        return new FuelerLinxUpliftsByLocationResponseContent() { ICAO = request.ICAO };
-                    upliftsResult.Result.d.ICAO = request.ICAO;
-                    return upliftsResult.Result.d;
+                    client.DefaultRequestHeaders.Add("APIKey", _APIKey);
+                    using (HttpResponseMessage response = await client.PostAsync(upliftsByLocationURL,
+                        new FBOLinx.Core.Utilities.Http.JsonContent(new FuelerLinxUpliftsByLocationRequest()
+                        {
+                            request = request
+                        })))
+                    {
+                        FuelerLinxUpliftsByLocationResponse upliftsResult =
+                            Newtonsoft.Json.JsonConvert.DeserializeObject<FuelerLinxUpliftsByLocationResponse>(
+                                await response.Content.ReadAsStringAsync());
+                        if (upliftsResult == null || upliftsResult.d == null)
+                            return new FuelerLinxUpliftsByLocationResponseContent() {ICAO = request.ICAO};
+                        upliftsResult.d.ICAO = request.ICAO;
+                        return upliftsResult.d;
+                    }
                 }
             }
+            catch (System.Exception)
+            {
+                return new FuelerLinxUpliftsByLocationResponseContent() {ICAO = request.ICAO};
+            }
+
         }
 
         public FBOLinxNearbyAirportsResponse GetTransactionsForNearbyAirports(FBOLinxNearbyAirportsRequest request)
@@ -139,8 +151,7 @@ namespace FBOLinx.Web.Services
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("APIKey", _APIKey);
-                    using (HttpResponseMessage response = await client.PostAsync(authURL,
-                        new Utilities.JsonContent(new FuelerLinxAuthenticationRequest()
+                    using (HttpResponseMessage response = await client.PostAsync(authURL, new JsonContent(new FuelerLinxAuthenticationRequest()
                         {
                             request = new FuelerLinxAuthenticationRequestContent()
                             {
@@ -151,10 +162,11 @@ namespace FBOLinx.Web.Services
                         })))
                     {
                         var authenticationResult =
-                            response.Content.ReadAsAsync<FuelerLinxAuthenticationResponse>();
-                        if (authenticationResult == null || authenticationResult.Result == null || authenticationResult.Result.d == null)
+                            Newtonsoft.Json.JsonConvert.DeserializeObject<FuelerLinxAuthenticationResponse>(
+                                await response.Content.ReadAsStringAsync());
+                        if (authenticationResult == null || authenticationResult.d == null)
                             return "";
-                        return authenticationResult.Result.d.Token;
+                        return authenticationResult.d.Token;
                     }
                 }
             }
