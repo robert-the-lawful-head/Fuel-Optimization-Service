@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Observable } from 'rxjs';
+import { interval, Observable } from 'rxjs';
 import * as moment from 'moment';
 
 // Services
@@ -92,6 +92,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     locationChangedSubscription: any;
     tooltipSubscription: any;
     tailNumberFormControlSubscription: any;
+    priceShiftSubscription: any;
+    priceShiftLoading: boolean;
 
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
@@ -139,6 +141,9 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         }
         if (this.tailNumberFormControlSubscription) {
             this.tailNumberFormControlSubscription.unsubscribe();
+        }
+        if (this.priceShiftSubscription) {
+            this.priceShiftSubscription.unsubscribe();
         }
     }
 
@@ -525,6 +530,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                         JetARetail: this.currentFboPriceJetARetail.price,
                     });
 
+                    this.subscribeToPricingShift();
+
                     observer.next();
                 }, (error: any) => {
                     observer.error(error);
@@ -540,6 +547,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                     this.stagedPrices = data;
                     this.stagedFboPriceJetACost = this.getStagedPriceByProduct('JetA Cost');
                     this.stagedFboPriceJetARetail = this.getStagedPriceByProduct('JetA Retail');
+                    this.subscribeToPricingShift();
                     observer.next();
                 }, (error: any) => {
                     observer.error(error);
@@ -737,6 +745,33 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             if (this.costFeeAndTaxBreakdown) {
                 this.costFeeAndTaxBreakdown.feesAndTaxes = this.feesAndTaxes;
                 this.costFeeAndTaxBreakdown.performRecalculation();
+            }
+        });
+    }
+
+    private subscribeToPricingShift() {
+        if (this.priceShiftSubscription) {
+            this.priceShiftSubscription.unsubscribe();
+        }
+        this.priceShiftSubscription = interval(1000).subscribe(() => {
+            const utcNow = moment.utc().format('MM/DD/YYYY');
+            const utcTomorrow = moment.utc().add(1, 'days').format('MM/DD/YYYY');
+            const currentRetailEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveFrom).format('MM/DD/YYYY');
+            const currentRetailEffectiveTo = moment(this.currentFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
+            const stagedRetailEffectiveFrom = moment(this.stagedFboPriceJetARetail.effectiveFrom).format('MM/DD/YYYY');
+            const stagedCostEffectiveFrom = moment(this.stagedFboPriceJetACost.effectiveFrom).format('MM/DD/YYYY');
+
+            if (!this.priceShiftLoading && (
+                (utcTomorrow !== currentRetailEffectiveFrom && utcNow === currentRetailEffectiveTo) ||
+                utcNow === stagedRetailEffectiveFrom ||
+                utcNow === stagedCostEffectiveFrom
+            )) {
+                this.priceShiftLoading = true;
+                this.loadCurrentFboPrices().subscribe(() => {
+                    this.loadStagedFboPrices().subscribe(() => {
+                        this.priceShiftLoading = false;
+                    });
+                });
             }
         });
     }
