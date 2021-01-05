@@ -272,14 +272,18 @@ export class FbosGridComponent implements OnInit {
                 if (!result) {
                     return;
                 }
+                localStorage.setItem('managerGroupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
-                localStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
+
+                localStorage.setItem('groupId', fbo.groupId.toString());
                 this.sharedService.currentUser.groupId = fbo.groupId;
-                localStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
-                this.sharedService.currentUser.impersonatedRole = 1;
+
                 localStorage.setItem('impersonatedrole', '1');
+                this.sharedService.currentUser.impersonatedRole = 1;
+
+                localStorage.setItem('fboId', fbo.oid.toString());
                 this.sharedService.currentUser.fboId = fbo.oid;
-                localStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+
                 this.sharedService.emitChange(fboChangedEvent);
                 this.router.navigate([ '/default-layout/dashboard-fbo/' ]);
             });
