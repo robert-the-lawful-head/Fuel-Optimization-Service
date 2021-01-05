@@ -17,7 +17,7 @@ import { EnumOptions } from '../../../models/enum-options';
 // Model
 import * as SharedEvents from '../../../models/sharedEvents';
 
-export interface TailLookupResponse {
+interface TailLookupResponse {
     template?: string;
     company?: string;
     makeModel?: string;
@@ -25,13 +25,13 @@ export interface TailLookupResponse {
     rampFee: any;
 }
 
-export interface PriceLookupRequest {
+interface PriceLookupRequest {
     pricingTemplateId: number;
     tailNumber: string;
     customerInfoByGroupId: number;
 }
 
-export enum PriceCheckerLookupTypes {
+enum PriceCheckerLookupTypes {
     ByPricingTemplate = 0,
     ByCustomer = 1,
     ByTail = 2,

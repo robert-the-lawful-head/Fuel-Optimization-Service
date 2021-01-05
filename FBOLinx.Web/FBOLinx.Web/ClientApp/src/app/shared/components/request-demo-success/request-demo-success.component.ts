@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 @Component({
     selector: 'app-request-demo-success',
     templateUrl: './request-demo-success.component.html',
-    styleUrls: ['./request-demo-success.component.scss'],
+    styleUrls: [ './request-demo-success.component.scss' ],
 })
 export class RequestDemoSuccessComponent {
     public zohoLoader = 'Zoho loader';

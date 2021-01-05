@@ -248,6 +248,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             });
         }
     }
+
     public applyFilter(filterValue: string) {
         this.customerAircraftsDataSource.filter = filterValue
             .trim()

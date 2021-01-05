@@ -4,14 +4,14 @@ import * as moment from 'moment';
 @Component({
     selector: 'app-table-global-search',
     templateUrl: 'table-global-search.component.html',
-    styleUrls: ['table-global-search.component.scss']
+    styleUrls: [ 'table-global-search.component.scss' ]
 })
 export class TableGlobalSearchComponent implements OnInit {
     @Input() placeholder: string;
     @Input() matDataSource: any = null;
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
 
-    public globalFilter: any = {isGlobal: true, filterValue: ''};
+    public globalFilter: any = { isGlobal: true, filterValue: '' };
 
     constructor() {
     }
@@ -161,7 +161,7 @@ export class TableGlobalSearchComponent implements OnInit {
                     }
                     columnValue = columnValue.toString();
 
-                    if ([2, 3, 4].indexOf(element.columnFormat) > -1) {
+                    if ([ 2, 3, 4 ].indexOf(element.columnFormat) > -1) {
                         return (
                             (!element.filter.dateFilter.startDate ||
                                 element.filter.dateFilter.startDate === '' ||
@@ -173,7 +173,7 @@ export class TableGlobalSearchComponent implements OnInit {
                                 moment(columnValue).isBefore(element.filter.dateFilter.endDate))
                         );
                     }
-                    if ([1, 5, 6].indexOf(element.columnFormat) > -1) {
+                    if ([ 1, 5, 6 ].indexOf(element.columnFormat) > -1) {
                         return (
                             (!element.filter.numberRangeFilter.start ||
                                 element.filter.numberRangeFilter.start <=
