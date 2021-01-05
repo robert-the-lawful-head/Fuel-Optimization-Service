@@ -19,6 +19,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
     menuItems: IMenuItem[];
     user: any;
     tooltipIndex = 0;
+    public hasShownTutorial: boolean = false;
 
     constructor(
         private menuService: MenuService,
@@ -108,7 +109,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
     showTooltipsIfFirstLogin() {
         this.getLoggedInUser().subscribe((user: any) => {
-            if (user && !user.goOverTutorial) {
+            if (user && !user.goOverTutorial && !this.hasShownTutorial) {
+                this.hasShownTutorial = true;
                 setTimeout(() => {
                     const tooltipsArr = this.priceTooltips.toArray();
                     tooltipsArr[this.tooltipIndex].open();
