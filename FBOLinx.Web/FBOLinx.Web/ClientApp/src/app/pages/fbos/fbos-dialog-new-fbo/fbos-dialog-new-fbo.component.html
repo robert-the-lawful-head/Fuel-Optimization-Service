@@ -8,7 +8,7 @@
         *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0"
     >
         <mat-select
-            (ngModelChange)="fboSelectionChange()"
+            (selectionChange)="fboSelectionChange()"
             [(ngModel)]="data.acukwikFbo"
             id="newFbo"
             name="ddlNewFbo"
