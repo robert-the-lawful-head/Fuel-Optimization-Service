@@ -1,31 +1,31 @@
 <h1 mat-dialog-title>Generate a Customer Price Sheet Download</h1>
 <div mat-dialog-content>
-  <p>Select the customer(s) you'd like to download a price sheet for.</p>
-  <mat-form-field class="filter">
-    <input matInput (keyup)="applyFilter($event.target.value)" [value]="filter" placeholder="Search for a customer">
-    <span matPrefix><i class="fa fa-search"></i></span>
-  </mat-form-field>
-  <ejs-grid
-    #grid
-    [dataSource]='dataSources'
-    (rowSelected)="rowSelected()"
-    (rowDeselected)="rowDeselected()"
-    height=350
-  >
-    <e-columns>
-        <e-column type='checkbox' width='50'></e-column>
-        <e-column field='company' headerText='Customer'></e-column>
-    </e-columns>
-  </ejs-grid>
+    <p>Select the customer(s) you'd like to download a price sheet for.</p>
+    <mat-form-field class="filter">
+        <input (keyup)="applyFilter($event.target.value)" [value]="filter" matInput placeholder="Search for a customer">
+        <span matPrefix><i class="fa fa-search"></i></span>
+    </mat-form-field>
+    <ejs-grid
+        #grid
+        (rowDeselected)="rowDeselected()"
+        (rowSelected)="rowSelected()"
+        [dataSource]='dataSources'
+        height=350
+    >
+        <e-columns>
+            <e-column type='checkbox' width='50'></e-column>
+            <e-column field='company' headerText='Customer'></e-column>
+        </e-columns>
+    </ejs-grid>
 </div>
 <div class="" mat-dialog-actions>
-  <button
-    mat-raised-button
-    color="accent"
-    (click)="onGenerate()"
-    [disabled]="!selectedCustomers || !selectedCustomers.length || loading"
-  >
-    {{ !loading ? 'Generate and Download' : '' }}
-    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-  </button>
+    <button
+        (click)="onGenerate()"
+        [disabled]="!selectedCustomers || !selectedCustomers.length || loading"
+        color="accent"
+        mat-raised-button
+    >
+        {{ !loading ? 'Generate and Download' : '' }}
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    </button>
 </div>

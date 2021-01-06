@@ -1,20 +1,17 @@
 import { Component, Inject, Input } from '@angular/core';
-import {
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 
 export interface ProceedConfirmationData {
-  description: string;
+    description: string;
     itemsList: string[];
     buttonText: string;
     title: string;
 }
 
 @Component({
-  selector: 'app-proceed-confirmation',
-  templateUrl: './proceed-confirmation.component.html',
-  styleUrls: ['./proceed-confirmation.component.scss'],
+    selector: 'app-proceed-confirmation',
+    templateUrl: './proceed-confirmation.component.html',
+    styleUrls: [ './proceed-confirmation.component.scss' ],
 })
 export class ProceedConfirmationComponent {
     @Input() buttonText = 'Confirm';
@@ -33,7 +30,7 @@ export class ProceedConfirmationComponent {
         }
     }
 
-  onCancelClick(): void {
-    this.dialogRef.close();
-  }
+    onCancelClick(): void {
+        this.dialogRef.close();
+    }
 }

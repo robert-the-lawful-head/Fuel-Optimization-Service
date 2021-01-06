@@ -1,8 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 
 export enum FeeAndTaxBreakdownDisplayModes {
-  PriceTaxBreakdown = 0,
+    PriceTaxBreakdown = 0,
     CustomerOmitting = 1,
     PricingPanel = 2
 }
@@ -10,7 +10,7 @@ export enum FeeAndTaxBreakdownDisplayModes {
 @Component({
     selector: 'fee-and-tax-breakdown',
     templateUrl: './fee-and-tax-breakdown.component.html',
-    styleUrls: ['./fee-and-tax-breakdown.component.scss']
+    styleUrls: [ './fee-and-tax-breakdown.component.scss' ]
 })
 export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
@@ -26,9 +26,9 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
     fboPrice: number;
     @Input()
-    validDepartureTypes: Array<number> = [0, 1, 2, 3];
+    validDepartureTypes: Array<number> = [ 0, 1, 2, 3 ];
     @Input()
-    validFlightTypes: Array<number> = [0, 1, 2, 3];
+    validFlightTypes: Array<number> = [ 0, 1, 2, 3 ];
     @Output()
     omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
 
@@ -38,7 +38,8 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     public subTotalWithMargin = 0;
     public total = 0;
 
-    constructor() {}
+    constructor() {
+    }
 
     ngOnInit(): void {
         this.performRecalculation();

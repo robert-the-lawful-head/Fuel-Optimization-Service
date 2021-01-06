@@ -1,37 +1,37 @@
 @import '../../../../assets/sass/variable';
 
 .mat-dialog-title {
-  padding: 10px 20px;
-  margin: 0;
-  background: main-color(500);
-  color: white;
+    padding: 10px 20px;
+    margin: 0;
+    background: main-color(500);
+    color: white;
 }
 
 .mat-dialog-content {
-  padding: 20px 40px;
-  margin: 0;
+    padding: 20px 40px;
+    margin: 0;
 
-  p {
-    margin-bottom: 5px;
-  }
+    p {
+        margin-bottom: 5px;
+    }
 }
 
 .mat-dialog-actions {
-  justify-content: flex-end;
-  margin: 0;
-  padding: 0 40px 20px;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0 40px 20px;
 
-  button {
-    width: 183px;
-    height: 36px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+    button {
+        width: 183px;
+        height: 36px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
 
-    ::ng-deep {
-      .mat-progress-spinner circle, .mat-spinner circle {
-        stroke: white;
-      }
+        ::ng-deep {
+            .mat-progress-spinner circle, .mat-spinner circle {
+                stroke: white;
+            }
+        }
     }
-  }
 }

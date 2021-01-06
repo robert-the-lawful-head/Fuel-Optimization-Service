@@ -1,18 +1,10 @@
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild,
-} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort, MatSortHeader, SortDirection} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatDialog} from '@angular/material/dialog';
-import {MatSelectChange} from '@angular/material/select';
-import {find, forEach, map, sortBy} from 'lodash';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
+import { find, forEach, map, sortBy } from 'lodash';
 import FlatFileImporter from 'flatfile-csv-importer';
 import * as XLSX from 'xlsx';
 
@@ -75,7 +67,7 @@ const initialColumns: ColumnType[] = [
 @Component({
     selector: 'app-customers-grid',
     templateUrl: './customers-grid.component.html',
-    styleUrls: ['./customers-grid.component.scss'],
+    styleUrls: [ './customers-grid.component.scss' ],
 })
 export class CustomersGridComponent implements OnInit {
     // Input/Output Bindings
@@ -89,8 +81,8 @@ export class CustomersGridComponent implements OnInit {
 
     // Members
     @ViewChild('customerTableContainer') table: ElementRef;
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     tableLocalStorageKey = 'customer-manager-table-settings';
 
@@ -100,8 +92,6 @@ export class CustomersGridComponent implements OnInit {
     selectedRows: number;
     pageIndex = 0;
     pageSize = 100;
-    customerSearch = '';
-
     columns: ColumnType[] = [];
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
@@ -168,7 +158,7 @@ export class CustomersGridComponent implements OnInit {
         const dialogRef = this.deleteCustomerDialog.open(
             DeleteConfirmationComponent,
             {
-                data: {item: customer, description: 'customer'},
+                data: { item: customer, description: 'customer' },
                 autoFocus: false,
             }
         );
@@ -178,7 +168,7 @@ export class CustomersGridComponent implements OnInit {
                 return;
             }
             this.customerInfoByGroupService
-                .remove({oid: result.item.customerInfoByGroupId})
+                .remove({ oid: result.item.customerInfoByGroupId })
                 .subscribe(() => {
                     this.customerDeleted.emit();
                 });
@@ -212,7 +202,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     newCustomer() {
-        const customerInfo = {oid: 0};
+        const customerInfo = { oid: 0 };
         const dialogRef = this.newCustomerDialog.open(
             CustomersDialogNewCustomerComponent,
             {
@@ -251,30 +241,24 @@ export class CustomersGridComponent implements OnInit {
 
     exportCustomersToExcel() {
         // Export the filtered results to an excel spreadsheet
-        const filteredList = this.customersDataSource.filteredData.filter((item) => {
-            return item.selectAll === true;
-        });
+        const filteredList = this.customersDataSource.filteredData.filter((item) => item.selectAll === true);
         let exportData;
         if (filteredList.length > 0) {
             exportData = filteredList;
         } else {
             exportData = this.customersDataSource.filteredData;
         }
-        exportData = map(exportData, (item) => {
-            return {
-                Company: item.company,
-                Source:
-                    item.customerCompanyTypeName === 'FuelerLinx'
-                        ? 'FBOLinx Network'
-                        : item.customerCompanyTypeName,
-                'Assigned Price Tier': item.pricingTemplateName,
-                Price: item.allInPrice,
-            };
-        });
+        exportData = map(exportData, (item) => ({
+            Company: item.company,
+            'Needs Attention': item.needsAttention ? 'Needs Attention' : '',
+            'Customer Type': item.customerCompanyTypeName,
+            'FuelerLinx Network': item.isFuelerLinxCustomer ? 'YES' : 'NO',
+            'Certificate Type': item.certificateTypeDescription,
+            'ITP Margin Template': item.pricingTemplateName,
+            'Fleet Size': item.fleetSize,
+        }));
         exportData = sortBy(exportData, [
-            (item) => {
-                return item.Company.toLowerCase();
-            },
+            (item) => item.Company.toLowerCase(),
         ]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -286,41 +270,16 @@ export class CustomersGridComponent implements OnInit {
 
     exportCustomerAircraftToExcel() {
         // Export the filtered results to an excel spreadsheet
-        let exportData = map(this.aircraftData, (item) => {
-            let pricingTemplateName = item.pricingTemplateName;
-            if (!pricingTemplateName) {
-                const customer = find(this.customersData, (c) => {
-                    return c.customerId === item.customerId;
-                });
-                if (customer) {
-                    pricingTemplateName = customer.pricingTemplateName;
-                }
-            }
-            const matchingPricingTemplate = find(
-                this.pricingTemplatesData,
-                (pricing) => {
-                    return pricing.name === pricingTemplateName;
-                }
-            );
-            return {
-                Company: item.company,
+        let exportData = map(this.aircraftData, (item) => ({
                 Tail: item.tailNumber,
-                Make: item.make,
-                Model: item.model,
+                Type: item.make + ' ' + item.model,
                 Size: item.aircraftSizeDescription,
-                'Margin Template': pricingTemplateName,
-                Pricing: matchingPricingTemplate
-                    ? matchingPricingTemplate.intoPlanePrice
-                    : '',
-            };
-        });
+                Company: item.company,
+                'Company Pricing': item.pricingTemplateName,
+            }));
         exportData = sortBy(exportData, [
-            (item) => {
-                return item.Company.toLowerCase();
-            },
-            (item) => {
-                return item.Tail.toLowerCase();
-            },
+            (item) => item.Company.toLowerCase(),
+            (item) => item.Tail.toLowerCase(),
         ]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -384,9 +343,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     anySelected() {
-        const filteredList = this.customersData.filter((item) => {
-            return item.selectAll === true;
-        });
+        const filteredList = this.customersData.filter((item) => item.selectAll === true);
         return filteredList.length > 0;
     }
 
@@ -426,13 +383,13 @@ export class CustomersGridComponent implements OnInit {
             fields: [
                 {
                     label: 'Company Id',
-                    alternates: ['Id', 'CompanyId'],
+                    alternates: [ 'Id', 'CompanyId' ],
                     key: 'CompanyId',
                     description: 'Company Id Value',
                 },
                 {
                     label: 'CompanyName',
-                    alternates: ['Company Name', 'Name'],
+                    alternates: [ 'Company Name', 'Name' ],
                     key: 'CompanyName',
                     description: 'Company Name Value',
                     validators: [
@@ -444,13 +401,13 @@ export class CustomersGridComponent implements OnInit {
                 },
                 {
                     label: 'Activate',
-                    alternates: ['activate'],
+                    alternates: [ 'activate' ],
                     key: 'Activate',
                     description: 'Activate Flag',
                 },
                 {
                     label: 'Tail',
-                    alternates: ['tail', 'plane tail', 'N-number', 'Nnumber'],
+                    alternates: [ 'tail', 'plane tail', 'N-number', 'Nnumber' ],
                     key: 'Tail',
                     description: 'Tail',
                 },
@@ -481,43 +438,43 @@ export class CustomersGridComponent implements OnInit {
                 },
                 {
                     label: 'Size',
-                    alternates: ['Aircraft Size', 'Plane Size'],
+                    alternates: [ 'Aircraft Size', 'Plane Size' ],
                     key: 'AircraftSize',
                     description: 'Aircraft Size',
                 },
                 {
                     label: 'First Name',
-                    alternates: ['first name', 'name'],
+                    alternates: [ 'first name', 'name' ],
                     key: 'FirstName',
                     description: 'First Name',
                 },
                 {
                     label: 'Last Name',
-                    alternates: ['last name', 'lname'],
+                    alternates: [ 'last name', 'lname' ],
                     key: 'LastName',
                     description: 'Last Name',
                 },
                 {
                     label: 'Title',
-                    alternates: ['title'],
+                    alternates: [ 'title' ],
                     key: 'Title',
                     description: 'Title',
                 },
                 {
                     label: 'Email',
-                    alternates: ['email address', 'email'],
+                    alternates: [ 'email address', 'email' ],
                     key: 'Email',
                     description: 'Email',
                 },
                 {
                     label: 'Mobile',
-                    alternates: ['mobile', 'cell', 'cell phone'],
+                    alternates: [ 'mobile', 'cell', 'cell phone' ],
                     key: 'Mobile',
                     description: 'Mobile',
                 },
                 {
                     label: 'Phone',
-                    alternates: ['phone'],
+                    alternates: [ 'phone' ],
                     key: 'Phone',
                     description: 'Phone',
                 },
@@ -538,11 +495,28 @@ export class CustomersGridComponent implements OnInit {
         return this.columns.filter(column => !column.hidden).map(column => column.id);
     }
 
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
+            data: this.columns
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.columns = [ ...result ];
+                this.refreshSort();
+                this.saveSettings();
+            }
+        });
+    }
+
+    saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+    }
+
     private refreshCustomerDataSource() {
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
-                    ? { ...column, sort: this.sort.direction}
+                    ? { ...column, sort: this.sort.direction }
                     : { id: column.id, name: column.name, hidden: column.hidden }
             );
             this.paginator.pageIndex = 0;
@@ -568,22 +542,5 @@ export class CustomersGridComponent implements OnInit {
         this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
         this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
         (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
-    }
-
-    openSettings() {
-        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
-            data: this.columns
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                this.columns = [...result];
-                this.refreshSort();
-                this.saveSettings();
-            }
-        });
-    }
-
-    saveSettings() {
-        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
     }
 }

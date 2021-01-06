@@ -1,8 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import {
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 import { GroupsService } from '../../../services/groups.service';
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
 import { FbosService } from '../../../services/fbos.service';
@@ -10,7 +7,7 @@ import { FbosService } from '../../../services/fbos.service';
 @Component({
     selector: 'app-groups-dialog-new-group',
     templateUrl: './groups-dialog-new-group.component.html',
-    styleUrls: ['./groups-dialog-new-group.component.scss'],
+    styleUrls: [ './groups-dialog-new-group.component.scss' ],
 })
 export class GroupsDialogNewGroupComponent {
     step = 1;
@@ -46,7 +43,7 @@ export class GroupsDialogNewGroupComponent {
     public fboSelectionChange() {
         this.data.fbo = this.data.acukwikFbo.handlerLongName;
         this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
-        this.data.group = `${this.data.fbo} - ${this.data.icao}`;
+        this.data.group = `${ this.data.fbo } - ${ this.data.icao }`;
     }
 
 

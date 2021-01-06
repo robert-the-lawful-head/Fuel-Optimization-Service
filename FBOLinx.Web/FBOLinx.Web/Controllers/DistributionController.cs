@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
@@ -53,14 +54,14 @@ namespace FBOLinx.Web.Controllers
             var distributionLog = await (from dl in _context.DistributionLog
                 join cg in _context.CustomerInfoByGroup on new
                     {
-                        CustomerId = dl.CustomerId.GetValueOrDefault(),
-                        GroupId = dl.GroupId.GetValueOrDefault()
+                        CustomerId = (dl.CustomerId ?? 0),
+                        GroupId = (dl.GroupId ?? 0)
                     } equals new {cg.CustomerId, cg.GroupId}
                     into leftJoinCustomerInfoByGroup
                 from cg in leftJoinCustomerInfoByGroup.DefaultIfEmpty()
                 join pt in _context.PricingTemplate on new
                 {
-                    PricingTemplateId = dl.PricingTemplateId.GetValueOrDefault()
+                    PricingTemplateId = (dl.PricingTemplateId ?? 0)
                 } equals new
                 {
                     PricingTemplateId = pt.Oid
@@ -123,7 +124,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
                 return BadRequest(ModelState);
 
             await _PriceDistributionService.DistributePricing(request, false);
@@ -140,7 +141,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
                 return BadRequest(ModelState);
 
             await _PriceDistributionService.DistributePricing(request, true);

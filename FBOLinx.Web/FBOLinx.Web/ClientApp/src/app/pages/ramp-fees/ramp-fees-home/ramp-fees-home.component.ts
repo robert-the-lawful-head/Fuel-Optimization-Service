@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import FlatfileImporter from 'flatfile-csv-importer';
@@ -30,7 +30,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-ramp-fees-home',
     templateUrl: './ramp-fees-home.component.html',
-    styleUrls: ['./ramp-fees-home.component.scss'],
+    styleUrls: [ './ramp-fees-home.component.scss' ],
 })
 export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('customRampFeeCat')
@@ -97,9 +97,9 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 this.messageService.updateMessage(this.expirationDate);
                 this.messageService
-                        .getMessage()
-                        .subscribe(
-                            (mymessage: any) => (this.expirationDate = mymessage)
+                    .getMessage()
+                    .subscribe(
+                        (mymessage: any) => (this.expirationDate = mymessage)
                     );
 
 
@@ -158,32 +158,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.requiresUpdate = false;
     }
 
-    // Private Methods
-    private updateRampFee(fee) {
-        if (!fee.fboid) {
-            fee.fboid = this.sharedService.currentUser.fboId;
-        }
-        if (fee.oid && fee.oid > 0) {
-            this.rampFeesService.update(fee).subscribe((data: any) => {});
-        } else {
-            this.rampFeesService.add(fee).subscribe((data: any) => {
-                fee.oid = data.oid;
-            });
-        }
-    }
-
-    private loadRampFees() {
-        this.rampFees = undefined;
-        this.rampFeesService
-            .getForFbo({ oid: this.sharedService.currentUser.fboId })
-            .subscribe((data: any) => {
-                this.rampFees = data;
-                if (this.customRampFeeCat) {
-                    this.customRampFeeCat.refreshData();
-                }
-            });
-    }
-
     public informForRampFees() {
         const dialogRef = this.importFeesInfoDialog.open(
             RampFeesImportInformationComponent,
@@ -193,8 +167,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
                 return;
-            }
-            else {
+            } else {
                 this.launchImporter();
             }
 
@@ -228,7 +201,8 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     });
             }
-        } catch (e) { }
+        } catch (e) {
+        }
     }
 
     initializeImporter() {
@@ -236,67 +210,67 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             fields: [
                 {
                     label: 'ICAO',
-                    alternates: ['Icao'],
+                    alternates: [ 'Icao' ],
                     key: 'icao',
                     description: 'Icao',
                 },
                 {
                     label: 'FBO',
-                    alternates: ['fbo'],
+                    alternates: [ 'fbo' ],
                     key: 'fbo',
                     description: 'FBO',
                 },
                 {
                     label: 'Make',
-                    alternates: ['make'],
+                    alternates: [ 'make' ],
                     key: 'Make',
                     description: 'Aircraft Make',
                 },
                 {
                     label: 'Model',
-                    alternates: ['model'],
+                    alternates: [ 'model' ],
                     key: 'Model',
                     description: 'Tail',
                 },
                 {
                     label: 'Ramp Fee ($)',
-                    alternates: ['Ramp Fee', 'ramp fee'],
+                    alternates: [ 'Ramp Fee', 'ramp fee' ],
                     key: 'RampFee',
                     description: 'Ramp Fee',
                 },
                 {
                     label: 'Waived At (gal)',
-                    alternates: ['Waived At', 'waived at'],
+                    alternates: [ 'Waived At', 'waived at' ],
                     key: 'WaivedAt',
                     description: 'Waived Fees',
                 },
                 {
                     label: 'Landing',
-                    alternates: ['landing'],
+                    alternates: [ 'landing' ],
                     key: 'Landing',
                     description: 'Landing Fees',
                 },
                 {
                     label: 'Overnight',
-                    alternates: ['overnight', 'overnight fees'],
+                    alternates: [ 'overnight', 'overnight fees' ],
                     key: 'Overnight',
                     description: 'Overnight Fees',
                 },
                 {
                     label: 'Tail Number',
-                    alternates: ['tail number', 'tail-number'],
+                    alternates: [ 'tail number', 'tail-number' ],
                     key: 'TailNumber',
                     description: 'Tail Number',
                 },
                 {
                     label: 'Aircraft Size',
-                    alternates: ['aircreft size'],
+                    alternates: [ 'aircreft size' ],
                     key: 'aircraftsize',
                     description: 'Aircraft Size',
                 },
                 {
                     label: 'Avoidance',
-                    alternates: ['avoidance'],
+                    alternates: [ 'avoidance' ],
                     key: 'avoidance',
                     description: 'Avoidance',
                 },
@@ -307,5 +281,32 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             allowCustom: true,
             disableManualInput: false,
         });
+    }
+
+    // Private Methods
+    private updateRampFee(fee) {
+        if (!fee.fboid) {
+            fee.fboid = this.sharedService.currentUser.fboId;
+        }
+        if (fee.oid && fee.oid > 0) {
+            this.rampFeesService.update(fee).subscribe((data: any) => {
+            });
+        } else {
+            this.rampFeesService.add(fee).subscribe((data: any) => {
+                fee.oid = data.oid;
+            });
+        }
+    }
+
+    private loadRampFees() {
+        this.rampFees = undefined;
+        this.rampFeesService
+            .getForFbo({ oid: this.sharedService.currentUser.fboId })
+            .subscribe((data: any) => {
+                this.rampFees = data;
+                if (this.customRampFeeCat) {
+                    this.customRampFeeCat.refreshData();
+                }
+            });
     }
 }

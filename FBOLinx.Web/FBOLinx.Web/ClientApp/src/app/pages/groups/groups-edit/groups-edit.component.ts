@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
@@ -24,7 +24,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-groups-edit',
     templateUrl: './groups-edit.component.html',
-    styleUrls: ['./groups-edit.component.scss'],
+    styleUrls: [ './groups-edit.component.scss' ],
 })
 export class GroupsEditComponent implements OnInit {
     @Output() cancelClicked = new EventEmitter<any>();
@@ -61,13 +61,13 @@ export class GroupsEditComponent implements OnInit {
         this.groupsService.update(this.groupInfo).subscribe(() => {
             this.snackBar.open('Successfully updated!', '', {
                 duration: 2000,
-                panelClass: ['blue-snackbar'],
+                panelClass: [ 'blue-snackbar' ],
             });
-            this.router.navigate(['/default-layout/groups/']);
+            this.router.navigate([ '/default-layout/groups/' ]);
         });
     }
 
     public cancelEdit() {
-        this.router.navigate(['/default-layout/groups/']);
+        this.router.navigate([ '/default-layout/groups/' ]);
     }
 }

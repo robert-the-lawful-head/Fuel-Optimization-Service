@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class FbosService {
     }
 
     public getAllFbos() {
-        return this.http.get(this.accessPointUrl, { headers: this.headers });
+        return this.http.get(this.accessPointUrl, {headers: this.headers});
     }
 
     public get(payload) {

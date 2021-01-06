@@ -1,9 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 
 export interface NewCustomerDialogData {
@@ -27,7 +23,7 @@ export interface NewCustomerDialogData {
 @Component({
     selector: 'app-customers-dialog-new-customer',
     templateUrl: './customers-dialog-new-customer.component.html',
-    styleUrls: ['./customers-dialog-new-customer.component.scss'],
+    styleUrls: [ './customers-dialog-new-customer.component.scss' ],
 })
 export class CustomersDialogNewCustomerComponent {
     constructor(

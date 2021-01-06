@@ -1,11 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    Output,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -19,7 +12,7 @@ import { UsersDialogNewUserComponent } from '../users-dialog-new-user/users-dial
 @Component({
     selector: 'app-users-grid',
     templateUrl: './users-grid.component.html',
-    styleUrls: ['./users-grid.component.scss'],
+    styleUrls: [ './users-grid.component.scss' ],
 })
 export class UsersGridComponent implements OnInit {
     @Output() userDeleted = new EventEmitter<any>();
@@ -28,6 +21,8 @@ export class UsersGridComponent implements OnInit {
     @Input() usersData: Array<any>;
     @Input() fboInfo: any;
     @Input() groupInfo: any;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     public usersDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [
@@ -40,14 +35,12 @@ export class UsersGridComponent implements OnInit {
     ];
     public resultsLength = 0;
 
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-
     constructor(
         private userService: UserService,
         public newUserDialog: MatDialog,
         public deleteUserDialog: MatDialog
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         if (!this.usersData) {
@@ -92,7 +85,8 @@ export class UsersGridComponent implements OnInit {
         }
 
         value.GroupId = this.fboInfo.groupId;
-        this.userService.update(value).subscribe((data: any) => {});
+        this.userService.update(value).subscribe((data: any) => {
+        });
     }
 
     public editRecord(record, $event) {

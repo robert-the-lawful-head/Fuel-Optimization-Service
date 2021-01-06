@@ -1,106 +1,107 @@
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import * as moment from 'moment';
 
 import { AuthenticationService } from '../services/authentication.service';
 import { User } from '../models/User';
 
 export interface ActiveUser {
-  fboId: number;
-  groupId: number;
-  icao: string;
+    fboId: number;
+    groupId: number;
+    icao: string;
 }
 
 export class DashboardSettings {
-  filterStartDate: Date;
-  filterEndDate: Date;
+    filterStartDate: Date;
+    filterEndDate: Date;
 }
 
 @Injectable()
 export class SharedService {
-  // Private members
-  private _currentUser: User;
+    dashboardSettings: DashboardSettings = new DashboardSettings();
 
-  constructor(private authenticationService: AuthenticationService) {
-    this.authenticationService.currentUser.subscribe(
-      (x) => (this.currentUser = x)
+    priceTemplateMessageSource = new BehaviorSubject(
+        'Update Pricing Template'
     );
-    const storedDashboardSettings = localStorage.getItem(
-      'dashboardSetings'
-    );
-    if (!storedDashboardSettings) {
-      this.dashboardSettings.filterStartDate = new Date(
-        moment().add(-6, 'M').format('MM/DD/YYYY')
-      );
-      this.dashboardSettings.filterEndDate = new Date(
-        moment().format('MM/DD/YYYY')
-      );
-    } else {
-      this.dashboardSettings = JSON.parse(storedDashboardSettings);
+    currentMessage = this.priceTemplateMessageSource.asObservable();
+
+    priceUpdateMessage = new BehaviorSubject('Enable button');
+    priceMessage = this.priceUpdateMessage.asObservable();
+
+    // Observable string sources
+    titleChangeSource = new Subject();
+    emitChangeSource = new Subject();
+    valueChangeSource = new Subject();
+
+    // Observable string streams
+    titleChanged$ = this.titleChangeSource.asObservable();
+    changeEmitted$ = this.emitChangeSource.asObservable();
+    valueChanged$ = this.valueChangeSource.asObservable();
+
+    constructor(private authenticationService: AuthenticationService) {
+        this.authenticationService.currentUser.subscribe(
+            (x) => (this.currentUser = x)
+        );
+        const storedDashboardSettings = localStorage.getItem(
+            'dashboardSetings'
+        );
+        if (!storedDashboardSettings) {
+            this.dashboardSettings.filterStartDate = new Date(
+                moment().add(-6, 'M').format('MM/DD/YYYY')
+            );
+            this.dashboardSettings.filterEndDate = new Date(
+                moment().format('MM/DD/YYYY')
+            );
+        } else {
+            this.dashboardSettings = JSON.parse(storedDashboardSettings);
+        }
     }
-  }
-  // Public Members
-  get currentUser(): User {
-    if (!this._currentUser.fboId && sessionStorage.getItem('fboId')) {
-      this._currentUser.fboId = Number(sessionStorage.getItem('fboId'));
+
+    // Private members
+    private _currentUser: User;
+
+    // Public Members
+    get currentUser(): User {
+        if (!this._currentUser.fboId && localStorage.getItem('fboId')) {
+            this._currentUser.fboId = Number(localStorage.getItem('fboId'));
+        }
+        if (!this._currentUser.managerGroupId && localStorage.getItem('managerGroupId')) {
+            this._currentUser.managerGroupId = Number(localStorage.getItem('managerGroupId'));
+        }
+        if (!this._currentUser.impersonatedRole && localStorage.getItem('impersonatedrole')) {
+            this._currentUser.impersonatedRole = Number(localStorage.getItem('impersonatedrole'));
+        }
+        const sessionGroupId = localStorage.getItem('groupId');
+        if (sessionGroupId && (!this._currentUser.groupId || this._currentUser.groupId !== Number(sessionGroupId))) {
+            this._currentUser.groupId = Number(sessionGroupId);
+        }
+        if (!this._currentUser.groupId && localStorage.getItem('groupId')) {
+            this._currentUser.groupId = Number(localStorage.getItem('groupId'));
+        }
+        if (!this._currentUser.conductorFbo && localStorage.getItem('conductorFbo')) {
+            this._currentUser.conductorFbo = Boolean(localStorage.getItem('conductorFbo'));
+        }
+        return this._currentUser;
     }
-    if (!this._currentUser.managerGroupId && sessionStorage.getItem('managerGroupId')) {
-      this._currentUser.managerGroupId = Number(sessionStorage.getItem('managerGroupId'));
+
+    set currentUser(user: User) {
+        this._currentUser = user;
     }
-    if (!this._currentUser.impersonatedRole && sessionStorage.getItem('impersonatedrole')) {
-      this._currentUser.impersonatedRole = Number(sessionStorage.getItem('impersonatedrole'));
+
+    NotifyPricingTemplateComponent(message: string) {
+        this.priceTemplateMessageSource.next(message);
     }
-    const sessionGroupId = sessionStorage.getItem('groupId');
-    if (sessionGroupId && (!this._currentUser.groupId || this._currentUser.groupId !== Number(sessionGroupId))) {
-      this._currentUser.groupId = Number(sessionGroupId);
+
+    titleChange(title: string) {
+        this.titleChangeSource.next(title);
     }
-    if (!this._currentUser.groupId && sessionStorage.getItem('groupId')) {
-      this._currentUser.groupId = Number(sessionStorage.getItem('groupId'));
+
+    // Service message commands
+    emitChange(change: string) {
+        this.emitChangeSource.next(change);
     }
-    if (!this._currentUser.conductorFbo && sessionStorage.getItem('conductorFbo')) {
-      this._currentUser.conductorFbo = Boolean(sessionStorage.getItem('conductorFbo'));
+
+    valueChange(change: any) {
+        this.valueChangeSource.next(change);
     }
-    return this._currentUser;
-  }
-
-  set currentUser(user: User) {
-    this._currentUser = user;
-  }
-
-  dashboardSettings: DashboardSettings = new DashboardSettings();
-
-  public priceTemplateMessageSource = new BehaviorSubject(
-    'Update Pricing Template'
-  );
-  currentMessage = this.priceTemplateMessageSource.asObservable();
-
-  public priceUpdateMessage = new BehaviorSubject('Enable button');
-  priceMessage = this.priceUpdateMessage.asObservable();
-
-  // Observable string sources
-  public titleChangeSource = new Subject();
-  public emitChangeSource = new Subject();
-  public valueChangeSource = new Subject();
-
-  // Observable string streams
-  titleChanged$ = this.titleChangeSource.asObservable();
-  changeEmitted$ = this.emitChangeSource.asObservable();
-  valueChanged$ = this.valueChangeSource.asObservable();
-
-  NotifyPricingTemplateComponent(message: string) {
-    this.priceTemplateMessageSource.next(message);
-  }
-
-  titleChange(title: string) {
-    this.titleChangeSource.next(title);
-  }
-
-  // Service message commands
-  emitChange(change: string) {
-    this.emitChangeSource.next(change);
-  }
-
-  valueChange(change: any) {
-    this.valueChangeSource.next(change);
-  }
 }

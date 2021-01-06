@@ -1,29 +1,31 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-import {combineLatest} from 'rxjs';
-import {find} from 'lodash';
+import { combineLatest, EMPTY, of } from 'rxjs';
+import { find } from 'lodash';
 
 // Services
-import {CustomcustomertypesService} from '../../../services/customcustomertypes.service';
-import {CustomeraircraftsService} from '../../../services/customeraircrafts.service';
-import {ContactinfobygroupsService} from '../../../services/contactinfobygroups.service';
-import {ContactsService} from '../../../services/contacts.service';
-import {CustomerinfobygroupService} from '../../../services/customerinfobygroup.service';
-import {CustomerCompanyTypesService} from '../../../services/customer-company-types.service';
-import {CustomercontactsService} from '../../../services/customercontacts.service';
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
+import { ContactsService } from '../../../services/contacts.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { CustomerCompanyTypesService } from '../../../services/customer-company-types.service';
+import { CustomercontactsService } from '../../../services/customercontacts.service';
 import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbofeeandtaxomitsbycustomerService } from '../../../services/fbofeeandtaxomitsbycustomer.service';
-import {PricingtemplatesService} from '../../../services/pricingtemplates.service';
-import {SharedService} from '../../../layouts/shared-service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 // Components
-import {CustomerCompanyTypeDialogComponent} from '../customer-company-type-dialog/customer-company-type-dialog.component';
+import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
 import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
+import { catchError, debounceTime, switchMap } from 'rxjs/operators';
 
 const BREADCRUMBS: any[] = [
     {
@@ -43,7 +45,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-customers-edit',
     templateUrl: './customers-edit.component.html',
-    styleUrls: ['./customers-edit.component.scss'],
+    styleUrls: [ './customers-edit.component.scss' ],
 })
 export class CustomersEditComponent implements OnInit {
     // Members
@@ -54,18 +56,13 @@ export class CustomersEditComponent implements OnInit {
     pricingTemplatesData: any[];
     customerAircraftsData: any[];
     selectedContactRecord: any;
-    selectedCustomerAircraftRecord: any;
     currentContactInfoByGroup: any;
     customCustomerType: any;
-    isSaving = false;
     certificateTypes: any[];
     customerCompanyTypes: any[];
     hasContactForPriceDistribution = false;
     customerForm: FormGroup;
-    canSave: boolean;
-    public feesAndTaxes: Array<any>;
-    public locationChangedSubscription: any;
-
+    feesAndTaxes: Array<any>;
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
 
@@ -86,8 +83,8 @@ export class CustomersEditComponent implements OnInit {
         private dialog: MatDialog,
         private newContactDialog: MatDialog,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
-        private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService
-
+        private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService,
+        private snackBar: MatSnackBar,
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
@@ -95,7 +92,7 @@ export class CustomersEditComponent implements OnInit {
 
     async ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
-        this.customerInfoByGroup = await this.customerInfoByGroupService.get({oid: id}).toPromise();
+        this.customerInfoByGroup = await this.customerInfoByGroupService.get({ oid: id }).toPromise();
         const results = await combineLatest([
             this.customerInfoByGroupService.getCertificateTypes(),
             this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId),
@@ -131,25 +128,47 @@ export class CustomersEditComponent implements OnInit {
         }
 
         this.customerForm = this.formBuilder.group({
-            active: [this.customerInfoByGroup.active],
-            company: [this.customerInfoByGroup.company],
-            customerCompanyType: [this.customerInfoByGroup.customerCompanyType],
-            certificateType: [this.customerInfoByGroup.certificateType],
-            mainPhone: [this.customerInfoByGroup.mainPhone],
-            address: [this.customerInfoByGroup.address],
-            city: [this.customerInfoByGroup.city],
-            state: [this.customerInfoByGroup.state],
-            zipCode: [this.customerInfoByGroup.zipCode],
-            country: [this.customerInfoByGroup.country],
-            website: [this.customerInfoByGroup.website],
-            distribute: [this.customerInfoByGroup.distribute],
-            showJetA: [this.customerInfoByGroup.showJetA],
-            show100Ll: [this.customerInfoByGroup.show100Ll],
-            customerMarginTemplate: [this.customCustomerType.customerType],
+            active: [ this.customerInfoByGroup.active ],
+            company: [ this.customerInfoByGroup.company ],
+            customerCompanyType: [ this.customerInfoByGroup.customerCompanyType ],
+            certificateType: [ this.customerInfoByGroup.certificateType ],
+            mainPhone: [ this.customerInfoByGroup.mainPhone ],
+            address: [ this.customerInfoByGroup.address ],
+            city: [ this.customerInfoByGroup.city ],
+            state: [ this.customerInfoByGroup.state ],
+            zipCode: [ this.customerInfoByGroup.zipCode ],
+            country: [ this.customerInfoByGroup.country ],
+            website: [ this.customerInfoByGroup.website ],
+            distribute: [ this.customerInfoByGroup.distribute ],
+            showJetA: [ this.customerInfoByGroup.showJetA ],
+            show100Ll: [ this.customerInfoByGroup.show100Ll ],
+            customerMarginTemplate: [ this.customCustomerType.customerType ],
         });
-        this.customerForm.valueChanges.subscribe(() => {
-            this.canSave = true;
-        });
+        this.customerForm.valueChanges.pipe(
+            debounceTime(1000),
+            switchMap(async () => {
+                const customerInfoByGroup = {
+                    ...this.customerInfoByGroup,
+                    ...this.customerForm.value,
+                };
+                this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
+
+                await this.customerInfoByGroupService.update(customerInfoByGroup).toPromise();
+                if (!this.customCustomerType.oid || this.customCustomerType.oid === 0) {
+                    await this.customCustomerTypesService.add(this.customCustomerType).toPromise();
+                } else {
+                    await this.customCustomerTypesService.update(this.customCustomerType).toPromise();
+                }
+            }),
+            catchError((err: Error) => {
+                console.error(err);
+                this.snackBar.open(err.message, '', {
+                    duration: 5000,
+                    panelClass: [ 'blue-snackbar' ],
+                });
+                return of(EMPTY);
+            })
+        ).subscribe();
         this.customerForm.controls.customerCompanyType.valueChanges.subscribe(type => {
             if (type < 0) {
                 this.customerCompanyTypeChanged();
@@ -164,34 +183,8 @@ export class CustomersEditComponent implements OnInit {
     }
 
     // Methods
-    saveDirectCustomerEdit() {
-        const customerInfoByGroup = {
-            ...this.customerInfoByGroup,
-            ...this.customerForm.value,
-        };
-        this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
-
-        this.customerInfoByGroupService
-            .update(customerInfoByGroup)
-            .subscribe(() => {
-                if (!this.customCustomerType.oid || this.customCustomerType.oid === 0) {
-                    this.customCustomerTypesService
-                        .add(this.customCustomerType)
-                        .subscribe(() => {
-                            this.router.navigate(['/default-layout/customers/']).then();
-                        });
-                } else {
-                    this.customCustomerTypesService
-                        .update(this.customCustomerType)
-                        .subscribe(() => {
-                            this.router.navigate(['/default-layout/customers/']).then();
-                        });
-                }
-            });
-    }
-
     cancelCustomerEdit() {
-        this.router.navigate(['/default-layout/customers/']).then();
+        this.router.navigate([ '/default-layout/customers/' ]).then();
     }
 
     contactDeleted(contact) {
@@ -230,7 +223,7 @@ export class CustomersEditComponent implements OnInit {
             if (result !== 'cancel') {
                 if (this.currentContactInfoByGroup.contactId === 0) {
                     this.contactsService
-                        .add({oid: 0})
+                        .add({ oid: 0 })
                         .subscribe((data: any) => {
                             this.currentContactInfoByGroup.contactId = data.oid;
                             this.saveContactInfoByGroup();
@@ -242,76 +235,6 @@ export class CustomersEditComponent implements OnInit {
                 this.loadCustomerContacts();
             }
         });
-    }
-
-    editContactClicked(contact) {
-        const dialogRef = this.newContactDialog.open(
-            ContactsDialogNewContactComponent,
-            {
-                data: contact,
-            }
-        );
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result !== 'cancel') {
-                if (result.toDelete) {
-                    this.customerContactsService
-                        .remove(result.customerContactId)
-                        .subscribe(() => {
-                            this.contactInfoByGroupsService
-                                .remove(contact.contactInfoByGroupId)
-                                .subscribe(() => {
-                                    this.loadCustomerContacts();
-                                });
-                        });
-                } else {
-                    this.selectedContactRecord = contact;
-                    this.contactInfoByGroupsService
-                        .get({oid: contact.contactInfoByGroupId})
-                        .subscribe((data: any) => {
-                            if (data) {
-                                this.currentContactInfoByGroup = data;
-                                if (this.currentContactInfoByGroup.oid) {
-                                    data.email = contact.email;
-                                    data.firstName = contact.firstName;
-                                    data.lastName = contact.lastName;
-                                    data.title = contact.title;
-                                    data.phone = contact.phone;
-                                    data.extension = contact.extension;
-                                    data.mobile = contact.mobile;
-                                    data.fax = contact.fax;
-                                    data.address = contact.address;
-                                    data.city = contact.city;
-                                    data.state = contact.state;
-                                    data.country = contact.country;
-                                    data.primary = contact.primary;
-                                    data.copyAlerts = contact.copyAlerts;
-                                    this.saveContactInfoByGroup();
-                                }
-                            }
-                        });
-                }
-            } else {
-                this.loadCustomerContacts();
-            }
-        });
-    }
-
-    saveEditContactClicked() {
-        // this.saveCustomerEdit();
-        if (this.currentContactInfoByGroup.contactId === 0) {
-            this.contactsService.add({oid: 0}).subscribe((data: any) => {
-                this.currentContactInfoByGroup.contactId = data.oid;
-                this.saveContactInfoByGroup();
-            });
-        } else {
-            // this.saveCustomerEdit();
-            this.saveContactInfoByGroup();
-        }
-    }
-
-    cancelEditContactClicked() {
-        this.currentContactInfoByGroup = null;
     }
 
     updateCustomerPricingTemplate(pricingTemplateId: number) {
@@ -344,10 +267,6 @@ export class CustomersEditComponent implements OnInit {
         });
     }
 
-    pricingTemplateSelectionChanged(customCustomerType) {
-        customCustomerType.requiresUpdate = true;
-    }
-
     toggleChange($event) {
         if ($event.checked) {
             this.customerInfoByGroup.showJetA = true;
@@ -360,7 +279,7 @@ export class CustomersEditComponent implements OnInit {
         }
     }
 
-    public omitFeeAndTaxCheckChanged(feeAndTax: any): void {
+    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
         if (!feeAndTax.omitsByCustomer) {
             feeAndTax.omitsByCustomer = [];
         }
@@ -381,7 +300,7 @@ export class CustomersEditComponent implements OnInit {
                 this.recalculatePriceBreakdown();
             });
         } else {
-            this.fboFeeAndTaxOmitsbyCustomerService.remove(omitRecord).subscribe((response: any) => {
+            this.fboFeeAndTaxOmitsbyCustomerService.remove(omitRecord).subscribe(() => {
                 feeAndTax.omitsByCustomer = [];
                 this.recalculatePriceBreakdown();
             });
@@ -429,7 +348,7 @@ export class CustomersEditComponent implements OnInit {
         } else {
             this.contactInfoByGroupsService
                 .update(this.currentContactInfoByGroup)
-                .subscribe((data: any) => {
+                .subscribe(() => {
                     this.saveCustomerContact();
                 });
         }
@@ -453,8 +372,8 @@ export class CustomersEditComponent implements OnInit {
     private loadCustomerFeesAndTaxes(): void {
         this.fboFeesAndTaxesService
             .getByFboAndCustomer(this.sharedService.currentUser.fboId, this.customerInfoByGroup.customerId).subscribe(
-                (response: any[]) => {
-                    this.feesAndTaxes = response;
-                });
+            (response: any[]) => {
+                this.feesAndTaxes = response;
+            });
     }
 }

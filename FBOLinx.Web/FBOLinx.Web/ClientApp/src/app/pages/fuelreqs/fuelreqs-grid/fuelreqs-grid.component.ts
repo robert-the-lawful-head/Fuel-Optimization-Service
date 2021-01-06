@@ -1,13 +1,13 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     EventEmitter,
     Input,
-    Output,
-    OnInit,
-    ViewChild,
-    ChangeDetectionStrategy,
     OnChanges,
-    SimpleChanges
+    OnInit,
+    Output,
+    SimpleChanges,
+    ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -77,7 +77,7 @@ const initialColumns: ColumnType[] = [
 @Component({
     selector: 'app-fuelreqs-grid',
     templateUrl: './fuelreqs-grid.component.html',
-    styleUrls: ['./fuelreqs-grid.component.scss'],
+    styleUrls: [ './fuelreqs-grid.component.scss' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FuelreqsGridComponent implements OnInit, OnChanges {
@@ -86,6 +86,8 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     tableLocalStorageKey = 'fuel-req-table-settings';
 
@@ -98,9 +100,6 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     columns: ColumnType[] = [];
 
     dashboardSettings: any;
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(
         private sharedService: SharedService,
@@ -120,7 +119,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
-                    ? { ...column, sort: this.sort.direction}
+                    ? { ...column, sort: this.sort.direction }
                     : { id: column.id, name: column.name, hidden: column.hidden }
             );
 
@@ -219,7 +218,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
                 return;
             }
 
-            this.columns = [...result];
+            this.columns = [ ...result ];
 
             this.refreshSort();
             this.saveSettings();

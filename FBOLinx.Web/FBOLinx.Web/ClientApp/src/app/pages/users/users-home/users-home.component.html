@@ -1,10 +1,14 @@
 <div>
     <div *ngIf="usersData || currentUser">
         <div *ngIf="currentUser">
-            <app-users-edit [userInfo]="currentUser" [groupInfo]="groupInfo" [fboInfo]="fboInfo" (saveClicked)="saveUserEditClicked()" (cancelClicked)="cancelUserEditClicked()"></app-users-edit>
+            <app-users-edit (cancelClicked)="cancelUserEditClicked()" (saveClicked)="saveUserEditClicked()"
+                            [fboInfo]="fboInfo"
+                            [groupInfo]="groupInfo"
+                            [userInfo]="currentUser"></app-users-edit>
         </div>
         <div *ngIf="!currentUser && usersData">
-            <app-users-grid [usersData]="usersData" [groupInfo]="groupInfo" [fboInfo]="fboInfo" (editUserClicked)="editUserClicked($event)"></app-users-grid>
+            <app-users-grid (editUserClicked)="editUserClicked($event)" [fboInfo]="fboInfo" [groupInfo]="groupInfo"
+                            [usersData]="usersData"></app-users-grid>
         </div>
     </div>
     <div *ngIf="!(usersData || currentUser)">

@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import * as _ from 'lodash';
 import * as moment from 'moment';
 
 // Services
@@ -37,7 +36,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
         this.icao = this.sharedService.currentUser.icao;
         this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
         this.filterEndDate = new Date(moment().add(7, 'd').format('MM/DD/YYYY'));
-        this.fbosService.get({ oid: this.sharedService.currentUser.fboId }).subscribe(
+        this.fbosService.get({oid: this.sharedService.currentUser.fboId}).subscribe(
             (data: any) => {
                 this.fbo = data.fbo;
             }

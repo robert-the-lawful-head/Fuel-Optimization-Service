@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +13,6 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Remotion.Linq.Clauses.ResultOperators;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Web.Models.Requests;
@@ -47,10 +48,11 @@ namespace FBOLinx.Web.Controllers
             int groupId = UserService.GetClaimedGroupId(_HttpContextAccessor);
             var role = UserService.GetClaimedRole(_HttpContextAccessor);
 
-            return _context.Group
-                        .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == Models.User.UserRoles.Conductor))
+            return await _context.Group
+                        .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == DB.Models.User.UserRoles.Conductor))
                         .Include(x => x.Users)
-                        .OrderBy((x => x.GroupName));
+                        .OrderBy((x => x.GroupName))
+                        .ToListAsync();
         }
 
         [HttpGet("group-fbo")]
@@ -76,23 +78,22 @@ namespace FBOLinx.Web.Controllers
                                 IsLegacyAccount = x.IsLegacyAccount,
                                 Users = x.Users,
                                 LastLogin = x.Fbos.Max(f => f.LastLogin),
-                                NeedAttentionCustomers = customersNeedAttention.Where(c => c.GroupId == x.Oid).Sum(c => c.CustomersNeedingAttention)
                             })
                             .ToListAsync();
 
-            var products = Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
+            foreach(var group in groups)
+            {
+                var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Oid).ToList();
+                group.NeedAttentionCustomers = needingAttentions.Count > 0 ? needingAttentions.Sum(c => c.CustomersNeedingAttention) : 0;
+            }
 
-            var fboPrices = (from f in _context.Fboprices
-                             where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
-                             group f by f.Fboid into g
-                             select new {
-                                 fboId = g.Key,
-                                 lastEffectiveDate = g.Max(t => t.EffectiveTo),
-                                 product = g.Select(t => t.Product),
-                                 expired = g.Select(t => t.Expired)
-                             });
-
-            var users = await _context.User.GroupBy(t => t.FboId).ToListAsync();
+            var fboPrices = from f in _context.Fboprices
+                            where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
+                            group f by f.Fboid into g
+                            select new
+                            {
+                                fboId = g.Key
+                            };
 
             //FbosViewModel used to display FBO info in the grid
             var fbos = await (from f in _context.Fbos
@@ -107,10 +108,11 @@ namespace FBOLinx.Web.Controllers
                                   Icao = fairports.Icao,
                                   Oid = f.Oid,
                                   GroupId = f.GroupId ?? 0,
-                                  PricingExpired = fprices == null,
+                                  PricingExpired = fprices.fboId == null,
                                   LastLogin = f.LastLogin
                               }).ToListAsync();
 
+            var users = (await _context.User.ToListAsync()).GroupBy(t => t.FboId);
             fbos.ForEach(f =>
             {
                 f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
@@ -126,7 +128,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin)]
+        [UserRole(DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin)]
         public async Task<IActionResult> GetGroup([FromRoute] int id)
         {
             try
@@ -136,7 +138,7 @@ namespace FBOLinx.Web.Controllers
                     return BadRequest(ModelState);
                 }
 
-                if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+                if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
                 {
                     return BadRequest(ModelState);
                 }
@@ -159,7 +161,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/Groups/5
         [HttpPut("{id}")]
-        [UserRole(new User.UserRoles[] {Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin})]
+        [UserRole(new User.UserRoles[] {DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin})]
         public async Task<IActionResult> PutGroup([FromRoute] int id, [FromBody] Group @group)
         {
             if (!ModelState.IsValid)
@@ -167,7 +169,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
             {
                 return BadRequest(ModelState);
             }
@@ -237,7 +239,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/Groups
         [HttpPost]
-        [UserRole(Models.User.UserRoles.Conductor)]
+        [UserRole(DB.Models.User.UserRoles.Conductor)]
         public async Task<IActionResult> PostGroup([FromBody] Group group)
         {
             if (!ModelState.IsValid)
@@ -258,7 +260,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("merge-groups")]
-        [UserRole(Models.User.UserRoles.Conductor)]
+        [UserRole(DB.Models.User.UserRoles.Conductor)]
         public async Task<IActionResult> MergeGroups([FromBody] MergeGroupRequest request)
         {
             if (!ModelState.IsValid)
@@ -272,19 +274,19 @@ namespace FBOLinx.Web.Controllers
                 {
                     var changeableGroups = request.Groups.Where(group => group.Oid != request.BaseGroupId).Select(group => group.Oid).ToList();
 
-                    var users = _context.User.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var fbos = _context.Fbos.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var adminEmails = _context.AdminEmails.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var companiesByGroups = _context.CompaniesByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var contactInfoByGroups = _context.ContactInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var customerAircrafts = _context.CustomerAircrafts.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var customerAircraftViewedByGroups = _context.CustomerAircraftViewedByGroup.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var customerCompanyTypes = _context.CustomerCompanyTypes.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var customerInfoByGroups = _context.CustomerInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var customerNotes = _context.CustomerNotes.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var customerSchedulingSoftwareByGroups = _context.CustomerSchedulingSoftwareByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
-                    var distributionLogs = _context.DistributionLog.Where(a => changeableGroups.Contains(a.GroupId.GetValueOrDefault())).ToList();
-                    var distributionQueues = _context.DistributionQueue.Where(a => changeableGroups.Contains(a.GroupId)).ToList();
+                    var users = await _context.User.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var fbos = await _context.Fbos.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var adminEmails = await _context.AdminEmails.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var companiesByGroups = await _context.CompaniesByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var contactInfoByGroups = await _context.ContactInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerAircrafts = await _context.CustomerAircrafts.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var customerAircraftViewedByGroups = await _context.CustomerAircraftViewedByGroup.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var customerCompanyTypes = await _context.CustomerCompanyTypes.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerInfoByGroups = await _context.CustomerInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerNotes = await _context.CustomerNotes.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerSchedulingSoftwareByGroups = await _context.CustomerSchedulingSoftwareByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var distributionLogs = await _context.DistributionLog.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var distributionQueues = await _context.DistributionQueue.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
 
                     users.ForEach(a => a.GroupId = request.BaseGroupId);
                     fbos.ForEach(a => a.GroupId = request.BaseGroupId);
@@ -399,7 +401,7 @@ namespace FBOLinx.Web.Controllers
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
-        [UserRole(Models.User.UserRoles.Conductor)]
+        [UserRole(DB.Models.User.UserRoles.Conductor)]
         public async Task<IActionResult> DeleteGroup([FromRoute] int id)
         {
             if (!ModelState.IsValid)

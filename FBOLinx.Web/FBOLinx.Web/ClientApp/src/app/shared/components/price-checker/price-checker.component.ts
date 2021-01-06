@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 
@@ -17,48 +17,44 @@ import { EnumOptions } from '../../../models/enum-options';
 // Model
 import * as SharedEvents from '../../../models/sharedEvents';
 
-export interface TailLookupResponse {
-  template?: string;
-  company?: string;
-  makeModel?: string;
-  pricingList: Array<any>;
-  rampFee: any;
+interface TailLookupResponse {
+    template?: string;
+    company?: string;
+    makeModel?: string;
+    pricingList: Array<any>;
+    rampFee: any;
 }
 
-export interface PriceLookupRequest {
-  pricingTemplateId: number;
-  tailNumber: string;
-  customerInfoByGroupId: number;
+interface PriceLookupRequest {
+    pricingTemplateId: number;
+    tailNumber: string;
+    customerInfoByGroupId: number;
 }
 
-export enum PriceCheckerLookupTypes {
-  ByPricingTemplate = 0,
-  ByCustomer = 1,
-  ByTail = 2,
+enum PriceCheckerLookupTypes {
+    ByPricingTemplate = 0,
+    ByCustomer = 1,
+    ByTail = 2,
 }
 
 @Component({
     selector: 'price-checker',
     templateUrl: './price-checker.component.html',
-    styleUrls: ['./price-checker.component.scss']
+    styleUrls: [ './price-checker.component.scss' ]
 })
 export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
-
     public customerForTailLookup: any;
     public tailNumberForTailLookup = '';
     public customersForTail: Array<any>;
     public tailNumberForLookupControl: FormControl = new FormControl();
     public tailNumberFormControlSubscription: any;
     public locationChangedSubscription: any;
-
     public customerForCustomerLookup: any;
     public tailNumberForCustomerLookup = '';
     public allCustomers: Array<any>;
     public aircraftForCustomer: Array<any>;
-
     public pricingTemplateId = 0;
     public pricingTemplates: Array<any>;
-
     public priceCheckerLookupType: PriceCheckerLookupTypes = PriceCheckerLookupTypes.ByPricingTemplate;
     public priceLookupInfo: TailLookupResponse;
     public tailLookupError: boolean;
@@ -66,11 +62,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         EnumOptions.strictApplicableTaxFlightOptions;
     public strictFlightTypeClassificationOptions: Array<EnumOptions.EnumOption> =
         EnumOptions.strictFlightTypeClassificationOptions;
-
     public sampleCalculation: PriceLookupRequest;
-
     public tailLoader = 'tail-loader';
-
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
 
@@ -89,19 +82,19 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.tailNumberForTailLookup = tailValue;
                 this.aircraftsService
                     .getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumberForTailLookup).subscribe(
-                        (response: any) => {
-                            this.NgxUiLoader.stopLoader(this.tailLoader);
-                            if (!response) {
-                                this.customersForTail = [];
-                                this.customerForTailLookup = null;
-                                return;
-                            }
-                            this.customersForTail = response;
-                            if (this.customersForTail.length > 0) {
-                                this.customerForTailLookup = this.customersForTail[0];
-                                this.lookupPricing();
-                            }
-                        });
+                    (response: any) => {
+                        this.NgxUiLoader.stopLoader(this.tailLoader);
+                        if (!response) {
+                            this.customersForTail = [];
+                            this.customerForTailLookup = null;
+                            return;
+                        }
+                        this.customersForTail = response;
+                        if (this.customersForTail.length > 0) {
+                            this.customerForTailLookup = this.customersForTail[0];
+                            this.lookupPricing();
+                        }
+                    });
             });
     }
 
@@ -140,7 +133,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.customerAircraftsService.getCustomerAircraftsByGroupAndCustomerId(this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId,
             this.customerForCustomerLookup.customerId).subscribe((response:
-            any) => {
+                                                                      any) => {
             this.NgxUiLoader.stopLoader(this.tailLoader);
             if (!response) {
                 alert('There was an issue loading aircraft for the specified company.');
@@ -166,8 +159,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
             };
             const self = this;
             setTimeout(() => {
-                self.priceBreakdownPreview.feesAndTaxes = null;
                 if (self.priceBreakdownPreview) {
+                    self.priceBreakdownPreview.feesAndTaxes = null;
                     self.priceBreakdownPreview.performRecalculation();
                 }
             });
@@ -232,13 +225,13 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     private loadAllCustomers(): void {
         this.customerInfoByGroupService
             .getByGroupAndFbo(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId).subscribe(
-                (response:
-                    any) => {
-                    if (!response) {
-                        alert('There was an error pulling customer information for price checking.');
-                    }
-                    this.allCustomers = response;
-                });
+            (response:
+                 any) => {
+                if (!response) {
+                    alert('There was an error pulling customer information for price checking.');
+                }
+                this.allCustomers = response;
+            });
     }
 
     private getTailNumber(): string {

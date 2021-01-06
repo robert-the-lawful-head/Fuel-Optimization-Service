@@ -1,8 +1,5 @@
-import { Component, Inject, EventEmitter, Output } from '@angular/core';
-import {
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 import { FbosService } from 'src/app/services/fbos.service';
 
 // Services
@@ -22,7 +19,7 @@ export interface NewFBODialogData {
 @Component({
     selector: 'app-fbos-dialog-new-fbo',
     templateUrl: './fbos-dialog-new-fbo.component.html',
-    styleUrls: ['./fbos-dialog-new-fbo.component.scss'],
+    styleUrls: [ './fbos-dialog-new-fbo.component.scss' ],
 })
 export class FbosDialogNewFboComponent {
     @Output() contactAdded = new EventEmitter<any>();
@@ -35,7 +32,8 @@ export class FbosDialogNewFboComponent {
         @Inject(MAT_DIALOG_DATA) public data: NewFBODialogData,
         private acukwikairportsService: AcukwikairportsService,
         private fbosService: FbosService
-    ) {}
+    ) {
+    }
 
     public airportValueChanged(airport: any) {
         this.data.icao = airport.icao;

@@ -71,9 +71,9 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
         return _.map(data, (item: any) => {
             let newItem: any;
             if (this.chartType === 'order') {
-                newItem = _.assign({}, item, { value: item.orders });
+                newItem = _.assign({}, item, {value: item.orders});
             } else {
-                newItem = _.assign({}, item, { value: item.volume });
+                newItem = _.assign({}, item, {value: item.volume});
             }
             return newItem;
         });

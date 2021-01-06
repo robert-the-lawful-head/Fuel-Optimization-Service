@@ -1,47 +1,58 @@
-<a href="#" class="open-navbar" #nodeInput (click)="openNavbar($event)">
-  <i style="transform: scale(1.5,1.2);" class="icon fa fa-envelope"></i>
+<a #nodeInput (click)="openNavbar($event)" class="open-navbar" href="#">
+    <i class="icon fa fa-envelope" style="transform: scale(1.5,1.2);"></i>
 </a>
 
 <div *ngIf="pricingTemplatesData.length == 0">
-  <mat-spinner diameter="30"></mat-spinner>
+    <mat-spinner diameter="30"></mat-spinner>
 </div>
 
-<div class="navbar-wrap" *ngIf="pricingTemplatesData.length > 0">
+<div *ngIf="pricingTemplatesData.length > 0" class="navbar-wrap">
     <div class="navbar-header">
         {{ title }}
-        <mat-slide-toggle color="accent" (change)="SelectAllTemplates($event);" [labelPosition]="labelPosition" [checked]="selectAll" style="margin-left:217px;">All</mat-slide-toggle>
+        <mat-slide-toggle (change)="selectAllTemplates()" [checked]="selectAll" [labelPosition]="labelPosition"
+                          color="accent" style="margin-left:217px;">All
+        </mat-slide-toggle>
     </div>
 
     <div class="navbar-content">
         <div>
-            <table mat-table [dataSource]="marginTemplateDataSource" matSort #marginTable>
+            <table #marginTable [dataSource]="marginTemplateDataSource" mat-table matSort>
                 <!--<h5 class="mt-0">Frameworks</h5>-->
                 <ng-container matColumnDef="template">
-                    <td class="mb-1 col-10" mat-cell *matCellDef="let pricingTemplate">
+                    <td *matCellDef="let pricingTemplate" class="mb-1 col-10" mat-cell>
                         <div class="row">
                             <div class="col-6">
                                 {{pricingTemplate.name}}
                             </div>
                             <div class="col-4" style="padding-left:0px !important">
-                                <button ni-button [view]="'accent'" *ngIf="pricingTemplate.changeText && !pricingTemplate.sent" size="small" (click)="OpenMarginInfo(pricingTemplate.oid)">Preview</button>
+                                <button (click)="openMarginInfo(pricingTemplate.oid)"
+                                        *ngIf="pricingTemplate.changeText && !pricingTemplate.sent"
+                                        [view]="'accent'" ni-button
+                                        size="small">Preview
+                                </button>
                                 <p *ngIf="pricingTemplate.sent">Sent!</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-8" style="font-size:9px;margin-left:0px !important;vertical-align: baseline;line-height:18px;" *ngIf="pricingTemplate.text">
+                            <div *ngIf="pricingTemplate.text"
+                                 class="col-8"
+                                 style="font-size:9px;margin-left:0px !important;vertical-align: baseline;line-height:18px;">
                                 {{pricingTemplate.text}}
                             </div>
-                           
+
                         </div>
                         <!--*ngIf="!pricingTemplate.changeText && !pricingTemplate.sent"-->
                         <div class="row col-12">
-                            <mat-progress-bar mode="determinate"  color="#2196F3" [(value)]="pricingTemplate.val"></mat-progress-bar>
-                            </div>
+                            <mat-progress-bar [(value)]="pricingTemplate.val" color="#2196F3"
+                                              mode="determinate"></mat-progress-bar>
+                        </div>
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="toggle">
-                    <td class="mb-1 col-2" mat-cell *matCellDef="let pricingTemplate">
-                        <mat-slide-toggle #selectAll [checked]="pricingTemplate.toSend" (ngModel)="pricingTemplate.toSend"  (change)="changeSentOption(pricingTemplate)"></mat-slide-toggle>
+                    <td *matCellDef="let pricingTemplate" class="mb-1 col-2" mat-cell>
+                        <mat-slide-toggle #selectAll (change)="changeSentOption(pricingTemplate)"
+                                          (ngModel)="pricingTemplate.toSend"
+                                          [checked]="pricingTemplate.toSend"></mat-slide-toggle>
                     </td>
                 </ng-container>
                 <!--<mat-progress-bar mode="determinate" color="accent" [value]="98"></mat-progress-bar>
@@ -52,14 +63,17 @@
                 <p class="mb-1">Backbone.js</p>
                 <mat-progress-bar mode="determinate" color="accent" [value]="38"></mat-progress-bar>-->
                 <tr mat-header-row></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (mouseenter)="row.changeText=true" (mouseleave)="row.changeText=false"></tr>
+                <tr (mouseenter)="row.changeText=true" (mouseleave)="row.changeText=false"
+                    *matRowDef="let row; columns: displayedColumns;"
+                    mat-row></tr>
             </table>
         </div>
         <div>
             <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
         </div>
         <div style="margin-top:20px; margin-right:10px;">
-            <button ni-button class="float-right" [view]="'success'" (click)="confirmSendEmails()">{{buttontext}}</button>
+            <button (click)="confirmSendEmails()" [view]="'success'" class="float-right"
+                    ni-button>{{buttontext}}</button>
         </div>
     </div>
     <div class="navbar-footer m-md-3">

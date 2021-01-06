@@ -23,7 +23,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-fuelreqs-home',
     templateUrl: './fuelreqs-home.component.html',
-    styleUrls: ['./fuelreqs-home.component.scss'],
+    styleUrls: [ './fuelreqs-home.component.scss' ],
 })
 export class FuelreqsHomeComponent implements OnDestroy {
     // Public Members
@@ -55,15 +55,15 @@ export class FuelreqsHomeComponent implements OnDestroy {
     public startFuelReqDataServe() {
         this.timer = interval(5000).subscribe(() => {
             this.fuelReqService
-            .getForGroupFboAndDateRange(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                this.filterStartDate,
-                this.filterEndDate
-            )
-            .subscribe((data: any) => {
-                this.fuelreqsData = data;
-            });
+                .getForGroupFboAndDateRange(
+                    this.sharedService.currentUser.groupId,
+                    this.sharedService.currentUser.fboId,
+                    this.filterStartDate,
+                    this.filterEndDate
+                )
+                .subscribe((data: any) => {
+                    this.fuelreqsData = data;
+                });
         });
     }
 
@@ -93,18 +93,20 @@ export class FuelreqsHomeComponent implements OnDestroy {
                 event.filterEndDate
             )
             .subscribe((data: any) => {
-                const exportData = _.map(data, (item) => {
-                    return {
-                        ID: item.oid,
-                        'Flight Dept.': item.customerName,
-                        ETA: item.eta,
-                        ICAO: item.icao,
-                        'Tail #': item.tailNumber,
-                        FBO: item.fboName,
-                        Notes: item.notes,
-                        Source: item.source,
-                    };
-                });
+                const exportData = _.map(data, (item) => ({
+                    'Flight Dept.': item.customerName,
+                    'ITP Margin Template': item.pricingTemplateName,
+                    ETA: item.eta,
+                    ETD: item.etd,
+                    'Volume (gal.)': item.quotedVolume,
+                    PPG: item.quotedPpg,
+                    'Tail #': item.tailNumber,
+                    Phone: item.phoneNumber,
+                    Source: item.source,
+                    Email: item.email,
+                    ID: item.oid,
+                    'Fuelerlinx ID': item.sourceId,
+                }));
                 const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
                 const wb: XLSX.WorkBook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, 'Fuel Orders');

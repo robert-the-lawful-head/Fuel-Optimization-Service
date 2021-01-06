@@ -16,9 +16,9 @@ namespace FBOLinx.Web.Models.Requests
         [Required]
         public int GroupID { get; set; }
         [Required]
-        public Enums.FlightTypeClassifications FlightTypeClassification { get; set; }     
+        public FBOLinx.Core.Enums.FlightTypeClassifications FlightTypeClassification { get; set; }     
         [Required]
-        public Enums.ApplicableTaxFlights DepartureType { get; set; }
+        public FBOLinx.Core.Enums.ApplicableTaxFlights DepartureType { get; set; }
         public List<FboFeesAndTaxes> ReplacementFeesAndTaxes { get; set; }
         public int CustomerInfoByGroupId { get; set; }
     }

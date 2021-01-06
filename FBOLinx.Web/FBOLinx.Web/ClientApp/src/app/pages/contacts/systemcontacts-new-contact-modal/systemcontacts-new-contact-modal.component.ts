@@ -1,11 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
 import { ContactsDialogConfirmContactDeleteComponent } from '../contact-confirm-delete-modal/contact-confirm-delete-modal.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 export interface NewContactDialogData {
     firstName?: string;
@@ -17,7 +13,7 @@ export interface NewContactDialogData {
 @Component({
     selector: 'app-systemcontacts-new-contact-modal',
     templateUrl: './systemcontacts-new-contact-modal.component.html',
-    styleUrls: ['./systemcontacts-new-contact-modal.component.scss'],
+    styleUrls: [ './systemcontacts-new-contact-modal.component.scss' ],
 })
 export class SystemcontactsNewContactModalComponent implements OnInit {
     contactForm: FormGroup;
@@ -26,13 +22,14 @@ export class SystemcontactsNewContactModalComponent implements OnInit {
         public dialogRef: MatDialogRef<SystemcontactsNewContactModalComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewContactDialogData,
         public dialogContactDeleteRef: MatDialog
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         this.contactForm = new FormGroup({
             email: new FormControl(this.data.email, [
-              Validators.required,
-              Validators.email,
+                Validators.required,
+                Validators.email,
             ]),
             firstName: new FormControl(this.data.firstName),
             lastName: new FormControl(this.data.lastName),

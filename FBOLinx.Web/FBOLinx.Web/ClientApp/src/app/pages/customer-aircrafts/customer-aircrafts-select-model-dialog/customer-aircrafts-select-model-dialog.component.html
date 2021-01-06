@@ -1,36 +1,38 @@
 <h1 mat-dialog-title>Ooops, we've hit a snag!</h1>
 <div mat-dialog-content>
-    <p>Here is a summary of your import, some of the aircrafts were not imported, please manually select the aircraft model. Thanks!</p>
-    <table mat-table [dataSource]="customerAircraftsDataSource" class="mat-elevation-z8" style="width:100%;">
+    <p>Here is a summary of your import, some of the aircrafts were not imported, please manually select the aircraft
+        model. Thanks!</p>
+    <table [dataSource]="customerAircraftsDataSource" class="mat-elevation-z8" mat-table style="width:100%;">
         <ng-container matColumnDef="tailNumber">
-            <th mat-header-cell *matHeaderCellDef> Tail Number </th>
-            <td mat-cell *matCellDef="let element"> {{element.tailNumber}} </td>
+            <th *matHeaderCellDef mat-header-cell> Tail Number</th>
+            <td *matCellDef="let element" mat-cell> {{element.tailNumber}} </td>
         </ng-container>
         <ng-container matColumnDef="model">
-            <th mat-header-cell *matHeaderCellDef> Your Model </th>
-            <td mat-cell *matCellDef="let element"> {{element.model}} </td>
+            <th *matHeaderCellDef mat-header-cell> Your Model</th>
+            <td *matCellDef="let element" mat-cell> {{element.model}} </td>
         </ng-container>
         <!-- Name Column -->
         <ng-container matColumnDef="otherOptions">
-            <th mat-header-cell *matHeaderCellDef> Available Models </th>
-            <td mat-cell *matCellDef="let element">
-                <mat-select placeholder="Click to expand list of models" [(ngModel)]="element.selectedModel">
+            <th *matHeaderCellDef mat-header-cell> Available Models</th>
+            <td *matCellDef="let element" mat-cell>
+                <mat-select [(ngModel)]="element.selectedModel" placeholder="Click to expand list of models">
                     <mat-option *ngFor="let aircraftType of element.otherOptions" [value]="aircraftType">
                         {{aircraftType}}
                     </mat-option>
                 </mat-select>
             </td>
         </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
     </table>
 </div>
 <div class="mt-2 text-center">
     <button
-        mat-flat-button
-        color="accent"
         (click)="onSaveClick()"
         class="mr-1"
-    >Confirm Selection</button>
-    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+        color="accent"
+        mat-flat-button
+    >Confirm Selection
+    </button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

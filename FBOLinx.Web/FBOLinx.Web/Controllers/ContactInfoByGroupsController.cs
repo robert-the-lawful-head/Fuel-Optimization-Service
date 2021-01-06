@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +61,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerContactInfoByGroupVM = (from cc in _context.CustomerContacts
+            var customerContactInfoByGroupVM = await (from cc in _context.CustomerContacts
                                                 join c in _context.Contacts on cc.ContactId equals c.Oid
                                                 join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
                                                 where cibg.GroupId == groupId
@@ -83,7 +85,7 @@ namespace FBOLinx.Web.Controllers
                                                     Country = cibg.Country,
                                                     Primary = cibg.Primary,
                                                     CopyAlerts = cibg.CopyAlerts
-                                                });
+                                                }).ToListAsync();
 
             return Ok(customerContactInfoByGroupVM);
         }
@@ -182,7 +184,7 @@ namespace FBOLinx.Web.Controllers
 
                     if(singleContact.CustomerId != 0)
                     {
-                        customerId = _context.CustomerInfoByGroup.FirstOrDefault(s => s.Oid == singleContact.CustomerId).CustomerId;
+                        customerId = (await _context.CustomerInfoByGroup.FirstOrDefaultAsync(s => s.Oid == singleContact.CustomerId)).CustomerId;
 
                         if(customerId != 0)
                         {
@@ -190,7 +192,7 @@ namespace FBOLinx.Web.Controllers
                             cc.ContactId = newContact.Oid;
 
                             _context.CustomerContacts.Add(cc);
-                            _context.SaveChanges();
+                            await _context.SaveChangesAsync();
                         }
                     }
 
@@ -222,7 +224,7 @@ namespace FBOLinx.Web.Controllers
                     cibg.ContactId = newContact.Oid;
 
                     _context.ContactInfoByGroup.Add(cibg);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
 
                     importedContacts.Add(cibg);
                 }

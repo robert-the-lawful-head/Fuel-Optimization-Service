@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using FBOLinx.Web.Configurations;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Utilities;
+using FBOLinx.Core.Utilities;
+using FBOLinx.Core.Utilities.Extensions;
+using FBOLinx.DB.Context;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using SendGrid.Helpers.Mail;
 
 namespace FBOLinx.Web.Services
@@ -16,17 +17,14 @@ namespace FBOLinx.Web.Services
     public class ResetPasswordService
     {
         private FBOLinx.Web.Configurations.MailSettings _MailSettings;
-        private readonly FboLinxContext _Context;
-        private readonly IFileProvider _FileProvider;
         private readonly IHttpContextAccessor _HttpContextAccessor;
+        private MailTemplateService _MailTemplateService;
 
-        public ResetPasswordService(FBOLinx.Web.Configurations.MailSettings mailSettings, FboLinxContext context, IFileProvider fileProvider,
-            IHttpContextAccessor httpContextAccessor)
+        public ResetPasswordService(IOptions< FBOLinx.Web.Configurations.MailSettings> mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService)
         {
+            _MailTemplateService = mailTemplateService;
             _HttpContextAccessor = httpContextAccessor;
-            _FileProvider = fileProvider;
-            _Context = context;
-            _MailSettings = mailSettings;
+            _MailSettings = mailSettings.Value;
         }
 
         #region Public Methods
@@ -55,7 +53,7 @@ namespace FBOLinx.Web.Services
         #region Private Methods
         private string GetResetPasswordEmailTemplate()
         {
-            return FileLocater.GetTemplatesFileContent(_FileProvider, "ResetPassword",
+            return _MailTemplateService.GetTemplatesFileContent("ResetPassword",
                 "ResetPasswordBody.html");
         }
         #endregion

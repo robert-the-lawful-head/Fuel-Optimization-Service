@@ -1,11 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    Output,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -21,13 +14,15 @@ import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/custome
 @Component({
     selector: 'app-aircrafts-grid',
     templateUrl: './aircrafts-grid.component.html',
-    styleUrls: ['./aircrafts-grid.component.scss'],
+    styleUrls: [ './aircrafts-grid.component.scss' ],
 })
 export class AircraftsGridComponent implements OnInit {
     // Input/Output Bindings
     @Output() editAircraftClicked = new EventEmitter<any>();
     @Input() aircraftsData: Array<any>;
     @Input() pricingTemplatesData: Array<any>;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     // Public Members
     public aircraftsDataSource: MatTableDataSource<any> = null;
@@ -43,9 +38,6 @@ export class AircraftsGridComponent implements OnInit {
     public aircraftTypes: Array<any>;
     public isLoadingAircraftTypes = false;
     public pageIndex = 0;
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,

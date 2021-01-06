@@ -1,5 +1,5 @@
-import { Component, Inject, EventEmitter, Output } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 // Services
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
@@ -19,7 +19,7 @@ export interface NewFboModel {
 @Component({
     selector: 'app-fbos-grid-new-fbo-dialog',
     templateUrl: './fbos-grid-new-fbo-dialog.component.html',
-    styleUrls: ['./fbos-grid-new-fbo-dialog.component.scss'],
+    styleUrls: [ './fbos-grid-new-fbo-dialog.component.scss' ],
 })
 export class FbosGridNewFboDialogComponent {
     @Output() contactAdded = new EventEmitter<any>();
@@ -32,7 +32,8 @@ export class FbosGridNewFboDialogComponent {
         @Inject(MAT_DIALOG_DATA) public data: NewFboModel,
         private acukwikairportsService: AcukwikairportsService,
         private fboService: FbosService
-    ) {}
+    ) {
+    }
 
     public airportValueChanged(airport: any) {
         this.data.icao = airport.icao;
@@ -53,7 +54,7 @@ export class FbosGridNewFboDialogComponent {
     public fboSelectionChange() {
         this.data.fbo = this.data.acukwikFbo.handlerLongName;
         this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
-        this.data.group = `${this.data.fbo} - ${this.data.icao}`;
+        this.data.group = `${ this.data.fbo } - ${ this.data.icao }`;
     }
 
     public onCancelClick(): void {
@@ -63,8 +64,9 @@ export class FbosGridNewFboDialogComponent {
     public onSaveClick(data): void {
         this.errorHappened = false;
 
-        this.fboService.addSingleFbo(data).subscribe((newFbo: any) =>
-        { this.dialogRef.close(newFbo); },
+        this.fboService.addSingleFbo(data).subscribe((newFbo: any) => {
+                this.dialogRef.close(newFbo);
+            },
             err => {
                 this.errorHappened = true;
             }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -58,12 +60,12 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var aircraftPrices = (from ca in _context.CustomerAircrafts
+            var aircraftPrices = await (from ca in _context.CustomerAircrafts
                 join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
                 join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
                 where ca.Oid == customerAircraftId
                       && pt.Fboid == fboId
-                select ap);
+                select ap).ToListAsync();
 
             if (aircraftPrices == null)
             {

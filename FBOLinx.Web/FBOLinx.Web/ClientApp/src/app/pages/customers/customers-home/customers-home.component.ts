@@ -1,19 +1,19 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 // Services
-import {CustomerinfobygroupService} from '../../../services/customerinfobygroup.service';
-import {SharedService} from '../../../layouts/shared-service';
-import {PricingtemplatesService} from '../../../services/pricingtemplates.service';
-import {CustomeraircraftsService} from '../../../services/customeraircrafts.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 
-import {locationChangedEvent} from '../../../models/sharedEvents';
+import { locationChangedEvent } from '../../../models/sharedEvents';
 
-import {getCustomerGridState} from '../../../store/selectors';
-import {State} from '../../../store/reducers';
-import {customerGridSet} from '../../../store/actions';
-import {CustomerGridState} from '../../../store/reducers/customer';
+import { getCustomerGridState } from '../../../store/selectors';
+import { State } from '../../../store/reducers';
+import { customerGridSet } from '../../../store/actions';
+import { CustomerGridState } from '../../../store/reducers/customer';
 
 const BREADCRUMBS: any[] = [
     {
@@ -29,7 +29,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-customers-home',
     templateUrl: './customers-home.component.html',
-    styleUrls: ['./customers-home.component.scss'],
+    styleUrls: [ './customers-home.component.scss' ],
 })
 export class CustomersHomeComponent implements OnInit, OnDestroy {
     // Public Members

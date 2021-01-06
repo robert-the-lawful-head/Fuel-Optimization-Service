@@ -1,10 +1,11 @@
 <div>
     <mat-form-field class="filter">
-        <input matInput (keyup)="applyFilter($event.target.value)" [value]="searchValue" placeholder="Search by Group, FBO, User, ...">
+        <input (keyup)="applyFilter($event.target.value)" [value]="searchValue" matInput
+               placeholder="Search by Group, FBO, User, ...">
         <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
 
-    <button *ngIf="selectedRows.length > 1" mat-flat-button color="warn" (click)="mergeGroups()">
+    <button (click)="mergeGroups()" *ngIf="selectedRows.length > 1" color="warn" mat-flat-button>
         <mat-icon>merge_type</mat-icon>
         Merge Groups
     </button>
@@ -12,11 +13,11 @@
 
 <ejs-grid
     #grid
-    [dataSource]='groupDataSource'
-    [childGrid]='childGrid'
-    (rowSelected)="rowSelected($event)"
     (rowDeselected)="rowDeselected()"
+    (rowSelected)="rowSelected($event)"
     [allowPaging]='true'
+    [childGrid]='childGrid'
+    [dataSource]='groupDataSource'
     [pageSettings]='pageSettings'
     [selectionSettings]='selectionOptions'
 >
@@ -25,14 +26,14 @@
         <e-column field='groupName' headerText='Group'></e-column>
         <e-column>
             <ng-template #template let-data>
-                <span class="status" [ngClass]="{'good': allChildFbosPricingLive(data.index)}">
+                <span [ngClass]="{'good': allChildFbosPricingLive(data.index)}" class="status">
                     {{fbosPricingExpired(data.index)}}
                 </span>
             </ng-template>
         </e-column>
         <e-column>
             <ng-template #template let-data>
-                <span class="status" [ngClass]="{'good': data.needAttentionCustomers == 0 }">
+                <span [ngClass]="{'good': data.needAttentionCustomers == 0 }" class="status">
                     {{data.needAttentionCustomers}} Need Attentions
                 </span>
             </ng-template>
@@ -45,31 +46,35 @@
         <e-column field='active' headerText='Active'></e-column>
         <e-column width=200>
             <ng-template #headerTemplate let-data>
-                <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="addNewGroupOrFbo()">Add New</button>
+                <button (click)="addNewGroupOrFbo()" [view]="'accent'" beforeIcon="fa fa-plus" ni-button>Add New
+                </button>
             </ng-template>
             <ng-template #template let-data>
-                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Group Actions" clickStopPropagation>
+                <button [matMenuTriggerFor]="menu" aria-label="Group Actions" clickStopPropagation mat-icon-button>
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                    <button mat-menu-item clickStopPropagation (click)="manageGroup(data)">
+                    <button (click)="manageGroup(data)" clickStopPropagation mat-menu-item>
                         <mat-icon>business_center</mat-icon>
                         <span>Manage</span>
                     </button>
-                    <button mat-menu-item clickStopPropagation (click)="addNewFbo(data)">
+                    <button (click)="addNewFbo(data)" clickStopPropagation mat-menu-item>
                         <mat-icon>add</mat-icon>
                         <span>Add FBO</span>
                     </button>
-                    <button mat-menu-item clickStopPropagation (click)="deleteGroup(data)">
+                    <button (click)="deleteGroup(data)" clickStopPropagation mat-menu-item>
                         <mat-icon>delete_forever</mat-icon>
                         <span>Delete Group</span>
                     </button>
-                    <button mat-menu-item [matMenuTriggerFor]="fbosMenu" [disabled]="!groupFbos(data.index).length" clickStopPropagation>
+                    <button [disabled]="!groupFbos(data.index).length" [matMenuTriggerFor]="fbosMenu"
+                            clickStopPropagation
+                            mat-menu-item>
                         <span>Delete FBO</span>
                     </button>
                 </mat-menu>
                 <mat-menu #fbosMenu="matMenu">
-                    <button mat-menu-item clickStopPropagation *ngFor="let fbo of groupFbos(data.index)" (click)="deleteFbo(fbo)">
+                    <button (click)="deleteFbo(fbo)" *ngFor="let fbo of groupFbos(data.index)" clickStopPropagation
+                            mat-menu-item>
                         <mat-icon>delete_forever</mat-icon>
                         <span>{{fbo.fbo}}</span>
                     </button>
@@ -80,17 +85,19 @@
 </ejs-grid>
 
 <ng-template #pricingExpiredTemplate let-data>
-    <span class="status" [ngClass]="{'good': !data.pricingExpired }">
+    <span [ngClass]="{'good': !data.pricingExpired }" class="status">
         {{data.pricingExpired ? 'Expired' : 'Pricing Live'}}
     </span>
 </ng-template>
 
 <ng-template #fboManageTemplate let-data>
-    <button ni-button [view]="'warning'" size="small" beforeIcon="fa fa-briefcase" (click)="manageFBO(data)" clickStopPropagation>Manage</button>
+    <button (click)="manageFBO(data)" [view]="'warning'" beforeIcon="fa fa-briefcase" clickStopPropagation ni-button
+            size="small">Manage
+    </button>
 </ng-template>
 
 <ng-template #needAttentionTemplate let-data>
-    <span class="status" [ngClass]="{'good': data.needAttentionCustomers == 0 }">
+    <span [ngClass]="{'good': data.needAttentionCustomers == 0 }" class="status">
         {{data.needAttentionCustomers}} Need Attentions
     </span>
 </ng-template>

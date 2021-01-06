@@ -1,13 +1,13 @@
 :host {
-  .tailLookupInfo {
-    display: flex;
-    align-items: center;
-    margin-left: 3rem;
+    .tailLookupInfo {
+        display: flex;
+        align-items: center;
+        margin-left: 3rem;
 
-    & > div:first-child {
-      width: 130px;
+        & > div:first-child {
+            width: 130px;
+        }
     }
-  }
 }
 
 
@@ -16,6 +16,6 @@
     padding: 10px;
 }
 
-.price-lookup-breakdown .d-inline-block.text-nowrap{
+.price-lookup-breakdown .d-inline-block.text-nowrap {
     margin-left: 10px;
 }

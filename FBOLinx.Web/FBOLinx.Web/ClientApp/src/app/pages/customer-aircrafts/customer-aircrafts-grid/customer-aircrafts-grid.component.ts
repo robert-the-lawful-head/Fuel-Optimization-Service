@@ -1,11 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    Output,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -28,7 +21,7 @@ import { CustomerAircraftSelectModelComponent } from '../customer-aircrafts-sele
 @Component({
     selector: 'app-customer-aircrafts-grid',
     templateUrl: './customer-aircrafts-grid.component.html',
-    styleUrls: ['./customer-aircrafts-grid.component.scss'],
+    styleUrls: [ './customer-aircrafts-grid.component.scss' ],
 })
 export class CustomerAircraftsGridComponent implements OnInit {
     // Input/Output Bindings
@@ -36,6 +29,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
     @Input() customer: any;
     @Input() customerAircraftsData: Array<any>;
     @Input() pricingTemplatesData: Array<any>;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     // Public Members
     public customerAircraftsDataSource: MatTableDataSource<any> = null;
@@ -51,9 +46,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
     public aircraftTypes: Array<any>;
     public isLoadingAircraftTypes = false;
     public pageIndex = 0;
-
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
@@ -257,10 +249,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
         }
     }
 
-    public deleteCustomerAircraft(customerAircraft: any) {
-        // TODO: add delete prompt and logic
-    }
-
     public applyFilter(filterValue: string) {
         this.customerAircraftsDataSource.filter = filterValue
             .trim()
@@ -298,7 +286,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             })
             .subscribe(() => {
                 customerAircraft.pricingTemplateId = event.value;
-                const pricingTemplateIds = this.customerAircraftsDataSource.data.map(d => d.pricingTemplateId );
+                const pricingTemplateIds = this.customerAircraftsDataSource.data.map(d => d.pricingTemplateId);
                 if (pricingTemplateIds.every(v => v === pricingTemplateId)) {
                     this.customCustomerTypeService
                         .updateForFboAndCustomer({
@@ -417,7 +405,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
                     });
 
             }
-        } catch (e) { }
+        } catch (e) {
+        }
     }
 
     initializeImporter() {
@@ -425,7 +414,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             fields: [
                 {
                     label: 'Tail',
-                    alternates: ['tail', 'plane tail', 'N-number', 'Nnumber', 'Tail Number'],
+                    alternates: [ 'tail', 'plane tail', 'N-number', 'Nnumber', 'Tail Number' ],
                     key: 'TailNumber',
                     description: 'Tail',
                     validators: [
@@ -437,7 +426,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 },
                 {
                     label: 'Make',
-                    alternates: ['make', 'manufacturer'],
+                    alternates: [ 'make', 'manufacturer' ],
                     key: 'AircraftMake',
                     description: 'Aircraft Make',
                     validators: [
@@ -449,7 +438,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 },
                 {
                     label: 'Model',
-                    alternates: ['model', 'plane model'],
+                    alternates: [ 'model', 'plane model' ],
                     key: 'Model',
                     description: 'Aircraft Model',
                     validators: [
@@ -461,7 +450,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 },
                 {
                     label: 'Size',
-                    alternates: ['size', 'plane size'],
+                    alternates: [ 'size', 'plane size' ],
                     key: 'Size',
                     description: 'Plane Size',
                     validators: [

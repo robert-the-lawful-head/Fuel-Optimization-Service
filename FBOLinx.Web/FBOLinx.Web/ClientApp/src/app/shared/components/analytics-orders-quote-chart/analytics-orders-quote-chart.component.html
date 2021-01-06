@@ -1,19 +1,19 @@
-<ni-card title="Quotes & Orders Won" [headerBgColor]="'gray'">
+<ni-card [headerBgColor]="'gray'" title="Quotes & Orders Won">
     <div class="flex">
         <div class="d-inline-block mr-2 ml-2" style="width: 130px">
             <mat-form-field>
                 <input
-                    matInput
-                    [max]="filterEndDate"
+                    (dateChange)="refreshData()"
+                    (focus)="dashboardSettingsStartDateFilter.open()"
                     [(ngModel)]="filterStartDate"
                     [matDatepicker]="dashboardSettingsStartDateFilter"
-                    (focus)="dashboardSettingsStartDateFilter.open()"
+                    [max]="filterEndDate"
+                    matInput
                     placeholder="Start Date"
-                    (dateChange)="refreshData()"
                 />
                 <mat-datepicker-toggle
-                    matSuffix
                     [for]="dashboardSettingsStartDateFilter"
+                    matSuffix
                 ></mat-datepicker-toggle>
                 <mat-datepicker
                     #dashboardSettingsStartDateFilter
@@ -24,17 +24,17 @@
         <div class="d-inline-block mr-2 ml-2" style="width: 130px">
             <mat-form-field>
                 <input
-                    matInput
-                    [min]="filterStartDate"
+                    (dateChange)="refreshData()"
+                    (focus)="dashboardSettingsEndDateFilter.open()"
                     [(ngModel)]="filterEndDate"
                     [matDatepicker]="dashboardSettingsEndDateFilter"
-                    (focus)="dashboardSettingsEndDateFilter.open()"
+                    [min]="filterStartDate"
+                    matInput
                     placeholder="End Date"
-                    (dateChange)="refreshData()"
                 />
                 <mat-datepicker-toggle
-                    matSuffix
                     [for]="dashboardSettingsEndDateFilter"
+                    matSuffix
                 ></mat-datepicker-toggle>
                 <mat-datepicker
                     #dashboardSettingsEndDateFilter
@@ -47,33 +47,33 @@
         <div class="sub-chart">
             <ngx-charts-line-chart
                 *ngIf="ordersQuoteData"
-                [scheme]="colorScheme"
                 [autoScale]="true"
-                [legend]="true"
                 [legendPosition]="'right'"
+                [legend]="true"
+                [results]="ordersQuoteData"
+                [scheme]="colorScheme"
                 [xAxis]="true"
                 [yAxis]="true"
-                [results]="ordersQuoteData"
             ></ngx-charts-line-chart>
         </div>
         <div class="sub-chart">
             <ngx-charts-line-chart
                 *ngIf="dollarSumData"
-                [scheme]="colorScheme"
                 [autoScale]="true"
-                [legend]="true"
                 [legendPosition]="'right'"
+                [legend]="true"
+                [results]="dollarSumData"
+                [scheme]="colorScheme"
                 [xAxis]="true"
                 [yAxis]="true"
-                [results]="dollarSumData"
             ></ngx-charts-line-chart>
         </div>
     </div>
     <ngx-ui-loader
         [loaderId]="chartName"
+        bgsColor="rgb(100, 181, 246)"
         bgsPosition="center-center"
         bgsType="ball-spin"
-        bgsColor="rgb(100, 181, 246)"
         overlayColor="rgba(0, 0, 0, 0.1)"
     ></ngx-ui-loader>
 </ni-card>

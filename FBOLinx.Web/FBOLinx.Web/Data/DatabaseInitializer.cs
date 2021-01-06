@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +11,7 @@ namespace FBOLinx.Web.Data
 {
     public class DatabaseInitializer
     {
-        public async void InitializeDataAsync(IServiceProvider serviceProvider)
+        public async Task InitializeDataAsync(IServiceProvider serviceProvider)
         {
             var fboLinxContext = serviceProvider.GetRequiredService<FboLinxContext>();
 
@@ -39,7 +41,7 @@ namespace FBOLinx.Web.Data
                     AllowMultiplePricingTemplates = false,
                     Name = "Transient"
                 });
-                fboLinxContext.SaveChanges();
+                await fboLinxContext.SaveChangesAsync();
             }
         }
     }

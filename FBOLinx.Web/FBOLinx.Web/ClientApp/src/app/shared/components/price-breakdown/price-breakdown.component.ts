@@ -1,28 +1,29 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
 import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { FeeAndTaxBreakdownComponent } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
+import {
+    FeeAndTaxBreakdownComponent,
+    FeeAndTaxBreakdownDisplayModes
+} from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 
-import { forkJoin } from 'rxjs';
-import { Observable } from 'rxjs';
-import { FeeAndTaxBreakdownDisplayModes } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
+import { forkJoin, Observable } from 'rxjs';
 
 
 export enum PriceBreakdownDisplayTypes {
-  SingleColumnAllFlights = 0,
-  TwoColumnsDomesticInternationalOnly = 1,
-  TwoColumnsApplicableFlightTypesOnly = 2,
-  FourColumnsAllRules = 3
+    SingleColumnAllFlights = 0,
+    TwoColumnsDomesticInternationalOnly = 1,
+    TwoColumnsApplicableFlightTypesOnly = 2,
+    FourColumnsAllRules = 3
 }
 
 @Component({
     selector: 'price-breakdown',
     templateUrl: './price-breakdown.component.html',
-    styleUrls: ['./price-breakdown.component.scss']
+    styleUrls: [ './price-breakdown.component.scss' ]
 })
 export class PriceBreakdownComponent implements OnInit {
 
@@ -48,7 +49,6 @@ export class PriceBreakdownComponent implements OnInit {
     omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output()
     calculationsComplated: EventEmitter<any> = new EventEmitter<any>();
-
     public internationalCommercialPricing: any;
     public internationalPrivatePricing: any;
     public domesticCommercialPricing: any;
@@ -63,14 +63,12 @@ export class PriceBreakdownComponent implements OnInit {
     public activeHoverPriceItem: any = {};
     public activeHoverDeparturetypes: Array<number> = [];
     public activeHoverFlightTypes: Array<number> = [];
-    public defaultValidDepartureTypes: Array<number> = [0, 1, 3];
-    public defaultValidFlightTypes: Array<number> = [0, 1, 3];
-
+    public defaultValidDepartureTypes: Array<number> = [ 0, 1, 3 ];
+    public defaultValidFlightTypes: Array<number> = [ 0, 1, 3 ];
     @ViewChild('feeAndTaxBreakdown')
     private feeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
     @ViewChild('dynamicFeeAndTaxBreakdown')
     private dynamicFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-
 
     constructor(private feesAndTaxesService: FbofeesandtaxesService,
                 private sharedService: SharedService,
@@ -107,8 +105,8 @@ export class PriceBreakdownComponent implements OnInit {
     // Private Methods
     private prepareDefaultSettings(): void {
         if (this.feeAndTaxDisplayMode === FeeAndTaxBreakdownDisplayModes.CustomerOmitting) {
-            this.defaultValidDepartureTypes = [0, 1, 2, 3];
-            this.defaultValidFlightTypes = [0, 1, 2, 3];
+            this.defaultValidDepartureTypes = [ 0, 1, 2, 3 ];
+            this.defaultValidFlightTypes = [ 0, 1, 2, 3 ];
         }
     }
 
@@ -138,16 +136,16 @@ export class PriceBreakdownComponent implements OnInit {
         }
         this.domesticCommercialFeesAndTaxes = this.feesAndTaxes.filter(
             (fee) => (fee.departureType === 1 || fee.departureType === 3) &&
-            (fee.flightTypeClassification === 2 || fee.flightTypeClassification === 3));
+                (fee.flightTypeClassification === 2 || fee.flightTypeClassification === 3));
         this.domesticPrivateFeesAndTaxes = this.feesAndTaxes.filter(
             (fee) => (fee.departureType === 1 || fee.departureType === 3) &&
-            (fee.flightTypeClassification === 1 || fee.flightTypeClassification === 3));
+                (fee.flightTypeClassification === 1 || fee.flightTypeClassification === 3));
         this.internationalCommercialFeesAndTaxes = this.feesAndTaxes.filter(
             (fee) => (fee.departureType === 2 || fee.departureType === 3) &&
-            (fee.flightTypeClassification === 2 || fee.flightTypeClassification === 3));
+                (fee.flightTypeClassification === 2 || fee.flightTypeClassification === 3));
         this.internationalPrivateFeesAndTaxes = this.feesAndTaxes.filter(
             (fee) => (fee.departureType === 2 || fee.departureType === 3) &&
-            (fee.flightTypeClassification === 1 || fee.flightTypeClassification === 3));
+                (fee.flightTypeClassification === 1 || fee.flightTypeClassification === 3));
     }
 
     private determineDisplayType(): void {
@@ -185,7 +183,7 @@ export class PriceBreakdownComponent implements OnInit {
             this.loadDomesticCommercialPricing(),
             this.loadDomesticPrivatePricing()
         ]).subscribe((responseList:
-            any[]) => {
+                          any[]) => {
             this.NgxUiLoader.stopLoader(this.priceBreakdownLoader);
             if (!responseList) {
                 alert('There was a problem fetching prices.');
@@ -213,7 +211,7 @@ export class PriceBreakdownComponent implements OnInit {
         });
     }
 
-    private loadInternationalCommercialPricing(): Observable<object> {
+    private loadInternationalCommercialPricing(): Observable<any> {
         return this.fboPricesService.getFuelPricesForCompany({
             flightTypeClassification: FlightTypeClassifications.Commercial,
             departureType: ApplicableTaxFlights.InternationalOnly,
@@ -227,7 +225,7 @@ export class PriceBreakdownComponent implements OnInit {
         });
     }
 
-    private loadInternationalPrivatePricing(): Observable<object> {
+    private loadInternationalPrivatePricing(): Observable<any> {
         return this.fboPricesService.getFuelPricesForCompany({
             flightTypeClassification: FlightTypeClassifications.Private,
             departureType: ApplicableTaxFlights.InternationalOnly,
@@ -241,7 +239,7 @@ export class PriceBreakdownComponent implements OnInit {
         });
     }
 
-    private loadDomesticCommercialPricing(): Observable<object> {
+    private loadDomesticCommercialPricing(): Observable<any> {
         return this.fboPricesService.getFuelPricesForCompany({
             flightTypeClassification: FlightTypeClassifications.Commercial,
             departureType: ApplicableTaxFlights.DomesticOnly,
@@ -255,7 +253,7 @@ export class PriceBreakdownComponent implements OnInit {
         });
     }
 
-    private loadDomesticPrivatePricing(): Observable<object> {
+    private loadDomesticPrivatePricing(): Observable<any> {
         return this.fboPricesService.getFuelPricesForCompany({
             flightTypeClassification: FlightTypeClassifications.Private,
             departureType: ApplicableTaxFlights.DomesticOnly,

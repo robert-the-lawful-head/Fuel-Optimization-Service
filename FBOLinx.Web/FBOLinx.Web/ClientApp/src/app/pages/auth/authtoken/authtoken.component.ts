@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
 import { AuthenticationService } from '../../../services/authentication.service';
@@ -7,7 +7,7 @@ import { AuthenticationService } from '../../../services/authentication.service'
 @Component({
     selector: 'app-authtoken',
     templateUrl: './authtoken.component.html',
-    styleUrls: ['./authtoken.component.scss'],
+    styleUrls: [ './authtoken.component.scss' ],
 })
 export class AuthtokenComponent {
     constructor(
@@ -18,7 +18,7 @@ export class AuthtokenComponent {
         // Check for passed in id
         const token = this.route.snapshot.paramMap.get('token');
         if (!token || token === '') {
-            this.router.navigate(['/']);
+            this.router.navigate([ '/' ]);
         } else {
             this.authenticationService
                 .preAuth(token)
@@ -26,7 +26,7 @@ export class AuthtokenComponent {
                 .subscribe(
                     (data) => {
                         if (data.role === 3 || data.role === 2) {
-                            this.router.navigate(['/default-layout/fbos/']);
+                            this.router.navigate([ '/default-layout/fbos/' ]);
                         } else {
                             this.router.navigate([
                                 '/default-layout/dashboard-fbo/',
@@ -34,7 +34,7 @@ export class AuthtokenComponent {
                         }
                     },
                     () => {
-                        this.router.navigate(['/landing-site']);
+                        this.router.navigate([ '/landing-site' ]);
                     }
                 );
         }

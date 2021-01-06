@@ -5,37 +5,37 @@
         <mat-spinner></mat-spinner>
     </div>
 
-    <ni-card title="" class="mb-0 " *ngIf="rampFees">
+    <ni-card *ngIf="rampFees" class="mb-0 " title="">
         <div class="mb-3">
             <div class="">
                 <div class="row">
                     <div class="col-12">
-                        <div class="pull-right mr-5" *ngIf="requiresUpdate">
+                        <div *ngIf="requiresUpdate" class="pull-right mr-5">
                             <button
-                                ni-button
+                                (click)="saveChanges()"
                                 [view]="'success'"
                                 beforeIcon="fa fa-floppy-o"
-                                (click)="saveChanges()"
+                                ni-button
                             >
                                 Save Changes
                             </button>
                         </div>
                         <div
-                            class="pull-left mr-1"
                             *ngIf="rampFees && expirationDate"
+                            class="pull-left mr-1"
                         >
                             <mat-form-field>
                                 <input
-                                    matInput
+                                    (ngModelChange)="rampFeeRequiresUpdate()"
                                     [(ngModel)]="expirationDate"
                                     [matDatepicker]="categoryDatePicker"
-                                    placeholder="Expiration Date"
                                     disabled
-                                    (ngModelChange)="rampFeeRequiresUpdate()"
+                                    matInput
+                                    placeholder="Expiration Date"
                                 />
                                 <mat-datepicker-toggle
-                                    matSuffix
                                     [for]="categoryDatePicker"
+                                    matSuffix
                                 ></mat-datepicker-toggle>
                                 <mat-datepicker
                                     #categoryDatePicker
@@ -45,14 +45,16 @@
                         </div>
                         <div class="actions-menu pull-right mr-1 d-flex">
                             <div class="ml-3">
-                                <button mat-icon-button [matMenuTriggerFor]="gridActions">
-                                    <mat-icon class="mat-icon material-icons" role="img" aria-hidden="true">more_vert</mat-icon>
+                                <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                                    <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert
+                                    </mat-icon>
                                 </button>
-                                <mat-menu #gridActions="matMenu" xPosition="before" class="switch-nested-menu-left-arrows">
+                                <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows"
+                                          xPosition="before">
                                     <button
-                                        mat-menu-item
                                         (click)="informForRampFees()"
                                         [ngClass]="{ disabled: !LICENSE_KEY }"
+                                        mat-menu-item
                                     >
                                         Import
                                     </button>
@@ -69,66 +71,66 @@
                     <mat-panel-title>Business Jets</mat-panel-title>
                     <mat-panel-description></mat-panel-description>
                 </mat-expansion-panel-header>
-                <app-ramp-fees-category [aircraftTypes]="aircraftTypes"
-                                        [rampFees]="rampFees"
+                <app-ramp-fees-category (rampFeeDeleted)="rampFeeDeleted()"
+                                        (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                                        [aircraftTypes]="aircraftTypes"
                                         [categoryTitle]="'Business Jets'"
                                         [categoryTypes]="[1]"
-                                        [supportedValues]="[0, 1, 2, 3, 5, 7, 16]"
+                                        [rampFees]="rampFees"
                                         [sortedValues]="[7, 1, 2, 3, 16, 5]"
-                                        (rampFeeFieldChanged)="rampFeeFieldChanged()"
-                                        (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
+                                        [supportedValues]="[0, 1, 2, 3, 5, 7, 16]"></app-ramp-fees-category>
             </mat-expansion-panel>
             <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title>Pistons and Turboprops</mat-panel-title>
                     <mat-panel-description></mat-panel-description>
                 </mat-expansion-panel-header>
-                <app-ramp-fees-category [aircraftTypes]="aircraftTypes"
-                                        [rampFees]="rampFees"
+                <app-ramp-fees-category (rampFeeDeleted)="rampFeeDeleted()"
+                                        (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                                        [aircraftTypes]="aircraftTypes"
                                         [categoryTitle]="'Turboprops'"
                                         [categoryTypes]="[1]"
-                                        [supportedValues]="[6, 8, 11, 12, 13, 14, 15]"
+                                        [rampFees]="rampFees"
                                         [sortedValues]="[8, 11, 12, 13, 6, 14, 15]"
-                                        (rampFeeFieldChanged)="rampFeeFieldChanged()"
-                                        (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
+                                        [supportedValues]="[6, 8, 11, 12, 13, 14, 15]"></app-ramp-fees-category>
             </mat-expansion-panel>
             <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title>Helicopters</mat-panel-title>
                     <mat-panel-description></mat-panel-description>
                 </mat-expansion-panel-header>
-                <app-ramp-fees-category [aircraftTypes]="aircraftTypes"
-                                        [rampFees]="rampFees"
+                <app-ramp-fees-category (rampFeeDeleted)="rampFeeDeleted()"
+                                        (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                                        [aircraftTypes]="aircraftTypes"
                                         [categoryTitle]="'Helicopters'"
                                         [categoryTypes]="[1]"
-                                        [supportedValues]="[4, 9, 10]"
+                                        [rampFees]="rampFees"
                                         [sortedValues]="[4, 9, 10]"
-                                        (rampFeeFieldChanged)="rampFeeFieldChanged()"
-                                        (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
+                                        [supportedValues]="[4, 9, 10]"></app-ramp-fees-category>
             </mat-expansion-panel>
             <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title class="align-items-center">Custom</mat-panel-title>
                     <mat-panel-description class="justify-content-between align-items-center">
                         By type, wingspan, weight, or tail
-                        <button ni-button
-                                class="mr-3"
-                                size="small"
-                                view="accent"
+                        <button (click)="addNewRampFeeClicked()"
                                 beforeIcon="fa fa-plus"
-                                (click)="addNewRampFeeClicked()">
+                                class="mr-3"
+                                ni-button
+                                size="small"
+                                view="accent">
                             Add New
                         </button>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
                 <app-ramp-fees-category #customRampFeeCat
+                                        (rampFeeDeleted)="rampFeeDeleted()"
+                                        (rampFeeFieldChanged)="rampFeeFieldChanged()"
                                         [aircraftTypes]="aircraftTypes"
-                                        [rampFees]="rampFees"
                                         [categoryTitle]="'Turboprops'"
                                         [categoryTypes]="[2, 3, 4, 5]"
-                                        [supportedValues]="[]"
-                                        (rampFeeFieldChanged)="rampFeeFieldChanged()"
-                                        (rampFeeDeleted)="rampFeeDeleted()"></app-ramp-fees-category>
+                                        [rampFees]="rampFees"
+                                        [supportedValues]="[]"></app-ramp-fees-category>
             </mat-expansion-panel>
 
         </mat-accordion>
