@@ -757,19 +757,36 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             const utcNow = moment.utc().format('MM/DD/YYYY');
             const utcTomorrow = moment.utc().add(1, 'days').format('MM/DD/YYYY');
 
+
             if (!this.priceShiftLoading) {
                 if (this.currentFboPriceJetARetail) {
-                    const currentRetailEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveFrom).format('MM/DD/YYYY');
-                    const currentRetailEffectiveTo = moment(this.currentFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
-                    if (utcTomorrow !== currentRetailEffectiveFrom && utcNow === currentRetailEffectiveTo) {
-                        this.loadAllPrices();
+                    if (this.currentFboPriceJetARetail.effectiveFrom && this.currentFboPriceJetARetail.effectiveTo) {
+                        const currentRetailEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveFrom).format('MM/DD/YYYY');
+                        const currentRetailEffectiveTo = moment(this.currentFboPriceJetARetail.effectiveTo).format('MM/DD/YYYY');
+                        if (utcTomorrow !== currentRetailEffectiveFrom && utcNow === currentRetailEffectiveTo) {
+                            this.loadAllPrices();
+                        }
+                    }
+                    if (this.currentFboPriceJetACost.effectiveFrom && this.currentFboPriceJetACost.effectiveTo) {
+                        const currentCostEffectiveFrom = moment(this.currentFboPriceJetACost.effectiveFrom).format('MM/DD/YYYY');
+                        const currentCostEffectiveTo = moment(this.currentFboPriceJetACost.effectiveTo).format('MM/DD/YYYY');
+                        if (utcTomorrow !== currentCostEffectiveFrom && utcNow === currentCostEffectiveTo) {
+                            this.loadAllPrices();
+                        }
                     }
                 }
                 if (this.stagedFboPriceJetARetail) {
-                    const stagedRetailEffectiveFrom = moment(this.stagedFboPriceJetARetail.effectiveFrom).format('MM/DD/YYYY');
-                    const stagedCostEffectiveFrom = moment(this.stagedFboPriceJetACost.effectiveFrom).format('MM/DD/YYYY');
-                    if (utcNow === stagedRetailEffectiveFrom || utcNow === stagedCostEffectiveFrom) {
-                        this.loadAllPrices();
+                    if (this.stagedFboPriceJetARetail.effectiveFrom) {
+                        const stagedRetailEffectiveFrom = moment(this.stagedFboPriceJetARetail.effectiveFrom).format('MM/DD/YYYY');
+                        if (utcNow === stagedRetailEffectiveFrom) {
+                            this.loadAllPrices();
+                        }
+                    }
+                    if (this.stagedFboPriceJetACost.effectiveFrom) {
+                        const stagedCostEffectiveFrom = moment(this.stagedFboPriceJetACost.effectiveFrom).format('MM/DD/YYYY');
+                        if (utcNow === stagedCostEffectiveFrom) {
+                            this.loadAllPrices();
+                        }
                     }
                 }
             }
