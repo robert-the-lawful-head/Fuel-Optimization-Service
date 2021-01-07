@@ -159,6 +159,7 @@ export class CustomersEditComponent implements OnInit {
                 } else {
                     await this.customCustomerTypesService.update(this.customCustomerType).toPromise();
                 }
+                this.customerInfoByGroup = customerInfoByGroup;
             }),
             catchError((err: Error) => {
                 console.error(err);

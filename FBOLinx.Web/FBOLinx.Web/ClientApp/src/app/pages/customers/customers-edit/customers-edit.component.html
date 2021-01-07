@@ -193,6 +193,7 @@
 
                             <div *ngIf="feesAndTaxes" class="sub-widget">
                                 <price-breakdown
+                                    *ngIf="customerInfoByGroup.active"
                                     #priceBreakdownPreview
                                     (omitCheckChanged)="omitFeeAndTaxCheckChanged($event)"
                                     [customerInfoByGroupId]="customerInfoByGroup.oid"
@@ -201,6 +202,7 @@
                                     [priceTemplateId]="customCustomerType.customerType"
                                     tooltipPlacement="left"
                                 ></price-breakdown>
+                                <h5 *ngIf="!customerInfoByGroup.active" class="text-center">Pricing Disabled!</h5>
                             </div>
                         </div>
                     </mat-tab>
