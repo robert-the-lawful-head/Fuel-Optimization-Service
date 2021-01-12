@@ -60,13 +60,8 @@ namespace FBOLinx.Web.Controllers
             var customerInfoByGroup = await (_context.CustomerInfoByGroup.Where(cg => cg.Oid.Equals(id))
                                                         .Include(cg => cg.Customer))
                                                         
-                                                        .FirstAsync<CustomerInfoByGroup>();
-
-            if (customerInfoByGroup == null)
-            {
-                return NotFound();
-            }
-
+                                                        .FirstOrDefaultAsync<CustomerInfoByGroup>();
+            
             return Ok(customerInfoByGroup);
         }
 

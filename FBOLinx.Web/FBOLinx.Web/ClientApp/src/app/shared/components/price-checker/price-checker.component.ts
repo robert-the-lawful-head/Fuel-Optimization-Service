@@ -64,6 +64,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         EnumOptions.strictFlightTypeClassificationOptions;
     public sampleCalculation: PriceLookupRequest;
     public tailLoader = 'tail-loader';
+    public isPriceBreakdownCustomerActive: boolean = true;
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
 
@@ -196,6 +197,10 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     public refresh(): void {
         this.loadPricingTemplates();
+    }
+
+    public priceBreakdownCustomerActiveCheckCompleted(event: any): void {
+        this.isPriceBreakdownCustomerActive = event;
     }
 
     // Private Methods
