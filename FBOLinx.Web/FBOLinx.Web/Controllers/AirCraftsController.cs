@@ -85,7 +85,9 @@ namespace FBOLinx.Web.Controllers
             if (customerAircraft == null)
                 return Ok(new List<CustomerInfoByGroup>());
 
-            var result = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && customerAircraft.Any(ca => ca.CustomerId == x.CustomerId)).Include(x => x.Customer).Where(x => (x.Customer != null && x.Customer.Suspended != true)).ToListAsync();
+            List<int> customerIds = customerAircraft.Select(x => x.CustomerId).Distinct().ToList();
+
+            var result = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && customerIds.Contains(x.CustomerId)).Include(x => x.Customer).Where(x => (x.Customer != null && x.Customer.Suspended != true)).ToListAsync();
 
             return Ok(result);
         }

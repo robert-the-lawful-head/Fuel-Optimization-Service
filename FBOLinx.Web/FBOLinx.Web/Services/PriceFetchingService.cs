@@ -61,7 +61,7 @@ namespace FBOLinx.Web.Services
                 CustomerInfoByGroup customerInfoByGroup = await _context.CustomerInfoByGroup
                                                                             .Where(x => x.CustomerId == customerId && x.GroupId == fbo.GroupId)
                                                                             .FirstOrDefaultAsync();
-                if (customerInfoByGroup == null)
+                if (customerInfoByGroup == null || customerInfoByGroup.Active != true)
                     continue;
 
                 List<PricingTemplate> templates = await GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault());

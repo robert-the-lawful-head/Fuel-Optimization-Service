@@ -11,6 +11,7 @@ import {
 } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 
 import { forkJoin, Observable } from 'rxjs';
+import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
 
 
 export enum PriceBreakdownDisplayTypes {
@@ -49,6 +50,8 @@ export class PriceBreakdownComponent implements OnInit {
     omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output()
     calculationsComplated: EventEmitter<any> = new EventEmitter<any>();
+    @Output()
+    customerActiveCheckCompleted: EventEmitter<any> = new EventEmitter<any>();
     public internationalCommercialPricing: any;
     public internationalPrivatePricing: any;
     public domesticCommercialPricing: any;
@@ -64,7 +67,8 @@ export class PriceBreakdownComponent implements OnInit {
     public activeHoverDeparturetypes: Array<number> = [];
     public activeHoverFlightTypes: Array<number> = [];
     public defaultValidDepartureTypes: Array<number> = [ 0, 1, 3 ];
-    public defaultValidFlightTypes: Array<number> = [ 0, 1, 3 ];
+    public defaultValidFlightTypes: Array<number> = [0, 1, 3];
+    public isCustomerActive: boolean = true;
     @ViewChild('feeAndTaxBreakdown')
     private feeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
     @ViewChild('dynamicFeeAndTaxBreakdown')
@@ -73,7 +77,8 @@ export class PriceBreakdownComponent implements OnInit {
     constructor(private feesAndTaxesService: FbofeesandtaxesService,
                 private sharedService: SharedService,
                 private fboPricesService: FbopricesService,
-                private NgxUiLoader: NgxUiLoaderService) {
+                private NgxUiLoader: NgxUiLoaderService,
+                private customerInfoByGroupService: CustomerinfobygroupService) {
 
     }
 
@@ -181,9 +186,10 @@ export class PriceBreakdownComponent implements OnInit {
             this.loadInternationalCommercialPricing(),
             this.loadInternationalPrivatePricing(),
             this.loadDomesticCommercialPricing(),
-            this.loadDomesticPrivatePricing()
+            this.loadDomesticPrivatePricing(),
+            this.loadCustomerInfoByGroup()
         ]).subscribe((responseList:
-                          any[]) => {
+            any[]) => {
             this.NgxUiLoader.stopLoader(this.priceBreakdownLoader);
             if (!responseList) {
                 alert('There was a problem fetching prices.');
@@ -193,15 +199,23 @@ export class PriceBreakdownComponent implements OnInit {
             this.internationalPrivatePricing = responseList[1];
             this.domesticCommercialPricing = responseList[2];
             this.domesticPrivatePricing = responseList[3];
+            const customerInfoByGroup = responseList[4];
+
+            //If no result was returned for the customer then this wasn't a customer-level price check so mark it as active.
+            //Otherwise check the actual active flag of the customer.
+            this.isCustomerActive = (!customerInfoByGroup || customerInfoByGroup.active);
+            this.customerActiveCheckCompleted.emit(this.isCustomerActive);
+
             this.feeAndTaxCloneForPopOver = [];
             this.feesAndTaxes.forEach(val => this.feeAndTaxCloneForPopOver.push(Object.assign({}, val)));
 
-            if (this.feeAndTaxBreakdown) {
-                const self = this;
-                setTimeout(() => {
+
+            const self = this;
+            setTimeout(() => {
+                if (self.feeAndTaxBreakdown) {
                     self.feeAndTaxBreakdown.performRecalculation();
-                });
-            }
+                }
+            });
             this.calculationsComplated.emit([
                 this.internationalCommercialPricing,
                 this.internationalPrivatePricing,
@@ -265,5 +279,9 @@ export class PriceBreakdownComponent implements OnInit {
             customerInfoByGroupId: this.customerInfoByGroupId,
             tailNumber: this.tailNumber
         });
+    }
+
+    private loadCustomerInfoByGroup(): Observable<any> {
+        return this.customerInfoByGroupService.get({ oid: this.customerInfoByGroupId });
     }
 }
