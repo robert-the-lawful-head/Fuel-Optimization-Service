@@ -305,6 +305,7 @@ namespace FBOLinx.Web.Controllers
 
                     var baseCustomerInfoByGroups = _context.CustomerInfoByGroup
                         .Where(a => a.GroupId == request.BaseGroupId)
+                        .ToList()
                         .Concat(customerInfoByGroups)
                         .ToList();
                     var distinctedByCustomerIDCustomerInfoByGroups = baseCustomerInfoByGroups
@@ -318,6 +319,7 @@ namespace FBOLinx.Web.Controllers
 
                     var baseContactInfoByGroups = _context.ContactInfoByGroup
                         .Where(a => a.GroupId == request.BaseGroupId)
+                        .ToList()
                         .Concat(contactInfoByGroups)
                         .ToList();
                     var distinctedContactInfoByGroups = baseContactInfoByGroups
