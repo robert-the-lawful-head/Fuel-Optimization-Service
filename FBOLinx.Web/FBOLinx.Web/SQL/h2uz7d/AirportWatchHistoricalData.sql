@@ -1,4 +1,3 @@
-
 CREATE TABLE [dbo].[AirportWatchHistoricalData](
 	[OID] [int] IDENTITY(1,1) NOT NULL,
 	[BoxTransmissionDateTimeUtc] [datetime2](7) NOT NULL,
