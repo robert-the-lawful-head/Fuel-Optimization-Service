@@ -269,7 +269,7 @@ namespace FBOLinx.Web.Controllers
                                  request.TimeStandard,
                                  CustomerId = c.Oid,
                                  DateCreated = DateTime.Now,
-                                 Source = "Fuelerlinx",
+                                 Source = "FuelerLinx",
                                  request.SourceId,
                                  request.Email,
                                  request.PhoneNumber,
