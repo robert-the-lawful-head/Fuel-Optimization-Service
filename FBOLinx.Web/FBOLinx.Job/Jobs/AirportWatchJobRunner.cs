@@ -9,7 +9,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Permissions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FBOLinx.Job.Jobs
@@ -20,13 +19,11 @@ namespace FBOLinx.Job.Jobs
         private int _lastWatchedFileRecordIndex = 0;
         private readonly IConfiguration _config;
         private readonly ApiClient _apiClient;
-        private readonly List<Task> _tasks;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
             _config = config;
             _apiClient = new ApiClient(config["FBOLinxApiUrl"]);
-            _tasks = new List<Task>();
         }
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
@@ -34,7 +31,7 @@ namespace FBOLinx.Job.Jobs
         {
             using (FileSystemWatcher watcher = new FileSystemWatcher())
             {
-                watcher.Path = @"Data";
+                watcher.Path = _config["AirportWatchDataLocation"];
 
                 // Watch for changes in File Size
                 watcher.NotifyFilter = NotifyFilters.Size;
@@ -52,8 +49,6 @@ namespace FBOLinx.Job.Jobs
                 Console.WriteLine("Press 'q' to quit the job.");
                 while (Console.Read() != 'q') ;
             }
-
-            //TasksRun();
         }
 
         private void OnChanged(object source, FileSystemEventArgs e) {
@@ -86,7 +81,10 @@ namespace FBOLinx.Job.Jobs
                             try
                             {
                                 var row = csv.GetRecord<AirportWatchDataType>();
-                                data.Add(row);
+                                if (!string.IsNullOrEmpty(row.AircraftHexCode) && !string.IsNullOrEmpty(row.AtcFlightNumber))
+                                {
+                                    data.Add(row);
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -149,51 +147,41 @@ namespace FBOLinx.Job.Jobs
                     })
                     .ToList();
 
-                var historicalData = transitionData
-                    .Where(row => row.IsAircraftOnGround == true)
-                    .Select(row => new AirportWatchHistoricalData
-                    {
-                        BoxTransmissionDateTimeUtc = row.BoxTransmissionDateTimeUtc,
-                        AircraftHexCode = row.AircraftHexCode,
-                        AtcFlightNumber = row.AtcFlightNumber,
-                        AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                        GroundSpeedKts = row.GroundSpeedKts,
-                        TrackingDegree = row.TrackingDegree,
-                        Latitude = row.Latitude,
-                        Longitude = row.Longitude,
-                        VerticalSpeedKts = row.VerticalSpeedKts,
-                        TransponderCode = row.TransponderCode,
-                        BoxName = row.BoxName,
-                        AircraftPositionDateTimeUtc = row.AircraftPositionDateTimeUtc,
-                        AircraftTypeCode = row.AircraftTypeCode,
-                        GpsAltitude = row.GpsAltitude,
-                        IsAircraftOnGround = row.IsAircraftOnGround,
-                    })
-                    .ToList();
+                //var historicalData = transitionData
+                //    .Where(row => row.IsAircraftOnGround == true)
+                //    .Select(row => new AirportWatchHistoricalData
+                //    {
+                //        BoxTransmissionDateTimeUtc = row.BoxTransmissionDateTimeUtc,
+                //        AircraftHexCode = row.AircraftHexCode,
+                //        AtcFlightNumber = row.AtcFlightNumber,
+                //        AltitudeInStandardPressure = row.AltitudeInStandardPressure,
+                //        GroundSpeedKts = row.GroundSpeedKts,
+                //        TrackingDegree = row.TrackingDegree,
+                //        Latitude = row.Latitude,
+                //        Longitude = row.Longitude,
+                //        VerticalSpeedKts = row.VerticalSpeedKts,
+                //        TransponderCode = row.TransponderCode,
+                //        BoxName = row.BoxName,
+                //        AircraftPositionDateTimeUtc = row.AircraftPositionDateTimeUtc,
+                //        AircraftTypeCode = row.AircraftTypeCode,
+                //        GpsAltitude = row.GpsAltitude,
+                //        IsAircraftOnGround = row.IsAircraftOnGround,
+                //    })
+                //    .ToList();
 
 
                 if (transitionData.Count > 0)
                 {
-                    _apiClient.PostAsync("/airportwatch/list", transitionData).Wait();
-                }
-                if (historicalData.Count > 0)
-                {
-                    _apiClient.PostAsync("/airportwatch/list", historicalData).Wait();
+                    try
+                    {
+                        _apiClient.PostAsync("airportwatch/list", transitionData).Wait();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
         }
-
-        //private void TasksRun()
-        //{
-        //    while (true)
-        //    {
-        //        if (_tasks.Count  > 0)
-        //        {
-        //            var currentTask = _tasks[0];
-        //            currentTask.Wait();
-        //            _tasks.RemoveAt(0);
-        //        }
-        //    }
-        //}
     }
 }
