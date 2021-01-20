@@ -29,5 +29,27 @@ namespace FBOLinx.DB.Models
         public string AircraftTypeCode { get; set; }
         public int? GpsAltitude { get; set; }
         public bool? IsAircraftOnGround { get; set; }
+
+        public static AirportWatchHistoricalData ConvertFromAirportWatchLiveData(AirportWatchLiveData entity)
+        {
+            return new AirportWatchHistoricalData
+            {
+                BoxTransmissionDateTimeUtc = entity.BoxTransmissionDateTimeUtc,
+                AircraftHexCode = entity.AircraftHexCode,
+                AtcFlightNumber = entity.AtcFlightNumber,
+                AltitudeInStandardPressure = entity.AltitudeInStandardPressure,
+                GroundSpeedKts = entity.GroundSpeedKts,
+                TrackingDegree = entity.TrackingDegree,
+                Latitude = entity.Latitude,
+                Longitude = entity.Longitude,
+                VerticalSpeedKts = entity.VerticalSpeedKts,
+                TransponderCode = entity.TransponderCode,
+                BoxName = entity.BoxName,
+                AircraftPositionDateTimeUtc = entity.AircraftPositionDateTimeUtc,
+                AircraftTypeCode = entity.AircraftTypeCode,
+                GpsAltitude = entity.GpsAltitude,
+                IsAircraftOnGround = entity.IsAircraftOnGround,
+            };
+        }
     }
 }

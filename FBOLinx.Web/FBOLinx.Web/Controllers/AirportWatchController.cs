@@ -25,7 +25,7 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost("list")]
-        public ActionResult<AiriportWatchDataPostResponse> PostDataList([FromBody] List<AirportWatchDataTransition> data)
+        public ActionResult<AiriportWatchDataPostResponse> PostDataList([FromBody] List<AirportWatchLiveData> data)
         {
             try
             {

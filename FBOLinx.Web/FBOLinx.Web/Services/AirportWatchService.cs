@@ -16,68 +16,68 @@ namespace FBOLinx.Web.Services
             _context = context;
         }
 
-        public void ProcessAirportWatchData(List<AirportWatchDataTransition> data)
+        public void ProcessAirportWatchData(List<AirportWatchLiveData> data)
         {
-            var live10sData = data
-                .Where(row => row.BoxTransmissionDateTimeUtc.AddSeconds(10) >= DateTime.UtcNow)
-                .Select(row => new AirportWatchLiveData
-                {
-                    BoxTransmissionDateTimeUtc = row.BoxTransmissionDateTimeUtc,
-                    AircraftHexCode = row.AircraftHexCode,
-                    AtcFlightNumber = row.AtcFlightNumber,
-                    AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                    GroundSpeedKts = row.GroundSpeedKts,
-                    TrackingDegree = row.TrackingDegree,
-                    Latitude = row.Latitude,
-                    Longitude = row.Longitude,
-                    VerticalSpeedKts = row.VerticalSpeedKts,
-                    TransponderCode = row.TransponderCode,
-                    BoxName = row.BoxName,
-                    AircraftPositionDateTimeUtc = row.AircraftPositionDateTimeUtc,
-                    AircraftTypeCode = row.AircraftTypeCode,
-                    GpsAltitude = row.GpsAltitude,
-                    IsAircraftOnGround = row.IsAircraftOnGround,
-                })
-                .ToList();
-
-            var historicalData = new List<AirportWatchHistoricalData>();
+            // Add the most recent records for the "live" view
             foreach (var record in data)
             {
-                var lastUpdatedRecord = _context.AirportWatchHistoricalData
+                var lastUpdatedRecord = _context.AirportWatchLiveData
                     .Where(h => h.AircraftHexCode == record.AircraftHexCode && h.AtcFlightNumber == record.AtcFlightNumber)
                     .OrderByDescending(h => h.BoxTransmissionDateTimeUtc)
                     .FirstOrDefault();
+
                 if (lastUpdatedRecord == null || lastUpdatedRecord.IsAircraftOnGround != record.IsAircraftOnGround)
                 {
                     if (lastUpdatedRecord != null)
                     {
-                        _context.AirportWatchHistoricalData.Remove(lastUpdatedRecord);
+                        _context.AirportWatchLiveData.Remove(lastUpdatedRecord);
                     }
 
-                    historicalData.Add(new AirportWatchHistoricalData
-                    {
-                        BoxTransmissionDateTimeUtc = record.BoxTransmissionDateTimeUtc,
-                        AircraftHexCode = record.AircraftHexCode,
-                        AtcFlightNumber = record.AtcFlightNumber,
-                        AltitudeInStandardPressure = record.AltitudeInStandardPressure,
-                        GroundSpeedKts = record.GroundSpeedKts,
-                        TrackingDegree = record.TrackingDegree,
-                        Latitude = record.Latitude,
-                        Longitude = record.Longitude,
-                        VerticalSpeedKts = record.VerticalSpeedKts,
-                        TransponderCode = record.TransponderCode,
-                        BoxName = record.BoxName,
-                        AircraftPositionDateTimeUtc = record.AircraftPositionDateTimeUtc,
-                        AircraftTypeCode = record.AircraftTypeCode,
-                        GpsAltitude = record.GpsAltitude,
-                        IsAircraftOnGround = record.IsAircraftOnGround,
-                    });
+                    _context.AirportWatchLiveData.Add(record);
                 }
             }
 
-            _context.AirportWatchDataTransition.AddRange(data);
-            _context.AirportWatchLiveData.AddRange(live10sData);
-            _context.AirportWatchHistoricalData.AddRange(historicalData);
+            // Add the distinct aircraft records from the HexCode and FlightNumber
+            var aircraftTailNumbers = data
+                .Select(record => new AirportWatchAircraftTailNumber
+                {
+                    AircraftHexCode = record.AircraftHexCode,
+                    AtcFlightNumber = record.AtcFlightNumber,
+                })
+                .ToList();
+            foreach (var aircraftTailNumber in aircraftTailNumbers)
+            {
+                var oldAircraftTailNumber = _context.AirportWatchAircraftTailNumber
+                    .Where(h => h.AircraftHexCode == aircraftTailNumber.AircraftHexCode && h.AtcFlightNumber == aircraftTailNumber.AtcFlightNumber)
+                    .FirstOrDefault();
+                if (oldAircraftTailNumber == null)
+                {
+                    _context.AirportWatchAircraftTailNumber.Add(aircraftTailNumber);
+                }
+            }
+
+            // Add all historical occurrences of a landing, takeoff, and parking.
+            foreach (var record in data)
+            {
+                var lastUpdatedRecord = _context.AirportWatchLiveData
+                    .Where(h => h.AircraftHexCode == record.AircraftHexCode && h.AtcFlightNumber == record.AtcFlightNumber)
+                    .OrderByDescending(h => h.BoxTransmissionDateTimeUtc)
+                    .FirstOrDefault();
+
+                //  landing, takeoff, parked
+                if ((lastUpdatedRecord == null || lastUpdatedRecord.IsAircraftOnGround != record.IsAircraftOnGround) ||
+                    (
+                        lastUpdatedRecord != null &&
+                        lastUpdatedRecord.IsAircraftOnGround != true &&
+                        record.IsAircraftOnGround != true &&
+                        record.BoxTransmissionDateTimeUtc >= lastUpdatedRecord.BoxTransmissionDateTimeUtc.AddMinutes(10)
+                    )
+                )
+                {
+                    var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
+                    _context.AirportWatchHistoricalData.Add(airportWatchHistoricalData);
+                }
+            }
 
             _context.SaveChanges();
         }

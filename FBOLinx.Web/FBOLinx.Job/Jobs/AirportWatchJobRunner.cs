@@ -101,56 +101,36 @@ namespace FBOLinx.Job.Jobs
                 catch {}
             }
 
-            var airportWatchData = data.Select(row => new AirportWatchDataTransition
-            {
-                BoxTransmissionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.BoxTransmissionDateTimeUtc).DateTime,
-                AircraftHexCode = row.AircraftHexCode,
-                AtcFlightNumber = row.AtcFlightNumber,
-                AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                GroundSpeedKts = row.GroundSpeedKts,
-                TrackingDegree = row.TrackingDegree,
-                Latitude = row.Latitude,
-                Longitude = row.Longitude,
-                VerticalSpeedKts = row.VerticalSpeedKts,
-                TransponderCode = row.TransponderCode,
-                BoxName = row.BoxName,
-                AircraftPositionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.AircraftPositionDateTimeUtc).DateTime,
-                AircraftTypeCode = row.AircraftTypeCode,
-                GpsAltitude = row.GpsAltitude,
-                IsAircraftOnGround = row.IsAircraftOnGround,
-            }).OrderByDescending(row => row.BoxTransmissionDateTimeUtc).ToList();
-
-            var transitionData = airportWatchData
-                .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
-                .Select(grouped => {
-                    var row = grouped.First();
-                    return new AirportWatchDataTransition
-                    {
-                        BoxTransmissionDateTimeUtc = row.BoxTransmissionDateTimeUtc,
-                        AircraftHexCode = row.AircraftHexCode,
-                        AtcFlightNumber = row.AtcFlightNumber,
-                        AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                        GroundSpeedKts = row.GroundSpeedKts,
-                        TrackingDegree = row.TrackingDegree,
-                        Latitude = row.Latitude,
-                        Longitude = row.Longitude,
-                        VerticalSpeedKts = row.VerticalSpeedKts,
-                        TransponderCode = row.TransponderCode,
-                        BoxName = row.BoxName,
-                        AircraftPositionDateTimeUtc = row.AircraftPositionDateTimeUtc,
-                        AircraftTypeCode = row.AircraftTypeCode,
-                        GpsAltitude = row.GpsAltitude,
-                        IsAircraftOnGround = row.IsAircraftOnGround,
-                    };
+            var airportWatchData = data
+                .Select(row => new AirportWatchLiveData
+                {
+                    BoxTransmissionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.BoxTransmissionDateTimeUtc).DateTime,
+                    AircraftHexCode = row.AircraftHexCode,
+                    AtcFlightNumber = row.AtcFlightNumber,
+                    AltitudeInStandardPressure = row.AltitudeInStandardPressure,
+                    GroundSpeedKts = row.GroundSpeedKts,
+                    TrackingDegree = row.TrackingDegree,
+                    Latitude = row.Latitude,
+                    Longitude = row.Longitude,
+                    VerticalSpeedKts = row.VerticalSpeedKts,
+                    TransponderCode = row.TransponderCode,
+                    BoxName = row.BoxName,
+                    AircraftPositionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.AircraftPositionDateTimeUtc).DateTime,
+                    AircraftTypeCode = row.AircraftTypeCode,
+                    GpsAltitude = row.GpsAltitude,
+                    IsAircraftOnGround = row.IsAircraftOnGround,
                 })
+                .OrderByDescending(row => row.BoxTransmissionDateTimeUtc)
+                .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
+                .Select(grouped => grouped.First())
                 .ToList();
 
              
-            if (transitionData.Count > 0)
+            if (airportWatchData.Count > 0)
             {
                 try
                 {
-                    _apiClient.PostAsync("airportwatch/list", transitionData).Wait();
+                    _apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
                 }
                 catch (Exception ex)
                 {
