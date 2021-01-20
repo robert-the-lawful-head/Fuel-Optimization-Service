@@ -72,6 +72,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<FboFeesAndTaxes> FbofeesAndTaxes { get; set; }
         public virtual DbSet<FboFeeAndTaxOmitsByCustomer> FboFeeAndTaxOmitsByCustomer { get; set; }
         public virtual DbSet<AirportWatchHistoricalData> AirportWatchHistoricalData { get; set; }
+        public virtual DbSet<AirportWatchDataTransition> AirportWatchDataTransition { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -882,6 +883,17 @@ namespace FBOLinx.DB.Context
             modelBuilder.Entity<FboFeeAndTaxOmitsByCustomer>(entity => { entity.HasKey(e => e.Oid); });
 
             modelBuilder.Entity<AirportWatchHistoricalData>(entity =>
+            {
+                entity.Property(e => e.AircraftHexCode).IsUnicode(false);
+
+                entity.Property(e => e.AircraftTypeCode).IsUnicode(false);
+
+                entity.Property(e => e.AtcFlightNumber).IsUnicode(false);
+
+                entity.Property(e => e.BoxName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AirportWatchDataTransition>(entity =>
             {
                 entity.Property(e => e.AircraftHexCode).IsUnicode(false);
 
