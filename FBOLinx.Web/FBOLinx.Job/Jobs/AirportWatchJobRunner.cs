@@ -101,85 +101,60 @@ namespace FBOLinx.Job.Jobs
                 catch {}
             }
 
-            if (data.Count > 0)
+            var airportWatchData = data.Select(row => new AirportWatchDataTransition
             {
-                var airportWatchData = data.Select(row => new AirportWatchDataTransition
-                {
-                    BoxTransmissionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.BoxTransmissionDateTimeUtc).DateTime,
-                    AircraftHexCode = row.AircraftHexCode,
-                    AtcFlightNumber = row.AtcFlightNumber,
-                    AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                    GroundSpeedKts = row.GroundSpeedKts,
-                    TrackingDegree = row.TrackingDegree,
-                    Latitude = row.Latitude,
-                    Longitude = row.Longitude,
-                    VerticalSpeedKts = row.VerticalSpeedKts,
-                    TransponderCode = row.TransponderCode,
-                    BoxName = row.BoxName,
-                    AircraftPositionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.AircraftPositionDateTimeUtc).DateTime,
-                    AircraftTypeCode = row.AircraftTypeCode,
-                    GpsAltitude = row.GpsAltitude,
-                    IsAircraftOnGround = row.IsAircraftOnGround,
-                }).OrderByDescending(row => row.BoxTransmissionDateTimeUtc).ToList();
+                BoxTransmissionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.BoxTransmissionDateTimeUtc).DateTime,
+                AircraftHexCode = row.AircraftHexCode,
+                AtcFlightNumber = row.AtcFlightNumber,
+                AltitudeInStandardPressure = row.AltitudeInStandardPressure,
+                GroundSpeedKts = row.GroundSpeedKts,
+                TrackingDegree = row.TrackingDegree,
+                Latitude = row.Latitude,
+                Longitude = row.Longitude,
+                VerticalSpeedKts = row.VerticalSpeedKts,
+                TransponderCode = row.TransponderCode,
+                BoxName = row.BoxName,
+                AircraftPositionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.AircraftPositionDateTimeUtc).DateTime,
+                AircraftTypeCode = row.AircraftTypeCode,
+                GpsAltitude = row.GpsAltitude,
+                IsAircraftOnGround = row.IsAircraftOnGround,
+            }).OrderByDescending(row => row.BoxTransmissionDateTimeUtc).ToList();
 
-                var transitionData = airportWatchData
-                    .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
-                    .Select(grouped => {
-                        var row = grouped.First();
-                        return new AirportWatchDataTransition
-                        {
-                            BoxTransmissionDateTimeUtc = row.BoxTransmissionDateTimeUtc,
-                            AircraftHexCode = row.AircraftHexCode,
-                            AtcFlightNumber = row.AtcFlightNumber,
-                            AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                            GroundSpeedKts = row.GroundSpeedKts,
-                            TrackingDegree = row.TrackingDegree,
-                            Latitude = row.Latitude,
-                            Longitude = row.Longitude,
-                            VerticalSpeedKts = row.VerticalSpeedKts,
-                            TransponderCode = row.TransponderCode,
-                            BoxName = row.BoxName,
-                            AircraftPositionDateTimeUtc = row.AircraftPositionDateTimeUtc,
-                            AircraftTypeCode = row.AircraftTypeCode,
-                            GpsAltitude = row.GpsAltitude,
-                            IsAircraftOnGround = row.IsAircraftOnGround,
-                        };
-                    })
-                    .ToList();
-
-                //var historicalData = transitionData
-                //    .Where(row => row.IsAircraftOnGround == true)
-                //    .Select(row => new AirportWatchHistoricalData
-                //    {
-                //        BoxTransmissionDateTimeUtc = row.BoxTransmissionDateTimeUtc,
-                //        AircraftHexCode = row.AircraftHexCode,
-                //        AtcFlightNumber = row.AtcFlightNumber,
-                //        AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                //        GroundSpeedKts = row.GroundSpeedKts,
-                //        TrackingDegree = row.TrackingDegree,
-                //        Latitude = row.Latitude,
-                //        Longitude = row.Longitude,
-                //        VerticalSpeedKts = row.VerticalSpeedKts,
-                //        TransponderCode = row.TransponderCode,
-                //        BoxName = row.BoxName,
-                //        AircraftPositionDateTimeUtc = row.AircraftPositionDateTimeUtc,
-                //        AircraftTypeCode = row.AircraftTypeCode,
-                //        GpsAltitude = row.GpsAltitude,
-                //        IsAircraftOnGround = row.IsAircraftOnGround,
-                //    })
-                //    .ToList();
-
-
-                if (transitionData.Count > 0)
-                {
-                    try
+            var transitionData = airportWatchData
+                .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
+                .Select(grouped => {
+                    var row = grouped.First();
+                    return new AirportWatchDataTransition
                     {
-                        _apiClient.PostAsync("airportwatch/list", transitionData).Wait();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
+                        BoxTransmissionDateTimeUtc = row.BoxTransmissionDateTimeUtc,
+                        AircraftHexCode = row.AircraftHexCode,
+                        AtcFlightNumber = row.AtcFlightNumber,
+                        AltitudeInStandardPressure = row.AltitudeInStandardPressure,
+                        GroundSpeedKts = row.GroundSpeedKts,
+                        TrackingDegree = row.TrackingDegree,
+                        Latitude = row.Latitude,
+                        Longitude = row.Longitude,
+                        VerticalSpeedKts = row.VerticalSpeedKts,
+                        TransponderCode = row.TransponderCode,
+                        BoxName = row.BoxName,
+                        AircraftPositionDateTimeUtc = row.AircraftPositionDateTimeUtc,
+                        AircraftTypeCode = row.AircraftTypeCode,
+                        GpsAltitude = row.GpsAltitude,
+                        IsAircraftOnGround = row.IsAircraftOnGround,
+                    };
+                })
+                .ToList();
+
+             
+            if (transitionData.Count > 0)
+            {
+                try
+                {
+                    _apiClient.PostAsync("airportwatch/list", transitionData).Wait();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
