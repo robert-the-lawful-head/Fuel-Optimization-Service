@@ -70,7 +70,9 @@ namespace FBOLinx.Web.Services
                         lastUpdatedRecord != null &&
                         lastUpdatedRecord.IsAircraftOnGround != true &&
                         record.IsAircraftOnGround != true &&
-                        record.BoxTransmissionDateTimeUtc >= lastUpdatedRecord.BoxTransmissionDateTimeUtc.AddMinutes(10)
+                        record.BoxTransmissionDateTimeUtc >= lastUpdatedRecord.BoxTransmissionDateTimeUtc.AddMinutes(10) &&
+                        record.Longitude == lastUpdatedRecord.Longitude &&
+                        record.Latitude == lastUpdatedRecord.Latitude
                     )
                 )
                 {
