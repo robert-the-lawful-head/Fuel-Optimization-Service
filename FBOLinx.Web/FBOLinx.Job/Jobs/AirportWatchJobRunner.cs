@@ -3,13 +3,13 @@ using FBOLinx.DB.Models;
 using FBOLinx.Job.Base;
 using FBOLinx.Job.Types;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Permissions;
-using System.Threading.Tasks;
 
 namespace FBOLinx.Job.Jobs
 {
@@ -51,9 +51,15 @@ namespace FBOLinx.Job.Jobs
             }
         }
 
-        private void OnChanged(object source, FileSystemEventArgs e) {
-            // Specify what is done when a file is changed, created, or deleted.
-            Console.WriteLine($"File: {e.FullPath} {e.Name} {e.ChangeType}");
+        private void OnChanged(object source, FileSystemEventArgs e)
+        {
+            using var logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File(_config["AirportWatchJobLog"])
+                .CreateLogger();
+
+            logger.Information($"File: {e.FullPath} {e.Name} {e.ChangeType}");
+
             if (_lastWatchedFile != e.Name)
             {
                 _lastWatchedFileRecordIndex = 0;
@@ -83,12 +89,13 @@ namespace FBOLinx.Job.Jobs
                                 var row = csv.GetRecord<AirportWatchDataType>();
                                 if (!string.IsNullOrEmpty(row.AircraftHexCode) && !string.IsNullOrEmpty(row.AtcFlightNumber))
                                 {
+                                    logger.Information($"Line-{rowIndex}: Parse Success!");
                                     data.Add(row);
                                 }
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                logger.Error(ex, $"Line-{rowIndex}: Parse Failed!");
                             }
 
                             rowIndex++;
@@ -131,10 +138,11 @@ namespace FBOLinx.Job.Jobs
                 try
                 {
                     _apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
+                    logger.Information("Fbolinx api call succeed!");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    logger.Error(ex, $"Failed to call Fbolinx api!");
                 }
             }
         }
