@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,6 +7,16 @@ namespace FBOLinx.DB.Models
 {
     public partial class AirportWatchHistoricalData
     {
+        public enum AircraftStatusType : short
+        {
+            [Description("Landing")]
+            Landing = 0,
+            [Description("Takeoff")]
+            Takeoff = 1,
+            [Description("Parking")]
+            Parking = 2,
+        }
+
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
@@ -29,6 +40,7 @@ namespace FBOLinx.DB.Models
         public string AircraftTypeCode { get; set; }
         public int? GpsAltitude { get; set; }
         public bool? IsAircraftOnGround { get; set; }
+        public AircraftStatusType AircraftStatus { get; set; }
 
         public static AirportWatchHistoricalData ConvertFromAirportWatchLiveData(AirportWatchLiveData entity)
         {
@@ -49,6 +61,7 @@ namespace FBOLinx.DB.Models
                 AircraftTypeCode = entity.AircraftTypeCode,
                 GpsAltitude = entity.GpsAltitude,
                 IsAircraftOnGround = entity.IsAircraftOnGround,
+                AircraftStatus = entity.IsAircraftOnGround == true ? AircraftStatusType.Landing : AircraftStatusType.Takeoff,
             };
         }
     }

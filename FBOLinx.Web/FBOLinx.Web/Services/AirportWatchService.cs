@@ -84,6 +84,8 @@ namespace FBOLinx.Web.Services
                     record.Latitude == lastUpdatedRecord.Latitude)
                 {
                     var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
+                    airportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
+
                     _context.AirportWatchHistoricalData.Add(airportWatchHistoricalData);
                 }
             }

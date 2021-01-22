@@ -15,6 +15,7 @@ CREATE TABLE [dbo].[AirportWatchHistoricalData](
 	[AircraftTypeCode] [varchar](3) NULL,
 	[GpsAltitude] [int] NULL,
 	[IsAircraftOnGround] [bit] NULL,
+	[AircraftStatus] [smallint] NULL,
  CONSTRAINT [PK_AirportWatchHistoricalData] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC
