@@ -147,11 +147,15 @@ namespace FBOLinx.Web.Services
                 var priceDate = new DateTime();
                 if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Retail"))
                 {
-                    priceDate = (await _context.Fboprices.LastOrDefaultAsync(f => f.Fboid == _DistributePricingRequest.FboId && f.Product == "JetA Retail")).EffectiveTo.GetValueOrDefault();
+                    var date = await _context.Fboprices.Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Retail").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefaultAsync();
+
+                    priceDate = date.GetValueOrDefault();
                 }
                 else if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Cost"))
                 {
-                    priceDate = (await _context.Fboprices.LastOrDefaultAsync(f => f.Fboid == _DistributePricingRequest.FboId && f.Product == "JetA Cost")).EffectiveTo.GetValueOrDefault();
+                    var date = await _context.Fboprices.Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Cost").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefaultAsync();
+
+                    priceDate = date.GetValueOrDefault();
                 }
 
                 if (priceDate != null)
