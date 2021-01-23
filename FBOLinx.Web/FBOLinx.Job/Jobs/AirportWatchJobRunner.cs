@@ -1,15 +1,15 @@
-﻿using CsvHelper;
-using FBOLinx.DB.Models;
+﻿using FBOLinx.DB.Models;
 using FBOLinx.Job.Base;
 using FBOLinx.Job.Types;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Permissions;
+using System.Text;
+using TinyCsvParser;
 
 namespace FBOLinx.Job.Jobs
 {
@@ -60,79 +60,9 @@ namespace FBOLinx.Job.Jobs
 
             logger.Information($"File: {e.FullPath} {e.Name} {e.ChangeType}");
 
-            if (_lastWatchedFile != e.Name)
-            {
-                _lastWatchedFileRecordIndex = 0;
-            }
+            List<AirportWatchDataType> data = GetCSVRecords(e.FullPath, e.Name);
+            List<AirportWatchLiveData> airportWatchData = ConvertToDBModel(data);
 
-            var data = new List<AirportWatchDataType>();
-
-            while (true)
-            {
-                try
-                {
-                    using var reader = new StreamReader(e.FullPath);
-                    using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-                    csv.Configuration.HasHeaderRecord = false;
-                    int rowIndex = 0;
-
-                    while (csv.Read())
-                    {
-                        if (rowIndex < _lastWatchedFileRecordIndex)
-                        {
-                            rowIndex++;
-                        }
-                        else
-                        {
-                            try
-                            {
-                                var row = csv.GetRecord<AirportWatchDataType>();
-                                if (!string.IsNullOrEmpty(row.AircraftHexCode) && !string.IsNullOrEmpty(row.AtcFlightNumber))
-                                {
-                                    logger.Information($"Line-{rowIndex}: Parse Success!");
-                                    data.Add(row);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                logger.Error(ex, $"Line-{rowIndex}: Parse Failed!");
-                            }
-
-                            rowIndex++;
-                            _lastWatchedFileRecordIndex++;
-                        }
-                    }
-                    _lastWatchedFile = e.Name;
-                    break;
-                }
-                catch {}
-            }
-
-            var airportWatchData = data
-                .Select(row => new AirportWatchLiveData
-                {
-                    BoxTransmissionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.BoxTransmissionDateTimeUtc).DateTime,
-                    AircraftHexCode = row.AircraftHexCode,
-                    AtcFlightNumber = row.AtcFlightNumber,
-                    AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                    GroundSpeedKts = row.GroundSpeedKts,
-                    TrackingDegree = row.TrackingDegree,
-                    Latitude = row.Latitude,
-                    Longitude = row.Longitude,
-                    VerticalSpeedKts = row.VerticalSpeedKts,
-                    TransponderCode = row.TransponderCode,
-                    BoxName = row.BoxName,
-                    AircraftPositionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.AircraftPositionDateTimeUtc).DateTime,
-                    AircraftTypeCode = row.AircraftTypeCode,
-                    GpsAltitude = row.GpsAltitude,
-                    IsAircraftOnGround = row.IsAircraftOnGround,
-                })
-                .OrderByDescending(row => row.BoxTransmissionDateTimeUtc)
-                .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
-                .Select(grouped => grouped.First())
-                .ToList();
-
-             
             if (airportWatchData.Count > 0)
             {
                 try
@@ -145,6 +75,170 @@ namespace FBOLinx.Job.Jobs
                     logger.Error(ex, $"Failed to call Fbolinx api!");
                 }
             }
+        }
+    
+        private List<AirportWatchDataType> GetCSVRecords(string filePath, string fileName)
+        {
+            if (_lastWatchedFile != fileName)
+            {
+                _lastWatchedFileRecordIndex = 0;
+            }
+
+            var data = new List<AirportWatchDataType>();
+
+            while (true)
+            {
+                try
+                {
+                    CsvParserOptions csvParserOptions = new CsvParserOptions(false, ',');
+                    CsvAirportWatchDataTypeMapping csvMapper = new CsvAirportWatchDataTypeMapping();
+                    CsvParser<AirportWatchDataType> csvParser = new CsvParser<AirportWatchDataType>(csvParserOptions, csvMapper);
+
+                    var records = csvParser
+                        .ReadFromFile(filePath, Encoding.ASCII);
+
+                    var recordsCount = records.Count();
+
+                    data = records.Select(r => r.Result).Skip(_lastWatchedFileRecordIndex).ToList();
+
+                    _lastWatchedFileRecordIndex = recordsCount;
+                    _lastWatchedFile = fileName;
+                    break;
+                }
+                catch { }
+            }
+
+            return data;
+        }
+    
+        private List<AirportWatchLiveData> ConvertToDBModel(List<AirportWatchDataType> data)
+        {
+            List<AirportWatchLiveData> airportWatchData = new List<AirportWatchLiveData>();
+
+            foreach (var record in data)
+            {
+                var airportWatchRow = new AirportWatchLiveData { };
+
+                if (string.IsNullOrEmpty(record.AircraftHexCode) ||
+                    string.IsNullOrEmpty(record.AtcFlightNumber))
+                {
+                    continue;
+                }
+                airportWatchRow.AircraftHexCode = record.AircraftHexCode;
+                airportWatchRow.AtcFlightNumber = record.AtcFlightNumber;
+                airportWatchRow.BoxName = record.BoxName;
+                airportWatchRow.AircraftTypeCode = record.AircraftTypeCode;
+
+                if (!int.TryParse(record.BoxTransmissionDateTimeUtc, out int BoxTransmissionDateTimeUtc))
+                {
+                    continue;
+                }
+                airportWatchRow.BoxTransmissionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(BoxTransmissionDateTimeUtc).DateTime;
+
+                if (!int.TryParse(record.AircraftPositionDateTimeUtc, out int AircraftPositionDateTimeUtc))
+                {
+                    continue;
+                }
+                airportWatchRow.AircraftPositionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(AircraftPositionDateTimeUtc).DateTime;
+
+                if (!string.IsNullOrEmpty(record.AltitudeInStandardPressure))
+                {
+                    if (!int.TryParse(record.AltitudeInStandardPressure, out int AltitudeInStandardPressure))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.AltitudeInStandardPressure = AltitudeInStandardPressure;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(record.GroundSpeedKts))
+                {
+                    if (!int.TryParse(record.GroundSpeedKts, out int GroundSpeedKts))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.GroundSpeedKts = GroundSpeedKts;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(record.TrackingDegree))
+                {
+                    if (!double.TryParse(record.TrackingDegree, out double TrackingDegree))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.TrackingDegree = TrackingDegree;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(record.Latitude) || !double.TryParse(record.Latitude, out double Latitude))
+                {
+                    continue;
+                }
+                airportWatchRow.Latitude = Latitude;
+
+                if (string.IsNullOrEmpty(record.Longitude) || !double.TryParse(record.Longitude, out double Longitude))
+                {
+                    continue;
+                }
+                airportWatchRow.Longitude = Longitude;
+
+                if (!string.IsNullOrEmpty(record.VerticalSpeedKts))
+                {
+                    if (!int.TryParse(record.VerticalSpeedKts, out int VerticalSpeedKts))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.VerticalSpeedKts = VerticalSpeedKts;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(record.TransponderCode))
+                {
+                    if (!int.TryParse(record.TransponderCode, out int TransponderCode))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.TransponderCode = TransponderCode;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(record.GpsAltitude))
+                {
+                    if (!int.TryParse(record.GpsAltitude, out int GpsAltitude))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.GpsAltitude = GpsAltitude;
+                    }
+                }
+
+                if (record.IsAircraftOnGround != "0" && record.IsAircraftOnGround != "1")
+                {
+                    continue;
+                }
+                airportWatchRow.IsAircraftOnGround = record.IsAircraftOnGround == "1" ? true : false;
+
+                airportWatchData.Add(airportWatchRow);
+            }
+
+            return airportWatchData
+                .OrderByDescending(row => row.BoxTransmissionDateTimeUtc)
+                .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
+                .Select(grouped => grouped.First())
+                .ToList();
         }
     }
 }

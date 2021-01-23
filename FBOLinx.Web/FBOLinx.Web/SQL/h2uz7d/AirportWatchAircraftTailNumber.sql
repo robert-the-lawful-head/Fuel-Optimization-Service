@@ -1,7 +1,7 @@
 CREATE TABLE [dbo].[AirportWatchAircraftTailNumber](
 	[OID] [int] IDENTITY(1,1) NOT NULL,
 	[AircraftHexCode] [varchar](10) NOT NULL,
-	[AtcFlightNumber] [varchar](20) NULL,
+	[AtcFlightNumber] [varchar](20) NOT NULL,
  CONSTRAINT [PK_AirportWatchAircraftTailNumber] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC
