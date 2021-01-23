@@ -5,7 +5,12 @@
         <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
 
-    <button (click)="mergeGroups()" *ngIf="selectedRows.length > 1" color="warn" mat-flat-button>
+    <button
+        (click)="mergeGroups()"
+        color="warn"
+        mat-flat-button
+        [disabled]="selectedRows.length < 2"
+    >
         <mat-icon>merge_type</mat-icon>
         Merge Groups
     </button>
