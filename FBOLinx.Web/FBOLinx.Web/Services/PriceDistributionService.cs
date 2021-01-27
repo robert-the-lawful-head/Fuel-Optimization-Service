@@ -168,11 +168,16 @@ namespace FBOLinx.Web.Services
 
                 var imageStream = new MemoryStream(priceBreakdownImage);
 
+                var fbo = _context.Fbos.FirstOrDefault(s => s.Oid == _DistributePricingRequest.FboId);
+                var fboIcao = _context.Fboairports.FirstOrDefault(s => s.Fboid == fbo.Oid).Icao;
+
                 //Convert to a SendGrid message and use their API to send it
                 Services.MailService mailService = new MailService(_MailSettings);
 
                 var sendGridMessageWithTemplate = new SendGridMessage();
-                sendGridMessageWithTemplate.From = new EmailAddress("donotreply@fbolinx.com");
+                sendGridMessageWithTemplate.From = new EmailAddress(fbo.SenderAddress + "@fbolinx.com");
+                if (fbo.ReplyTo != null && fbo.ReplyTo != "")
+                    sendGridMessageWithTemplate.ReplyTo = new EmailAddress(fbo.ReplyTo);
                 Personalization personalization = new Personalization();
 
                 personalization.Tos = new System.Collections.Generic.List<EmailAddress>();
@@ -190,9 +195,6 @@ namespace FBOLinx.Web.Services
 
                 sendGridMessageWithTemplate.Personalizations = new List<Personalization>();
                 sendGridMessageWithTemplate.Personalizations.Add(personalization);
-
-                var fbo = _context.Fbos.FirstOrDefault(s => s.Oid == _DistributePricingRequest.FboId);
-                var fboIcao = _context.Fboairports.FirstOrDefault(s => s.Fboid == fbo.Oid).Icao;
 
                 _DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
                 var dynamicTemplateData = new TemplateData
