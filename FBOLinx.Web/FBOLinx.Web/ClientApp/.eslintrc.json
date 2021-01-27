@@ -21,21 +21,13 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        "max-len": "off",
-        "@typescript-eslint/naming-convention": [
-          "off",
+        "max-len": [
+          "error",
           {
-            "selector": "default",
-            "format": null
+            "ignorePattern": "^import [^,]+ from |^export | implements ",
+            "code": 140
           }
-        ],
-        "@angular-eslint/no-host-metadata-property": "off",
-        "@angular-eslint/component-selector": "off",
-        "no-underscore-dangle": "off",
-        "@angular-eslint/directive-selector": "off",
-        "@typescript-eslint/member-ordering": "off",
-        "no-shadow": "off",
-        "guard-for-in": "off"
+        ]
       }
     },
     {
