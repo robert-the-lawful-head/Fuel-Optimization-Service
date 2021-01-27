@@ -63,24 +63,22 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div
-                            *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword != data.confirmPassword"
-                            class="text-danger">
+                        <div *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword != data.confirmPassword"
+                             class="text-danger">
                             Passwords must match
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 mt-2 text-center">
-                            <button
-                                [disabled]="!data.confirmPassword ||
+                            <button [disabled]="!data.confirmPassword ||
                                             !data.newPassword ||
                                             data.confirmPassword !== data.newPassword ||
                                             userLoginEmail.errors?.email"
-                                [mat-dialog-close]="data"
-                                class="mr-1"
-                                color="accent"
-                                mat-raised-button
-                            >Save
+                                    [mat-dialog-close]="data"
+                                    class="mr-1"
+                                    color="accent"
+                                    mat-raised-button>
+                                Save
                             </button>
                             <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
                         </div>
@@ -97,22 +95,50 @@
                                    placeholder="FuelDesk Email"
                                    required>
                         </mat-form-field>
-                        <button
-                            [disabled]="!systemContactsForm.valid"
-                            class="ml-3"
-                            color="accent"
-                            mat-raised-button
-                            type="submit"
-                        >
+                        <button [disabled]="!systemContactsForm.valid"
+                                class="ml-3"
+                                color="accent"
+                                mat-raised-button
+                                type="submit">
                             Save Email
                         </button>
                     </div>
                     <!--Contacts Grid-->
                     <div *ngIf="contactsData">
-                        <app-systemcontacts-grid
-                            (contactDeleted)="contactDeleted($event)"
-                            [contactsData]="contactsData"
-                        ></app-systemcontacts-grid>
+                        <app-systemcontacts-grid (contactDeleted)="contactDeleted($event)"
+                                                 [contactsData]="contactsData"></app-systemcontacts-grid>
+                    </div>
+                </form>
+            </mat-tab>
+
+            <mat-tab label="Email Distribution">
+                <form (ngSubmit)="onSaveEmailDistribution()" [formGroup]="emailDistributionForm">
+                    <div class="mt-4 mb-2 pl-4">
+                        <mat-form-field style="max-width: 240px;">
+                            <input formControlName="senderAddress"
+                                   matInput
+                                   placeholder="Sender Address*"
+                                   matTooltip="Your distribution emails will come from this address"
+                                   matTooltipPosition="after" />
+                        </mat-form-field> @FBOLinx.com
+                        <div>
+                            <mat-form-field style="max-width: 240px;">
+                                <input formControlName="replyTo"
+                                       matInput
+                                       placeholder="ReplyTo*"
+                                       matTooltip="For distribution emails, customer replies will default to this address"
+                                       matTooltipPosition="after" />
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <button [disabled]="!emailDistributionForm.valid"
+                                    class="ml-3"
+                                    color="accent"
+                                    mat-raised-button
+                                    type="submit">
+                                Save Emails
+                            </button>
+                        </div>
                     </div>
                 </form>
             </mat-tab>
