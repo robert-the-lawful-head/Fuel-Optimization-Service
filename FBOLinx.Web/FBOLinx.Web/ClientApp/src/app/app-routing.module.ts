@@ -26,6 +26,7 @@ import { AnalyticsHomeComponent } from './pages/analytics/analytics-home/analyti
 import { UsersEditComponent } from './pages/users/users-edit/users-edit.component';
 import { UsersHomeComponent } from './pages/users/users-home/users-home.component';
 import { GroupAnalyticsHomeComponent } from './pages/group-analytics/group-analytics-home/group-analytics-home.component';
+import { FlightWatchMapComponent } from './pages/flight-watch/flight-watch-map/flight-watch-map.component';
 
 // Guards
 import { AuthGuard } from './guards';
@@ -140,6 +141,14 @@ const defaultRoutes: Routes = [{
   {
     path: 'users/:id',
     component: UsersEditComponent,
+    canActivate: [AuthGuard],
+    data: {
+      expectedRoles: [1, 2, 3],
+    },
+  },
+  {
+    path: 'flight-watch',
+    component: FlightWatchMapComponent,
     canActivate: [AuthGuard],
     data: {
       expectedRoles: [1, 2, 3],
