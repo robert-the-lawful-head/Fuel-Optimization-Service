@@ -11,12 +11,13 @@
         (mapReady)="mapReady()"
     >
         <agm-marker-cluster imagePath="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m">
-            <agm-marker
-                *ngFor="let airportWatch of airportWatchData"
-                [latitude]="airportWatch.latitude"
-                [longitude]="airportWatch.longitude"
-                [iconUrl]="markerImg"
-            ></agm-marker>
+            <ng-container *ngFor="let airportWatchId of airportWatchData">
+                <agm-marker
+                    [latitude]="airportWatchMap[airportWatchId].latitude"
+                    [longitude]="airportWatchMap[airportWatchId].longitude"
+                    [iconUrl]="markerImg"
+                ></agm-marker>
+            </ng-container>
         </agm-marker-cluster>
     </agm-map>
 </div>

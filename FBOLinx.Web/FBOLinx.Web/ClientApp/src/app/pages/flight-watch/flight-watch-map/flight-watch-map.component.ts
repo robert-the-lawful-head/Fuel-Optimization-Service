@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
+import { keyBy, keys } from 'lodash';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
@@ -32,7 +33,9 @@ export class FlightWatchMapComponent implements OnInit, OnDestroy {
 
     mapInitialized = false;
     loading = false;
-    airportWatchData: FlightWatch[] = [];
+    airportWatchMap: {
+        [oid: number]: FlightWatch;
+    };
 
     mapLoadSubscription: Subscription;
 
@@ -53,16 +56,22 @@ export class FlightWatchMapComponent implements OnInit, OnDestroy {
         }
     }
 
+    get airportWatchData() {
+        return keys(this.airportWatchMap);
+    }
+
     loadAirportWatchData() {
         if (!this.loading) {
             this.loading = true;
             this.airportWatchService.getAll()
                 .subscribe((data: FlightWatch[]) => {
-                    this.airportWatchData.push(...data.slice(this.airportWatchData.length));
                     if (!this.lat || !this.lng) {
-                        this.lat = this.airportWatchData[data.length - 1]?.latitude || 0;
-                        this.lng = this.airportWatchData[data.length - 1]?.longitude || 0;
+                        this.lat = data[data.length - 1]?.latitude || 0;
+                        this.lng = data[data.length - 1]?.longitude || 0;
                     }
+
+                    this.airportWatchMap = keyBy(data, row => row.oid);
+
                     this.loading = false;
                 });
         }
