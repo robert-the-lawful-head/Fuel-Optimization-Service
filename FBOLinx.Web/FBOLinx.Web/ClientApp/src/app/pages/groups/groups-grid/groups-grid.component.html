@@ -1,52 +1,112 @@
-<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
-
 <div>
-
-    <mat-form-field>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Group Name">
+    <mat-form-field class="filter">
+        <input (keyup)="applyFilter($event.target.value)" [value]="searchValue" matInput
+               placeholder="Search by Group, FBO, User, ...">
         <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
 
-    <table mat-table [dataSource]="groupsDataSource" class="col-md-12" matSort matSortActive="group" matSortDirection="asc">
-        <ng-container matColumnDef="group">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Group</th>
-            <td mat-cell *matCellDef="let group">{{group.groupName}}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="active">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-            <td mat-cell *matCellDef="let group">{{group.active ? 'Active' : 'Inactive'}}</td>
-        </ng-container>
-
-        <!--<ng-container matColumnDef="edit">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let group">
-                <div class="pull-right">
-                    <button ni-button size="small" beforeIcon="fa fa-edit" (click)="editRecord(group)">Edit</button>
-                </div>
-            </td>
-        </ng-container>-->
-
-
-        <ng-container matColumnDef="delete">
-            <th mat-header-cell *matHeaderCellDef>
-                <div class="pull-right">
-                    <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newRecord()">Add New</button>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let group">
-                <div class="pull-right">
-                    <button ni-button [view]="'error'" size="small" beforeIcon="fa fa-trash" (click)="deleteRecord(group)">Delete</button>
-                </div>
-            </td>
-        </ng-container>
-
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editRecord(row,$event)"></tr>
-    </table>
+    <button
+        (click)="mergeGroups()"
+        color="warn"
+        mat-flat-button
+        [disabled]="selectedRows.length < 2"
+    >
+        <mat-icon>merge_type</mat-icon>
+        Merge Groups
+    </button>
 </div>
 
-<div>
-    <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
-</div>
+<ejs-grid
+    #grid
+    (rowDeselected)="rowDeselected()"
+    (rowSelected)="rowSelected($event)"
+    [allowPaging]='true'
+    [childGrid]='childGrid'
+    [dataSource]='groupDataSource'
+    [pageSettings]='pageSettings'
+    [selectionSettings]='selectionOptions'
+>
+    <e-columns>
+        <e-column type='checkbox' width='50'></e-column>
+        <e-column field='groupName' headerText='Group'></e-column>
+        <e-column>
+            <ng-template #template let-data>
+                <span [ngClass]="{'good': allChildFbosPricingLive(data.index)}" class="status">
+                    {{fbosPricingExpired(data.index)}}
+                </span>
+            </ng-template>
+        </e-column>
+        <e-column>
+            <ng-template #template let-data>
+                <span [ngClass]="{'good': data.needAttentionCustomers == 0 }" class="status">
+                    {{data.needAttentionCustomers}} Need Attentions
+                </span>
+            </ng-template>
+        </e-column>
+        <e-column field='lastLogin' headerText='Last Login Date'>
+            <ng-template #template let-data>
+                {{data.lastLogin | date:'medium'}}
+            </ng-template>
+        </e-column>
+        <e-column field='active' headerText='Active'></e-column>
+        <e-column width=200>
+            <ng-template #headerTemplate let-data>
+                <button (click)="addNewGroupOrFbo()" [view]="'accent'" beforeIcon="fa fa-plus" ni-button>Add New
+                </button>
+            </ng-template>
+            <ng-template #template let-data>
+                <button [matMenuTriggerFor]="menu" aria-label="Group Actions" clickStopPropagation mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button (click)="manageGroup(data)" clickStopPropagation mat-menu-item>
+                        <mat-icon>business_center</mat-icon>
+                        <span>Manage</span>
+                    </button>
+                    <button (click)="addNewFbo(data)" clickStopPropagation mat-menu-item>
+                        <mat-icon>add</mat-icon>
+                        <span>Add FBO</span>
+                    </button>
+                    <button (click)="deleteGroup(data)" clickStopPropagation mat-menu-item>
+                        <mat-icon>delete_forever</mat-icon>
+                        <span>Delete Group</span>
+                    </button>
+                    <button [disabled]="!groupFbos(data.index).length" [matMenuTriggerFor]="fbosMenu"
+                            clickStopPropagation
+                            mat-menu-item>
+                        <span>Delete FBO</span>
+                    </button>
+                </mat-menu>
+                <mat-menu #fbosMenu="matMenu">
+                    <button (click)="deleteFbo(fbo)" *ngFor="let fbo of groupFbos(data.index)" clickStopPropagation
+                            mat-menu-item>
+                        <mat-icon>delete_forever</mat-icon>
+                        <span>{{fbo.fbo}}</span>
+                    </button>
+                </mat-menu>
+            </ng-template>
+        </e-column>
+    </e-columns>
+</ejs-grid>
+
+<ng-template #pricingExpiredTemplate let-data>
+    <span [ngClass]="{'good': !data.pricingExpired }" class="status">
+        {{data.pricingExpired ? 'Expired' : 'Pricing Live'}}
+    </span>
+</ng-template>
+
+<ng-template #fboManageTemplate let-data>
+    <button (click)="manageFBO(data)" [view]="'warning'" beforeIcon="fa fa-briefcase" clickStopPropagation ni-button
+            size="small">Manage
+    </button>
+</ng-template>
+
+<ng-template #needAttentionTemplate let-data>
+    <span [ngClass]="{'good': data.needAttentionCustomers == 0 }" class="status">
+        {{data.needAttentionCustomers}} Need Attentions
+    </span>
+</ng-template>
+
+<ng-template #lastLoginTemplate let-data>
+    {{data.lastLogin | date:'medium'}}
+</ng-template>

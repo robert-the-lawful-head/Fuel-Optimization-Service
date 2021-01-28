@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Linq" Version="4.3.0" />
+      <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Fuelerlinx.SDK\Fuelerlinx.SDK.csproj" />
+      <ProjectReference Include="..\FBOLinx.Core\FBOLinx.Core.csproj" />
+      <ProjectReference Include="..\FBOLinx.DB\FBOLinx.DB.csproj" />
+    </ItemGroup>
+
+</Project>

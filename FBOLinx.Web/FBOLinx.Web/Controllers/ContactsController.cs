@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -50,17 +52,12 @@ namespace FBOLinx.Web.Controllers
         }
 
         // PUT: api/Contacts/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutContacts([FromRoute] int id, [FromBody] Contacts contacts)
+        [HttpPut]
+        public async Task<IActionResult> PutContacts([FromBody] Contacts contacts)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (id != contacts.Oid)
-            {
-                return BadRequest();
             }
 
             _context.Entry(contacts).State = EntityState.Modified;
@@ -71,14 +68,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ContactsExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();

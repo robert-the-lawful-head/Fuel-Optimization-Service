@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
+using FBOLinx.Web.ViewModels;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -44,16 +48,16 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/CustomCustomerTypes/5
         [HttpGet("fbo/{fboId}/customer/{customerId}")]
-        public async Task<ActionResult<List<CustomCustomerTypes>>> GetCustomCustomerTypesForCustomer([FromRoute] int fboId, [FromRoute] int customerId)
+        public async Task<IActionResult> GetCustomCustomerTypesForCustomer([FromRoute] int fboId, [FromRoute] int customerId)
         {
-            var customCustomerTypes = await _context.CustomCustomerTypes.Where((x => x.CustomerId == customerId && x.Fboid == fboId)).ToListAsync();
+            var customCustomerTypes = await _context.CustomCustomerTypes.FirstOrDefaultAsync((x => x.CustomerId == customerId && x.Fboid == fboId));
 
-            if (customCustomerTypes != null && customCustomerTypes.Count > 0)
-                return customCustomerTypes;
+            if (customCustomerTypes != null)
+                return Ok(customCustomerTypes);
 
             //If no previous pricing template was attached, grab the default
             var defaultPricingTemplate = await _context.PricingTemplate
-                .Where(x => x.Fboid == fboId && x.Default.GetValueOrDefault()).FirstOrDefaultAsync();
+                .Where(x => x.Fboid == fboId && x.Default.HasValue && x.Default.Value).FirstOrDefaultAsync();
             
             if (defaultPricingTemplate == null)
                 return null;
@@ -64,9 +68,24 @@ namespace FBOLinx.Web.Controllers
                 CustomerType = defaultPricingTemplate.Oid,
                 Fboid = fboId
             };
-            var defaultResult = new List<CustomCustomerTypes>();
-            defaultResult.Add(defaultCustomerType);
-            return defaultResult;
+            return Ok(defaultCustomerType);
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> PutCustomCustomerTypesForCustomer([FromBody] CustomCustomerTypeUpdateRequest request)
+        {
+            var customCustomerType = _context.CustomCustomerTypes
+                                            .FirstOrDefault((x => x.CustomerId == request.CustomerId && x.Fboid == request.FboId));
+
+            if (customCustomerType == null)
+                return NotFound();
+
+            customCustomerType.CustomerType = request.PricingTemplateId;
+            _context.CustomCustomerTypes.Update(customCustomerType);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         // PUT: api/CustomCustomerTypes/5
@@ -142,6 +161,52 @@ namespace FBOLinx.Web.Controllers
         private bool CustomCustomerTypesExists(int id)
         {
             return _context.CustomCustomerTypes.Any(e => e.Oid == id);
+        }
+
+        [HttpPost("updatedefaulttemplate")]
+        public async Task<ActionResult<PricingTemplate>> UpdateCustomCustomerTypeCollection(UpdateTemplateVM updateTemplate)
+        {
+           if(updateTemplate != null)
+            {
+                var currentDefault = await _context.PricingTemplate.FirstOrDefaultAsync(s => s.Fboid == updateTemplate.fboid && s.Oid == updateTemplate.currenttemplate);
+
+                var newDefault = await _context.PricingTemplate.FirstOrDefaultAsync(s => s.Fboid == updateTemplate.fboid && s.Oid == updateTemplate.newtemplate);
+
+                if(newDefault != null)
+                {
+                    newDefault.Default = true;
+                }
+
+                if(currentDefault != null)
+                {
+                    _context.PricingTemplate.Remove(currentDefault);
+                }
+
+                if (newDefault != null && currentDefault != null)
+                {
+                    var customers = await _context.CustomCustomerTypes
+                    .Where(c => c.Fboid.Equals(updateTemplate.fboid) && c.CustomerType.Equals(updateTemplate.currenttemplate))
+                    .Select(s => s.CustomerId)
+                    .ToListAsync();
+
+                    var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == updateTemplate.fboid).GroupId;
+                    _context.CustomerInfoByGroup.Where(s => customers.Contains(s.CustomerId) && s.GroupId == groupInfo).ToList().ForEach(s => s.PricingTemplateRemoved = true);
+
+                    var customCustomerTypes = await _context.CustomCustomerTypes
+                        .Where(c => c.Fboid.Equals(updateTemplate.fboid) && c.CustomerType.Equals(updateTemplate.currenttemplate))
+                        .ToListAsync();
+
+                    customCustomerTypes.ForEach(c => c.CustomerType = newDefault.Oid);
+                }
+                
+                _context.PricingTemplate.Update(newDefault);
+
+                await _context.SaveChangesAsync();
+
+                return newDefault;
+            }
+
+            return null;
         }
     }
 }

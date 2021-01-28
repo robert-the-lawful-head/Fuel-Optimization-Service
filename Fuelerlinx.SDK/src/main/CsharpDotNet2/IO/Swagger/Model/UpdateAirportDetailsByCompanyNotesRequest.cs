@@ -1,0 +1,44 @@
+using System;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+
+namespace IO.Swagger.Model {
+
+  /// <summary>
+  /// 
+  /// </summary>
+  [DataContract]
+  public class UpdateAirportDetailsByCompanyNotesRequest {
+    /// <summary>
+    /// Gets or Sets AirportDetailsByCompanyNotes
+    /// </summary>
+    [DataMember(Name="airportDetailsByCompanyNotes", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "airportDetailsByCompanyNotes")]
+    public AirportDetailsByCompanyNotesDTO AirportDetailsByCompanyNotes { get; set; }
+
+
+    /// <summary>
+    /// Get the string presentation of the object
+    /// </summary>
+    /// <returns>String presentation of the object</returns>
+    public override string ToString()  {
+      var sb = new StringBuilder();
+      sb.Append("class UpdateAirportDetailsByCompanyNotesRequest {\n");
+      sb.Append("  AirportDetailsByCompanyNotes: ").Append(AirportDetailsByCompanyNotes).Append("\n");
+      sb.Append("}\n");
+      return sb.ToString();
+    }
+
+    /// <summary>
+    /// Get the JSON string presentation of the object
+    /// </summary>
+    /// <returns>JSON string presentation of the object</returns>
+    public string ToJson() {
+      return JsonConvert.SerializeObject(this, Formatting.Indented);
+    }
+
+}
+}

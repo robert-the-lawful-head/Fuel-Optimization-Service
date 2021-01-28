@@ -1,340 +1,269 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { MatDialog,  MAT_DIALOG_DATA } from '@angular/material';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
-//Services
+import { combineLatest } from 'rxjs';
+import { differenceBy, forOwn } from 'lodash';
+
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+
+// Services
 import { CustomermarginsService } from '../../../services/customermargins.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 
-//Components
-import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
-import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+// Components
+import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/default-layout'
+        link: '/default-layout',
     },
     {
-        title: 'Margin Templates',
-        link: '#/default-layout/pricing-templates'
+        title: 'ITP Margin Templates',
+        link: '/default-layout/pricing-templates',
     },
     {
         title: 'Edit Margin Template',
-        link: ''
-    }
+        link: '',
+    },
 ];
 
 @Component({
     selector: 'app-pricing-templates-edit',
     templateUrl: './pricing-templates-edit.component.html',
-    styleUrls: ['./pricing-templates-edit.component.scss']
+    styleUrls: [ './pricing-templates-edit.component.scss' ],
 })
-/** pricing-templates-edit component*/
-export class PricingTemplatesEditComponent {
-
-    //Private Members
-    private _RequiresRouting: boolean = false;
-    
-    //Input/Output Bindings
-    @Output() savePricingTemplateClicked = new EventEmitter<any>();
-    @Output() cancelPricingTemplateEditclicked = new EventEmitter<any>();
-    @Input() pricingTemplate: any;
-    @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
-    @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
-
-    //Public Members
-    public focus: any = false;
-    public count: number = 0;
-    public pageTitle: string = 'Edit Margin Template';
-    public breadcrumb: any[] = BREADCRUMBS;
-    public marginTypeDataSource: Array<any> = [
+export class PricingTemplatesEditComponent implements OnInit {
+    // Input/Output Bindings
+    @Output()
+    savePricingTemplateClicked = new EventEmitter<any>();
+    @Input()
+    pricingTemplate: any;
+    @ViewChild('typeRTE')
+    rteObj: RichTextEditorComponent;
+    @ViewChild('typeEmail')
+    rteEmail: RichTextEditorComponent;
+    pricingTemplateForm: FormGroup;
+    // Members
+    pageTitle = 'Edit Margin Template';
+    breadcrumb: any[] = BREADCRUMBS;
+    marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
-        { text: 'Retail -', value: 1 }
+        { text: 'Retail -', value: 1 },
     ];
-    public isSaving: boolean = false;
-    public currentPrice: any;
-    public product: any;
+    canSave: boolean;
+    jetACost: number;
+    jetARetail: number;
+    public isSaving = false;
+    public hasSaved = false;
+    public isSaveQueued = false;
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
 
-    /** pricing-templates-edit ctor */
     constructor(
         private route: ActivatedRoute,
         private router: Router,
+        private formBuilder: FormBuilder,
         private customerMarginsService: CustomermarginsService,
         private priceTiersService: PricetiersService,
         private pricingTemplatesService: PricingtemplatesService,
-        private fbopricesService: FbopricesService,
-        private sharedService: SharedService,
-        public distributionDialog: MatDialog
+        private fboPricesService: FbopricesService,
+        private sharedService: SharedService
     ) {
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
     }
 
-    ngOnInit(): void {
-        //Check for passed in id
-        let id = this.route.snapshot.paramMap.get('id');
-        if (!id) {
-            this.loadCurrentPrice();
-            return;
-        } else {
-            this._RequiresRouting = true;
-            this.pricingTemplatesService.get({ oid: id }).subscribe((data: any) => {
-                this.pricingTemplate = data;
-                this.customerMarginsService.getCustomerMarginsByPricingTemplateId(this.pricingTemplate.oid).subscribe(
-                    (data: any) => {
-                        this.pricingTemplate.customerMargins = data;
+    get customerMarginsFormArray() {
+        return this.pricingTemplateForm.controls.customerMargins as FormArray;
+    }
 
-                        this.loadCurrentPrice();
-                    });
+    public ngOnInit(): void {
+        // Check for passed in id
+        const id = this.route.snapshot.paramMap.get('id');
+
+        combineLatest([
+            this.pricingTemplatesService.get({ oid: id }),
+            this.customerMarginsService.getCustomerMarginsByPricingTemplateId(id),
+            this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId),
+        ]).subscribe(([ pricingTemplateData, customerMarginsData, fboPricesData ]) => {
+            const jetACostRecords = (fboPricesData as any).filter(item => item.product === 'JetA Cost');
+            const jetARetailRecords = (fboPricesData as any).filter(item => item.product === 'JetA Retail');
+            if (jetACostRecords && jetACostRecords.length > 0) {
+                this.jetACost = jetACostRecords[0].price;
+            }
+            if (jetARetailRecords && jetARetailRecords.length > 0) {
+                this.jetARetail = jetARetailRecords[0].price;
+            }
+
+            this.pricingTemplate = pricingTemplateData;
+            this.pricingTemplate.customerMargins =
+                this.updateMargins(customerMarginsData, this.pricingTemplate.marginType);
+            let customerMargins: FormArray = this.formBuilder.array([]);
+            if (this.pricingTemplate.customerMargins) {
+                customerMargins = this.formBuilder.array(this.pricingTemplate.customerMargins.map(customerMargin => {
+                        if (customerMargin.amount !== undefined && customerMargin.amount !== null) {
+                            customerMargin.amount = Number(customerMargin.amount).toFixed(4);
+                        }
+                        const group = {
+                            itp: undefined,
+                        };
+                        forOwn(customerMargin,
+                            (value, key) => {
+                                group[key] = [ value ];
+                            });
+                        return this.formBuilder.group(group, { updateOn: 'blur' });
+                    })
+                );
+            }
+
+            this.pricingTemplateForm = this.formBuilder.group({
+                name: [ this.pricingTemplate.name ],
+                default: [ this.pricingTemplate.default ],
+                marginType: [ this.pricingTemplate.marginType ],
+                customerMargins,
+                notes: [ this.pricingTemplate.notes ],
+                subject: [ this.pricingTemplate.subject ],
+                email: [ this.pricingTemplate.email ]
             });
-        }
-    }
 
-    public disableToolbarNote() {
-        //this.rteObj.toolbarSettings.enable = false;
+            this.pricingTemplateForm.valueChanges.subscribe(() => {
+                this.canSave = true;
+                this.savePricingTemplate();
+            });
 
-    }
-
-    public enableToolbarNote() {
-        this.pricingTemplate.notes = this.rteObj.getText();
-        this.rteObj.toolbarSettings.enable = true;
-    }
-
-    public disableToolbarEmail() {
-        //this.rteEmail.toolbarSettings.enable = false;
-    }
-
-    public enableToolbarEmail() {
-        this.pricingTemplate.email = this.rteEmail.getText();
-        this.rteEmail.toolbarSettings.enable = true;
-    }
-
-    public onFocus() {
-        this.focus = true;
-    }
-
-    public outFocus() {
-        this.focus = false;
-        this.count = 0;
-    }
-
-
-    public onType(customerMargin, event) {
-        this.count = this.count + 1;
-        if (this.focus && this.count == 1) {
-            customerMargin.amount = event.key / 100;
-        }
-    }
-
-    public savePricingTemplate() {
-        this.isSaving = true;
-        
-        //Update the margin template first
-        this.pricingTemplatesService.update(this.pricingTemplate).subscribe((data: any) => {
-            this.saveCustomerMargins();
+            // Margin type change event
+            this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(type => {
+                const updatedMargins =
+                    this.updateMargins(this.pricingTemplateForm.value.customerMargins, type);
+                this.pricingTemplateForm.controls.customerMargins.setValue(updatedMargins,
+                    {
+                        emitEvent: false,
+                    });
+                this.savePricingTemplate();
+            });
+            this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(margins => {
+                const updatedMargins = this.updateMargins(margins, this.pricingTemplateForm.value.marginType);
+                this.pricingTemplateForm.controls.customerMargins.setValue(updatedMargins,
+                    {
+                        emitEvent: false,
+                    });
+                this.savePricingTemplate();
+            });
         });
     }
-    
 
-    public cancelPricingTemplateEdit() {
-        if (this._RequiresRouting)
-            this.router.navigate(['/default-layout/pricing-templates/']);
-        else
-            this.cancelPricingTemplateEditclicked.emit();
+    public savePricingTemplate(): void {
+        const self = this;
+        if (this.isSaving) {
+            // Save already in queue - no need to double-up the queue
+            if (this.isSaveQueued) {
+                return;
+            }
+            this.isSaveQueued = true;
+            setTimeout(() => {
+                self.savePricingTemplate();
+            }, 250);
+            return;
+        }
+
+        this.isSaveQueued = false;
+        this.isSaving = true;
+        this.hasSaved = false;
+        const removedCustomerMargins =
+            differenceBy(this.pricingTemplate.customerMargins, this.pricingTemplateForm.value.customerMargins, 'oid');
+
+        combineLatest([
+            this.customerMarginsService.bulkRemove(removedCustomerMargins),
+            this.priceTiersService.updateFromCustomerMarginsViewModel(this.pricingTemplateForm.value.customerMargins),
+            this.pricingTemplatesService.update({
+                ...this.pricingTemplate,
+                ...this.pricingTemplateForm.value,
+            }),
+        ]).subscribe(([ bulkRemoveResponse, customerMarginsUpdateResponse, priceTemplatesResponse ]) => {
+            // this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
+            this.pricingTemplate.customerMargins = customerMarginsUpdateResponse;
+            for (let i = 0; i < this.pricingTemplateForm.value.customerMargins.length; i++) {
+                this.pricingTemplateForm.value.customerMargins[i].oid = this.pricingTemplate.customerMargins[i].oid;
+            }
+            this.isSaving = false;
+            this.hasSaved = true;
+            this.priceBreakdownPreview.performRecalculation();
+
+            this.sharedService.NotifyPricingTemplateComponent('updateComponent');
+        });
     }
 
-    public deleteCustomerMargin(customerMargin) {
-        if (customerMargin.oid == 0) {
-            this.pricingTemplate.customerMargins.splice(
-                this.pricingTemplate.customerMargins.indexOf(customerMargin),
-                1);
-        } else {
-            this.customerMarginsService.remove(customerMargin).subscribe((data: any) => {
-                this.priceTiersService.remove({ oid: customerMargin.priceTierId }).subscribe((data: any) => {
-                    this.pricingTemplate.customerMargins.splice(
-                        this.pricingTemplate.customerMargins.indexOf(customerMargin),
-                        1);
-                });
+    cancelPricingTemplateEdit() {
+        this.router.navigate([ '/default-layout/pricing-templates/' ]).then(() => {
+        });
+    }
+
+    deleteCustomerMargin(index: number) {
+        this.customerMarginsFormArray.removeAt(index);
+        if (this.customerMarginsFormArray.length) {
+            this.customerMarginsFormArray.at(this.customerMarginsFormArray.length - 1).patchValue({
+                max: 99999,
             });
         }
     }
 
-    public addCustomerMargin() {
-        let customerMargin = {
+    addCustomerMargin() {
+        const customerMargin = {
             oid: 0,
-            templatesId: this.pricingTemplate.oid,
+            templateId: this.pricingTemplate.oid,
             priceTierId: 0,
             min: 1,
             max: 99999,
-            amount: 0,
+            amount: Number(0).toFixed(4),
             itp: 0,
-            allin: 0
+            allin: 0,
         };
-        if (this.pricingTemplate.customerMargins.length > 0) {
-            customerMargin.min =
-                this.pricingTemplate.customerMargins[this.pricingTemplate.customerMargins.length - 1].min + 250;
+        if (this.customerMarginsFormArray.length > 0) {
+            const lastIndex = this.customerMarginsFormArray.length - 1;
+            customerMargin.min = Math.abs(this.customerMarginsFormArray.at(lastIndex).value.min) + 250;
+            this.customerMarginsFormArray.at(lastIndex).patchValue({
+                    max: Math.abs(customerMargin.min) - 1,
+                },
+                {
+                    emitEvent: false,
+                });
         }
-        this.pricingTemplate.customerMargins.push(customerMargin);
-       
-       // this.fixCustomerMargins();
-    }
-
-    public fixCustomerMargins() {
-        for (let i in this.pricingTemplate.customerMargins) {
-            let indexNumber = Number(i);
-            if (!this.pricingTemplate.customerMargins[indexNumber].min || this.pricingTemplate.customerMargins[indexNumber].min == '') {
-                if (indexNumber == 0)
-                    this.pricingTemplate.customerMargins[indexNumber].min = 1;
-                else
-                    this.pricingTemplate.customerMargins[indexNumber].min =
-                        (this.pricingTemplate.customerMargins[indexNumber - 1].min + 1);
-            }
-
-            if (indexNumber > 0 && this.pricingTemplate.customerMargins[indexNumber].min == this.pricingTemplate.customerMargins[indexNumber - 1].min) {
-                this.pricingTemplate.customerMargins[indexNumber].min =
-                    (this.pricingTemplate.customerMargins[indexNumber - 1].min + 1);
-            }
-                
-            if (this.pricingTemplate.customerMargins.length > (indexNumber + 1) &&
-                this.pricingTemplate.customerMargins[indexNumber + 1].min > 0)
-                this.pricingTemplate.customerMargins[i].max = this.pricingTemplate.customerMargins[indexNumber + 1].min - 1;
-            else
-                this.pricingTemplate.customerMargins[i].max = 99999;
-
-            this.calculateItpForMargin(this.pricingTemplate.customerMargins[indexNumber]);
-        }
-    }
-
-    public updateCustomerMargin(margin) {
-        
-        var jetACost = this.currentPrice.filter(item => item.product == 'JetA Cost')[0].price;
-        var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
-
-        if (this.pricingTemplate.marginType == 0) {
-            if (margin.min !=null && margin.amount !=null) {
-                margin.allin = jetACost + margin.amount;
-            }
-
-        }
-        else if (this.pricingTemplate.marginType == 1) {
-            if (margin.amount !=null && margin.min !=null) {
-                margin.allin = jetARetail - margin.amount;
-                if (margin.allin) {
-                    margin.itp = margin.allin - jetACost;
-                }
-            }
-        }
-    }
-
-    public distributePricingTemplate() {
-        var pricingTemplate = this.pricingTemplate;
-        const dialogRef = this.distributionDialog.open(DistributionWizardMainComponent, {
-            data: {
-                pricingTemplate: pricingTemplate,
-                fboId: this.sharedService.currentUser.fboId,
-                groupId: this.sharedService.currentUser.groupId
-            },
-            disableClose: true
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-
-        });
-    }
-
-    public customerMarginAmountChanged(customerMargin) {
-        var indexOfMargin = this.pricingTemplate.customerMargins.indexOf(customerMargin);
-        if (indexOfMargin > 0) {
-            var previousTier = this.pricingTemplate.customerMargins[indexOfMargin - 1];
-            if ((this.pricingTemplate.marginType == 0 || this.pricingTemplate.marginType == 2) && Math.abs(previousTier.amount) < Math.abs(customerMargin.amount))
-                customerMargin.amount = previousTier.amount + .01;
-            else if (this.pricingTemplate.marginType == 1 && Math.abs(previousTier.amount) > Math.abs(customerMargin.amount))
-                customerMargin.amount = previousTier.amount - .01;
-        }
-        this.calculateItpForMargin(customerMargin);
-        this.calculateAllInForMargin(customerMargin);
-    }
-
-    public marginTypeChange() {
-        this.loadCurrentPrice();
-    }
-
-    //Private Methods
-    private saveCustomerMargins() {
-        this.pricingTemplate.customerMargins.forEach((customerMargin: any) => {
-            customerMargin.templateId = this.pricingTemplate.oid;
-        });
-
-        this.priceTiersService.updateFromCustomerMarginsViewModel(this.pricingTemplate.customerMargins).subscribe(
-            (data: any) => {
-                if (this._RequiresRouting)
-                    this.router.navigate(['/default-layout/pricing-templates/']);
-                else
-                    this.savePricingTemplateClicked.emit();
-                this.isSaving = false;
+        const group = {};
+        forOwn(customerMargin,
+            (value, key) => {
+                group[key] = [ value ];
             });
+        this.customerMarginsFormArray.push(this.formBuilder.group(group, { updateOn: 'blur' }));
     }
 
-    private loadCurrentPrice() {
-        //this.fbopricesService.getFbopricesByFboIdAndProductCurrent(this.sharedService.currentUser.fboId, this.getCurrentProductForMarginType()).subscribe((data: any) => {
-        //    this.currentPrice = data;
-        //    for (let margin of this.pricingTemplate.customerMargins) {
-        //        this.calculateItpForMargin(margin);
-        //    }
-        //});
-
-        this.fbopricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.currentPrice = data;
-            for (let margin of this.pricingTemplate.customerMargins) {
-                //this.calculateItpForMargin(margin);
-                this.updateCustomerMargin(margin);
-            }
-        });
-    }
-
-    private getCurrentProductForMarginType() {
-        if (this.pricingTemplate.marginType == 0)
-            return 'JetA Cost';
-        return 'JetA Retail';
-    }
-
-    private calculateItpForMargin(customerMargin) {
-        for (let m of this.currentPrice) {
-            if (this.pricingTemplate.marginType == 0 && this.getCurrentProductForMarginType() == m.product) {
-                customerMargin.itp = m ? m.price : 0 + Math.abs(customerMargin.amount);
-                return;
-            }
-            else if (this.pricingTemplate.marginType == 1 && this.getCurrentProductForMarginType() == m.product) {
-                customerMargin.itp = m ? m.price : 0 - Math.abs(customerMargin.amount);
-                return;
-            }
-            else if (this.pricingTemplate.marginType > 1) {
-                customerMargin.itp = Math.abs(customerMargin.amount);
-                return;
-            }
-        }
-    }
-
-    private calculateAllInForMargin(customerMargin) {
-        var jetACost = this.currentPrice.filter(item => item.product == 'JetA Cost')[0].price;
-        var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
-
-        if (this.pricingTemplate.marginType == 0) {
-            if (customerMargin.min != null && customerMargin.amount != null) {
-                customerMargin.allin = jetACost + customerMargin.amount;
+    private updateMargins(oldMargins, marginType) {
+        const margins = [ ...oldMargins ];
+        for (let i = 0; i < margins?.length; i++) {
+            if (i > 0) {
+                margins[i - 1].max = Math.abs(margins[i].min - 1);
             }
 
-        }
-        else if (this.pricingTemplate.marginType == 1) {
-            if (customerMargin.amount != null && customerMargin.min != null) {
-                customerMargin.allin = jetARetail - customerMargin.amount;
-                if (customerMargin.allin) {
-                    customerMargin.itp = customerMargin.allin - jetACost;
+            if (marginType !== 1) {
+                if (margins[i].min !== null && margins[i].amount !== null) {
+                    margins[i].allin = this.jetACost + Number(margins[i].amount);
+                }
+            } else {
+                if (margins[i].amount !== null && margins[i].min !== null) {
+                    margins[i].allin = this.jetARetail - Number(margins[i].amount);
+                    margins[i].itp = this.jetARetail;
+                    if (margins[i].allin) {
+                        margins[i].itp = margins[i].allin - this.jetACost;
+                    }
                 }
             }
+            if (margins[i].amount !== null || margins[i].amount !== '') {
+                margins[i].amount = Number(margins[i].amount).toFixed(4);
+            }
         }
+        return margins;
     }
 }

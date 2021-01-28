@@ -1,59 +1,101 @@
 <div>
-
     <div>
         <mat-form-field>
-            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search by Tail, Make, Model, etc.">
+            <input
+                (keyup)="applyFilter($event.target.value)"
+                matInput
+                placeholder="Search by Tail, Make, Model, etc."
+            />
             <span matPrefix><i class="fa fa-search"></i></span>
         </mat-form-field>
 
-        <table mat-table [dataSource]="customerAircraftsDataSource" class="col-md-12" matSort matSortActive="tailNumber" matSortDirection="asc">
+        <table
+            [dataSource]="customerAircraftsDataSource"
+            class="col-md-12"
+            mat-table
+            matSort
+            matSortActive="tailNumber"
+            matSortDirection="asc">
             <ng-container matColumnDef="tailNumber">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tail</th>
-                <td (click)="editCustomerAircraft(customerAircraft)" mat-cell *matCellDef="let customerAircraft">{{customerAircraft.tailNumber}}</td>
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Tail</th>
+                <td (click)="editCustomerAircraft(customerAircraft)" *matCellDef="let customerAircraft" mat-cell>
+                    {{ customerAircraft.tailNumber }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="aircraftType">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
-                <td mat-cell *matCellDef="let customerAircraft" (click)="editCustomerAircraft(customerAircraft)">
-                    {{customerAircraft.make}} {{customerAircraft.model}}
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Type</th>
+                <td (click)="editCustomerAircraft(customerAircraft)" *matCellDef="let customerAircraft" mat-cell>
+                    {{ customerAircraft.make }} {{ customerAircraft.model }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="aircraftSize">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Size</th>
-                <td mat-cell *matCellDef="let customerAircraft" (click)="editCustomerAircraft(customerAircraft)">
-                    {{customerAircraft.aircraftSizeDescription}}
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Size</th>
+                <td (click)="editCustomerAircraft(customerAircraft)" *matCellDef="let customerAircraft" mat-cell>
+                    {{ customerAircraft.aircraftSizeDescription }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="aircraftPricingTemplate">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Pricing</th>
-                <td mat-cell *matCellDef="let customerAircraft">
-                    <select id="pricingtemplates" name="ddlPricingTemplate" class="dropdownHeight" [(ngModel)]="customerAircraft.pricingTemplateName" (ngModelChange)="onMarginChange($event, customerAircraft);">
-                        <option *ngFor="let pricingTemplate of pricingTemplatesData" value="{{pricingTemplate.name}}">{{pricingTemplate.name}}</option>
-                    </select>
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Pricing
+                </th>
+                <td *matCellDef="let customerAircraft" mat-cell>
+                    <mat-form-field floatLabel="never">
+                        <mat-label>Company Pricing</mat-label>
+                        <mat-select
+                            (selectionChange)="
+                                onMarginChange($event, customerAircraft)
+                            "
+                            [value]="customerAircraft.pricingTemplateId"
+                        >
+                            <mat-option>None</mat-option>
+                            <mat-option
+                                *ngFor="
+                                    let pricingTemplate of pricingTemplatesData
+                                "
+                                [value]="pricingTemplate.oid"
+                            >{{ pricingTemplate.name }}</mat-option
+                            >
+                        </mat-select>
+                    </mat-form-field>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="delete">
-                <th mat-header-cell *matHeaderCellDef>
+                <th *matHeaderCellDef mat-header-cell>
                     <div class="pull-right">
-                        <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newCustomerAircraft()">Add New</button>
+                        <button (click)="newCustomerAircraft()" [view]="'accent'" beforeIcon="fa fa-plus" class="mr-3"
+                                ni-button>
+                            Add New
+                        </button>
+                        <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                            <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+                        </button>
+                        <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
+                            <button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>
+                                Import
+                            </button>
+                        </mat-menu>
                     </div>
                 </th>
-                <td mat-cell *matCellDef="let customerAircraft">
+                <td *matCellDef="let customerAircraft" mat-cell>
                     &nbsp;
                 </td>
             </ng-container>
 
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editCustomerAircraft(customerAircraft)"></tr>
+            <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
         </table>
     </div>
 
     <div>
-        <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
+        <mat-paginator
+            (page)="(pageIndex); onPageChanged($event)"
+            [length]="resultsLength"
+            [pageSizeOptions]="[10, 25, 50, 100, 200, 500]"
+            [pageSize]="500"
+        ></mat-paginator>
     </div>
-
 </div>

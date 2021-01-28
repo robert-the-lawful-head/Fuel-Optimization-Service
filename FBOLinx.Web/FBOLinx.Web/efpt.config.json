@@ -2,25 +2,28 @@
    "ContextClassName": "Dega_LocalContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
-   "DoNotCombineNamespace": false,
-   "IdReplace": false,
+   "FilterSchemas": false,
    "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": null,
    "ProjectRootNamespace": "FBOLinx.Web",
+   "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[IntegrationPartners]"
+         "Name": "[dbo].[AirportWatchHistoricalData]"
       }
    ],
    "UseDatabaseNames": false,
+   "UseDbContextSplitting": false,
    "UseFluentApiOnly": false,
    "UseHandleBars": false,
    "UseInflector": false,
    "UseLegacyPluralizer": false,
-   "UseSpatial": false
+   "UseNodaTime": false,
+   "UseSpatial": false,
+   "UseStoredProcedures": false
 }

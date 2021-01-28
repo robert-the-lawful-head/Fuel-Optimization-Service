@@ -1,79 +1,92 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 
-//Services
+import * as moment from 'moment';
+
+// Services
 import { SharedService } from '../../../layouts/shared-service';
 
-//Components
-import { StatisticsTotalOrdersComponent } from '../../../shared/components/statistics-total-orders/statistics-total-orders.component';
-import { StatisticsTotalCustomersComponent } from
-    '../../../shared/components/statistics-total-customers/statistics-total-customers.component';
-import { StatisticsTotalAircraftComponent } from
-    '../../../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
-import { StatisticsOrdersByLocationComponent } from
-    '../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
-import { AnalysisPriceOrdersChartComponent } from
-    '../../../shared/components/analysis-price-orders-chart/analysis-price-orders-chart.component';
-import { AnalysisFuelreqsTopCustomersFboComponent } from
-    '../../../shared/components/analysis-fuelreqs-top-customers-fbo/analysis-fuelreqs-top-customers-fbo.component';
-import { AnalysisFuelreqsByAircraftSizeComponent } from
-    '../../../shared/components/analysis-fuelreqs-by-aircraft-size/analysis-fuelreqs-by-aircraft-size.component';
+import * as SharedEvents from '../../../models/sharedEvents';
 
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '#/default-layout'
-    },
-    {
-        title: 'Dashboard',
-        link: '#/default-layout/dashboard-fbo'
-    }
-];
+// Components
+import { StatisticsTotalOrdersComponent } from '../../../shared/components/statistics-total-orders/statistics-total-orders.component';
+import { StatisticsTotalCustomersComponent } from '../../../shared/components/statistics-total-customers/statistics-total-customers.component';
+import { StatisticsTotalAircraftComponent } from '../../../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
+import { StatisticsOrdersByLocationComponent } from '../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 
 @Component({
     selector: 'app-dashboard-fbo',
     templateUrl: './dashboard-fbo.component.html',
-    styleUrls: ['./dashboard-fbo.component.scss']
+    styleUrls: [ './dashboard-fbo.component.scss' ],
 })
-/** dashboard-fbo component*/
-export class DashboardFboComponent {
-
-    public pageTitle: string = 'Dashboard';
-    public breadcrumb: any[] = BREADCRUMBS;
-    public statisticsOptions: any = { useCard: true };
-    public dashboardSettings: any;
+export class DashboardFboComponent implements AfterViewInit, OnDestroy {
+    public breadcrumb: any[];
+    public pageTitle = 'Dashboard';
     public fboid: any;
     public groupid: any;
-    public priceUpdatedEvent: any;
     public updatedPrice: any;
+    public locationChangedSubscription: any;
+    public filterStartDate: Date;
+    public filterEndDate: Date;
+    public pastThirtyDaysStartDate: Date;
+    @ViewChild('statisticsTotalOrders')
+    private statisticsTotalOrders: StatisticsTotalOrdersComponent;
+    @ViewChild('statisticsTotalCustomers')
+    private statisticsTotalCustomers: StatisticsTotalCustomersComponent;
+    @ViewChild('statisticsTotalAircraft')
+    private statisticsTotalAircraft: StatisticsTotalAircraftComponent;
+    @ViewChild('statisticsOrdersByLocation')
+    private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
 
-    @ViewChild('statisticsTotalOrders') private statisticsTotalOrders: StatisticsTotalOrdersComponent;
-    @ViewChild('statisticsTotalCustomers') private statisticsTotalCustomers: StatisticsTotalCustomersComponent;
-    @ViewChild('statisticsTotalAircraft') private statisticsTotalAircraft: StatisticsTotalAircraftComponent;
-    @ViewChild('statisticsOrdersByLocation') private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
-    @ViewChild('analysisPriceOrdersChart') private analysisPriceOrdersChart: AnalysisPriceOrdersChartComponent;
-    @ViewChild('analysisFuelreqsTopCustomersFbo') private analysisFuelreqsTopCustomersFbo: AnalysisFuelreqsTopCustomersFboComponent;
-    @ViewChild('analysisFuelreqsByAircraftSize') private analysisFuelreqsByAircraftSize: AnalysisFuelreqsByAircraftSizeComponent;
-
-    /** dashboard-fbo ctor */
     constructor(private sharedService: SharedService) {
-        this.dashboardSettings = this.sharedService.dashboardSettings;
+        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+        this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
         this.fboid = this.sharedService.currentUser.fboId;
         this.groupid = this.sharedService.currentUser.groupId;
-        this.sharedService.emitChange(this.pageTitle);
+        this.sharedService.titleChange(this.pageTitle);
+
+        this.breadcrumb = [ {
+            title: 'Main',
+            link: '/default-layout',
+        },
+        ];
+        if (!this.isCsr) {
+            this.breadcrumb.push({
+                title: 'Dashboard',
+                link: '/default-layout/dashboard-fbo',
+            });
+        } else {
+            this.breadcrumb.push({
+                title: 'CSR Dashboard',
+                link: '/default-layout/dashboard-csr',
+            });
+        }
     }
 
-    public applyDateFilterChange() {
+    get isCsr() {
+        return this.sharedService.currentUser.role === 5;
+    }
+
+    ngAfterViewInit() {
+        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
+            (message) => {
+                if (message === SharedEvents.locationChangedEvent) {
+                    this.applyDateFilterChange();
+                }
+            }
+        );
+    }
+
+    ngOnDestroy() {
+        if (this.locationChangedSubscription) {
+            this.locationChangedSubscription.unsubscribe();
+        }
+    }
+
+    applyDateFilterChange() {
         this.statisticsTotalOrders.refreshData();
         this.statisticsTotalCustomers.refreshData();
         this.statisticsTotalAircraft.refreshData();
         this.statisticsOrdersByLocation.refreshData();
-        this.analysisPriceOrdersChart.refreshData();
-        this.analysisFuelreqsTopCustomersFbo.refreshData();
-        this.analysisFuelreqsByAircraftSize.refreshData();
-    }
-
-    public priceLiveUpdated(price: any) {
-        this.updatedPrice = price;
     }
 }

@@ -1,52 +1,25 @@
-<div class="row" style="margin-top:-12px !important">
-    <div class="col-11"><h1 mat-dialog-title style="font-size:20px !important;">Preview: {{data.name}}</h1></div>
-                 <div class="col-1 float-right"><a  (click)="closeDialog()" ><i class="fa fa-times"style="font-size:22px;font-weight:100;"></i></a> </div></div>
-<div mat-dialog-content class="mt-1 mb-4 ml-3 row">
-    <div class="row">
-        <div class="col-12 text-left">
-            <strong>Subject:</strong>&nbsp;<span [innerHTML]='data.subject'></span>
-        </div>
+<h1 mat-dialog-title>Send Preview Email</h1>
+<div mat-dialog-content>
+    <div class="mb-3">
+        Please provide your email address below.
     </div>
-    <div class="row" style="margin-top:10px;">
-        <div class="col-12 text-left" style="display:flex !important;">
-            <strong>Body:</strong>&nbsp;<span [innerHTML]='data.email'></span>
-        </div>
-    </div>
-    <div class="row" #custMargin>
-        <div class="col-12" *ngIf="customerMargins">
-            <div class="text-center font-weight-bold mt-4" style="min-width: 65%;max-width:75%">{{data.marginType == 1 ? 'Retail-' : data.marginType==0 ? 'Cost+' : 'Flat Fee'}}</div>
-            <div class="row">
-                <table class="mat-table mt-2" style="min-width: 65%;max-width:75%">
-                    <thead>
-                        <tr class="mat-header-row">
-                            <th class="text-center">Volume (gal.)</th>
-                            <th class="text-center">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let customerMargin of customerMargins; let last = last" class="mat-row mat-row-not-hover text-left">
-                            <td class="mat-cell">
-                                {{customerMargin.min}}<span *ngIf="last">+</span> <span *ngIf="!last">&nbsp;- {{customerMargin.max}}</span>
-                            </td>
-                            <td class="mat-cell text-center">
-                                ${{customerMargin.allin | number:'1.4-4'}}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="row" style="margin-top:20px;">
-        <div class="col-12 text-left" style="display:flex !important;">
-            <strong>Notes:</strong>&nbsp;<span [innerHTML]='data.notes'></span>
+    <div>
+        <mat-form-field>
+            <input #email="ngModel" [(ngModel)]="previewEmail" [email]="true" aria-label="Email" matInput
+                   placeholder="Email" type="email">
+        </mat-form-field>
+        <div *ngIf="email.errors?.email" style="color: red;">
+            Please enter a valid email address.
         </div>
     </div>
 </div>
-<div mat-dialog-actions class="row">
-    <div class="text-center float-right col-12">
-        <button ni-button [view]="'blank'" class="mr-1" style="border:1px solid #000;" (click)="editPricingTemplate(data)" *ngIf="!edit">Edit Message</button>
-        <button ni-button [view]="'success'" [mat-dialog-close]="" *ngIf="!edit">Close Preview</button>
-        <button ni-button [view]="'success'" *ngIf="edit" (click)="update()">Save</button>
-    </div>
+<div class="mt-2 text-center">
+    <button [disabled]="!previewEmail || !previewEmail.length"
+            [mat-dialog-close]="previewEmail"
+            class="mr-1"
+            color="accent"
+            mat-flat-button>
+        Send Preview Email
+    </button>
+    <button (click)="closeDialog()" mat-stroked-button>Cancel</button>
 </div>

@@ -1,28 +1,26 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 
-//Services
-import { AuthenticationService } from '../../../../services/authentication.service';
+// Services
 
-//Interfaces
+// Interfaces
 export interface ForgotPasswordDialogData {
-    username: string;
+    email: string;
 }
 
 @Component({
     selector: 'app-forgot-password-dialog',
     templateUrl: './forgot-password-dialog.component.html',
-    styleUrls: ['./forgot-password-dialog.component.scss']
+    styleUrls: [ './forgot-password-dialog.component.scss' ],
 })
-/** forgot-password-dialog component*/
 export class ForgotPasswordDialogComponent {
-    /** forgot-password-dialog ctor */
-    constructor(public dialogRef: MatDialogRef<ForgotPasswordDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: ForgotPasswordDialogData,
-        private authService: AuthenticationService    ) {
-
+    constructor(
+        public dialogRef: MatDialogRef<ForgotPasswordDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: ForgotPasswordDialogData
+    ) {
     }
 
-    //Public Methods
+    // Public Methods
     public onCancelClick(): void {
         this.dialogRef.close();
     }

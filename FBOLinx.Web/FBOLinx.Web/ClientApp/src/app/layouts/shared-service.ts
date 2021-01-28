@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-
-import { AuthenticationService } from '../services/authentication.service'
-import { User } from '../models/User';
-
-//Components
+import { BehaviorSubject, Subject } from 'rxjs';
 import * as moment from 'moment';
+
+import { AuthenticationService } from '../services/authentication.service';
+import { User } from '../models/User';
 
 export interface ActiveUser {
     fboId: number;
@@ -20,29 +18,90 @@ export class DashboardSettings {
 
 @Injectable()
 export class SharedService {
-  //Public Members
-    currentUser: User;
     dashboardSettings: DashboardSettings = new DashboardSettings();
 
-  // Observable string sources
-  private emitChangeSource = new Subject();
+    priceTemplateMessageSource = new BehaviorSubject(
+        'Update Pricing Template'
+    );
+    currentMessage = this.priceTemplateMessageSource.asObservable();
+
+    priceUpdateMessage = new BehaviorSubject('Enable button');
+    priceMessage = this.priceUpdateMessage.asObservable();
+
+    // Observable string sources
+    titleChangeSource = new Subject();
+    emitChangeSource = new Subject();
+    valueChangeSource = new Subject();
+
+    // Observable string streams
+    titleChanged$ = this.titleChangeSource.asObservable();
+    changeEmitted$ = this.emitChangeSource.asObservable();
+    valueChanged$ = this.valueChangeSource.asObservable();
 
     constructor(private authenticationService: AuthenticationService) {
-        this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-        var storedDashboardSettings = localStorage.getItem('dashboardSetings');
+        this.authenticationService.currentUser.subscribe(
+            (x) => (this.currentUser = x)
+        );
+        const storedDashboardSettings = localStorage.getItem(
+            'dashboardSetings'
+        );
         if (!storedDashboardSettings) {
-            this.dashboardSettings.filterStartDate = new Date(moment().add(-6, 'M').format('MM/DD/YYYY'));
-            this.dashboardSettings.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+            this.dashboardSettings.filterStartDate = new Date(
+                moment().add(-6, 'M').format('MM/DD/YYYY')
+            );
+            this.dashboardSettings.filterEndDate = new Date(
+                moment().format('MM/DD/YYYY')
+            );
         } else {
             this.dashboardSettings = JSON.parse(storedDashboardSettings);
         }
     }
 
-  // Observable string streams
-  changeEmitted$ = this.emitChangeSource.asObservable();
+    // Private members
+    private _currentUser: User;
 
-  // Service message commands
-  emitChange(change: string) {
-    this.emitChangeSource.next(change);
-  }
+    // Public Members
+    get currentUser(): User {
+        if (!this._currentUser.fboId && localStorage.getItem('fboId')) {
+            this._currentUser.fboId = Number(localStorage.getItem('fboId'));
+        }
+        if (!this._currentUser.managerGroupId && localStorage.getItem('managerGroupId')) {
+            this._currentUser.managerGroupId = Number(localStorage.getItem('managerGroupId'));
+        }
+        if (!this._currentUser.impersonatedRole && localStorage.getItem('impersonatedrole')) {
+            this._currentUser.impersonatedRole = Number(localStorage.getItem('impersonatedrole'));
+        }
+        const sessionGroupId = localStorage.getItem('groupId');
+        if (sessionGroupId && (!this._currentUser.groupId || this._currentUser.groupId !== Number(sessionGroupId))) {
+            this._currentUser.groupId = Number(sessionGroupId);
+        }
+        if (!this._currentUser.groupId && localStorage.getItem('groupId')) {
+            this._currentUser.groupId = Number(localStorage.getItem('groupId'));
+        }
+        if (!this._currentUser.conductorFbo && localStorage.getItem('conductorFbo')) {
+            this._currentUser.conductorFbo = Boolean(localStorage.getItem('conductorFbo'));
+        }
+        return this._currentUser;
+    }
+
+    set currentUser(user: User) {
+        this._currentUser = user;
+    }
+
+    NotifyPricingTemplateComponent(message: string) {
+        this.priceTemplateMessageSource.next(message);
+    }
+
+    titleChange(title: string) {
+        this.titleChangeSource.next(title);
+    }
+
+    // Service message commands
+    emitChange(change: string) {
+        this.emitChangeSource.next(change);
+    }
+
+    valueChange(change: any) {
+        this.valueChangeSource.next(change);
+    }
 }

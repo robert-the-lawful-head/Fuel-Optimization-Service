@@ -1,0 +1,38 @@
+<h1 mat-dialog-title>Ooops, we've hit a snag!</h1>
+<div mat-dialog-content>
+    <p>Here is a summary of your import, some of the aircrafts were not imported, please manually select the aircraft
+        model. Thanks!</p>
+    <table [dataSource]="customerAircraftsDataSource" class="mat-elevation-z8" mat-table style="width:100%;">
+        <ng-container matColumnDef="tailNumber">
+            <th *matHeaderCellDef mat-header-cell> Tail Number</th>
+            <td *matCellDef="let element" mat-cell> {{element.tailNumber}} </td>
+        </ng-container>
+        <ng-container matColumnDef="model">
+            <th *matHeaderCellDef mat-header-cell> Your Model</th>
+            <td *matCellDef="let element" mat-cell> {{element.model}} </td>
+        </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="otherOptions">
+            <th *matHeaderCellDef mat-header-cell> Available Models</th>
+            <td *matCellDef="let element" mat-cell>
+                <mat-select [(ngModel)]="element.selectedModel" placeholder="Click to expand list of models">
+                    <mat-option *ngFor="let aircraftType of element.otherOptions" [value]="aircraftType">
+                        {{aircraftType}}
+                    </mat-option>
+                </mat-select>
+            </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+</div>
+<div class="mt-2 text-center">
+    <button
+        (click)="onSaveClick()"
+        class="mr-1"
+        color="accent"
+        mat-flat-button
+    >Confirm Selection
+    </button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+</div>

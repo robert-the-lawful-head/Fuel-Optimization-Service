@@ -1,272 +1,251 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
-//Services
-import { CustomermarginsService } from '../../../services/customermargins.service';
+// Services
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 
-export interface NewPricingTemplateDialogData {
-    oid: number;
-    name: string;
-    fboId: number;
-    marginType: number;
-    subject: string;
-    email: any;
-    notes: any;
-    customerMargins: NewPricingTemplateMargin[];
-    default: boolean;
-}
-
 export interface NewPricingTemplateMargin {
-    oid: number;
-    min: number;
-    amount: number;
-    itp: number;
-    priceTierId: number;
-    max: number;
-    templatesId: number;
-    allin: number;
+    min?: number;
+    amount?: number;
+    itp?: number;
+    max?: number;
+    templatesId?: number;
+    allin?: number;
 }
 
 @Component({
     selector: 'app-pricing-templates-dialog-new-template',
     templateUrl: './pricing-templates-dialog-new-template.component.html',
-    styleUrls: ['./pricing-templates-dialog-new-template.component.scss']
+    styleUrls: [ './pricing-templates-dialog-new-template.component.scss' ],
 })
-/** pricing-templates-dialog-new-template component*/
 export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
-
-    public firstFormGroup: FormGroup;
-    public secondFormGroup: FormGroup;
-    public thirdFormGroup: FormGroup;
     @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
     @ViewChild('typeNotes') rteObj: RichTextEditorComponent;
-    public currentPrice: any[];
-    public focus: any = false;
-    public count: number = 0;
-    public title: string;
-    public isSaving: boolean;
-    public total: number = 0;
-    public marginTypeDataSource: Array<any> = [
-        { text: 'Cost +', value: 0 },
-        { text: 'Retail -', value: 1 }
+    @ViewChild('stepper') stepper: MatStepper;
+
+    form: FormGroup;
+
+    jetACost: number;
+    jetARetail: number;
+    currentPrice: any[];
+    title: string;
+    isSaving: boolean;
+    marginTypeDataSource: Array<any> = [
+        {
+            text: 'Cost +',
+            value: 0
+        },
+        {
+            text: 'Retail -',
+            value: 1
+        },
     ];
 
-    /** pricing-templates-dialog-new-template ctor */
     constructor(
-        public dialogRef: MatDialogRef<PricingTemplatesDialogNewTemplateComponent>,
-        public closeConfirmationDialog: MatDialog,
-        @Inject(MAT_DIALOG_DATA) public data: NewPricingTemplateDialogData,
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        private dialogRef: MatDialogRef<PricingTemplatesDialogNewTemplateComponent>,
+        private closeConfirmationDialog: MatDialog,
         private formBuilder: FormBuilder,
-        private customerMarginsService: CustomermarginsService,
         private priceTiersService: PricetiersService,
         private pricingTemplatesService: PricingtemplatesService,
-        private fbopricesService: FbopricesService
+        private fboPricesService: FbopricesService
     ) {
-
         this.loadCurrentPrice();
         this.title = 'New Margin Template';
 
         // Prevent modal close on outside click
-        dialogRef.disableClose = true;
-        dialogRef.backdropClick().subscribe(() => {
-            const marginName = this.firstFormGroup.get('templateName').value;
+        this.dialogRef.disableClose = true;
+        this.dialogRef.backdropClick().subscribe(() => {
+            const marginName = this.form.value.firstStep.templateName;
             if (!marginName) {
-                dialogRef.close();
+                this.dialogRef.close();
             } else {
-                const closeDialogRef = this.closeConfirmationDialog.open(CloseConfirmationComponent, {
-                    data: {
-                        customTitle: 'Discard Changes?',
-                        customText: 'You have unsaved changes. Are you sure?',
-                        ok: 'Discard',
-                        cancel: 'Cancel'
+                const closeDialogRef = this.closeConfirmationDialog.open(
+                    CloseConfirmationComponent, {
+                        data: {
+                            customTitle: 'Discard Changes?',
+                            customText: 'You have unsaved changes. Are you sure?',
+                            ok: 'Discard',
+                            cancel: 'Cancel',
+                        },
+                        autoFocus: false,
                     }
-                });
-                closeDialogRef.afterClosed().subscribe(result => {
+                );
+                closeDialogRef.afterClosed().subscribe((result) => {
                     if (result === true) {
-                        dialogRef.close();
+                        this.dialogRef.close();
                     }
                 });
             }
-        })
+        });
+    }
+
+    get customerMarginsFormArray() {
+        const secondStep = this.form.controls.secondStep as FormGroup;
+        return secondStep.controls.customerMargins as FormArray;
+    }
+
+    get marginType() {
+        return this.form.value.secondStep.marginType;
     }
 
     ngOnInit() {
-
-        this.firstFormGroup = this.formBuilder.group({
-            templateName: ['', Validators.required],
-            templateDefault: ['']
-        });
-        this.secondFormGroup = this.formBuilder.group({
-            marginType: ['', Validators.required]
-        });
-        this.thirdFormGroup = this.formBuilder.group({
-            subject: ['', Validators.required],
-            email: ['', Validators.required]
-        });
-        //Subscribe to necessary changes
-        this.secondFormGroup.get('marginType').valueChanges.subscribe(val => {
-            this.data.marginType = val;
-        });
-
-
-        this.secondFormGroup.patchValue({
-            marginType: this.data.marginType
-        });
-
-
+        this.initForm();
     }
 
-    onKey(event: KeyboardEvent) {
-        null;
-    }
-
-    public modelChanged(event) {
-        alert(event);
-    }
-
-    public disableToolbarEmail() {
-        this.rteEmail.toolbarSettings.enable = false;
-
-    }
-
-    public enableToolbarEmail() {
-        this.rteEmail.toolbarSettings.enable = true;
-    }
-
-    public marginTypeChange() {
-        this.data.customerMargins.forEach((customerMargin: any) => {
-            customerMargin.amount = 0;
-            customerMargin.itp = 0;
-            customerMargin.allin = 0;
+    initForm() {
+        this.form = this.formBuilder.group({
+            firstStep: this.formBuilder.group({
+                templateName: [ '', Validators.required ],
+                templateDefault: [ false ],
+            }),
+            secondStep: this.formBuilder.group({
+                marginType: [ 1, Validators.required ],
+                customerMargins: this.formBuilder.array([
+                    this.formBuilder.group({
+                        min: [ 1 ],
+                        max: [ 99999 ],
+                        amount: [ Number(0).toFixed(4) ],
+                        itp: [ 0 ],
+                        allin: [ 0 ],
+                    }, {
+                        updateOn: 'blur'
+                    }),
+                ]),
+            }),
+            thirdStep: this.formBuilder.group({
+                subject: [ '', Validators.required ],
+                email: [ '', Validators.required ],
+                notes: [ '', Validators.required ],
+            }),
         });
-        this.loadCurrentPrice();
+
+        const secondStep = this.form.controls.secondStep as FormGroup;
+        secondStep.valueChanges.subscribe(() => {
+            const updatedMargins = this.updateMargins(this.customerMarginsFormArray.value, this.marginType);
+            this.customerMarginsFormArray.setValue(updatedMargins, {
+                emitEvent: false,
+            });
+        });
     }
 
-    
-    public addCustomerMargin() {
-        let customerMargin = {
-            oid: 0,
-            templatesId: this.data.oid,
-            priceTierId: 0,
+    marginTypeChange() {
+        const secondStep = this.form.controls.secondStep as FormGroup;
+        secondStep.setControl('customerMargins', this.formBuilder.array([
+            this.formBuilder.group({
+                min: [ 1 ],
+                max: [ 99999 ],
+                amount: [ Number(0).toFixed(4) ],
+                itp: [ 0 ],
+                allin: [ 0 ],
+            }, {
+                updateOn: 'blur'
+            }),
+        ]));
+    }
+
+    addCustomerMargin() {
+        const customerMargin = {
             min: 1,
             max: 99999,
-            amount: 0,
+            amount: Number(0).toFixed(4),
             itp: 0,
-            allin: 0
+            allin: 0,
         };
-        if (this.data.customerMargins.length > 0) {
-            customerMargin.min =
-                this.data.customerMargins[this.data.customerMargins.length - 1].min + 250;
-        }
-        this.data.customerMargins.push(customerMargin);
-    }
-
-    public updateCustomerMargin(margin) {
-        var jetACost = this.currentPrice.filter(item => item.product == 'JetA Cost')[0].price;
-        var jetARetail = this.currentPrice.filter(item => item.product == 'JetA Retail')[0].price;
-
-        if (this.data.marginType == 0) {
-            if (margin.min && margin.amount) {
-                margin.allin = jetACost + margin.amount;
-            }
-
-        }
-        else if (this.data.marginType == 1) {
-            if (margin.amount && margin.min) {
-                margin.allin = jetARetail - margin.amount;
-                if (margin.allin) {
-                    margin.itp = margin.allin - jetACost;
-                }
-            }
-        }        
-    }
-
-    public empty(customerMargin) {
-        customerMargin.amount = 0;
-    }
-
-    public onFocus() {
-        this.focus =true;
-    }
-
-    public outFocus() {
-        this.focus = false;
-        this.count = 0;
-    }
-
-
-    public onType(customerMargin, event) {
-        this.count = this.count + 1;
-        if (this.focus && this.count == 1) {
-            customerMargin.amount = event.key/100;
-        }
-    }
-
-    public customerMarginAmountChanged(customerMargin) {
-        var indexOfMargin = this.data.customerMargins.indexOf(customerMargin);
-        if (indexOfMargin > 0) {
-            var previousTier = this.data.customerMargins[indexOfMargin - 1];
-            if ((this.data.marginType == 0 || this.data.marginType == 2) && Math.abs(previousTier.amount) < Math.abs(customerMargin.amount))
-                customerMargin.amount = previousTier.amount + .01;
-            else if (this.data.marginType == 1 && Math.abs(previousTier.amount) > Math.abs(customerMargin.amount))
-                customerMargin.amount = previousTier.amount - .01;
-        }
-
-        for (let margin of this.data.customerMargins) {
-            this.total += margin.amount;
-        }
-    }
-
-    public deleteCustomerMargin(customerMargin) {
-        if (customerMargin.oid == 0) {
-            this.data.customerMargins.splice(
-                this.data.customerMargins.indexOf(customerMargin),
-                1);
-        } else {
-            this.customerMarginsService.remove(customerMargin).subscribe((data: any) => {
-                this.priceTiersService.remove({ oid: customerMargin.priceTierId }).subscribe((data: any) => {
-                    this.data.customerMargins.splice(
-                        this.data.customerMargins.indexOf(customerMargin),
-                        1);
-                });
+        if (this.customerMarginsFormArray.length > 0) {
+            const lastIndex = this.customerMarginsFormArray.length - 1;
+            customerMargin.min = Math.abs(this.customerMarginsFormArray.at(lastIndex).value.min) + 250;
+            this.customerMarginsFormArray.at(lastIndex).patchValue({
+                max: Math.abs(customerMargin.min) - 1,
             });
         }
+
+        this.customerMarginsFormArray.push(this.formBuilder.group(customerMargin, { updateOn: 'blur' }));
     }
 
+    deleteCustomerMargin(index) {
+        this.customerMarginsFormArray.removeAt(index);
+    }
 
-    public addTemplateClicked() {
-       
+    addTemplateClicked() {
         this.isSaving = true;
 
-        this.data.name = this.firstFormGroup.get('templateName').value;
-        this.data.marginType = Number(this.secondFormGroup.get('marginType').value);
-        this.data.default = (this.firstFormGroup.get('templateDefault').value == true);
-        this.data.notes = (this.rteObj.contentModule.getEditPanel()).innerHTML;
+        const templatePayload = {
+            fboId: this.data.fboId,
+            name: this.form.value.firstStep.templateName,
+            default: this.form.value.firstStep.templateDefault,
+            marginType: this.form.value.secondStep.marginType,
+            subject: this.form.value.thirdStep.subject,
+            email: this.form.value.thirdStep.email,
+            notes: this.form.value.thirdStep.notes,
+        };
 
-        this.pricingTemplatesService.add(this.data).subscribe((savedTemplate: any) => {
-            this.data.customerMargins.forEach((customerMargin: any) => {
-                customerMargin.templateId = savedTemplate.oid;
-            });
-
-            this.priceTiersService.updateFromCustomerMarginsViewModel(this.data.customerMargins).subscribe(
-                (savedMargins: any) => {
-                    this.isSaving = false;
-                    this.dialogRef.close(this.data);
+        this.pricingTemplatesService
+            .add(templatePayload)
+            .subscribe((savedTemplate: any) => {
+                const customerMargins = [];
+                this.customerMarginsFormArray.value.forEach((customerMargin: any) => {
+                    customerMargins.push({
+                        ...customerMargin,
+                        templateId: savedTemplate.oid,
+                    });
                 });
-        });
+
+                this.priceTiersService
+                    .updateFromCustomerMarginsViewModel(
+                        customerMargins
+                    )
+                    .subscribe(() => {
+                        this.isSaving = false;
+                        this.dialogRef.close(savedTemplate);
+                    });
+            });
     }
 
-    //Private Methods
-    private loadCurrentPrice() {
-        this.fbopricesService.getFbopricesByFboIdCurrent(this.data.fboId).subscribe((data: any) => {
-            this.currentPrice = data;
-        })
+    loadCurrentPrice() {
+        this.fboPricesService
+            .getFbopricesByFboIdCurrent(this.data.fboId)
+            .subscribe((data: any) => {
+                this.jetACost = data.find(item => item.product === 'JetA Cost').price;
+                this.jetARetail = data.find(item => item.product === 'JetA Retail').price;
+            });
+    }
+
+    resetWizard() {
+        this.initForm();
+        this.stepper.reset();
+    }
+
+    private updateMargins(oldMargins, marginType) {
+        const margins = [ ...oldMargins ];
+        for (let i = 0; i < margins?.length; i++) {
+            if (i > 0) {
+                margins[i - 1].max = Math.abs(margins[i].min - 1);
+            }
+            if (marginType !== 1) {
+                if (margins[i].min !== null && margins[i].amount !== null) {
+                    margins[i].allin = this.jetACost + Number(margins[i].amount);
+                }
+            } else {
+                if (margins[i].amount !== null && margins[i].min !== null) {
+                    margins[i].allin = this.jetARetail - Number(margins[i].amount);
+                    margins[i].itp = this.jetARetail;
+                    if (margins[i].allin) {
+                        margins[i].itp = margins[i].allin - this.jetACost;
+                    }
+                }
+            }
+            if (margins[i].amount !== null || margins[i].amount !== '') {
+                margins[i].amount = Number(margins[i].amount).toFixed(4);
+            }
+        }
+        return margins;
     }
 }

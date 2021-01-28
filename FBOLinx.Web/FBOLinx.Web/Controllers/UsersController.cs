@@ -1,18 +1,23 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using FBOLinx.Web.Auth;
+﻿using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices;
+using FBOLinx.ServiceLayer.BusinessServices.Auth;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -21,40 +26,73 @@ namespace FBOLinx.Web.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private IUserService _UserService;
-        private readonly FboLinxContext _Context;
-        private readonly IHttpContextAccessor _HttpContextAccessor;
-        private IFileProvider _FileProvider;
-        private MailSettings _MailSettings;
+        private readonly IUserService _userService;
+        private readonly FboLinxContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IFileProvider _fileProvider;
+        private readonly MailSettings _MailSettings;
+        private readonly FboService _fboService;
+        private IServiceProvider _Services;
+        private EncryptionService _encryptionService;
+        private ResetPasswordService _ResetPasswordService;
 
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings)
+        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService, EncryptionService encryptionService, ResetPasswordService resetPasswordService)
         {
-            _UserService = userService;
-            _Context = context;
-            _HttpContextAccessor = httpContextAccessor;
+            _ResetPasswordService = resetPasswordService;
+            _encryptionService = encryptionService;
+            _userService = userService;
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
             _MailSettings = mailSettings.Value;
-            _FileProvider = fileProvider;
+            _fileProvider = fileProvider;
+            _Services = services;
+            _fboService = fboService;
         }
 
         [HttpGet("current")]
         public async Task<ActionResult<User>> GetCurrentUser()
         {
-            var user = await _Context.User.FindAsync(UserService.GetClaimedUserId(_HttpContextAccessor));
+            var user = await _context.User.FindAsync(UserService.GetClaimedUserId(_httpContextAccessor));
 
             return Ok(user);
         }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody]User userParam)
+        public async Task<IActionResult> AuthenticateAsync([FromBody] User userParam)
         {
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
 
-            var user = _UserService.Authenticate(userParam.Username, userParam.Password, false);
+            var user = await _userService.Authenticate(userParam.Username, userParam.Password, false);
 
             if (user == null)
+            {
                 return BadRequest(new { message = "Username or password is incorrect" });
+            }
+
+            var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
+            if (fbo != null)
+            {
+                fbo.LastLogin = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
+            try
+            {
+                var group = await _context.Group.FindAsync(user.GroupId);
+
+                if (group.IsLegacyAccount == true)
+                {
+                    await _fboService.DoLegacyGroupTransition(group.Oid);
+
+                    group.IsLegacyAccount = false;
+                    await _context.SaveChangesAsync();
+                }
+            } catch (DbUpdateConcurrencyException ex)
+            {
+                throw ex;
+            }
 
             return Ok(user);
         }
@@ -68,27 +106,27 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = await _Context.User.FindAsync(id);
+            var user = await _context.User.FindAsync(id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            var currentRole = UserService.GetClaimedRole(_HttpContextAccessor);
+            var currentRole = UserService.GetClaimedRole(_httpContextAccessor);
 
-            if (currentRole == Models.User.UserRoles.Conductor)
+            if (currentRole == DB.Models.User.UserRoles.Conductor)
                 return Ok(user);
 
-            if (UserService.GetClaimedUserId(_HttpContextAccessor) == id)
+            if (UserService.GetClaimedUserId(_httpContextAccessor) == id)
                 return Ok(user);
 
-            if (currentRole == Models.User.UserRoles.GroupAdmin &&
-                UserService.GetClaimedGroupId(_HttpContextAccessor) == user.GroupId)
+            if (currentRole == DB.Models.User.UserRoles.GroupAdmin &&
+                UserService.GetClaimedGroupId(_httpContextAccessor) == user.GroupId)
                 return Ok(user);
 
-            if (currentRole == Models.User.UserRoles.Primary &&
-                UserService.GetClaimedFboId(_HttpContextAccessor) == user.FboId)
+            if (currentRole == DB.Models.User.UserRoles.Primary &&
+                UserService.GetClaimedFboId(_httpContextAccessor) == user.FboId)
                 return Ok(user);
 
             return Unauthorized();
@@ -96,7 +134,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/users/group/5
         [HttpGet("group/{groupId}")]
-        [UserRole(new User.UserRoles[] {Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin})]
+        [UserRole(new User.UserRoles[] { DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin })]
         public async Task<IActionResult> GetUsersByGroupId([FromRoute] int groupId)
         {
             if (!ModelState.IsValid)
@@ -104,19 +142,19 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var group = await _Context.Group.FindAsync(groupId);
+            var group = await _context.Group.FindAsync(groupId);
 
             if (group != null)
-                _UserService.CreateGroupLoginIfNeeded(group);
+                _userService.CreateGroupLoginIfNeeded(group);
 
-            var users = await _Context.User.Where((x => x.GroupId == groupId && x.FboId == 0)).ToListAsync();
-            
+            var users = await _context.User.Where((x => x.GroupId == groupId && x.FboId == 0)).ToListAsync();
+
             return Ok(users);
         }
 
         // GET: api/users/fbo/5
         [HttpGet("fbo/{fboId}")]
-        [UserRole(new User.UserRoles[] { Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin, Models.User.UserRoles.Primary })]
+        [UserRole(new User.UserRoles[] { DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin, DB.Models.User.UserRoles.Primary })]
         public async Task<IActionResult> GetUsersByFboId([FromRoute] int fboId)
         {
             if (!ModelState.IsValid)
@@ -124,26 +162,26 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fbo = await _Context.Fbos.FindAsync(fboId);
+            var fbo = await _context.Fbos.FindAsync(fboId);
 
             if (fbo != null)
-                _UserService.CreateFBOLoginIfNeeded(fbo);
+                _userService.CreateFBOLoginIfNeeded(fbo);
 
-            var users = await _Context.User.Where((x => x.FboId == fboId)).ToListAsync();
+            var users = await _context.User.Where((x => x.FboId == fboId)).ToListAsync();
 
             return Ok(users);
         }
 
         // GET: api/users/roles
         [HttpGet("roles")]
-        public async Task<IActionResult> GetUserRoles()
+        public IActionResult GetUserRoles()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var roles = Utilities.Enum.GetDescriptions(typeof(Models.User.UserRoles));
+            var roles = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(User.UserRoles));
 
             return Ok(roles);
         }
@@ -162,16 +200,16 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            if (id != UserService.GetClaimedUserId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_HttpContextAccessor) != user.GroupId)
+            if (id != UserService.GetClaimedUserId(_httpContextAccessor) && UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return BadRequest(ModelState);
             }
 
-            _Context.Entry(user).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
-                await _Context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -190,7 +228,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/users
         [HttpPost]
-        [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin, Models.User.UserRoles.Primary)]
+        [UserRole(DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin, DB.Models.User.UserRoles.Primary)]
         public async Task<IActionResult> PostUser([FromBody] User user)
         {
             if (!ModelState.IsValid)
@@ -198,47 +236,84 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_HttpContextAccessor) != user.GroupId)
+            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }
 
-            _Context.User.Add(user);
-            await _Context.SaveChangesAsync();
+            _context.User.Add(user);
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUser", new { id = user.Oid }, user);
         }
 
-        // POST: api/users/resetpassword
         [AllowAnonymous]
-        [HttpPost("resetpassword")]
-        public async Task<IActionResult> PostResetPassword([FromBody] UserResetPasswordRequest request)
+        [HttpPost("request-reset-password")]
+        public async Task<IActionResult> RequestResetPassword([FromBody] UserRequireResetPasswordRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = _UserService.Authenticate(request.username, "", true);
-            if (user == null)
-                return BadRequest(new {message = "There are no records of that username in the system"});
-
-            string emailAddress = "";
-            if (user.Username.Contains("@"))
-                emailAddress = user.Username;
-            if (user.FboId > 0)
+            var user = _context.User.FirstOrDefault(u => u.Username.Equals(request.Email));
+            if (user != null)
             {
-                var fbo = await _Context.Fbos.FindAsync(user.FboId);
-                if (fbo != null)
-                    emailAddress = fbo.FuelDeskEmail;
+                var rand = new Random();
+                byte[] bytes = new byte[32];
+                rand.NextBytes(bytes);
+
+                string token = Convert.ToBase64String(bytes);
+
+                user.ResetPasswordToken = token;
+                user.ResetPasswordTokenExpiration = DateTime.UtcNow.AddDays(7);
+                await _context.SaveChangesAsync();
+
+                await _ResetPasswordService.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, token);
             }
-            if (string.IsNullOrEmpty(emailAddress))
-                return BadRequest(new { message = "No valid email address to send to.  Please contact us for assistance." });
 
-            ResetPasswordService service =
-                new ResetPasswordService(_MailSettings, _Context, _FileProvider, _HttpContextAccessor);
-            await service.SendResetPasswordEmailAsync(user, emailAddress);
+            return Ok();
+        }
 
+        [AllowAnonymous]
+        [HttpPost("validate-reset-password-token")]
+        public IActionResult ValidateResetPasswordToken([FromBody] UserResetPasswordValidateRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = _context.User.FirstOrDefault(u => u.ResetPasswordToken.Equals(request.Token));
+            if (user == null || user.ResetPasswordTokenExpiration < DateTime.UtcNow)
+            {
+                return BadRequest();
+            }
+
+            return Ok(user);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] UserResetPasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = _context.User.FirstOrDefault(u => u.Username.Equals(request.Username) && u.ResetPasswordToken.Equals(request.ResetPasswordToken));
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+
+            user.ResetPasswordToken = null;
+            user.ResetPasswordTokenExpiration = null;
+            user.Password = _encryptionService.HashPassword(request.Password);
+
+            await _context.SaveChangesAsync();
             return Ok();
         }
 
@@ -251,17 +326,16 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_HttpContextAccessor) != request.User.GroupId)
+            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != request.User.GroupId)
             {
                 return Unauthorized();
             }
-            Utilities.Hash hashUtility = new Utilities.Hash();
-            request.User.Password = hashUtility.HashPassword(request.NewPassword);
-            _Context.Entry(request.User).State = EntityState.Modified;
+            request.User.Password = _encryptionService.HashPassword(request.NewPassword);
+            _context.Entry(request.User).State = EntityState.Modified;
 
             try
             {
-                await _Context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -275,7 +349,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            return Ok(new {password = request.User.Password});
+            return Ok(new { password = request.User.Password });
         }
 
         // POST: api/users
@@ -290,34 +364,14 @@ namespace FBOLinx.Web.Controllers
             try
             {
 
-                int fboId = UserService.GetClaimedFboId(_HttpContextAccessor);
+                int fboId = UserService.GetClaimedFboId(_httpContextAccessor);
 
-                var existingPricingTemplates =
-                    await _Context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync();
-                if (existingPricingTemplates != null && existingPricingTemplates.Count != 0)
-                    return Ok();
+                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
 
-                //Add a default pricing template - project #1c5383
-                var newTemplate = new PricingTemplate()
-                {
-                    Default = true,
-                    Fboid = fboId,
-                    Name = "Posted Retail",
-                    MarginType = PricingTemplate.MarginTypes.RetailMinus,
-                    Notes = ""
-                };
-
-                await _Context.PricingTemplate.AddAsync(newTemplate);
-                await _Context.SaveChangesAsync();
-
-                await AddDefaultCustomerMargins(newTemplate.Oid, 1, 500);
-                await AddDefaultCustomerMargins(newTemplate.Oid, 501, 750);
-                await AddDefaultCustomerMargins(newTemplate.Oid, 751, 1000);
-                await AddDefaultCustomerMargins(newTemplate.Oid, 1001, 99999);
+                await pricingTemplateService.FixDefaultPricingTemplate(fboId);
             }
-            catch (System.Exception exception)
+            catch (Exception)
             {
-                //Resume the login without issue
             }
 
             return Ok();
@@ -325,7 +379,7 @@ namespace FBOLinx.Web.Controllers
 
         // DELETE: api/users/5
         [HttpDelete("{id}")]
-        [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin, Models.User.UserRoles.Primary)]
+        [UserRole(DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin, DB.Models.User.UserRoles.Primary)]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -333,30 +387,30 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = await _Context.User.FindAsync(id);
+            var user = await _context.User.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            if (UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_HttpContextAccessor) != user.GroupId)
+            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }
 
-            _Context.User.Remove(user);
-            await _Context.SaveChangesAsync();
+            _context.User.Remove(user);
+            await _context.SaveChangesAsync();
 
             return Ok(user);
         }
 
         [HttpGet("checkemailexists/{emailAddress}")]
-        public IActionResult CheckEmailExists([FromRoute]string emailAddress)
+        public IActionResult CheckEmailExists([FromRoute] string emailAddress)
         {
             if (string.IsNullOrEmpty(emailAddress) || string.IsNullOrEmpty(emailAddress))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
 
-            var checkUser = _Context.User.FirstOrDefault(s => s.Username == emailAddress);
+            var checkUser = _context.User.FirstOrDefault(s => s.Username == emailAddress);
             if (checkUser != null)
             {
                 return StatusCode(409, "Email exists");
@@ -366,24 +420,9 @@ namespace FBOLinx.Web.Controllers
 
         private bool UserExists(int id)
         {
-            return _Context.Group.Any(e => e.Oid == id);
+            return _context.Group.Any(e => e.Oid == id);
         }
 
-        private async Task AddDefaultCustomerMargins(int priceTemplateId, double min, double max)
-        {
-            var newPriceTier = new PriceTiers() { Min = min, Max = max, MaxEntered = max};
-            await _Context.PriceTiers.AddAsync(newPriceTier);
-            await _Context.SaveChangesAsync();
-
-            var newCustomerMargin = new CustomerMargins()
-            {
-                Amount = 0,
-                TemplateId = priceTemplateId,
-                PriceTierId = newPriceTier.Oid
-            };
-            await _Context.CustomerMargins.AddAsync(newCustomerMargin);
-            await _Context.SaveChangesAsync();
-
-        }
+        
     }
 }

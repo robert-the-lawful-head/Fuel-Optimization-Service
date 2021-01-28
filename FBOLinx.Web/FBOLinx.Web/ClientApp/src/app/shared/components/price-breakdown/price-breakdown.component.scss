@@ -1,0 +1,28 @@
+body {
+}
+
+table {
+    width: inherit;
+}
+
+
+table thead tr th div {
+    margin-bottom: 1rem !important;
+}
+
+table tbody tr td div {
+    margin-bottom: 0.25rem !important;
+}
+
+.hover-mouseenter:hover {
+    color: #2196f3;
+    cursor: default;
+}
+
+.hover-mouseenter .fa.fa-info-circle {
+    color: #2196f3;
+}
+
+.hover-mouseenter div i {
+    margin-left: 3px;
+}

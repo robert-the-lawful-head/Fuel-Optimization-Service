@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Models;
 
 namespace FBOLinx.Web.ViewModels
@@ -46,6 +47,7 @@ namespace FBOLinx.Web.ViewModels
         }
 
         public int? CategoryMaxValue { get; set; }
+        public string CategoryStringValue { get; set; }
         public DateTime? ExpirationDate { get; set; }
 
         public string SizeDescription
@@ -53,18 +55,19 @@ namespace FBOLinx.Web.ViewModels
             get
             {
                 if (CategoryType.GetValueOrDefault() == RampFees.RampFeeCategories.AircraftSize)
-                    return FBOLinx.Web.Utilities.Enum.GetDescription((AirCrafts.AircraftSizes)CategoryMinValue);
+                    return FBOLinx.Core.Utilities.Enum.GetDescription((AirCrafts.AircraftSizes)CategoryMinValue);
                 return "";
             }
         }
 
         public string CategoryDescription
         {
-            get { return FBOLinx.Web.Utilities.Enum.GetDescription(CategoryType.GetValueOrDefault()); }
+            get { return FBOLinx.Core.Utilities.Enum.GetDescription(CategoryType.GetValueOrDefault()); }
         }
 
         public string AircraftMake { get; set; }
         public string AircraftModel { get; set; }
-        public List<Models.AirCrafts> AppliesTo { get; set; }
+        public List<AirCrafts> AppliesTo { get; set; }
+        public DateTime? LastUpdated { get; set; }
     }
 }

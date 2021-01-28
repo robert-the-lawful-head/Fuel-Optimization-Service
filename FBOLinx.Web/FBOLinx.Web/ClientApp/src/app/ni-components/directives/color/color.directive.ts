@@ -1,35 +1,45 @@
-import { Directive, OnInit, Input, HostBinding, HostListener } from '@angular/core';
+import {
+    Directive,
+    OnInit,
+    Input,
+    HostBinding,
+    HostListener,
+} from '@angular/core';
 
 @Directive({
-  selector: '[color]'
+    selector: '[color]',
 })
 export class ColorDirective implements OnInit {
-  @Input() color: string | string[];
-  private currentColor: string;
-  private defaultColor: string;
-  private hoveredColor: string;
+    @Input() color: string | string[];
+    public currentColor: string;
+    public defaultColor: string;
+    public hoveredColor: string;
 
-  constructor( ){}
+    constructor() {}
 
-  ngOnInit() {
-    this.defaultColor = (typeof this.color === 'string') ? this.color : this.color[0];
-    this.hoveredColor = (typeof this.color === 'string') ? this.color : this.color[1];
-    this.currentColor = this.defaultColor;
-  }
+    ngOnInit() {
+        this.defaultColor =
+            typeof this.color === 'string' ? this.color : this.color[0];
+        this.hoveredColor =
+            typeof this.color === 'string' ? this.color : this.color[1];
+        this.currentColor = this.defaultColor;
+    }
 
-  @HostBinding('style.color') get getColor(){
-    return this.currentColor;
-  }
+    @HostListener('mouseenter') onMouseEnter() {
+        this.currentColor = this.hoveredColor;
+    }
 
-  @HostBinding('class.custom-color') get getClass(){
-    return true;
-  }
+    @HostListener('mouseleave') onMouseLeave() {
+        this.currentColor = this.defaultColor;
+    }
 
-  @HostListener('mouseenter') onMouseEnter() {
-    this.currentColor = this.hoveredColor;
-  }
+    @HostBinding('style.color') get getColor() {
+        return this.currentColor;
+    }
 
-  @HostListener('mouseleave') onMouseLeave() {
-    this.currentColor = this.defaultColor;
-  }
+    @HostBinding('class.custom-color') get getClass() {
+        return true;
+    }
+
+
 }

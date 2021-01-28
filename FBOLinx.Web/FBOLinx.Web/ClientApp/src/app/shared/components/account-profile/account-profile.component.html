@@ -1,10 +1,15 @@
-<h1 mat-dialog-title>Account Profile</h1>
+<h1 mat-dialog-title>
+    Account Profile
+    <a (click)="onCancelClick()" class="float-right close-btn">
+        <mat-icon>close</mat-icon>
+    </a>
+</h1>
+
 <div mat-dialog-content>
     <div *ngIf="!availableroles">
         <mat-spinner></mat-spinner>
     </div>
 
-    <!--<div *ngIf="availableroles && contactsData">-->
     <div *ngIf="availableroles">
         <mat-tab-group>
 
@@ -14,17 +19,21 @@
                     <div class="row">
                         <div class="col-6">
                             <mat-form-field>
-                                <input matInput placeholder="First Name" aria-label="First Name" [(ngModel)]="data.firstName">
+                                <input [(ngModel)]="data.firstName" aria-label="First Name" matInput
+                                       placeholder="First Name">
                             </mat-form-field>
                         </div>
                         <div class="col-6">
                             <mat-form-field>
-                                <input matInput placeholder="Last Name" aria-label="Last Name" [(ngModel)]="data.lastName">
+                                <input [(ngModel)]="data.lastName" aria-label="Last Name" matInput
+                                       placeholder="Last Name">
                             </mat-form-field>
                         </div>
                         <div class="col-6">
                             <mat-form-field>
-                                <input matInput type="email" placeholder="Email Login" aria-label="Email Login" [(ngModel)]="data.username" [email]="true" #userLoginEmail="ngModel">
+                                <input #userLoginEmail="ngModel" [(ngModel)]="data.username" [email]="true"
+                                       aria-label="Email Login"
+                                       matInput placeholder="Email Login" type="email">
                             </mat-form-field>
                             <div *ngIf="userLoginEmail.errors?.email" style="color: red;">
                                 Please enter a valid email address.
@@ -32,7 +41,7 @@
                         </div>
                         <div class="col-6">
                             <mat-form-field *ngIf="availableroles">
-                                <mat-select placeholder="Role" [(ngModel)]="data.role" disabled>
+                                <mat-select [(ngModel)]="data.role" disabled placeholder="Role">
                                     <mat-option *ngFor="let role of availableroles" [value]="role.value">
                                         {{role.description}}
                                     </mat-option>
@@ -41,43 +50,98 @@
                         </div>
                         <div class="col-6">
                             <mat-form-field>
-                                <input matInput type="password" placeholder="Password" aria-label="Password" [(ngModel)]="data.newPassword">
+                                <input [(ngModel)]="data.newPassword" aria-label="Password" matInput
+                                       placeholder="Password"
+                                       type="password">
                             </mat-form-field>
                         </div>
                         <div class="col-6">
                             <mat-form-field>
-                                <input matInput type="password" placeholder="Confirm Password" aria-label="Confirm Password" [(ngModel)]="data.confirmPassword">
+                                <input [(ngModel)]="data.confirmPassword" aria-label="Confirm Password" matInput
+                                       placeholder="Confirm Password" type="password">
                             </mat-form-field>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="text-danger" *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword != data.confirmPassword">
+                        <div *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword != data.confirmPassword"
+                             class="text-danger">
                             Passwords must match
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 mt-2 text-center">
-                            <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1" *ngIf="(!data.confirmPassword || !data.newPassword || data.confirmPassword.length == 0 || data.newPassword.length == 0 || data.newPassword === data.confirmPassword)  && !userLoginEmail.errors?.email">Save</button>
-                            <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+                            <button [disabled]="!data.confirmPassword ||
+                                            !data.newPassword ||
+                                            data.confirmPassword !== data.newPassword ||
+                                            userLoginEmail.errors?.email"
+                                    [mat-dialog-close]="data"
+                                    class="mr-1"
+                                    color="accent"
+                                    mat-raised-button>
+                                Save
+                            </button>
+                            <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
                         </div>
                     </div>
                 </div>
             </mat-tab>
 
-            <mat-tab label="Contacts" *ngIf="contactsData">
-
-                <!--Contacts Grid-->
-                <div *ngIf="contactsData && !currentContact">
-                    <app-contacts-grid [contactsData]="contactsData" (contactDeleted)="contactDeleted($event)" (newContactClicked)="newContactClicked()" (editContactClicked)="editContactClicked($event)"></app-contacts-grid>
-                </div>
-
-                <!--Contact Information-->
-                <div *ngIf="currentContact">
-                    <app-contacts-edit [contactInfo]="currentContact" (saveEditClicked)="saveEditContactClicked()" (cancelEditClicked)="cancelEditContactClicked()"></app-contacts-edit>
-                </div>
+            <mat-tab *ngIf="contactsData && !isCsr" label="System Contacts">
+                <form (ngSubmit)="onSaveSystemContacts()" [formGroup]="systemContactsForm">
+                    <div class="mt-4 mb-2 pl-4">
+                        <p>Add contacts at your FBO to copy on relevant system emails, such as fuel requests.</p>
+                        <mat-form-field style="max-width: 240px;">
+                            <input aria-label="FuelDesk Email" formControlName="fuelDeskEmail" matInput
+                                   placeholder="FuelDesk Email"
+                                   required>
+                        </mat-form-field>
+                        <button [disabled]="!systemContactsForm.valid"
+                                class="ml-3"
+                                color="accent"
+                                mat-raised-button
+                                type="submit">
+                            Save Email
+                        </button>
+                    </div>
+                    <!--Contacts Grid-->
+                    <div *ngIf="contactsData">
+                        <app-systemcontacts-grid (contactDeleted)="contactDeleted($event)"
+                                                 [contactsData]="contactsData"></app-systemcontacts-grid>
+                    </div>
+                </form>
             </mat-tab>
 
+            <mat-tab label="Email Distribution">
+                <form (ngSubmit)="onSaveEmailDistribution()" [formGroup]="emailDistributionForm">
+                    <div class="mt-4 mb-2 pl-4">
+                        <mat-form-field style="max-width: 240px;">
+                            <input formControlName="senderAddress"
+                                   matInput
+                                   placeholder="Sender Address*"
+                                   matTooltip="Your distribution emails will come from this address"
+                                   matTooltipPosition="after" />
+                        </mat-form-field> @FBOLinx.com
+                        <div>
+                            <mat-form-field style="max-width: 240px;">
+                                <input formControlName="replyTo"
+                                       matInput
+                                       placeholder="ReplyTo*"
+                                       matTooltip="For distribution emails, customer replies will default to this address"
+                                       matTooltipPosition="after" />
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <button [disabled]="!emailDistributionForm.valid"
+                                    class="ml-3"
+                                    color="accent"
+                                    mat-raised-button
+                                    type="submit">
+                                Save Emails
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </mat-tab>
         </mat-tab-group>
     </div>
 </div>
-    

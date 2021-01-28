@@ -9,4 +9,7 @@ export class User {
     fboId: number;
     groupId: number;
     impersonatedRole: number;
+    icao?: string;
+    managerGroupId: number;
+    conductorFbo?: boolean;
 }

@@ -1,0 +1,63 @@
+<ni-card [headerBgColor]="'gray'" title="{{fbo}} Fuel Vendor Sources">
+    <div class="flex">
+        <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+            <mat-form-field>
+                <input
+                    (dateChange)="refreshData()"
+                    (focus)="dashboardSettingsStartDateFilter.open()"
+                    [(ngModel)]="filterStartDate"
+                    [matDatepicker]="dashboardSettingsStartDateFilter"
+                    [max]="filterEndDate"
+                    matInput
+                    placeholder="Start Date"
+                />
+                <mat-datepicker-toggle
+                    [for]="dashboardSettingsStartDateFilter"
+                    matSuffix
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsStartDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+            <mat-form-field>
+                <input
+                    (dateChange)="refreshData()"
+                    (focus)="dashboardSettingsEndDateFilter.open()"
+                    [(ngModel)]="filterEndDate"
+                    [matDatepicker]="dashboardSettingsEndDateFilter"
+                    [min]="filterStartDate"
+                    matInput
+                    placeholder="End Date"
+                />
+                <mat-datepicker-toggle
+                    [for]="dashboardSettingsEndDateFilter"
+                    matSuffix
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsEndDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="chart-container">
+        <ngx-charts-pie-chart
+            *ngIf="totalOrdersData"
+            [gradient]="false"
+            [labels]="true"
+            [results]="totalOrdersData"
+            [scheme]="colorScheme"
+            [trimLabels]="false"
+        ></ngx-charts-pie-chart>
+    </div>
+    <ngx-ui-loader
+        [loaderId]="chartName"
+        bgsColor="rgb(100, 181, 246)"
+        bgsPosition="center-center"
+        bgsType="ball-spin"
+        overlayColor="rgba(0, 0, 0, 0.1)"
+    ></ngx-ui-loader>
+</ni-card>

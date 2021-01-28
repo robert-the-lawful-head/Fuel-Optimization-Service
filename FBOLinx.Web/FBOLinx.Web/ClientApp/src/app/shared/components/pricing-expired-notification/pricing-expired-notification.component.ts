@@ -1,36 +1,39 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, Inject, Input } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
-//Components
+// Components
 import * as moment from 'moment';
 
 @Component({
     selector: 'app-pricing-expired-notification',
     templateUrl: './pricing-expired-notification.component.html',
-    styleUrls: ['./pricing-expired-notification.component.scss']
+    styleUrls: ['./pricing-expired-notification.component.scss'],
 })
-/** pricing-expired-notification component*/
 export class PricingExpiredNotificationComponent {
+    @Input() hideRemindMeButton = false;
 
-    /** pricing-expired-notification ctor */
-    constructor(private router: Router,
-        public dialogRef: MatDialogRef<PricingExpiredNotificationComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
-
+    constructor(
+        private router: Router,
+        public dialogRef: MatDialogRef<PricingExpiredNotificationComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: any
+    ) {
+        if (data.hideRemindMeButton) {
+            this.hideRemindMeButton = data.hideRemindMeButton;
+        }
     }
 
     public onConfirmClicked() {
-        this.router.navigate(['/default-layout/fbo-prices']);
+        this.router.navigate(['/default-layout/dashboard-fbo']);
         this.dialogRef.close();
     }
 
     public onRemindMeLaterClick() {
-        localStorage.setItem('pricingExpiredNotification', moment().format('L'));
+        localStorage.setItem('pricingExpiredNotification', moment().add(1, 'days').format('L'));
         this.dialogRef.close();
     }
 
     public onCancelClick() {
-        sessionStorage.setItem('pricingExpiredNotification', moment().format('L'));
         this.dialogRef.close();
     }
 }

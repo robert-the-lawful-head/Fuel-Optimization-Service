@@ -1,0 +1,32 @@
+.generate-report-button {
+    text-align: left;
+    white-space: normal;
+
+    h5 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        margin-top: 1rem;
+        color: #2196F3;
+    }
+
+    p {
+        line-height: 19px;
+        margin-bottom: 1rem;
+    }
+}
+
+.report-card {
+    ::ng-deep {
+        .card-content {
+            min-height: 300px;
+        }
+    }
+}
+
+::ng-deep {
+    .group-analytics-dialog {
+        .mat-dialog-container {
+            padding: 0;
+        }
+    }
+}

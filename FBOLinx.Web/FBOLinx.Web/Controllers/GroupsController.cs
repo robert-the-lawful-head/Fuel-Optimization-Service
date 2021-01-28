@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,10 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
+using FBOLinx.Web.DTO;
+using FBOLinx.Web.ViewModels;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -21,51 +27,141 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly FuelerLinxContext _fcontext;
         private readonly IHttpContextAccessor _HttpContextAccessor;
+        public IServiceScopeFactory _serviceScopeFactory;
+        private readonly GroupFboService _groupFboService;
+        private readonly CustomerService _customerService;
 
-        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, CustomerService customerService)
         {
+            _groupFboService = groupFboService;
             _context = context;
             _fcontext = fcontext;
             _HttpContextAccessor = httpContextAccessor;
+            _serviceScopeFactory = serviceScopeFactory;
+            _customerService = customerService;
         }
 
         // GET: api/Groups
         [HttpGet]
-        public IEnumerable<Group> GetGroup()
+        public async Task<IEnumerable<Group>> GetGroup()
         {
             int groupId = UserService.GetClaimedGroupId(_HttpContextAccessor);
-            Models.User.UserRoles role = UserService.GetClaimedRole(_HttpContextAccessor);
-            return _context.Group.Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == Models.User.UserRoles.Conductor)).OrderBy((x => x.GroupName));
+            var role = UserService.GetClaimedRole(_HttpContextAccessor);
+
+            return await _context.Group
+                        .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == DB.Models.User.UserRoles.Conductor))
+                        .Include(x => x.Users)
+                        .OrderBy((x => x.GroupName))
+                        .ToListAsync();
+        }
+
+        [HttpGet("group-fbo")]
+        public async Task<IActionResult> GetGroupsAndFbos()
+        {
+            var customersNeedAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
+
+            var groups = await _context.Group
+                            .Where(x => !string.IsNullOrEmpty(x.GroupName))
+                            .Include(x => x.Users)
+                            .Include(x => x.Fbos)
+                            .OrderBy((x => x.GroupName))
+                            .Select(x => new GroupViewModel
+                            {
+                                Oid = x.Oid,
+                                GroupName = x.GroupName,
+                                Username = x.Username,
+                                Password = x.Password,
+                                Isfbonetwork = x.Isfbonetwork,
+                                Domain = x.Domain,
+                                LoggedInHomePage = x.LoggedInHomePage,
+                                Active = x.Active,
+                                IsLegacyAccount = x.IsLegacyAccount,
+                                Users = x.Users,
+                                LastLogin = x.Fbos.Max(f => f.LastLogin),
+                            })
+                            .ToListAsync();
+
+            foreach(var group in groups)
+            {
+                var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Oid).ToList();
+                group.NeedAttentionCustomers = needingAttentions.Count > 0 ? needingAttentions.Sum(c => c.CustomersNeedingAttention) : 0;
+            }
+
+            var fboPrices = from f in _context.Fboprices
+                            where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
+                            group f by f.Fboid into g
+                            select new
+                            {
+                                fboId = g.Key
+                            };
+
+            //FbosViewModel used to display FBO info in the grid
+            var fbos = await (from f in _context.Fbos
+                              join fa in _context.Fboairports on f.Oid equals fa.Fboid into fas
+                              from fairports in fas.DefaultIfEmpty()
+                              join fp in fboPrices on f.Oid equals fp.fboId into fps
+                              from fprices in fps.DefaultIfEmpty()
+                              select new FbosGridViewModel
+                              {
+                                  Active = f.Active,
+                                  Fbo = f.Fbo,
+                                  Icao = fairports.Icao,
+                                  Oid = f.Oid,
+                                  GroupId = f.GroupId ?? 0,
+                                  PricingExpired = fprices.fboId == null,
+                                  LastLogin = f.LastLogin
+                              }).ToListAsync();
+
+            var users = (await _context.User.ToListAsync()).GroupBy(t => t.FboId);
+            fbos.ForEach(f =>
+            {
+                f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
+                f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Sum(c => c.CustomersNeedingAttention);
+            });
+
+            return Ok(new GroupFboViewModel
+            {
+                Groups = groups,
+                Fbos = fbos
+            });
         }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        [UserRole(Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin)]
+        [UserRole(DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin)]
         public async Task<IActionResult> GetGroup([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+                if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var @group = await _context.Group.FindAsync(id);
+
+                if (@group == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(@group);
+            }
+            catch(Exception ex)
             {
-                return BadRequest(ModelState);
+                return Ok("Get error: " + ex.Message);
             }
-
-            var @group = await _context.Group.FindAsync(id);
-
-            if (@group == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(@group);
+            
         }
 
         // PUT: api/Groups/5
         [HttpPut("{id}")]
-        [UserRole(new User.UserRoles[] {Models.User.UserRoles.Conductor, Models.User.UserRoles.GroupAdmin})]
+        [UserRole(new User.UserRoles[] {DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin})]
         public async Task<IActionResult> PutGroup([FromRoute] int id, [FromBody] Group @group)
         {
             if (!ModelState.IsValid)
@@ -73,17 +169,54 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != @group.Oid)
-            {
-                return BadRequest();
-            }
-
-            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.Conductor)
+            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Entry(@group).State = EntityState.Modified;
+            bool groupActiveStatus = await _context.Group.Where(g => g.Oid.Equals(group.Oid))
+                                                         .Select(g => g.Active)
+                                                         .FirstAsync();
+            if (groupActiveStatus != group.Active)
+            {
+                List<User> users = _context.User.Where(u => u.GroupId.Equals(id))
+                                            .ToList();
+                foreach (var user in users)
+                {
+                    user.Active = group.Active;
+                }
+
+                _context.User.UpdateRange(users);
+
+                List<Fbos> fbos = _context.Fbos.Where(f => f.GroupId.Equals(id)).ToList();
+
+                foreach (var fbo in fbos)
+                {
+                    fbo.Active = group.Active;
+                }
+
+                _context.Fbos.UpdateRange(fbos);
+
+                if (!group.Active)
+                {
+                    // Expire All Prices from the de-activated FBOLinx accounts
+                    List<Fboprices> fboPrices = await (
+                                        from fp in _context.Fboprices
+                                        join f in _context.Fbos on fp.Fboid equals f.Oid
+                                        where f.GroupId == id
+                                        select fp
+                                    ).ToListAsync();
+
+                    foreach (var fboPrice in fboPrices)
+                    {
+                        fboPrice.Expired = true;
+                    }
+
+                    _context.Fboprices.UpdateRange(fboPrices);
+                }
+            }
+
+            _context.Group.Update(group);
 
             try
             {
@@ -91,7 +224,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GroupExists(id))
+                if (!_context.Group.Any(e => e.Oid == id))
                 {
                     return NotFound();
                 }
@@ -106,35 +239,171 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/Groups
         [HttpPost]
-        [UserRole(Models.User.UserRoles.Conductor)]
-        public async Task<IActionResult> PostGroup([FromBody] Group @group)
+        [UserRole(DB.Models.User.UserRoles.Conductor)]
+        public async Task<IActionResult> PostGroup([FromBody] Group group)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            try
+            {
+                group = await _groupFboService.CreateNewGroup(group.GroupName);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
 
-            //try
-            //{
-                
-            //}
-            //catch(Exception ex)
-            //{
-            //    var sss = ex.Message;
-            //}
+            return CreatedAtAction("GetGroup", new { id = group.Oid }, group);
+        }
 
-            _context.Group.Add(@group);
-            await _context.SaveChangesAsync();
+        [HttpPost("merge-groups")]
+        [UserRole(DB.Models.User.UserRoles.Conductor)]
+        public async Task<IActionResult> MergeGroups([FromBody] MergeGroupRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            _fcontext.Database.ExecuteSqlCommand("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + @group.GroupName + "', @GroupID=" + @group.Oid + "");
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var changeableGroups = request.Groups.Where(group => group.Oid != request.BaseGroupId).Select(group => group.Oid).ToList();
 
-            return CreatedAtAction("GetGroup", new { id = @group.Oid }, @group);
+                    var users = await _context.User.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var fbos = await _context.Fbos.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var adminEmails = await _context.AdminEmails.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var companiesByGroups = await _context.CompaniesByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var contactInfoByGroups = await _context.ContactInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerAircrafts = await _context.CustomerAircrafts.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var customerAircraftViewedByGroups = await _context.CustomerAircraftViewedByGroup.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var customerCompanyTypes = await _context.CustomerCompanyTypes.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerInfoByGroups = await _context.CustomerInfoByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerNotes = await _context.CustomerNotes.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var customerSchedulingSoftwareByGroups = await _context.CustomerSchedulingSoftwareByGroup.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+                    var distributionLogs = await _context.DistributionLog.Where(a => changeableGroups.Contains((a.GroupId ?? 0))).ToListAsync();
+                    var distributionQueues = await _context.DistributionQueue.Where(a => changeableGroups.Contains(a.GroupId)).ToListAsync();
+
+                    users.ForEach(a => a.GroupId = request.BaseGroupId);
+                    fbos.ForEach(a => a.GroupId = request.BaseGroupId);
+                    adminEmails.ForEach(a => a.GroupId = request.BaseGroupId);
+                    companiesByGroups.ForEach(a => a.GroupId = request.BaseGroupId);
+                    contactInfoByGroups.ForEach(a => a.GroupId = request.BaseGroupId);
+                    customerAircrafts.ForEach(a => a.GroupId = request.BaseGroupId);
+                    customerAircraftViewedByGroups.ForEach(a => a.GroupId = request.BaseGroupId);
+                    customerCompanyTypes.ForEach(a => a.GroupId = request.BaseGroupId);
+                    customerInfoByGroups.ForEach(a => a.GroupId = request.BaseGroupId);
+                    customerNotes.ForEach(a => a.GroupId = request.BaseGroupId);
+
+                    customerSchedulingSoftwareByGroups.ForEach(a => a.GroupId = request.BaseGroupId);
+                    distributionLogs.ForEach(a => a.GroupId = request.BaseGroupId);
+                    distributionQueues.ForEach(a => a.GroupId = request.BaseGroupId);
+
+                    var baseCustomerInfoByGroups = _context.CustomerInfoByGroup
+                        .Where(a => a.GroupId == request.BaseGroupId)
+                        .ToList()
+                        .Concat(customerInfoByGroups)
+                        .ToList();
+                    var distinctedByCustomerIDCustomerInfoByGroups = baseCustomerInfoByGroups
+                        .GroupBy(cg => new { cg.CustomerId, cg.GroupId })
+                        .Select(g => g.First())
+                        .ToList();
+                    var duplicatedByCustomerIDCustomerInfoByGroups = baseCustomerInfoByGroups
+                        .Except(distinctedByCustomerIDCustomerInfoByGroups)
+                        .ToList();
+                    _context.CustomerInfoByGroup.RemoveRange(duplicatedByCustomerIDCustomerInfoByGroups);
+
+                    var baseContactInfoByGroups = _context.ContactInfoByGroup
+                        .Where(a => a.GroupId == request.BaseGroupId)
+                        .ToList()
+                        .Concat(contactInfoByGroups)
+                        .ToList();
+                    var distinctedContactInfoByGroups = baseContactInfoByGroups
+                        .GroupBy(cg => new { cg.GroupId, cg.Email })
+                        .Select(g => g.First())
+                        .ToList();
+                    var duplicatedContactInfoByGroups = baseContactInfoByGroups
+                        .Except(distinctedContactInfoByGroups)
+                        .ToList();
+                    _context.ContactInfoByGroup.RemoveRange(duplicatedContactInfoByGroups);
+
+                    var groupedByCustomerNameCustomerInfoByGroups = distinctedByCustomerIDCustomerInfoByGroups
+                            .GroupBy(cg => new { Company = cg.Company.ToLower(), cg.GroupId })
+                            .ToList();
+                    groupedByCustomerNameCustomerInfoByGroups.ForEach(groupedResult =>
+                    {
+                        if (groupedResult.Count() > 0)
+                        {
+                            var customerIds = groupedResult
+                                .Skip(1)
+                                .Select(cg => cg.CustomerId)
+                                .ToList();
+                            var replacingCustomerContacts = _context.CustomerContacts
+                                .Where(c => customerIds.Contains(c.CustomerId))
+                                .ToList();
+                            replacingCustomerContacts.ForEach(c => c.CustomerId = groupedResult.First().CustomerId);
+                            _context.CustomerContacts.UpdateRange(replacingCustomerContacts);
+                            _context.CustomerInfoByGroup.RemoveRange(groupedResult.Skip(1));
+
+                            var duplicatedCustomerAircrafts = _context.CustomerAircrafts.Where(ca => customerIds.Contains(ca.CustomerId)).ToList();
+                            duplicatedCustomerAircrafts.ForEach(ca => ca.CustomerId = groupedResult.First().CustomerId);
+                            _context.CustomerAircrafts.UpdateRange(duplicatedCustomerAircrafts);
+                        }
+                    });
+
+                    var removingGroups = _context.Group.Where(a => changeableGroups.Contains(a.Oid));
+                    _context.Group.RemoveRange(removingGroups);
+
+                    await _context.SaveChangesAsync();
+
+                    var baseCustomerAircrafts = _context.CustomerAircrafts
+                       .Where(a => a.GroupId == request.BaseGroupId)
+                       .ToList();
+                    var distinctedCustomerAircrafts = baseCustomerAircrafts
+                        .GroupBy(ca => new { ca.GroupId, ca.CustomerId, ca.TailNumber, ca.AircraftId, ca.Size })
+                        .Select(g => g.First())
+                        .ToList();
+                    var duplicatedCustomerAircrafts = baseCustomerAircrafts
+                        .Except(distinctedCustomerAircrafts)
+                        .ToList();
+
+                    duplicatedCustomerAircrafts.ForEach(ca =>
+                    {
+                        var aircraftPrices = _context.AircraftPrices.Where(ap => ap.CustomerAircraftId == ca.Oid).ToList();
+                        var baseCustomerAircraft = distinctedCustomerAircrafts.Where(dca => dca.GroupId == ca.GroupId
+                            && dca.CustomerId == ca.CustomerId
+                            && dca.TailNumber == ca.TailNumber
+                            && dca.AircraftId == ca.AircraftId
+                            && dca.Size == ca.Size
+                        ).First();
+                        aircraftPrices.ForEach(ap => ap.CustomerAircraftId = baseCustomerAircraft.Oid);
+                        _context.AircraftPrices.UpdateRange(aircraftPrices);
+                    });
+
+                    _context.CustomerAircrafts.RemoveRange(duplicatedCustomerAircrafts);
+
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    throw ex;
+                }
+            }
+
+            return Ok();
         }
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
-        [UserRole(Models.User.UserRoles.Conductor)]
+        [UserRole(DB.Models.User.UserRoles.Conductor)]
         public async Task<IActionResult> DeleteGroup([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -148,20 +417,16 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            _context.Group.Remove(@group);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _groupFboService.DeleteGroup(id);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
 
             return Ok(@group);
-        }
-
-        private bool GroupExists(int id)
-        {
-            return _context.Group.Any(e => e.Oid == id);
-        }
-
-        private void InsertNewGroupInfo()
-        {
-
         }
     }
 }

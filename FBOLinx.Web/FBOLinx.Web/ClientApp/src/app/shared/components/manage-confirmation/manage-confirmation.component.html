@@ -1,12 +1,19 @@
-<h1 mat-dialog-title>Manage FBO?</h1>
-<div mat-dialog-content class="mt-1 mb-2">
+<h1 mat-dialog-title>{{ data.title }}</h1>
+<div class="mt-1 mb-2" mat-dialog-content>
     <div class="text-center">
-        This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?
+        {{ data.description }}
     </div>
 </div>
 <div mat-dialog-actions>
-    <div class="text-center col-12">
-        <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1">Confirm</button>
-        <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
-    </div>
+    <button
+        (click)="onConfirm()"
+        [disabled]="loading"
+        class="mr-1 confirm-btn"
+        color="accent"
+        mat-raised-button
+    >
+        {{ !loading ? "Confirm" : "" }}
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    </button>
+    <button [mat-dialog-close]="false" mat-stroked-button>Cancel</button>
 </div>

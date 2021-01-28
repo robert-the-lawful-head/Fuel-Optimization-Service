@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { ContactsService } from '../../../services/contacts.service';
 import { FbosService } from '../../../services/fbos.service';
@@ -23,100 +24,146 @@ export interface AccountProfileDialogData {
 @Component({
     selector: 'app-account-profile',
     templateUrl: './account-profile.component.html',
-    styleUrls: ['./account-profile.component.scss'],
-    providers: [SharedService]
+    styleUrls: [ './account-profile.component.scss' ],
+    providers: [ SharedService ],
 })
-/** account-profile component*/
 export class AccountProfileComponent {
-    //Public Members
-    public fboInfo: any;
-    public contactsData: any[];
-    public currentContact: any;
-    public availableroles: any[];
+    // Members
+    fboInfo: any;
+    contactsData: any[];
+    currentContact: any;
+    availableroles: any[];
+    systemContactsForm: FormGroup;
+    emailDistributionForm: FormGroup;
 
-    //Private Members
-    private selectedContactRecord: any;
-
-    /** account-profile ctor */
-    constructor(public dialogRef: MatDialogRef<AccountProfileComponent>,
+    constructor(
+        public dialogRef: MatDialogRef<AccountProfileComponent>,
         @Inject(MAT_DIALOG_DATA) public data: AccountProfileDialogData,
         private sharedService: SharedService,
         private contactsService: ContactsService,
         private fboContactsService: FbocontactsService,
         private fbosService: FbosService,
-        private usersService: UserService) {
-
+        private usersService: UserService,
+        private formBuilder: FormBuilder
+    ) {
+        this.systemContactsForm = this.formBuilder.group({
+            fuelDeskEmail: new FormControl('', [
+                Validators.required,
+            ]),
+        });
+        this.emailDistributionForm = this.formBuilder.group({
+            senderAddress: new FormControl('', [
+                Validators.required,
+            ]),
+            replyTo: new FormControl('', [
+                Validators.required,
+            ]),
+        });
         this.loadFboInfo();
         this.loadAvailableRoles();
     }
 
-    //Public Methods
-    public onCancelClick(): void {
+    get isCsr() {
+        return this.sharedService.currentUser.role === 5;
+    }
+
+    // Methods
+    onCancelClick(): void {
         this.dialogRef.close();
     }
 
-    public contactDeleted(record) {
+    contactDeleted(record) {
         this.fboContactsService.remove(record).subscribe(() => {
-            this.fboContactsService.getForFbo(this.fboInfo).subscribe((data: any) => this.contactsData = data);
+            this.fboContactsService
+                .getForFbo(this.fboInfo)
+                .subscribe((data: any) => (this.contactsData = data));
         });
     }
 
-    public newContactClicked() {
-        this.currentContact = {
-            oid: 0
-        }
-    }
-
-    public editContactClicked(record) {
-        this.selectedContactRecord = record;
-        this.contactsService.get({ oid: record.contactId }).subscribe((data: any) => this.currentContact = data);
-    }
-
-    public saveEditContactClicked() {
+    saveEditContactClicked() {
         this.contactsService.update(this.currentContact).subscribe(() => {
             this.currentContact = null;
         });
     }
 
-    public cancelEditContactClicked() {
+    cancelEditContactClicked() {
         this.currentContact = null;
     }
 
-    //Private Methods
+    onSaveSystemContacts() {
+        if (this.systemContactsForm.valid) {
+            this.fboInfo.fuelDeskEmail = this.systemContactsForm.value.fuelDeskEmail;
+            this.fbosService.update(this.fboInfo).subscribe(() => {
+                this.fboContactsService.updateFuelvendor({
+                    fboId: this.fboInfo.oid
+                }).subscribe(() => {
+                    this.dialogRef.close();
+                });
+            });
+        }
+    }
+
+    onSaveEmailDistribution() {
+        if (this.emailDistributionForm.valid) {
+            this.fboInfo.SenderAddress = this.emailDistributionForm.value.senderAddress;
+            this.fboInfo.ReplyTo = this.emailDistributionForm.value.replyTo;
+            this.fbosService.update(this.fboInfo).subscribe(() => {
+                this.dialogRef.close();
+            });
+        }
+    }
+
+    // Private Methods
     private loadFboInfo(): void {
-        if (!this.sharedService.currentUser.fboId || this.sharedService.currentUser.fboId == 0)
+        if (
+            !this.sharedService.currentUser.fboId ||
+            this.sharedService.currentUser.fboId === 0
+        ) {
             return;
-        this.fbosService.get({ oid: this.sharedService.currentUser.fboId }).subscribe((fboData: any) => {
-            this.fboContactsService.getForFbo(this.fboInfo).subscribe((data: any) => this.contactsData = data);
-        });
-        
+        }
+        this.fbosService
+            .get({
+                oid: this.sharedService.currentUser.fboId
+            })
+            .subscribe((fboData: any) => {
+                this.systemContactsForm.setValue({
+                    fuelDeskEmail: fboData.fuelDeskEmail,
+                });
+                this.emailDistributionForm.setValue({
+                    senderAddress: fboData.senderAddress,
+                    replyTo: fboData.replyTo,
+                });
+                this.fboInfo = fboData;
+                this.fboContactsService
+                    .getForFbo(this.fboInfo)
+                    .subscribe((data: any) => (this.contactsData = data));
+            });
     }
 
     private loadAvailableRoles() {
         this.usersService.getRoles().subscribe((data: any) => {
-            var supportedRoleValues = [4];
+            let supportedRoleValues = [ 4 ];
             this.availableroles = [];
             if (this.data.fboId > 0) {
-                supportedRoleValues = [1, 4];
+                supportedRoleValues = [ 1, 4, 5 ];
+            } else if (this.data.groupId > 0) {
+                supportedRoleValues = [ 2 ];
             }
-            else if (this.data.groupId > 0) {
-                supportedRoleValues = [2];
-            }
-            for (let role of data) {
-                if (supportedRoleValues.indexOf(role.value) > -1)
+            for (const role of data) {
+                if (supportedRoleValues.indexOf(role.value) > -1) {
                     this.availableroles.push(role);
-            }
-            //if (this.data.role > 0)
-            //    return;
-
-            if (this.availableroles.length > 1) {
-                this.data.role = this.availableroles[this.availableroles.length - 1].Value;
-            }
-            else {
-                this.data.role = this.availableroles[0].value;
+                }
             }
 
-            //this.data.role = this.availableroles[this.availableroles.length - 1].Value;
+            if (!this.data.role || this.data.role === 0) {
+                if (this.availableroles.length > 1) {
+                    this.data.role = this.availableroles[
+                    this.availableroles.length - 1
+                        ].value;
+                } else {
+                    this.data.role = this.availableroles[0].value;
+                }
+            }
         });
     }
 }

@@ -1,10 +1,23 @@
-<div>
+<ni-breadcrumb *ngIf="breadcrumb" [menu]="breadcrumb"></ni-breadcrumb>
+
+<div [ngClass]="{'after-breadcrumb': breadcrumb}">
     <div *ngIf="fbosData || currentFbo">
         <div *ngIf="currentFbo">
-            <app-fbos-edit [fboInfo]="currentFbo" [groupInfo]="groupInfo" [fboAirportInfo]="currentFboAirport" (saveClicked)="saveFboEditClicked()" (cancelClicked)="cancelFboEditClicked()"></app-fbos-edit>
+            <app-fbos-edit
+                (cancelClicked)="cancelFboEditClicked()"
+                (saveClicked)="saveFboEditClicked()"
+                [embed]="embed"
+                [fboAirportInfo]="currentFboAirport"
+                [fboInfo]="currentFbo"
+                [groupInfo]="groupInfo"
+            ></app-fbos-edit>
         </div>
         <div *ngIf="!currentFbo && fbosData">
-            <app-fbos-grid [fbosData]="fbosData" [groupInfo]="groupInfo" (editFboClicked)="editFboClicked($event)" (recordDeleted)="deleteFboClicked($event)"></app-fbos-grid>
+            <app-fbos-grid
+                (editFboClicked)="editFboClicked($event)"
+                [fbosData]="fbosData"
+                [groupInfo]="groupInfo"
+            ></app-fbos-grid>
         </div>
     </div>
     <div *ngIf="!(fbosData || currentFbo)">

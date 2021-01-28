@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -58,12 +60,12 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var aircraftPrices = (from ca in _context.CustomerAircrafts
+            var aircraftPrices = await (from ca in _context.CustomerAircrafts
                 join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
                 join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
                 where ca.Oid == customerAircraftId
                       && pt.Fboid == fboId
-                select ap);
+                select ap).ToListAsync();
 
             if (aircraftPrices == null)
             {
@@ -125,7 +127,7 @@ namespace FBOLinx.Web.Controllers
 
         // DELETE: api/AircraftPrices/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAircraftPrices([FromRoute] int id)
+        public async Task<IActionResult> DeleteAircraftPrice([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
@@ -142,6 +144,26 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(aircraftPrices);
+        }
+
+        [HttpPost("delete-multiple")]
+        public async Task<IActionResult> DeleteAircraftPricesByCustomerAircraftIds([FromBody] List<CustomerAircrafts> customerAircrafts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customerAircraftIds = customerAircrafts.Select(ca => ca.Oid).ToList();
+
+            var aircraftPrices = await _context.AircraftPrices
+                                            .Where(ap => customerAircraftIds.Contains(ap.CustomerAircraftId))
+                                            .ToListAsync();
+
+            _context.AircraftPrices.RemoveRange(aircraftPrices);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         private bool AircraftPricesExists(int id)

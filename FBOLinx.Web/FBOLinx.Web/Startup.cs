@@ -1,4 +1,9 @@
 using System.Text;
+using FBOLinx.DB.Context;
+using FBOLinx.ServiceLayer.BusinessServices;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
@@ -7,14 +12,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Hosting;
 
 namespace FBOLinx.Web
 {
@@ -30,7 +35,10 @@ namespace FBOLinx.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); ;
+            services.AddControllers().AddNewtonsoftJson(o =>
+            {
+                o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
@@ -71,24 +79,56 @@ namespace FBOLinx.Web
             services.AddDbContext<FuelerLinxContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("FuelerLinxContext")));
 
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("CorsPolicy",
+            //        builder => builder.AllowAnyOrigin()
+            //            .AllowAnyMethod()
+            //            .AllowAnyHeader()
+            //            .AllowCredentials());
+            //});
+
             services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
+                {
+                    options.AddPolicy("CorsPolicy", builder => builder
+                        .SetIsOriginAllowedToAllowWildcardSubdomains()
+                        .WithOrigins("https://*.fbolinx.com")
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
-            });
+                        .AllowAnyHeader());
+                    options.AddPolicy("LocalHost", builder => builder.WithOrigins("https://localhost:5001").AllowAnyMethod().AllowAnyHeader());
+                }
+            );
 
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            var appParnterSDKSettings = Configuration.GetSection("AppPartnerSDKSettings");
+            services.Configure<AppPartnerSDKSettings>(appParnterSDKSettings);
 
             // configure DI for application services
+            services.AddScoped<FuelerLinxService, FuelerLinxService>();
+            services.AddScoped<RampFeesService, RampFeesService>();
+            services.AddScoped<PriceDistributionService, PriceDistributionService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<Auth.UserRoleAttribute>();
+            services.AddScoped<UserRoleAttribute>();
+            services.AddScoped<GroupTransitionService, GroupTransitionService>();
+
+            services.AddTransient<GroupFboService, GroupFboService>();
+            services.AddTransient<CustomerService, CustomerService>();
+            services.AddTransient<FboService, FboService>();
+            services.AddTransient<PriceFetchingService, PriceFetchingService>();
+            services.AddTransient<ResetPasswordService, ResetPasswordService>();
+
+            //Business Services
+            services.AddTransient<AircraftService, AircraftService>();
+            services.AddTransient<EncryptionService, EncryptionService>();
+            services.AddTransient<MailTemplateService, MailTemplateService>();
+            services.AddTransient<CustomerAircraftService, CustomerAircraftService>();
+            services.AddTransient<AirportWatchService, AirportWatchService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //Auth services
+            services.AddScoped<JwtManager, JwtManager>();
+            services.AddScoped<OAuthService, OAuthService>();
             services.AddScoped<IAPIKeyManager, APIKeyManager>();
 
             //Add file provider
@@ -96,12 +136,10 @@ namespace FBOLinx.Web
 
             services.AddSingleton<IFileProvider>(physicalProvider);
 
-            //services.AddIdentityServer().AddDeveloperSigningCredential();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -113,25 +151,32 @@ namespace FBOLinx.Web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             //app.UseIdentityServer();
 
             // global cors policy
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            if (env.IsDevelopment())
+                app.UseCors("LocalHost");
+            else
+                app.UseCors("CorsPolicy");
 
+            app.UseRouting();
+            
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
             });
+
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //        name: "default",
+            //        template: "{controller}/{action=Index}/{id?}");
+            //});
 
             app.UseSpa(spa =>
             {

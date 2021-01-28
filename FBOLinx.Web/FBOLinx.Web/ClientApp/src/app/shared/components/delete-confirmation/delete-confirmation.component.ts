@@ -1,21 +1,22 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 
 export interface DeleteConfirmationData {
     item: any;
-    description: string;
+    description?: string;
+    fullDescription?: string;
 }
 
 @Component({
     selector: 'app-delete-confirmation',
     templateUrl: './delete-confirmation.component.html',
-    styleUrls: ['./delete-confirmation.component.scss']
+    styleUrls: [ './delete-confirmation.component.scss' ],
 })
-/** delete-confirmation component*/
 export class DeleteConfirmationComponent {
-    /** delete-confirmation ctor */
-    constructor(public dialogRef: MatDialogRef<DeleteConfirmationComponent>, @Inject(MAT_DIALOG_DATA) public data: DeleteConfirmationData) {
-
+    constructor(
+        public dialogRef: MatDialogRef<DeleteConfirmationComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: DeleteConfirmationData
+    ) {
     }
 
     onCancelClick(): void {

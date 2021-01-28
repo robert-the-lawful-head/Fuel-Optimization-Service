@@ -1,0 +1,21 @@
+:host {
+    .tailLookupInfo {
+        display: flex;
+        align-items: center;
+        margin-left: 3rem;
+
+        & > div:first-child {
+            width: 130px;
+        }
+    }
+}
+
+
+.sub-widget {
+    background: #ececec;
+    padding: 10px;
+}
+
+.price-lookup-breakdown .d-inline-block.text-nowrap {
+    margin-left: 10px;
+}

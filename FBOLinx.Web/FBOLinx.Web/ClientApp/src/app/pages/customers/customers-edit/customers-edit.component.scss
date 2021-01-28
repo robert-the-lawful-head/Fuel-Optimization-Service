@@ -1,24 +1,55 @@
-.stickyStyle {
-    padding-bottom: 10px;
-    padding-top: 5px;
-    background-color: #f8f8f8;
+:host {
+    position: relative;
+    display: block;
+
+    .stickyStyle {
+        padding-bottom: 10px;
+        padding-top: 5px;
+        background-color: #f8f8f8;
+        z-index: 900;
+    }
+
+
+    .card-container-right {
+        display: inline;
+        float: right;
+    }
+
+    .card-container-left {
+        display: inline;
+    }
+
+    ::ng-deep {
+        .mat-card-header-text {
+            padding-bottom: 10px;
+            padding-top: 5px;
+            background-color: white;
+            position: sticky;
+            top: 0;
+            z-index: 800;
+        }
+
+        .template-dropdown {
+            .mat-form-field-infix {
+                width: 260px;
+            }
+        }
+
+        .mat-tab-body-content {
+            height: calc(100vh - 375px);
+        }
+    }
 }
 
-
-.card-container-right {
-    display: inline;
-    float: right;
+.edit-customer-content .mat-tab-body-content {
+    overflow: initial !important;
 }
 
-.card-container-left {
-    display: inline;
+.edit-customer-content .mat-tab-body.mat-tab-body-active {
+    overflow-x: initial !important;
+    overflow-y: initial !important;
 }
 
-::ng-deep .mat-card-header-text {
-    padding-bottom: 10px;
-    padding-top: 5px;
-    background-color: white;
-    position: sticky;
-    top: 0;
-    z-index: 1030;
+.edit-customer-content .mat-tab-body {
+    overflow: initial !important;
 }

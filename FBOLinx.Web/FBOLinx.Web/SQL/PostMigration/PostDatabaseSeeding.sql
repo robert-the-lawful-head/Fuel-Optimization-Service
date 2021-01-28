@@ -1,8 +1,7 @@
 update cg
 set CustomerCompanyType = cct.OID
 from CustomerInfoByGroup cg
-inner join CustomerCompanyTypes cct on cct.Name = case when cg.CustomerType = 1 then 'Fuelerlinx'
-                                                       when cg.CustomerType = 2 then 'Base Tenant'
+inner join CustomerCompanyTypes cct on cct.Name = case when cg.CustomerType = 2 then 'Base Tenant'
                                                        when cg.CustomerType = 3 then 'Transient'
                                                        when cg.CustomerType = 4 then 'Contract Fuel Vendor'
                                                        else '' end

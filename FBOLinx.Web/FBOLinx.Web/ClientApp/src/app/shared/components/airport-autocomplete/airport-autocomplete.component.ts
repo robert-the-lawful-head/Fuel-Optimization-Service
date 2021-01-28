@@ -1,17 +1,10 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
-import {
-    startWith,
-    map,
-    debounceTime,
-    mergeMapTo,
-    mergeMap,
-    switchMap,
-    catchError } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { FormControl } from '@angular/forms';
+import { catchError, debounceTime, map, startWith, switchMap, } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
-//Services
+// Services
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
 
 export interface AirportAutoCompleteData {
@@ -25,10 +18,8 @@ export declare type AirportAutoCompleteDataSource = AirportAutoCompleteData[];
 @Component({
     selector: 'app-airport-autocomplete',
     templateUrl: './airport-autocomplete.component.html',
-    styleUrls: ['./airport-autocomplete.component.scss']
+    styleUrls: [ './airport-autocomplete.component.scss' ],
 })
-
-/** airport-autocomplete component*/
 export class AirportAutocompleteComponent implements OnInit {
     @Input() airportContainerModel: any;
     @Output() valueChange = new EventEmitter();
@@ -40,23 +31,6 @@ export class AirportAutocompleteComponent implements OnInit {
     airportModel = null;
 
     constructor(private acukwikAirportsService: AcukwikairportsService) {
-        //acukwikAirportsService.getAllAirports().subscribe((data: AirportAutoCompleteData[]) => {
-        //    this.airports = data;
-        //    this.registerFilter();
-        //});
-
-        //this.filteredAirports = this.searchControl.valueChanges.pipe(
-        //    startWith<string | AirportAutoCompleteData>(''),
-        //    map(val => {
-        //        return this.filter(val || '');
-        //    })
-        //);
-            //.startWith(null)
-            //.debounceTime(200)
-            //.distinctUntilChanged()
-            //.switchMap(val => {
-            //    return this.filter(val || '');
-            //});
     }
 
     ngOnInit() {
@@ -66,7 +40,7 @@ export class AirportAutocompleteComponent implements OnInit {
             // delay emits
             debounceTime(300),
             // use switch map so as to cancel previous subscribed events, before creating new once
-            switchMap(value => {
+            switchMap((value) => {
                 if (value !== '') {
                     // lookup from github
                     return this.lookup(value);
@@ -78,25 +52,27 @@ export class AirportAutocompleteComponent implements OnInit {
         );
     }
 
-    lookup(value: string): Observable<AirportAutoCompleteDataSource> {
+    lookup(value: any): Observable<AirportAutoCompleteDataSource> {
+        if (typeof value === 'object') {
+            return of(null);
+        }
         return this.acukwikAirportsService.search(value).pipe(
             // map the item property of the github results as our return object
-            map(results => results),
+            map((results) => results),
             // catch errors
-            catchError(_ => {
-                return of(null);
-            })
+            catchError((_) => of(null))
         );
     }
 
     public displayFn(airport?: AirportAutoCompleteData): string | undefined {
-        return airport ? airport.icao + ' - ' + airport.fullAirportName : undefined;
+        return airport
+            ? airport.icao + ' - ' + airport.fullAirportName
+            : undefined;
     }
 
-    public selected(airport) {
-        console.log(airport);
-        this.airportModel = airport;
-        //send to parent or do whatever you want to do
-        this.valueChange.emit(airport);
+    public selected(airport: MatAutocompleteSelectedEvent) {
+        this.airportModel = airport.option.value;
+        // send to parent or do whatever you want to do
+        this.valueChange.emit(airport.option.value);
     }
 }

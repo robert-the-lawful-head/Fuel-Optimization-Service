@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +61,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerContactInfoByGroupVM = (from cc in _context.CustomerContacts
+            var customerContactInfoByGroupVM = await (from cc in _context.CustomerContacts
                                                 join c in _context.Contacts on cc.ContactId equals c.Oid
                                                 join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
                                                 where cibg.GroupId == groupId
@@ -83,7 +85,7 @@ namespace FBOLinx.Web.Controllers
                                                     Country = cibg.Country,
                                                     Primary = cibg.Primary,
                                                     CopyAlerts = cibg.CopyAlerts
-                                                });
+                                                }).ToListAsync();
 
             return Ok(customerContactInfoByGroupVM);
         }
@@ -157,6 +159,79 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(contactInfoByGroup);
+        }
+
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportCustomerContacts([FromBody] List<CustomerContactsByGroupGridViewModel> customerContacts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            List<ContactInfoByGroup> importedContacts = new List<ContactInfoByGroup>();
+            foreach (var singleContact in customerContacts)
+            {
+                Contacts newContact = new Contacts();
+                newContact.Email = singleContact.Email;
+
+                _context.Contacts.Add(newContact);
+                await _context.SaveChangesAsync();
+
+                if(newContact.Oid != 0)
+                {
+                    CustomerContacts cc = new CustomerContacts();
+                    int customerId = 0;
+
+                    if(singleContact.CustomerId != 0)
+                    {
+                        customerId = (await _context.CustomerInfoByGroup.FirstOrDefaultAsync(s => s.Oid == singleContact.CustomerId)).CustomerId;
+
+                        if(customerId != 0)
+                        {
+                            cc.CustomerId = customerId;
+                            cc.ContactId = newContact.Oid;
+
+                            _context.CustomerContacts.Add(cc);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+
+                    
+                    ContactInfoByGroup cibg = new ContactInfoByGroup();
+                    cibg.FirstName = singleContact.FirstName;
+                    cibg.LastName = singleContact.LastName;
+                    cibg.Email = singleContact.Email;
+                    cibg.Title = singleContact.Title;
+                    cibg.Phone = singleContact.Phone;
+                    cibg.Extension = singleContact.Extension;
+                    cibg.Mobile = singleContact.Mobile;
+                    cibg.Fax = singleContact.Fax;
+                    cibg.Address = singleContact.Address;
+                    cibg.City = singleContact.City;
+                    cibg.State = singleContact.State;
+                    cibg.Country = singleContact.Country;
+                    cibg.GroupId = Convert.ToInt32(singleContact.GroupId);
+                    if(singleContact.PrimaryContact != string.Empty)
+                    {
+                        cibg.Primary = singleContact.PrimaryContact.ToLower() == "yes" ? true : false;
+                    }
+
+                    if(singleContact.CopyAlertsContact != string.Empty)
+                    {
+                        cibg.CopyAlerts = singleContact.CopyAlertsContact.ToLower() == "yes" ? true : false;
+                    }
+
+                    cibg.ContactId = newContact.Oid;
+
+                    _context.ContactInfoByGroup.Add(cibg);
+                    await _context.SaveChangesAsync();
+
+                    importedContacts.Add(cibg);
+                }
+
+            }
+            return Ok(importedContacts);
+            //return Ok(customerContacts);
         }
 
         private bool ContactInfoByGroupExists(int id)

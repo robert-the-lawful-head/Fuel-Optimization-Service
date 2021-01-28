@@ -1,12 +1,67 @@
-.mat-column-company {
-    width: 400px;
+.table-container {
+    height: calc(100vh - 357px);
 }
 
 .dropdownHeight {
-    height:30px !important;
+    height: 30px !important;
 }
 
 .checkboxHeight {
-    height:20px !important;
+    height: 20px !important;
     width: 20px !important;
 }
+
+.download {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.download a {
+    color: #1d62b4;
+}
+
+.download a:hover {
+    color: #1d62b4;
+}
+
+.action-btn {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.bulk-action-btn {
+    padding-top: 12px;
+}
+
+::ng-deep .switch-nested-menu-left-arrows {
+    button[mat-menu-item] {
+        padding-left: 32px;
+        padding-right: 16px;
+
+        &.mat-menu-item-submenu-trigger::after {
+            border-width: 5px 5px 5px 0;
+            border-color: transparent currentColor transparent transparent;
+            right: 0;
+            left: 16px;
+        }
+    }
+}
+
+.table-column-filter {
+    position: absolute;
+    right: 0;
+    top: -10px;
+}
+
+.export-import-menu {
+    position: absolute;
+    right: -40px;
+    top: 60px;
+}
+
+
+
+
+

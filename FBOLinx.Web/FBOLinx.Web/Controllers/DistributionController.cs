@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
@@ -22,16 +24,22 @@ namespace FBOLinx.Web.Controllers
     public class DistributionController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly FuelerLinxContext _fuelerLinxContext;
         private IHttpContextAccessor _HttpContextAccessor;
         private IFileProvider _FileProvider;
         private IOptions<MailSettings> _MailSettings;
+        private JwtManager _jwtManager;
+        private PriceDistributionService _PriceDistributionService;
 
-        public DistributionController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings)
+        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager, PriceDistributionService priceDistributionService)
         {
             _MailSettings = mailSettings;
             _FileProvider = fileProvider;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
+            _fuelerLinxContext = fuelerLinxContext;
+            _jwtManager = jwtManager;
+            _PriceDistributionService = priceDistributionService;
         }
 
         // GET: fbo/5/log/10
@@ -43,20 +51,17 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (fboId != UserService.GetClaimedFboId(_HttpContextAccessor))
-                return BadRequest(ModelState);
-
             var distributionLog = await (from dl in _context.DistributionLog
                 join cg in _context.CustomerInfoByGroup on new
                     {
-                        CustomerId = dl.CustomerId.GetValueOrDefault(),
-                        GroupId = dl.GroupId.GetValueOrDefault()
+                        CustomerId = (dl.CustomerId ?? 0),
+                        GroupId = (dl.GroupId ?? 0)
                     } equals new {cg.CustomerId, cg.GroupId}
                     into leftJoinCustomerInfoByGroup
                 from cg in leftJoinCustomerInfoByGroup.DefaultIfEmpty()
                 join pt in _context.PricingTemplate on new
                 {
-                    PricingTemplateId = dl.PricingTemplateId.GetValueOrDefault()
+                    PricingTemplateId = (dl.PricingTemplateId ?? 0)
                 } equals new
                 {
                     PricingTemplateId = pt.Oid
@@ -72,7 +77,7 @@ namespace FBOLinx.Web.Controllers
                 }
                 into leftJoinCCT
                 from cct in leftJoinCCT.DefaultIfEmpty()
-                                   where dl.Fboid == fboId
+                where dl.Fboid == fboId
                 select new
                 {
                     dl.Oid,
@@ -87,7 +92,6 @@ namespace FBOLinx.Web.Controllers
                     PricingTemplateName = pt != null ? pt.Name : "All",
                     CustomerCompanyTypeName = cct != null ? cct.Name : "All"
                 }).OrderByDescending(x => x.DateSent).ToListAsync();
-            //var distributionLog = _context.DistributionLog.Where((x => x.Fboid == fboId)).OrderByDescending((x => x.DateSent)).Take(resultCount);
 
             return Ok(distributionLog);
         }
@@ -102,8 +106,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var currentPrices = await (from f in _context.Fboprices
-                where f.EffectiveFrom <= DateTime.Now && f.EffectiveTo > DateTime.Now.AddDays(-1)
-                && f.Fboid == fboId
+                where f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
                 select f).ToListAsync();
 
             if (currentPrices.Count == 0)
@@ -121,12 +124,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
                 return BadRequest(ModelState);
 
-            await Task.Run(() => Services.PriceDistributionService.BeginPriceDistribution(_MailSettings.Value, _context,
-                request,
-                _FileProvider, _HttpContextAccessor));
+            await _PriceDistributionService.DistributePricing(request, false);
 
             return Ok();
         }
@@ -140,13 +141,12 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
                 return BadRequest(ModelState);
 
-            Services.PriceDistributionService service = new PriceDistributionService(_MailSettings.Value, _context, _FileProvider, _HttpContextAccessor);
-            string preview = await service.GeneratePreview(request);
+            await _PriceDistributionService.DistributePricing(request, true);
 
-            return Ok(new {preview = preview});
+            return Ok();
         }
     }
 }

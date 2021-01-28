@@ -1,8 +1,13 @@
-import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-//Services
+import { combineLatest, EMPTY, of } from 'rxjs';
+import { find } from 'lodash';
+
+// Services
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
@@ -10,544 +15,366 @@ import { ContactsService } from '../../../services/contacts.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { CustomerCompanyTypesService } from '../../../services/customer-company-types.service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
-import { CustomersService } from '../../../services/customers.service';
 import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
+import { FbofeeandtaxomitsbycustomerService } from '../../../services/fbofeeandtaxomitsbycustomer.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 
-//Components
-import { DistributionWizardMainComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
+// Components
 import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
-import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
-
+import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
+import { catchError, debounceTime, switchMap } from 'rxjs/operators';
 
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/default-layout'
+        link: '/default-layout',
     },
     {
         title: 'Customers',
-        link: '#/default-layout/customers'
+        link: '/default-layout/customers',
     },
     {
         title: 'Edit Customer',
-        link: ''
-    }
+        link: '',
+    },
 ];
 
 @Component({
     selector: 'app-customers-edit',
     templateUrl: './customers-edit.component.html',
-    styleUrls: ['./customers-edit.component.scss']
+    styleUrls: [ './customers-edit.component.scss' ],
 })
-/** customers-edit component*/
-export class CustomersEditComponent {
+export class CustomersEditComponent implements OnInit {
+    // Members
+    pageTitle = 'Edit Customer';
+    breadcrumb = BREADCRUMBS;
+    customerInfoByGroup: any;
+    contactsData: any[];
+    pricingTemplatesData: any[];
+    customerAircraftsData: any[];
+    selectedContactRecord: any;
+    currentContactInfoByGroup: any;
+    customCustomerType: any;
+    certificateTypes: any[];
+    customerCompanyTypes: any[];
+    hasContactForPriceDistribution = false;
+    customerForm: FormGroup;
+    feesAndTaxes: Array<any>;
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
 
-    //Private Members
-    private _RequiresRouting: boolean = false;
-
-    //Public Members
-    public pageTitle: string = 'Edit Customer';
-    public breadcrumb: any[] = BREADCRUMBS;
-    public pricingTemplatesDataSource: Array<any>;
-    public contactsData: Array<any>;
-    public pricingTemplatesData: Array<any>;
-    public customerAircraftsData: Array<any>;
-    public selectedContactRecord: any;
-    public selectedCustomerAircraftRecord: any;
-    public currentContactInfoByGroup: any;
-    public currentCustomerAircraft: any;
-    public customCustomerTypes: any[];
-    public isSaving: boolean = false;
-    public certificateTypes: any[];
-    public customerCompanyTypes: any[];
-    public isLoading: boolean = false;
-    public hasContactForPriceDistribution: boolean = false;
-
-    //Input/Output Bindings
-    @Output() saveCustomerClicked = new EventEmitter<any>();
-    @Output() cancelCustomerEditclicked = new EventEmitter<any>();
-    @Input() customerInfoByGroup: any;
-
-    /** customers-edit ctor */
-    constructor(private route: ActivatedRoute,
+    constructor(
+        private formBuilder: FormBuilder,
+        private route: ActivatedRoute,
         private router: Router,
         private customCustomerTypesService: CustomcustomertypesService,
         private contactInfoByGroupsService: ContactinfobygroupsService,
         private contactsService: ContactsService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customerContactsService: CustomercontactsService,
-        private customersService: CustomersService,
         private pricingTemplatesService: PricingtemplatesService,
         private customerAircraftsService: CustomeraircraftsService,
         private sharedService: SharedService,
         private customerCompanyTypesService: CustomerCompanyTypesService,
         private customersViewedByFboService: CustomersviewedbyfboService,
-        public deleteCustomerDialog: MatDialog,
-        public dialog: MatDialog,
-        public newContactDialog: MatDialog) {
+        private dialog: MatDialog,
+        private newContactDialog: MatDialog,
+        private fboFeesAndTaxesService: FbofeesandtaxesService,
+        private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService,
+        private snackBar: MatSnackBar,
+    ) {
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.sharedService.titleChange(this.pageTitle);
+    }
 
-        this.sharedService.emitChange(this.pageTitle);
-        this.customerInfoByGroupService.getCertificateTypes().subscribe((data: any) => this.certificateTypes = data);
+    async ngOnInit() {
+        const id = this.route.snapshot.paramMap.get('id');
+        this.customerInfoByGroup = await this.customerInfoByGroupService.get({ oid: id }).toPromise();
+        const results = await combineLatest([
+            this.customerInfoByGroupService.getCertificateTypes(),
+            this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId),
+            this.contactInfoByGroupsService.getCustomerContactInfoByGroup(
+                this.sharedService.currentUser.groupId,
+                this.customerInfoByGroup.customerId
+            ),
+            this.customerAircraftsService.getCustomerAircraftsByGroupAndCustomerId(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId,
+                this.customerInfoByGroup.customerId
+            ),
+            this.customCustomerTypesService.getForFboAndCustomer(
+                this.sharedService.currentUser.fboId,
+                this.customerInfoByGroup.customerId
+            ),
+            this.customerCompanyTypesService.getNonFuelerLinxForFbo(this.sharedService.currentUser.fboId),
+            this.customersViewedByFboService.add({
+                fboId: this.sharedService.currentUser.fboId,
+                groupId: this.sharedService.currentUser.groupId,
+                customerId: this.customerInfoByGroup.customerId,
+            }),
+        ]).toPromise();
 
-        //Check for passed in id
-        let id = this.route.snapshot.paramMap.get('id');
-        if (!id) {
-            this.loadCustomerContacts();
-            this.loadPricingTemplates();
-            this.loadCustomerAircrafts();
-            this.loadCustomCustomerType();
-            this.loadCustomerCompanyTypes();
-            return;
-        } else {
-            this._RequiresRouting = true;
-            this.customerInfoByGroupService.get({ oid: id }).subscribe((data: any) => {
-                this.customerInfoByGroup = data;
-                this.loadCustomerContacts();
-                this.loadPricingTemplates();
-                this.loadCustomerAircrafts();
-                this.loadCustomCustomerType();
-                this.loadCustomerCompanyTypes();
-                this.markCustomerAsViewedByFbo();
+        this.certificateTypes = results[0] as any[];
+        this.pricingTemplatesData = results[1] as any[];
+        this.contactsData = results[2] as any[];
+        this.customerAircraftsData = results[3] as any[];
+        this.customCustomerType = results[4];
+        this.customerCompanyTypes = results[5] as any[];
+        if (find(this.contactsData, c => c.copyAlerts)) {
+            this.hasContactForPriceDistribution = true;
+        }
+
+        this.customerForm = this.formBuilder.group({
+            active: [ this.customerInfoByGroup.active ],
+            company: [ this.customerInfoByGroup.company ],
+            customerCompanyType: [ this.customerInfoByGroup.customerCompanyType ],
+            certificateType: [ this.customerInfoByGroup.certificateType ],
+            mainPhone: [ this.customerInfoByGroup.mainPhone ],
+            address: [ this.customerInfoByGroup.address ],
+            city: [ this.customerInfoByGroup.city ],
+            state: [ this.customerInfoByGroup.state ],
+            zipCode: [ this.customerInfoByGroup.zipCode ],
+            country: [ this.customerInfoByGroup.country ],
+            website: [ this.customerInfoByGroup.website ],
+            distribute: [ this.customerInfoByGroup.distribute ],
+            showJetA: [ this.customerInfoByGroup.showJetA ],
+            show100Ll: [ this.customerInfoByGroup.show100Ll ],
+            customerMarginTemplate: [ this.customCustomerType.customerType ],
+        });
+        this.customerForm.valueChanges.pipe(
+            debounceTime(1000),
+            switchMap(async () => {
+                const customerInfoByGroup = {
+                    ...this.customerInfoByGroup,
+                    ...this.customerForm.value,
+                };
+                this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
+
+                await this.customerInfoByGroupService.update(customerInfoByGroup).toPromise();
+                if (!this.customCustomerType.oid || this.customCustomerType.oid === 0) {
+                    await this.customCustomerTypesService.add(this.customCustomerType).toPromise();
+                } else {
+                    await this.customCustomerTypesService.update(this.customCustomerType).toPromise();
+                }
+                this.customerInfoByGroup = customerInfoByGroup;
+            }),
+            catchError((err: Error) => {
+                console.error(err);
+                this.snackBar.open(err.message, '', {
+                    duration: 5000,
+                    panelClass: [ 'blue-snackbar' ],
+                });
+                return of(EMPTY);
+            })
+        ).subscribe();
+        this.customerForm.controls.customerCompanyType.valueChanges.subscribe(type => {
+            if (type < 0) {
+                this.customerCompanyTypeChanged();
+            }
+        });
+        this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe((selectedValue) => {
+            this.customCustomerType.customerType = selectedValue;
+            this.recalculatePriceBreakdown();
+        });
+
+        this.loadCustomerFeesAndTaxes();
+    }
+
+    // Methods
+    cancelCustomerEdit() {
+        this.router.navigate([ '/default-layout/customers/' ]).then();
+    }
+
+    contactDeleted(contact) {
+        this.customerContactsService
+            .remove(contact.customerContactId)
+            .subscribe(() => {
+                this.contactInfoByGroupsService
+                    .remove(contact.contactInfoByGroupId)
+                    .subscribe(() => {
+                        const index = this.contactsData.findIndex(
+                            (d) =>
+                                d.customerContactId ===
+                                contact.customerContactId
+                        ); // find index in your array
+                        this.contactsData.splice(index, 1); // remove element from array
+                    });
             });
-        }
     }
 
-    //Public Methods
-    public saveCustomerEdit() {
-        this.isSaving = true;
-        //Update customer information
-        this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((data: any) => {
-            for (let customCustomerType of this.customCustomerTypes) {
-                this.saveCustomCustomerType(customCustomerType);
-            }
-            //Update other aspects
-            if (this._RequiresRouting) {
-                sessionStorage.setItem('isCustomerEdit', '1');
-                this.router.navigate(['/default-layout/customers/']);
-            }
-            else {
-                this.saveCustomerClicked.emit();
-            }
-                
-        });
-    }
-
-    public saveDirectCustomerEdit() {
-        this.isSaving = true;
-        this._RequiresRouting = true;
-        //Update customer information
-        this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((data: any) => {
-            for (let customCustomerType of this.customCustomerTypes) {
-                this.saveCustomCustomerType(customCustomerType);
-            }
-            //Update other aspects
-            if (this._RequiresRouting) {
-                sessionStorage.setItem('isCustomerEdit', '1');
-                this.router.navigate(['/default-layout/customers/']);
-            }
-            else {
-                this.saveCustomerClicked.emit();
-            }
-
-        });
-    }
-
-    public cancelCustomerEdit() {
-        if (this._RequiresRouting) {
-            sessionStorage.setItem('isCustomerEdit', '1');
-            this.router.navigate(['/default-layout/customers/']);
-        }
-        else {
-            this.cancelCustomerEditclicked.emit();
-        }
-    }
-
-    public contactDeleted(contact) {
-        this.customerContactsService.remove(contact.customerContactId).subscribe((data: any) => {
-            this.contactInfoByGroupsService.remove(contact.contactInfoByGroupId).subscribe((data: any) => {
-                let index = this.contactsData.findIndex(d => d.customerContactId === contact.customerContactId); //find index in your array
-                this.contactsData.splice(index, 1);//remove element from array
-            });
-        });
-    }
-
-    public newContactClicked() {
-
+    newContactClicked() {
         this.selectedContactRecord = null;
         this.currentContactInfoByGroup = {
             oid: 0,
             contactId: 0,
-            groupId: this.sharedService.currentUser.groupId
+            groupId: this.sharedService.currentUser.groupId,
         };
 
-        const dialogRef = this.newContactDialog.open(ContactsDialogNewContactComponent, {
-            data: this.currentContactInfoByGroup
-        });
+        const dialogRef = this.newContactDialog.open(
+            ContactsDialogNewContactComponent,
+            {
+                data: this.currentContactInfoByGroup,
+            }
+        );
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (result != 'cancel') {
-                this._RequiresRouting = false;
-                this.saveCustomerEdit();
-                if (this.currentContactInfoByGroup.contactId == 0) {
-                    this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
-                        this.currentContactInfoByGroup.contactId = data.oid;
-                        this.saveContactInfoByGroup();
-                    });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result !== 'cancel') {
+                if (this.currentContactInfoByGroup.contactId === 0) {
+                    this.contactsService
+                        .add({ oid: 0 })
+                        .subscribe((data: any) => {
+                            this.currentContactInfoByGroup.contactId = data.oid;
+                            this.saveContactInfoByGroup();
+                        });
                 } else {
-                    this.saveCustomerEdit();
                     this.saveContactInfoByGroup();
                 }
-            }
-            else {
+            } else {
                 this.loadCustomerContacts();
             }
         });
-
-
-        //this.selectedContactRecord = null;
-        //this.currentContactInfoByGroup = {
-        //    oid: 0,
-        //    contactId: 0,
-        //    groupId: this.sharedService.currentUser.groupId
-        //};
     }
 
-    public editContactClicked(contact) {
-        const dialogRef = this.newContactDialog.open(ContactsDialogNewContactComponent, {
-            data: contact
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result != 'cancel') {
-                if (result.toDelete) {
-
-                    this.customerContactsService.remove(result.customerContactId).subscribe((data: any) => {
-                        this.contactInfoByGroupsService.remove(contact.contactInfoByGroupId).subscribe((data: any) => {
-                            //let index = this.contactsData.findIndex(d => d.customerContactId === contact.customerContactId); //find index in your array
-                            //this.contactsData.splice(index, 1);//remove element from array
-                           
-                            this.loadCustomerContacts();
-                        });
-                    });
-                }
-                else {
-                    this.selectedContactRecord = contact;
-                    this.contactInfoByGroupsService.get({ oid: contact.contactInfoByGroupId }).subscribe((data: any) => {
-                        if (data) {
-                            this.currentContactInfoByGroup = data;
-                            if (this.currentContactInfoByGroup.oid) {
-                                data.email = contact.email;
-                                data.firstName = contact.firstName;
-                                data.lastName = contact.lastName;
-                                data.title = contact.title;
-                                data.phone = contact.phone;
-                                data.extension = contact.extension;
-                                data.mobile = contact.mobile;
-                                data.fax = contact.fax;
-                                data.address = contact.address;
-                                data.city = contact.city;
-                                data.state = contact.state;
-                                data.country = contact.country;
-                                data.primary = contact.primary;
-                                data.copyAlerts = contact.copyAlerts;
-                                this.saveContactInfoByGroup();
-                            }
-
-                        }
-                    });
-                }
-                
-            }
-            else {
-                this.loadCustomerContacts();
-            }
-            
-            //this.contactInfoByGroupsService.get({ oid: contact.contactInfoByGroupId }).subscribe((data: any) => this.currentContactInfoByGroup = data);
-            
-
-            
-            //this.saveContactInfoByGroup();
-
-            //if (!result.oid) {
-            //    result.oid = result.contactInfoByGroupId;
-            //}
-            //this.contactsService.update(result).subscribe((data: any) => {
-            //    console.log(data);
-            //});
-
-
-            //if (this.currentContactInfoByGroup.contactId == 0) {
-            //    this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
-            //        this.currentContactInfoByGroup.contactId = data.oid;
-            //        this.saveContactInfoByGroup();
-            //    });
-            //} else {
-            //    this.saveCustomerEdit();
-            //    this.saveContactInfoByGroup();
-                
-            //}
-            //this.customersService.add(result).subscribe((data: any) => {
-            //    //result.customerId = data.oid;
-            //});
-        });
-
-        //this.selectedContactRecord = contact;
-        //this.contactInfoByGroupsService.get({ oid: contact.contactInfoByGroupId }).subscribe((data: any) => this.currentContactInfoByGroup = data);
-    }
-
-    public saveEditContactClicked() {
-        this.saveCustomerEdit();
-        if (this.currentContactInfoByGroup.contactId == 0) {
-            this.contactsService.add({ oid: 0 }).subscribe((data: any) => {
-                this.currentContactInfoByGroup.contactId = data.oid;
-                this.saveContactInfoByGroup();
-            });
-        } else {
-            this.saveCustomerEdit();
-            this.saveContactInfoByGroup();
+    updateCustomerPricingTemplate(pricingTemplateId: number) {
+        if (this.customCustomerType) {
+            this.customCustomerType.customerType = pricingTemplateId;
         }
     }
 
-    public cancelEditContactClicked() {
-        this.currentContactInfoByGroup = null;
-    }
-
-    public newCustomerAircraftAdded() {
-        this.saveCustomerEdit();
-        this.loadCustomerAircrafts();
-        
-    }
-
-    public editCustomerAircraftClicked(customerAircraft) {
-        
-
-        //this.saveCustomerEdit();
-        this.currentCustomerAircraft = null;
-        this.loadCustomerAircrafts();
-        this.selectedCustomerAircraftRecord = customerAircraft;
-        
-        //this.customerAircraftsService.get({ oid: customerAircraft.oid })
-        //    .subscribe((data: any) => this.currentCustomerAircraft = data);
-    }
-
-    public saveEditCustomerAircraftClicked() {
-        this.currentCustomerAircraft = null;
-      
-        this.loadCustomerAircrafts();
-      
-    }
-
-    public cancelEditCustomerAircraftClicked() {
-        this.currentCustomerAircraft = null;
-    }
-
-    public distributePricing() {
-        this.isLoading = true;
-        var customer = this.customerInfoByGroup;
-        var data = {
-            customer: customer,
+    customerCompanyTypeChanged() {
+        const data = {
             fboId: this.sharedService.currentUser.fboId,
-            groupId: this.sharedService.currentUser.groupId
-        };
-
-        //Update customer information
-        this.customerInfoByGroupService.update(this.customerInfoByGroup).subscribe((result: any) => {
-            for (let customCustomerType of this.customCustomerTypes) {
-                customCustomerType.customerId = this.customerInfoByGroup.customerId;
-            }
-            var pricingTemplatesToUpdate = [];
-
-            for (let customCustomerType of this.customCustomerTypes) {
-                if (customCustomerType.requiresUpdate)
-                    pricingTemplatesToUpdate.push(customCustomerType);
-            }
-
-            this.customCustomerTypesService.updateCollection(pricingTemplatesToUpdate).subscribe((result: any) => {
-                this.customCustomerTypesService
-                    .getForFboAndCustomer(this.sharedService.currentUser.fboId, this.customerInfoByGroup.customerId).subscribe(
-                        (result:
-                            any) => {
-                            this.customCustomerTypes = result;
-                            this.isLoading = false;
-
-                            //Show dispatch dialog
-                            const dialogRef = this.dialog.open(DistributionWizardMainComponent, {
-                                data: data,
-                                disableClose: true
-                            });
-
-                            dialogRef.afterClosed().subscribe(result => {
-
-                            });
-                        });
-            });
-        });
-    }
-
-    public customerCompanyTypeChanged() {
-        if (this.customerInfoByGroup.customerCompanyType > -1)
-            return;
-        var customers = [this.customerInfoByGroup];
-        var data = {
-            fboId: this.sharedService.currentUser.fboId,
-            groupId: this.sharedService.currentUser.groupId
+            groupId: this.sharedService.currentUser.groupId,
         };
         const dialogRef = this.dialog.open(CustomerCompanyTypeDialogComponent, {
-            data: data
+            data,
         });
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (!result)
+        dialogRef.afterClosed().subscribe((response) => {
+            if (!response) {
                 return;
-            this.customerCompanyTypesService.add(result).subscribe((data: any) => {
-                this.customerInfoByGroup.customerCompanyType = data.oid;
-                this.loadCustomerCompanyTypes();
-            });
-        });
-    }
-
-    public newCustomerPricingTemplate() {
-        this.customCustomerTypes.push({
-            oid: 0,
-            fboId: this.sharedService.currentUser.fboId,
-            customerId: this.customerInfoByGroup.customerId
-        });
-    }
-
-    public deleteCustomerPricingTemplate(customCustomerType) {
-        const dialogRef = this.deleteCustomerDialog.open(DeleteConfirmationComponent, {
-            data: { item: customCustomerType, description: 'customer\'s margin template' }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (!result)
-                return;
-            if (result.item.oid > 0) {
-                this.customCustomerTypesService.remove({ oid: result.item.oid }).subscribe(
-                    (data: any) => {
-                        this.customCustomerTypes.splice(this.customCustomerTypes.indexOf(customCustomerType), 1);
-                    });
-            } else {
-                this.customCustomerTypes.splice(this.customCustomerTypes.indexOf(customCustomerType), 1);
             }
+            this.customerCompanyTypesService
+                .add(response)
+                .subscribe((result: any) => {
+                    this.customerCompanyTypes.push(result);
+                    this.customerForm.patchValue({
+                        customerCompanyType: result.oid,
+                    });
+                });
         });
     }
 
-    public pricingTemplateSelectionChanged(customCustomerType) {
-        customCustomerType.requiresUpdate = true;
-    }
-
-    //Private Methods
-    private loadCustomerContacts() {
-        this.contactInfoByGroupsService.getCustomerContactInfoByGroup(this.sharedService.currentUser.groupId, this.customerInfoByGroup.customerId).subscribe(
-            (data:
-                any) => {
-                this.contactsData = data;
-                this.currentContactInfoByGroup = null;
-                this.hasContactForPriceDistribution = false;
-                if (!this.contactsData)
-                    return;
-                for (let contact of this.contactsData) {
-                    if (contact.copyAlerts)
-                        this.hasContactForPriceDistribution = true;
-                }
-            });
-    }
-
-    private toggleChange($event) {
+    toggleChange($event) {
         if ($event.checked) {
             this.customerInfoByGroup.showJetA = true;
             this.customerInfoByGroup.show100Ll = true;
             this.customerInfoByGroup.distribute = true;
-        }
-        else {
+        } else {
             this.customerInfoByGroup.showJetA = false;
             this.customerInfoByGroup.show100Ll = false;
             this.customerInfoByGroup.distribute = false;
         }
     }
 
-    private loadPricingTemplates() {
-        this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.pricingTemplatesData = data;
-        });
-    }
-
-    private loadCustomerAircrafts() {
-        this.customerAircraftsService
-            .getCustomerAircraftsByGroupAndCustomerId(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId,
-                this.customerInfoByGroup.customerId).subscribe((data:
-                any) => {
-                this.customerAircraftsData = data;
+    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
+        if (!feeAndTax.omitsByCustomer) {
+            feeAndTax.omitsByCustomer = [];
+        }
+        let omitRecord: any = {
+            oid: 0,
+            fboFeeAndTaxId: feeAndTax.oid,
+            customerId: this.customerInfoByGroup.customerId
+        };
+        if (feeAndTax.omitsByCustomer.length > 0) {
+            omitRecord = feeAndTax.omitsByCustomer[0];
+        } else {
+            feeAndTax.omitsByCustomer.push(omitRecord);
+        }
+        omitRecord.fboFeeAndTaxId = feeAndTax.oid;
+        if (feeAndTax.isOmitted) {
+            this.fboFeeAndTaxOmitsbyCustomerService.add(omitRecord).subscribe((response: any) => {
+                omitRecord.oid = response.oid;
+                this.recalculatePriceBreakdown();
             });
+        } else {
+            this.fboFeeAndTaxOmitsbyCustomerService.remove(omitRecord).subscribe(() => {
+                feeAndTax.omitsByCustomer = [];
+                this.recalculatePriceBreakdown();
+            });
+        }
     }
 
-    private loadCustomCustomerType() {
-        this.customCustomerTypesService
-            .getForFboAndCustomer(this.sharedService.currentUser.fboId, this.customerInfoByGroup.customerId).subscribe(
-                (data:
-                    any) => {
-                    //if (data)
-                        this.customCustomerTypes = data;
-                    //else
-                    //    this.customCustomerTypes = {
-                    //        fboId: this.sharedService.currentUser.fboId,
-                    //        customerId: this.customerInfoByGroup.customerId
-                    //    }
-                });
-    }
-
-    private loadCustomerCompanyTypes() {
-        this.customerCompanyTypesService.getForFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.customerCompanyTypes = data;
-            this.customerCompanyTypes.push({ oid: -1, name: '<Add Custom>' });
+    // Private Methods
+    private recalculatePriceBreakdown(): void {
+        // Set a timeout so the child component is aware of model changes
+        const self = this;
+        setTimeout(() => {
+            self.priceBreakdownPreview.performRecalculation();
         });
+    }
+
+    private loadCustomerContacts() {
+        this.contactInfoByGroupsService
+            .getCustomerContactInfoByGroup(
+                this.sharedService.currentUser.groupId,
+                this.customerInfoByGroup.customerId
+            )
+            .subscribe((data: any) => {
+                this.contactsData = data;
+                this.currentContactInfoByGroup = null;
+                this.hasContactForPriceDistribution = false;
+                if (!this.contactsData) {
+                    return;
+                }
+                for (const contact of this.contactsData) {
+                    if (contact.copyAlerts) {
+                        this.hasContactForPriceDistribution = true;
+                    }
+                }
+            });
     }
 
     private saveContactInfoByGroup() {
-        if (this.currentContactInfoByGroup.oid == 0) {
-            this.contactInfoByGroupsService.add(this.currentContactInfoByGroup).subscribe((data: any) => {
-                this.currentContactInfoByGroup.oid = data.oid;
-                this.saveCustomerContact();
-            });
+        if (this.currentContactInfoByGroup.oid === 0) {
+            this.contactInfoByGroupsService
+                .add(this.currentContactInfoByGroup)
+                .subscribe((data: any) => {
+                    this.currentContactInfoByGroup.oid = data.oid;
+                    this.saveCustomerContact();
+                });
         } else {
-            this.contactInfoByGroupsService.update(this.currentContactInfoByGroup).subscribe((data: any) => {
-                this.saveCustomerContact();
-            });
+            this.contactInfoByGroupsService
+                .update(this.currentContactInfoByGroup)
+                .subscribe(() => {
+                    this.saveCustomerContact();
+                });
         }
     }
 
     private saveCustomerContact() {
         if (!this.selectedContactRecord) {
-            this.customerContactsService.add({ customerId: this.customerInfoByGroup.customerId, contactId: this.currentContactInfoByGroup.contactId }).subscribe((data:
-                any) => {
-                this.loadCustomerContacts();
-            })
+            this.customerContactsService
+                .add({
+                    customerId: this.customerInfoByGroup.customerId,
+                    contactId: this.currentContactInfoByGroup.contactId,
+                })
+                .subscribe(() => {
+                    this.loadCustomerContacts();
+                });
         } else {
             this.loadCustomerContacts();
         }
     }
 
-    private saveCustomCustomerType(customCustomerType) {
-        customCustomerType.customerId = this.customerInfoByGroup.customerId;
-        if (!customCustomerType.oid || customCustomerType.oid == 0) {
-            this.customCustomerTypesService.add(customCustomerType).subscribe((data: any) => {
-
+    private loadCustomerFeesAndTaxes(): void {
+        this.fboFeesAndTaxesService
+            .getByFboAndCustomer(this.sharedService.currentUser.fboId, this.customerInfoByGroup.customerId).subscribe(
+            (response: any[]) => {
+                this.feesAndTaxes = response;
             });
-        } else {
-            this.customCustomerTypesService.update(customCustomerType).subscribe((data: any) => {
-
-            });
-        }
-    }
-
-    private markCustomerAsViewedByFbo() {
-        this.customersViewedByFboService.add({ fboId: this.sharedService.currentUser.fboId, groupId: this.sharedService.currentUser.groupId, customerId: this.customerInfoByGroup.customerId }).subscribe((data:
-            any) => {
-            
-        });
     }
 }

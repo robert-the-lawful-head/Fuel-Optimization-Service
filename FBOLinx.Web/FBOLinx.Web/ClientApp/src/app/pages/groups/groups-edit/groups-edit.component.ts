@@ -1,78 +1,73 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-//Services
+// Services
 import { GroupsService } from '../../../services/groups.service';
-import { SharedService } from '../../../layouts/shared-service';
+
 
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/default-layout'
+        link: '/default-layout',
     },
     {
         title: 'Groups',
-        link: '#/default-layout/groups'
+        link: '/default-layout/groups',
     },
     {
         title: 'Edit Group',
-        link: ''
-    }
+        link: '',
+    },
 ];
 
 @Component({
     selector: 'app-groups-edit',
     templateUrl: './groups-edit.component.html',
-    styleUrls: ['./groups-edit.component.scss']
+    styleUrls: [ './groups-edit.component.scss' ],
 })
-/** groups-edit component*/
 export class GroupsEditComponent implements OnInit {
-
-    @Output() saveClicked = new EventEmitter<any>();
     @Output() cancelClicked = new EventEmitter<any>();
     @Input() groupInfo: any;
 
-    //Public Members
-    public pageTitle: string = 'Edit FBO';
+    // Public Members
+    public pageTitle = 'Edit FBO';
     public breadcrumb: any[] = BREADCRUMBS;
     public currentContact: any;
     public contactsData: any;
 
-    //Private Members
-    private selectedContactRecord: any;
-    private _RequiresRouting: boolean = false;
-
-    /** groups-edit ctor */
-    constructor(private route: ActivatedRoute,
+    constructor(
+        private route: ActivatedRoute,
         private router: Router,
         private groupsService: GroupsService,
-        private sharedService: SharedService    ) {
-
+        private snackBar: MatSnackBar
+    ) {
     }
 
     ngOnInit() {
-        let id = this.route.snapshot.paramMap.get('id');
-        if (!id)
-            this._RequiresRouting = false;
-        else {
-            this._RequiresRouting = true;
+        const id = this.route.snapshot.paramMap.get('id');
+        if (id) {
             this.groupsService.get({ oid: id }).subscribe((data: any) => {
                 this.groupInfo = data;
             });
         }
+        if (sessionStorage.getItem('isNewFbo')) {
+            sessionStorage.removeItem('isNewFbo');
+        }
     }
 
-    //Public Methods
+    // Public Methods
     public saveEdit() {
         this.groupsService.update(this.groupInfo).subscribe(() => {
+            this.snackBar.open('Successfully updated!', '', {
+                duration: 2000,
+                panelClass: [ 'blue-snackbar' ],
+            });
+            this.router.navigate([ '/default-layout/groups/' ]);
         });
-        this.saveClicked.emit(this.groupInfo);
     }
 
     public cancelEdit() {
-        if (this._RequiresRouting)
-            this.router.navigate(['/default-layout/groups/']);
-        else
-            this.cancelClicked.emit();
+        this.router.navigate([ '/default-layout/groups/' ]);
     }
 }

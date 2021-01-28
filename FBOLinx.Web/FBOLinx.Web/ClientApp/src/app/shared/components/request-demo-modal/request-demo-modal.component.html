@@ -1,0 +1,15 @@
+<div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px;">
+    <iframe
+        (load)="zohoLoaded()"
+        frameborder="0"
+        height="650px"
+        src="https://forms.zohopublic.com/degatech/form/FBOlinxDemoRequest/formperma/LffG16GME4Z4vTP8VxaMyFL4Q8ChNBtkKnJXo7XuZqc"
+        width="100%"
+    ></iframe>
+    <ngx-ui-loader
+        [loaderId]="zohoLoader"
+        fgsColor="#091a26"
+        fgsType="fading-circle"
+        overlayColor="rgba(0, 0, 0, 0.2)"
+    ></ngx-ui-loader>
+</div>

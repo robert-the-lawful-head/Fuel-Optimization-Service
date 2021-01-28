@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -152,23 +154,23 @@ namespace FBOLinx.Web.Controllers
 
         //GET: api/AcukwikAirports/KVNY/fbo-handler-detail/1234
         [HttpGet("{icao}/fbo-handler-detail")]
-        public async Task<IActionResult> GetAcukwikFboHandlerDetailByIcao([FromRoute] string icao,
-            [FromRoute] int handlerId)
+        public async Task<IActionResult> GetAcukwikFboHandlerDetailByIcao([FromRoute] string icao)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var airport = await _context.AcukwikAirports.Where(x =>
-                !string.IsNullOrEmpty(x.Icao) && x.Icao.ToLower() == icao.ToLower()).FirstOrDefaultAsync();
+            var airport = await _context.AcukwikAirports
+                                            .Where(x => !string.IsNullOrEmpty(x.Icao) && x.Icao.ToLower() == icao.ToLower())
+                                            .FirstOrDefaultAsync();
 
             if (airport == null || airport.AirportId == 0)
                 return NotFound("No record found for that icao.");
 
-            var results =
-                await _context.AcukwikFbohandlerDetail.Where(x =>
-                    x.AirportId == airport.AirportId).ToListAsync();
+            var results = await _context.AcukwikFbohandlerDetail
+                                            .Where(x => x.AirportId == airport.AirportId)
+                                            .ToListAsync();
 
             if (results == null)
                 return NotFound("No record found for that handler Id.");

@@ -1,93 +1,89 @@
-import { Component, OnInit, Inject, Input, Output } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
-//Services
-import { AcukwikairportsService } from '../../../services/acukwikairports.service';
+// Services
 import { FbosService } from '../../../services/fbos.service';
 import { FboairportsService } from '../../../services/fboairports.service';
 import { SharedService } from '../../../layouts/shared-service';
 
-//Components
-import { FbosDialogNewFboComponent } from '../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
+const BREADCRUMBS: any[] = [
+    {
+        title: 'Main',
+        link: '/default-layout',
+    },
+    {
+        title: 'FBOs',
+        link: '',
+    },
+];
 
 @Component({
     selector: 'app-fbos-home',
     templateUrl: './fbos-home.component.html',
-    styleUrls: ['./fbos-home.component.scss']
+    styleUrls: [ './fbos-home.component.scss' ],
 })
-/** fbos-home component*/
-export class FbosHomeComponent {
-
+export class FbosHomeComponent implements OnInit {
     @Input() groupInfo: any;
+    @Input() embed: boolean;
 
-    //Public Members
+    // Public Members
+    public breadcrumb: any[];
     public fbosData: Array<any>;
     public currentFbo: any;
     public currentFboAirport: any;
-    public airportData: Array<any>;
 
-    /** fbos-home ctor */
-    constructor(private route: ActivatedRoute,
+    constructor(
         private router: Router,
         private fboService: FbosService,
         private fboAirportsService: FboairportsService,
-        public newFboDialog: MatDialog,
-        private acukwikAirportsService: AcukwikairportsService,
-        private sharedService: SharedService) {
-        
+        private sharedService: SharedService
+    ) {
         this.currentFbo = null;
         this.currentFboAirport = null;
     }
 
     ngOnInit() {
-        this.loadInitialData();
+        this.loadAllFbosForGroup();
 
-        //this.currentFbo = this.route.paramMap.pipe(
-        //    switchMap((params: ParamMap) =>
-        //        this.fboService.get({ oid: params.get('id') }))
-        //);
-    }
-
-    /** Public Methods */
-    public editFboClicked = function (record) {
-        if (!this.groupInfo)
-            this.router.navigate(['/default-layout/fbos/' + record.oid]);
-        else {
-            this.fboService.get(record).subscribe((data: any) => this.currentFbo = data);
-            this.fboAirportsService.getForFbo(record).subscribe((data: any) => this.currentFboAirport = data);
+        if (!this.embed) {
+            this.breadcrumb = BREADCRUMBS;
         }
     }
 
-    public deleteFboClicked = function (record) {
-        
-    };
+    public editFboClicked(record) {
+        if (!this.groupInfo) {
+            this.router.navigate([ '/default-layout/fbos/' + record.oid ]);
+        } else {
+            this.fboService
+                .get(record)
+                .subscribe((data: any) => (this.currentFbo = data));
+            this.fboAirportsService
+                .getForFbo(record)
+                .subscribe((data: any) => (this.currentFboAirport = data));
+        }
+    }
 
-    public saveFboEditClicked = function () {
+    public saveFboEditClicked() {
         this.currentFboAirport = null;
         this.currentFbo = null;
+        this.fbosData = null;
+        this.loadAllFbosForGroup();
     }
 
     public cancelFboEditClicked() {
         this.currentFbo = null;
     }
 
-    //Private Methods
-    private loadInitialData() {
-        if (!this.groupInfo && this.sharedService.currentUser.role == 3)
-            this.loadAllFbos();
-        else
-            this.loadAllFbosForGroup();
-    }
-
-    private loadAllFbos() {
-        this.fboService.getAllFbos().subscribe((data: any) => this.fbosData = data);
-    }
-
+    // Private Methods
     private loadAllFbosForGroup() {
-        if (!this.groupInfo)
-            this.fboService.getForGroup(this.sharedService.currentUser.groupId).subscribe((data: any) => this.fbosData = data);
-        else
-            this.fboService.getForGroup(this.groupInfo.oid).subscribe((data: any) => this.fbosData = data);
+        if (!this.groupInfo) {
+            this.fboService
+                .getForGroup(this.sharedService.currentUser.groupId)
+                .subscribe((data: any) => (this.fbosData = data));
+        } else {
+            this.fboService
+                .getForGroup(this.groupInfo.oid)
+                .subscribe((data: any) => (this.fbosData = data));
+        }
     }
 }

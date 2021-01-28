@@ -1,48 +1,118 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, OnDestroy } from '@angular/core';
 
-//Services
+import * as _ from 'lodash';
+import * as moment from 'moment';
+import * as XLSX from 'xlsx';
+
+// Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { interval, Subscription } from 'rxjs';
 
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/default-layout'
+        link: '/default-layout',
     },
     {
         title: 'Fuel Orders',
-        link: '#/default-layout/fuelreqs'
-    }
+        link: '/default-layout/fuelreqs',
+    },
 ];
 
 @Component({
     selector: 'app-fuelreqs-home',
     templateUrl: './fuelreqs-home.component.html',
-    styleUrls: ['./fuelreqs-home.component.scss']
+    styleUrls: [ './fuelreqs-home.component.scss' ],
 })
-/** fuelreqs-home component*/
-export class FuelreqsHomeComponent {
-
-    //Public Members
-    public pageTitle: string = 'Fuel Orders';
+export class FuelreqsHomeComponent implements OnDestroy {
+    // Public Members
+    public pageTitle = 'Fuel Orders';
     public breadcrumb: any[] = BREADCRUMBS;
-    public fuelreqsData: Array<any>;
+    public fuelreqsData: any[];
+    public filterStartDate: Date;
+    public filterEndDate: Date;
+    public timer: Subscription;
 
-    /** fuelreqs-home ctor */
-    constructor(private fuelReqService: FuelreqsService, private sharedService: SharedService) {
-        this.sharedService.emitChange(this.pageTitle);
-        this.loadFuelReqData();
+    constructor(
+        private fuelReqService: FuelreqsService,
+        private sharedService: SharedService
+    ) {
+        this.sharedService.titleChange(this.pageTitle);
+        this.filterStartDate = new Date(
+            moment().add(-30, 'd').format('MM/DD/YYYY')
+        );
+        this.filterEndDate = new Date(
+            moment().add(30, 'd').format('MM/DD/YYYY')
+        );
+        this.startFuelReqDataServe();
+    }
+
+    ngOnDestroy() {
+        this.stopFuelReqDataServe();
+    }
+
+    public startFuelReqDataServe() {
+        this.timer = interval(5000).subscribe(() => {
+            this.fuelReqService
+                .getForGroupFboAndDateRange(
+                    this.sharedService.currentUser.groupId,
+                    this.sharedService.currentUser.fboId,
+                    this.filterStartDate,
+                    this.filterEndDate
+                )
+                .subscribe((data: any) => {
+                    this.fuelreqsData = data;
+                });
+        });
+    }
+
+    public restartFuelReqDataServe() {
+        this.stopFuelReqDataServe();
+        this.startFuelReqDataServe();
+    }
+
+    public stopFuelReqDataServe() {
+        if (this.timer) {
+            this.timer.unsubscribe();
+        }
     }
 
     public dateFilterChanged(event) {
-        this.loadFuelReqData();
+        this.filterStartDate = event.filterStartDate;
+        this.filterEndDate = event.filterEndDate;
+        this.restartFuelReqDataServe();
     }
 
-    private loadFuelReqData() {
-        this.fuelreqsData = null;
-        this.fuelReqService.getForFboAndDateRange(this.sharedService.currentUser.fboId, this.sharedService.dashboardSettings.filterStartDate, this.sharedService.dashboardSettings.filterEndDate).subscribe((data: any) => {
-            this.fuelreqsData = data;
-        });
+    public export(event) {
+        this.fuelReqService
+            .getForGroupFboAndDateRange(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId,
+                event.filterStartDate,
+                event.filterEndDate
+            )
+            .subscribe((data: any) => {
+                const exportData = _.map(data, (item) => ({
+                    'Flight Dept.': item.customerName,
+                    'ITP Margin Template': item.pricingTemplateName,
+                    ETA: item.eta,
+                    ETD: item.etd,
+                    'Volume (gal.)': item.quotedVolume,
+                    PPG: item.quotedPpg,
+                    'Tail #': item.tailNumber,
+                    Phone: item.phoneNumber,
+                    Source: item.source,
+                    Email: item.email,
+                    ID: item.oid,
+                    'Fuelerlinx ID': item.sourceId,
+                }));
+                const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
+                const wb: XLSX.WorkBook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Fuel Orders');
+
+                /* save to file */
+                XLSX.writeFile(wb, 'FuelOrders.xlsx');
+            });
     }
 }

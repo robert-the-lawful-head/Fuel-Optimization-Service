@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -17,23 +21,26 @@ namespace FBOLinx.Web.Controllers
     public class AirCraftsController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly AircraftService _aircraftService;
 
-        public AirCraftsController(FboLinxContext context)
+        public AirCraftsController(FboLinxContext context, AircraftService aircraftService)
         {
             _context = context;
+            _aircraftService = aircraftService;
         }
 
         // GET: api/AirCrafts
         [HttpGet]
-        public IEnumerable<AirCrafts> GetAirCrafts()
+        public async Task<ActionResult<IEnumerable<AirCrafts>>> GetAirCrafts()
         {
-            return _context.Aircrafts.OrderBy((x => x.Make)).ThenBy((x => x.Model));
+            var result = await _aircraftService.GetAllAircrafts();
+            return Ok(result.OrderBy(x => x.Make).ThenBy(x => x.Model));
         }
 
         [HttpGet("Sizes")]
-        public IEnumerable<Utilities.Enum.EnumDescriptionValue> GetAircraftSizes()
+        public IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> GetAircraftSizes()
         {
-            return Utilities.Enum.GetDescriptions(typeof(Models.AirCrafts.AircraftSizes));
+            return Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
         }
 
         // GET: api/AirCrafts/5
@@ -45,30 +52,44 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerAircrafts = await (from ca in _context.CustomerAircrafts
-                                           join ac in _context.Aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
-                                           from ac in leftJoinAircrafts.DefaultIfEmpty()
-                                           where ca.Oid == id
-                                           select new
-                                           {
-                                               ca.Oid,
-                                               ca.AircraftId,
-                                               ca.TailNumber,
-                                               ca.GroupId,
-                                               ca.CustomerId,
-                                               ac.Make,
-                                               ac.Model,
-                                               ca.Size
-                                           }).FirstOrDefaultAsync();
+            var customerAircraft = await _context.CustomerAircrafts.Where(x => x.Oid == id).FirstOrDefaultAsync();
 
-           // var airCrafts = await _context.Aircrafts.FindAsync(id);
-
-            if (customerAircrafts == null)
+            if (customerAircraft == null)
             {
                 return NotFound();
             }
 
-            return Ok(customerAircrafts);
+            var aircraft = await _aircraftService.GetAircrafts(customerAircraft.AircraftId);
+            var result = new
+            {
+                customerAircraft.Oid,
+                customerAircraft.AircraftId,
+                customerAircraft.TailNumber,
+                customerAircraft.GroupId,
+                customerAircraft.CustomerId,
+                aircraft.Make,
+                aircraft.Model,
+                customerAircraft.Size
+            };
+
+           return Ok(result);
+        }
+
+        [HttpGet("customers-by-tail/group/{groupId}/tail/{tailNumber}")]
+        public async Task<ActionResult<CustomerInfoByGroup>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
+        {
+            if (string.IsNullOrEmpty(tailNumber))
+                return Ok(new List<CustomerInfoByGroup>());
+            
+            var customerAircraft = await _context.CustomerAircrafts.Where(x => x.TailNumber == tailNumber).ToListAsync();
+            if (customerAircraft == null)
+                return Ok(new List<CustomerInfoByGroup>());
+
+            List<int> customerIds = customerAircraft.Select(x => x.CustomerId).Distinct().ToList();
+
+            var result = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && customerIds.Contains(x.CustomerId)).Include(x => x.Customer).Where(x => (x.Customer != null && x.Customer.Suspended != true)).ToListAsync();
+
+            return Ok(result);
         }
 
         // PUT: api/AirCrafts/5
@@ -85,25 +106,16 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(airCrafts).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _aircraftService.UpdateAirCrafts(airCrafts);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AirCraftsExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/AirCrafts
@@ -115,8 +127,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Aircrafts.Add(airCrafts);
-            await _context.SaveChangesAsync();
+            await _aircraftService.AddAirCrafts(airCrafts);
 
             return CreatedAtAction("GetAirCrafts", new { id = airCrafts.AircraftId }, airCrafts);
         }
@@ -130,21 +141,15 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var airCrafts = await _context.Aircrafts.FindAsync(id);
+            var airCrafts = await _aircraftService.GetAircrafts(id);
             if (airCrafts == null)
             {
                 return NotFound();
             }
 
-            _context.Aircrafts.Remove(airCrafts);
-            await _context.SaveChangesAsync();
+            await _aircraftService.RemoveAirCrafts(airCrafts);
 
             return Ok(airCrafts);
-        }
-
-        private bool AirCraftsExists(int id)
-        {
-            return _context.Aircrafts.Any(e => e.AircraftId == id);
         }
     }
 }

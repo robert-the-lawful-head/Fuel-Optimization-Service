@@ -1,297 +1,546 @@
-import { Component, EventEmitter, Input, Output, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
-import { MatDialog } from '@angular/material';
-import * as _ from 'lodash';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
+import { find, forEach, map, sortBy } from 'lodash';
+import FlatFileImporter from 'flatfile-csv-importer';
+import * as XLSX from 'xlsx';
 
-//Services
-import { AuthenticationService } from '../../../services/authentication.service'
-import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+// Services
 import { CustomersService } from '../../../services/customers.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { SharedService } from '../../../layouts/shared-service';
 
-//Components
+// Components
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
 
-import * as XLSX from 'xlsx';
 import { CustomermarginsService } from '../../../services/customermargins.service';
 import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
+import { CustomerGridState } from '../../../store/reducers/customer';
+
+import * as SharedEvents from '../../../models/sharedEvents';
+
+const initialColumns: ColumnType[] = [
+    {
+        id: 'selectAll',
+        name: 'Select All',
+    },
+    {
+        id: 'needsAttention',
+        name: 'Needs Attention',
+    },
+    {
+        id: 'company',
+        name: 'Company',
+        sort: 'asc',
+    },
+    {
+        id: 'customerCompanyTypeName',
+        name: 'Customer Type',
+    },
+    {
+        id: 'isFuelerLinxCustomer',
+        name: 'FuelerLinx Network',
+    },
+    {
+        id: 'certificateTypeDescription',
+        name: 'Certificate Type',
+    },
+    {
+        id: 'pricingTemplateName',
+        name: 'ITP Margin Template',
+    },
+    {
+        id: 'fleetSize',
+        name: 'Fleet Size',
+    },
+    {
+        id: 'delete',
+        name: 'Actions',
+    },
+];
 
 @Component({
     selector: 'app-customers-grid',
     templateUrl: './customers-grid.component.html',
-    styleUrls: ['./customers-grid.component.scss']
+    styleUrls: [ './customers-grid.component.scss' ],
 })
-/** customers-grid component*/
 export class CustomersGridComponent implements OnInit {
+    // Input/Output Bindings
+    @Input() customersData: any[];
+    @Input() pricingTemplatesData: any[];
+    @Input() aircraftData: any[];
+    @Input() customerGridState: CustomerGridState;
 
-    //Input/Output Bindings
     @Output() editCustomerClicked = new EventEmitter<any>();
     @Output() customerDeleted = new EventEmitter<any>();
-    @Input() customersData: Array<any>;
 
-    @Input() pricingTemplatesData: Array<any>;
-
-    //Public Members
+    // Members
     @ViewChild('customerTableContainer') table: ElementRef;
-    public customersDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = ['selectAll', 'needsAttention', 'company', 'customerCompanyTypeName', 'pricingTemplateId', 'allInPrice', 'fleetSize', 'delete'];
-    public resultsLength: number = 0;
-    public allCustomerAircraft: any[];
-    public customerFilterType: number = 0;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-    public selectAll: boolean = false;
-    public selectedRows: number;
-    public globalMargin: any;
-    public pageIndex: number = 0;
-    public pricingTemplatesDataSource: MatTableDataSource<any> = null;
-    
+    tableLocalStorageKey = 'customer-manager-table-settings';
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
+    customersDataSource: any = null;
+    customerFilterType: number = undefined;
+    selectAll = false;
+    selectedRows: number;
+    pageIndex = 0;
+    pageSize = 100;
+    columns: ColumnType[] = [];
 
-    /** customers-grid ctor */
+    LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
+
+    results = '[]';
+
+    private importer: FlatFileImporter;
+
     constructor(
-        public newCustomerDialog: MatDialog,
-        private AuthenticationService: AuthenticationService,
+        private newCustomerDialog: MatDialog,
+        private deleteCustomerDialog: MatDialog,
+        private tableSettingsDialog: MatDialog,
         private customersService: CustomersService,
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customersViewedByFboService: CustomersviewedbyfboService,
-        public deleteCustomerDialog: MatDialog,
-        public customeraircraftsService: CustomeraircraftsService,
-        public customerMarginsService: CustomermarginsService
-    ) {}
+        private customerMarginsService: CustomermarginsService
+    ) {
+    }
 
     ngOnInit() {
-        this.loadCustomerAircraftFullList();
-        this.pricingTemplatesDataSource = new MatTableDataSource(this.pricingTemplatesData);
-        if (!this.customersData)
-            return;
+        this.initializeImporter();
+
+        if (this.customerGridState.filterType) {
+            this.customerFilterType = this.customerGridState.filterType;
+        }
+
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+        } else {
+            this.columns = initialColumns;
+        }
+
         this.refreshCustomerDataSource();
+
+        if (this.customerGridState.filter) {
+            this.customersDataSource.filterCollection = JSON.parse(this.customerGridState.filter);
+        }
+        if (this.customerGridState.page) {
+            this.paginator.pageIndex = this.customerGridState.page;
+        }
+        if (this.customerGridState.order) {
+            this.sort.active = this.customerGridState.order;
+        }
+        if (this.customerGridState.orderBy) {
+            this.sort.direction = this.customerGridState.orderBy as SortDirection;
+        }
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem('pageIndex', event.pageIndex);
+        sessionStorage.setItem(
+            'pageSizeValue',
+            this.paginator.pageSize.toString()
+        );
         this.selectAll = false;
+        forEach(this.customersData, (customer) => {
+            customer.selectAll = false;
+        });
+    }
 
-        if (sessionStorage.getItem('isCustomerEdit')) {
-            if (sessionStorage.getItem('isCustomerEdit') == '1') {
-                if (sessionStorage.getItem('pageIndex')) {
-                    this.paginator.pageIndex = sessionStorage.getItem('pageIndex') as any;
-                    sessionStorage.removeItem('pageIndex');
-                    sessionStorage.removeItem('isCustomerEdit');
-                }
-                else {
-                    this.paginator.pageIndex = 0;
-                }
+    // Methods
+    deleteCustomer(customer) {
+        const dialogRef = this.deleteCustomerDialog.open(
+            DeleteConfirmationComponent,
+            {
+                data: { item: customer, description: 'customer' },
+                autoFocus: false,
             }
-        }
-        else {
-            this.paginator.pageIndex = 0;
-        }
-    }
+        );
 
-    onPageChanged(e) {
-        sessionStorage.setItem('pageIndex', e.pageIndex);
-    }
-
-    //Public Methods
-    public deleteCustomer(customer) {
-        const dialogRef = this.deleteCustomerDialog.open(DeleteConfirmationComponent, {
-            data: { item: customer, description: 'customer' }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (!result)
-                return;
-            this.customerInfoByGroupService.remove({ oid: result.item.customerInfoByGroupId}).subscribe((data: any) => {
-                this.customerDeleted.emit();
-            });
-        });
-    }
-
-    public editCustomer(customer, $event) {
-        if ($event.srcElement) {
-            if ($event.srcElement.nodeName.toLowerCase() == 'button' || $event.srcElement.nodeName.toLowerCase() == 'select' || ($event.srcElement.nodeName.toLowerCase() == 'input' && $event.srcElement.getAttribute('type') == 'checkbox')) {
-                $event.stopPropagation();
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
                 return;
             }
-        }
-
-        const clonedCustomer = Object.assign({}, customer);
-        this.editCustomerClicked.emit(clonedCustomer);
-    }
-
-    public selectAction()
-    {
-        this.customersData.forEach(fee => {
-            fee.selectAll = this.selectAll ? true : false;
+            this.customerInfoByGroupService
+                .remove({ oid: result.item.customerInfoByGroupId })
+                .subscribe(() => {
+                    this.customerDeleted.emit();
+                });
         });
-        this.selectedRows = this.selectAll ? this.customersData.length: 0;
     }
 
-    public selectUnique() {
-        if (this.selectedRows == this.customersData.length) {
+    editCustomer(customer) {
+        this.editCustomerClicked.emit({
+            customerInfoByGroupId: customer.customerInfoByGroupId,
+            filter: this.customersDataSource.filter,
+            page: this.customersDataSource.paginator.pageIndex,
+            order: this.customersDataSource.sort.active,
+            orderBy: this.customersDataSource.sort.direction,
+            filterType: this.customerFilterType,
+        });
+    }
+
+    selectAction() {
+        const pageCustomersData = this.customersDataSource.connect().value;
+        forEach(pageCustomersData, (customer) => {
+            customer.selectAll = this.selectAll;
+        });
+        this.selectedRows = this.selectAll ? pageCustomersData.length : 0;
+    }
+
+    selectUnique() {
+        if (this.selectedRows === this.customersData.length) {
             this.selectAll = false;
             this.selectedRows = this.selectedRows - 1;
         }
     }
 
-    public newCustomer() {
-        var customerInfo = { oid: 0 };
-        const dialogRef = this.newCustomerDialog.open(CustomersDialogNewCustomerComponent, {
-            data: customerInfo
-        });
+    newCustomer() {
+        const customerInfo = { oid: 0 };
+        const dialogRef = this.newCustomerDialog.open(
+            CustomersDialogNewCustomerComponent,
+            {
+                data: customerInfo,
+            }
+        );
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (!result) return;
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
             this.customersService.add(result).subscribe((data: any) => {
                 result.customerId = data.oid;
-               
+
                 result.GroupId = this.sharedService.currentUser.groupId;
 
-                this.customersViewedByFboService.add({ fboId: this.sharedService.currentUser.fboId, groupId: this.sharedService.currentUser.groupId, customerId: result.customerId }).subscribe((data:
-                    any) => {
-                });
+                this.customersViewedByFboService
+                    .add({
+                        fboId: this.sharedService.currentUser.fboId,
+                        groupId: this.sharedService.currentUser.groupId,
+                        customerId: result.customerId,
+                    })
+                    .subscribe(() => {
+                    });
 
-                this.customerInfoByGroupService.add(result).subscribe((customerInfoByGroupData: any) => {
-                    result.customerInfoByGroupId = customerInfoByGroupData.oid;
-                    this.editCustomer(result,Event);
-                });
+                this.customerInfoByGroupService
+                    .add(result)
+                    .subscribe((customerInfoByGroupData: any) => {
+                        result.customerInfoByGroupId =
+                            customerInfoByGroupData.oid;
+                        this.editCustomer(result);
+                    });
             });
         });
     }
 
-    public applyFilter(filterValue: string) {
-        this.customersDataSource.filter = filterValue.trim().toLowerCase();
-    }
-
-    public exportCustomersToExcel() {
-        //Export the filtered results to an excel spreadsheet
-        let exportData = _.clone(this.customersDataSource.filteredData);
-        exportData = _.map(exportData, item => {
-            return {
-                Company: item.company,
-                Source: item.customerCompanyTypeName == 'FuelerLinx' ? 'FBOLinx Network' : item.customerCompanyTypeName,
-                'Assigned Price Tier': item.pricingTemplateName,
-                Price: item.allInPrice
-            }
-        });
-        exportData = _.sortBy(exportData, [
-            item => {
-                return item.Company.toLowerCase();
-            }
+    exportCustomersToExcel() {
+        // Export the filtered results to an excel spreadsheet
+        const filteredList = this.customersDataSource.filteredData.filter((item) => item.selectAll === true);
+        let exportData;
+        if (filteredList.length > 0) {
+            exportData = filteredList;
+        } else {
+            exportData = this.customersDataSource.filteredData;
+        }
+        exportData = map(exportData, (item) => ({
+            Company: item.company,
+            'Needs Attention': item.needsAttention ? 'Needs Attention' : '',
+            'Customer Type': item.customerCompanyTypeName,
+            'FuelerLinx Network': item.isFuelerLinxCustomer ? 'YES' : 'NO',
+            'Certificate Type': item.certificateTypeDescription,
+            'ITP Margin Template': item.pricingTemplateName,
+            'Fleet Size': item.fleetSize,
+        }));
+        exportData = sortBy(exportData, [
+            (item) => item.Company.toLowerCase(),
         ]);
-        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);//converts a DOM TABLE element to a worksheet
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Customers');
 
         /* save to file */
         XLSX.writeFile(wb, 'Customers.xlsx');
-
     }
 
-    public exportCustomerAircraftToExcel() {
-        //Export the filtered results to an excel spreadsheet
-        let exportData = _.clone(this.allCustomerAircraft);
-        exportData = _.map(exportData, item => {
-            return {
-                Company: item.company,
+    exportCustomerAircraftToExcel() {
+        // Export the filtered results to an excel spreadsheet
+        let exportData = map(this.aircraftData, (item) => ({
                 Tail: item.tailNumber,
-                Make: item.make,
-                Model: item.model,
+                Type: item.make + ' ' + item.model,
                 Size: item.aircraftSizeDescription,
-                'Margin Template': item.pricingTemplateName
-            };
-        });
-        exportData = _.sortBy(exportData, [
-            item => {
-                return item.Company.toLowerCase();
-            },
-            item => {
-                return item.Tail.toLowerCase();
-            }
+                Company: item.company,
+                'Company Pricing': item.pricingTemplateName,
+            }));
+        exportData = sortBy(exportData, [
+            (item) => item.Company.toLowerCase(),
+            (item) => item.Tail.toLowerCase(),
         ]);
-        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);//converts a DOM TABLE element to a worksheet
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Aircraft');
 
         /* save to file */
         XLSX.writeFile(wb, 'Aircraft.xlsx');
-
     }
 
-    public customerFilterTypeChanged(event) {
+    customerFilterTypeChanged() {
         this.refreshCustomerDataSource();
     }
 
-    //Private Methods
-    private loadCustomerAircraftFullList() {
-        this.customeraircraftsService.getCustomerAircraftsByGroup(this.sharedService.currentUser.groupId).subscribe((data: any) => {
-            this.allCustomerAircraft = data;
+    onMarginChange(changedPricingTemplateId: any, customer: any) {
+        const changedPricingTemplate = find(this.pricingTemplatesData, p => p.oid === parseInt(changedPricingTemplateId, 10));
+
+        customer.needsAttention = changedPricingTemplate.default;
+        customer.allInPrice = changedPricingTemplate.intoPlanePrice;
+
+        if (customer.needsAttention) {
+            customer.needsAttentionReason = 'Customer was assigned to the default template and has not been changed yet.';
+        }
+
+        const vm = {
+            id: customer.customerId,
+            pricingTemplateId: changedPricingTemplate.oid,
+            fboid: this.sharedService.currentUser.fboId,
+        };
+        this.customerMarginsService
+            .updatecustomermargin(vm)
+            .subscribe(() => {
+                this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
+            });
+    }
+
+    bulkMarginTemplateUpdate(event: MatSelectChange) {
+        const listCustomers = [];
+
+        forEach(this.customersData, (customer) => {
+            if (customer.selectAll === true) {
+                customer.needsAttention = event.value.default;
+                customer.pricingTemplateName = event.value.name;
+                customer.pricingTemplateId = event.value.oid;
+                customer.allInPrice = event.value.intoPlanePrice;
+                if (customer.needsAttention) {
+                    customer.needsAttentionReason = 'Customer was assigned to the default template and has not been changed yet.';
+                }
+                listCustomers.push({
+                    id: customer.customerId,
+                    pricingTemplateId: event.value.oid,
+                    fboid: this.sharedService.currentUser.fboId,
+                });
+            }
         });
+
+        this.customerMarginsService
+            .updatemultiplecustomermargin(listCustomers)
+            .subscribe(() => {
+                this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
+            });
+    }
+
+    anySelected() {
+        const filteredList = this.customersData.filter((item) => item.selectAll === true);
+        return filteredList.length > 0;
+    }
+
+    async launchImporter() {
+        if (!this.LICENSE_KEY) {
+            return alert('Set LICENSE_KEY on Line 13 before continuing.');
+        }
+        try {
+            const results = await this.importer.requestDataFromUser();
+            this.importer.displayLoader();
+
+            if (results) {
+                results.data.forEach((result) => {
+                    result.groupid = this.sharedService.currentUser.groupId;
+                });
+
+                this.customersService
+                    .importcustomers(results.data)
+                    .subscribe((data: any) => {
+                        if (data) {
+                            this.importer.displaySuccess(
+                                'Data successfully imported!'
+                            );
+                            setTimeout(() => {
+                                this.customerDeleted.emit();
+                            }, 1500);
+                        }
+                    });
+            }
+        } catch (e) {
+        }
+    }
+
+    initializeImporter() {
+        FlatFileImporter.setVersion(2);
+        this.importer = new FlatFileImporter(this.LICENSE_KEY, {
+            fields: [
+                {
+                    label: 'Company Id',
+                    alternates: [ 'Id', 'CompanyId' ],
+                    key: 'CompanyId',
+                    description: 'Company Id Value',
+                },
+                {
+                    label: 'CompanyName',
+                    alternates: [ 'Company Name', 'Name' ],
+                    key: 'CompanyName',
+                    description: 'Company Name Value',
+                    validators: [
+                        {
+                            validate: 'required',
+                            error: 'this field is required',
+                        },
+                    ],
+                },
+                {
+                    label: 'Activate',
+                    alternates: [ 'activate' ],
+                    key: 'Activate',
+                    description: 'Activate Flag',
+                },
+                {
+                    label: 'Tail',
+                    alternates: [ 'tail', 'plane tail', 'N-number', 'Nnumber' ],
+                    key: 'Tail',
+                    description: 'Tail',
+                },
+                {
+                    label: 'Aircraft Make',
+                    alternates: [
+                        'Make',
+                        'make',
+                        'aircraft make',
+                        'aircraft',
+                        'Manufacturer',
+                        'Aircraft Manufacturer',
+                    ],
+                    key: 'AircraftMake',
+                    description: 'Aircraft Make',
+                },
+                {
+                    label: 'Model',
+                    alternates: [
+                        'Aircraft Model',
+                        'aircraft model',
+                        'model',
+                        'aircraft type',
+                        'type',
+                    ],
+                    key: 'AircraftModel',
+                    description: 'Aircraft Model',
+                },
+                {
+                    label: 'Size',
+                    alternates: [ 'Aircraft Size', 'Plane Size' ],
+                    key: 'AircraftSize',
+                    description: 'Aircraft Size',
+                },
+                {
+                    label: 'First Name',
+                    alternates: [ 'first name', 'name' ],
+                    key: 'FirstName',
+                    description: 'First Name',
+                },
+                {
+                    label: 'Last Name',
+                    alternates: [ 'last name', 'lname' ],
+                    key: 'LastName',
+                    description: 'Last Name',
+                },
+                {
+                    label: 'Title',
+                    alternates: [ 'title' ],
+                    key: 'Title',
+                    description: 'Title',
+                },
+                {
+                    label: 'Email',
+                    alternates: [ 'email address', 'email' ],
+                    key: 'Email',
+                    description: 'Email',
+                },
+                {
+                    label: 'Mobile',
+                    alternates: [ 'mobile', 'cell', 'cell phone' ],
+                    key: 'Mobile',
+                    description: 'Mobile',
+                },
+                {
+                    label: 'Phone',
+                    alternates: [ 'phone' ],
+                    key: 'Phone',
+                    description: 'Phone',
+                },
+            ],
+            type: 'Customers',
+            allowInvalidSubmit: true,
+            managed: true,
+            allowCustom: true,
+            disableManualInput: false,
+        });
+        this.importer.setCustomer({
+            userId: '1',
+            name: 'WebsiteImport',
+        });
+    }
+
+    getTableColumns() {
+        return this.columns.filter(column => !column.hidden).map(column => column.id);
+    }
+
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
+            data: this.columns
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.columns = [ ...result ];
+                this.refreshSort();
+                this.saveSettings();
+            }
+        });
+    }
+
+    saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
     }
 
     private refreshCustomerDataSource() {
-        this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-        this.customersData.forEach(c => {
-            c.needsAttention = c.pricingTemplateName === 'Default Template' ? true : false;
+        this.sort.sortChange.subscribe(() => {
+            this.columns = this.columns.map(column =>
+                column.id === this.sort.active
+                    ? { ...column, sort: this.sort.direction }
+                    : { id: column.id, name: column.name, hidden: column.hidden }
+            );
+            this.paginator.pageIndex = 0;
+            this.saveSettings();
         });
-        this.customersDataSource = new MatTableDataSource(this.customersData.filter((element: any, index: number, array: any[]) => {
-            if (this.customerFilterType == 0)
-                return true;
-            return !element.needsAttention;
-        }));
+        if (!this.customersDataSource) {
+            this.customersDataSource = new MatTableDataSource();
+        }
+        this.customersDataSource.data = this.customersData.filter((element: any) => {
+                if (this.customerFilterType !== 1) {
+                    return true;
+                }
+                return element.needsAttention;
+            }
+        );
+        this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
         this.customersDataSource.paginator = this.paginator;
-        this.resultsLength = this.customersData.length;
     }
 
-    private onMarginChange(newValue, customer) {
-        let filteredList = this.customersData.filter(function (item) {
-            return item.selectAll == true
-        });
-
-        if (filteredList.length > 0) {
-
-            var listCustomers= [];
-
-            let updatedCount = 0;
-            filteredList.forEach(selectedItem => {
-                
-                selectedItem.pricingTemplateName = newValue;
-                
-                let vm = {
-                    id: selectedItem.customerId,
-                    customerMarginName: newValue,
-                    fboid: this.sharedService.currentUser.fboId
-                }
-
-                listCustomers.push(vm);
-                
-
-                //this.customerMarginsService.updatecustomermargin(vm).subscribe((data: any) => {
-                //    selectedItem.pricingTemplateName = newValue;
-                //    updatedCount++;
-                //    if (updatedCount === filteredList.length) {
-                //        this.refreshCustomerDataSource();
-                //    }
-                //});
-            });
-
-            if (listCustomers.length > 0) {
-                this.customerMarginsService.updatemultiplecustomermargin(listCustomers).subscribe((data: any) => {
-
-                });
-            }
-        }
-        else {
-            let vm = {
-                id: customer.customerId,
-                customerMarginName: newValue,
-                fboid: this.sharedService.currentUser.fboId
-            }
-            this.customerMarginsService.updatecustomermargin(vm).subscribe((data: any) => {
-                this.refreshCustomerDataSource();
-            });
-        }
+    private refreshSort() {
+        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
+        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
     }
 }

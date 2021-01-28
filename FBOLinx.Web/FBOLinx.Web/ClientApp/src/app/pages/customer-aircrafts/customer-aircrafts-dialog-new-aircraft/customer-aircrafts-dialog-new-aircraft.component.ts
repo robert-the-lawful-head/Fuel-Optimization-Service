@@ -1,8 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-//Services
+// Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 
 export interface NewCustomerAircraftDialogData {
@@ -20,35 +19,36 @@ export interface NewCustomerAircraftDialogData {
 @Component({
     selector: 'app-customer-aircrafts-dialog-new-aircraft',
     templateUrl: './customer-aircrafts-dialog-new-aircraft.component.html',
-    styleUrls: ['./customer-aircrafts-dialog-new-aircraft.component.scss']
+    styleUrls: [ './customer-aircrafts-dialog-new-aircraft.component.scss' ],
 })
-/** customer-aircrafts-dialog-new-aircraft component*/
 export class CustomerAircraftsDialogNewAircraftComponent implements OnInit {
-
-    //Public Members
+    // Public Members
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
 
-    /** customer-aircrafts-dialog-new-aircraft ctor */
-    constructor(public dialogRef: MatDialogRef<CustomerAircraftsDialogNewAircraftComponent>,
+    constructor(
+        public dialogRef: MatDialogRef<CustomerAircraftsDialogNewAircraftComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewCustomerAircraftDialogData,
-        private aircraftsService: AircraftsService) {
-
+        private aircraftsService: AircraftsService
+    ) {
     }
 
     ngOnInit() {
-        this.aircraftsService.getAll().subscribe((data: any) => this.aircraftTypes = data);
-        this.aircraftsService.getAircraftSizes().subscribe((data: any) => this.aircraftSizes = data);
+        this.aircraftsService
+            .getAll()
+            .subscribe((data: any) => (this.aircraftTypes = data));
+        this.aircraftsService
+            .getAircraftSizes()
+            .subscribe((data: any) => (this.aircraftSizes = data));
     }
 
-    //Public Methods
+    // Public Methods
     public onAircraftTypeChanged() {
         this.data.aircraftId = this.data.selectedAircraft.aircraftId;
         this.data.size = this.data.selectedAircraft.size;
     }
 
     public onCancelClick(): void {
-        this.data = null;
         this.dialogRef.close();
     }
 }

@@ -1,42 +1,44 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
 
-//Services
+// Services
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
     selector: 'app-statistics-total-customers',
     templateUrl: './statistics-total-customers.component.html',
-    styleUrls: ['./statistics-total-customers.component.scss']
+    styleUrls: ['./statistics-total-customers.component.scss'],
 })
-/** statisticsTotalCustomers component*/
+// statisticsTotalCustomers component
 export class StatisticsTotalCustomersComponent implements OnInit {
+    @Input() options: any = {
+        useCard: true,
+    };
+    @Input() startDate: any;
+    @Input() endDate: any;
 
-    @Input() options: any;
-
-    //Public Members
+    // Public Members
     public totalCustomers: number;
 
-    /** statisticsTotalCustomers ctor */
-    constructor(private router: Router,
+    constructor(
         private customerinfobygroupService: CustomerinfobygroupService,
-        private sharedService: SharedService) {
-        if (!this.options)
-            this.options = {};
+        private sharedService: SharedService
+    ) {
     }
 
     ngOnInit() {
         this.refreshData();
     }
 
-    public redirectClicked() {
-        this.router.navigate(['/default-layout/customers']);
-    }
-
     public refreshData() {
-        this.customerinfobygroupService.getCustomerCountByGroupAndFBO(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.totalCustomers = data;
-        });
+        this.customerinfobygroupService
+            .getCustomerCountByGroupAndFBO(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
+            .subscribe((data: any) => {
+                this.totalCustomers = data;
+            }, () => {
+            });
     }
 }

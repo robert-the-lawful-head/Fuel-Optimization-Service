@@ -1,0 +1,17 @@
+<ni-card [align]="'center'" [title]="'Sign in to FBOLinx'">
+    <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+        <mat-form-field>
+            <input formControlName="username" matInput placeholder="Username" required>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input formControlName="password" matInput placeholder="Password" required type="password">
+            <mat-hint *ngIf="error" class="text-danger">{{ error }}</mat-hint>
+        </mat-form-field>
+
+        <button class="mt-3" color="accent" mat-flat-button type="submit">Sign In</button>
+
+        <div class="additional-info">
+        </div>
+    </form>
+</ni-card>

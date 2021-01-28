@@ -1,1 +1,21 @@
-﻿
+.actions {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.paddingTop {
+    padding-top: 30px;
+}
+
+.table-container {
+    height: calc(100vh - 320px);
+}
+
+.mat-column-email {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

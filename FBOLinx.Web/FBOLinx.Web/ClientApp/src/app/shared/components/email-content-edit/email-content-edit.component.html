@@ -1,14 +1,14 @@
-<h1 mat-dialog-title *ngIf="emailContent.oid > 0">Edit Email Content</h1>
-<h1 mat-dialog-title *ngIf="!emailContent.oid || emailContent.oid == 0">New Email Content</h1>
+<h1 *ngIf="emailContent.oid > 0" mat-dialog-title>Edit Email Content</h1>
+<h1 *ngIf="!emailContent.oid || emailContent.oid == 0" mat-dialog-title>New Email Content</h1>
 <div mat-dialog-content>
     <div>
         <mat-form-field>
-            <input matInput placeholder="Name" aria-label="Name" [(ngModel)]="emailContent.name" cdkFocusInitial>
+            <input [(ngModel)]="emailContent.name" aria-label="Name" cdkFocusInitial matInput placeholder="Name">
         </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <mat-select placeholder="Type" [(ngModel)]="emailContent.emailContentType">
+            <mat-select [(ngModel)]="emailContent.emailContentType" placeholder="Type">
                 <mat-option *ngFor="let contentType of emailContentTypes" [value]="contentType.value">
                     {{contentType.description}}
                 </mat-option>
@@ -16,10 +16,18 @@
         </mat-form-field>
     </div>
     <div>
-        <ejs-richtexteditor id='rteContent' [(value)]='emailContent.emailContentHTML'></ejs-richtexteditor>
+        <ejs-richtexteditor [(value)]='emailContent.emailContentHTML' id='rteContent'></ejs-richtexteditor>
     </div>
 </div>
 <div mat-dialog-actions>
-    <button ni-button [view]="'success'" beforeIcon="fa fa-floppy-o" (click)="onSaveChangesClick()" class="mr-1">{{emailContent.oid > 0 ? 'Save Changes' : 'Add New'}}</button>
-    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+    <button
+        (click)="onSaveChangesClick()"
+        class="mr-1"
+        color="green"
+        mat-stroked-button
+    >
+        <mat-icon>save</mat-icon>
+        {{emailContent.oid > 0 ? 'Save Changes' : 'Add New'}}
+    </button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

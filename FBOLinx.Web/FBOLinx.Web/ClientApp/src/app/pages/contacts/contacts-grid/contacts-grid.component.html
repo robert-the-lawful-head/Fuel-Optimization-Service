@@ -1,49 +1,113 @@
 <div class="">
-    <table mat-table [dataSource]="contactsDataSource" style="box-shadow:none !important;" class="mat-elevation-z8 col-md-12" matSort>
+    <table
+        [dataSource]="contactsDataSource"
+        class="mat-elevation-z8 col-md-12"
+        mat-table
+        matSort
+        style="box-shadow: none !important;"
+    >
         <ng-container matColumnDef="firstName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
-            <td mat-cell (click)="EditContactPopup(contact)" *matCellDef="let contact">{{contact.firstName}}</td>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                First Name
+            </th>
+            <td
+                (click)="editContactPopup(contact)"
+                *matCellDef="let contact"
+                mat-cell
+            >
+                {{ contact.firstName }}
+            </td>
         </ng-container>
 
         <ng-container matColumnDef="lastName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell (click)="EditContactPopup(contact)" *matCellDef="let contact">{{contact.lastName}}</td>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Last Name</th>
+            <td
+                (click)="editContactPopup(contact)"
+                *matCellDef="let contact"
+                mat-cell
+            >
+                {{ contact.lastName }}
+            </td>
         </ng-container>
 
         <ng-container matColumnDef="title">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
-            <td mat-cell (click)="EditContactPopup(contact)" *matCellDef="let contact">{{contact.title}}</td>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Title</th>
+            <td
+                (click)="editContactPopup(contact)"
+                *matCellDef="let contact"
+                mat-cell
+            >
+                {{ contact.title }}
+            </td>
         </ng-container>
 
         <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-            <td mat-cell (click)="EditContactPopup(contact)" *matCellDef="let contact">{{contact.email}}</td>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
+            <td
+                (click)="editContactPopup(contact)"
+                *matCellDef="let contact"
+                mat-cell
+            >
+                {{ contact.email }}
+            </td>
         </ng-container>
 
         <ng-container matColumnDef="phone">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone</th>
-            <td mat-cell (click)="EditContactPopup(contact)" *matCellDef="let contact">{{contact.phone}}</td>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Phone</th>
+            <td
+                (click)="editContactPopup(contact)"
+                *matCellDef="let contact"
+                mat-cell
+            >
+                {{ contact.phone }}
+            </td>
         </ng-container>
 
         <ng-container matColumnDef="copyAlerts">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Copy On Distribution?</th>
-            <td mat-cell *matCellDef="let contact">
-                <mat-slide-toggle color="accent" (click)="UpdateCopyAlertsValue(contact);" [checked]="contact.copyAlerts" [(ngModel)]="contact.copyAlerts"></mat-slide-toggle>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                <span style="margin-right: 15px;">Copy All</span>
+                <mat-slide-toggle
+                    (change)="UpdateAllCopyAlertsValues()"
+                    [checked]="copyAll"
+                    color="accent"
+                ></mat-slide-toggle>
+            </th>
+            <td *matCellDef="let contact" mat-cell>
+                <mat-slide-toggle
+                    (click)="UpdateCopyAlertsValue(contact)"
+                    [(ngModel)]="contact.copyAlerts"
+                    [checked]="contact.copyAlerts"
+                    color="accent"
+                ></mat-slide-toggle>
             </td>
         </ng-container>
 
         <ng-container matColumnDef="delete">
-            <th mat-header-cell *matHeaderCellDef>
+            <th *matHeaderCellDef mat-header-cell>
+                <!--<div class="actions-menu pull-right">-->
                 <div class="pull-right">
-                    <button ni-button [view]="'accent'" beforeIcon="fa fa-plus" (click)="newRecord()">Add New</button>
+                    <button (click)="newRecord()" [view]="'accent'" beforeIcon="fa fa-plus" class="mr-3" ni-button>
+                        Add New
+                    </button>
+                    <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                        <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+                    </button>
+                    <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
+                        <button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>Import
+                        </button>
+                    </mat-menu>
                 </div>
             </th>
-            <td mat-cell *matCellDef="let contact">
+            <td *matCellDef="let contact" mat-cell>
                 &nbsp;
             </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editRecord(row,$event)"></tr>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr
+            (click)="editRecord(row, $event)"
+            *matRowDef="let row; columns: displayedColumns"
+            mat-row
+        ></tr>
     </table>
 </div>

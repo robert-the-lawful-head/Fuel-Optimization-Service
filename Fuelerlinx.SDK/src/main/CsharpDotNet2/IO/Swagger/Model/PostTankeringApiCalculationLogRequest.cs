@@ -1,0 +1,108 @@
+using System;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+
+namespace IO.Swagger.Model {
+
+  /// <summary>
+  /// 
+  /// </summary>
+  [DataContract]
+  public class PostTankeringApiCalculationLogRequest {
+    /// <summary>
+    /// Gets or Sets Id
+    /// </summary>
+    [DataMember(Name="id", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "id")]
+    public int? Id { get; set; }
+
+    /// <summary>
+    /// Gets or Sets CompanyId
+    /// </summary>
+    [DataMember(Name="companyId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyId")]
+    public int? CompanyId { get; set; }
+
+    /// <summary>
+    /// Gets or Sets UserId
+    /// </summary>
+    [DataMember(Name="userId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "userId")]
+    public int? UserId { get; set; }
+
+    /// <summary>
+    /// Gets or Sets DateTimeRecordedUtc
+    /// </summary>
+    [DataMember(Name="dateTimeRecordedUtc", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "dateTimeRecordedUtc")]
+    public DateTime? DateTimeRecordedUtc { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Apikey
+    /// </summary>
+    [DataMember(Name="apikey", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "apikey")]
+    public Guid? Apikey { get; set; }
+
+    /// <summary>
+    /// Gets or Sets RequestSerializedData
+    /// </summary>
+    [DataMember(Name="requestSerializedData", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "requestSerializedData")]
+    public string RequestSerializedData { get; set; }
+
+    /// <summary>
+    /// Gets or Sets RequestSerializedAs
+    /// </summary>
+    [DataMember(Name="requestSerializedAs", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "requestSerializedAs")]
+    public string RequestSerializedAs { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ResponseSerializedData
+    /// </summary>
+    [DataMember(Name="responseSerializedData", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "responseSerializedData")]
+    public string ResponseSerializedData { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ResponseSerializedAs
+    /// </summary>
+    [DataMember(Name="responseSerializedAs", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "responseSerializedAs")]
+    public string ResponseSerializedAs { get; set; }
+
+
+    /// <summary>
+    /// Get the string presentation of the object
+    /// </summary>
+    /// <returns>String presentation of the object</returns>
+    public override string ToString()  {
+      var sb = new StringBuilder();
+      sb.Append("class PostTankeringApiCalculationLogRequest {\n");
+      sb.Append("  Id: ").Append(Id).Append("\n");
+      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
+      sb.Append("  UserId: ").Append(UserId).Append("\n");
+      sb.Append("  DateTimeRecordedUtc: ").Append(DateTimeRecordedUtc).Append("\n");
+      sb.Append("  Apikey: ").Append(Apikey).Append("\n");
+      sb.Append("  RequestSerializedData: ").Append(RequestSerializedData).Append("\n");
+      sb.Append("  RequestSerializedAs: ").Append(RequestSerializedAs).Append("\n");
+      sb.Append("  ResponseSerializedData: ").Append(ResponseSerializedData).Append("\n");
+      sb.Append("  ResponseSerializedAs: ").Append(ResponseSerializedAs).Append("\n");
+      sb.Append("}\n");
+      return sb.ToString();
+    }
+
+    /// <summary>
+    /// Get the JSON string presentation of the object
+    /// </summary>
+    /// <returns>JSON string presentation of the object</returns>
+    public string ToJson() {
+      return JsonConvert.SerializeObject(this, Formatting.Indented);
+    }
+
+}
+}

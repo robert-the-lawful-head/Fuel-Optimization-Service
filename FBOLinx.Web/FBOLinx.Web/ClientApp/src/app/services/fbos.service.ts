@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
@@ -7,31 +7,55 @@ export class FbosService {
     private accessPointUrl: string;
 
     constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-        this.headers = new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' });
+        this.headers = new HttpHeaders({
+            'Content-Type': 'application/json; charset=utf-8',
+        });
         this.accessPointUrl = baseUrl + 'api/fbos';
     }
 
     public getForGroup(groupId) {
-        return this.http.get(this.accessPointUrl + '/group/' + groupId, { headers: this.headers });
+        return this.http.get(this.accessPointUrl + '/group/' + groupId, {
+            headers: this.headers,
+        });
     }
 
     public getAllFbos() {
-            return this.http.get(this.accessPointUrl, { headers: this.headers });
+        return this.http.get(this.accessPointUrl, {headers: this.headers});
     }
 
     public get(payload) {
-        return this.http.get(this.accessPointUrl + '/' + payload.oid, { headers: this.headers });
+        return this.http.get(this.accessPointUrl + '/' + payload.oid, {
+            headers: this.headers,
+        });
     }
 
     public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, { headers: this.headers });
+        return this.http.post(this.accessPointUrl, payload, {
+            headers: this.headers,
+        });
+    }
+
+    public addSingleFbo(payload) {
+        return this.http.post(this.accessPointUrl + '/single', payload, {
+            headers: this.headers,
+        });
     }
 
     public remove(payload) {
-        return this.http.delete(this.accessPointUrl + '/' + payload.oid, { headers: this.headers });
+        return this.http.delete(this.accessPointUrl + '/' + payload.oid, {
+            headers: this.headers,
+        });
     }
 
     public update(payload) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, { headers: this.headers });
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
+            headers: this.headers,
+        });
+    }
+
+    public manageFbo(id: number) {
+        return this.http.post(this.accessPointUrl + '/manage/' + id, {}, {
+            headers: this.headers,
+        });
     }
 }

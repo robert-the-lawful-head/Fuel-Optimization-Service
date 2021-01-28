@@ -336,7 +336,7 @@ BEGIN
 			AC.MAKE AS AircraftMake,
 			AC.MODEL AS AircraftModel,
 			AC.[NORMAL CRUISE TAS] AS NormalCruiseTAS,
-			AC.[FUEL CAPACITY (gal)] AS FuelCapacity,
+			AC.[FUEL CAPACITYÂ (gal)] AS FuelCapacity,
 			AC.[LANDING PERF LENGTH] AS LandingPerfLength,
 			AC.[RANGE (nm)] AS MaxRange,
 			AC.MaxRangeHours AS MaxRangeHours,
@@ -347,7 +347,7 @@ BEGIN
 			CASE WHEN ISNULL(CA.Size, 0) > 0
 							THEN CA.Size
 							ELSE ISNULL(AC.Size, 0) END AS Size,
-			CASE WHEN ISNULL(AC.MaxRangeHours, 0) > 0 THEN ISNULL(AC.[FUEL CAPACITY (gal)], 0) / ISNULL(AC.MaxRangeHours, 1) ELSE 0 END AS FuelBurnRate,
+			CASE WHEN ISNULL(AC.MaxRangeHours, 0) > 0 THEN ISNULL(AC.[FUEL CAPACITYÂ (gal)], 0) / ISNULL(AC.MaxRangeHours, 1) ELSE 0 END AS FuelBurnRate,
 			AC.FuelType AS FuelType,
 			CA.AddedFrom
 	FROM
@@ -403,7 +403,7 @@ BEGIN
       ,FBO.[InitialSetupPhase]
       ,FBO.[DisableCost]
 	FROM RampFees AS RF
-	INNER JOIN FBOs FBO ON RF.FBOID = FBO.OID AND FBO.GroupID = @GroupID
+	INNER JOIN FBOs FBO ON RF.FBOID = FBO.OID AND FBO.GroupID = @GroupID AND ISNULL(RF.Size, 0) > 0
 	
 	--FBO Prices
 	EXEC up_Load_FBOPrices @GroupID

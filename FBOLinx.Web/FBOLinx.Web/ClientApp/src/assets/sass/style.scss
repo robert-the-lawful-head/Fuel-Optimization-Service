@@ -5,5 +5,404 @@
 @import './structure';
 @import './typography';
 @import './helpers';
+@import './popover';
 @import './components/material-components';
 @import './components/bootstrap';
+
+.actions-menu {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    .mat-icon-button .mat-icon {
+        line-height: normal;
+    }
+}
+
+.no-arrow {
+    .arrow {
+        visibility: hidden;
+    }
+}
+
+.divider {
+    border-left: 1px solid rgba(#000,.2);
+    display: inline-block;
+    height: 18px;
+    margin: 0 10px;
+    vertical-align: bottom;
+}
+
+.mat-green {
+    background-color: #81C784;
+    color: #000000 !important;
+
+    &:disabled {
+        color: rgba(0, 0, 0, 0.26) !important;
+    }
+}
+
+.mat-orange {
+    background-color: #FFB74D;
+    color: #000000 !important;
+
+    &:disabled {
+        color: rgba(0, 0, 0, 0.26) !important;
+    }
+}
+
+.mat-button-wrapper {
+    .mat-icon {
+        font-size: 18px;
+    }
+}
+
+button.mat-icon-button {
+    height: 36px;
+    line-height: 36px;
+}
+
+.mat-button-base {
+    &[size="sm"] {
+        line-height: 24px;
+    }
+}
+
+.card-wrap {
+    background-color: #fff;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: 1px solid $card-header-bg;
+    border-radius: 3px;
+    box-shadow: 1px 1px 5px 0px rgba(main-color(500),.25);
+    position: relative;
+
+    &:not(.outline-card) {
+        border: 0 !important;
+    }
+
+    .card-header {
+        background: $card-header-bg;
+        border-radius: 3px 3px 0 0;
+        color: $card-header-color;
+        display: block;
+        margin: 0;
+        padding: $module-rem $module-rem * 2;
+        position: relative;
+
+        &-title {
+            display: inline-flex;
+            height: 100%;
+            align-items: center;
+        }
+
+        &.success-card-header {
+            background: $success-color;
+            color: white;
+        }
+
+        &.info-card-header {
+            background: $info-color;
+        }
+
+        &.gray-card-header {
+            background: $gray-color;
+        }
+
+        &.warning-card-header {
+            background: $warning-color;
+        }
+
+        &.danger-card-header {
+            background: $accent-color;
+            color: white;
+        }
+
+        &.dead-card-header {
+            background-color: main-color(500);
+            color: white;
+        }
+
+        &.dark-card-header {
+            background-color: main-color(200);
+            color: white;
+        }
+
+        &.small-header {
+            padding: 0.3rem 1.5rem;
+            font-size: 1.1571429rem;
+            font-weight: normal;
+
+            .card-subtitle {
+                font-size: 0.8rem;
+                font-weight: bold;
+                color: #a50202;
+            }
+        }
+
+        &.tiny-header {
+            padding: 0.3rem 1.5rem;
+            font-size: 1rem;
+            font-weight: normal;
+        }
+
+        + .card-content {
+            border-radius: 0 0 3px 3px;
+        }
+
+        .card-subtitle {
+            position: absolute;
+            right: 15px;
+            bottom: 0;
+            margin: 0;
+            line-height: normal;
+        }
+    }
+
+
+    .card-content {
+        border-radius: 3px;
+        display: block;
+        padding: $module-rem * 2;
+        position: relative;
+
+        &.tiny-content {
+            padding: 0.3rem 1rem !important;
+        }
+    }
+
+    &.success-card {
+        background: $success-color;
+        border-color: $success-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.gray-card {
+        background: $gray-color;
+        border-color: $gray-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.dark-card {
+        background: main-color(200);
+        border-color: main-color(200);
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.info-card {
+        background: $info-color;
+        border-color: $info-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.warning-card {
+        background: $warning-color;
+        border-color: $warning-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.danger-card {
+        background: $accent-color;
+        border-color: $accent-color;
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.dead-card {
+        background-color: main-color(500);
+        border-color: main-color(500);
+
+        &:not(.outline-card) {
+            color: #fff;
+        }
+    }
+
+    &.success-color-card {
+        color: $success-color;
+    }
+
+    &.info-color-card {
+        color: $info-color;
+    }
+
+    &.gray-color-card {
+        color: $gray-color;
+    }
+
+    &.warning-color-card {
+        color: $warning-color;
+    }
+
+    &.danger-color-card {
+        color: $accent-color;
+    }
+
+    &.outline-card {
+        background: white !important;
+        box-shadow: none !important;
+    }
+
+    &.bg-image-card {
+        border: none !important;
+
+        &:before {
+            background-color: inherit;
+            border-radius: 3px;
+            content: '';
+            display: block;
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+    }
+}
+
+.close-btn {
+    .mat-button-wrapper {
+        .mat-icon {
+            font-size: 30px;
+            width: auto;
+            height: auto;
+        }
+    }
+}
+
+
+
+.mat-sort-header-container {
+  padding-right: 25px;
+  position: relative;
+}
+
+.mat-sort-header-content {
+  text-align: left !important;
+  display: flex ;
+  align-items: inherit !important;
+}
+
+
+.overflow-label .table-column-filter {
+  top: 0px !important;
+}
+
+.customers-grid .mat-icon-button .mat-button-wrapper > * {
+  vertical-align: sub !important;
+}
+
+.export-import-menu .mat-button-wrapper .mat-icon {
+  font-size: 25px !important;
+}
+
+.after-breadcrumb {
+    padding-top: 100px;
+}
+
+.popover {
+    min-width: 350px;
+}
+
+.sub-widget {
+    background: #ececec;
+    padding: 10px;
+}
+
+/*Tax and Fee Breakdown*/
+
+   /*Price Lookup*/
+.price-lookup-breakdown .d-inline-block.text-nowrap {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.price-lookup-breakdown .label-tax-fees > div.d-inline-block {
+    margin-left: 10px !important;
+}
+
+.price-lookup-breakdown .label-tax-fees > div.d-inline-block.no-padding-label {
+    margin-left: -1px !important;
+}
+
+.price-lookup-breakdown .col > div.d-inline-block {
+    width: 100px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+
+.price-lookup-breakdown .col > div.d-inline-block.text-nowrap {
+    width: 150px !important;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.price-lookup-breakdown .col {
+    padding-right: 0px;
+}
+
+
+.price-lookup-breakdown hr {
+   width: 270px;
+}
+
+/*END Price Lookup*/
+
+
+/*Live Pricing*/
+
+.live-pricing-container {
+    color: #6c757d;
+    font-size: 0.75rem;
+}
+
+.live-pricing-container {
+    padding-right: 0px;
+}
+
+.live-pricing-container .col > div.d-inline-block {
+    width: 60px;
+    overflow: hidden;
+}
+
+
+.live-pricing-container .col > div.d-inline-block.text-nowrap {
+    width: 100px !important;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.live-pricing-container .col {
+    padding-right: 0px;
+}
+
+
+.live-pricing-container hr {
+    border: 1px solid;
+    margin: -1px -8px -1px -1px;
+}
+
+/*END Live Pricing*/
+
+/*END Tax and Fee Breakdown*/
+

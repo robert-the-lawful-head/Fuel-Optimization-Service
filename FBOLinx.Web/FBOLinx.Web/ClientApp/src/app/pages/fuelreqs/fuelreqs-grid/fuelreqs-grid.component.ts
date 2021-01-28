@@ -1,50 +1,231 @@
-import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { isEqual } from 'lodash';
 
-//Services
+// Services
 import { SharedService } from '../../../layouts/shared-service';
+
+// Shared components
+import { FuelReqsExportModalComponent } from '../../../shared/components/fuelreqs-export/fuelreqs-export.component';
+import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
+
+const initialColumns: ColumnType[] = [
+    {
+        id: 'customer',
+        name: 'Flight Dept.',
+    },
+    {
+        id: 'pricingTemplateName',
+        name: 'ITP Margin Template',
+    },
+    {
+        id: 'eta',
+        name: 'ETA',
+        sort: 'desc',
+    },
+    {
+        id: 'etd',
+        name: 'ETD',
+    },
+    {
+        id: 'quotedVolume',
+        name: 'Volume (gal.)',
+    },
+    {
+        id: 'quotedPpg',
+        name: 'PPG',
+    },
+    {
+        id: 'tailNumber',
+        name: 'Tail #',
+    },
+    {
+        id: 'phoneNumber',
+        name: 'Phone',
+    },
+    {
+        id: 'source',
+        name: 'Source',
+    },
+    {
+        id: 'email',
+        name: 'Email',
+    },
+    {
+        id: 'oid',
+        name: 'ID',
+    },
+    {
+        id: 'sourceId',
+        name: 'Fuelerlinx ID',
+    },
+];
 
 @Component({
     selector: 'app-fuelreqs-grid',
     templateUrl: './fuelreqs-grid.component.html',
-    styleUrls: ['./fuelreqs-grid.component.scss']
+    styleUrls: [ './fuelreqs-grid.component.scss' ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/** fuelreqs-grid component*/
-export class FuelreqsGridComponent {
-    /** fuelreqs-grid ctor */
-    @Output() fuelreqDeleted = new EventEmitter<any>();
-    @Output() newFuelreqClicked = new EventEmitter<any>();
-    @Output() editFuelreqClicked = new EventEmitter<any>();
+export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Output() dateFilterChanged = new EventEmitter<any>();
-    @Input() fuelreqsData: Array<any>;
+    @Output() exportTriggered = new EventEmitter<any>();
+    @Input() fuelreqsData: any[];
+    @Input() filterStartDate: Date;
+    @Input() filterEndDate: Date;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+    tableLocalStorageKey = 'fuel-req-table-settings';
+
+    pageIndex = 0;
+    pageSize = 100;
+
 
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
-    displayedColumns: string[] = ['oid', 'customer', 'eta', 'icao', 'tailNumber', 'fbo', 'dispatchNotes', 'source'];
-    public dashboardSettings: any;
+    columns: ColumnType[] = [];
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
+    dashboardSettings: any;
 
-    constructor(private sharedService: SharedService) {
+    constructor(
+        private sharedService: SharedService,
+        private exportDialog: MatDialog,
+        private tableSettingsDialog: MatDialog,
+    ) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
     }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.fuelreqsData && !isEqual(changes.fuelreqsData.currentValue, changes.fuelreqsData.previousValue)) {
+            this.refreshTable();
+        }
+    }
+
     ngOnInit() {
-        if (!this.fuelreqsData)
-            return;
-        this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+        this.sort.sortChange.subscribe(() => {
+            this.columns = this.columns.map(column =>
+                column.id === this.sort.active
+                    ? { ...column, sort: this.sort.direction }
+                    : { id: column.id, name: column.name, hidden: column.hidden }
+            );
+
+            this.saveSettings();
+            this.paginator.pageIndex = 0;
+        });
+
+        if (localStorage.getItem('pageIndexFuelReqs')) {
+            this.paginator.pageIndex = localStorage.getItem('pageIndexFuelReqs') as any;
+        } else {
+            this.paginator.pageIndex = 0;
+        }
+
+        if (sessionStorage.getItem('pageSizeValueFuelReqs')) {
+            this.pageSize = sessionStorage.getItem('pageSizeValueFuelReqs') as any;
+        } else {
+            this.pageSize = 100;
+        }
+
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+        } else {
+            this.columns = initialColumns;
+        }
+        this.refreshTable();
+    }
+
+    getTableColumns() {
+        return this.columns.filter(column => !column.hidden).map(column => column.id);
+    }
+
+    refreshTable() {
+        let filter = '';
+        if (this.fuelreqsDataSource) {
+            filter = this.fuelreqsDataSource.filter;
+        }
         this.fuelreqsDataSource = new MatTableDataSource(this.fuelreqsData);
         this.fuelreqsDataSource.sort = this.sort;
         this.fuelreqsDataSource.paginator = this.paginator;
+        this.fuelreqsDataSource.filter = filter;
         this.resultsLength = this.fuelreqsData.length;
+
+        this.refreshSort();
     }
 
-    public applyFilter(filterValue: string) {
+    refreshSort() {
+        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
+        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
+    }
+
+    applyFilter(filterValue: string) {
         this.fuelreqsDataSource.filter = filterValue.trim().toLowerCase();
     }
 
-    public applyDateFilterChange() {
-        this.dateFilterChanged.emit();
+    applyDateFilterChange() {
+        this.dateFilterChanged.emit({
+            filterStartDate: this.filterStartDate,
+            filterEndDate: this.filterEndDate,
+        });
+    }
+
+    export() {
+        const dialogRef = this.exportDialog.open(
+            FuelReqsExportModalComponent,
+            {
+                data: {
+                    filterStartDate: this.filterStartDate,
+                    filterEndDate: this.filterEndDate,
+                },
+            }
+        );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+            this.exportTriggered.emit(result);
+        });
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem('pageIndexFuelReqs', event.pageIndex);
+        sessionStorage.setItem(
+            'pageSizeValueFuelReqs',
+            this.paginator.pageSize.toString()
+        );
+    }
+
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
+            data: this.columns
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.columns = [ ...result ];
+
+            this.refreshSort();
+            this.saveSettings();
+        });
+    }
+
+    saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
     }
 }

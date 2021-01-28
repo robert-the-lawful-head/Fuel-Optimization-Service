@@ -1,64 +1,102 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { SharedService } from '../shared-service';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
-
-//Services
-import {FbopricesService} from '../../services/fboprices.service';
-import { PricingtemplatesService } from '../../services/pricingtemplates.service';
-//Components
-import {PricingExpiredNotificationComponent} from
-    '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
+import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 
+// Services
+import { FbopricesService } from '../../services/fboprices.service';
+import { PricingtemplatesService } from '../../services/pricingtemplates.service';
+import { SharedService } from '../shared-service';
+
+// Components
+import { PricingExpiredNotificationComponent } from '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
+import { fboChangedEvent, fboPricesUpdatedEvent, locationChangedEvent } from '../../models/sharedEvents';
+
 @Component({
-    moduleId: module.id,
     selector: 'default-layout',
     templateUrl: 'default.component.html',
     styleUrls: ['../layouts.scss'],
-    providers: [SharedService]
+    providers: [SharedService],
 })
 export class DefaultLayoutComponent implements OnInit {
+    @Input() openedSidebar: boolean;
+
     pageTitle: any;
     boxed: boolean;
     compress: boolean;
     menuStyle: string;
-    rtl: boolean;
-    @Input()
-    openedSidebar: boolean;
-    public pricingTemplatesData: any[];
+    layoutClasses: any;
+    pricingTemplatesData: any[];
+    retail: number;
+    cost: number;
 
-    constructor(private _sharedService: SharedService,
+    hidePricesPanel: boolean;
+
+    constructor(
+        private sharedService: SharedService,
         private fboPricesService: FbopricesService,
         private pricingTemplatesService: PricingtemplatesService,
-        public expiredPricingDialog: MatDialog) {
+        private expiredPricingDialog: MatDialog
+    ) {
         this.openedSidebar = false;
         this.boxed = false;
         this.compress = false;
         this.menuStyle = 'style-3';
-        this.rtl = false;
 
-        this.pricingTemplatesService.getByFbo(this._sharedService.currentUser.fboId).subscribe((data: any) => this.pricingTemplatesData = data);
-        _sharedService.changeEmitted$.subscribe(
-            title => {
-                this.pageTitle = title;
-            }
-        );
+        if (this.sharedService.currentUser.fboId) {
+            this.pricingTemplatesService
+                .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+                .subscribe((data: any) => (this.pricingTemplatesData = data));
+            sharedService.titleChanged$.subscribe((title) => {
+                setTimeout(() => this.pageTitle = title, 100);
+            });
+        }
+    }
+
+    get isCsr() {
+        return this.sharedService.currentUser.role === 5;
     }
 
     ngOnInit() {
+        this.loadFboPrices();
         this.checkCurrentPrices();
-        //this.callTemporaryAddOn();
+        this.layoutClasses = this.getClasses();
+
+        this.sharedService.changeEmitted$.subscribe((message) => {
+            if ((message === fboChangedEvent || message === locationChangedEvent) && this.sharedService.currentUser.fboId) {
+                this.pricingTemplatesService
+                    .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+                    .subscribe((data: any) => (this.pricingTemplatesData = data));
+            }
+        });
+        this.sharedService.valueChanged$.subscribe((value: any) => {
+            if (value.message === fboPricesUpdatedEvent) {
+                this.cost = value.JetACost;
+                this.retail = value.JetARetail;
+            }
+        });
+    }
+
+    isPricePanelVisible() {
+        const blacklist = [
+            '/default-layout/groups',
+            '/default-layout/fbos',
+            '/default-layout/group-analytics',
+        ];
+        if (blacklist.findIndex(v => window.location.pathname.startsWith(v)) >= 0) {
+            return false;
+        }
+        return !this.isCsr;
     }
 
     getClasses() {
-        let menu: string = (this.menuStyle);
+        const menu: string = this.menuStyle;
 
         return {
             ['menu-' + menu]: menu,
-            'boxed': this.boxed,
+            boxed: this.boxed,
             'compress-vertical-navbar': this.compress,
             'open-sidebar': this.openedSidebar,
-            'rtl': this.rtl
+            rtl: false,
         };
     }
 
@@ -66,41 +104,57 @@ export class DefaultLayoutComponent implements OnInit {
         this.openedSidebar = !this.openedSidebar;
     }
 
-    //Private Methods
-
-    private checkCurrentPrices() {
-        var remindMeLaterFlag = localStorage.getItem('pricingExpiredNotification');
-        var noThanksFlag = sessionStorage.getItem('pricingExpiredNotification');
+    checkCurrentPrices() {
+        if (!this.sharedService.currentUser.fboId) {
+            return;
+        }
+        const remindMeLaterFlag = localStorage.getItem(
+            'pricingExpiredNotification'
+        );
+        const noThanksFlag = sessionStorage.getItem(
+            'pricingExpiredNotification'
+        );
         if (noThanksFlag) {
             return;
         }
-        if (remindMeLaterFlag && moment(moment().format('L')).isAfter(moment(remindMeLaterFlag))) {
+
+        if (remindMeLaterFlag &&
+            moment(new Date(moment().format('L'))) !== moment(new Date(remindMeLaterFlag))
+        ) {
             return;
         }
-        this.fboPricesService.checkFboExpiredPricing(this._sharedService.currentUser.fboId).subscribe(
-            (data: any) => {
-                //for (let fboPrice of data) {
-                //    if (fboPrice.price > 0) 
-                //        return;
-                //}
-                if(data){
-                    if (data.price > 0) {
-                        return;
+
+        this.fboPricesService
+            .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                if (!data) {
+                    const dialogRef = this.expiredPricingDialog.open(
+                        PricingExpiredNotificationComponent, {
+                            data: {},
+                            autoFocus: false,
+                        }
+                    );
+                    dialogRef.afterClosed().subscribe();
+                }
+            });
+    }
+
+    isSidebarInvisible() {
+        return this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole;
+    }
+
+    private loadFboPrices() {
+        this.fboPricesService
+            .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
+            .subscribe((data: any) => {
+                for (const price of data) {
+                    if (price.product === 'JetA Cost') {
+                        this.cost = price.price;
+                    }
+                    if (price.product === 'JetA Retail') {
+                        this.retail = price.price;
                     }
                 }
-                
-
-                const dialogRef = this.expiredPricingDialog.open(PricingExpiredNotificationComponent,
-                    {
-                        data: {}
-                    });
-
-                dialogRef.afterClosed().subscribe(result => {
-                    
-                });
-
             });
-
-        
     }
 }

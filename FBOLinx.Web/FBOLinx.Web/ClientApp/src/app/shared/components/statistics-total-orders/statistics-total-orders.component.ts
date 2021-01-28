@@ -1,49 +1,49 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
 
-//Services
+// Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
 
-//Components
+// Components
 import * as moment from 'moment';
 
 @Component({
     selector: 'app-statistics-total-orders',
     templateUrl: './statistics-total-orders.component.html',
-    styleUrls: ['./statistics-total-orders.component.scss']
+    styleUrls: ['./statistics-total-orders.component.scss'],
 })
-/** statistics-total-orders component*/
+// statistics-total-orders component
 export class StatisticsTotalOrdersComponent implements OnInit {
+    @Input() options: any = {
+        useCard: true,
+    };
+    @Input() startDate: any;
+    @Input() endDate: any;
 
-    @Input() options: any;
-
-    //Public Members
+    // Public Members
     public totalOrders: number;
     public startDateString: string;
 
-    /** statistics-total-orders ctor */
-    constructor(private router: Router,
+    constructor(
         private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService) {
-        if (!this.options)
+        private sharedService: SharedService
+    ) {
+        if (!this.options) {
             this.options = {};
+        }
     }
 
     ngOnInit() {
         this.refreshData();
     }
 
-    public redirectClicked() {
-        this.router.navigate(['/default-layout/fuelreqs']);
-    }
-
     public refreshData() {
-        let startDate = this.sharedService.dashboardSettings.filterStartDate;
-        let endDate = this.sharedService.dashboardSettings.filterEndDate;
-        this.startDateString = moment(startDate).format('L');
-        this.fuelreqsService.getForFboCount(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.totalOrders = data;
-        });
+        this.startDateString = moment(this.startDate).format('L');
+        this.fuelreqsService
+            .getForFboCount(this.sharedService.currentUser.fboId, this.startDate)
+            .subscribe((data: any) => {
+                this.totalOrders = data;
+            }, () => {
+            });
     }
 }

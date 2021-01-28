@@ -1,0 +1,62 @@
+$popover-padding: 16px;
+$popover-border-radius: 6px;
+$popover-z-index: 99999;
+$popover-box-shadow: 0 3px 12px rgba(27, 31, 35, 0.15);
+
+$popover-dark-background: black;
+$popover-dark-color: #fff;
+
+$popover-light-background: #fff;
+$popover-light-color: black;
+$popover-light-border: 1px solid rgba(27, 31, 35, 0.15);
+$popover-light-border-color: rgba(27, 31, 35, 0.15); // rgba(0,0,0,.07)
+
+.popover {
+    background-color: $popover-light-background;
+    color: $popover-light-color;
+    border: $popover-light-border;
+    border-radius: $popover-border-radius;
+    padding: $popover-padding;
+    z-index: $popover-z-index;
+    display: block;
+    box-sizing: border-box;
+    box-shadow: $popover-box-shadow;
+    overflow: visible !important;
+    min-width: 300px;
+}
+
+.popover-header {
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 14px;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+.popover-body {
+    font-size: 14px;
+    padding: 0;
+}
+
+.popover-actions {
+    padding-top: 8px;
+
+    button {
+        float: right;
+        border: 1px solid #0366d6;
+        border-radius: 6px;
+        background: none;
+        cursor: pointer;
+        color: #0366d6;
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
+
+.noArrowPopover {
+    .arrow {
+        display: none;
+    }
+}

@@ -1,7 +1,7 @@
-import { Component, Inject, Input } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 
-//Services
+// Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { Parametri } from '../../../services/paremeters.service';
 import { Subscription } from 'rxjs';
@@ -15,31 +15,40 @@ export interface NewRampFeeDialogData {
     categoryType: number;
     categoryMinValue: number;
     categoryMaxValue: number;
+    categoryStringValue: string;
 }
 
 @Component({
     selector: 'app-ramp-fees-dialog-new-fee',
     templateUrl: './ramp-fees-dialog-new-fee.component.html',
-    styleUrls: ['./ramp-fees-dialog-new-fee.component.scss']
+    styleUrls: [ './ramp-fees-dialog-new-fee.component.scss' ],
 })
-/** ramp-fees-dialog-new-fee component*/
 export class RampFeesDialogNewFeeComponent {
-
-    public categoryTypes: any[] = [{ text: 'Aircraft Type', value: 2 }, { text: 'Weight Range', value: 3 }, { text: 'Wingspan', value: 4 }];
+    public categoryTypes: any[] = [
+        { text: 'Aircraft Make/Model', value: 2 },
+        { text: 'Weight Range', value: 3 },
+        { text: 'Wingspan', value: 4 },
+        { text: 'Tail Number', value: 5 },
+    ];
     public aircraftTypes: any[];
     subscription: Subscription;
 
-    /** ramp-fees-dialog-new-fee ctor */
-    constructor(public dialogRef: MatDialogRef<RampFeesDialogNewFeeComponent>, @Inject(MAT_DIALOG_DATA) public data: NewRampFeeDialogData,
+    constructor(
+        public dialogRef: MatDialogRef<RampFeesDialogNewFeeComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: NewRampFeeDialogData,
         private aircraftsService: AircraftsService,
-        private messageService: Parametri) {
+        private messageService: Parametri
+    ) {
         this.data.categoryType = 2;
-        this.messageService.getMessage().subscribe(mymessage => this.data.expirationDate = mymessage );
-       // this.data.expirationDate = this.datum;
-        this.aircraftsService.getAll().subscribe((data: any) => this.aircraftTypes = data);
+        this.messageService
+            .getMessage()
+            .subscribe((mymessage) => (this.data.expirationDate = mymessage));
+        this.aircraftsService
+            .getAll()
+            .subscribe((result: any) => (this.aircraftTypes = result));
     }
 
-    //Public Methods
+    // Public Methods
     public onCancelClick(): void {
         this.dialogRef.close();
     }

@@ -4,24 +4,25 @@
         "groupTitle": true
     },
     {
-        "title": "Dashboard (Admin)",
+        "title": "Dashboard",
         "icon": {
             "class": "fa fa-home",
             "bg": "#ea8080",
             "color": "rgba(0,0,0,.87)"
         },
-        "routing": "/default-layout/dashboard-admin",
-        "roles": [ 9999 ]
-    },
-    {
-        "title": "Dashboard (FBO)",
-        "icon": {
-            "class": "fa fa-home",
-            "bg": "#ea8080",
-            "color": "rgba(0,0,0,.87)"
-        },
+        "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers.",
         "routing": "/default-layout/dashboard-fbo",
         "roles": [ 1, 4 ]
+    },
+    {
+        "title": "CSR Dashboard",
+        "icon": {
+            "class": "fa fa-home",
+            "bg": "#ea8080",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/dashboard-csr",
+        "roles": [ 5 ]
     },
     {
         "title": "FBO Group",
@@ -31,6 +32,16 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/fbos",
+        "roles": [ 2 ]
+    },
+    {
+        "title": "Group Analytics",
+        "icon": {
+            "class": "fa fa-bar-chart",
+            "bg": "rgb(178, 223, 219)",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/group-analytics",
         "roles": [ 2 ]
     },
     {
@@ -44,22 +55,13 @@
         "roles": [ 3 ]
     },
     {
-        "title": "FBOs",
-        "icon": {
-            "class": "fa fa-th",
-            "bg": "#E1BEE7",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "routing": "/default-layout/fbos",
-        "roles": [ 3 ]
-    },
-    {
-        "title": "Margin Templates",
+        "title": "ITP Margin Templates",
         "icon": {
             "class": "fa fa-sitemap",
             "bg": "#C5CAE9",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Create and manage margin templates for your customer.",
         "routing": "/default-layout/pricing-templates",
         "roles": [ 1, 4 ]
     },
@@ -70,6 +72,7 @@
             "bg": "#FFCCBC",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Create, manage, and assign each customer or aircraft to a Margin template.",
         "routing": "/default-layout/customers",
         "roles": [ 1, 4 ]
     },
@@ -80,8 +83,9 @@
             "bg": "#B3E5FC",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "See your incoming fuel orders.",
         "routing": "/default-layout/fuelreqs",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 5 ]
     },
     {
         "title": "Ramp Fees",
@@ -90,7 +94,30 @@
             "bg": "rgb(255, 224, 130)",
             "color": "rgba(0,0,0,.87)"
         },
+        "tooltip": "Enter and manage your fees.",
         "routing": "/default-layout/rampfees",
+        "roles": [ 1, 4 ]
+    },
+    {
+        "title": "Flight Watch",
+        "icon": {
+            "class": "fa fa-eye",
+            "bg": "#7fadd4",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "Flight Watch",
+        "routing": "/default-layout/flight-watch",
+        "roles": [ 1, 4 ]
+    },
+    {
+        "title": "Analytics",
+        "icon": {
+            "class": "fa fa-line-chart",
+            "bg": "rgb(178, 223, 219)",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "Analytics features graphs and statistics to help you better target customers and understand your business.",
+        "routing": "/default-layout/analytics",
         "roles": [ 1, 4 ]
     }
 ]

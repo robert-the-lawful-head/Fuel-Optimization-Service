@@ -24,5 +24,9 @@ namespace FBOLinx.Web.ViewModels
         public string Country { get; set; }
         public bool? Primary { get; set; }
         public bool? CopyAlerts { get; set; }
+        public string PrimaryContact { get; set; }
+        public string CopyAlertsContact { get; set; }
+        public int? GroupId { get; set; }
+        public int? CustomerId { get; set; }
     }
 }

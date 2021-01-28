@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +13,9 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using FBOLinx.Web.Models.Requests;
+using Microsoft.Extensions.DependencyInjection;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -20,10 +25,16 @@ namespace FBOLinx.Web.Controllers
     public class FbosController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private IServiceScopeFactory _serviceScopeFactory;
+        private GroupFboService _groupFboService;
+        private readonly FboService _fboService;
 
-        public FbosController(FboLinxContext context)
+        public FbosController(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, FboService fboService)
         {
+            _groupFboService = groupFboService;
             _context = context;
+            _serviceScopeFactory = serviceScopeFactory;
+            _fboService = fboService;
         }
 
         // GET: api/Fbos/group/5
@@ -41,9 +52,11 @@ namespace FBOLinx.Web.Controllers
             {
                 Active = f.Active,
                 Fbo = f.Fbo,
-                Icao = f.fboAirport.Icao,
-                Oid = f.Oid
-            }).ToList();
+                Icao = f.fboAirport == null ? "" : f.fboAirport.Icao,
+                Iata = f.fboAirport == null ? "" : f.fboAirport.Iata,
+                Oid = f.Oid,
+                GroupId = (f.GroupId ?? 0)
+            }).Distinct().ToList();
             return Ok(fbosVM);
         }
 
@@ -55,7 +68,7 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var fbos = await GetAllFbos().Include("fboAirport").ToListAsync();
+            var fbos = await GetAllFbos().Include(f => f.Users).Include("fboAirport").ToListAsync();
             if (fbos == null)
             {
                 return NotFound();
@@ -67,7 +80,9 @@ namespace FBOLinx.Web.Controllers
                 Active = f.Active,
                 Fbo = f.Fbo,
                 Icao = f.fboAirport?.Icao,
-                Oid = f.Oid
+                Oid = f.Oid,
+                GroupId = f.GroupId ?? 0,
+                Users = f.Users
             }).ToList();
             return Ok(fbosVM);
         }
@@ -105,7 +120,35 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(fbos).State = EntityState.Modified;
+            bool activeStatus = await _context.Fbos.Where(f => f.Oid.Equals(fbos.Oid))
+                                                   .Select(f => f.Active ?? false)
+                                                   .FirstAsync();
+            if (activeStatus != fbos.Active)
+            {
+                List<User> users = _context.User.Where(u => u.FboId.Equals(id))
+                                            .ToList();
+                foreach (var user in users)
+                {
+                    user.Active = fbos.Active ?? false;
+                }
+
+                _context.User.UpdateRange(users);
+
+                if (!fbos.Active.GetValueOrDefault())
+                {
+                    // Expire All Prices from the de-activated FBOLinx accounts
+                    var fboPrices = _context.Fboprices.Where(fp => fp.Fboid.Equals(id));
+
+                    foreach (var fboPrice in fboPrices)
+                    {
+                        fboPrice.Expired = true;
+                    }
+
+                    _context.Fboprices.UpdateRange(fboPrices);
+                }
+            }
+
+            _context.Fbos.Update(fbos);
 
             try
             {
@@ -128,17 +171,91 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/Fbos
         [HttpPost]
-        public async Task<IActionResult> PostFbos([FromBody] Fbos fbos)
+        public async Task<IActionResult> PostFbos([FromBody] SingleFboRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Fbos.Add(fbos);
-            await _context.SaveChangesAsync();
+            var fbo = await _groupFboService.CreateNewFbo(request);
 
-            return CreatedAtAction("GetFbo", new { id = fbos.Oid }, fbos);
+            PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
+
+            await pricingTemplateService.FixCustomCustomerTypes(request.GroupId ?? 0, fbo.Oid);
+
+            return CreatedAtAction("GetFbo", new { id = fbo.Oid }, new
+            {
+                request.Icao,
+                request.Iata,
+                Active = true,
+                request.Fbo,
+                fbo.Oid
+            });
+        }
+
+        [HttpPost("single")]
+        public async Task<IActionResult> CreateSingleFbo([FromBody] SingleFboRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var fbo = await _groupFboService.CreateNewFbo(request);
+
+                return CreatedAtAction("GetFbo", new {id = fbo.Oid}, new
+                {
+                    request.Icao,
+                    request.Iata,
+                    Active = true,
+                    request.Fbo,
+                    fbo.Oid
+                });
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(exception.Message);
+            }
+        }
+
+        [HttpPost("manage/{id}")]
+        public async Task<IActionResult> ManageFbo([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbo = _context.Fbos.Find(id);
+            if (fbo == null)
+            {
+                return NotFound("FBO Not Found");
+            }
+
+            try
+            {
+                var group = _context.Group.Find(fbo.GroupId);
+
+                if (group.IsLegacyAccount == true)
+                {
+                    await _fboService.DoLegacyGroupTransition(group.Oid);
+
+                    group.IsLegacyAccount = false;
+                    await _context.SaveChangesAsync();
+                }
+
+                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
+
+                await pricingTemplateService.FixDefaultPricingTemplate(fbo.Oid);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw ex;
+            }
+            return Ok();
         }
 
         // DELETE: api/Fbos/5

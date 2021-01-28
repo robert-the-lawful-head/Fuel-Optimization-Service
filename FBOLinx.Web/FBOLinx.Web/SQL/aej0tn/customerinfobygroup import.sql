@@ -1,0 +1,1 @@
+update cibg set certificatetype=c.certificatetypefrom customers cinner join customerinfobygroup cibg on cibg.customerid=c.oid and cibg.groupid>1

@@ -1,51 +1,57 @@
-<div class="card-wrap"
-     [ngClass]="{
-    'success-card': bgColor === 'success',
-    'info-card': bgColor === 'info',
-     'gray-card': bgColor === 'gray',
-    'warning-card': bgColor === 'warning',
-    'danger-card': bgColor === 'danger',
-    'success-color-card': color === 'success',
-    'info-color-card': color === 'info',
-    'warning-color-card': color === 'warning',
-    'danger-color-card': color === 'danger',
-    'bg-image-card': bgImage,
-    'outline-card': outline
-  }"
-     [ngStyle]="{
-   'background-color': customBgColor,
-   'background-image': 'url(' + bgImage + ')',
-   'border-color': customBgColor,
-   'color': customColor
-  }">
-    <h3 class="card-header h5"
+<div
+    class="card-wrap"
+    [ngClass]="{
+        'success-card': bgColor === 'success',
+        'info-card': bgColor === 'info',
+        'gray-card': bgColor === 'gray',
+        'warning-card': bgColor === 'warning',
+        'danger-card': bgColor === 'danger',
+        'dead-card': bgColor === 'dead',
+        'dark-card': bgColor === 'dark',
+        'outline-card': outline,
+        'collapsible': collapsible
+    }"
+>
+    <h3
+        class="card-header h5"
         *ngIf="title"
+        (click)="headerClick()"
         [ngClass]="{
-      'text-right': align === 'right',
-      'text-center': align === 'center',
-      'success-card-header': headerBgColor === 'success',
-    'info-card-header': headerBgColor === 'info',
-        'gray-card-header': headerBgColor === 'gray',
-    'warning-card-header': headerBgColor === 'warning',
-    'danger-card-header': headerBgColor === 'danger',
-    'success-color-card-header': headerColor === 'success',
-    'info-color-card-header': headerColor === 'info',
-    'warning-color-card-header': headerColor === 'warning',
-    'danger-color-card-header': headerColor === 'danger',
-      'small-header': theme === 'small'
-    }">
+            'text-center': align === 'center',
+            'success-card-header': headerBgColor === 'success',
+            'info-card-header': headerBgColor === 'info',
+            'gray-card-header': headerBgColor === 'gray',
+            'warning-card-header': headerBgColor === 'warning',
+            'danger-card-header': headerBgColor === 'danger',
+            'dead-card-header': headerBgColor === 'dead',
+            'dark-card-header': headerBgColor === 'dark',
+            'small-header': theme === 'small',
+            'tiny-header': theme === 'tiny'
+        }"
+    >
         <div class="row">
             <div class="col-12">
-                {{title}}&nbsp;<button title="Temporarily increase or decrease your pricing to ALL customers" *ngIf="!tempId && visible=='true'" ni-button [view]="'info'" style="background-color:#fff;" class="mr-1 pull-right" (click)="openAddOnMargin()">Add On Margin</button>&nbsp;<button title="Suspend pricing for all customers" *ngIf="visibleSuspend=='true' && !tempId && visible=='true'" ni-button [view]="'info'" style="background-color:red; color:white;" class="mr-4 pull-right" (click)="suspendPricing()">Cancel Pricing</button>
+                <span #cardTitle>{{ title }} {{ collapsible && !opened ? " + " : "" }}</span>
+                <h6
+                    #cardSubTitle
+                    class="card-subtitle"
+                    [ngClass]="{
+                        'invisible': !subTitleVisible
+                    }"
+                >
+                    {{ subtitle }}
+                </h6>
             </div>
         </div>
     </h3>
-    <div class="card-content"
-         [ngClass]="{
-      'text-right': align === 'right',
-      'text-center': align === 'center'
-    }"
-         [ngStyle]="{'padding': indents}">
+    <div
+        [@openClose]="!collapsible || opened"
+        class="card-content"
+        [style]="customStyle"
+        [ngClass]="{
+            'tiny-content': theme === 'tiny'
+        }"
+    >
         <ng-content></ng-content>
     </div>
 </div>

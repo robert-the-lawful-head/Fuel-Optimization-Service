@@ -1,0 +1,3 @@
+ALTER TABLE CompanyPricingLog
+	ALTER COLUMN ICAO varchar(1000) NULL
+GO

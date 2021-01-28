@@ -12,7 +12,7 @@ CREATE TABLE [dbo].[airCrafts](
 	[MAKE] [nvarchar](100) NULL,
 	[MODEL] [nvarchar](100) NULL,
 	[NORMAL CRUISE TAS] [float] NULL,
-	[FUEL CAPACITY (gal)] [float] NULL,
+	[FUEL CAPACITYÂ (gal)] [float] NULL,
 	[LANDING PERF LENGTH] [float] NULL,
 	[RANGE (nm)] [float] NULL,
 	[RangePerGal] [float] NULL,
@@ -30,6 +30,7 @@ CREATE TABLE [dbo].[airCrafts](
 	[BasicOperatingWeight] [float] NULL,
 	[FuelType] [varchar](25) NULL,
 	[TempSize] [smallint] NULL,
+	[IFRReserve] [float] NULL,
  CONSTRAINT [PK_airCrafts] PRIMARY KEY CLUSTERED 
 (
 	[AircraftID] ASC
@@ -47,29 +48,7 @@ insert into aircrafts ([AircraftID]
       ,[MAKE]
       ,[MODEL]
       ,[NORMAL CRUISE TAS]
-      ,[FUEL CAPACITY (gal)]
-      ,[LANDING PERF LENGTH]
-      ,[RANGE (nm)]
-      ,[RangePerGal]
-      ,[MaxRangeHours]
-      ,[MaxRangeMinutes]
-      ,[ReserveMinutes]
-      ,[ReserveNM]
-      ,[Size]
-      ,[MaxTakeoffWeight]
-      ,[MaxLandingWeight]
-      ,[AircraftCeiling]
-      ,[TakeoffPerfSL]
-      ,[TakeoffPerf]
-      ,[ZeroFuelWeight]
-      ,[BasicOperatingWeight]
-      ,[FuelType]
-      ,[TempSize])
-select [AircraftID]
-      ,[MAKE]
-      ,[MODEL]
-      ,[NORMAL CRUISE TAS]
-      ,[FUEL CAPACITY (gal)]
+      ,[FUEL CAPACITYÂ (gal)]
       ,[LANDING PERF LENGTH]
       ,[RANGE (nm)]
       ,[RangePerGal]
@@ -87,6 +66,30 @@ select [AircraftID]
       ,[BasicOperatingWeight]
       ,[FuelType]
       ,[TempSize]
+      ,[IFRReserve])
+select [AircraftID]
+      ,[MAKE]
+      ,[MODEL]
+      ,[NORMAL CRUISE TAS]
+      ,[FUEL CAPACITYÂ (gal)]
+      ,[LANDING PERF LENGTH]
+      ,[RANGE (nm)]
+      ,[RangePerGal]
+      ,[MaxRangeHours]
+      ,[MaxRangeMinutes]
+      ,[ReserveMinutes]
+      ,[ReserveNM]
+      ,[Size]
+      ,[MaxTakeoffWeight]
+      ,[MaxLandingWeight]
+      ,[AircraftCeiling]
+      ,[TakeoffPerfSL]
+      ,[TakeoffPerf]
+      ,[ZeroFuelWeight]
+      ,[BasicOperatingWeight]
+      ,[FuelType]
+      ,[TempSize]
+      ,[IFRReserve]
 from Dega.dbo.airCrafts ac
 
 SET IDENTITY_INSERT aircrafts OFF

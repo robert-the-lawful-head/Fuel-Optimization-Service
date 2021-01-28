@@ -1,68 +1,66 @@
-import { Component, Inject, EventEmitter, Output } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { FbosService } from 'src/app/services/fbos.service';
 
-//Services
+// Services
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
 
-import { AirportAutocompleteComponent } from '../../../shared/components/airport-autocomplete/airport-autocomplete.component';
-
-//Interfaces
+// Interfaces
 export interface NewFBODialogData {
     oid: number;
     fbo: string;
     icao: string;
+    iata: string;
     acukwikFboHandlerId: number;
     acukwikFbo: any;
+    groupId: number;
 }
 
 @Component({
     selector: 'app-fbos-dialog-new-fbo',
     templateUrl: './fbos-dialog-new-fbo.component.html',
-    styleUrls: ['./fbos-dialog-new-fbo.component.scss']
+    styleUrls: [ './fbos-dialog-new-fbo.component.scss' ],
 })
-/** fbos-dialog-new-fbo component*/
 export class FbosDialogNewFboComponent {
     @Output() contactAdded = new EventEmitter<any>();
 
-    //Public Members
+    // Public Members
     public dataSources: any = {};
 
-    /** fbos-dialog-new-fbo ctor */
-    constructor(public dialogRef: MatDialogRef<FbosDialogNewFboComponent>, @Inject(MAT_DIALOG_DATA) public data: NewFBODialogData,
-        private acukwikairportsService: AcukwikairportsService) {
-
-        
+    constructor(
+        public dialogRef: MatDialogRef<FbosDialogNewFboComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: NewFBODialogData,
+        private acukwikairportsService: AcukwikairportsService,
+        private fbosService: FbosService
+    ) {
     }
 
-    public airportValueChanged(airport) {
+    public airportValueChanged(airport: any) {
         this.data.icao = airport.icao;
-        this.acukwikairportsService.getAcukwikFboHandlerDetailByIcao(this.data.icao).subscribe((result: any) => {
-            this.dataSources.acukwikFbos = [];
-            if (!result) {
-                return;
-            }
-
-            result.forEach(fbo => {
-                this.dataSources.acukwikFbos.push(fbo);
+        this.data.iata = airport.iata;
+        this.acukwikairportsService
+            .getAcukwikFboHandlerDetailByIcao(this.data.icao)
+            .subscribe((result: any) => {
+                this.dataSources.acukwikFbos = [];
+                if (!result) {
+                    return;
+                }
+                this.dataSources.acukwikFbos.push(...result);
             });
-        });
     }
 
     public fboSelectionChange() {
-        if (!this.data.acukwikFbo) {
-            this.data.fbo = '';
-            this.data.acukwikFboHandlerId = 0;
-        } else {
-            this.data.fbo = this.data.acukwikFbo.handlerLongName;
-            this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
-        }
+        this.data.fbo = this.data.acukwikFbo.handlerLongName;
+        this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
     }
 
     public onCancelClick(): void {
         this.dialogRef.close();
     }
 
-    //public addFbo() {
-    //    this.contactAdded.emit(this.data);
-    //}
+    public onSaveChanges(): void {
+        this.fbosService.add(this.data).subscribe((newFbo: any) => {
+            this.dialogRef.close(newFbo);
+        });
+    }
 }

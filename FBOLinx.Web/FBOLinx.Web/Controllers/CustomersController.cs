@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +12,8 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using static FBOLinx.DB.Models.AirCrafts;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -18,10 +23,12 @@ namespace FBOLinx.Web.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly AircraftService _aircraftService;
 
-        public CustomersController(FboLinxContext context)
+        public CustomersController(FboLinxContext context, AircraftService aircraftService)
         {
             _context = context;
+            _aircraftService = aircraftService;
         }
 
         // GET: api/Customers
@@ -49,37 +56,6 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(customers);
         }
-
-        //// GET: api/Customers/5
-        //[HttpGet("group/{groupId}/fbo/{fboId}")]
-        //public async Task<IActionResult> GetCustomersByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var customers = await GetAllCustomers().Include("CustomerInfoByGroup").Where(c => c.CustomerInfoByGroup?.GroupId == groupId).ToListAsync();
-
-        //    //View model for customers grid
-        //    var customerVM = customers.Select(c => new CustomersGridViewModel
-        //    {
-        //        CustomerId = c.Oid,
-        //        CustomerInfoByGroupId = c.CustomerInfoByGroup?.Oid,
-        //        CompanyByGroupId = c.CompanyByGroup?.Oid,
-        //        Company = c.CustomerInfoByGroup?.Company,
-        //        PricingTemplateId = 0,
-        //        DefaultCustomerType = c.CustomerInfoByGroup?.CustomerType,
-        //        Joined = c.CustomerInfoByGroup?.Joined,
-        //        Price = 0,
-        //        Suspended = c.CustomerInfoByGroup?.Suspended,
-        //        FuelerLinxId = c.FuelerlinxId,
-        //        Network = c.CustomerInfoByGroup?.Network,
-        //        GroupId = c.CustomerInfoByGroup?.GroupId
-        //    });
-
-        //    return Ok(customerVM);
-        //}
 
         // PUT: api/Customers/5
         [HttpPut("{id}")]
@@ -152,14 +128,133 @@ namespace FBOLinx.Web.Controllers
             return Ok(customers);
         }
 
+        [HttpPost("importcustomers")]
+        public async Task<IActionResult> ImportCustomers([FromBody] List<CustomerImportVM> customers)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var distinctCust = customers.GroupBy(s => s.CompanyName).Select(s => s.First()).ToList();
+            int custId = 0;
+            foreach(var customer in distinctCust)
+            {
+                Customers newC = new Customers();
+                newC.Company = customer.CompanyName;
+
+                if(customer.Activate != null)
+                {
+                    if(customer.Activate.ToLower().Equals("active") || customer.Activate.ToLower().Equals("on"))
+                    {
+                        newC.Active = true;
+                    }
+                }
+
+                _context.Customers.Add(newC);
+                await _context.SaveChangesAsync();
+
+                if(newC.Oid != 0)
+                {
+                    custId = newC.Oid;
+                    customer.CompanyId = newC.Oid;
+                    CustomerInfoByGroup cibg = new CustomerInfoByGroup();
+                    cibg.CustomerId = newC.Oid;
+                    cibg.GroupId = customer.groupid;
+                    cibg.Company = newC.Company;
+                    if(newC.Active == true)
+                    {
+                        cibg.Active = true;
+                    }
+                    _context.CustomerInfoByGroup.Add(cibg);
+                    await _context.SaveChangesAsync();
+                }
+
+                var custWithAircrafts = customers.Where(s => s.AircraftMake != null && s.CompanyName == customer.CompanyName).ToList();
+
+                if (custWithAircrafts.Count > 0)
+                {
+                    var aircraftSizes = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+
+                    foreach (var custPlane in custWithAircrafts)
+                    {
+                        AirCrafts ac = new AirCrafts();
+                        ac.Make = custPlane.AircraftMake;
+                        ac.Model = custPlane.AircraftModel;
+                        var aircraftSize = aircraftSizes.FirstOrDefault(s => s.Description == custPlane.AircraftSize);
+
+                        if (aircraftSize != null)
+                        {
+                            AircraftSizes acSize = (AircraftSizes)aircraftSize.Value;
+                            ac.Size = acSize;
+                        }
+
+                        await _aircraftService.AddAirCrafts(ac);
+
+                        if (ac.AircraftId != 0)
+                        {
+                            CustomerAircrafts ca = new CustomerAircrafts();
+                            ca.AircraftId = ac.AircraftId;
+                            ca.TailNumber = custPlane.Tail;
+                            ca.GroupId = custPlane.groupid;
+                            ca.CustomerId = custId;
+
+                            _context.CustomerAircrafts.Add(ca);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+
+                var custWithContacts = customers.Where(s => s.FirstName != null && s.CompanyName == customer.CompanyName).ToList();
+
+                if (custWithContacts.Count > 0)
+                {
+                    foreach (var custContact in custWithContacts)
+                    {
+                        Contacts ct = new Contacts();
+                        ct.FirstName = custContact.FirstName;
+                        ct.LastName = custContact.FirstName;
+                        ct.Mobile = custContact.Mobile;
+                        ct.Email = custContact.Email;
+                        ct.Phone = custContact.Phone;
+                        ct.Title = custContact.Title;
+
+                        _context.Contacts.Add(ct);
+                        await _context.SaveChangesAsync();
+
+                        if (ct.Oid != 0)
+                        {
+                            CustomerContacts cc = new CustomerContacts();
+                            cc.ContactId = ct.Oid;
+                            cc.CustomerId = custContact.CompanyId;
+
+                            _context.CustomerContacts.Add(cc);
+                            await _context.SaveChangesAsync();
+
+                            ContactInfoByGroup cibg = new ContactInfoByGroup();
+                            cibg.GroupId = custContact.groupid;
+                            cibg.ContactId = ct.Oid;
+                            cibg.FirstName = custContact.FirstName;
+                            cibg.LastName = custContact.LastName;
+                            cibg.Mobile = custContact.Mobile;
+                            cibg.Email = custContact.Email;
+                            cibg.Phone = custContact.Phone;
+                            cibg.Title = custContact.Title;
+
+                            _context.ContactInfoByGroup.Add(cibg);
+                            await _context.SaveChangesAsync();
+                        }
+
+                    }
+                }
+            }
+
+            return Ok(customers);
+        }
+
         private bool CustomersExists(int id)
         {
             return _context.Customers.Any(e => e.Oid == id);
-        }
-
-        private IQueryable<Customers> GetAllCustomers()
-        {
-            return _context.Customers.AsQueryable();
         }
     }
 }

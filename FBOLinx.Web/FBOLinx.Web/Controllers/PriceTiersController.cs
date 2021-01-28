@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -156,9 +158,11 @@ namespace FBOLinx.Web.Controllers
                     _context.CustomerMargins.Add(customerMargin);
 
                 await _context.SaveChangesAsync();
+
+                customerMarginsGridViewModel.Oid = customerMargin.Oid;
             }
 
-            return NoContent();
+            return Ok(customerMargins);
         }
 
         // DELETE: api/PriceTiers/5

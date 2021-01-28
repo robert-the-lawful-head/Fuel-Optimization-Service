@@ -1,10 +1,36 @@
-<ni-breadcrumb [menu]="breadcrumb" [style]="'custom1'" class="mb-4"></ni-breadcrumb>
+<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
-<div>
-    <div *ngIf="customersData">
-        <app-customers-grid [customersData]="customersData" (editCustomerClicked)="editCustomerClicked($event)" (customerDeleted)="customerDeleted($event)"></app-customers-grid>
-    </div>
-    <div *ngIf="!customersData">
-        <mat-spinner></mat-spinner>
-    </div>
+<div class="after-breadcrumb">
+    <mat-tab-group>
+        <mat-tab label="Customers">
+            <div class="table-container">
+                <div *ngIf="customersData && pricingTemplatesData">
+                    <app-customers-grid
+                        (customerDeleted)="customerDeleted()"
+                        (editCustomerClicked)="editCustomerClicked($event)"
+                        [aircraftData]="aircraftData"
+                        [customerGridState]="customerGridState"
+                        [customersData]="customersData"
+                        [pricingTemplatesData]="pricingTemplatesData"
+                    ></app-customers-grid>
+                </div>
+                <div *ngIf="!customersData || !pricingTemplatesData">
+                    <mat-spinner></mat-spinner>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="Aircraft">
+            <div class="table-container">
+                <div *ngIf="pricingTemplatesData && aircraftData">
+                    <app-aircrafts-grid
+                        [aircraftsData]="aircraftData"
+                        [pricingTemplatesData]="pricingTemplatesData"
+                    ></app-aircrafts-grid>
+                </div>
+                <div *ngIf="!pricingTemplatesData || !aircraftData">
+                    <mat-spinner></mat-spinner>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
 </div>

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,12 +51,26 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fbo/{fboId}")]
         public async Task<ActionResult<CustomerCompanyTypes>> GetCustomerCompanyTypesForFbo([FromRoute] int fboId)
         {
-            if (UserService.GetClaimedFboId(_HttpContextAccessor) != fboId && UserService.GetClaimedRole(_HttpContextAccessor) != Models.User.UserRoles.GroupAdmin)
+            var customerCompanyTypes = await _context.CustomerCompanyTypes
+                                                        .Where((x => x.Fboid == fboId || x.Fboid == 0))
+                                                        .OrderBy((x => x.Name))
+                                                        .ToListAsync();
+
+            if (customerCompanyTypes == null)
             {
-                return BadRequest("Invalid FBO");
+                return NotFound();
             }
 
-            var customerCompanyTypes = await _context.CustomerCompanyTypes.Where((x => x.Fboid == fboId || x.Fboid == 0)).OrderBy((x => x.Name)).ToListAsync();
+            return Ok(customerCompanyTypes);
+        }
+
+        [HttpGet("fbo/{fboId}/nofuelerlinx")]
+        public async Task<ActionResult<CustomerCompanyTypes>> GetNoFuelerlinxCustomerCompanyTypesForFbo([FromRoute] int fboId)
+        {
+            var customerCompanyTypes = await _context.CustomerCompanyTypes
+                                                        .Where(x => (x.Fboid == fboId || x.Fboid == 0) && (x.Name != "FuelerLinx"))
+                                                        .OrderBy((x => x.Name))
+                                                        .ToListAsync();
 
             if (customerCompanyTypes == null)
             {

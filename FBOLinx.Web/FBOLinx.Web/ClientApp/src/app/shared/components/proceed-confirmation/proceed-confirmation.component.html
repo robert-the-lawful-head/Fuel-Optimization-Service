@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px;">
+  <span>
+    {{data.description}}
+  </span>
+    <table class="mat-table mt-2" style="min-width: 65%;max-width:75%">
+        <tbody>
+        <tr *ngFor="let cell of data.itemsList;" class="mat-row mat-row-not-hover text-left">
+            <td class="mat-cell">
+                {{cell}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div mat-dialog-actions>
+    <div class="text-center col-12">
+        <button [mat-dialog-close]="data" class="mr-1" color="green" mat-flat-button>{{buttonText}}</button>
+        <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+    </div>
+</div>

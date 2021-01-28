@@ -1,16 +1,16 @@
-<h1 mat-dialog-title *ngIf="!data.customTitle">Discard Changes?</h1>
-<h1 mat-dialog-title *ngIf="data.customTitle">{{data.customTitle}}</h1>
-<div mat-dialog-content class="mt-1 mb-2">
-    <div class="text-center" *ngIf="!data.customText">
-        You are about to close this {{data.description}}.  Are you sure?
+<h1 *ngIf="!data.customTitle" mat-dialog-title>Discard Changes?</h1>
+<h1 *ngIf="data.customTitle" mat-dialog-title>{{data.customTitle}}</h1>
+<div class="mt-1 mb-2" mat-dialog-content>
+    <div *ngIf="!data.customText" class="text-center">
+        You are about to close this {{data.description}}. Are you sure?
     </div>
-    <div class="text-center" *ngIf="data.customText">
+    <div *ngIf="data.customText" class="text-center">
         {{data.customText}}
     </div>
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button ni-button [view]="'error'" [mat-dialog-close]="true" class="mr-1">{{data.ok}}</button>
-        <button mat-stroked-button (click)="onCancelClick()">{{data.cancel}}</button>
+        <button [mat-dialog-close]="true" class="mr-1" color="warn" mat-flat-button>{{data.ok}}</button>
+        <button (click)="onCancelClick()" mat-stroked-button>{{data.cancel}}</button>
     </div>
 </div>

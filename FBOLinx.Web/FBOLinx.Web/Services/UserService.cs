@@ -9,12 +9,18 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.Web.Services
 {
     public interface IUserService
     {
-        User Authenticate(string username, string password, bool resetPassword);
+        Task<User> Authenticate(string username, string password, bool resetPassword);
+        User CheckUserByCredentials(string username, string password);
         System.Collections.Generic.IEnumerable<User> GetAll();
         User CreateFBOLoginIfNeeded(Fbos fboRecord);
         User CreateGroupLoginIfNeeded(Group groupRecord);
@@ -25,16 +31,17 @@ namespace FBOLinx.Web.Services
 
         private readonly AppSettings _AppSettings;
         private readonly FboLinxContext _Context;
+        private EncryptionService _EncryptionService;
 
-        public UserService(FboLinxContext context, IOptions<AppSettings> appSettings)
+        public UserService(FboLinxContext context, IOptions<AppSettings> appSettings, EncryptionService encryptionService)
         {
+            _EncryptionService = encryptionService;
             _Context = context;
             _AppSettings = appSettings.Value;
         }
 
-        public User Authenticate(string username, string password, bool resetPassword = false)
+        public async Task<User> Authenticate(string username, string password, bool resetPassword = false)
         {
-            FBOLinx.Web.Utilities.Hash hashUtility = new FBOLinx.Web.Utilities.Hash();
             var user = _Context.User.SingleOrDefault(x => x.Username == username);
 
             // return null if user not found
@@ -46,12 +53,57 @@ namespace FBOLinx.Web.Services
             }
             else
             {
-                if (!resetPassword && !hashUtility.VerifyHashedPassword(user.Password, password))
+                var groupRecord = await _Context.Group.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
+
+                //return null if Paragon
+                if (groupRecord.Isfbonetwork.GetValueOrDefault())
                     return null;
+
+                if (!resetPassword && !_EncryptionService.VerifyHashedPassword(user.Password, password))
+                {
+                    return null;
+                }
             }
 
+            if (user.Active != true)
+            {
+                return null;
+            }
+
+            UpdateLoginCount(user);
             SetAuthToken(user);
             
+            return user;
+        }
+
+        public User CheckUserByCredentials(string username, string password)
+        {
+            var user = _Context.User.SingleOrDefault(x => x.Username == username);
+            var groupRecord = _Context.Group.Where(x => x.Oid == user.GroupId).FirstOrDefault();
+
+            //return null if Paragon
+            if (groupRecord.Isfbonetwork.GetValueOrDefault())
+                return null;
+
+            // return null if user not found
+            if (user == null)
+            {
+                user = CheckForUserOnOldLogins(username, password);
+                if (user == null)
+                    return null;
+            }
+            else
+            {
+                if (!_EncryptionService.VerifyHashedPassword(user.Password, password))
+                {
+                    return null;
+                }
+            }
+
+            if (user.Active != true)
+            {
+                return null;
+            }
             return user;
         }
 
@@ -63,7 +115,6 @@ namespace FBOLinx.Web.Services
 
         public User CreateFBOLoginIfNeeded(Fbos fboRecord)
         {
-            FBOLinx.Web.Utilities.Hash hashUtility = new FBOLinx.Web.Utilities.Hash();
             User user = _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == User.UserRoles.Primary))
                 .FirstOrDefault();
             if (user != null)
@@ -82,9 +133,10 @@ namespace FBOLinx.Web.Services
                 FboId = fboRecord.Oid,
                 GroupId = fboRecord.GroupId,
                 LastName = contactRecord?.LastName,
-                Password = hashUtility.HashPassword(fboRecord.Password),
+                Password = _EncryptionService.HashPassword(fboRecord.Password),
                 Role = User.UserRoles.Primary,
-                Username = fboRecord.Username
+                Username = fboRecord.Username,
+                Active = true
             };
             _Context.User.Add(user);
             //fboRecord.Password = "";
@@ -98,7 +150,6 @@ namespace FBOLinx.Web.Services
 
         public User CreateGroupLoginIfNeeded(Group groupRecord)
         {
-            FBOLinx.Web.Utilities.Hash hashUtility = new FBOLinx.Web.Utilities.Hash();
             User user = _Context.User.Where((x => x.GroupId == groupRecord.Oid && (x.Role == User.UserRoles.Conductor || x.Role == User.UserRoles.GroupAdmin))).FirstOrDefault();
             if (user != null)
                 return user;
@@ -112,9 +163,10 @@ namespace FBOLinx.Web.Services
                 FboId = 0,
                 GroupId = groupRecord.Oid,
                 LastName = "",
-                Password = hashUtility.HashPassword(groupRecord.Password),
-                Role = (groupRecord.GroupName == "FBOLinx") ? User.UserRoles.Conductor : User.UserRoles.GroupAdmin,
-                Username = groupRecord.Username
+                Password = _EncryptionService.HashPassword(groupRecord.Password),
+                Role = (!string.IsNullOrEmpty(groupRecord.GroupName) && (groupRecord.GroupName == "FBOLinx" || groupRecord.GroupName.ToLower().Contains("fbolinx conductor"))) ? User.UserRoles.Conductor : User.UserRoles.GroupAdmin,
+                Username = groupRecord.Username,
+                Active = true
             };
 
             _Context.User.Add(user);
@@ -147,21 +199,29 @@ namespace FBOLinx.Web.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
+        }
 
-            // remove password before returning
-            user.Password = null;
+        private void UpdateLoginCount(User user)
+        {
+            user.LoginCount = user.LoginCount.GetValueOrDefault() + 1;
+            _Context.SaveChanges();
         }
 
         private User CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)
         {
-            var fboRecord = _Context.Fbos.Where((x => x.Username == username && (x.Password == password || resetPassword))).FirstOrDefault();
+            var fbo = from f in _Context.Fbos
+                      join g in _Context.Group on f.GroupId equals g.Oid
+                      where g.Isfbonetwork == false && f.Username == username && (f.Password == password || resetPassword)
+                      select f;
 
+            var fboRecord = fbo.FirstOrDefault();
+            
             if (fboRecord != null)
             {
                 return CreateFBOLoginIfNeeded(fboRecord);
             }
 
-            var groupRecord = _Context.Group.Where((x => x.Username == username && (x.Password == password || resetPassword)))
+            var groupRecord = _Context.Group.Where((x => x.Isfbonetwork == false && x.Username == username && (x.Password == password || resetPassword)))
                 .FirstOrDefault();
 
             if (groupRecord != null)
@@ -187,11 +247,11 @@ namespace FBOLinx.Web.Services
             }
         }
 
-        public static Models.User.UserRoles GetClaimedRole(IHttpContextAccessor httpContextAccessor)
+        public static User.UserRoles GetClaimedRole(IHttpContextAccessor httpContextAccessor)
         {
             try
             {
-                return (Models.User.UserRoles) System.Convert.ToInt16(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value);
+                return (User.UserRoles) System.Convert.ToInt16(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value);
             }
             catch (System.Exception)
             {

@@ -1,31 +1,29 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
 
-//Services
+// Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
-
-//Components
-import * as moment from 'moment';
 
 @Component({
     selector: 'app-statistics-orders-by-location',
     templateUrl: './statistics-orders-by-location.component.html',
-    styleUrls: ['./statistics-orders-by-location.component.scss']
+    styleUrls: ['./statistics-orders-by-location.component.scss'],
 })
-/** statistics-orders-by-location component*/
-export class StatisticsOrdersByLocationComponent {
-    @Input() options: any;
+export class StatisticsOrdersByLocationComponent implements OnInit {
+    @Input() options: any = {
+        useCard: true,
+    };
+    @Input() startDate: any;
+    @Input() endDate: any;
 
-    //Public Members
+    // Public Members
     public totalOrders: number;
     public icao: string;
 
-    /** statistics-total-aircraft ctor */
-    constructor(private fuelreqsService: FuelreqsService,
-        private sharedService: SharedService) {
-        if (!this.options)
-            this.options = {};
+    constructor(
+        private fuelreqsService: FuelreqsService,
+        private sharedService: SharedService
+    ) {
     }
 
     ngOnInit() {
@@ -33,11 +31,24 @@ export class StatisticsOrdersByLocationComponent {
     }
 
     public refreshData() {
-        let startDate = this.sharedService.dashboardSettings.filterStartDate;
-        let endDate = this.sharedService.dashboardSettings.filterEndDate;
-        this.fuelreqsService.getOrdersByLocation({ StartDateTime: startDate, EndDateTime: endDate, ICAO: '' , FboId: this.sharedService.currentUser.fboId}).subscribe((data: any) => {
-            this.totalOrders = data.totalOrders;
-            this.icao = data.icao;
-        });
+        this.fuelreqsService
+            .getOrdersByLocation({
+                startDateTime: this.startDate,
+                endDateTime: this.endDate,
+                icao: '',
+                fboId: this.sharedService.currentUser.fboId,
+            })
+            .subscribe((data: any) => {
+                this.totalOrders = 0;
+                if (data) {
+                    if (data.totalOrders) {
+                        this.totalOrders = data.totalOrders;
+                    }
+                    if (data.icao) {
+                        this.icao = data.icao;
+                    }
+                }
+            }, (error: any) => {
+            });
     }
 }

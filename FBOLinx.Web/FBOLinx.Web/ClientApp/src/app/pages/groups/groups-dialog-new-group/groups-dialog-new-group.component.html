@@ -1,10 +1,46 @@
-<h1 mat-dialog-title>New Group</h1>
+<h1 mat-dialog-title>Create New Group or FBO</h1>
 <div mat-dialog-content>
     <mat-form-field>
-        <input matInput placeholder="Group Name" aria-label="Group Name" [(ngModel)]="data.groupName">
+        <mat-label>Group or FBO</mat-label>
+        <mat-select [(value)]="type">
+            <mat-option value="group">
+                Group
+            </mat-option>
+            <mat-option value="fbo">
+                FBO
+            </mat-option>
+        </mat-select>
     </mat-form-field>
+    <div *ngIf="type === 'group'">
+        <mat-form-field>
+            <input [(ngModel)]="data.groupName" aria-label="Group Name" matInput placeholder="Group Name">
+        </mat-form-field>
+    </div>
+    <div *ngIf="type === 'fbo'">
+        <app-airport-autocomplete (valueChange)="airportValueChanged($event)"
+                                  [airportContainerModel]="data"></app-airport-autocomplete>
+        <mat-form-field *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0">
+            <mat-select (ngModelChange)="fboSelectionChange()"
+                        [(ngModel)]="data.acukwikFbo"
+                        placeholder="FBO">
+                <mat-option *ngFor="let acukwikFbo of dataSources.acukwikFbos"
+                            [value]="acukwikFbo">{{ acukwikFbo.handlerLongName }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="data.acukwikFbo">
+            <mat-label>Group</mat-label>
+            <input [(ngModel)]="data.group"
+                   [value]="data.group"
+                   matInput>
+        </mat-form-field>
+    </div>
 </div>
 <div mat-dialog-actions>
-    <button ni-button [view]="'accent'" [mat-dialog-close]="data" class="mr-1">Add Group</button>
-    <button mat-stroked-button (click)="onCancelClick()">Cancel</button>
+    <button
+        (click)="onSaveClick()"
+        class="mr-1"
+        color="accent"
+        mat-flat-button
+    >Add {{ type === 'group' ? 'Group' : 'FBO' }}</button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

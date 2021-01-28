@@ -1,0 +1,48 @@
+# IO.Swagger.Model.TransactionGeneralInfoResultDTO
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**OID** | **int?** |  | [optional] 
+**TripNumber** | **string** |  | [optional] 
+**LegNumber** | **int?** |  | [optional] 
+**TailNumber** | **string** |  | [optional] 
+**ArrivalDate** | **string** |  | [optional] 
+**DepartureDate** | **string** |  | [optional] 
+**ServiceDate** | **string** |  | [optional] 
+**CreationDate** | **string** |  | [optional] 
+**ICAO** | **string** |  | [optional] 
+**Fueler** | **string** |  | [optional] 
+**QuotedPPG** | **double?** |  | [optional] 
+**InvoicedPPG** | **double?** |  | [optional] 
+**QuotedFuelAmount** | **int?** |  | [optional] 
+**InvoicedFuelAmount** | **double?** |  | [optional] 
+**FBO** | **string** |  | [optional] 
+**Price** | **double?** |  | [optional] 
+**FuelAmount** | **double?** |  | [optional] 
+**HasAttachments** | **bool?** |  | [optional] 
+**InvoiceNumber** | **string** |  | [optional] 
+**InvoiceStatus** | **string** |  | [optional] 
+**AddedByImport** | **bool?** |  | [optional] 
+**DiscrepancyInImport** | **bool?** |  | [optional] 
+**OriginalQuotedPPG** | **double?** |  | [optional] 
+**IsArchived** | **bool?** |  | [optional] 
+**FuelMasterID** | **int?** |  | [optional] 
+**FuelerID** | **int?** |  | [optional] 
+**TaxStatus** | **int?** |  | [optional] 
+**CompanyName** | **string** |  | [optional] 
+**MemoFor** | **int?** |  | [optional] 
+**RequestedBy** | **string** |  | [optional] 
+**AdditionalFees** | **string** |  | [optional] 
+**AdditionalFeesTotal** | **double?** |  | [optional] 
+**ArrivalTime** | **string** |  | [optional] 
+**DepartureTime** | **string** |  | [optional] 
+**HasPaid** | **bool?** |  | [optional] 
+**HasInvoicedBills** | **bool?** |  | [optional] 
+**CanPay** | **bool?** |  | [optional] 
+**ACHMerchantProfileID** | **string** |  | [optional] 
+**CreditCardMerchantProfileID** | **string** |  | [optional] 
+**AccountingTransferStatus** | **int?** |  | [optional] 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+

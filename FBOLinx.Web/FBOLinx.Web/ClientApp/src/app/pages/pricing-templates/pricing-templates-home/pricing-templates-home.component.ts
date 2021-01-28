@@ -1,90 +1,138 @@
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 
-//Services
+import { State } from '../../../store/reducers';
+import { pricingTemplateGridSet } from '../../../store/actions';
+
+// Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
 
-//Components
+import * as SharedEvents from '../../../models/sharedEvents';
+
+// Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 const BREADCRUMBS: any[] = [
     {
         title: 'Main',
-        link: '#/default-layout'
+        link: '/default-layout',
     },
     {
-        title: 'Margin Templates',
-        link: '#/default-layout/pricing-templates'
-    }
+        title: 'ITP Margin Templates',
+        link: '/default-layout/pricing-templates',
+    },
 ];
 
 @Component({
     selector: 'app-pricing-templates-home',
     templateUrl: './pricing-templates-home.component.html',
-    styleUrls: ['./pricing-templates-home.component.scss']
+    styleUrls: [ './pricing-templates-home.component.scss' ],
 })
-/** pricing-templates-home component*/
-export class PricingTemplatesHomeComponent {
-
-    //Public Members
-    public pageTitle: string = 'Margin Templates';
+export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
+    // Public Members
+    public pageTitle = 'ITP Margin Templates';
     public breadcrumb: any[] = BREADCRUMBS;
     public pricingTemplatesData: Array<any>;
-    public currentPricingTemplate: any;
+    public locationChangedSubscription: any;
 
     constructor(
         private router: Router,
+        private store: Store<State>,
         private pricingTemplatesService: PricingtemplatesService,
-        public newPricingTemplateDialog: MatDialog,
         private sharedService: SharedService,
         public deleteFBODialog: MatDialog
     ) {
-        this.sharedService.emitChange(this.pageTitle);
-        pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).subscribe((data: any) => this.pricingTemplatesData = data);
-        this.currentPricingTemplate = null;
+        this.sharedService.titleChange(this.pageTitle);
+        this.loadPricingTemplateData();
     }
 
-    public editPricingTemplateClicked(pricingTemplate) {
-        this.router.navigate(['/default-layout/pricing-templates/' + pricingTemplate.oid]);
+    ngAfterViewInit() {
+        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
+            (message) => {
+                if (message === SharedEvents.locationChangedEvent) {
+                    this.loadPricingTemplateData();
+                }
+            }
+        );
+    }
+
+    ngOnDestroy() {
+        if (this.locationChangedSubscription) {
+            this.locationChangedSubscription.unsubscribe();
+        }
+    }
+
+    public loadPricingTemplateData() {
+        this.pricingTemplatesData = null;
+        this.pricingTemplatesService
+            .getByFbo(
+                this.sharedService.currentUser.fboId,
+                this.sharedService.currentUser.groupId
+            )
+            .subscribe((data: any) => (this.pricingTemplatesData = data));
+    }
+
+    public editPricingTemplateClicked($event) {
+        this.store.dispatch(pricingTemplateGridSet({
+            filter: $event.filter,
+            page: $event.page,
+            order: $event.order,
+            orderBy: $event.orderBy,
+        }));
+        this.router.navigate([
+            '/default-layout/pricing-templates/' + $event.pricingTemplateId,
+        ]).then(() => {
+        });
     }
 
     public deletePricingTemplateClicked(pricingTemplate) {
-        const dialogRef = this.deleteFBODialog.open(DeleteConfirmationComponent, {
-            data: { item: pricingTemplate, description: 'margin template' }
-        });
+        const dialogRef = this.deleteFBODialog.open(
+            DeleteConfirmationComponent,
+            {
+                data: { item: pricingTemplate, description: 'margin template' },
+                autoFocus: false,
+            }
+        );
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (!result) return;
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
             this.pricingTemplatesData = null;
-            this.pricingTemplatesService.remove(pricingTemplate).subscribe((data: any) => {
-                this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-                    this.pricingTemplatesData = data;
-                    this.currentPricingTemplate = null;
+            this.pricingTemplatesService
+                .remove({
+                    fboId: this.sharedService.currentUser.fboId,
+                    oid: pricingTemplate.oid,
+                })
+                .subscribe(() => {
+                    this.pricingTemplatesService
+                        .getByFbo(
+                            this.sharedService.currentUser.fboId,
+                            this.sharedService.currentUser.groupId
+                        )
+                        .subscribe((data: any) => {
+                            this.pricingTemplatesData = data;
+                        });
                 });
-            });
+
+            this.sharedService.NotifyPricingTemplateComponent(
+                'updateComponent'
+            );
         });
     }
 
-    public savePricingTemplateClicked() {
-        this.pricingTemplatesService.update(this.currentPricingTemplate).subscribe((data: any) => {
-            this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-                this.pricingTemplatesData = data;
-                this.currentPricingTemplate = null;
-            });
-        });
-    }
-
-    public cancelPricingTemplateEditclicked() {
-        this.currentPricingTemplate = null;
-    }
-
-    public newPricingTemplateAdded(event) {
+    public newPricingTemplateAdded() {
         this.pricingTemplatesData = null;
-        this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.pricingTemplatesData = data;
-            this.currentPricingTemplate = null;
-        });
+        this.pricingTemplatesService
+            .getByFbo(
+                this.sharedService.currentUser.fboId,
+                this.sharedService.currentUser.groupId
+            )
+            .subscribe((data: any) => {
+                this.pricingTemplatesData = data;
+            });
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -118,6 +120,30 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(customerContacts);
+        }
+
+        // GET: api/CustomerContacts/group/5/fbo/6/pricingtemplate/7
+        [HttpGet("group/{groupId}/fbo/{fboId}/pricingtemplate/{pricingTemplateId}")]
+        public IActionResult GetDistributionEmailCountByTemplate([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int pricingTemplateId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var emails = (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
+                             join c in _context.Customers on cg.CustomerId equals c.Oid
+                             join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
+                             join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
+                             join co in _context.Contacts on custc.ContactId equals co.Oid
+                             join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
+                             where (cg.Active ?? false)
+                                   && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
+                                   && (cibg.CopyAlerts ?? false) == true
+                                   && !string.IsNullOrEmpty(cibg.Email)
+                             select co).Count();
+
+            return Ok(emails);
         }
 
         private bool CustomerContactsExists(int id)

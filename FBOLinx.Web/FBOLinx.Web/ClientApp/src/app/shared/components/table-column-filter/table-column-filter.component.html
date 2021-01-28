@@ -1,0 +1,138 @@
+<div class="table-column-filter">
+    <button #table_header_menu_trigger="matMenuTrigger" [matMenuTriggerFor]="table_header_menu"
+            aria-label="Table header filter"
+            mat-icon-button onclick="event.stopPropagation();">
+        <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+    </button>
+    <mat-menu #table_header_menu="matMenu" [id]="columnId">
+        <div (click)="$event.stopPropagation()" class="">
+            <div *ngIf="allowEditHeading" class="">
+                <button (click)="isHeadingOpen = !isHeadingOpen;" mat-menu-item>
+                    <mat-icon>edit</mat-icon>
+                    <span>Heading</span>
+                </button>
+                <div [@openClose]="isHeadingOpen ? 'open' : 'closed'" class="col-12">
+                    <mat-form-field>
+                        <mat-label>Heading</mat-label>
+                        <input (blur)="editHeadingFinished(column);" (click)="$event.target.select()"
+                               [(ngModel)]="column.heading" matInput
+                               placeholder="Heading" type="text"/>
+                    </mat-form-field>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="">
+                <div>
+                    <button (click)="orderData(column.propertyName,'asc')" mat-menu-item>
+                        <mat-icon>arrow_upward</mat-icon>
+                        <span>Sort Ascending</span>
+                    </button>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="">
+                <div>
+                    <button (click)="orderData(column.propertyName,'desc')" mat-menu-item>
+                        <mat-icon>arrow_downward</mat-icon>
+                        <span>Sort Descending</span>
+                    </button>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div>
+                <button (click)="isFilterOpen = !isFilterOpen;$event.stopPropagation();" mat-menu-item>
+                    <mat-icon>filter_list</mat-icon>
+                    <span>Filter</span>
+                </button>
+
+            </div>
+            <div [@openClose]="isFilterOpen ? 'open' : 'closed'">
+                <div *ngIf="[2,3,4].indexOf(column.columnFormat) > -1" class="col-12">
+                    <div>
+                        <!--Date/Time select-->
+                        <div (click)="$event.stopPropagation();">
+                            <mat-form-field *ngIf="isFilterOpen">
+                                <mat-label>From</mat-label>
+                                <input (focus)="columnStartDateFilter.open()" [(ngModel)]="filter.dateFilter.startDate"
+                                       [matDatepicker]="columnStartDateFilter" [max]="filter.dateFilter.endDate"
+                                       matInput placeholder="Choose a date">
+                                <mat-datepicker-toggle [for]="columnStartDateFilter" matSuffix></mat-datepicker-toggle>
+                                <mat-datepicker #columnStartDateFilter disabled="false"></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div (click)="$event.stopPropagation();">
+                            <mat-form-field *ngIf="isFilterOpen">
+                                <mat-label>To</mat-label>
+                                <input (focus)="columnEndDateFilter.open()" [(ngModel)]="filter.dateFilter.endDate"
+                                       [matDatepicker]="columnEndDateFilter" [min]="filter.dateFilter.startDate"
+                                       matInput placeholder="Choose a date">
+                                <mat-datepicker-toggle [for]="columnEndDateFilter" matSuffix></mat-datepicker-toggle>
+                                <mat-datepicker #columnEndDateFilter disabled="false"></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="[0,7].indexOf(column.columnFormat) > -1" class="col-12">
+                    <div>
+                        <mat-form-field *ngIf="isFilterOpen">
+                            <mat-label>{{column.heading}} Filter</mat-label>
+                            <input (click)="$event.stopPropagation()" [(ngModel)]="filter.stringFilter" matInput/>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div *ngIf="[8].indexOf(column.columnFormat) > -1" class="col-12">
+                    <div (click)="$event.stopPropagation()">
+                        <mat-form-field *ngIf="isFilterOpen">
+                            <mat-label>{{column.heading}} Filter</mat-label>
+                            <mat-select [(ngModel)]="filter.stringFilter">
+                                <mat-option value="">--Select One--</mat-option>
+                                <mat-option value="true">Yes</mat-option>
+                                <mat-option value="false">No</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div *ngIf="[1,5,6].indexOf(column.columnFormat) > -1" class="col-12">
+                    <div>
+                        <div>
+                            <mat-form-field *ngIf="isFilterOpen">
+                                <mat-label>Range From</mat-label>
+                                <input (click)="$event.stopPropagation()" [(ngModel)]="filter.numberRangeFilter.start"
+                                       matInput step="1"
+                                       type="number"/>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field *ngIf="isFilterOpen">
+                                <mat-label>Range To</mat-label>
+                                <input (click)="$event.stopPropagation()" [(ngModel)]="filter.numberRangeFilter.end"
+                                       matInput step="1"
+                                       type="number"/>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="isFilterOpen" class="col-12">
+                    <div class="container-fluid">
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <button (click)="clearFilter();$event.stopPropagation();" mat-raised-button>Clear
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button
+                                    (click)="applyFilter(filter, table_header_menu_trigger);$event.stopPropagation();"
+                                    color="primary"
+                                    mat-raised-button>
+                                    Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </mat-menu>
+</div>
+

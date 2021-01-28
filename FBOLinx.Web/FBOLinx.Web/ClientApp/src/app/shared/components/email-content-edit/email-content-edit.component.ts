@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 
-//Services
+// Services
 import { EmailcontentService } from '../../../services/emailcontent.service';
 
 export interface EmailContentDialogData {
@@ -15,24 +15,28 @@ export interface EmailContentDialogData {
 @Component({
     selector: 'app-email-content-edit',
     templateUrl: './email-content-edit.component.html',
-    styleUrls: ['./email-content-edit.component.scss']
+    styleUrls: [ './email-content-edit.component.scss' ],
 })
-/** email-content-edit component*/
 export class EmailContentEditComponent {
     public emailContentTypes: any[] = [];
 
-    /** email-content-edit ctor */
-    constructor(public dialogRef: MatDialogRef<EmailContentEditComponent>, @Inject(MAT_DIALOG_DATA) public emailContent: EmailContentDialogData,
-        private emailContentService: EmailcontentService) {
-
+    constructor(
+        public dialogRef: MatDialogRef<EmailContentEditComponent>,
+        @Inject(MAT_DIALOG_DATA) public emailContent: EmailContentDialogData,
+        private emailContentService: EmailcontentService
+    ) {
     }
 
-    //Public Methods
+    // Public Methods
     public onSaveChangesClick(): void {
         if (this.emailContent.oid > 0) {
-            this.emailContentService.update(this.emailContent).subscribe((data: any) => this.completeSave());
+            this.emailContentService
+                .update(this.emailContent)
+                .subscribe(() => this.completeSave());
         } else {
-            this.emailContentService.add(this.emailContent).subscribe((data: any) => this.completeSave());
+            this.emailContentService
+                .add(this.emailContent)
+                .subscribe(() => this.completeSave());
         }
     }
 
@@ -40,7 +44,7 @@ export class EmailContentEditComponent {
         this.dialogRef.close();
     }
 
-    //Private Methods
+    // Private Methods
     private completeSave() {
         this.dialogRef.close(this.emailContent);
     }

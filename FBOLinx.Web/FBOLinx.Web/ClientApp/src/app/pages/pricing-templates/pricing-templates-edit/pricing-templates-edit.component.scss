@@ -1,5 +1,35 @@
-.stickyStyle {
-    padding-bottom: 10px;
-    padding-top: 5px;
-    background-color: #f8f8f8;
+:host {
+    position: relative;
+    display: block;
+
+    .stickyStyle {
+        padding-bottom: 10px;
+        padding-top: 5px;
+        background-color: #f8f8f8;
+    }
+}
+
+.volume-tiers-width {
+    width: 45%;
+}
+
+.volume-tiers-table {
+    padding-left: 20px !important;
+}
+
+
+.volume-tiers-header {
+    margin-left: -0.25rem !important;
+    margin-right: 1.5rem !important;
+}
+
+.fbo-prices-panel {
+    position: absolute;
+    top: -14px;
+    right: 62px;
+}
+
+.card-content {
+    height: calc(100vh - 280px);
+    overflow: auto;
 }

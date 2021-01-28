@@ -1,109 +1,89 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-
-import { TemporaryAddOnMarginComponent } from '../../shared/components/temporary-add-on-margin/temporary-add-on-margin.component';
-import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs';
-import { FbopricesService } from '../../services/fboprices.service';
-import { SharedService } from '../../layouts/shared-service';
+import {
+    Component,
+    Input,
+    ViewChild,
+    HostListener,
+    ElementRef,
+    AfterContentChecked,
+} from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 
 @Component({
     selector: 'ni-card',
     templateUrl: './ni-card.component.html',
     styleUrls: ['./ni-card.component.scss'],
+    animations: [
+        trigger('openClose', [
+            state('true', style({
+                height: '*',
+                paddingBottom: '15px',
+                paddingTop: '15px',
+            })),
+            state('false', style({
+                height: '0',
+                paddingBottom: '0',
+                paddingTop: '0',
+            })),
+            transition('false <=> true', [ animate(300) ]),
+        ]),
+    ],
     host: {
-        '[class.ni-card]': 'true'
-    }
+        '[class.ni-card]': 'true',
+    },
 })
+export class NiCardComponent implements AfterContentChecked {
+    @ViewChild('cardTitle') cardTitle: ElementRef;
+    @ViewChild('cardSubTitle') cardSubTitle: ElementRef;
 
+    @Input() title = '';
+    @Input() subtitle = '';
 
-export class NiCardComponent implements OnInit {
-    vId: any;
-    vEffectiveFrom: any;
-    vEffectiveTo: any;
-    vJet: any;
-    @Output() jetChanged: EventEmitter<any> = new EventEmitter();
-    @Output() priceDeleted: EventEmitter<any> = new EventEmitter();
+    @Input() bgColor = '';
+    @Input() color = '';
+    @Input() headerBgColor = '';
+    @Input() headerColor = '';
 
-    @Input() title: string = '';
-    @Input() tempId: string = '';
-    @Input() visible: string = '';
-    @Input() visibleSuspend: string = '';
-    @Input() bgColor: string = '';
-    @Input() customBgColor: string = '';
-    @Input() color: string = '';
-    @Input() customColor: string = '';
-    @Input() bgImage: string = '';
-    @Input() outline: boolean = false;
-    @Input() indents: any = '';
-    @Input() align: string = 'left';
-    @Input() headerBgColor: string = '';
-    @Input() headerColor: string = '';
-    @Input() theme: string = '';
+    @Input() outline = false;
 
+    @Input() theme = '';
+    @Input() align = '';
 
-    public currentPrices: any[];
-    //public isPricingSuspended: boolean = true;
-    //@Input() isPricingSuspended: boolean = false;
-    constructor(public tempAddOnMargin: MatDialog, public deleteFBODialog: MatDialog, private fboPricesService: FbopricesService, private sharedService: SharedService) { }
+    @Input() customStyle = '';
 
-    ngOnInit() {
-        this.checkPrices();
+    @Input() collapsible = false;
+
+    @Input() opened = false;
+
+    subTitleVisible = true;
+
+    constructor() {}
+
+    ngAfterContentChecked(): void {
+        this.checkSubtitleVisible();
     }
 
-    openDialog(): Observable<any> {
-        const dialogRef = this.tempAddOnMargin.open(TemporaryAddOnMarginComponent, {
-            data: { EffectiveFrom: this.vEffectiveFrom, EffectiveTo: this.vEffectiveTo, MarginJet: this.vJet, Id: this.vId, update: false },
-            autoFocus: false,
-            panelClass: 'my-panel'
-        });
-        dialogRef.componentInstance.idChanged1.subscribe((result) => {
-            console.log(result);
-            this.jetChanged.emit(result);
-
-        });
-        return dialogRef.afterClosed();
+    @HostListener('window:resize')
+    onResize() {
+        this.checkSubtitleVisible();
     }
 
-    private openAddOnMargin() {
-        this.openDialog();
-    }
-
-    public checkPricing() {
-        this.checkPrices();
-    }
-
-    private checkPrices() {
-        this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
-            .subscribe((data: any) => {
-                this.currentPrices = data;
-                var jetACost = this.getCurrentPriceByProduct('JetA Cost');
-                var jetAprice = this.getCurrentPriceByProduct('JetA Retail');
-
-                if (jetACost.oid != 0 || jetAprice.oid !=0) {
-                    // this.isPricingSuspended = false;
-                    this.visibleSuspend = 'true';
-                }
-                else {
-                  //  this.isPricingSuspended = true;
-                    this.visibleSuspend = 'false';
-                }
-            });
-    }
-
-    private suspendPricing() {
-        this.fboPricesService.suspendAllPricing(this.sharedService.currentUser.fboId).subscribe((data: any) => {
-            this.checkPrices();
-            this.priceDeleted.emit('ok');
-        });
-    }
-
-    private getCurrentPriceByProduct(product) {
-        var result = { fboId: this.sharedService.currentUser.fboId, groupId: this.sharedService.currentUser.groupId, oid: 0 };
-        for (let fboPrice of this.currentPrices) {
-            if (fboPrice.product == product)
-                result = fboPrice;
+    headerClick() {
+        if (this.collapsible) {
+            this.opened = !this.opened;
         }
-        return result;
+    }
+
+    private checkSubtitleVisible() {
+        if (this.subtitle && this.cardTitle && this.cardSubTitle) {
+            const limit = this.cardTitle.nativeElement.offsetLeft + this.cardTitle.nativeElement.offsetWidth + 10;
+            const subtitleStart = this.cardSubTitle.nativeElement.offsetLeft;
+            if (subtitleStart < limit && this.subTitleVisible) {
+                this.subTitleVisible = false;
+            }
+            if (subtitleStart >= limit && !this.subTitleVisible) {
+                this.subTitleVisible = true;
+            }
+        }
     }
 }
