@@ -58,7 +58,8 @@ export class FlightWatchMapComponent implements OnInit, OnDestroy {
             this.loading = true;
             this.airportWatchService.getAll()
                 .subscribe((data: FlightWatch[]) => {
-                    this.airportWatchData.push(...data.slice(this.airportWatchData.length));
+                    this.airportWatchData = data;
+
                     if (!this.lat || !this.lng) {
                         this.lat = this.airportWatchData[data.length - 1]?.latitude || 0;
                         this.lng = this.airportWatchData[data.length - 1]?.longitude || 0;
