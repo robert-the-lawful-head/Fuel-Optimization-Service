@@ -1,7 +1,9 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Services
 {
@@ -12,6 +14,18 @@ namespace FBOLinx.Web.Services
         public AirportWatchService(FboLinxContext context)
         {
             _context = context;
+        }
+
+        public async Task<List<AirportWatchHistoricalData>> GetAirportWatchHistoricalData()
+        {
+            var result = await (from ah in _context.AirportWatchHistoricalData
+                                join al in _context.AirportWatchLiveData
+                                    on new { ah.AircraftHexCode, ah.AtcFlightNumber, ah.BoxTransmissionDateTimeUtc, ah.AircraftPositionDateTimeUtc, ah.IsAircraftOnGround }
+                                    equals new { al.AircraftHexCode, al.AtcFlightNumber, al.BoxTransmissionDateTimeUtc, al.AircraftPositionDateTimeUtc, al.IsAircraftOnGround }
+                                orderby ah.Oid
+                                select ah).ToListAsync();
+
+            return result;
         }
 
         public void ProcessAirportWatchData(List<AirportWatchLiveData> data)

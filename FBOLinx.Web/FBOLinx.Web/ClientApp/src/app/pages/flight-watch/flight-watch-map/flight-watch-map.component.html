@@ -1,0 +1,22 @@
+<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
+
+<div class="after-breadcrumb">
+    <mat-spinner *ngIf="!mapInitialized"></mat-spinner>
+
+    <agm-map
+        [ngClass]="{ 'invisible': !mapInitialized }"
+        [latitude]="lat"
+        [longitude]="lng"
+        [zoom]="zoom"
+        (mapReady)="mapReady()"
+    >
+        <agm-marker-cluster imagePath="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m">
+            <agm-marker
+                *ngFor="let airportWatch of airportWatchData"
+                [latitude]="airportWatch.latitude"
+                [longitude]="airportWatch.longitude"
+                [iconUrl]="markerImg"
+            ></agm-marker>
+        </agm-marker-cluster>
+    </agm-map>
+</div>

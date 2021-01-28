@@ -117,6 +117,11 @@ namespace FBOLinx.Job.Jobs
 
             foreach (var record in data)
             {
+                if (record == null)
+                {
+                    continue;
+                }
+
                 var airportWatchRow = new AirportWatchLiveData { };
 
                 if (string.IsNullOrEmpty(record.AircraftHexCode) ||
