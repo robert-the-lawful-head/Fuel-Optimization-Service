@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
+import { keyBy, keys } from 'lodash';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
-import { keyBy, keys } from 'lodash';
 
 const BREADCRUMBS: any[] = [
     {
