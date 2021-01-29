@@ -64,5 +64,25 @@ namespace FBOLinx.DB.Models
                 AircraftStatus = entity.IsAircraftOnGround == true ? AircraftStatusType.Landing : AircraftStatusType.Takeoff,
             };
         }
+
+        public static void CopyEntity(AirportWatchHistoricalData oldRecord, AirportWatchHistoricalData newRecord)
+        {
+            oldRecord.BoxTransmissionDateTimeUtc = newRecord.BoxTransmissionDateTimeUtc;
+            oldRecord.AircraftHexCode = newRecord.AircraftHexCode;
+            oldRecord.AtcFlightNumber = newRecord.AtcFlightNumber;
+            oldRecord.AltitudeInStandardPressure = newRecord.AltitudeInStandardPressure;
+            oldRecord.GroundSpeedKts = newRecord.GroundSpeedKts;
+            oldRecord.TrackingDegree = newRecord.TrackingDegree;
+            oldRecord.Latitude = newRecord.Latitude;
+            oldRecord.Longitude = newRecord.Longitude;
+            oldRecord.VerticalSpeedKts = newRecord.VerticalSpeedKts;
+            oldRecord.TransponderCode = newRecord.TransponderCode;
+            oldRecord.BoxName = newRecord.BoxName;
+            oldRecord.AircraftPositionDateTimeUtc = newRecord.AircraftPositionDateTimeUtc;
+            oldRecord.AircraftTypeCode = newRecord.AircraftTypeCode;
+            oldRecord.GpsAltitude = newRecord.GpsAltitude;
+            oldRecord.IsAircraftOnGround = newRecord.IsAircraftOnGround;
+            oldRecord.AircraftStatus = newRecord.AircraftStatus;
+        }
     }
 }

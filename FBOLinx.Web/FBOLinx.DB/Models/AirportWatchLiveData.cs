@@ -29,5 +29,24 @@ namespace FBOLinx.DB.Models
         public string AircraftTypeCode { get; set; }
         public int? GpsAltitude { get; set; }
         public bool IsAircraftOnGround { get; set; }
+
+        public static void CopyEntity(AirportWatchLiveData oldRecord, AirportWatchLiveData newRecord)
+        {
+            oldRecord.BoxTransmissionDateTimeUtc = newRecord.BoxTransmissionDateTimeUtc;
+            oldRecord.AircraftHexCode = newRecord.AircraftHexCode;
+            oldRecord.AtcFlightNumber = newRecord.AtcFlightNumber;
+            oldRecord.AltitudeInStandardPressure = newRecord.AltitudeInStandardPressure;
+            oldRecord.GroundSpeedKts = newRecord.GroundSpeedKts;
+            oldRecord.TrackingDegree = newRecord.TrackingDegree;
+            oldRecord.Latitude = newRecord.Latitude;
+            oldRecord.Longitude = newRecord.Longitude;
+            oldRecord.VerticalSpeedKts = newRecord.VerticalSpeedKts;
+            oldRecord.TransponderCode = newRecord.TransponderCode;
+            oldRecord.BoxName = newRecord.BoxName;
+            oldRecord.AircraftPositionDateTimeUtc = newRecord.AircraftPositionDateTimeUtc;
+            oldRecord.AircraftTypeCode = newRecord.AircraftTypeCode;
+            oldRecord.GpsAltitude = newRecord.GpsAltitude;
+            oldRecord.IsAircraftOnGround = newRecord.IsAircraftOnGround;
+        }
     }
 }

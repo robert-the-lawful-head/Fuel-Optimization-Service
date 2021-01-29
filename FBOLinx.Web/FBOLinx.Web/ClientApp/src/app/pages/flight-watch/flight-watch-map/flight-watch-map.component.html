@@ -16,6 +16,7 @@
                     [latitude]="airportWatchMap[airportWatchId].latitude"
                     [longitude]="airportWatchMap[airportWatchId].longitude"
                     [iconUrl]="markerImg"
+                    [title]="airportWatchMap[airportWatchId].aircraftHexCode + '/' + airportWatchMap[airportWatchId].atcFlightNumber"
                 ></agm-marker>
             </ng-container>
         </agm-marker-cluster>

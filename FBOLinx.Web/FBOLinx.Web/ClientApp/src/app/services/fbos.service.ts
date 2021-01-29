@@ -58,4 +58,10 @@ export class FbosService {
             headers: this.headers,
         });
     }
+
+    public getLocation(id: number) {
+        return this.http.get(this.accessPointUrl + '/' + id + '/location', {
+            headers: this.headers,
+        });
+    }
 }

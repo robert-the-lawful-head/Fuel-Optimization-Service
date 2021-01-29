@@ -25,15 +25,15 @@ namespace FBOLinx.Web.Controllers
     public class FbosController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private IServiceScopeFactory _serviceScopeFactory;
+        private readonly DegaContext _degaContext;
         private GroupFboService _groupFboService;
         private readonly FboService _fboService;
 
-        public FbosController(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, FboService fboService)
+        public FbosController(FboLinxContext context, DegaContext degaContext, GroupFboService groupFboService, FboService fboService)
         {
             _groupFboService = groupFboService;
             _context = context;
-            _serviceScopeFactory = serviceScopeFactory;
+            _degaContext = degaContext;
             _fboService = fboService;
         }
 
@@ -104,6 +104,40 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(fbos);
+        }
+
+        [HttpGet("{id}/location")]
+        public async Task<IActionResult> GetFboLocation([FromRoute] int id)
+        {
+            var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == id).FirstOrDefaultAsync();
+            if (fboAirport == null)
+            {
+                return NotFound("FBO not found.");
+            }
+
+            var airport = await _degaContext.AcukwikAirports.Where(a => a.Icao == fboAirport.Icao).FirstOrDefaultAsync();
+            if (airport == null)
+            {
+                return NotFound("Airport not found for the specified FBO.");
+            }
+
+            var latDirection = airport.Latitude.Substring(0, 1);
+            var lngDirection = airport.Longitude.Substring(0, 1);
+
+
+            double latitude = double.Parse(airport.Latitude.Substring(1, 2)) + double.Parse(airport.Latitude.Substring(4, 2)) / 60 + double.Parse(airport.Latitude[7..]) / 3600;           
+            double longitude = airport.Longitude.Length == 8 ?
+                double.Parse(airport.Longitude.Substring(1, 2)) + double.Parse(airport.Longitude.Substring(4, 2)) / 60 + double.Parse(airport.Longitude[6..]) / 3600 :
+                double.Parse(airport.Longitude.Substring(1, 3)) + double.Parse(airport.Longitude.Substring(5, 2)) / 60 + double.Parse(airport.Longitude[7..]) / 3600;
+
+            if (latDirection != "N") latitude = -latitude;
+            if (lngDirection != "E") longitude = -longitude;
+
+            return Ok(new
+            {
+                latitude,
+                longitude
+            });
         }
 
         // PUT: api/Fbos/5
