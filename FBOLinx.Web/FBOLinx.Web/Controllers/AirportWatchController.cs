@@ -24,9 +24,9 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("list")]
-        public async Task<ActionResult<List<AirportWatchHistoricalData>>> GetAirportWatchHistoricalData()
+        public async Task<ActionResult<List<AirportWatchLiveData>>> GetAirportLiveData()
         {
-            var data = await _airportWatchService.GetAirportWatchHistoricalData();
+            var data = await _airportWatchService.GetAirportWatchLiveData();
             return data;
         }
 

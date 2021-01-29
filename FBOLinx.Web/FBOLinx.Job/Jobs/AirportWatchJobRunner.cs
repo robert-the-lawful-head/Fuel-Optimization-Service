@@ -240,7 +240,7 @@ namespace FBOLinx.Job.Jobs
             }
 
             return airportWatchData
-                .OrderByDescending(row => row.BoxTransmissionDateTimeUtc)
+                .OrderByDescending(row => row.AircraftPositionDateTimeUtc)
                 .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
                 .Select(grouped => grouped.First())
                 .ToList();
