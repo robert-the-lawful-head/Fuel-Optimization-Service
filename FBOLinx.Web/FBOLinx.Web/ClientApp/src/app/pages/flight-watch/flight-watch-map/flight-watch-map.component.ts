@@ -29,7 +29,7 @@ export class FlightWatchMapComponent implements OnInit, OnDestroy {
     // Map Options
     lat: number;
     lng: number;
-    zoom = 15;
+    zoom = 8;
     markerImg = '/assets/img/airportMarker.png';
 
     mapInitialized = false;
