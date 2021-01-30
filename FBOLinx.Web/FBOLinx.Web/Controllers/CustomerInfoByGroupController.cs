@@ -586,27 +586,27 @@ namespace FBOLinx.Web.Controllers
         [HttpPost("group-analytics/group/{groupId}")]
         public async Task<IActionResult> GetGroupAnalytics([FromRoute]int groupId, [FromBody] List<int> customerIds)
         {
-            var customerFbos = (from cig in _context.CustomerInfoByGroup.Where(cig => customerIds.Contains(cig.CustomerId))
-                                join fbo in _context.Fbos on cig.GroupId equals fbo.GroupId
-                                join fa in _context.Fboairports on fbo.Oid equals fa.Fboid
-                                join cct in _context.CustomCustomerTypes on new { cig.CustomerId, Fboid = fbo.Oid } equals new { cct.CustomerId, cct.Fboid }
-                                into leftJoinCCT
-                                from cct in leftJoinCCT.DefaultIfEmpty()
-                                join pt in _context.PricingTemplate on cct == null ? 0 : cct.CustomerType equals pt.Oid
-                                into leftJoinPT
-                                from pt in leftJoinPT.DefaultIfEmpty()
-                                where cig.GroupId == groupId
-                                select new
-                                {
-                                    CustomerInfoByGroupId = cig.Oid,
-                                    cig.Company,
-                                    FboId = fbo.Oid,
-                                    fa.Icao,
-                                    PricingTemplateId = pt == null ? 0 : pt.Oid
-                                })
-                                .ToList()
-                                .GroupBy(cf => cf.Company)
-                                .ToList();
+            var customerFbos = (await (from cig in _context.CustomerInfoByGroup.Where(cig => customerIds.Contains(cig.CustomerId))
+                                       join fbo in _context.Fbos on cig.GroupId equals fbo.GroupId
+                                       join fa in _context.Fboairports on fbo.Oid equals fa.Fboid
+                                       join cct in _context.CustomCustomerTypes on new { cig.CustomerId, Fboid = fbo.Oid } equals new { cct.CustomerId, cct.Fboid }
+                                       into leftJoinCCT
+                                       from cct in leftJoinCCT.DefaultIfEmpty()
+                                       join pt in _context.PricingTemplate on cct == null ? 0 : cct.CustomerType equals pt.Oid
+                                       into leftJoinPT
+                                       from pt in leftJoinPT.DefaultIfEmpty()
+                                       where cig.GroupId == groupId
+                                       select new
+                                       {
+                                           CustomerInfoByGroupId = cig.Oid,
+                                           cig.Company,
+                                           FboId = fbo.Oid,
+                                           fa.Icao,
+                                           PricingTemplateId = pt == null ? 0 : pt.Oid
+                                       })
+                                       .ToListAsync())
+                                       .GroupBy(cf => cf.Company)
+                                       .ToList();
 
             var result = new List<GroupCustomerAnalyticsResponse>();
 
