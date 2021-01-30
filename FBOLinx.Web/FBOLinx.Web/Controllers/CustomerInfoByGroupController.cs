@@ -586,28 +586,27 @@ namespace FBOLinx.Web.Controllers
         [HttpPost("group-analytics/group/{groupId}")]
         public async Task<IActionResult> GetGroupAnalytics([FromRoute]int groupId, [FromBody] List<int> customerIds)
         {
-            var customerFbos = await (from cig in _context.CustomerInfoByGroup
-                              join fbo in _context.Fbos on cig.GroupId equals fbo.GroupId
-                              join fa in _context.Fboairports on fbo.Oid equals fa.Fboid
-                              join cct in _context.CustomCustomerTypes on new { cig.CustomerId, Fboid = fbo.Oid } equals new { cct.CustomerId, cct.Fboid }
-                              into leftJoinCCT
-                              from cct in leftJoinCCT.DefaultIfEmpty()
-                              join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
-                              into leftJoinPT
-                              from pt in leftJoinPT.DefaultIfEmpty()
-                              join c in customerIds on cig.CustomerId equals c
-                              where cig.GroupId == groupId
-                              select new
-                              {
-                                  CustomerInfoByGroupId = cig.Oid,
-                                  cig.Company,
-                                  FboId = fbo.Oid,
-                                  fa.Icao,
-                                  PricingTemplateId = pt == null ? 0 : pt.Oid,
-                                  PricingTemplateNote = pt == null ? "" : pt.Notes,
-                              })
-                              .GroupBy(cf => cf.Company)
-                              .ToListAsync();
+            var customerFbos = (from cig in _context.CustomerInfoByGroup.Where(cig => customerIds.Contains(cig.CustomerId))
+                                join fbo in _context.Fbos on cig.GroupId equals fbo.GroupId
+                                join fa in _context.Fboairports on fbo.Oid equals fa.Fboid
+                                join cct in _context.CustomCustomerTypes on new { cig.CustomerId, Fboid = fbo.Oid } equals new { cct.CustomerId, cct.Fboid }
+                                into leftJoinCCT
+                                from cct in leftJoinCCT.DefaultIfEmpty()
+                                join pt in _context.PricingTemplate on cct == null ? 0 : cct.CustomerType equals pt.Oid
+                                into leftJoinPT
+                                from pt in leftJoinPT.DefaultIfEmpty()
+                                where cig.GroupId == groupId
+                                select new
+                                {
+                                    CustomerInfoByGroupId = cig.Oid,
+                                    cig.Company,
+                                    FboId = fbo.Oid,
+                                    fa.Icao,
+                                    PricingTemplateId = pt == null ? 0 : pt.Oid
+                                })
+                                .ToList()
+                                .GroupBy(cf => cf.Company)
+                                .ToList();
 
             var result = new List<GroupCustomerAnalyticsResponse>();
 
@@ -645,7 +644,7 @@ namespace FBOLinx.Web.Controllers
                             string minGallon, maxGallon;
                             minGallon = model.MinGallons.GetValueOrDefault().ToString();
                             var next = commercialInternationalPricingResults[loopIndex + 1];
-                            Double maxValue = Convert.ToDouble(next.MinGallons) - 1;
+                            double maxValue = Convert.ToDouble(next.MinGallons) - 1;
 
                             if (maxValue > 999)
                             {
@@ -787,8 +786,6 @@ namespace FBOLinx.Web.Controllers
                     .Select(g => g.FirstOrDefault())
                     .OrderByDescending(s => (s.FleetSize ?? 0))
                     .ToList();
-
-                //await _context.SaveChangesAsync();
 
                 customerGridVM.ForEach(x =>
                 {
