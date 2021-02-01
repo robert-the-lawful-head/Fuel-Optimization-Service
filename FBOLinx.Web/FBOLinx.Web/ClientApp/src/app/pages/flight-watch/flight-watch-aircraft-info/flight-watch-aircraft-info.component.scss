@@ -1,0 +1,22 @@
+:host {
+    display: block;
+    overflow: auto;
+}
+
+mat-card {
+    height: 100%;
+    width: 0;
+    border-radius: 0;
+    position: relative;
+
+    mat-card-title, mat-card-subtitle {
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}
+
+.close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

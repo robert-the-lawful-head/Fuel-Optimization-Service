@@ -1,5 +1,3 @@
-import { AgmCoreModule } from '@agm/core';
-import { AgmMarkerClustererModule  } from '@agm/markerclusterer';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -12,6 +10,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
+import { GoogleMapsModule } from '@angular/google-maps';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -117,7 +116,9 @@ import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { SystemcontactsNewContactModalComponent } from './contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 import { GroupAnalyticsHomeComponent } from './group-analytics/group-analytics-home/group-analytics-home.component';
 import { GroupAnalyticsGenerateDialogComponent } from './group-analytics/group-analytics-generate-dialog/group-analytics-generate-dialog.component';
+import { FlightWatchComponent } from './flight-watch/flight-watch/flight-watch.component';
 import { FlightWatchMapComponent } from './flight-watch/flight-watch-map/flight-watch-map.component';
+import { FlightWatchAircraftInfoComponent } from './flight-watch/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
 
 // Shared
 import { FboPricesPanelComponent } from '../shared/components/fbo-prices-panel/fbo-prices-panel.component';
@@ -159,17 +160,11 @@ import { AppPipesModule } from '../app-pipes.module';
 
 import { ClickStopPropagationDirective } from '../shared/directives/click-stop-propagation.directive';
 
-import { environment } from '../../environments/environment';
-
-
 @NgModule({
     imports: [
-        AgmCoreModule.forRoot({
-            apiKey: environment.googleMapApiKey
-        }),
-        AgmMarkerClustererModule,
         CommonModule,
         FormsModule,
+        GoogleMapsModule,
         DragDropModule,
         A11yModule,
         ClipboardModule,
@@ -313,7 +308,9 @@ import { environment } from '../../environments/environment';
         GroupAnalyticsGenerateDialogComponent,
         FeeAndTaxBreakdownComponent,
         TableSettingsComponent,
+        FlightWatchComponent,
         FlightWatchMapComponent,
+        FlightWatchAircraftInfoComponent,
     ],
     exports: [
         ClickStopPropagationDirective,
