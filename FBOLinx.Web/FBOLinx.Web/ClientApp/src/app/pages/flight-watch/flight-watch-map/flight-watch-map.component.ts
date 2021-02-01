@@ -1,89 +1,49 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { interval, Subscription } from 'rxjs';
-import { keyBy, keys } from 'lodash';
-import { AirportWatchService } from '../../../services/airportwatch.service';
-import { FbosService } from '../../../services/fbos.service';
-import { SharedService } from '../../../layouts/shared-service';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { keys } from 'lodash';
 import { FlightWatch } from '../../../models/flight-watch';
-
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '/default-layout',
-    },
-    {
-        title: 'Flight Watch',
-        link: '/default-layout/flight-watch',
-    },
-];
 
 @Component({
     selector: 'app-flight-watch-map',
     templateUrl: './flight-watch-map.component.html',
     styleUrls: [ './flight-watch-map.component.scss' ],
 })
-export class FlightWatchMapComponent implements OnInit, OnDestroy {
-    pageTitle = 'Analytics';
-    breadcrumb: any[] = BREADCRUMBS;
+export class FlightWatchMapComponent {
+    @ViewChild('flightWatchMap') flightWatchMap: google.maps.Map;
+    @Input() center: google.maps.LatLngLiteral;
+    @Input() flightWatchData: {
+        [oid: number]: FlightWatch;
+    };
+    @Output() flightWatchClicked = new EventEmitter<FlightWatch>();
 
     // Map Options
-    lat: number;
-    lng: number;
-    zoom = 15;
+    zoom = 8;
     markerImg = '/assets/img/airportMarker.png';
+    markerIcons = {
+        A0: '/assets/img/map-markers/A0.png',
+        A1: '/assets/img/map-markers/A1.png',
+        A2: '/assets/img/map-markers/A2.png',
+        A3: '/assets/img/map-markers/A3.png',
+        A4: '/assets/img/map-markers/A4_A5.png',
+        A5: '/assets/img/map-markers/A4_A5.png',
+        A6: '/assets/img/map-markers/A6.png',
+        A7: '/assets/img/map-markers/A7.png',
+        B0: '/assets/img/map-markers/B0.png',
+        B3: '/assets/img/map-markers/B3.png',
+        default: '/assets/img/map-markers/default.png',
+    };
+    bounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(85, -180),
+        new google.maps.LatLng(-85, 180)
+    );
 
-    mapInitialized = false;
-    loading = false;
-    airportWatchMap: {
-        [oid: number]: FlightWatch;
-    } = {};
-
-    mapLoadSubscription: Subscription;
-
-    constructor(
-        private airportWatchService: AirportWatchService,
-        private fbosService: FbosService,
-        private sharedService: SharedService
-    ) {
-        this.sharedService.titleChange(this.pageTitle);
+    constructor() {
     }
 
-    ngOnInit() {
-        this.fbosService.getLocation(this.sharedService.currentUser.fboId)
-            .subscribe((data: {
-                latitude: number;
-                longitude: number;
-            }) => {
-                this.lat = data.latitude;
-                this.lng = data.longitude;
-
-                this.mapLoadSubscription = interval(3000).subscribe(() => this.loadAirportWatchData());
-            });
+    get flightWatchIds() {
+        return keys(this.flightWatchData);
     }
 
-    ngOnDestroy() {
-        if (this.mapLoadSubscription) {
-            this.mapLoadSubscription.unsubscribe();
-        }
-    }
-
-    get airportWatchData() {
-        return keys(this.airportWatchMap);
-    }
-
-    loadAirportWatchData() {
-        if (!this.loading) {
-            this.loading = true;
-            this.airportWatchService.getAll()
-                .subscribe((data: FlightWatch[]) => {
-                    this.airportWatchMap = keyBy(data, row => row.oid);
-
-                    this.loading = false;
-                });
-        }
-    }
-
-    mapReady() {
-        this.mapInitialized = true;
+    onFlightWatchClick(flightWatch: FlightWatch) {
+        this.flightWatchClicked.emit(flightWatch);
     }
 }

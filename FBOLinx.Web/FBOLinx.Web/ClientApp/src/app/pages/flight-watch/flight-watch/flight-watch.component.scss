@@ -1,0 +1,11 @@
+.flight-watch-container {
+    position: relative;
+}
+
+app-flight-watch-aircraft-info {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 999;
+}
