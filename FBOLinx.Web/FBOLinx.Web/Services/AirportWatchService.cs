@@ -30,6 +30,7 @@ namespace FBOLinx.Web.Services
             var filteredResult = await _context.AirportWatchLiveData
                 .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
                 .Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
+                .OrderBy(x => x.AircraftPositionDateTimeUtc)
                 .ToListAsync();
             return filteredResult
                 .Where(x => GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, x.Latitude, x.Longitude, 1, distanceUnit) <= distance)
