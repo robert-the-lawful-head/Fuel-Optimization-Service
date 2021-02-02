@@ -93,7 +93,7 @@ namespace FBOLinx.Web.Services
 
             Fbos fbo = new Fbos
             {
-                Fbo = request.Fbo,
+                Fbo = request.Fbo.Trim(),
                 GroupId = request.GroupId,
                 AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
                 Active = true,

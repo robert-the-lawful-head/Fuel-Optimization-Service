@@ -182,6 +182,8 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
+            fbos.Fbo = fbos.Fbo.Trim();
+
             _context.Fbos.Update(fbos);
 
             try
