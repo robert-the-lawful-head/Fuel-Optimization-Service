@@ -74,6 +74,7 @@ namespace FBOLinx.Web.Controllers
             var result = await (from cg in _context.CustomerInfoByGroup
                           join c in _context.Customers on cg.CustomerId equals c.Oid
                           where cg.GroupId == groupId
+                          && (!c.Suspended.HasValue || !c.Suspended.Value)
                           group cg by new
                           {
                               cg.CustomerId,
