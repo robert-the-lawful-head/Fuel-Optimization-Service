@@ -119,6 +119,7 @@ import { GroupAnalyticsGenerateDialogComponent } from './group-analytics/group-a
 import { FlightWatchComponent } from './flight-watch/flight-watch/flight-watch.component';
 import { FlightWatchMapComponent } from './flight-watch/flight-watch-map/flight-watch-map.component';
 import { FlightWatchAircraftInfoComponent } from './flight-watch/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
+import { FlightWatchSettingsComponent } from './flight-watch/flight-watch-settings/flight-watch-settings.component';
 
 // Shared
 import { FboPricesPanelComponent } from '../shared/components/fbo-prices-panel/fbo-prices-panel.component';
@@ -311,6 +312,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
         FlightWatchComponent,
         FlightWatchMapComponent,
         FlightWatchAircraftInfoComponent,
+        FlightWatchSettingsComponent,
     ],
     exports: [
         ClickStopPropagationDirective,

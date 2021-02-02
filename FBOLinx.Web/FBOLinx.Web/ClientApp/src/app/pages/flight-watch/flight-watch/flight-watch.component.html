@@ -8,11 +8,18 @@
             [flightWatch]="selectedFlightWatch"
             (closed)="onAircraftInfoClose()"
         ></app-flight-watch-aircraft-info>
+
         <app-flight-watch-map
             *ngIf="flightWatchData"
-            [flightWatchData]="flightWatchData"
+            [flightWatchData]="filteredFlightWatchData"
+            [flightWatchIds]="filteredFlightWatchIds"
             [center]="center"
             (flightWatchClicked)="onFlightWatchClick($event)"
         ></app-flight-watch-map>
+
+        <app-flight-watch-settings
+            [dataSource]="flightWatchDataSource"
+            (filterChanged)="onFilterChanged($event)"
+        ></app-flight-watch-settings>
     </div>
 </div>

@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { keys } from 'lodash';
 import { FlightWatch } from '../../../models/flight-watch';
 
 @Component({
@@ -13,6 +12,7 @@ export class FlightWatchMapComponent {
     @Input() flightWatchData: {
         [oid: number]: FlightWatch;
     };
+    @Input() flightWatchIds: number[];
     @Output() flightWatchClicked = new EventEmitter<FlightWatch>();
 
     // Map Options
@@ -37,10 +37,6 @@ export class FlightWatchMapComponent {
     );
 
     constructor() {
-    }
-
-    get flightWatchIds() {
-        return keys(this.flightWatchData);
     }
 
     onFlightWatchClick(flightWatch: FlightWatch) {

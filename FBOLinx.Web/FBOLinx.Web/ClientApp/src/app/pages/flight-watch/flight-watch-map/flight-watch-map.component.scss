@@ -1,8 +1,11 @@
 google-map {
+    width: 100%;
+    height: 100%;
+
     ::ng-deep {
         .map-container {
             width: 100% !important;
-            height: calc(100vh - 221px) !important;
+            height: 100% !important;
         }
 
         a[href^="http://maps.google.com/maps"] {

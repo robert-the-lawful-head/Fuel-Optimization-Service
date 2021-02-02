@@ -1,11 +1,22 @@
 .flight-watch-container {
     position: relative;
-}
+    display: flex;
+    height: calc(100vh - 221px);
 
-app-flight-watch-aircraft-info {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 999;
+    app-flight-watch-aircraft-info {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 999;
+    }
+    
+    app-flight-watch-map {
+        display: flex;
+        flex: 1 1 auto;
+    }
+
+    app-flight-watch-settings {
+        width: 400px;
+    }
 }
