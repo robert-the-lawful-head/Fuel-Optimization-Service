@@ -6,16 +6,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
+using Geolocation;
 
 namespace FBOLinx.Web.Services
 {
     public class FboService
     {
         private readonly FboLinxContext _context;
+        private readonly DegaContext _degaContext;
         private readonly IServiceProvider _services;
-        public FboService(FboLinxContext context, IServiceProvider services)
+        public FboService(FboLinxContext context, DegaContext degaContext, IServiceProvider services)
         {
             _context = context;
+            _degaContext = degaContext;
             _services = services;
         }
 
@@ -47,6 +50,25 @@ namespace FBOLinx.Web.Services
             var result = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.Group)
                 .Include(x => x.fboAirport).FirstOrDefaultAsync();
             return result;
+        }
+
+        public async Task<Coordinate> GetFBOLocaiton(int fboid)
+        {
+            var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboid).FirstOrDefaultAsync();
+            var airport = await _degaContext.AcukwikAirports.Where(a => a.Icao == fboAirport.Icao).FirstOrDefaultAsync();
+
+            var latDirection = airport.Latitude.Substring(0, 1);
+            var lngDirection = airport.Longitude.Substring(0, 1);
+
+            double latitude = double.Parse(airport.Latitude.Substring(1, 2)) + double.Parse(airport.Latitude.Substring(4, 2)) / 60 + double.Parse(airport.Latitude[7..]) / 3600;
+            double longitude = airport.Longitude.Length == 8 ?
+                double.Parse(airport.Longitude.Substring(1, 2)) + double.Parse(airport.Longitude.Substring(4, 2)) / 60 + double.Parse(airport.Longitude[6..]) / 3600 :
+                double.Parse(airport.Longitude.Substring(1, 3)) + double.Parse(airport.Longitude.Substring(5, 2)) / 60 + double.Parse(airport.Longitude[7..]) / 3600;
+
+            if (latDirection != "N") latitude = -latitude;
+            if (lngDirection != "E") longitude = -longitude;
+
+            return new Coordinate(latitude, longitude);
         }
     }
 }

@@ -12,7 +12,6 @@
         <app-flight-watch-map
             *ngIf="flightWatchData"
             [flightWatchData]="filteredFlightWatchData"
-            [flightWatchIds]="filteredFlightWatchIds"
             [center]="center"
             (flightWatchClicked)="onFlightWatchClick($event)"
         ></app-flight-watch-map>
