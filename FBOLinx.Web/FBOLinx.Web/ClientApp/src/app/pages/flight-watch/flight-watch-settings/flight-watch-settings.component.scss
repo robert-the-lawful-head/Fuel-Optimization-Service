@@ -1,0 +1,24 @@
+mat-card {
+    height: 100%;
+
+    mat-card-content {
+        height: calc(100% - 50px);
+    }
+}
+
+.flight-watch-container {
+    overflow: auto;
+    height: calc(100% - 53px);
+
+    table {
+        min-width: 100%;
+
+        tr.mat-header-row {
+            height: 28px;
+        }
+
+        tr.mat-row, tr.mat-footer-row {
+            height: 28px;
+        }
+    }
+}
