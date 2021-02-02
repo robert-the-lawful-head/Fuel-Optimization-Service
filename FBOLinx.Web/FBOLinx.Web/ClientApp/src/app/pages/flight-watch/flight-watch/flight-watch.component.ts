@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { interval, Subscription } from 'rxjs';
-import { keyBy, map, values } from 'lodash';
+import { keyBy } from 'lodash';
 import { AirportWatchService } from '../../../services/airportwatch.service';
-import { FbosService } from '../../../services/fbos.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
 
@@ -33,7 +32,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     filteredFlightWatchData: {
         [oid: number]: FlightWatch;
     };
-    filteredFlightWatchIds: number[];
     filter: string;
     center: google.maps.LatLngLiteral;
     selectedFlightWatch: FlightWatch;
@@ -41,22 +39,13 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     constructor(
         private airportWatchService: AirportWatchService,
-        private fbosService: FbosService,
         private sharedService: SharedService
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
 
     ngOnInit() {
-        this.fbosService.getLocation(this.sharedService.currentUser.fboId)
-            .subscribe((data: {
-                latitude: number;
-                longitude: number;
-            }) => {
-                this.center = { lat: data.latitude, lng: data.longitude };
-
-                this.mapLoadSubscription = interval(3000).subscribe(() => this.loadAirportWatchData());
-            });
+        this.mapLoadSubscription = interval(3000).subscribe(() => this.loadAirportWatchData());
     }
 
     ngOnDestroy() {
@@ -68,9 +57,12 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     loadAirportWatchData() {
         if (!this.loading) {
             this.loading = true;
-            this.airportWatchService.getAll()
-                .subscribe((data: FlightWatch[]) => {
-                    this.flightWatchData = data;
+            this.airportWatchService.getAll(this.sharedService.currentUser.fboId)
+                .subscribe((data: any) => {
+                    if (!this.center) {
+                        this.center = { lat: data.fboLocation.latitude, lng: data.fboLocation.longitude };
+                    }
+                    this.flightWatchData = data.flightWatchData;
                     this.setFilteredFlightWatchData();
                     this.loading = false;
                 });
@@ -95,30 +87,21 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     setFilteredFlightWatchData() {
+        let originalData: FlightWatch[];
         if (!this.filter) {
-            this.filteredFlightWatchData = keyBy(this.flightWatchData, fw => fw.oid);
-            this.filteredFlightWatchIds = map(this.flightWatchData, fw => fw.oid);
-            this.flightWatchDataSource = new MatTableDataSource(this.flightWatchData);
+            originalData = this.flightWatchData;
         } else {
             const loweredFilter = this.filter.toLowerCase();
-            const filteredFlightWatches = values(this.flightWatchData).filter(fw => fw.aircraftHexCode.toLowerCase().includes(loweredFilter)
-                || fw.aircraftTypeCode.toLowerCase().includes(loweredFilter)
-                || fw.atcFlightNumber.toLowerCase().includes(loweredFilter)
-            );
-            const filteredResult = keyBy(
-                values(this.flightWatchData).filter(fw => fw.aircraftHexCode.toLowerCase().includes(loweredFilter)
-                    || fw.aircraftTypeCode.toLowerCase().includes(loweredFilter)
-                    || fw.atcFlightNumber.toLowerCase().includes(loweredFilter)
-                ),
-                (fw => fw.oid)
-            );
+            originalData = this.flightWatchData.filter(fw => fw.aircraftHexCode.toLowerCase().includes(loweredFilter)
+            || fw.aircraftTypeCode.toLowerCase().includes(loweredFilter)
+            || fw.atcFlightNumber.toLowerCase().includes(loweredFilter));
+        }
 
-            this.filteredFlightWatchData = {
-                ...filteredResult
-            };
-
-            this.filteredFlightWatchIds = map(filteredFlightWatches, fw => fw.oid);
-            this.flightWatchDataSource = new MatTableDataSource(filteredFlightWatches);
+        this.filteredFlightWatchData = keyBy(originalData, fw => fw.oid);
+        if (!this.flightWatchDataSource) {
+            this.flightWatchDataSource = new MatTableDataSource(originalData);
+        } else {
+            this.flightWatchDataSource.data = originalData;
         }
     }
 }

@@ -14,7 +14,7 @@ export class AirportWatchService {
         this.accessPointUrl = baseUrl + 'api/airportwatch';
     }
 
-    public getAll() {
-        return this.http.get<FlightWatch[]>(this.accessPointUrl + '/list', { headers: this.headers });
+    public getAll(fboId: number) {
+        return this.http.get<FlightWatch[]>(this.accessPointUrl + '/list/fbo/' + fboId, { headers: this.headers });
     }
 }

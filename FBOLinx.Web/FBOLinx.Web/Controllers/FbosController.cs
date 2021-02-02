@@ -106,40 +106,6 @@ namespace FBOLinx.Web.Controllers
             return Ok(fbos);
         }
 
-        [HttpGet("{id}/location")]
-        public async Task<IActionResult> GetFboLocation([FromRoute] int id)
-        {
-            var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == id).FirstOrDefaultAsync();
-            if (fboAirport == null)
-            {
-                return NotFound("FBO not found.");
-            }
-
-            var airport = await _degaContext.AcukwikAirports.Where(a => a.Icao == fboAirport.Icao).FirstOrDefaultAsync();
-            if (airport == null)
-            {
-                return NotFound("Airport not found for the specified FBO.");
-            }
-
-            var latDirection = airport.Latitude.Substring(0, 1);
-            var lngDirection = airport.Longitude.Substring(0, 1);
-
-
-            double latitude = double.Parse(airport.Latitude.Substring(1, 2)) + double.Parse(airport.Latitude.Substring(4, 2)) / 60 + double.Parse(airport.Latitude[7..]) / 3600;           
-            double longitude = airport.Longitude.Length == 8 ?
-                double.Parse(airport.Longitude.Substring(1, 2)) + double.Parse(airport.Longitude.Substring(4, 2)) / 60 + double.Parse(airport.Longitude[6..]) / 3600 :
-                double.Parse(airport.Longitude.Substring(1, 3)) + double.Parse(airport.Longitude.Substring(5, 2)) / 60 + double.Parse(airport.Longitude[7..]) / 3600;
-
-            if (latDirection != "N") latitude = -latitude;
-            if (lngDirection != "E") longitude = -longitude;
-
-            return Ok(new
-            {
-                latitude,
-                longitude
-            });
-        }
-
         // PUT: api/Fbos/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFbos([FromRoute] int id, [FromBody] Fbos fbos)

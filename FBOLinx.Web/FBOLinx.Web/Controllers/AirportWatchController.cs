@@ -17,17 +17,24 @@ namespace FBOLinx.Web.Controllers
     public class AirportWatchController : ControllerBase
     {
         private readonly AirportWatchService _airportWatchService;
+        private readonly FboService _fboService;
 
-        public AirportWatchController(AirportWatchService airportWatchService)
+        public AirportWatchController(AirportWatchService airportWatchService, FboService fboService)
         {
             _airportWatchService = airportWatchService;
+            _fboService = fboService;
         }
 
-        [HttpGet("list")]
-        public async Task<ActionResult<List<AirportWatchLiveData>>> GetAirportLiveData()
+        [HttpGet("list/fbo/{fboId}")]
+        public async Task<IActionResult> GetAirportLiveData([FromRoute] int fboId)
         {
-            var data = await _airportWatchService.GetAirportWatchLiveData();
-            return data;
+            var fboLocation = await _fboService.GetFBOLocaiton(fboId);
+            var data = await _airportWatchService.GetAirportWatchLiveData(fboLocation, 300, Geolocation.DistanceUnit.Miles);
+            return Ok(new
+            {
+                FBOLocation = fboLocation,
+                FlightWatchData = data,
+            });
         }
 
         [AllowAnonymous]

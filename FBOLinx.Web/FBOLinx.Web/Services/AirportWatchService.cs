@@ -1,5 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using Geolocation;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,45 @@ namespace FBOLinx.Web.Services
 {
     public class AirportWatchService
     {
-        private FboLinxContext _context;
+        private readonly FboLinxContext _context;
+        private readonly FboService _fboService;
 
-        public AirportWatchService(FboLinxContext context)
+        public AirportWatchService(FboLinxContext context, FboService fboService)
         {
             _context = context;
+            _fboService = fboService;
         }
 
-        public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData()
+        public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData(Coordinate coordinate, int distance, DistanceUnit distanceUnit)
         {
-            return await _context.AirportWatchLiveData.ToListAsync();
+            CoordinateBoundaries boundaries = new CoordinateBoundaries(coordinate, distance, distanceUnit);
+            double minLatitude = boundaries.MinLatitude;
+            double maxLatitude = boundaries.MaxLatitude;
+            double minLongitude = boundaries.MinLongitude;
+            double maxLongitude = boundaries.MaxLongitude;
+
+            var filteredResult = await _context.AirportWatchLiveData
+                .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
+                .Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
+                .ToListAsync();
+            return filteredResult
+                .Where(x => GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, x.Latitude, x.Longitude, 1, distanceUnit) <= distance)
+                //.Select(x=> new
+                //{
+                //    AircraftHexCode = x.AircraftHexCode,
+                //    AtcFlightNumber = x.AtcFlightNumber,
+                //    GroundSpeedKts = x.GroundSpeedKts,
+                //    TrackingDegree = x.TrackingDegree,
+                //    Latitude = x.Latitude,
+                //    Longitude = x.Longitude,
+                //    VerticalSpeedKts = x.VerticalSpeedKts,
+                //    AircraftTypeCode = x.AircraftTypeCode,
+                //    GpsAltitude = x.GpsAltitude,
+                //    IsAircraftOnGround = x.IsAircraftOnGround,
+                //    Distance = GeoCalculator.GetDistance(fboLocation.Latitude, fboLocation.Longitude, x.Latitude, x.Longitude, 1, DistanceUnit.Miles),
+                //})
+                //.Where(x => x.Distance <= 25)
+                .ToList();
         }
 
         public void ProcessAirportWatchData(List<AirportWatchLiveData> data)
