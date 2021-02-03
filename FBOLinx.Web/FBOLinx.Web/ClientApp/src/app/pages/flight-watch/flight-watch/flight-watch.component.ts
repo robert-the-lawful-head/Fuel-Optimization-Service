@@ -123,11 +123,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     onResizeEnd(event: ResizeEvent): void {
         this.style = {
-            position: 'fixed',
-            left: `${event.rectangle.left}px`,
-            right: `${event.rectangle.right}px`,
             width: `${event.rectangle.width}px`,
-            height: `${event.rectangle.height}px`,
         };
     }
 
