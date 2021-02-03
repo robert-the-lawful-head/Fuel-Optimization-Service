@@ -38,6 +38,9 @@ export class LoginModalComponent {
                 this.loginForm.value.password,
                 this.loginForm.value.remember
             ).subscribe((data) => {
+                localStorage.removeItem('impersonatedrole');
+                localStorage.removeItem('managerGroupId');
+                localStorage.removeItem('conductorFbo');
                 this.authenticationService
                     .postAuth()
                     .subscribe(() => {

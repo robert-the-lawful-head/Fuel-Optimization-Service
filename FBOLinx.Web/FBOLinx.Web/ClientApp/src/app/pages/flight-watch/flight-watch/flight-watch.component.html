@@ -14,11 +14,26 @@
             [flightWatchData]="filteredFlightWatchData"
             [center]="center"
             (flightWatchClicked)="onFlightWatchClick($event)"
+            [style.width]="mapWidth"
         ></app-flight-watch-map>
 
-        <app-flight-watch-settings
-            [dataSource]="flightWatchDataSource"
-            (filterChanged)="onFilterChanged($event)"
-        ></app-flight-watch-settings>
+        <div
+            class="flight-watch-settings"
+            [ngStyle]="style"
+            mwlResizable
+            [enableGhostResize]="true"
+            (resizeEnd)="onResizeEnd($event)"
+            [validateResize]="validate"
+        >
+            <div
+                class="resize-handle-left"
+                mwlResizeHandle
+                [resizeEdges]="{ left: true }"
+            ></div>
+            <app-flight-watch-settings
+                [dataSource]="flightWatchDataSource"
+                (filterChanged)="onFilterChanged($event)"
+            ></app-flight-watch-settings>
+        </div>
     </div>
 </div>

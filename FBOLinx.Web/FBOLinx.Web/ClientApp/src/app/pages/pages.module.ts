@@ -54,6 +54,7 @@ import {
     SortService,
     ToolbarService
 } from '@syncfusion/ej2-angular-grids';
+import { ResizableModule } from 'angular-resizable-element';
 
 // Popover
 import { PopoverModule } from 'ngx-smart-popover';
@@ -215,7 +216,8 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
         NgxUiLoaderModule,
         GridModule,
         RouterModule,
-        PopoverModule
+        PopoverModule,
+        ResizableModule,
     ],
     declarations: [
         AuthtokenComponent,

@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { interval, Subscription } from 'rxjs';
-import { keyBy } from 'lodash';
+import { isEmpty, keyBy } from 'lodash';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
+import { ResizeEvent } from 'angular-resizable-element';
 
 const BREADCRUMBS: any[] = [
     {
@@ -36,6 +37,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     center: google.maps.LatLngLiteral;
     selectedFlightWatch: FlightWatch;
     flightWatchDataSource: MatTableDataSource<FlightWatch>;
+
+    style: any = {};
 
     constructor(
         private airportWatchService: AirportWatchService,
@@ -103,5 +106,35 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         } else {
             this.flightWatchDataSource.data = originalData;
         }
+    }
+
+    validate(event: ResizeEvent): boolean {
+        const MAX_DIMENSIONS_PX = 800;
+        const MIN_DIMENSIONS_PX = 0;
+        if (
+          event.rectangle.width &&
+          (event.rectangle.width > MAX_DIMENSIONS_PX ||
+            event.rectangle.width < MIN_DIMENSIONS_PX)
+        ) {
+          return false;
+        }
+        return true;
+    }
+
+    onResizeEnd(event: ResizeEvent): void {
+        this.style = {
+            position: 'fixed',
+            left: `${event.rectangle.left}px`,
+            right: `${event.rectangle.right}px`,
+            width: `${event.rectangle.width}px`,
+            height: `${event.rectangle.height}px`,
+        };
+    }
+
+    get mapWidth() {
+        if (isEmpty(this.style)) {
+            return 'calc(100% - 400px)';
+        }
+        return `calc(100% - ${this.style.width})`;
     }
 }
