@@ -11,7 +11,16 @@ export class FlightWatchSettingsComponent {
     @Input() dataSource: MatTableDataSource<FlightWatch>;
     @Output() filterChanged = new EventEmitter<string>();
 
-    displayedColumns: string[] = ['aircraftHexCode', 'atcFlightNumber', 'aircraftTypeCode'];
+    displayedColumns: string[] = [
+        'aircraftHexCode',
+        'atcFlightNumber',
+        'aircraftTypeCode',
+        'groundSpeedKts',
+        'trackingDegree',
+        'verticalSpeedKts',
+        'gpsAltitude',
+        'isAircraftOnGround'
+    ];
 
     constructor() {
     }

@@ -27,6 +27,33 @@
                     <td mat-cell *matCellDef="let element"> {{element.aircraftTypeCode}} </td>
                 </ng-container>
 
+                <ng-container matColumnDef="groundSpeedKts">
+                    <th mat-header-cell *matHeaderCellDef> Ground Speed Kts </th>
+                    <td mat-cell *matCellDef="let element"> {{element.groundSpeedKts}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="trackingDegree">
+                    <th mat-header-cell *matHeaderCellDef> Tracking Degree </th>
+                    <td mat-cell *matCellDef="let element"> {{element.trackingDegree}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="verticalSpeedKts">
+                    <th mat-header-cell *matHeaderCellDef> Vertical Speed Kts </th>
+                    <td mat-cell *matCellDef="let element"> {{element.verticalSpeedKts}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="gpsAltitude">
+                    <th mat-header-cell *matHeaderCellDef> GPS Altitude </th>
+                    <td mat-cell *matCellDef="let element"> {{element.gpsAltitude}} </td>
+                </ng-container>
+
+
+                <ng-container matColumnDef="isAircraftOnGround">
+                    <th mat-header-cell *matHeaderCellDef> Is on Ground </th>
+                    <td mat-cell *matCellDef="let element"> {{element.isAircraftOnGround ? 'Yes' : 'No'}} </td>
+                </ng-container>
+
+
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 

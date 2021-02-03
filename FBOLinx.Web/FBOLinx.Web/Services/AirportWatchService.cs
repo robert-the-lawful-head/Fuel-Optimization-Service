@@ -2,6 +2,7 @@
 using FBOLinx.DB.Models;
 using Geolocation;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,12 +12,10 @@ namespace FBOLinx.Web.Services
     public class AirportWatchService
     {
         private readonly FboLinxContext _context;
-        private readonly FboService _fboService;
 
-        public AirportWatchService(FboLinxContext context, FboService fboService)
+        public AirportWatchService(FboLinxContext context)
         {
             _context = context;
-            _fboService = fboService;
         }
 
         public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData(Coordinate coordinate, int distance, DistanceUnit distanceUnit)
@@ -27,28 +26,17 @@ namespace FBOLinx.Web.Services
             double minLongitude = boundaries.MinLongitude;
             double maxLongitude = boundaries.MaxLongitude;
 
+            var timelimit = DateTime.UtcNow.AddMinutes(-10);
+
             var filteredResult = await _context.AirportWatchLiveData
+                .Where(x => x.AircraftPositionDateTimeUtc >= timelimit)
                 .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
                 .Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
                 .OrderBy(x => x.AircraftPositionDateTimeUtc)
                 .ToListAsync();
+
             return filteredResult
                 .Where(x => GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, x.Latitude, x.Longitude, 1, distanceUnit) <= distance)
-                //.Select(x=> new
-                //{
-                //    AircraftHexCode = x.AircraftHexCode,
-                //    AtcFlightNumber = x.AtcFlightNumber,
-                //    GroundSpeedKts = x.GroundSpeedKts,
-                //    TrackingDegree = x.TrackingDegree,
-                //    Latitude = x.Latitude,
-                //    Longitude = x.Longitude,
-                //    VerticalSpeedKts = x.VerticalSpeedKts,
-                //    AircraftTypeCode = x.AircraftTypeCode,
-                //    GpsAltitude = x.GpsAltitude,
-                //    IsAircraftOnGround = x.IsAircraftOnGround,
-                //    Distance = GeoCalculator.GetDistance(fboLocation.Latitude, fboLocation.Longitude, x.Latitude, x.Longitude, 1, DistanceUnit.Miles),
-                //})
-                //.Where(x => x.Distance <= 25)
                 .ToList();
         }
 
