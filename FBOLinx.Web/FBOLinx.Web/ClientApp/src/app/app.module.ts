@@ -5,7 +5,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
-
 // Angular Material Modules
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -88,6 +87,7 @@ import { RampfeesettingsService } from './services/rampfeesettings.service';
 import { TemporaryAddOnMarginService } from './services/temporaryaddonmargin.service';
 import { UserService } from './services/user.service';
 import { AppService } from './services/app.service';
+import { AirportWatchService } from './services/airportwatch.service';
 
 import { environment } from '../environments/environment';
 import { metaReducers, reducers } from './store/reducers';
@@ -190,6 +190,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     TemporaryAddOnMarginService,
     UserService,
     AppService,
+    AirportWatchService,
   ],
   bootstrap: [AppComponent]
 })

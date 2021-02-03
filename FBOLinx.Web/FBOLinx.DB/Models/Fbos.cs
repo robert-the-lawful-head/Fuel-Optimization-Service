@@ -74,6 +74,25 @@ namespace FBOLinx.DB.Models
         public bool DisableCost { get; set; }
         [Column("AcukwikFBOHandlerID")]
         public int? AcukwikFBOHandlerId { get; set; }
+        public string SenderAddress
+        {
+            get
+            {
+                if (_SenderAddress == null || _SenderAddress == "") return "DoNotReply";
+                else return _SenderAddress;
+            }
+            set { _SenderAddress = value; }
+        }
+        private string _SenderAddress;
+        public string ReplyTo {
+            get
+            {
+                if (_ReplyTo == null || _ReplyTo == "") return FuelDeskEmail;
+                else return _ReplyTo;
+            }
+            set { _ReplyTo = value; }
+        }
+        private string _ReplyTo;
 
         [ForeignKey("GroupId")]
         [InverseProperty("Fbos")]

@@ -99,7 +99,7 @@ export class GroupAnalyticsGenerateDialogComponent {
             XLSX.writeFile(wb, company + '.csv');
 
             setTimeout(() => {
-                resolve();
+                resolve({});
             }, 100);
         });
     }

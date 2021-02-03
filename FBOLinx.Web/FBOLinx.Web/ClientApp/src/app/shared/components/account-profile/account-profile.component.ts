@@ -34,6 +34,7 @@ export class AccountProfileComponent {
     currentContact: any;
     availableroles: any[];
     systemContactsForm: FormGroup;
+    emailDistributionForm: FormGroup;
 
     constructor(
         public dialogRef: MatDialogRef<AccountProfileComponent>,
@@ -47,7 +48,14 @@ export class AccountProfileComponent {
     ) {
         this.systemContactsForm = this.formBuilder.group({
             fuelDeskEmail: new FormControl('', [
-                Validators.email,
+                Validators.required,
+            ]),
+        });
+        this.emailDistributionForm = this.formBuilder.group({
+            senderAddress: new FormControl('', [
+                Validators.required,
+            ]),
+            replyTo: new FormControl('', [
                 Validators.required,
             ]),
         });
@@ -95,6 +103,16 @@ export class AccountProfileComponent {
         }
     }
 
+    onSaveEmailDistribution() {
+        if (this.emailDistributionForm.valid) {
+            this.fboInfo.SenderAddress = this.emailDistributionForm.value.senderAddress;
+            this.fboInfo.ReplyTo = this.emailDistributionForm.value.replyTo;
+            this.fbosService.update(this.fboInfo).subscribe(() => {
+                this.dialogRef.close();
+            });
+        }
+    }
+
     // Private Methods
     private loadFboInfo(): void {
         if (
@@ -110,6 +128,10 @@ export class AccountProfileComponent {
             .subscribe((fboData: any) => {
                 this.systemContactsForm.setValue({
                     fuelDeskEmail: fboData.fuelDeskEmail,
+                });
+                this.emailDistributionForm.setValue({
+                    senderAddress: fboData.senderAddress,
+                    replyTo: fboData.replyTo,
                 });
                 this.fboInfo = fboData;
                 this.fboContactsService

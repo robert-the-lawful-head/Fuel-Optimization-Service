@@ -99,19 +99,6 @@
         "roles": [ 1, 4 ]
     },
     {
-        "title": "Flight Watch",
-        "icon": {
-            "class": "fa fa-eye",
-            "bg": "#7fadd4",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "tooltip": "Flight Watch",
-        "href": "https://identity.ppsflightplanning.com/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3Dairportwatch%26redirect_uri%3Dhttps%253A%252F%252Fairportwatch.ppsflightplanning.com%26response_type%3Dcode%26scope%3Dopenid%2520web_configuration%2520web_ui_configuration%2520service_bridge%2520vendor_bridge%2520airportwatch_trackingfeed%2520rgen_navigation_service%26nonce%3Dfdc5502933459600fb0ed4b8ed2e7924c6ZNVlcrE%26state%3D49aa9c3389c64db65e4dc1db0f43b63602NtZjCHb%26code_challenge%3Db_xu3iIPIxtc_JZwVUr-QgQDVsrERQmRLmBWicAj6UE%26code_challenge_method%3DS256",
-        "target": "_blank",
-        "roles": [ 1, 4 ]
-    },
-
-    {
         "title": "Analytics",
         "icon": {
             "class": "fa fa-line-chart",

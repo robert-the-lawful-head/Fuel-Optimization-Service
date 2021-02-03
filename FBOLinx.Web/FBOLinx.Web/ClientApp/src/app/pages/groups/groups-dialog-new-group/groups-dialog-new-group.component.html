@@ -20,7 +20,7 @@
         <app-airport-autocomplete (valueChange)="airportValueChanged($event)"
                                   [airportContainerModel]="data"></app-airport-autocomplete>
         <mat-form-field *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0">
-            <mat-select (ngModelChange)="fboSelectionChange()"
+            <mat-select (selectionChange)="fboSelectionChange()"
                         [(ngModel)]="data.acukwikFbo"
                         placeholder="FBO">
                 <mat-option *ngFor="let acukwikFbo of dataSources.acukwikFbos"

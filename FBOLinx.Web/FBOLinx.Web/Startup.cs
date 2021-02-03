@@ -122,6 +122,7 @@ namespace FBOLinx.Web
             services.AddTransient<EncryptionService, EncryptionService>();
             services.AddTransient<MailTemplateService, MailTemplateService>();
             services.AddTransient<CustomerAircraftService, CustomerAircraftService>();
+            services.AddTransient<AirportWatchService, AirportWatchService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

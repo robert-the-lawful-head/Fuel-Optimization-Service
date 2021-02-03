@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -25,7 +25,7 @@ const BREADCRUMBS: any[] = [
     templateUrl: './fuelreqs-home.component.html',
     styleUrls: [ './fuelreqs-home.component.scss' ],
 })
-export class FuelreqsHomeComponent implements OnDestroy {
+export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     // Public Members
     public pageTitle = 'Fuel Orders';
     public breadcrumb: any[] = BREADCRUMBS;
@@ -52,18 +52,13 @@ export class FuelreqsHomeComponent implements OnDestroy {
         this.stopFuelReqDataServe();
     }
 
+    ngOnInit() {
+        this.loadFuelReqs();
+    }
+
     public startFuelReqDataServe() {
-        this.timer = interval(5000).subscribe(() => {
-            this.fuelReqService
-                .getForGroupFboAndDateRange(
-                    this.sharedService.currentUser.groupId,
-                    this.sharedService.currentUser.fboId,
-                    this.filterStartDate,
-                    this.filterEndDate
-                )
-                .subscribe((data: any) => {
-                    this.fuelreqsData = data;
-                });
+        this.timer = interval(30000).subscribe(() => {
+            this.loadFuelReqs();
         });
     }
 
@@ -113,6 +108,20 @@ export class FuelreqsHomeComponent implements OnDestroy {
 
                 /* save to file */
                 XLSX.writeFile(wb, 'FuelOrders.xlsx');
+            });
+    }
+
+    // PRIVATE METHODS
+    private loadFuelReqs() {
+        this.fuelReqService
+            .getForGroupFboAndDateRange(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId,
+                this.filterStartDate,
+                this.filterEndDate
+            )
+            .subscribe((data: any) => {
+                this.fuelreqsData = data;
             });
     }
 }

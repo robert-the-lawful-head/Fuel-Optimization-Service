@@ -1,0 +1,39 @@
+<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
+
+<div class="after-breadcrumb">
+    <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
+
+    <div class="flight-watch-container">
+        <app-flight-watch-aircraft-info
+            [flightWatch]="selectedFlightWatch"
+            (closed)="onAircraftInfoClose()"
+        ></app-flight-watch-aircraft-info>
+
+        <app-flight-watch-map
+            *ngIf="flightWatchData"
+            [flightWatchData]="filteredFlightWatchData"
+            [center]="center"
+            (flightWatchClicked)="onFlightWatchClick($event)"
+            [style.width]="mapWidth"
+        ></app-flight-watch-map>
+
+        <div
+            class="flight-watch-settings"
+            [ngStyle]="style"
+            mwlResizable
+            [enableGhostResize]="true"
+            (resizeEnd)="onResizeEnd($event)"
+            [validateResize]="validate"
+        >
+            <div
+                class="resize-handle-left"
+                mwlResizeHandle
+                [resizeEdges]="{ left: true }"
+            ></div>
+            <app-flight-watch-settings
+                [dataSource]="flightWatchDataSource"
+                (filterChanged)="onFilterChanged($event)"
+            ></app-flight-watch-settings>
+        </div>
+    </div>
+</div>

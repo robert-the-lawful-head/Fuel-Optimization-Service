@@ -147,11 +147,15 @@ namespace FBOLinx.Web.Services
                 var priceDate = new DateTime();
                 if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Retail"))
                 {
-                    priceDate = (await _context.Fboprices.LastOrDefaultAsync(f => f.Fboid == _DistributePricingRequest.FboId && f.Product == "JetA Retail")).EffectiveTo.GetValueOrDefault();
+                    var date = await _context.Fboprices.Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Retail").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefaultAsync();
+
+                    priceDate = date.GetValueOrDefault();
                 }
                 else if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Cost"))
                 {
-                    priceDate = (await _context.Fboprices.LastOrDefaultAsync(f => f.Fboid == _DistributePricingRequest.FboId && f.Product == "JetA Cost")).EffectiveTo.GetValueOrDefault();
+                    var date = await _context.Fboprices.Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Cost").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefaultAsync();
+
+                    priceDate = date.GetValueOrDefault();
                 }
 
                 if (priceDate != null)
@@ -162,13 +166,16 @@ namespace FBOLinx.Web.Services
                 //Add the price breakdown as an image to prevent parsing
                 byte[] priceBreakdownImage = await GetPriceBreakdownImage(customer, validPricingTemplates);
 
-                var imageStream = new MemoryStream(priceBreakdownImage);
+                var fbo = _context.Fbos.FirstOrDefault(s => s.Oid == _DistributePricingRequest.FboId);
+                var fboIcao = _context.Fboairports.FirstOrDefault(s => s.Fboid == fbo.Oid).Icao;
 
                 //Convert to a SendGrid message and use their API to send it
                 Services.MailService mailService = new MailService(_MailSettings);
 
                 var sendGridMessageWithTemplate = new SendGridMessage();
-                sendGridMessageWithTemplate.From = new EmailAddress("donotreply@fbolinx.com");
+                sendGridMessageWithTemplate.From = new EmailAddress(fbo.SenderAddress + "@fbolinx.com");
+                if (fbo.ReplyTo != null && fbo.ReplyTo != "")
+                    sendGridMessageWithTemplate.ReplyTo = new EmailAddress(fbo.ReplyTo);
                 Personalization personalization = new Personalization();
 
                 personalization.Tos = new System.Collections.Generic.List<EmailAddress>();
@@ -186,9 +193,6 @@ namespace FBOLinx.Web.Services
 
                 sendGridMessageWithTemplate.Personalizations = new List<Personalization>();
                 sendGridMessageWithTemplate.Personalizations.Add(personalization);
-
-                var fbo = _context.Fbos.FirstOrDefault(s => s.Oid == _DistributePricingRequest.FboId);
-                var fboIcao = _context.Fboairports.FirstOrDefault(s => s.Fboid == fbo.Oid).Icao;
 
                 _DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
                 var dynamicTemplateData = new TemplateData

@@ -1,16 +1,15 @@
-﻿using CsvHelper;
-using FBOLinx.DB.Models;
+﻿using FBOLinx.DB.Models;
 using FBOLinx.Job.Base;
 using FBOLinx.Job.Types;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
-using System.Threading.Tasks;
+using TinyCsvParser;
 
 namespace FBOLinx.Job.Jobs
 {
@@ -20,13 +19,11 @@ namespace FBOLinx.Job.Jobs
         private int _lastWatchedFileRecordIndex = 0;
         private readonly IConfiguration _config;
         private readonly ApiClient _apiClient;
-        private readonly List<Task> _tasks;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
             _config = config;
             _apiClient = new ApiClient(config["FBOLinxApiUrl"]);
-            _tasks = new List<Task>();
         }
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
@@ -34,7 +31,7 @@ namespace FBOLinx.Job.Jobs
         {
             using (FileSystemWatcher watcher = new FileSystemWatcher())
             {
-                watcher.Path = @"Data";
+                watcher.Path = _config["AirportWatchDataLocation"];
 
                 // Watch for changes in File Size
                 watcher.NotifyFilter = NotifyFilters.Size;
@@ -52,14 +49,37 @@ namespace FBOLinx.Job.Jobs
                 Console.WriteLine("Press 'q' to quit the job.");
                 while (Console.Read() != 'q') ;
             }
-
-            //TasksRun();
         }
 
-        private void OnChanged(object source, FileSystemEventArgs e) {
-            // Specify what is done when a file is changed, created, or deleted.
-            Console.WriteLine($"File: {e.FullPath} {e.Name} {e.ChangeType}");
-            if (_lastWatchedFile != e.Name)
+        private void OnChanged(object source, FileSystemEventArgs e)
+        {
+            using var logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File(_config["AirportWatchJobLog"])
+                .CreateLogger();
+
+            logger.Information($"File: {e.FullPath} {e.Name} {e.ChangeType}");
+
+            List<AirportWatchDataType> data = GetCSVRecords(e.FullPath, e.Name);
+            List<AirportWatchLiveData> airportWatchData = ConvertToDBModel(data);
+
+            if (airportWatchData.Count > 0)
+            {
+                try
+                {
+                    _apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
+                    logger.Information("Fbolinx api call succeed!");
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, $"Failed to call Fbolinx api!");
+                }
+            }
+        }
+    
+        private List<AirportWatchDataType> GetCSVRecords(string filePath, string fileName)
+        {
+            if (_lastWatchedFile != fileName)
             {
                 _lastWatchedFileRecordIndex = 0;
             }
@@ -70,130 +90,160 @@ namespace FBOLinx.Job.Jobs
             {
                 try
                 {
-                    using var reader = new StreamReader(e.FullPath);
-                    using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-                    csv.Configuration.HasHeaderRecord = false;
-                    int rowIndex = 0;
+                    CsvParserOptions csvParserOptions = new CsvParserOptions(false, ',');
+                    CsvAirportWatchDataTypeMapping csvMapper = new CsvAirportWatchDataTypeMapping();
+                    CsvParser<AirportWatchDataType> csvParser = new CsvParser<AirportWatchDataType>(csvParserOptions, csvMapper);
 
-                    while (csv.Read())
-                    {
-                        if (rowIndex < _lastWatchedFileRecordIndex)
-                        {
-                            rowIndex++;
-                        }
-                        else
-                        {
-                            try
-                            {
-                                var row = csv.GetRecord<AirportWatchDataType>();
-                                data.Add(row);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex);
-                            }
+                    var records = csvParser
+                        .ReadFromFile(filePath, Encoding.ASCII);
 
-                            rowIndex++;
-                            _lastWatchedFileRecordIndex++;
-                        }
-                    }
-                    _lastWatchedFile = e.Name;
+                    var recordsCount = records.Count();
+
+                    data = records.Select(r => r.Result).Skip(_lastWatchedFileRecordIndex).ToList();
+
+                    _lastWatchedFileRecordIndex = recordsCount;
+                    _lastWatchedFile = fileName;
                     break;
                 }
-                catch {}
+                catch { }
             }
 
-            if (data.Count > 0)
-            {
-                var airportWatchData = data.Select(row => new AirportWatchDataTransition
-                {
-                    BoxTransmissionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.BoxTransmissionDateTimeUtc).DateTime,
-                    AircraftHexCode = row.AircraftHexCode,
-                    AtcFlightNumber = row.AtcFlightNumber,
-                    AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                    GroundSpeedKts = row.GroundSpeedKts,
-                    TrackingDegree = row.TrackingDegree,
-                    Latitude = row.Latitude,
-                    Longitude = row.Longitude,
-                    VerticalSpeedKts = row.VerticalSpeedKts,
-                    TransponderCode = row.TransponderCode,
-                    BoxName = row.BoxName,
-                    AircraftPositionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(row.AircraftPositionDateTimeUtc).DateTime,
-                    AircraftTypeCode = row.AircraftTypeCode,
-                    GpsAltitude = row.GpsAltitude,
-                    IsAircraftOnGround = row.IsAircraftOnGround,
-                }).OrderByDescending(row => row.BoxTransmissionDateTimeUtc).ToList();
-
-                var transitionData = airportWatchData
-                    .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
-                    .Select(grouped => {
-                        var row = grouped.First();
-                        return new AirportWatchDataTransition
-                        {
-                            BoxTransmissionDateTimeUtc = row.BoxTransmissionDateTimeUtc,
-                            AircraftHexCode = row.AircraftHexCode,
-                            AtcFlightNumber = row.AtcFlightNumber,
-                            AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                            GroundSpeedKts = row.GroundSpeedKts,
-                            TrackingDegree = row.TrackingDegree,
-                            Latitude = row.Latitude,
-                            Longitude = row.Longitude,
-                            VerticalSpeedKts = row.VerticalSpeedKts,
-                            TransponderCode = row.TransponderCode,
-                            BoxName = row.BoxName,
-                            AircraftPositionDateTimeUtc = row.AircraftPositionDateTimeUtc,
-                            AircraftTypeCode = row.AircraftTypeCode,
-                            GpsAltitude = row.GpsAltitude,
-                            IsAircraftOnGround = row.IsAircraftOnGround,
-                        };
-                    })
-                    .ToList();
-
-                var historicalData = transitionData
-                    .Where(row => row.IsAircraftOnGround == true)
-                    .Select(row => new AirportWatchHistoricalData
-                    {
-                        BoxTransmissionDateTimeUtc = row.BoxTransmissionDateTimeUtc,
-                        AircraftHexCode = row.AircraftHexCode,
-                        AtcFlightNumber = row.AtcFlightNumber,
-                        AltitudeInStandardPressure = row.AltitudeInStandardPressure,
-                        GroundSpeedKts = row.GroundSpeedKts,
-                        TrackingDegree = row.TrackingDegree,
-                        Latitude = row.Latitude,
-                        Longitude = row.Longitude,
-                        VerticalSpeedKts = row.VerticalSpeedKts,
-                        TransponderCode = row.TransponderCode,
-                        BoxName = row.BoxName,
-                        AircraftPositionDateTimeUtc = row.AircraftPositionDateTimeUtc,
-                        AircraftTypeCode = row.AircraftTypeCode,
-                        GpsAltitude = row.GpsAltitude,
-                        IsAircraftOnGround = row.IsAircraftOnGround,
-                    })
-                    .ToList();
-
-
-                if (transitionData.Count > 0)
-                {
-                    _apiClient.PostAsync("/airportwatch/list", transitionData).Wait();
-                }
-                if (historicalData.Count > 0)
-                {
-                    _apiClient.PostAsync("/airportwatch/list", historicalData).Wait();
-                }
-            }
+            return data;
         }
+    
+        private List<AirportWatchLiveData> ConvertToDBModel(List<AirportWatchDataType> data)
+        {
+            List<AirportWatchLiveData> airportWatchData = new List<AirportWatchLiveData>();
 
-        //private void TasksRun()
-        //{
-        //    while (true)
-        //    {
-        //        if (_tasks.Count  > 0)
-        //        {
-        //            var currentTask = _tasks[0];
-        //            currentTask.Wait();
-        //            _tasks.RemoveAt(0);
-        //        }
-        //    }
-        //}
+            foreach (var record in data)
+            {
+                if (record == null)
+                {
+                    continue;
+                }
+
+                var airportWatchRow = new AirportWatchLiveData { };
+
+                if (string.IsNullOrEmpty(record.AircraftHexCode) ||
+                    string.IsNullOrEmpty(record.AtcFlightNumber))
+                {
+                    continue;
+                }
+                airportWatchRow.AircraftHexCode = record.AircraftHexCode;
+                airportWatchRow.AtcFlightNumber = record.AtcFlightNumber;
+                airportWatchRow.BoxName = record.BoxName;
+                airportWatchRow.AircraftTypeCode = record.AircraftTypeCode;
+
+                if (!int.TryParse(record.BoxTransmissionDateTimeUtc, out int BoxTransmissionDateTimeUtc))
+                {
+                    continue;
+                }
+                airportWatchRow.BoxTransmissionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(BoxTransmissionDateTimeUtc).DateTime;
+
+                if (!int.TryParse(record.AircraftPositionDateTimeUtc, out int AircraftPositionDateTimeUtc))
+                {
+                    continue;
+                }
+                airportWatchRow.AircraftPositionDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(AircraftPositionDateTimeUtc).DateTime;
+
+                if (!string.IsNullOrEmpty(record.AltitudeInStandardPressure))
+                {
+                    if (!int.TryParse(record.AltitudeInStandardPressure, out int AltitudeInStandardPressure))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.AltitudeInStandardPressure = AltitudeInStandardPressure;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(record.GroundSpeedKts))
+                {
+                    if (!int.TryParse(record.GroundSpeedKts, out int GroundSpeedKts))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.GroundSpeedKts = GroundSpeedKts;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(record.TrackingDegree))
+                {
+                    if (!double.TryParse(record.TrackingDegree, out double TrackingDegree))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.TrackingDegree = TrackingDegree;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(record.Latitude) || !double.TryParse(record.Latitude, out double Latitude))
+                {
+                    continue;
+                }
+                airportWatchRow.Latitude = Latitude;
+
+                if (string.IsNullOrEmpty(record.Longitude) || !double.TryParse(record.Longitude, out double Longitude))
+                {
+                    continue;
+                }
+                airportWatchRow.Longitude = Longitude;
+
+                if (!string.IsNullOrEmpty(record.VerticalSpeedKts))
+                {
+                    if (!int.TryParse(record.VerticalSpeedKts, out int VerticalSpeedKts))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.VerticalSpeedKts = VerticalSpeedKts;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(record.TransponderCode))
+                {
+                    if (!int.TryParse(record.TransponderCode, out int TransponderCode))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.TransponderCode = TransponderCode;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(record.GpsAltitude))
+                {
+                    if (!int.TryParse(record.GpsAltitude, out int GpsAltitude))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        airportWatchRow.GpsAltitude = GpsAltitude;
+                    }
+                }
+
+                if (record.IsAircraftOnGround != "0" && record.IsAircraftOnGround != "1")
+                {
+                    continue;
+                }
+                airportWatchRow.IsAircraftOnGround = record.IsAircraftOnGround == "1" ? true : false;
+
+                airportWatchData.Add(airportWatchRow);
+            }
+
+            return airportWatchData
+                .OrderByDescending(row => row.AircraftPositionDateTimeUtc)
+                .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
+                .Select(grouped => grouped.First())
+                .ToList();
+        }
     }
 }

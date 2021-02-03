@@ -10,9 +10,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
-
-import { NiComponentsModule } from '../ni-components/ni-components.module';
-
+import { GoogleMapsModule } from '@angular/google-maps';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -56,9 +54,12 @@ import {
     SortService,
     ToolbarService
 } from '@syncfusion/ej2-angular-grids';
+import { ResizableModule } from 'angular-resizable-element';
 
 // Popover
 import { PopoverModule } from 'ngx-smart-popover';
+
+import { NiComponentsModule } from '../ni-components/ni-components.module';
 
 import { AuthtokenComponent } from './auth/authtoken/authtoken.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -116,6 +117,10 @@ import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { SystemcontactsNewContactModalComponent } from './contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 import { GroupAnalyticsHomeComponent } from './group-analytics/group-analytics-home/group-analytics-home.component';
 import { GroupAnalyticsGenerateDialogComponent } from './group-analytics/group-analytics-generate-dialog/group-analytics-generate-dialog.component';
+import { FlightWatchComponent } from './flight-watch/flight-watch/flight-watch.component';
+import { FlightWatchMapComponent } from './flight-watch/flight-watch-map/flight-watch-map.component';
+import { FlightWatchAircraftInfoComponent } from './flight-watch/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
+import { FlightWatchSettingsComponent } from './flight-watch/flight-watch-settings/flight-watch-settings.component';
 
 // Shared
 import { FboPricesPanelComponent } from '../shared/components/fbo-prices-panel/fbo-prices-panel.component';
@@ -157,11 +162,11 @@ import { AppPipesModule } from '../app-pipes.module';
 
 import { ClickStopPropagationDirective } from '../shared/directives/click-stop-propagation.directive';
 
-
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
+        GoogleMapsModule,
         DragDropModule,
         A11yModule,
         ClipboardModule,
@@ -211,7 +216,8 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
         NgxUiLoaderModule,
         GridModule,
         RouterModule,
-        PopoverModule
+        PopoverModule,
+        ResizableModule,
     ],
     declarations: [
         AuthtokenComponent,
@@ -305,6 +311,10 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
         GroupAnalyticsGenerateDialogComponent,
         FeeAndTaxBreakdownComponent,
         TableSettingsComponent,
+        FlightWatchComponent,
+        FlightWatchMapComponent,
+        FlightWatchAircraftInfoComponent,
+        FlightWatchSettingsComponent,
     ],
     exports: [
         ClickStopPropagationDirective,
