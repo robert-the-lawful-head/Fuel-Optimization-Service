@@ -11,13 +11,13 @@
 
         <app-flight-watch-map
             [isStable]="flightWatchData.length > 0"
-            [flightWatchData]="filteredFlightWatchData"
+            [data]="filteredFlightWatchData"
             [center]="center"
-            (flightWatchClicked)="onFlightWatchClick($event)"
+            (markerClicked)="onFlightWatchClick($event)"
             [style.width]="mapWidth"
         ></app-flight-watch-map>
 
-        <div
+        <!-- <div
             class="flight-watch-settings"
             [ngStyle]="style"
             mwlResizable
@@ -31,9 +31,9 @@
                 [resizeEdges]="{ left: true }"
             ></div>
             <app-flight-watch-settings
-                [dataSource]="flightWatchDataSource"
+                [tableData]="flightWatchDataObservable$"
                 (filterChanged)="onFilterChanged($event)"
             ></app-flight-watch-settings>
-        </div>
+        </div> -->
     </div>
 </div>

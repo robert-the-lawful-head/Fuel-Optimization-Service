@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { interval, Subscription } from 'rxjs';
+import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { isEmpty, keyBy } from 'lodash';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -38,6 +38,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     selectedFlightWatch: FlightWatch;
     flightWatchDataSource: MatTableDataSource<FlightWatch>;
 
+    flightWatchDataSubject = new BehaviorSubject<FlightWatch[]>([]);
+    flightWatchDataObservable$ = this.flightWatchDataSubject.asObservable();
+
     style: any = {};
 
     constructor(
@@ -55,6 +58,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         if (this.mapLoadSubscription) {
             this.mapLoadSubscription.unsubscribe();
         }
+        this.flightWatchDataSubject.unsubscribe();
     }
 
     loadAirportWatchData() {
@@ -101,11 +105,15 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         }
 
         this.filteredFlightWatchData = keyBy(originalData, fw => fw.oid);
-        if (!this.flightWatchDataSource) {
-            this.flightWatchDataSource = new MatTableDataSource(originalData);
-        } else {
-            this.flightWatchDataSource.data = originalData;
-        }
+
+        this.flightWatchDataSubject.next(originalData);
+        // if (!this.flightWatchDataSource) {
+        //     this.flightWatchDataSource = new MatTableDataSource(originalData);
+        // } else {
+        //     this.flightWatchDataSource.data = originalData;
+        // }
+
+        this.flightWatchDataSubject.asObservable();
     }
 
     validate(event: ResizeEvent): boolean {
