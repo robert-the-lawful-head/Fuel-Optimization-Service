@@ -3,14 +3,14 @@
 <div class="after-breadcrumb">
     <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
 
-    <div class="flight-watch-container">
+    <div class="flight-watch-container" *ngIf="flightWatchData">
         <app-flight-watch-aircraft-info
             [flightWatch]="selectedFlightWatch"
             (closed)="onAircraftInfoClose()"
         ></app-flight-watch-aircraft-info>
 
         <app-flight-watch-map
-            *ngIf="flightWatchData"
+            [isStable]="flightWatchData.length > 0"
             [flightWatchData]="filteredFlightWatchData"
             [center]="center"
             (flightWatchClicked)="onFlightWatchClick($event)"

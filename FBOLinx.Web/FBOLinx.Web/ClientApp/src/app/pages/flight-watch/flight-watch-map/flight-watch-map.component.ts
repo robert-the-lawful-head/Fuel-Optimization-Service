@@ -13,6 +13,7 @@ export class FlightWatchMapComponent {
     @Input() flightWatchData: {
         [oid: number]: FlightWatch;
     };
+    @Input() isStable: boolean;
     @Output() flightWatchClicked = new EventEmitter<FlightWatch>();
 
     // Map Options
