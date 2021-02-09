@@ -52,7 +52,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.mapLoadSubscription = timer(0, 300000).subscribe(() => this.loadAirportWatchData());
+        this.mapLoadSubscription = timer(0, 3000).subscribe(() => this.loadAirportWatchData());
     }
 
     ngOnDestroy() {
