@@ -99,6 +99,17 @@
         "roles": [ 1, 4 ]
     },
     {
+        "title": "Flight Watch",
+        "icon": {
+            "class": "fa fa-eye",
+            "bg": "#7fadd4",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "Flight Watch",
+        "routing": "/default-layout/flight-watch",
+        "roles": [ 1, 4 ]
+    },
+    {
         "title": "Analytics",
         "icon": {
             "class": "fa fa-line-chart",
