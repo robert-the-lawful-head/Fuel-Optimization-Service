@@ -21,8 +21,11 @@
                         }"
                         class="aircraft-types-toggle"
                         [style.backgroundColor]="type.color"
+                        data-toggle="tooltip"
+                        data-placement="right"
+                        [title]="type.description"
                     >
-                        {{ type.aircraftType === 'default' ? 'Unknown' : type.aircraftType }}
+                        {{ type.label }}
                     </div>
                 </ng-container>
             </div>

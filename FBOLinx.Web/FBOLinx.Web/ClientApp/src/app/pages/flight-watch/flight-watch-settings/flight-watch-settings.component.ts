@@ -32,10 +32,20 @@ export class FlightWatchSettingsComponent {
     }
 
     get aircraftTypes() {
-        return keys(AircraftIcons).map(type => ({
-            aircraftType: type,
-            color: AircraftIcons[type].fillColor,
-        }));
+        return keys(AircraftIcons)
+            .filter(type => AircraftIcons[type].label !== 'Other')
+            .map(type => ({
+                aircraftType: type,
+                color: AircraftIcons[type].fillColor,
+                label: AircraftIcons[type].label,
+                description: AircraftIcons[type].description,
+            }))
+            .concat({
+                aircraftType: 'default',
+                color: '#5fb4e6',
+                label: 'Other',
+                description: '',
+            });
     }
 
     applyFilter(event: Event) {
@@ -44,9 +54,17 @@ export class FlightWatchSettingsComponent {
 
     toggleType(type: string) {
         if (this.filteredTypes.includes(type)) {
-            this.typesFilterChanged.emit(this.filteredTypes.filter(ft => ft !== type));
+            if (type === 'default') {
+                this.typesFilterChanged.emit(this.filteredTypes.filter(ft => !['B0', 'B3', 'default'].includes(ft)));
+            } else {
+                this.typesFilterChanged.emit(this.filteredTypes.filter(ft => ft !== type));
+            }
         } else {
-            this.typesFilterChanged.emit([...this.filteredTypes, type]);
+            if (type === 'default') {
+                this.typesFilterChanged.emit([...this.filteredTypes, 'B0', 'B3', 'default']);
+            } else {
+                this.typesFilterChanged.emit([...this.filteredTypes, type]);
+            }
         }
     }
 }

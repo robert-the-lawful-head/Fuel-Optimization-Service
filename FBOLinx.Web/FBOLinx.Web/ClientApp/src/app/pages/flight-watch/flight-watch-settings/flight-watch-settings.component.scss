@@ -8,13 +8,14 @@ mat-card {
     }
 
     mat-card-content {
+        display: flex;
+        flex-direction: column;
         height: calc(100% - 50px);
     }
 }
 
 .flight-watch-container {
     overflow: auto;
-    height: calc(100% - 145px);
 
     table {
         min-width: 100%;
