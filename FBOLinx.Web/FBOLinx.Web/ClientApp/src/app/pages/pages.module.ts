@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
@@ -166,6 +167,7 @@ import { FlightWatchMapMarkerIconPipe } from './flight-watch/flight-watch-map/fl
 @NgModule({
     imports: [
         CommonModule,
+        BrowserAnimationsModule,
         FormsModule,
         GoogleMapsModule,
         DragDropModule,
