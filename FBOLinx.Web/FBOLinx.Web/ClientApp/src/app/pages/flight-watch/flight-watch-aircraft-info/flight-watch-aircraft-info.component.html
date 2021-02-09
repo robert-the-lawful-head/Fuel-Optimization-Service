@@ -9,5 +9,11 @@
     </mat-card-header>
 
     <mat-card-content>
+        <h6>Type: <span>{{ flightWatch?.aircraftTypeCode }}</span></h6>
+        <h6>Ground Speed: <span>{{ flightWatch?.groundSpeedKts }}</span></h6>
+        <h6>Tracking Degree: <span>{{ flightWatch?.trackingDegree }}</span></h6>
+        <h6>Vertical Speed: <span>{{ flightWatch?.verticalSpeedKts }}</span></h6>
+        <h6>GPS Altitude: <span>{{ flightWatch?.gpsAltitude }}</span></h6>
+        <h6>Is on Ground: <span>{{ flightWatch?.isAircraftOnGround ? "Yes" : "No" }}</span></h6>
     </mat-card-content>
 </mat-card>

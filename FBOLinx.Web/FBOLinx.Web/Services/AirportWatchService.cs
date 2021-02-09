@@ -33,6 +33,8 @@ namespace FBOLinx.Web.Services
                 .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
                 .Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
                 .OrderBy(x => x.AircraftPositionDateTimeUtc)
+                .ThenBy(x => x.AircraftHexCode)
+                .ThenBy(x => x.AtcFlightNumber)
                 .ToListAsync();
 
             return filteredResult

@@ -161,6 +161,7 @@ import { TableSettingsComponent } from '../shared/components/table-settings/tabl
 import { AppPipesModule } from '../app-pipes.module';
 
 import { ClickStopPropagationDirective } from '../shared/directives/click-stop-propagation.directive';
+import { FlightWatchMapMarkerIconPipe } from './flight-watch/flight-watch-map/flight-watch-map-marker.pipe';
 
 @NgModule({
     imports: [
@@ -315,6 +316,7 @@ import { ClickStopPropagationDirective } from '../shared/directives/click-stop-p
         FlightWatchMapComponent,
         FlightWatchAircraftInfoComponent,
         FlightWatchSettingsComponent,
+        FlightWatchMapMarkerIconPipe,
     ],
     exports: [
         ClickStopPropagationDirective,
