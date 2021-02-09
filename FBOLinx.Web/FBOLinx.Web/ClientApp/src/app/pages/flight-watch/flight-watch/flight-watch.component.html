@@ -17,7 +17,7 @@
             [style.width]="mapWidth"
         ></app-flight-watch-map>
 
-        <!-- <div
+        <div
             class="flight-watch-settings"
             [ngStyle]="style"
             mwlResizable
@@ -31,9 +31,11 @@
                 [resizeEdges]="{ left: true }"
             ></div>
             <app-flight-watch-settings
+                [filteredTypes]="filteredTypes"
                 [tableData]="flightWatchDataObservable$"
                 (filterChanged)="onFilterChanged($event)"
+                (typesFilterChanged)="onTypesFilterChanged($event)"
             ></app-flight-watch-settings>
-        </div> -->
+        </div>
     </div>
 </div>

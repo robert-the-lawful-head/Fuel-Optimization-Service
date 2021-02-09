@@ -9,7 +9,25 @@
             <mat-label>Filter</mat-label>
             <input #input matInput (keyup)="applyFilter($event)">
         </mat-form-field>
-        
+
+        <div class="aircraft-types">
+            <mat-label>Filter by type</mat-label>
+            <div class="aircraft-types-filter">
+                <ng-container *ngFor="let type of aircraftTypes" >
+                    <div
+                        (click)="toggleType(type.aircraftType)"
+                        [ngClass]="{
+                            'active': filteredTypes.includes(type.aircraftType)
+                        }"
+                        class="aircraft-types-toggle"
+                        [style.backgroundColor]="type.color"
+                    >
+                        {{ type.aircraftType === 'default' ? 'Unknown' : type.aircraftType }}
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    
         <div class="flight-watch-container">
             <table mat-table [dataSource]="tableData">
                 <ng-container matColumnDef="aircraftHexCode">
