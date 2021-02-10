@@ -8,13 +8,14 @@ mat-card {
     }
 
     mat-card-content {
+        display: flex;
+        flex-direction: column;
         height: calc(100% - 50px);
     }
 }
 
 .flight-watch-container {
     overflow: auto;
-    height: calc(100% - 53px);
 
     table {
         min-width: 100%;
@@ -30,6 +31,31 @@ mat-card {
         th, td {
             white-space: nowrap;
             overflow: hidden;
+        }
+    }
+}
+
+.aircraft-types {
+    mat-label {
+        margin-bottom: 5px;
+        display: flex;
+    }
+
+    &-filter {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -5px;    
+        padding-bottom: 5px;
+    }
+
+    &-toggle {
+        cursor: pointer;
+        padding: 5px 10px;
+        margin: 5px;
+        border: 1px solid black;
+
+        &.active {
+            outline: 2px solid #7b00ff;
         }
     }
 }

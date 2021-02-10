@@ -1,8 +1,6 @@
-﻿using FBOLinx.Job.Jobs;
+﻿using FBOLinx.Job.AirportWatch;
+using FBOLinx.Job.Interfaces;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FBOLinx.Job.Base
 {

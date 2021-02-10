@@ -20,24 +20,29 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData(Coordinate coordinate, int distance, DistanceUnit distanceUnit)
         {
-            CoordinateBoundaries boundaries = new CoordinateBoundaries(coordinate, distance, distanceUnit);
-            double minLatitude = boundaries.MinLatitude;
-            double maxLatitude = boundaries.MaxLatitude;
-            double minLongitude = boundaries.MinLongitude;
-            double maxLongitude = boundaries.MaxLongitude;
+            //CoordinateBoundaries boundaries = new CoordinateBoundaries(coordinate, distance, distanceUnit);
+            //double minLatitude = boundaries.MinLatitude;
+            //double maxLatitude = boundaries.MaxLatitude;
+            //double minLongitude = boundaries.MinLongitude;
+            //double maxLongitude = boundaries.MaxLongitude;
 
             var timelimit = DateTime.UtcNow.AddMinutes(-10);
 
             var filteredResult = await _context.AirportWatchLiveData
                 .Where(x => x.AircraftPositionDateTimeUtc >= timelimit)
-                .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
-                .Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
+                //.Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
+                //.Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
                 .OrderBy(x => x.AircraftPositionDateTimeUtc)
+                .ThenBy(x => x.AircraftHexCode)
+                .ThenBy(x => x.AtcFlightNumber)
+                .ThenBy(x => x.GpsAltitude)
                 .ToListAsync();
 
-            return filteredResult
-                .Where(x => GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, x.Latitude, x.Longitude, 1, distanceUnit) <= distance)
-                .ToList();
+            return filteredResult;
+
+            //return filteredResult
+            //    .Where(x => GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, x.Latitude, x.Longitude, 1, distanceUnit) <= distance)
+            //    .ToList();
         }
 
         public void ProcessAirportWatchData(List<AirportWatchLiveData> data)

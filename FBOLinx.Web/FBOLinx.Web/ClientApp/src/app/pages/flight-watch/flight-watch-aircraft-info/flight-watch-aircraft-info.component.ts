@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FlightWatch } from '../../../models/flight-watch';
 
 @Component({
@@ -22,6 +22,7 @@ import { FlightWatch } from '../../../models/flight-watch';
             ]),
         ]),
       ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlightWatchAircraftInfoComponent {
     @Input() flightWatch: FlightWatch;
