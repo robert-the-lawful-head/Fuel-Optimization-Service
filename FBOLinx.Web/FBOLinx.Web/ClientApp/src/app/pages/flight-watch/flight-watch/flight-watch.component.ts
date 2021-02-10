@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { BehaviorSubject, timer, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, interval } from 'rxjs';
 import { isEmpty, keyBy } from 'lodash';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -52,7 +52,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.mapLoadSubscription = timer(0, 3000).subscribe(() => this.loadAirportWatchData());
+        this.mapLoadSubscription = interval(3000).subscribe(() => this.loadAirportWatchData());
     }
 
     ngOnDestroy() {
