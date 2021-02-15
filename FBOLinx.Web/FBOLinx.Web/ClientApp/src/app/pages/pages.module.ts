@@ -111,6 +111,14 @@ import { RampFeesDialogNewFeeComponent } from './ramp-fees/ramp-fees-dialog-new-
 import { RampFeesImportInformationComponent } from './ramp-fees/ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component';
 import { RampFeesHomeComponent } from './ramp-fees/ramp-fees-home/ramp-fees-home.component';
 import { AnalyticsHomeComponent } from './analytics/analytics-home/analytics-home.component';
+import { AnalyticsOrdersQuoteChartComponent } from './analytics/analytics-orders-quote-chart/analytics-orders-quote-chart.component';
+import { AnalyticsOrdersOverTimeChartComponent } from './analytics/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component';
+import { AnalyticsVolumesNearbyAirportChartComponent } from './analytics/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component';
+import { AnalyticsCustomerBreakdownChartComponent } from './analytics/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component';
+import { AnalyticsCompaniesQuotesDealTableComponent } from './analytics/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component';
+import { AnalyticsFuelVendorSourceChartComponent } from './analytics/analytics-fuel-vendor-source-chart/analytics-fuel-vendor-source-chart.component';
+import { AnalyticsMarketShareFboAirportChartComponent } from './analytics/analytics-market-share-fbo-airport-chart/analytics-market-share-fbo-airport-chart.component';
+import { AnalyticsAirportWatchTableComponent } from './analytics/analytics-airport-watch-table/analytics-airport-watch-table.component';
 import { UsersDialogNewUserComponent } from './users/users-dialog-new-user/users-dialog-new-user.component';
 import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
@@ -145,13 +153,6 @@ import { StatisticsOrdersByLocationComponent } from '../shared/components/statis
 import { StatisticsTotalAircraftComponent } from '../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
 import { StatisticsTotalCustomersComponent } from '../shared/components/statistics-total-customers/statistics-total-customers.component';
 import { StatisticsTotalOrdersComponent } from '../shared/components/statistics-total-orders/statistics-total-orders.component';
-import { AnalyticsOrdersQuoteChartComponent } from '../shared/components/analytics-orders-quote-chart/analytics-orders-quote-chart.component';
-import { AnalyticsOrdersOverTimeChartComponent } from '../shared/components/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component';
-import { AnalyticsVolumesNearbyAirportChartComponent } from '../shared/components/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component';
-import { AnalyticsCustomerBreakdownChartComponent } from '../shared/components/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component';
-import { AnalyticsCompaniesQuotesDealTableComponent } from '../shared/components/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component';
-import { AnalyticsFuelVendorSourceChartComponent } from '../shared/components/analytics-fuel-vendor-source-chart/analytics-fuel-vendor-source-chart.component';
-import { AnalyticsMarketShareFboAirportChartComponent } from '../shared/components/analytics-market-share-fbo-airport-chart/analytics-market-share-fbo-airport-chart.component';
 import { FuelReqsExportModalComponent } from '../shared/components/fuelreqs-export/fuelreqs-export.component';
 import { CustomerMatchDialogComponent } from './customers/customer-match-dialog/customer-match-dialog.component';
 import { TableColumnFilterComponent } from '../shared/components/table-column-filter/table-column-filter.component';
@@ -283,6 +284,7 @@ import { FlightWatchMapMarkerIconPipe } from './flight-watch/flight-watch-map/fl
         AnalyticsCompaniesQuotesDealTableComponent,
         AnalyticsFuelVendorSourceChartComponent,
         AnalyticsMarketShareFboAirportChartComponent,
+        AnalyticsAirportWatchTableComponent,
         DeleteConfirmationComponent,
         ProceedConfirmationComponent,
         CloseConfirmationComponent,
