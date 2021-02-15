@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { BehaviorSubject, Subscription, interval } from 'rxjs';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { isEmpty, keyBy } from 'lodash';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { SharedService } from '../../../layouts/shared-service';
@@ -29,6 +29,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     loading = false;
     mapLoadSubscription: Subscription;
+    airportWatchFetchSubscription: Subscription;
     flightWatchData: FlightWatch[];
     filteredFlightWatchData: {
         [oid: number]: FlightWatch;
@@ -52,28 +53,32 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.mapLoadSubscription = interval(3000).subscribe(() => this.loadAirportWatchData());
+        this.mapLoadSubscription = timer(0, 3000).subscribe(() => this.loadAirportWatchData());
     }
 
     ngOnDestroy() {
+        this.flightWatchDataSubject.unsubscribe();
         if (this.mapLoadSubscription) {
             this.mapLoadSubscription.unsubscribe();
         }
-        this.flightWatchDataSubject.unsubscribe();
+        if (this.airportWatchFetchSubscription) {
+            this.airportWatchFetchSubscription.unsubscribe();
+        }
     }
 
     loadAirportWatchData() {
         if (!this.loading) {
             this.loading = true;
-            this.airportWatchService.getAll(this.sharedService.currentUser.fboId)
-                .subscribe((data: any) => {
-                    if (!this.center) {
-                        this.center = { lat: data.fboLocation.latitude, lng: data.fboLocation.longitude };
-                    }
-                    this.flightWatchData = data.flightWatchData;
-                    this.setFilteredFlightWatchData();
-                    this.loading = false;
-                });
+            this.airportWatchFetchSubscription =
+                this.airportWatchService.getAll(this.sharedService.currentUser.fboId)
+                    .subscribe((data: any) => {
+                        if (!this.center) {
+                            this.center = { lat: data.fboLocation.latitude, lng: data.fboLocation.longitude };
+                        }
+                        this.flightWatchData = data.flightWatchData;
+                        this.setFilteredFlightWatchData();
+                        this.loading = false;
+                    });
         }
     }
 

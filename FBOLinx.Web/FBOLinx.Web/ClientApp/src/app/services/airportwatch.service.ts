@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FlightWatch } from '../models/flight-watch';
 
 @Injectable()
 export class AirportWatchService {
@@ -15,6 +14,6 @@ export class AirportWatchService {
     }
 
     public getAll(fboId: number) {
-        return this.http.get<FlightWatch[]>(this.accessPointUrl + '/list/fbo/' + fboId, { headers: this.headers });
+        return this.http.get<any>(this.accessPointUrl + '/list/fbo/' + fboId, { headers: this.headers });
     }
 }
