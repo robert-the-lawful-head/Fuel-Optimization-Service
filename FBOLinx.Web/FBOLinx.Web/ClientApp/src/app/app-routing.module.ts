@@ -150,9 +150,6 @@ const defaultRoutes: Routes = [{
     path: 'flight-watch',
     component: FlightWatchComponent,
     canActivate: [AuthGuard],
-    data: {
-      expectedRoles: [1, 2, 3],
-    },
   },
   {
     path: '**',
