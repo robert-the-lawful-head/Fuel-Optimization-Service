@@ -240,99 +240,115 @@ namespace FBOLinx.Web.Controllers
             if (fbo.Group == null || fbo.Group.IsLegacyAccount.GetValueOrDefault())
                 return BadRequest("Legacy FBO client.  This FBO does not support API orders yet.");
 
-            var fuelReqsPt =
-                            (from c in _context.Customers
-                             join cg in _context.CustomerInfoByGroup on
-                                 new { CustomerId = c.Oid, c.FuelerlinxId, Active = true }
-                                 equals
-                                 new { cg.CustomerId, FuelerlinxId = request.CompanyId, Active = cg.Active ?? false }
-                             join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
-                             join pt in _context.PricingTemplate on new { cct.CustomerType, Fboid = fboId } equals new { CustomerType = pt.Oid, pt.Fboid }
-                             join f in _context.Fbos on
-                                 new { cg.GroupId, FboId = fboId, Active = true }
-                                 equals
-                                 new { GroupId = (f.GroupId ?? 0), FboId = f.Oid, Active = f.Active ?? false }
-                             join ca in _context.CustomerAircrafts on
-                                 new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId }
-                                 equals
-                                 new { TailNumber = ca.TailNumber.Trim(), ca.CustomerId, GroupId = (ca.GroupId ?? 0) }
-                             select new
-                             {
-                                 Fboid = fboId,
-                                 CustomerAircraftId = ca.Oid,
-                                 request.Eta,
-                                 request.Etd,
-                                 request.Icao,
-                                 request.Notes,
-                                 QuotedPpg = request.FuelEstCost,
-                                 QuotedVolume = request.FuelEstWeight,
-                                 request.TimeStandard,
-                                 CustomerId = c.Oid,
-                                 DateCreated = DateTime.Now,
-                                 Source = "FuelerLinx",
-                                 request.SourceId,
-                                 request.Email,
-                                 request.PhoneNumber,
-                                 PricingTemplate = pt
-                             })
-                            .Distinct()
-                            .ToList();
+            var fuelReqs = _context.FuelReq.Where(f => f.SourceId > 0 && f.SourceId == request.SourceId).ToList();
 
-            var fuelReqs = fuelReqsPt.Select(fr => new FuelReq
+            if (fuelReqs.Count == 0)
             {
-                Fboid = fr.Fboid,
-                CustomerAircraftId = fr.CustomerAircraftId,
-                Eta = fr.Eta,
-                Etd = fr.Etd,
-                Icao = fr.Icao,
-                Notes = fr.Notes,
-                QuotedPpg = fr.QuotedPpg,
-                QuotedVolume = fr.QuotedVolume,
-                TimeStandard = fr.TimeStandard,
-                CustomerId = fr.CustomerId,
-                DateCreated = fr.DateCreated,
-                Source = fr.Source,
-                SourceId = fr.SourceId,
-                Email = fr.Email,
-                PhoneNumber = fr.PhoneNumber,
-            }).ToList();
+                var fuelReqsPt =
+                                (from c in _context.Customers
+                                 join cg in _context.CustomerInfoByGroup on
+                                     new { CustomerId = c.Oid, c.FuelerlinxId, Active = true }
+                                     equals
+                                     new { cg.CustomerId, FuelerlinxId = request.CompanyId, Active = cg.Active ?? false }
+                                 join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
+                                 join pt in _context.PricingTemplate on new { cct.CustomerType, Fboid = fboId } equals new { CustomerType = pt.Oid, pt.Fboid }
+                                 join f in _context.Fbos on
+                                     new { cg.GroupId, FboId = fboId, Active = true }
+                                     equals
+                                     new { GroupId = (f.GroupId ?? 0), FboId = f.Oid, Active = f.Active ?? false }
+                                 join ca in _context.CustomerAircrafts on
+                                     new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId }
+                                     equals
+                                     new { TailNumber = ca.TailNumber.Trim(), ca.CustomerId, GroupId = (ca.GroupId ?? 0) }
+                                 select new
+                                 {
+                                     Fboid = fboId,
+                                     CustomerAircraftId = ca.Oid,
+                                     request.Eta,
+                                     request.Etd,
+                                     request.Icao,
+                                     request.Notes,
+                                     QuotedPpg = request.FuelEstCost,
+                                     QuotedVolume = request.FuelEstWeight,
+                                     request.TimeStandard,
+                                     CustomerId = c.Oid,
+                                     DateCreated = DateTime.Now,
+                                     Source = "FuelerLinx",
+                                     request.SourceId,
+                                     request.Email,
+                                     request.PhoneNumber,
+                                     PricingTemplate = pt
+                                 })
+                                .Distinct()
+                                .ToList();
 
-            _context.FuelReq.AddRange(fuelReqs);
-            await _context.SaveChangesAsync();
-
-            List<FuelReqPricingTemplate> fuelReqPricingTemplates = new List<FuelReqPricingTemplate>();
-            for (int i = 0; i < fuelReqs.Count; i++)
-            {
-                var pricingTemplate = fuelReqsPt[i].PricingTemplate;
-                fuelReqPricingTemplates.Add(new FuelReqPricingTemplate
+                fuelReqs = fuelReqsPt.Select(fr => new FuelReq
                 {
-                    FuelReqId = fuelReqs[i].Oid,
-                    PricingTemplateId = pricingTemplate.Oid,
-                    PricingTemplateName = pricingTemplate.Name,
-                    PricingTemplateRaw = JsonConvert.SerializeObject(new
+                    Fboid = fr.Fboid,
+                    CustomerAircraftId = fr.CustomerAircraftId,
+                    Eta = fr.Eta,
+                    Etd = fr.Etd,
+                    Icao = fr.Icao,
+                    Notes = fr.Notes,
+                    QuotedPpg = fr.QuotedPpg,
+                    QuotedVolume = fr.QuotedVolume,
+                    TimeStandard = fr.TimeStandard,
+                    CustomerId = fr.CustomerId,
+                    DateCreated = fr.DateCreated,
+                    Source = fr.Source,
+                    SourceId = fr.SourceId,
+                    Email = fr.Email,
+                    PhoneNumber = fr.PhoneNumber,
+                }).ToList();
+
+                _context.FuelReq.AddRange(fuelReqs);
+                await _context.SaveChangesAsync();
+
+                List<FuelReqPricingTemplate> fuelReqPricingTemplates = new List<FuelReqPricingTemplate>();
+                for (int i = 0; i < fuelReqs.Count; i++)
+                {
+                    var pricingTemplate = fuelReqsPt[i].PricingTemplate;
+                    fuelReqPricingTemplates.Add(new FuelReqPricingTemplate
                     {
-                        pricingTemplate.Oid,
-                        pricingTemplate.Name,
-                        pricingTemplate.Fboid,
-                        pricingTemplate.CustomerId,
-                        pricingTemplate.Default,
-                        pricingTemplate.Notes,
-                        pricingTemplate.Email,
-                        pricingTemplate.Subject,
-                        pricingTemplate.Type,
-                        CustomerMargins = _context.CustomerMargins
-                            .Where(cm => cm.TemplateId == pricingTemplate.Oid)
-                            .Select(cm => new
-                            {
-                                cm.Oid,
-                                cm.PriceTierId,
-                                cm.TemplateId,
-                                cm.Amount
-                            }).ToList()
-                    }),
-                });
+                        FuelReqId = fuelReqs[i].Oid,
+                        PricingTemplateId = pricingTemplate.Oid,
+                        PricingTemplateName = pricingTemplate.Name,
+                        PricingTemplateRaw = JsonConvert.SerializeObject(new
+                        {
+                            pricingTemplate.Oid,
+                            pricingTemplate.Name,
+                            pricingTemplate.Fboid,
+                            pricingTemplate.CustomerId,
+                            pricingTemplate.Default,
+                            pricingTemplate.Notes,
+                            pricingTemplate.Email,
+                            pricingTemplate.Subject,
+                            pricingTemplate.Type,
+                            CustomerMargins = _context.CustomerMargins
+                                .Where(cm => cm.TemplateId == pricingTemplate.Oid)
+                                .Select(cm => new
+                                {
+                                    cm.Oid,
+                                    cm.PriceTierId,
+                                    cm.TemplateId,
+                                    cm.Amount
+                                }).ToList()
+                        }),
+                    });
+                }
+                _context.FuelReqPricingTemplate.AddRange(fuelReqPricingTemplates);
             }
-            _context.FuelReqPricingTemplate.AddRange(fuelReqPricingTemplates);
+            else
+            {
+                fuelReqs[0].Eta = request.Eta;
+                fuelReqs[0].Etd = request.Etd;
+                fuelReqs[0].Notes = request.Notes;
+                fuelReqs[0].QuotedPpg = request.FuelEstCost;
+                fuelReqs[0].QuotedVolume = request.FuelEstWeight;
+                fuelReqs[0].TimeStandard = request.TimeStandard;
+                fuelReqs[0].Email = request.Email;
+                fuelReqs[0].PhoneNumber = request.PhoneNumber;
+            }
             await _context.SaveChangesAsync();
 
             return Ok(fuelReqs);
