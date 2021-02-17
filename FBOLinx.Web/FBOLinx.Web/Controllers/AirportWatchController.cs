@@ -7,6 +7,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
+using FBOLinx.Web.Models.Requests;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -37,10 +38,10 @@ namespace FBOLinx.Web.Controllers
             });
         }
 
-        [HttpGet("group/{groupId}/historical-data")]
-        public async Task<IActionResult> GetHistoricalData([FromRoute] int groupId)
+        [HttpPost("group/{groupId}/historical-data")]
+        public async Task<IActionResult> GetHistoricalData([FromRoute] int groupId, [FromBody] AirportWatchHistoricalDataRequest request)
         {
-            var data = await _airportWatchService.GetHistoricalData(groupId);
+            var data = await _airportWatchService.GetHistoricalData(groupId, request);
             return Ok(data);
         }
 

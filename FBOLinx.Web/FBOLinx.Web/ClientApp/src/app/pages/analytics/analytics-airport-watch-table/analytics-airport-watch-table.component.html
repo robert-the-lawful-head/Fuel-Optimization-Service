@@ -1,4 +1,4 @@
-<ni-card [headerBgColor]="'gray'" title="Airport Departures and Arrivals">
+<ni-card [headerBgColor]="'gray'" title="Airport Departures and Arrivals" class="mb-1">
     <div class="chart-container">
         <div class="flex">
             <div class="d-inline-block mr-2 ml-2" style="width: 130px">
@@ -57,7 +57,7 @@
                 [dataSource]="dataSource"
                 mat-table
                 matSort
-                matSortActive="lastPullDate"
+                matSortActive="dateTime"
                 matSortDirection="desc"
             >
                 <ng-container matColumnDef="company">
@@ -65,35 +65,45 @@
                     <td *matCellDef="let info" mat-cell> {{info.company}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="directOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Direct Orders</th>
-                    <td *matCellDef="let info" mat-cell> {{info.directOrders}} </td>
+                <ng-container matColumnDef="dateTime">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Date and Time</th>
+                    <td *matCellDef="let info" mat-cell> {{info.dateTime | date:'M/d/YYYY H:m'}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="companyQuotesTotal">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Number of Quotes</th>
-                    <td *matCellDef="let info" mat-cell> {{info.companyQuotesTotal}} </td>
+                <ng-container matColumnDef="tailNumber">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Tail #</th>
+                    <td *matCellDef="let info" mat-cell> {{info.tailNumber}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="conversionRate">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Conversion Rate</th>
-                    <td *matCellDef="let info" mat-cell> {{info.conversionRate}}%</td>
+                <ng-container matColumnDef="flightNumber">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Flight #</th>
+                    <td *matCellDef="let info" mat-cell> {{info.flightNumber}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="totalOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at </th>
-                    <td *matCellDef="let info" mat-cell> {{info.totalOrders}} </td>
+                <ng-container matColumnDef="hexCode">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Hex # </th>
+                    <td *matCellDef="let info" mat-cell> {{info.hexCode}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="airportOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at</th>
-                    <td *matCellDef="let info" mat-cell> {{info.airportOrders}} </td>
+                <ng-container matColumnDef="aircraftType">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Aircraft Type</th>
+                    <td *matCellDef="let info" mat-cell> {{info.aircraftType}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="lastPullDate">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Last Quoted</th>
-                    <td *matCellDef="let info" mat-cell> {{info.lastPullDate}} </td>
+                <ng-container matColumnDef="status">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Departure / Arrival</th>
+                    <td *matCellDef="let info" mat-cell> {{info.status | airportWatchStatus}} </td>
                 </ng-container>
+
+                <!-- <ng-container matColumnDef="pastVisits">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Past Visits</th>
+                    <td *matCellDef="let info" mat-cell> {{info.pastVisits}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="originated">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Originated</th>
+                    <td *matCellDef="let info" mat-cell> {{info.originated}} </td>
+                </ng-container> -->
                 <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
                 <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
             </table>

@@ -1,60 +1,68 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb">
-    <div class="row">
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-total-orders
-                [endDate]="filterEndDate"
-                [startDate]="filterStartDate"
-            ></app-statistics-total-orders>
-        </div>
+    <mat-tab-group>
+        <mat-tab label="Statistics">
+            <div class="row mt-3">
+                <div class="col-md-6 col-xl-3">
+                    <app-statistics-total-orders
+                        [endDate]="filterEndDate"
+                        [startDate]="filterStartDate"
+                    ></app-statistics-total-orders>
+                </div>
+        
+                <div class="col-md-6 col-xl-3">
+                    <app-statistics-total-customers
+                        [endDate]="filterEndDate"
+                        [startDate]="filterStartDate"
+                    ></app-statistics-total-customers>
+                </div>
+        
+                <div class="col-md-6 col-xl-3">
+                    <app-statistics-total-aircraft
+                        [endDate]="filterEndDate"
+                        [startDate]="filterStartDate"
+                    ></app-statistics-total-aircraft>
+                </div>
+        
+                <div class="col-md-6 col-xl-3">
+                    <app-statistics-orders-by-location
+                        [endDate]="filterEndDate"
+                        [startDate]="pastThirtyDaysStartDate"
+                    ></app-statistics-orders-by-location>
+                </div>
+            </div>
 
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-total-customers
-                [endDate]="filterEndDate"
-                [startDate]="filterStartDate"
-            ></app-statistics-total-customers>
-        </div>
-
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-total-aircraft
-                [endDate]="filterEndDate"
-                [startDate]="filterStartDate"
-            ></app-statistics-total-aircraft>
-        </div>
-
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-orders-by-location
-                [endDate]="filterEndDate"
-                [startDate]="pastThirtyDaysStartDate"
-            ></app-statistics-orders-by-location>
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- <div class="col-12">
-            <app-analytics-airport-watch-table></app-analytics-airport-watch-table>
-        </div> -->
-        <div class="col-12">
-            <app-analytics-companies-quotes-deal></app-analytics-companies-quotes-deal>
-        </div>
-        <div class="col-md-6">
-            <app-analytics-fuel-vendor-source></app-analytics-fuel-vendor-source>
-        </div>
-        <div class="col-md-6">
-            <app-analytics-market-share-fbo-airport></app-analytics-market-share-fbo-airport>
-        </div>
-        <div class="col-md-6">
-            <app-analytics-orders-quote></app-analytics-orders-quote>
-        </div>
-        <div class="col-md-6">
-            <app-analytics-orders-over-time></app-analytics-orders-over-time>
-        </div>
-        <div class="col-md-6">
-            <app-analytics-customer-breakdown></app-analytics-customer-breakdown>
-        </div>
-        <div class="col-md-6">
-            <app-analytics-volumes-nearby-airport></app-analytics-volumes-nearby-airport>
-        </div>
-    </div>
+            <div class="row">
+                <div class="col-12">
+                    <app-analytics-companies-quotes-deal></app-analytics-companies-quotes-deal>
+                </div>
+                <div class="col-md-6">
+                    <app-analytics-fuel-vendor-source></app-analytics-fuel-vendor-source>
+                </div>
+                <div class="col-md-6">
+                    <app-analytics-market-share-fbo-airport></app-analytics-market-share-fbo-airport>
+                </div>
+                <div class="col-md-6">
+                    <app-analytics-orders-quote></app-analytics-orders-quote>
+                </div>
+                <div class="col-md-6">
+                    <app-analytics-orders-over-time></app-analytics-orders-over-time>
+                </div>
+                <div class="col-md-6">
+                    <app-analytics-customer-breakdown></app-analytics-customer-breakdown>
+                </div>
+                <div class="col-md-6">
+                    <app-analytics-volumes-nearby-airport></app-analytics-volumes-nearby-airport>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="Flight Watch">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <app-analytics-airport-watch-table></app-analytics-airport-watch-table>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
 </div>

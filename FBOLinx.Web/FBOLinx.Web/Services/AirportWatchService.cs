@@ -1,6 +1,7 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -36,35 +37,52 @@ namespace FBOLinx.Web.Services
             return filteredResult;
         }
 
-        public async Task<List<AirportWatchHistoricalDataResponse>> GetHistoricalData(int groupId)
+        public async Task<List<AirportWatchHistoricalDataResponse>> GetHistoricalData(int groupId, AirportWatchHistoricalDataRequest request)
         {
             var allAircrafts = await _aircraftService.GetAllAircrafts();
 
-            var customersData = await (from awat in _context.AirportWatchAircraftTailNumber
-                                       join ca in _context.CustomerAircrafts on awat.AtcFlightNumber equals ca.TailNumber
-                                       join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 } equals new { cig.CustomerId, cig.GroupId }
-                                       where ca.GroupId == groupId
-                                       select new
-                                       {
-                                           awat.AircraftHexCode,
-                                           cig.Company,
-                                           ca.TailNumber,
-                                           ca.AircraftId,
-                                       }).ToListAsync();
+            var historicalData = await (from awhd in _context.AirportWatchHistoricalData
+                                        join awat in _context.AirportWatchAircraftTailNumber on new { awhd.AircraftHexCode, awhd.AtcFlightNumber } equals new { awat.AircraftHexCode, awat.AtcFlightNumber }
+                                        join ca in _context.CustomerAircrafts on awat.AtcFlightNumber equals ca.TailNumber
+                                        join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 } equals new { cig.CustomerId, cig.GroupId }
+                                        where ca.GroupId == groupId &&
+                                            awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.ToUniversalTime() &&
+                                            awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.ToUniversalTime().AddDays(1)
+                                        group awhd by new
+                                        {
+                                            AirportWatchHistoricalDataID = awhd.Oid,
+                                            awat.AircraftHexCode,
+                                            awat.AtcFlightNumber,
+                                            awhd.AircraftPositionDateTimeUtc,
+                                            awhd.AircraftStatus,
+                                            cig.Company,
+                                            ca.TailNumber,
+                                            ca.AircraftId,
+                                        }
+                                        into groupedResult
+                                        select new
+                                        {
+                                            groupedResult.Key.AirportWatchHistoricalDataID,
+                                            groupedResult.Key.AircraftHexCode,
+                                            groupedResult.Key.AtcFlightNumber,
+                                            groupedResult.Key.AircraftPositionDateTimeUtc,
+                                            groupedResult.Key.AircraftStatus,
+                                            groupedResult.Key.Company,
+                                            groupedResult.Key.TailNumber,
+                                            groupedResult.Key.AircraftId,
+                                        }).ToListAsync();
 
-            var historicalData = await _context.AirportWatchHistoricalData.ToListAsync();
-
-            var result = (from awhd in historicalData
-                          join ca in customersData on awhd.AircraftHexCode equals ca.AircraftHexCode
-                          join a in allAircrafts on ca.AircraftId equals a.AircraftId
+            var result = (from h in historicalData
+                          join a in _aircraftService.GetAllAircraftsAsQueryable() on h.AircraftId equals a.AircraftId
                           select new AirportWatchHistoricalDataResponse
                           {
-                              Company = ca.Company,
-                              DateTime = awhd.AircraftPositionDateTimeUtc,
-                              TailNumber = ca.TailNumber,
-                              FlightNumber = awhd.AtcFlightNumber,
-                              HexCode = awhd.AircraftHexCode,
+                              Company = h.Company,
+                              DateTime = h.AircraftPositionDateTimeUtc,
+                              TailNumber = h.TailNumber,
+                              FlightNumber = h.AtcFlightNumber,
+                              HexCode = h.AircraftHexCode,
                               AircraftType = a.Model,
+                              Status = h.AircraftStatus,
                           }).ToList();
             return result;
         }
