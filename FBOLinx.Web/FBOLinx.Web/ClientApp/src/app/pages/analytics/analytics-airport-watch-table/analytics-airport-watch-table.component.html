@@ -1,0 +1,109 @@
+<ni-card [headerBgColor]="'gray'" title="Airport Departures and Arrivals">
+    <div class="chart-container">
+        <div class="flex">
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input
+                        (dateChange)="refreshData()"
+                        (focus)="dashboardSettingsStartDateFilter.open()"
+                        [(ngModel)]="filterStartDate"
+                        [matDatepicker]="dashboardSettingsStartDateFilter"
+                        [max]="filterEndDate"
+                        matInput
+                        placeholder="Start Date"
+                    />
+                    <mat-datepicker-toggle
+                        [for]="dashboardSettingsStartDateFilter"
+                        matSuffix
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsStartDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input
+                        (dateChange)="refreshData()"
+                        (focus)="dashboardSettingsEndDateFilter.open()"
+                        [(ngModel)]="filterEndDate"
+                        [matDatepicker]="dashboardSettingsEndDateFilter"
+                        [min]="filterStartDate"
+                        matInput
+                        placeholder="End Date"
+                    />
+                    <mat-datepicker-toggle
+                        [for]="dashboardSettingsEndDateFilter"
+                        matSuffix
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsEndDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="d-inline-block mr-2 ml-2">
+                <mat-form-field>
+                    <mat-label>Company / Tail #</mat-label>
+                    <input (keyup)="applyFilter($event)" matInput>
+                    <span matPrefix><i class="fa fa-search"></i></span>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="table-container mat-elevation-z8">
+            <table
+                [dataSource]="dataSource"
+                mat-table
+                matSort
+                matSortActive="lastPullDate"
+                matSortDirection="desc"
+            >
+                <ng-container matColumnDef="company">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Company</th>
+                    <td *matCellDef="let info" mat-cell> {{info.company}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="directOrders">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Direct Orders</th>
+                    <td *matCellDef="let info" mat-cell> {{info.directOrders}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="companyQuotesTotal">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Number of Quotes</th>
+                    <td *matCellDef="let info" mat-cell> {{info.companyQuotesTotal}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="conversionRate">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Conversion Rate</th>
+                    <td *matCellDef="let info" mat-cell> {{info.conversionRate}}%</td>
+                </ng-container>
+
+                <ng-container matColumnDef="totalOrders">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at </th>
+                    <td *matCellDef="let info" mat-cell> {{info.totalOrders}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="airportOrders">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at</th>
+                    <td *matCellDef="let info" mat-cell> {{info.airportOrders}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="lastPullDate">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Last Quoted</th>
+                    <td *matCellDef="let info" mat-cell> {{info.lastPullDate}} </td>
+                </ng-container>
+                <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+            </table>
+        </div>
+    </div>
+    <ngx-ui-loader
+        [loaderId]="chartName"
+        bgsColor="rgb(100, 181, 246)"
+        bgsPosition="center-center"
+        bgsType="ball-spin"
+        overlayColor="rgba(0, 0, 0, 0.1)"
+    ></ngx-ui-loader>
+</ni-card>
