@@ -1,6 +1,7 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using Geolocation;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,26 +13,20 @@ namespace FBOLinx.Web.Services
     public class AirportWatchService
     {
         private readonly FboLinxContext _context;
+        private readonly AircraftService _aircraftService;
 
-        public AirportWatchService(FboLinxContext context)
+        public AirportWatchService(FboLinxContext context, AircraftService aircraftService)
         {
             _context = context;
+            _aircraftService = aircraftService;
         }
 
-        public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData(Coordinate coordinate, int distance, DistanceUnit distanceUnit)
+        public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData()
         {
-            //CoordinateBoundaries boundaries = new CoordinateBoundaries(coordinate, distance, distanceUnit);
-            //double minLatitude = boundaries.MinLatitude;
-            //double maxLatitude = boundaries.MaxLatitude;
-            //double minLongitude = boundaries.MinLongitude;
-            //double maxLongitude = boundaries.MaxLongitude;
-
-            var timelimit = DateTime.UtcNow.AddMinutes(-10);
+            var timelimit = DateTime.UtcNow.AddMinutes(-5);
 
             var filteredResult = await _context.AirportWatchLiveData
                 .Where(x => x.AircraftPositionDateTimeUtc >= timelimit)
-                //.Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
-                //.Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
                 .OrderBy(x => x.AircraftPositionDateTimeUtc)
                 .ThenBy(x => x.AircraftHexCode)
                 .ThenBy(x => x.AtcFlightNumber)
@@ -39,46 +34,51 @@ namespace FBOLinx.Web.Services
                 .ToListAsync();
 
             return filteredResult;
+        }
 
-            //return filteredResult
-            //    .Where(x => GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, x.Latitude, x.Longitude, 1, distanceUnit) <= distance)
-            //    .ToList();
+        public async Task<List<AirportWatchHistoricalDataResponse>> GetHistoricalData(int groupId)
+        {
+            var allAircrafts = await _aircraftService.GetAllAircrafts();
+
+            var customersData = await (from awat in _context.AirportWatchAircraftTailNumber
+                                       join ca in _context.CustomerAircrafts on awat.AtcFlightNumber equals ca.TailNumber
+                                       join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 } equals new { cig.CustomerId, cig.GroupId }
+                                       where ca.GroupId == groupId
+                                       select new
+                                       {
+                                           awat.AircraftHexCode,
+                                           cig.Company,
+                                           ca.TailNumber,
+                                           ca.AircraftId,
+                                       }).ToListAsync();
+
+            var historicalData = await _context.AirportWatchHistoricalData.ToListAsync();
+
+            var result = (from awhd in historicalData
+                          join ca in customersData on awhd.AircraftHexCode equals ca.AircraftHexCode
+                          join a in allAircrafts on ca.AircraftId equals a.AircraftId
+                          select new AirportWatchHistoricalDataResponse
+                          {
+                              Company = ca.Company,
+                              DateTime = awhd.AircraftPositionDateTimeUtc,
+                              TailNumber = ca.TailNumber,
+                              FlightNumber = awhd.AtcFlightNumber,
+                              HexCode = awhd.AircraftHexCode,
+                              AircraftType = a.Model,
+                          }).ToList();
+            return result;
         }
 
         public void ProcessAirportWatchData(List<AirportWatchLiveData> data)
         {
-            var pairedData = (from r in data
-                              join aw in _context.AirportWatchLiveData on new { r.AircraftHexCode, r.AtcFlightNumber } equals new { aw.AircraftHexCode, aw.AtcFlightNumber }
-                              into leftJoinAw
-                              from aw in leftJoinAw.DefaultIfEmpty()
-                              join ah in _context.AirportWatchHistoricalData on new { r.AircraftHexCode, r.AtcFlightNumber } equals new { ah.AircraftHexCode, ah.AtcFlightNumber }
-                              into leftJoinAh
-                              from ah in leftJoinAh.DefaultIfEmpty()
-                              select new
-                              {
-                                  Record = r,
-                                  OldAirportWatchLiveData = aw,
-                                  OldAirportWatchHistoricalData = ah
-                              })
-                              .OrderBy(aw => aw.Record.AircraftPositionDateTimeUtc)
-                              .ToList();
-
-            foreach (var pair in pairedData)
+            foreach (var record in data)
             {
+                var oldAirportWatchLiveData = _context.AirportWatchLiveData
+                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
+                    .FirstOrDefault();
 
-                var lastUpdatedAirportWatchLiveData = pair.OldAirportWatchLiveData;
-                var lastUpdatedAirportWatchHistoricalData = pair.OldAirportWatchHistoricalData;
-                var record = pair.Record;
-
-                
-                if (lastUpdatedAirportWatchLiveData != null)
+                if (oldAirportWatchLiveData == null)
                 {
-                    AirportWatchLiveData.CopyEntity(lastUpdatedAirportWatchLiveData, record);
-                    _context.AirportWatchLiveData.Update(lastUpdatedAirportWatchLiveData);
-                }
-                else
-                {
-                    // Add the distinct aircraft records from the HexCode and FlightNumber
                     _context.AirportWatchAircraftTailNumber.Add(new AirportWatchAircraftTailNumber
                     {
                         AircraftHexCode = record.AircraftHexCode,
@@ -87,29 +87,33 @@ namespace FBOLinx.Web.Services
                     // Add the most recent records for the "live" view
                     _context.AirportWatchLiveData.Add(record);
                 }
-
-                // Add/Update historical occurrences of landing/takeoff/parking
-                if (lastUpdatedAirportWatchHistoricalData == null)
-                {
-                    var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
-                    _context.AirportWatchHistoricalData.Add(airportWatchHistoricalData);
-                }
                 else
                 {
-                    var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
+                    AirportWatchLiveData.CopyEntity(oldAirportWatchLiveData, record);
+                    _context.AirportWatchLiveData.Update(oldAirportWatchLiveData);
+                }
 
+                var oldAirportWatchHistoricalData = _context.AirportWatchHistoricalData
+                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
+                    .OrderByDescending(aw => aw.AircraftPositionDateTimeUtc)
+                    .FirstOrDefault();
+
+                var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
+                if (oldAirportWatchHistoricalData == null || oldAirportWatchLiveData.IsAircraftOnGround != record.IsAircraftOnGround)
+                {
+                    _context.AirportWatchHistoricalData.Add(airportWatchHistoricalData);
+                } else
+                {
                     // Parking occurrences
-                    if (lastUpdatedAirportWatchHistoricalData.IsAircraftOnGround == true &&
+                    if (oldAirportWatchHistoricalData.IsAircraftOnGround == true &&
                         record.IsAircraftOnGround == true &&
-                        record.AircraftPositionDateTimeUtc >= lastUpdatedAirportWatchHistoricalData.AircraftPositionDateTimeUtc.AddMinutes(10) &&
-                        record.Longitude == lastUpdatedAirportWatchHistoricalData.Longitude &&
-                        record.Latitude == lastUpdatedAirportWatchHistoricalData.Latitude)
+                        record.AircraftPositionDateTimeUtc >= oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc.AddMinutes(5))
                     {
-                        airportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
+                        oldAirportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
                     }
 
-                    AirportWatchHistoricalData.CopyEntity(lastUpdatedAirportWatchHistoricalData, airportWatchHistoricalData);
-                    _context.AirportWatchHistoricalData.Update(lastUpdatedAirportWatchHistoricalData);
+                    AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
+                    _context.AirportWatchHistoricalData.Update(oldAirportWatchHistoricalData);
                 }
             }
 

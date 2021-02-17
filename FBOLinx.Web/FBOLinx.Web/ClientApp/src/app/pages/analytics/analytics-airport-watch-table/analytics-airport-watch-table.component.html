@@ -81,17 +81,17 @@
                 </ng-container>
 
                 <ng-container matColumnDef="totalOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at {{fbo}} </th>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at </th>
                     <td *matCellDef="let info" mat-cell> {{info.totalOrders}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="airportOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at {{icao}}</th>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at</th>
                     <td *matCellDef="let info" mat-cell> {{info.airportOrders}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="lastPullDate">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> {{icao}} Last Quoted</th>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Last Quoted</th>
                     <td *matCellDef="let info" mat-cell> {{info.lastPullDate}} </td>
                 </ng-container>
                 <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>

@@ -16,4 +16,8 @@ export class AirportWatchService {
     public getAll(fboId: number) {
         return this.http.get<any>(this.accessPointUrl + '/list/fbo/' + fboId, { headers: this.headers });
     }
+
+    public getHistoricalData(groupId: number) {
+        return this.http.get<any>(this.accessPointUrl + '/group/' + groupId + '/historical-data', { headers: this.headers });
+    }
 }
