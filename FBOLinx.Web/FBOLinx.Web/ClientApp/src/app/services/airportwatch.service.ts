@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FlightWatchHistorical } from '../models/flight-watch-historical';
 
 @Injectable()
 export class AirportWatchService {
@@ -17,7 +18,14 @@ export class AirportWatchService {
         return this.http.get<any>(this.accessPointUrl + '/list/fbo/' + fboId, { headers: this.headers });
     }
 
-    public getHistoricalData(groupId: number) {
-        return this.http.get<any>(this.accessPointUrl + '/group/' + groupId + '/historical-data', { headers: this.headers });
+    public getHistoricalData(groupId: number, startDate: Date, endDate: Date) {
+        return this.http.post<FlightWatchHistorical[]>(
+            this.accessPointUrl + '/group/' + groupId + '/historical-data',
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+            },
+            { headers: this.headers },
+        );
     }
 }

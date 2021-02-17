@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using static FBOLinx.DB.Models.AirportWatchHistoricalData;
 
 namespace FBOLinx.Web.Models.Responses.AirportWatch
 {
@@ -13,7 +11,7 @@ namespace FBOLinx.Web.Models.Responses.AirportWatch
         public string FlightNumber { get; set; }
         public string HexCode { get; set; }
         public string AircraftType { get; set; }
-        public string Status { get; set; }
+        public AircraftStatusType Status { get; set; }
         public int PastVisits { get; set; }
         public string Originated { get; set; }
     }

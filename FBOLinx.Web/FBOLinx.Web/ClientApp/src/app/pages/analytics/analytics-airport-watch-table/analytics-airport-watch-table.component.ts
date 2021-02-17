@@ -7,6 +7,7 @@ import * as moment from 'moment';
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportWatchService } from '../../../services/airportwatch.service';
+import { FlightWatchHistorical } from 'src/app/models/flight-watch-historical';
 
 @Component({
     selector: 'app-analytics-airport-watch-table',
@@ -19,16 +20,18 @@ export class AnalyticsAirportWatchTableComponent implements OnInit, AfterViewIni
     public filterStartDate: Date;
     public filterEndDate: Date;
     public chartName = 'airport-watch-table';
-    public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
-    public dataSource: MatTableDataSource<any[]>;
+    public displayedColumns: string[] = ['company', 'dateTime', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'status',
+        // 'pastVisits', 'originated'
+    ];
+    public dataSource: MatTableDataSource<FlightWatchHistorical>;
 
     constructor(
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
-        this.filterEndDate = new Date(moment().add(7, 'd').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(moment().add(-1, 'M').format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
     }
 
     ngOnInit() {
@@ -43,26 +46,16 @@ export class AnalyticsAirportWatchTableComponent implements OnInit, AfterViewIni
 
     refreshData() {
         this.ngxLoader.startLoader(this.chartName);
-        this.airportWatchService.getHistoricalData(this.sharedService.currentUser.groupId)
-            .subscribe((data: any) => {
-                console.log(data);
-                // this.dataSource = new MatTableDataSource(data);
-                // this.dataSource.sortingDataAccessor = (item, property) => {
-                //     switch (property) {
-                //         case 'lastPullDate':
-                //             if (item[property] === 'N/A') {
-                //                 if (this.sort.direction === 'asc') {
-                //                     return new Date(8640000000000000);
-                //                 } else {
-                //                     return new Date(-8640000000000000);
-                //                 }
-                //             }
-                //             return new Date(item[property]);
-                //         default:
-                //             return item[property];
-                //     }
-                // };
-                // this.dataSource.sort = this.sort;
+        this.airportWatchService.getHistoricalData(
+            this.sharedService.currentUser.groupId,
+            this.filterStartDate,
+            this.filterEndDate,
+        )
+            .subscribe((data) => {
+                this.dataSource = new MatTableDataSource(data);
+                this.dataSource.sort = this.sort;
+                this.dataSource.filterPredicate = (data, filter: string) =>
+                    data.company.toLowerCase().includes(filter) || data.tailNumber.toLowerCase().includes(filter);
             }, () => {
             }, () => {
                 this.ngxLoader.stopLoader(this.chartName);
