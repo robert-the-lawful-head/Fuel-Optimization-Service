@@ -117,15 +117,16 @@ namespace FBOLinx.Web.Services
                     .FirstOrDefault();
 
                 var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
-                if (oldAirportWatchHistoricalData == null || oldAirportWatchLiveData.IsAircraftOnGround != record.IsAircraftOnGround)
+                if (oldAirportWatchHistoricalData == null || oldAirportWatchHistoricalData.IsAircraftOnGround != record.IsAircraftOnGround || oldAirportWatchHistoricalData.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking)
                 {
                     _context.AirportWatchHistoricalData.Add(airportWatchHistoricalData);
-                } else
+                }
+                else
                 {
                     // Parking occurrences
                     if (oldAirportWatchHistoricalData.IsAircraftOnGround == true &&
                         record.IsAircraftOnGround == true &&
-                        record.AircraftPositionDateTimeUtc >= oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc.AddMinutes(5))
+                        record.AircraftPositionDateTimeUtc >= oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc.AddMinutes(10))
                     {
                         oldAirportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
                     }
