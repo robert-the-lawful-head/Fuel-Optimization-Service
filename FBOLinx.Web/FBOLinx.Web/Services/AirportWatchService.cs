@@ -148,8 +148,8 @@ namespace FBOLinx.Web.Services
                 return;
 
             //If the aircraft has not moved then do not update the parking record - we want to keep the old record when it first stopped moving
-            if (Math.Abs(airportWatchHistoricalData.Latitude - oldAirportWatchHistoricalData.Latitude) == 0 ||
-                Math.Abs(airportWatchHistoricalData.Longitude - oldAirportWatchHistoricalData.Longitude) == 0)
+            if (Math.Abs(airportWatchHistoricalData.Latitude - oldAirportWatchHistoricalData.Latitude) <= 0.000001 ||
+                Math.Abs(airportWatchHistoricalData.Longitude - oldAirportWatchHistoricalData.Longitude) <= 0.000001)
                 return;
             //Last record was over 10 minutes ago and the aircraft hasn't moved since that point - keep this old record and don't update
             if (oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc < DateTime.UtcNow.AddMinutes(-10))
