@@ -117,26 +117,47 @@ namespace FBOLinx.Web.Services
                     .FirstOrDefault();
 
                 var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
-                if (oldAirportWatchHistoricalData == null || oldAirportWatchHistoricalData.IsAircraftOnGround != record.IsAircraftOnGround || oldAirportWatchHistoricalData.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking)
+                if (oldAirportWatchHistoricalData == null ||
+                    oldAirportWatchHistoricalData.IsAircraftOnGround != record.IsAircraftOnGround)
                 {
                     _context.AirportWatchHistoricalData.Add(airportWatchHistoricalData);
                 }
-                else
+                else if (!oldAirportWatchHistoricalData.IsAircraftOnGround && !record.IsAircraftOnGround)
                 {
-                    // Parking occurrences
-                    if (oldAirportWatchHistoricalData.IsAircraftOnGround == true &&
-                        record.IsAircraftOnGround == true &&
-                        record.AircraftPositionDateTimeUtc >= oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc.AddMinutes(10))
-                    {
-                        oldAirportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
-                    }
-
                     AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
                     _context.AirportWatchHistoricalData.Update(oldAirportWatchHistoricalData);
+                }
+                else {
+                    AddPossibleParkingOccurrence(oldAirportWatchHistoricalData, airportWatchHistoricalData);
                 }
             }
 
             _context.SaveChanges();
+        }
+
+        private void AddPossibleParkingOccurrence(AirportWatchHistoricalData oldAirportWatchHistoricalData, AirportWatchHistoricalData airportWatchHistoricalData)
+        {
+            // Parking occurrences
+
+            //First confirm the last record we are comparing with was a landing or a parking
+            if (oldAirportWatchHistoricalData.AircraftStatus != AirportWatchHistoricalData.AircraftStatusType.Landing &&
+                oldAirportWatchHistoricalData.AircraftStatus != AirportWatchHistoricalData.AircraftStatusType.Parking)
+                return;
+            // If neither the old record nor the new one are on the ground then it can't be a parking
+            if (!oldAirportWatchHistoricalData.IsAircraftOnGround || !airportWatchHistoricalData.IsAircraftOnGround)
+                return;
+
+            //If the aircraft has not moved then do not update the parking record - we want to keep the old record when it first stopped moving
+            if (Math.Abs(airportWatchHistoricalData.Latitude - oldAirportWatchHistoricalData.Latitude) <= 0.000001 ||
+                Math.Abs(airportWatchHistoricalData.Longitude - oldAirportWatchHistoricalData.Longitude) <= 0.000001)
+                return;
+            //Last record was over 10 minutes ago and the aircraft hasn't moved since that point - keep this old record and don't update
+            if (oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc < DateTime.UtcNow.AddMinutes(-10))
+                return;
+            //The aircraft has moved since landing - this should be an updated parking record
+            oldAirportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
+            AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
+            _context.AirportWatchHistoricalData.Update(oldAirportWatchHistoricalData);
         }
     }
 }
