@@ -47,11 +47,11 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost("list")]
-        public ActionResult<AiriportWatchDataPostResponse> PostDataList([FromBody] List<AirportWatchLiveData> data)
+        public async Task<ActionResult<AiriportWatchDataPostResponse>> PostDataList([FromBody] List<AirportWatchLiveData> data)
         {
             try
             {
-                _airportWatchService.ProcessAirportWatchData(data);
+                await _airportWatchService.ProcessAirportWatchData(data);
                 return Ok(new AiriportWatchDataPostResponse(true));
             }
             catch (Exception exception)

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -14,15 +14,13 @@ import { FlightWatchHistorical } from 'src/app/models/flight-watch-historical';
     templateUrl: './analytics-airport-watch-table.component.html',
     styleUrls: ['./analytics-airport-watch-table.component.scss'],
 })
-export class AnalyticsAirportWatchTableComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AnalyticsAirportWatchTableComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
 
     public filterStartDate: Date;
     public filterEndDate: Date;
     public chartName = 'airport-watch-table';
-    public displayedColumns: string[] = ['company', 'dateTime', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'status',
-        // 'pastVisits', 'originated'
-    ];
+    public displayedColumns: string[] = ['company', 'dateTime', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'status', 'pastVisits', 'originated'];
     public dataSource: MatTableDataSource<FlightWatchHistorical>;
 
     constructor(
@@ -36,12 +34,6 @@ export class AnalyticsAirportWatchTableComponent implements OnInit, AfterViewIni
 
     ngOnInit() {
         this.refreshData();
-    }
-
-    ngAfterViewInit() {
-    }
-
-    ngOnDestroy() {
     }
 
     refreshData() {

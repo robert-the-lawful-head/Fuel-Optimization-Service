@@ -1,8 +1,10 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses.AirportWatch;
+using Geolocation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,11 +16,13 @@ namespace FBOLinx.Web.Services
     public class AirportWatchService
     {
         private readonly FboLinxContext _context;
+        private readonly DegaContext _degaContext;
         private readonly AircraftService _aircraftService;
 
-        public AirportWatchService(FboLinxContext context, AircraftService aircraftService)
+        public AirportWatchService(FboLinxContext context, DegaContext degaContext,  AircraftService aircraftService)
         {
             _context = context;
+            _degaContext = degaContext;
             _aircraftService = aircraftService;
         }
 
@@ -55,7 +59,9 @@ namespace FBOLinx.Web.Services
                                             awat.AtcFlightNumber,
                                             awhd.AircraftPositionDateTimeUtc,
                                             awhd.AircraftStatus,
+                                            awhd.AirportICAO,
                                             cig.Company,
+                                            ca.CustomerId,
                                             ca.TailNumber,
                                             ca.AircraftId,
                                         }
@@ -68,32 +74,59 @@ namespace FBOLinx.Web.Services
                                             groupedResult.Key.AircraftPositionDateTimeUtc,
                                             groupedResult.Key.AircraftStatus,
                                             groupedResult.Key.Company,
+                                            groupedResult.Key.CustomerId,
                                             groupedResult.Key.TailNumber,
                                             groupedResult.Key.AircraftId,
+                                            groupedResult.Key.AirportICAO,
                                         }).ToListAsync();
 
-            var result = (from h in historicalData
-                          join a in _aircraftService.GetAllAircraftsAsQueryable() on h.AircraftId equals a.AircraftId
-                          select new AirportWatchHistoricalDataResponse
-                          {
-                              Company = h.Company,
-                              DateTime = h.AircraftPositionDateTimeUtc,
-                              TailNumber = h.TailNumber,
-                              FlightNumber = h.AtcFlightNumber,
-                              HexCode = h.AircraftHexCode,
-                              AircraftType = a.Model,
-                              Status = h.AircraftStatus,
-                          }).ToList();
-            return result;
+            var aircraftHistoricalData = (from h in historicalData
+                                          join a in _aircraftService.GetAllAircraftsAsQueryable() on h.AircraftId equals a.AircraftId
+                                          orderby h.AircraftPositionDateTimeUtc descending
+                                          select new
+                                          {
+                                              h.CustomerId,
+                                              h.Company,
+                                              h.AircraftPositionDateTimeUtc,
+                                              h.TailNumber,
+                                              h.AtcFlightNumber,
+                                              h.AircraftHexCode,
+                                              a.Model,
+                                              h.AircraftStatus,
+                                              h.AirportICAO,
+                                          })
+                                          .ToList()
+                                          .GroupBy(ah => new { ah.CustomerId, ah.AirportICAO })
+                                          .Select(g => {
+                                              var latest = g.OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
+                                              var pastVisits = g.Where(ah => ah.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing).Count();
+                                              return new AirportWatchHistoricalDataResponse
+                                              {
+                                                  Company = latest.Company,
+                                                  DateTime = latest.AircraftPositionDateTimeUtc,
+                                                  TailNumber = latest.TailNumber,
+                                                  FlightNumber = latest.AtcFlightNumber,
+                                                  HexCode = latest.AircraftHexCode,
+                                                  AircraftType = latest.Model,
+                                                  Status = latest.AircraftStatus,
+                                                  PastVisits = pastVisits,
+                                                  Originated = latest.AirportICAO,
+                                              };
+                                          })
+                                          .ToList();
+
+            return aircraftHistoricalData;
         }
 
-        public void ProcessAirportWatchData(List<AirportWatchLiveData> data)
+        public async Task ProcessAirportWatchData(List<AirportWatchLiveData> data)
         {
+            var airportPositions = await GetAirportPositions();
+
             foreach (var record in data)
             {
-                var oldAirportWatchLiveData = _context.AirportWatchLiveData
+                var oldAirportWatchLiveData = await _context.AirportWatchLiveData
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
-                    .FirstOrDefault();
+                    .FirstOrDefaultAsync();
 
                 if (oldAirportWatchLiveData == null)
                 {
@@ -117,6 +150,8 @@ namespace FBOLinx.Web.Services
                     .FirstOrDefault();
 
                 var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
+                airportWatchHistoricalData.AirportICAO = GetNearestICAO(airportPositions, record.Latitude, record.Longitude);
+
                 if (oldAirportWatchHistoricalData == null ||
                     oldAirportWatchHistoricalData.IsAircraftOnGround != record.IsAircraftOnGround)
                 {
@@ -132,7 +167,7 @@ namespace FBOLinx.Web.Services
                 }
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         private void AddPossibleParkingOccurrence(AirportWatchHistoricalData oldAirportWatchHistoricalData, AirportWatchHistoricalData airportWatchHistoricalData)
@@ -158,6 +193,61 @@ namespace FBOLinx.Web.Services
             oldAirportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
             AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
             _context.AirportWatchHistoricalData.Update(oldAirportWatchHistoricalData);
+        }
+
+        private async Task<List<AirportPosition>> GetAirportPositions()
+        {
+            var airports = (await _degaContext.AcukwikAirports
+                            .ToListAsync()
+                            )
+                            .Select(a =>
+                            {
+                                var (alat, alng) = GetGeoLocationFromGPS(a.Latitude, a.Longitude);
+
+                                return new AirportPosition
+                                {
+                                    Latitude = alat,
+                                    Longitude = alng,
+                                    Icao = a.Icao,
+                                };
+                            })
+                            .ToList();
+
+            return airports;
+        }
+
+        private string GetNearestICAO(List<AirportPosition> airportPositions, double latitude, double longitude)
+        {
+            double minDistance = -1;
+            string nearestICAO = null;
+            foreach (var airport in airportPositions)
+            {
+                double distance = GeoCalculator.GetDistance(latitude, longitude, airport.Latitude, airport.Longitude, 1);
+
+                if (minDistance == -1 || distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestICAO = airport.Icao;
+                }
+            }
+
+            return nearestICAO;
+        }
+
+        private Tuple<double, double> GetGeoLocationFromGPS(string lat, string lng)
+        {
+            var latDirection = lat.Substring(0, 1);
+            var lngDirection = lng.Substring(0, 1);
+
+            double latitude = double.Parse(lat.Substring(1, 2)) + double.Parse(lat.Substring(4, 2)) / 60 + double.Parse(lat[7..]) / 3600;
+            double longitude = lng.Length == 8 ?
+                double.Parse(lng.Substring(1, 2)) + double.Parse(lng.Substring(4, 2)) / 60 + double.Parse(lng[6..]) / 3600 :
+                double.Parse(lng.Substring(1, 3)) + double.Parse(lng.Substring(5, 2)) / 60 + double.Parse(lng[7..]) / 3600;
+
+            if (latDirection != "N") latitude = -latitude;
+            if (lngDirection != "E") longitude = -longitude;
+
+            return new Tuple<double, double>(latitude, longitude);
         }
     }
 }
