@@ -41,9 +41,10 @@ namespace FBOLinx.Web.Services
             return filteredResult;
         }
 
-        public async Task<List<AirportWatchHistoricalDataResponse>> GetHistoricalData(int groupId, AirportWatchHistoricalDataRequest request)
+        public async Task<List<AirportWatchHistoricalDataResponse>> GetHistoricalData(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
             var allAircrafts = await _aircraftService.GetAllAircrafts();
+            var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboId).FirstOrDefaultAsync();
 
             var historicalData = await (from awhd in _context.AirportWatchHistoricalData
                                         join awat in _context.AirportWatchAircraftTailNumber on new { awhd.AircraftHexCode, awhd.AtcFlightNumber } equals new { awat.AircraftHexCode, awat.AtcFlightNumber }
@@ -99,7 +100,9 @@ namespace FBOLinx.Web.Services
                                           .GroupBy(ah => new { ah.CustomerId, ah.AirportICAO })
                                           .Select(g => {
                                               var latest = g.OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
-                                              var pastVisits = g.Where(ah => ah.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing).Count();
+                                              var pastVisits = g.Where(ah =>
+                                                ah.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing &&
+                                                ah.AirportICAO.ToLower() == fboAirport.Icao.ToLower()).Count();
                                               return new AirportWatchHistoricalDataResponse
                                               {
                                                   Company = latest.Company,

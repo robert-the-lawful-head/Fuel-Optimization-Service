@@ -38,10 +38,10 @@ namespace FBOLinx.Web.Controllers
             });
         }
 
-        [HttpPost("group/{groupId}/historical-data")]
-        public async Task<IActionResult> GetHistoricalData([FromRoute] int groupId, [FromBody] AirportWatchHistoricalDataRequest request)
+        [HttpPost("group/{groupId}/fbo/{fboId}/historical-data")]
+        public async Task<IActionResult> GetHistoricalData([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request)
         {
-            var data = await _airportWatchService.GetHistoricalData(groupId, request);
+            var data = await _airportWatchService.GetHistoricalData(groupId, fboId, request);
             return Ok(data);
         }
 

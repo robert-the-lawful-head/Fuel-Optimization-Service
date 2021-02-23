@@ -40,6 +40,7 @@ export class AnalyticsAirportWatchTableComponent implements OnInit {
         this.ngxLoader.startLoader(this.chartName);
         this.airportWatchService.getHistoricalData(
             this.sharedService.currentUser.groupId,
+            this.sharedService.currentUser.fboId,
             this.filterStartDate,
             this.filterEndDate,
         )
