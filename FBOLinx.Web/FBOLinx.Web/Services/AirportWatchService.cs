@@ -102,7 +102,7 @@ namespace FBOLinx.Web.Services
                                               var latest = g.OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
                                               var pastVisits = g.Where(ah =>
                                                 ah.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing &&
-                                                ah.AirportICAO.ToLower() == fboAirport.Icao.ToLower()).Count();
+                                                ah.AirportICAO == fboAirport.Icao).Count();
                                               return new AirportWatchHistoricalDataResponse
                                               {
                                                   Company = latest.Company,
