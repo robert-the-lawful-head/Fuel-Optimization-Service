@@ -81,11 +81,6 @@
     <None Remove="ClientApp\src\app\shared\components\table-global-search\table-global-search.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\tail-lookup-tool\tail-lookup-tool.component.ts" />
     <None Remove="ClientApp\src\app\shared\pipes\safe-html-pipe.pipe.ts" />
-    <None Remove="SQL\kwvy5k\add_AirportICAO_AirportWatchHistoricalData.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="SQL\kwvy5k\add_AirportICAO_AirportWatchHistoricalData.sql" />
   </ItemGroup>
 
   <ItemGroup>
