@@ -18,9 +18,9 @@ export class AirportWatchService {
         return this.http.get<any>(this.accessPointUrl + '/list/fbo/' + fboId, { headers: this.headers });
     }
 
-    public getHistoricalData(groupId: number, startDate: Date, endDate: Date) {
+    public getHistoricalData(groupId: number, fboId: number, startDate: Date, endDate: Date) {
         return this.http.post<FlightWatchHistorical[]>(
-            this.accessPointUrl + '/group/' + groupId + '/historical-data',
+            this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId + '/historical-data',
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
