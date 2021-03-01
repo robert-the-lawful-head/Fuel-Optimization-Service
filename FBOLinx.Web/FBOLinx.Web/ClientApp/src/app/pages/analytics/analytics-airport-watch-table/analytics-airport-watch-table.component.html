@@ -95,7 +95,7 @@
                     <td *matCellDef="let info" mat-cell> {{info.status | airportWatchStatus}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="pastVisits">
+                <!-- <ng-container matColumnDef="pastVisits">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Past Visits</th>
                     <td *matCellDef="let info" mat-cell> {{info.pastVisits}} </td>
                 </ng-container>
@@ -103,7 +103,7 @@
                 <ng-container matColumnDef="originated">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Originated</th>
                     <td *matCellDef="let info" mat-cell> {{info.originated}} </td>
-                </ng-container>
+                </ng-container> -->
                 <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
                 <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
             </table>

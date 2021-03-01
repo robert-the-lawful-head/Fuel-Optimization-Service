@@ -20,7 +20,9 @@ export class AnalyticsAirportWatchTableComponent implements OnInit {
     public filterStartDate: Date;
     public filterEndDate: Date;
     public chartName = 'airport-watch-table';
-    public displayedColumns: string[] = ['company', 'dateTime', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'status', 'pastVisits', 'originated'];
+    public displayedColumns: string[] = ['company', 'dateTime', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'status',
+    //  'pastVisits', 'originated'
+    ];
     public dataSource: MatTableDataSource<FlightWatchHistorical>;
 
     constructor(
