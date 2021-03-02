@@ -60,7 +60,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
             result.ForEach(x =>
             {
-                var pricingTemplate = pricingTemplates.FirstOrDefault(x => x.CustomerAircraftId == x.Oid);
+                var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.Oid);
                 x.PricingTemplateId = pricingTemplate?.Oid;
                 x.PricingTemplateName = pricingTemplate?.Name;
 
