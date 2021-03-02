@@ -64,4 +64,10 @@ export class FbosService {
             headers: this.headers,
         });
     }
+
+    public getByAcukwikHandlerId(handlerId: number) {
+        return this.http.get(this.accessPointUrl + '/by-akukwik-handlerId/' + handlerId, {
+            headers: this.headers,
+        });
+    }
 }

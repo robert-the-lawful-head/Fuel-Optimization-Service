@@ -13,6 +13,7 @@ export class GroupsDialogNewGroupComponent {
     step = 1;
     type: string;
     dataSources: any = {};
+    public fboAlreadyExists: boolean = false;
 
     constructor(
         public dialogRef: MatDialogRef<GroupsDialogNewGroupComponent>,
@@ -43,7 +44,15 @@ export class GroupsDialogNewGroupComponent {
     public fboSelectionChange() {
         this.data.fbo = this.data.acukwikFbo.handlerLongName;
         this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
-        this.data.group = `${ this.data.fbo } - ${ this.data.icao }`;
+        this.data.group = `${this.data.fbo} - ${this.data.icao}`;
+
+        this.fboService.getByAcukwikHandlerId(this.data.acukwikFboHandlerId).subscribe((response: any) => {
+            if (!response || response.oid == 0) {
+                this.fboAlreadyExists = false;
+            } else {
+                this.fboAlreadyExists = true;
+            }
+        });
     }
 
 
