@@ -14,5 +14,6 @@ namespace FBOLinx.Web.Models.Responses.AirportWatch
         public AircraftStatusType Status { get; set; }
         public int PastVisits { get; set; }
         public string Originated { get; set; }
+        public bool IsFuelerlinx { get; set; }
     }
 }

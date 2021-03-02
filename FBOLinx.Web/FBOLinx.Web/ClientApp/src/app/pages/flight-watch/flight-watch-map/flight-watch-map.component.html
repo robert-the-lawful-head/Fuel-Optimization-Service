@@ -18,6 +18,16 @@
             fillOpacity: 0.35
         }"
     ></map-rectangle>
+    <map-circle
+        [center]="center"
+        [radius]="250 * 1609.34"
+        [options]="{
+            strokeOpacity: 0,
+            strokeWeight: 0,
+            fillColor: '#585858',
+            fillOpacity: 0.35
+        }"
+    ></map-circle>
     <ng-container *ngFor="let key of keys">
         <map-marker
             [position]="{

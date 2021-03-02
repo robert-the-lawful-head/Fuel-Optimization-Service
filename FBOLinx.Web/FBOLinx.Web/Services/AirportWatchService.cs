@@ -46,22 +46,25 @@ namespace FBOLinx.Web.Services
             var allAircrafts = await _aircraftService.GetAllAircrafts();
             var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboId).FirstOrDefaultAsync();
 
-            var historicalData = await (from awhd in _context.AirportWatchHistoricalData
-                                        join awat in _context.AirportWatchAircraftTailNumber on new { awhd.AircraftHexCode, awhd.AtcFlightNumber } equals new { awat.AircraftHexCode, awat.AtcFlightNumber }
-                                        join ca in _context.CustomerAircrafts on awat.AtcFlightNumber equals ca.TailNumber
+            var historicalData = await (from ca in _context.CustomerAircrafts
                                         join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 } equals new { cig.CustomerId, cig.GroupId }
-                                        where ca.GroupId == groupId &&
+                                        join c in _context.Customers on cig.CustomerId equals c.Oid
+                                        join awhd in _context.AirportWatchHistoricalData on ca.TailNumber equals awhd.AtcFlightNumber
+                                        into leftJoinedAwhd
+                                        from awhd in leftJoinedAwhd.DefaultIfEmpty()
+                                        where ca.GroupId == groupId && (awhd == null ||
                                             awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.ToUniversalTime() &&
-                                            awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.ToUniversalTime().AddDays(1)
+                                            awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.ToUniversalTime().AddDays(1))
                                         group awhd by new
                                         {
                                             AirportWatchHistoricalDataID = awhd.Oid,
-                                            awat.AircraftHexCode,
-                                            awat.AtcFlightNumber,
+                                            awhd.AircraftHexCode,
+                                            awhd.AtcFlightNumber,
                                             awhd.AircraftPositionDateTimeUtc,
                                             awhd.AircraftStatus,
                                             awhd.AirportICAO,
                                             cig.Company,
+                                            c.FuelerlinxId,
                                             ca.CustomerId,
                                             ca.TailNumber,
                                             ca.AircraftId,
@@ -75,6 +78,7 @@ namespace FBOLinx.Web.Services
                                             groupedResult.Key.AircraftPositionDateTimeUtc,
                                             groupedResult.Key.AircraftStatus,
                                             groupedResult.Key.Company,
+                                            groupedResult.Key.FuelerlinxId,
                                             groupedResult.Key.CustomerId,
                                             groupedResult.Key.TailNumber,
                                             groupedResult.Key.AircraftId,
@@ -88,6 +92,7 @@ namespace FBOLinx.Web.Services
                                           {
                                               h.CustomerId,
                                               h.Company,
+                                              h.FuelerlinxId,
                                               h.AircraftPositionDateTimeUtc,
                                               h.TailNumber,
                                               h.AtcFlightNumber,
@@ -106,6 +111,7 @@ namespace FBOLinx.Web.Services
                                               return new AirportWatchHistoricalDataResponse
                                               {
                                                   Company = latest.Company,
+                                                  IsFuelerlinx = latest.FuelerlinxId > 0,
                                                   DateTime = latest.AircraftPositionDateTimeUtc,
                                                   TailNumber = latest.TailNumber,
                                                   FlightNumber = latest.AtcFlightNumber,
