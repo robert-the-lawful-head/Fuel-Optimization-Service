@@ -50,6 +50,24 @@
                     <span matPrefix><i class="fa fa-search"></i></span>
                 </mat-form-field>
             </div>
+            <div class="d-inline-block mr-2 ml-2">
+                <mat-slide-toggle
+                    color="primary"
+                    [(ngModel)]="isFuelerlinx"
+                    (change)="toggleFilter()"
+                >
+                    FuelerLinx
+                </mat-slide-toggle>
+            </div>
+            <!-- <div class="d-inline-block mr-2 ml-2">
+                <mat-slide-toggle
+                    color="primary"
+                    [(ngModel)]="isCommercial"
+                    (change)="toggleFilter()"
+                >
+                    Commercial Aircraft
+                </mat-slide-toggle>
+            </div> -->
         </div>
 
         <div class="table-container mat-elevation-z8">
@@ -67,7 +85,7 @@
 
                 <ng-container matColumnDef="dateTime">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Date and Time</th>
-                    <td *matCellDef="let info" mat-cell> {{info.dateTime | date:'M/d/YYYY H:m'}} </td>
+                    <td *matCellDef="let info" mat-cell> {{info.flightNumber ? (info.dateTime | date:'M/d/YYYY H:m') : "N/A"}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="tailNumber">
@@ -77,12 +95,12 @@
 
                 <ng-container matColumnDef="flightNumber">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Flight #</th>
-                    <td *matCellDef="let info" mat-cell> {{info.flightNumber}} </td>
+                    <td *matCellDef="let info" mat-cell> {{info.flightNumber ? info.flightNumber : "N/A"}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="hexCode">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Hex # </th>
-                    <td *matCellDef="let info" mat-cell> {{info.hexCode}} </td>
+                    <td *matCellDef="let info" mat-cell> {{info.flightNumber ? info.hexCode : "N/A"}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="aircraftType">
@@ -92,15 +110,15 @@
 
                 <ng-container matColumnDef="status">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Departure / Arrival</th>
-                    <td *matCellDef="let info" mat-cell> {{info.status | airportWatchStatus}} </td>
+                    <td *matCellDef="let info" mat-cell> {{info.flightNumber ? (info.status | airportWatchStatus) : "N/A"}}</td>
                 </ng-container>
 
-                <!-- <ng-container matColumnDef="pastVisits">
+                <ng-container matColumnDef="pastVisits">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Past Visits</th>
-                    <td *matCellDef="let info" mat-cell> {{info.pastVisits}} </td>
+                    <td *matCellDef="let info" mat-cell> {{info.flightNumber ? info.pastVisits : "N/A"}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="originated">
+                <!-- <ng-container matColumnDef="originated">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Originated</th>
                     <td *matCellDef="let info" mat-cell> {{info.originated}} </td>
                 </ng-container> -->
