@@ -296,6 +296,19 @@ namespace FBOLinx.Web.Controllers
             return Ok(fbo);
         }
 
+        [HttpGet("by-akukwik-handlerId/{handlerId}")]
+        public async Task<ActionResult<Fbos>> GetFboByAcukwikHandlerId([FromRoute] int handlerId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).Include(x => x.Group).Include(x => x.fboAirport).Include(x => x.Contacts).ThenInclude(c => c.Contact).FirstOrDefaultAsync();
+
+            return Ok(fbo);
+        }
+
         private bool FbosExists(int id)
         {
             return _context.Fbos.Any(e => e.Oid == id);

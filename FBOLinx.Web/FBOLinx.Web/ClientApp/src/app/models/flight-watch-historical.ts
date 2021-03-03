@@ -14,4 +14,5 @@ export type FlightWatchHistorical = {
     status: number;
     pastVisits: number;
     originated: string;
+    isFuelerlinx: boolean;
 };

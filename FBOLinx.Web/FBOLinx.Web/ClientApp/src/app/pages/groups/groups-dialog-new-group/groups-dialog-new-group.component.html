@@ -34,9 +34,13 @@
                    matInput>
         </mat-form-field>
     </div>
+    <div *ngIf="fboAlreadyExists" style="color: red">
+        <i>This FBO is already registered to a group in FBOLinx.</i> 
+    </div>
 </div>
 <div mat-dialog-actions>
     <button
+        [disabled]="fboAlreadyExists"
         (click)="onSaveClick()"
         class="mr-1"
         color="accent"
