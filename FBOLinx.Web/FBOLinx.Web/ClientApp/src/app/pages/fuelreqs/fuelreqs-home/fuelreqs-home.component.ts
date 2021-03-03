@@ -77,6 +77,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterStartDate = event.filterStartDate;
         this.filterEndDate = event.filterEndDate;
         this.restartFuelReqDataServe();
+        this.loadFuelReqs();
     }
 
     public export(event) {
