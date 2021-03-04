@@ -232,7 +232,7 @@ namespace FBOLinx.Web.Services
             if (_LiveDataToAdjust == null || _LiveDataToAdjust.Count == 0)
                 return;
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            await _context.BulkInsertOrUpdateOrDeleteAsync(_LiveDataToAdjust, config => config.SetOutputIdentity = false);
+            await _context.BulkInsertOrUpdateAsync(_LiveDataToAdjust, config => config.SetOutputIdentity = false);
             await transaction.CommitAsync();
         }
 
@@ -241,7 +241,7 @@ namespace FBOLinx.Web.Services
             if (_HistoricalDataToAdjust == null || _HistoricalDataToAdjust.Count == 0)
                 return;
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            await _context.BulkInsertOrUpdateOrDeleteAsync(_HistoricalDataToAdjust, config => config.SetOutputIdentity = false);
+            await _context.BulkInsertOrUpdateAsync(_HistoricalDataToAdjust, config => config.SetOutputIdentity = false);
             await transaction.CommitAsync();
         }
 
@@ -250,7 +250,7 @@ namespace FBOLinx.Web.Services
             if (_TailNumberDataToAdjust == null || _TailNumberDataToAdjust.Count == 0)
                 return;
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            await _context.BulkInsertOrUpdateOrDeleteAsync(_TailNumberDataToAdjust, config => config.SetOutputIdentity = false);
+            await _context.BulkInsertOrUpdateAsync(_TailNumberDataToAdjust, config => config.SetOutputIdentity = false);
             await transaction.CommitAsync();
         }
 
