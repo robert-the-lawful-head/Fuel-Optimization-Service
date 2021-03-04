@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
+using FBOLinx.DB;
 
 namespace FBOLinx.Web.Services
 {
@@ -197,6 +198,7 @@ namespace FBOLinx.Web.Services
             await CommitLiveDataChanges();
             await CommitHistoricalDataChanges();
             await CommitTailNumberDataChanges();
+            await CommitTrackerChanges();
         }
 
         private void AddPossibleParkingOccurrence(AirportWatchHistoricalData oldAirportWatchHistoricalData, AirportWatchHistoricalData airportWatchHistoricalData)
@@ -252,6 +254,19 @@ namespace FBOLinx.Web.Services
             await using var transaction = await _context.Database.BeginTransactionAsync();
             await _context.BulkInsertOrUpdateAsync(_TailNumberDataToAdjust, config => config.SetOutputIdentity = false);
             await transaction.CommitAsync();
+        }
+
+        private async Task CommitTrackerChanges()
+        {
+            var newChangeRecord = new AirportWatchChangeTracker()
+            {
+                DateTimeAppliedUtc = DateTime.UtcNow,
+                HistoricalDataRecords = _HistoricalDataToAdjust?.Count ?? 0,
+                LiveDataRecords = _LiveDataToAdjust?.Count ?? 0,
+                TailNumberRecords = _TailNumberDataToAdjust?.Count ?? 0
+            };
+            await _context.AirportWatchChangeTracker.AddAsync(newChangeRecord);
+            await _context.SaveChangesAsync();
         }
 
         private async Task<List<AirportPosition>> GetAirportPositions()
