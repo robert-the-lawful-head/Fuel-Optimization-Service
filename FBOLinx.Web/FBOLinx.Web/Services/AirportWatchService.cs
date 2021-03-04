@@ -146,6 +146,32 @@ namespace FBOLinx.Web.Services
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
                     .FirstOrDefaultAsync();
 
+                var oldAirportWatchHistoricalData = await _context.AirportWatchHistoricalData
+                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
+                    .OrderByDescending(aw => aw.AircraftPositionDateTimeUtc)
+                    .FirstOrDefaultAsync();
+
+                var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
+
+                //Record historical status
+                
+                //Compare our last "live" record with the new one to determine if the aircraft is taking off or landing
+                //First check if this is our first time seeing the aircraft and it's on the ground (flight number may have changed while offline so they are prepping to takeoff)
+                if (oldAirportWatchLiveData == null && record.IsAircraftOnGround)
+                    _HistoricalDataToAdjust.Add(airportWatchHistoricalData);
+                //Next check if the last live record we have for the aircraft had a different IsAircraftOnGround state than what we see now
+                else if (oldAirportWatchLiveData != null &&
+                    oldAirportWatchLiveData.IsAircraftOnGround != record.IsAircraftOnGround && oldAirportWatchLiveData.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-5))
+                {
+                    _HistoricalDataToAdjust.Add(airportWatchHistoricalData);
+                }
+                //Finally go through the conditions that make this a valid parking occurrence
+                else 
+                {
+                    AddPossibleParkingOccurrence(oldAirportWatchHistoricalData, airportWatchHistoricalData);
+                }
+
+                //Record live-view data and new flight/tail combinations
                 if (oldAirportWatchLiveData == null)
                 {
                     _TailNumberDataToAdjust.Add(new AirportWatchAircraftTailNumber
@@ -160,23 +186,6 @@ namespace FBOLinx.Web.Services
                     AirportWatchLiveData.CopyEntity(oldAirportWatchLiveData, record);
                     _LiveDataToAdjust.Add(oldAirportWatchLiveData);
                 }
-
-                var oldAirportWatchHistoricalData = await _context.AirportWatchHistoricalData
-                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
-                    .OrderByDescending(aw => aw.AircraftPositionDateTimeUtc)
-                    .FirstOrDefaultAsync();
-
-                var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
-
-                //If we don't have an old record or the the aircraft's OnGround state changed in the last 5 minutes then add it as a landing/takeoff
-                if (oldAirportWatchHistoricalData == null ||
-                    (oldAirportWatchHistoricalData.IsAircraftOnGround != record.IsAircraftOnGround && oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-5)))
-                {
-                    _HistoricalDataToAdjust.Add(airportWatchHistoricalData);
-                }
-                else {
-                    AddPossibleParkingOccurrence(oldAirportWatchHistoricalData, airportWatchHistoricalData);
-                }
             }
             
             //Set the nearest airport for all records that will be recorded for historical statuses
@@ -185,7 +194,6 @@ namespace FBOLinx.Web.Services
                 x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
             });
             
-            //await _context.SaveChangesAsync();
             await CommitLiveDataChanges();
             await CommitHistoricalDataChanges();
             await CommitTailNumberDataChanges();
@@ -195,6 +203,9 @@ namespace FBOLinx.Web.Services
         private void AddPossibleParkingOccurrence(AirportWatchHistoricalData oldAirportWatchHistoricalData, AirportWatchHistoricalData airportWatchHistoricalData)
         {
             // Parking occurrences
+            //Don't check for parking if we don't know what the aircraft was doing previously
+            if (oldAirportWatchHistoricalData == null)
+                return;
 
             //First confirm the last record we are comparing with was a landing or a parking
             if (oldAirportWatchHistoricalData.AircraftStatus != AirportWatchHistoricalData.AircraftStatusType.Landing &&
@@ -215,7 +226,6 @@ namespace FBOLinx.Web.Services
             oldAirportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
             AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
             
-            //_context.AirportWatchHistoricalData.Update(oldAirportWatchHistoricalData);
             _HistoricalDataToAdjust.Add(oldAirportWatchHistoricalData);
 
         }
