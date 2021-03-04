@@ -148,13 +148,6 @@ namespace FBOLinx.Web.Services
 
                 if (oldAirportWatchLiveData == null)
                 {
-                    //_context.AirportWatchAircraftTailNumber.Add(new AirportWatchAircraftTailNumber
-                    //{
-                    //    AircraftHexCode = record.AircraftHexCode,
-                    //    AtcFlightNumber = record.AtcFlightNumber,
-                    //});
-                    //// Add the most recent records for the "live" view
-                    //await _context.AirportWatchLiveData.AddAsync(record);
                     _TailNumberDataToAdjust.Add(new AirportWatchAircraftTailNumber
                     {
                         AircraftHexCode = record.AircraftHexCode,
@@ -165,7 +158,6 @@ namespace FBOLinx.Web.Services
                 else
                 {
                     AirportWatchLiveData.CopyEntity(oldAirportWatchLiveData, record);
-                    //_context.AirportWatchLiveData.Update(oldAirportWatchLiveData);
                     _LiveDataToAdjust.Add(oldAirportWatchLiveData);
                 }
 
@@ -175,24 +167,23 @@ namespace FBOLinx.Web.Services
                     .FirstOrDefaultAsync();
 
                 var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
-                airportWatchHistoricalData.AirportICAO = GetNearestICAO(airportPositions, record.Latitude, record.Longitude);
 
+                //If we don't have an old record or the the aircraft's OnGround state changed in the last 5 minutes then add it as a landing/takeoff
                 if (oldAirportWatchHistoricalData == null ||
-                    oldAirportWatchHistoricalData.IsAircraftOnGround != record.IsAircraftOnGround)
+                    (oldAirportWatchHistoricalData.IsAircraftOnGround != record.IsAircraftOnGround && oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-5)))
                 {
-                    //await _context.AirportWatchHistoricalData.AddAsync(airportWatchHistoricalData);
                     _HistoricalDataToAdjust.Add(airportWatchHistoricalData);
-                }
-                else if (!oldAirportWatchHistoricalData.IsAircraftOnGround && !record.IsAircraftOnGround)
-                {
-                    AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
-                    //_context.AirportWatchHistoricalData.Update(oldAirportWatchHistoricalData);
-                    _HistoricalDataToAdjust.Add(oldAirportWatchHistoricalData);
                 }
                 else {
                     AddPossibleParkingOccurrence(oldAirportWatchHistoricalData, airportWatchHistoricalData);
                 }
             }
+            
+            //Set the nearest airport for all records that will be recorded for historical statuses
+            _HistoricalDataToAdjust.ForEach(x =>
+            {
+                x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
+            });
             
             //await _context.SaveChangesAsync();
             await CommitLiveDataChanges();
