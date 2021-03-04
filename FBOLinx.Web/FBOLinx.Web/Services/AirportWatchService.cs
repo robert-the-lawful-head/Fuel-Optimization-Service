@@ -156,11 +156,9 @@ namespace FBOLinx.Web.Services
                 //Record historical status
                 
                 //Compare our last "live" record with the new one to determine if the aircraft is taking off or landing
-                //First check if this is our first time seeing the aircraft and it's on the ground (flight number may have changed while offline so they are prepping to takeoff)
-                if (oldAirportWatchLiveData == null && record.IsAircraftOnGround)
-                    _HistoricalDataToAdjust.Add(airportWatchHistoricalData);
+                
                 //Next check if the last live record we have for the aircraft had a different IsAircraftOnGround state than what we see now
-                else if (oldAirportWatchLiveData != null &&
+                if (oldAirportWatchLiveData != null &&
                     oldAirportWatchLiveData.IsAircraftOnGround != record.IsAircraftOnGround && oldAirportWatchLiveData.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-5))
                 {
                     _HistoricalDataToAdjust.Add(airportWatchHistoricalData);
@@ -207,12 +205,13 @@ namespace FBOLinx.Web.Services
             if (oldAirportWatchHistoricalData == null)
                 return;
 
+            // If neither the old record nor the new one are on the ground then it can't be a parking
+            if (!oldAirportWatchHistoricalData.IsAircraftOnGround || !airportWatchHistoricalData.IsAircraftOnGround)
+                return;
+
             //First confirm the last record we are comparing with was a landing or a parking
             if (oldAirportWatchHistoricalData.AircraftStatus != AirportWatchHistoricalData.AircraftStatusType.Landing &&
                 oldAirportWatchHistoricalData.AircraftStatus != AirportWatchHistoricalData.AircraftStatusType.Parking)
-                return;
-            // If neither the old record nor the new one are on the ground then it can't be a parking
-            if (!oldAirportWatchHistoricalData.IsAircraftOnGround || !airportWatchHistoricalData.IsAircraftOnGround)
                 return;
 
             //If the aircraft has not moved then do not update the parking record - we want to keep the old record when it first stopped moving
