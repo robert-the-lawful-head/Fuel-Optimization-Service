@@ -391,8 +391,13 @@ namespace FBOLinx.Web.Services
         public async Task<List<PricingTemplatesGridViewModel>> GetPricingTemplates(int fboId, int groupId)
         {
             //Load customer assignments by template ID
-            var customerAssignments = await _context.CustomCustomerTypes.Where(x => x.Fboid == fboId).ToListAsync();
-            
+            var customerAssignments = await (from cibg in _context.CustomerInfoByGroup
+                                             join cct in _context.CustomCustomerTypes on cibg.CustomerId equals cct.CustomerId
+                                             join c in _context.Customers on cibg.CustomerId equals c.Oid
+                                             where cct.Fboid == fboId && cibg.GroupId == groupId && (c.Suspended == null || c.Suspended == false)
+                                             select new
+                                             { CustomerType = cct.CustomerType }).ToListAsync();
+
             //Separate inner queries first for FBO Prices and Margin Tiers
             var tempFboPrices = await _context.Fboprices
                                                 .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
