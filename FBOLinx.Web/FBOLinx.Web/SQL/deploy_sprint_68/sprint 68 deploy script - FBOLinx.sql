@@ -139,3 +139,22 @@ SELECT @OID AS OID
 
 --endregion
 GO
+USE [paragon_test]
+GO
+/****** Object:  Table [dbo].[AirportWatchChangeTracker]    Script Date: 3/4/2021 10:25:23 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AirportWatchChangeTracker](
+	[OID] [int] IDENTITY(1,1) NOT NULL,
+	[LiveDataRecords] [int] NULL,
+	[HistoricalDataRecords] [int] NULL,
+	[TailNumberRecords] [int] NULL,
+	[DateTimeAppliedUTC] [datetime2](7) NULL,
+ CONSTRAINT [PK_AirportWatchChangeTracker] PRIMARY KEY CLUSTERED 
+(
+	[OID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
