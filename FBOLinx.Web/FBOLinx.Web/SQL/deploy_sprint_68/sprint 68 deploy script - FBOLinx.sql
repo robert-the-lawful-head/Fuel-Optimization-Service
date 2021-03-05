@@ -3,13 +3,7 @@ GO
 ALTER TABLE AirportWatchHistoricalData
 ADD AirportICAO varchar(255) null
 GO
-delete a
-FROM [CustomerAircrafts] AS [c]
-INNER JOIN [AircraftPrices] AS [a] ON [c].[OID] = [a].[CustomerAircraftID]
-inner join PricingTemplate pt on pt.oid = a.PriceTemplateID
-left join FBOs f on f.oid = pt.fboid and f.groupid = c.Groupid
-where f.OID is null
-GO
+
 /****** Object:  StoredProcedure [dbo].[up_InsertUpdate_AircraftPrices]    Script Date: 3/2/2021 11:29:35 AM ******/
 SET ANSI_NULLS ON
 GO
