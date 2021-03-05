@@ -511,7 +511,8 @@ namespace FBOLinx.Web.Controllers
 
                 var customer =
                     await _context.Customers.FirstOrDefaultAsync(x =>
-                        x.FuelerlinxId == request.FuelerlinxCompanyID);
+                        x.FuelerlinxId == request.FuelerlinxCompanyID
+                        && (!x.GroupId.HasValue || x.GroupId.Value != 1));
                 if (customer == null)
                     return Ok(null);
 
