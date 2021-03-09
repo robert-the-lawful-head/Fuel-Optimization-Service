@@ -20,9 +20,11 @@ namespace FBOLinx.Web.Services
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
         private readonly AircraftService _aircraftService;
-        private List<AirportWatchLiveData> _LiveDataToAdjust;
-        private List<AirportWatchHistoricalData> _HistoricalDataToAdjust;
-        private List<AirportWatchAircraftTailNumber> _TailNumberDataToAdjust;
+        private List<AirportWatchLiveData> _LiveDataToUpdate;
+        private List<AirportWatchLiveData> _LiveDataToInsert;
+        private List<AirportWatchHistoricalData> _HistoricalDataToUpdate;
+        private List<AirportWatchHistoricalData> _HistoricalDataToInsert;
+        private List<AirportWatchAircraftTailNumber> _TailNumberDataToInsert;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext,  AircraftService aircraftService)
         {
@@ -134,9 +136,11 @@ namespace FBOLinx.Web.Services
 
         public async Task ProcessAirportWatchData(List<AirportWatchLiveData> data)
         {
-            _LiveDataToAdjust = new List<AirportWatchLiveData>();
-            _HistoricalDataToAdjust = new List<AirportWatchHistoricalData>();
-            _TailNumberDataToAdjust = new List<AirportWatchAircraftTailNumber>();
+            _LiveDataToUpdate = new List<AirportWatchLiveData>();
+            _LiveDataToInsert = new List<AirportWatchLiveData>();
+            _HistoricalDataToUpdate = new List<AirportWatchHistoricalData>();
+            _HistoricalDataToInsert = new List<AirportWatchHistoricalData>();
+            _TailNumberDataToInsert = new List<AirportWatchAircraftTailNumber>();
 
             var airportPositions = await GetAirportPositions();
 
@@ -161,7 +165,7 @@ namespace FBOLinx.Web.Services
                 if (oldAirportWatchLiveData != null &&
                     oldAirportWatchLiveData.IsAircraftOnGround != record.IsAircraftOnGround && oldAirportWatchLiveData.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-5))
                 {
-                    _HistoricalDataToAdjust.Add(airportWatchHistoricalData);
+                    _HistoricalDataToInsert.Add(airportWatchHistoricalData);
                 }
                 //Finally go through the conditions that make this a valid parking occurrence
                 else 
@@ -172,29 +176,31 @@ namespace FBOLinx.Web.Services
                 //Record live-view data and new flight/tail combinations
                 if (oldAirportWatchLiveData == null)
                 {
-                    _TailNumberDataToAdjust.Add(new AirportWatchAircraftTailNumber
+                    _TailNumberDataToInsert.Add(new AirportWatchAircraftTailNumber
                     {
                         AircraftHexCode = record.AircraftHexCode,
                         AtcFlightNumber = record.AtcFlightNumber,
                     });
-                    _LiveDataToAdjust.Add(record);
+                    _LiveDataToInsert.Add(record);
                 }
                 else
                 {
                     AirportWatchLiveData.CopyEntity(oldAirportWatchLiveData, record);
-                    _LiveDataToAdjust.Add(oldAirportWatchLiveData);
+                    _LiveDataToUpdate.Add(oldAirportWatchLiveData);
                 }
             }
             
             //Set the nearest airport for all records that will be recorded for historical statuses
-            _HistoricalDataToAdjust.ForEach(x =>
+            _HistoricalDataToUpdate.ForEach(x =>
             {
                 x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
             });
             
-            await CommitLiveDataChanges();
-            await CommitHistoricalDataChanges();
-            await CommitTailNumberDataChanges();
+            await CommitLiveDataAdditions();
+            await CommitLiveDataUpdates();
+            await CommitHistoricalDataAdditions();
+            await CommitHistoricalDataUpdates();
+            await CommitTailNumberDataAdditions();
             await CommitTrackerChanges();
         }
 
@@ -222,37 +228,62 @@ namespace FBOLinx.Web.Services
             if (oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc < DateTime.UtcNow.AddMinutes(-10))
                 return;
             //The aircraft has moved since landing - this should be an updated parking record
-            oldAirportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
-            AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
-            
-            _HistoricalDataToAdjust.Add(oldAirportWatchHistoricalData);
+            airportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
+
+            if (oldAirportWatchHistoricalData.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking)
+            {
+                AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
+                _HistoricalDataToUpdate.Add(oldAirportWatchHistoricalData);
+            }
+            else
+            {
+                _HistoricalDataToInsert.Add(airportWatchHistoricalData);
+            }
 
         }
 
-        private async Task CommitLiveDataChanges()
+        private async Task CommitLiveDataAdditions()
         {
-            if (_LiveDataToAdjust == null || _LiveDataToAdjust.Count == 0)
+            if (_LiveDataToInsert == null || _LiveDataToInsert.Count == 0)
                 return;
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            await _context.BulkInsertOrUpdateAsync(_LiveDataToAdjust, config => config.SetOutputIdentity = false);
+            await _context.BulkInsertAsync(_LiveDataToInsert);
             await transaction.CommitAsync();
         }
 
-        private async Task CommitHistoricalDataChanges()
+        private async Task CommitLiveDataUpdates()
         {
-            if (_HistoricalDataToAdjust == null || _HistoricalDataToAdjust.Count == 0)
+            if (_LiveDataToUpdate == null || _LiveDataToUpdate.Count == 0)
                 return;
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            await _context.BulkInsertOrUpdateAsync(_HistoricalDataToAdjust, config => config.SetOutputIdentity = false);
+            await _context.BulkUpdateAsync(_LiveDataToUpdate);
             await transaction.CommitAsync();
         }
 
-        private async Task CommitTailNumberDataChanges()
+        private async Task CommitHistoricalDataAdditions()
         {
-            if (_TailNumberDataToAdjust == null || _TailNumberDataToAdjust.Count == 0)
+            if (_HistoricalDataToInsert == null || _HistoricalDataToInsert.Count == 0)
                 return;
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            await _context.BulkInsertOrUpdateAsync(_TailNumberDataToAdjust, config => config.SetOutputIdentity = false);
+            await _context.BulkInsertAsync(_HistoricalDataToInsert);
+            await transaction.CommitAsync();
+        }
+
+        private async Task CommitHistoricalDataUpdates()
+        {
+            if (_HistoricalDataToUpdate == null || _HistoricalDataToUpdate.Count == 0)
+                return;
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            await _context.BulkUpdateAsync(_HistoricalDataToUpdate);
+            await transaction.CommitAsync();
+        }
+
+        private async Task CommitTailNumberDataAdditions()
+        {
+            if (_TailNumberDataToInsert == null || _TailNumberDataToInsert.Count == 0)
+                return;
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            await _context.BulkInsertAsync(_TailNumberDataToInsert);
             await transaction.CommitAsync();
         }
 
@@ -261,9 +292,9 @@ namespace FBOLinx.Web.Services
             var newChangeRecord = new AirportWatchChangeTracker()
             {
                 DateTimeAppliedUtc = DateTime.UtcNow,
-                HistoricalDataRecords = _HistoricalDataToAdjust?.Count ?? 0,
-                LiveDataRecords = _LiveDataToAdjust?.Count ?? 0,
-                TailNumberRecords = _TailNumberDataToAdjust?.Count ?? 0
+                HistoricalDataRecords = _HistoricalDataToUpdate?.Count ?? 0,
+                LiveDataRecords = _LiveDataToUpdate?.Count ?? 0,
+                TailNumberRecords = _TailNumberDataToUpdate?.Count ?? 0
             };
             await _context.AirportWatchChangeTracker.AddAsync(newChangeRecord);
             await _context.SaveChangesAsync();
