@@ -292,9 +292,9 @@ namespace FBOLinx.Web.Services
             var newChangeRecord = new AirportWatchChangeTracker()
             {
                 DateTimeAppliedUtc = DateTime.UtcNow,
-                HistoricalDataRecords = _HistoricalDataToUpdate?.Count ?? 0,
-                LiveDataRecords = _LiveDataToUpdate?.Count ?? 0,
-                TailNumberRecords = _TailNumberDataToUpdate?.Count ?? 0
+                HistoricalDataRecords = (_HistoricalDataToInsert?.Count ?? 0) + (_HistoricalDataToUpdate?.Count ?? 0),
+                LiveDataRecords = (_LiveDataToInsert?.Count ?? 0) + (_LiveDataToUpdate?.Count ?? 0),
+                TailNumberRecords = _TailNumberDataToInsert?.Count ?? 0
             };
             await _context.AirportWatchChangeTracker.AddAsync(newChangeRecord);
             await _context.SaveChangesAsync();
