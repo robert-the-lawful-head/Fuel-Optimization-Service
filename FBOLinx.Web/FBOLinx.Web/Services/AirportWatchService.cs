@@ -197,11 +197,6 @@ namespace FBOLinx.Web.Services
             });
             
             await CommitChanges();
-            //await CommitLiveDataUpdates();
-            //await CommitHistoricalDataAdditions();
-            //await CommitHistoricalDataUpdates();
-            //await CommitTailNumberDataAdditions();
-            //await CommitTrackerChanges();
         }
 
         private void AddPossibleParkingOccurrence(AirportWatchHistoricalData oldAirportWatchHistoricalData, AirportWatchHistoricalData airportWatchHistoricalData)
@@ -252,57 +247,15 @@ namespace FBOLinx.Web.Services
             await _context.BulkInsertAsync(_HistoricalDataToInsert);
             await _context.BulkUpdateAsync(_HistoricalDataToUpdate); 
             await _context.BulkInsertAsync(_TailNumberDataToInsert);
+            await _context.AirportWatchChangeTracker.AddAsync(new AirportWatchChangeTracker()
+            {
+                DateTimeAppliedUtc = DateTime.UtcNow,
+                HistoricalDataRecords = (_HistoricalDataToInsert?.Count ?? 0) + (_HistoricalDataToUpdate?.Count ?? 0),
+                LiveDataRecords = (_LiveDataToInsert?.Count ?? 0) + (_LiveDataToUpdate?.Count ?? 0),
+                TailNumberRecords = _TailNumberDataToInsert?.Count ?? 0
+            });
             await transaction.CommitAsync();
         }
-
-        //private async Task CommitLiveDataUpdates()
-        //{
-        //    if (_LiveDataToUpdate == null || _LiveDataToUpdate.Count == 0)
-        //        return;
-        //    await using var transaction = await _context.Database.BeginTransactionAsync();
-        //    await _context.BulkUpdateAsync(_LiveDataToUpdate);
-        //    await transaction.CommitAsync();
-        //}
-
-        //private async Task CommitHistoricalDataAdditions()
-        //{
-        //    if (_HistoricalDataToInsert == null || _HistoricalDataToInsert.Count == 0)
-        //        return;
-        //    await using var transaction = await _context.Database.BeginTransactionAsync();
-        //    await _context.BulkInsertAsync(_HistoricalDataToInsert);
-        //    await transaction.CommitAsync();
-        //}
-
-        //private async Task CommitHistoricalDataUpdates()
-        //{
-        //    if (_HistoricalDataToUpdate == null || _HistoricalDataToUpdate.Count == 0)
-        //        return;
-        //    await using var transaction = await _context.Database.BeginTransactionAsync();
-        //    await _context.BulkUpdateAsync(_HistoricalDataToUpdate);
-        //    await transaction.CommitAsync();
-        //}
-
-        //private async Task CommitTailNumberDataAdditions()
-        //{
-        //    if (_TailNumberDataToInsert == null || _TailNumberDataToInsert.Count == 0)
-        //        return;
-        //    await using var transaction = await _context.Database.BeginTransactionAsync();
-        //    await _context.BulkInsertAsync(_TailNumberDataToInsert);
-        //    await transaction.CommitAsync();
-        //}
-
-        //private async Task CommitTrackerChanges()
-        //{
-        //    var newChangeRecord = new AirportWatchChangeTracker()
-        //    {
-        //        DateTimeAppliedUtc = DateTime.UtcNow,
-        //        HistoricalDataRecords = (_HistoricalDataToInsert?.Count ?? 0) + (_HistoricalDataToUpdate?.Count ?? 0),
-        //        LiveDataRecords = (_LiveDataToInsert?.Count ?? 0) + (_LiveDataToUpdate?.Count ?? 0),
-        //        TailNumberRecords = _TailNumberDataToInsert?.Count ?? 0
-        //    };
-        //    await _context.AirportWatchChangeTracker.AddAsync(newChangeRecord);
-        //    await _context.SaveChangesAsync();
-        //}
 
         private async Task<List<AirportPosition>> GetAirportPositions()
         {

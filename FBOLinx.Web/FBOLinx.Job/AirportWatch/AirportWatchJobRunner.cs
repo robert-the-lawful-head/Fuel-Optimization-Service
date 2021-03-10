@@ -17,6 +17,7 @@ namespace FBOLinx.Job.AirportWatch
         private readonly IConfiguration _config;
         private readonly ApiClient _apiClient;
         private bool _isPostingData = false;
+        private DateTime? _LastPostDateTimeUTC;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
@@ -50,6 +51,10 @@ namespace FBOLinx.Job.AirportWatch
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+            //Don't push more often than every 9 seconds to prevent consistent spikes
+            if (_LastPostDateTimeUTC.HasValue && DateTime.UtcNow < _LastPostDateTimeUTC.GetValueOrDefault().AddSeconds(9))
+                return;
+            
             using var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.File(_config["AirportWatchJobLog"])
@@ -73,6 +78,7 @@ namespace FBOLinx.Job.AirportWatch
                 {
                     _apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
                     logger.Information("Fbolinx api call succeed!");
+                    _LastPostDateTimeUTC = DateTime.UtcNow;
                 }
                 catch (Exception ex)
                 {
