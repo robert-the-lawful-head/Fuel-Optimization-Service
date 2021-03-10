@@ -143,17 +143,33 @@ namespace FBOLinx.Web.Services
             _TailNumberDataToInsert = new List<AirportWatchAircraftTailNumber>();
 
             var airportPositions = await GetAirportPositions();
+            
+            //Grab distinct aircraft for this set of data
+            var distinctAircraftHexCodes =
+                data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList().Distinct();
+            var distinctFlightNumbers = data.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber))
+                .Select(x => x.AtcFlightNumber).ToList().Distinct();
+
+            //Preload the collection of past records from the last 7 days to use in the loop
+            var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
+                distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode) 
+                && distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
+                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
+
+            var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
+                distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
+                && distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
+                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
 
             foreach (var record in data)
             {
-                var oldAirportWatchLiveData = await _context.AirportWatchLiveData
-                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
-                    .FirstOrDefaultAsync();
+                var oldAirportWatchLiveData = oldAirportWatchLiveDataCollection
+                    .FirstOrDefault(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber);
 
-                var oldAirportWatchHistoricalData = await _context.AirportWatchHistoricalData
+                var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
                     .OrderByDescending(aw => aw.AircraftPositionDateTimeUtc)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefault();
 
                 var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
 
