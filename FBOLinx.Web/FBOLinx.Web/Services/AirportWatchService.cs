@@ -255,14 +255,17 @@ namespace FBOLinx.Web.Services
 
         private async Task CommitChanges()
         {
-            if (_LiveDataToInsert == null || _LiveDataToInsert.Count == 0)
-                return;
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            await _context.BulkInsertAsync(_LiveDataToInsert);
-            await _context.BulkUpdateAsync(_LiveDataToUpdate);
-            await _context.BulkInsertAsync(_HistoricalDataToInsert);
-            await _context.BulkUpdateAsync(_HistoricalDataToUpdate); 
-            await _context.BulkInsertAsync(_TailNumberDataToInsert);
+            if (_LiveDataToInsert != null)
+                await _context.BulkInsertAsync(_LiveDataToInsert);
+            if (_LiveDataToUpdate != null)
+                await _context.BulkUpdateAsync(_LiveDataToUpdate);
+            if (_HistoricalDataToInsert != null)
+                await _context.BulkInsertAsync(_HistoricalDataToInsert);
+            if (_HistoricalDataToUpdate != null)
+                await _context.BulkUpdateAsync(_HistoricalDataToUpdate); 
+            if (_TailNumberDataToInsert != null)
+                await _context.BulkInsertAsync(_TailNumberDataToInsert);
             await _context.AirportWatchChangeTracker.AddAsync(new AirportWatchChangeTracker()
             {
                 DateTimeAppliedUtc = DateTime.UtcNow,
@@ -272,7 +275,7 @@ namespace FBOLinx.Web.Services
             });
             await transaction.CommitAsync();
         }
-
+        
         private async Task<List<AirportPosition>> GetAirportPositions()
         {
             var airports = (await _degaContext.AcukwikAirports
