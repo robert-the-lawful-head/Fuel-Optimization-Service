@@ -127,6 +127,14 @@ namespace FBOLinx.Web.Controllers
             return Ok(result);
         }
 
+        [HttpGet("group/{groupId}/fbo/{fboId}/list")]
+        public async Task<IActionResult> GetCustomerAircraftsListByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId)
+        {
+            var result = await _CustomerAircraftService.GetAircraftsList(groupId, fboId);
+
+            return Ok(result);
+        }
+
         [HttpGet("group/{groupId}/count")]
         public async Task<IActionResult> GetCustomerAircraftsCountByGroupId([FromRoute] int groupId)
         {

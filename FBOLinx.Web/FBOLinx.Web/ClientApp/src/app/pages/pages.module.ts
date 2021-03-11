@@ -56,6 +56,7 @@ import {
     ToolbarService
 } from '@syncfusion/ej2-angular-grids';
 import { ResizableModule } from 'angular-resizable-element';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 // Popover
 import { PopoverModule } from 'ngx-smart-popover';
@@ -118,7 +119,8 @@ import { AnalyticsCustomerBreakdownChartComponent } from './analytics/analytics-
 import { AnalyticsCompaniesQuotesDealTableComponent } from './analytics/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component';
 import { AnalyticsFuelVendorSourceChartComponent } from './analytics/analytics-fuel-vendor-source-chart/analytics-fuel-vendor-source-chart.component';
 import { AnalyticsMarketShareFboAirportChartComponent } from './analytics/analytics-market-share-fbo-airport-chart/analytics-market-share-fbo-airport-chart.component';
-import { AnalyticsAirportWatchTableComponent } from './analytics/analytics-airport-watch-table/analytics-airport-watch-table.component';
+import { AnalyticsAirportArrivalsDepaturesComponent } from './analytics/analytics-airport-arrivals-depatures/analytics-airport-arrivals-depatures.component';
+import { AnalyticsAirportVisitsComponent } from './analytics/analytics-airport-visits/analytics-airport-visits.component';
 import { UsersDialogNewUserComponent } from './users/users-dialog-new-user/users-dialog-new-user.component';
 import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
@@ -164,7 +166,7 @@ import { AppPipesModule } from '../app-pipes.module';
 
 import { ClickStopPropagationDirective } from '../shared/directives/click-stop-propagation.directive';
 import { FlightWatchMapMarkerIconPipe } from './flight-watch/flight-watch-map/flight-watch-map-marker.pipe';
-import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-airport-watch-table/analytics-airport-watch-status-marker.pipe';
+import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-airport-arrivals-depatures/analytics-airport-watch-status-marker.pipe';
 
 @NgModule({
     imports: [
@@ -223,6 +225,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         RouterModule,
         PopoverModule,
         ResizableModule,
+        MultiSelectModule,
     ],
     declarations: [
         AuthtokenComponent,
@@ -285,7 +288,8 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         AnalyticsCompaniesQuotesDealTableComponent,
         AnalyticsFuelVendorSourceChartComponent,
         AnalyticsMarketShareFboAirportChartComponent,
-        AnalyticsAirportWatchTableComponent,
+        AnalyticsAirportArrivalsDepaturesComponent,
+        AnalyticsAirportVisitsComponent,
         DeleteConfirmationComponent,
         ProceedConfirmationComponent,
         CloseConfirmationComponent,

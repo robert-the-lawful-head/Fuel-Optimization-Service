@@ -1,13 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FBOLinx.Web.Models.Requests
 {
     public class AirportWatchHistoricalDataRequest
     {
-        [Required]
-        public DateTime StartDateTime { get; set; }
-        [Required]
-        public DateTime EndDateTime { get; set; }
+        public DateTime? StartDateTime { get; set; }
+        public DateTime? EndDateTime { get; set; }
     }
 }

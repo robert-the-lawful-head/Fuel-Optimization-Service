@@ -1,0 +1,44 @@
+@import "../../../../assets/sass/variable";
+
+.chart-container {
+    width: 100%;
+}
+
+.table-container {
+    height: 300px;
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-form-field {
+    font-size: 14px;
+}
+
+.airport-dropdown-filter {
+    ::ng-deep {
+        .p-multiselect {
+            min-width: 15rem;
+            width: 15rem;
+    
+            .p-multiselect-panel {
+                max-width: 100%;
+            }
+        }
+    
+        .p-component {
+            font-size: 13px;
+        }
+    }
+
+    &.airport-dropdown-tails-filter {
+        ::ng-deep {
+            .p-multiselect {
+                min-width: 12rem;
+                width: 12rem;
+            }
+        }
+    }
+}
