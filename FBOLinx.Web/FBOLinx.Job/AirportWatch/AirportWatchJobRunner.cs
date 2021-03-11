@@ -16,6 +16,8 @@ namespace FBOLinx.Job.AirportWatch
         private int _lastWatchedFileRecordIndex = 0;
         private readonly IConfiguration _config;
         private readonly ApiClient _apiClient;
+        private bool _isPostingData = false;
+        private DateTime? _LastPostDateTimeUTC;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
@@ -49,6 +51,10 @@ namespace FBOLinx.Job.AirportWatch
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+            //Don't push more often than every 9 seconds to prevent consistent spikes
+            if (_LastPostDateTimeUTC.HasValue && DateTime.UtcNow < _LastPostDateTimeUTC.GetValueOrDefault().AddSeconds(9))
+                return;
+            
             using var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.File(_config["AirportWatchJobLog"])
@@ -56,6 +62,13 @@ namespace FBOLinx.Job.AirportWatch
 
             logger.Information($"File: {e.FullPath} {e.Name} {e.ChangeType}");
 
+            if (_isPostingData)
+            {
+                logger.Information("Fbolinx api call delayed - previous POST still in progress.");
+                return;
+            }
+
+            _isPostingData = true;
             List<AirportWatchDataType> data = GetCSVRecords(e.FullPath, e.Name);
             List<AirportWatchLiveData> airportWatchData = ConvertToDBModel(data);
 
@@ -65,12 +78,15 @@ namespace FBOLinx.Job.AirportWatch
                 {
                     _apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
                     logger.Information("Fbolinx api call succeed!");
+                    _LastPostDateTimeUTC = DateTime.UtcNow;
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex, $"Failed to call Fbolinx api!");
                 }
             }
+
+            _isPostingData = false;
         }
     
         private List<AirportWatchDataType> GetCSVRecords(string filePath, string fileName)

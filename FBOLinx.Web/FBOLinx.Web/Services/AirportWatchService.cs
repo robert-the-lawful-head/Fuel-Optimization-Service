@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
+using FBOLinx.DB;
 
 namespace FBOLinx.Web.Services
 {
@@ -19,6 +21,11 @@ namespace FBOLinx.Web.Services
         private readonly DegaContext _degaContext;
         private readonly AircraftService _aircraftService;
         private readonly FboService _fboService;
+        private List<AirportWatchLiveData> _LiveDataToUpdate;
+        private List<AirportWatchLiveData> _LiveDataToInsert;
+        private List<AirportWatchHistoricalData> _HistoricalDataToUpdate;
+        private List<AirportWatchHistoricalData> _HistoricalDataToInsert;
+        private List<AirportWatchAircraftTailNumber> _TailNumberDataToInsert;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext,  AircraftService aircraftService, FboService fboService)
         {
@@ -158,66 +165,99 @@ namespace FBOLinx.Web.Services
 
         public async Task ProcessAirportWatchData(List<AirportWatchLiveData> data)
         {
+            _LiveDataToUpdate = new List<AirportWatchLiveData>();
+            _LiveDataToInsert = new List<AirportWatchLiveData>();
+            _HistoricalDataToUpdate = new List<AirportWatchHistoricalData>();
+            _HistoricalDataToInsert = new List<AirportWatchHistoricalData>();
+            _TailNumberDataToInsert = new List<AirportWatchAircraftTailNumber>();
+
             var airportPositions = await GetAirportPositions();
+            
+            //Grab distinct aircraft for this set of data
+            var distinctAircraftHexCodes =
+                data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList().Distinct();
+            var distinctFlightNumbers = data.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber))
+                .Select(x => x.AtcFlightNumber).ToList().Distinct();
+
+            //Preload the collection of past records from the last 7 days to use in the loop
+            var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
+                distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode) 
+                && distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
+                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
+
+            var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
+                distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
+                && distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
+                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
 
             foreach (var record in data)
             {
-                var oldAirportWatchLiveData = await _context.AirportWatchLiveData
-                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
-                    .FirstOrDefaultAsync();
+                var oldAirportWatchLiveData = oldAirportWatchLiveDataCollection
+                    .FirstOrDefault(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber);
 
-                if (oldAirportWatchLiveData == null)
-                {
-                    _context.AirportWatchAircraftTailNumber.Add(new AirportWatchAircraftTailNumber
-                    {
-                        AircraftHexCode = record.AircraftHexCode,
-                        AtcFlightNumber = record.AtcFlightNumber,
-                    });
-                    // Add the most recent records for the "live" view
-                    _context.AirportWatchLiveData.Add(record);
-                }
-                else
-                {
-                    AirportWatchLiveData.CopyEntity(oldAirportWatchLiveData, record);
-                    _context.AirportWatchLiveData.Update(oldAirportWatchLiveData);
-                }
-
-                var oldAirportWatchHistoricalData = _context.AirportWatchHistoricalData
+                var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
                     .OrderByDescending(aw => aw.AircraftPositionDateTimeUtc)
                     .FirstOrDefault();
 
                 var airportWatchHistoricalData = AirportWatchHistoricalData.ConvertFromAirportWatchLiveData(record);
-                airportWatchHistoricalData.AirportICAO = GetNearestICAO(airportPositions, record.Latitude, record.Longitude);
 
-                if (oldAirportWatchHistoricalData == null ||
-                    oldAirportWatchHistoricalData.IsAircraftOnGround != record.IsAircraftOnGround)
+                //Record historical status
+                
+                //Compare our last "live" record with the new one to determine if the aircraft is taking off or landing
+                
+                //Next check if the last live record we have for the aircraft had a different IsAircraftOnGround state than what we see now
+                if (oldAirportWatchLiveData != null &&
+                    oldAirportWatchLiveData.IsAircraftOnGround != record.IsAircraftOnGround && oldAirportWatchLiveData.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-5))
                 {
-                    _context.AirportWatchHistoricalData.Add(airportWatchHistoricalData);
+                    _HistoricalDataToInsert.Add(airportWatchHistoricalData);
                 }
-                else if (!oldAirportWatchHistoricalData.IsAircraftOnGround && !record.IsAircraftOnGround)
+                //Finally go through the conditions that make this a valid parking occurrence
+                else 
                 {
-                    AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
-                    _context.AirportWatchHistoricalData.Update(oldAirportWatchHistoricalData);
-                }
-                else {
                     AddPossibleParkingOccurrence(oldAirportWatchHistoricalData, airportWatchHistoricalData);
                 }
-            }
 
-            await _context.SaveChangesAsync();
+                //Record live-view data and new flight/tail combinations
+                if (oldAirportWatchLiveData == null)
+                {
+                    _TailNumberDataToInsert.Add(new AirportWatchAircraftTailNumber
+                    {
+                        AircraftHexCode = record.AircraftHexCode,
+                        AtcFlightNumber = record.AtcFlightNumber,
+                    });
+                    _LiveDataToInsert.Add(record);
+                }
+                else
+                {
+                    AirportWatchLiveData.CopyEntity(oldAirportWatchLiveData, record);
+                    _LiveDataToUpdate.Add(oldAirportWatchLiveData);
+                }
+            }
+            
+            //Set the nearest airport for all records that will be recorded for historical statuses
+            _HistoricalDataToUpdate.ForEach(x =>
+            {
+                x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
+            });
+            
+            await CommitChanges();
         }
 
         private void AddPossibleParkingOccurrence(AirportWatchHistoricalData oldAirportWatchHistoricalData, AirportWatchHistoricalData airportWatchHistoricalData)
         {
             // Parking occurrences
+            //Don't check for parking if we don't know what the aircraft was doing previously
+            if (oldAirportWatchHistoricalData == null)
+                return;
+
+            // If neither the old record nor the new one are on the ground then it can't be a parking
+            if (!oldAirportWatchHistoricalData.IsAircraftOnGround || !airportWatchHistoricalData.IsAircraftOnGround)
+                return;
 
             //First confirm the last record we are comparing with was a landing or a parking
             if (oldAirportWatchHistoricalData.AircraftStatus != AirportWatchHistoricalData.AircraftStatusType.Landing &&
                 oldAirportWatchHistoricalData.AircraftStatus != AirportWatchHistoricalData.AircraftStatusType.Parking)
-                return;
-            // If neither the old record nor the new one are on the ground then it can't be a parking
-            if (!oldAirportWatchHistoricalData.IsAircraftOnGround || !airportWatchHistoricalData.IsAircraftOnGround)
                 return;
 
             //If the aircraft has not moved then do not update the parking record - we want to keep the old record when it first stopped moving
@@ -228,9 +268,38 @@ namespace FBOLinx.Web.Services
             if (oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc < DateTime.UtcNow.AddMinutes(-10))
                 return;
             //The aircraft has moved since landing - this should be an updated parking record
-            oldAirportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
-            AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
-            _context.AirportWatchHistoricalData.Update(oldAirportWatchHistoricalData);
+            airportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
+
+            if (oldAirportWatchHistoricalData.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking)
+            {
+                AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
+                _HistoricalDataToUpdate.Add(oldAirportWatchHistoricalData);
+            }
+            else
+            {
+                _HistoricalDataToInsert.Add(airportWatchHistoricalData);
+            }
+
+        }
+
+        private async Task CommitChanges()
+        {
+            if (_LiveDataToInsert == null || _LiveDataToInsert.Count == 0)
+                return;
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            await _context.BulkInsertAsync(_LiveDataToInsert);
+            await _context.BulkUpdateAsync(_LiveDataToUpdate);
+            await _context.BulkInsertAsync(_HistoricalDataToInsert);
+            await _context.BulkUpdateAsync(_HistoricalDataToUpdate); 
+            await _context.BulkInsertAsync(_TailNumberDataToInsert);
+            await _context.AirportWatchChangeTracker.AddAsync(new AirportWatchChangeTracker()
+            {
+                DateTimeAppliedUtc = DateTime.UtcNow,
+                HistoricalDataRecords = (_HistoricalDataToInsert?.Count ?? 0) + (_HistoricalDataToUpdate?.Count ?? 0),
+                LiveDataRecords = (_LiveDataToInsert?.Count ?? 0) + (_LiveDataToUpdate?.Count ?? 0),
+                TailNumberRecords = _TailNumberDataToInsert?.Count ?? 0
+            });
+            await transaction.CommitAsync();
         }
 
         private async Task<List<AirportPosition>> GetAirportPositions()

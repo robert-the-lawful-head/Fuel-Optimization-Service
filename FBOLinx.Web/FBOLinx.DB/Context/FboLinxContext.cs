@@ -74,7 +74,8 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchHistoricalData> AirportWatchHistoricalData { get; set; }
         public virtual DbSet<AirportWatchAircraftTailNumber> AirportWatchAircraftTailNumber { get; set; }
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
-        
+        public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -911,6 +912,15 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.AtcFlightNumber).IsUnicode(false);
 
                 entity.Property(e => e.BoxName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AirportWatchChangeTracker>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.DateTimeAppliedUtc).HasColumnName("DateTimeAppliedUTC");
             });
         }
     }
