@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Models.Requests
 {
-    public class FuelerLinxAircraftReleaseRequest
+    public class FuelerLinxAircraftRequest
     {
         [Required]
         public int FuelerlinxCompanyID { get; set; }
-        [Required]
-        public string TailNumber { get; set; }
+
+        public string TailNumbers { get; set; }
     }
 }
