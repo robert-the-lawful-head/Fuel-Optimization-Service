@@ -37,7 +37,7 @@ namespace FBOLinx.Web.Services
         public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData()
         {
             List<AirportWatchLiveData> filteredResult = new List<AirportWatchLiveData>();
-            var timelimit = DateTime.UtcNow.AddMinutes(-5);
+            var timelimit = DateTime.UtcNow.AddMinutes(-2);
 
             using (var scope = new TransactionScope(
                 TransactionScopeOption.Required,
