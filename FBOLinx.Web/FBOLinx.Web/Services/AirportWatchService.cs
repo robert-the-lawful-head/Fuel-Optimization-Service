@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using EFCore.BulkExtensions;
 using FBOLinx.DB;
 
@@ -35,16 +36,23 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData()
         {
+            List<AirportWatchLiveData> filteredResult = new List<AirportWatchLiveData>();
             var timelimit = DateTime.UtcNow.AddMinutes(-5);
 
-            var filteredResult = await _context.AirportWatchLiveData
-                .Where(x => x.AircraftPositionDateTimeUtc >= timelimit)
-                .OrderBy(x => x.AircraftPositionDateTimeUtc)
-                .ThenBy(x => x.AircraftHexCode)
-                .ThenBy(x => x.AtcFlightNumber)
-                .ThenBy(x => x.GpsAltitude)
-                .ToListAsync();
-
+            using (var scope = new TransactionScope(
+                TransactionScopeOption.Required,
+                new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted },
+                TransactionScopeAsyncFlowOption.Enabled))
+            {
+                    filteredResult = await _context.AirportWatchLiveData
+                        .Where(x => x.AircraftPositionDateTimeUtc >= timelimit)
+                        .OrderBy(x => x.AircraftPositionDateTimeUtc)
+                        .ThenBy(x => x.AircraftHexCode)
+                        .ThenBy(x => x.AtcFlightNumber)
+                        .ThenBy(x => x.GpsAltitude)
+                        .ToListAsync();
+                    scope.Complete();
+            }
             return filteredResult;
         }
 
@@ -205,8 +213,12 @@ namespace FBOLinx.Web.Services
                     _LiveDataToUpdate.Add(oldAirportWatchLiveData);
                 }
             }
-            
+
             //Set the nearest airport for all records that will be recorded for historical statuses
+            _HistoricalDataToInsert.ForEach(x =>
+            {
+                x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
+            });
             _HistoricalDataToUpdate.ForEach(x =>
             {
                 x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
