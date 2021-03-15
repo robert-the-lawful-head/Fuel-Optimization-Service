@@ -44,6 +44,12 @@ export class CustomeraircraftsService {
         });
     }
 
+    public getAircraftsListByGroupAndFbo(groupId, fboId) {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId + '/list', {
+            headers: this.headers,
+        });
+    }
+
     public getCustomerAircraftsCountByGroupId(groupId) {
         return this.http.get(
             this.accessPointUrl + '/group/' + groupId + '/count',

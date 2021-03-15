@@ -178,4 +178,13 @@ export class CustomerinfobygroupService {
             }
         );
     }
+
+    getCustomersListByGroupAndFbo(groupId: number, fboId: number) {
+        return this.http.get(
+            `${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/list`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

@@ -70,5 +70,12 @@ namespace FBOLinx.Web.Services
 
             return new Coordinate(latitude, longitude);
         }
+
+        public async Task<string> GetFBOIcao(int fboId)
+        {
+            var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboId).FirstOrDefaultAsync();
+
+            return fboAirport.Icao;
+        }
     }
 }

@@ -73,5 +73,26 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
             return result;
         }
+
+        public async Task<List<CustomerAircraftsViewModel>> GetAircraftsList(int groupId, int fboId)
+        {
+            var allAircraft = await _AircraftService.GetAllAircrafts();
+
+            List<CustomerAircraftsViewModel> result = await (
+               from ca in _Context.CustomerAircrafts
+               join cg in _Context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
+               join c in _Context.Customers on cg.CustomerId equals c.Oid
+               join cct in _Context.CustomCustomerTypes on new { fboId, CustomerId = c.Oid } equals new { fboId = cct.Fboid, cct.CustomerId }
+               where ca.GroupId == groupId && cct.Fboid == fboId && !string.IsNullOrEmpty(ca.TailNumber)
+               select new CustomerAircraftsViewModel
+               {
+                   TailNumber = ca.TailNumber,
+               })
+               .Distinct()
+               .OrderBy(x => x.TailNumber)
+               .ToListAsync();
+
+            return result;
+        }
     }
 }

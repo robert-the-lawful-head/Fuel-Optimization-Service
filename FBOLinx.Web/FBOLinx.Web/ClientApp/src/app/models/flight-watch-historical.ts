@@ -5,14 +5,21 @@ export enum FlightWatchStatus {
 }
 
 export type FlightWatchHistorical = {
+    companyId: number;
     company: string;
     dateTime: Date;
     tailNumber: string;
     flightNumber: string;
     hexCode: string;
     aircraftType: string;
+    aircraftTypeCode: string;
     status: number;
     pastVisits: number;
     originated: string;
     isFuelerlinx: boolean;
+};
+
+export type AirportWatchHistoricalDataRequest = {
+    startDateTime?: Date;
+    endDateTime?: Date;
 };
