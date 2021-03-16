@@ -25,7 +25,7 @@ export class AnalyticsAirportVisitsComponent implements OnInit {
     @Input() tailNumbers: any[] = [];
 
     public chartName = 'airport-visits-table';
-    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'dateTime', 'pastVisits'];
+    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'airportIcao', 'dateTime', 'pastVisits'];
 
     public commercialAircraftTypeCodes = ['A3', 'A5'];
     public commercialAircraftFlightNumber = ['ASA', 'UPS', 'SKW', 'FDX', 'UAL', 'AAL', 'DAL', 'SWA', 'GTI'];
