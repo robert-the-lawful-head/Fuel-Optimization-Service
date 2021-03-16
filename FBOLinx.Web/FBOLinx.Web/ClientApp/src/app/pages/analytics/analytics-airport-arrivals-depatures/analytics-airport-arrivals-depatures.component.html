@@ -78,8 +78,13 @@
                 </ng-container>
 
                 <ng-container matColumnDef="aircraftType">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Aircraft Type</th>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Aircraft</th>
                     <td *matCellDef="let info" mat-cell> {{info.aircraftType}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="airportIcao">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Aircraft ICAO Code</th>
+                    <td *matCellDef="let info" mat-cell> {{info.airportIcao}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="dateTime">

@@ -16,5 +16,6 @@ namespace FBOLinx.Web.Models.Responses.AirportWatch
         public int? PastVisits { get; set; }
         public string Originated { get; set; }
         public int CompanyId { get; set; }
+        public string AirportIcao { get; set; }
     }
 }

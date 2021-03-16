@@ -23,7 +23,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     @Input() tailNumbers: any[] = [];
 
     public chartName = 'airport-arrivals-depatures-table';
-    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'dateTime', 'status'];
+    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'airportIcao', 'dateTime', 'status'];
 
     public commercialAircraftTypeCodes = ['A3', 'A5'];
     public commercialAircraftFlightNumber = ['ASA', 'UPS', 'SKW', 'FDX', 'UAL', 'AAL', 'DAL', 'SWA', 'GTI'];
