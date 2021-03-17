@@ -208,7 +208,7 @@ namespace FBOLinx.Web.Controllers
             {
                 var fbo = await _groupFboService.CreateNewFbo(request);
 
-                return CreatedAtAction("GetFbo", new {id = fbo.Oid}, new
+                return CreatedAtAction("GetFbo", new { id = fbo.Oid }, new
                 {
                     request.Icao,
                     request.Iata,
@@ -280,6 +280,68 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(fbos);
         }
+
+        // GET: api/getfbologo
+        [HttpGet("getfbologo/{fboId}")]
+        public async Task<IActionResult> GetFboLogo([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var logoUrl = await _fboService.GetLogo(fboId);
+
+                return Ok(new { Message = logoUrl });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Message = "" });
+            }
+        }
+
+        // POST: api/get
+        [HttpPost("uploadfboLogo")]
+        public async Task<IActionResult> PostFboLogo([FromBody] FboLogoRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                if (request.FileData.Contains(","))
+                {
+                    request.FileData = request.FileData.Substring(request.FileData.IndexOf(",") + 1);
+                }
+
+                var logoUrl = await _fboService.UploadLogo(request);
+
+                return Ok(new { Message = logoUrl });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Message = "" });
+            }
+        }
+
+        // DELETE: api/deletelogp/5
+        [HttpDelete("fbologo/{id}")]
+        public async Task<IActionResult> DeleteLogo([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _fboService.DeleteLogo(id);
+
+            return Ok();
+        }
+
 
         [AllowAnonymous]
         [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]

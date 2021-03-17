@@ -20,6 +20,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Hosting;
+using System.IO;
 
 namespace FBOLinx.Web
 {
@@ -78,6 +79,9 @@ namespace FBOLinx.Web
 
             services.AddDbContext<FuelerLinxContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("FuelerLinxContext")));
+
+            services.AddDbContext<FilestorageContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("FilestorageContext")));
 
             //services.AddCors(options =>
             //{

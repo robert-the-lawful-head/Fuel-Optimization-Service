@@ -64,4 +64,22 @@ export class FbosService {
             headers: this.headers,
         });
     }
+
+    public uploadLogo(payload) {
+        return this.http.post(this.accessPointUrl + '/uploadfbologo', payload, {
+            headers: this.headers,
+        });
+    }
+
+    public deleteLogo(id: number) {
+        return this.http.delete(this.accessPointUrl + '/fbologo/' + id, {
+            headers: this.headers,
+        });
+    }
+
+    public getLogo(fboid: number) {
+        return this.http.get(this.accessPointUrl + '/getfbologo/' + fboid, {
+            headers: this.headers,
+        });
+    }
 }
