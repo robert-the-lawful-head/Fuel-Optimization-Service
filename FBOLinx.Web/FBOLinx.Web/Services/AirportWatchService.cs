@@ -74,6 +74,7 @@ namespace FBOLinx.Web.Services
                     AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
                     Status = h.AircraftStatus,
                     AirportIcao = h.AirportICAO,
+                    AircraftTypeCode = h.AircraftTypeCode,
                 })
                 .ToList();
 
@@ -97,6 +98,7 @@ namespace FBOLinx.Web.Services
                     AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
                     Status = h.AircraftStatus,
                     AirportIcao = h.AirportICAO,
+                    AircraftTypeCode = h.AircraftTypeCode,
                 })
                 .ToList();
 
@@ -124,6 +126,7 @@ namespace FBOLinx.Web.Services
                         Status = latest.AircraftStatus,
                         PastVisits = pastVisits,
                         AirportIcao = latest.AirportICAO,
+                        AircraftTypeCode = latest.AircraftTypeCode,
                     };
                 })
                 .ToList();
@@ -212,7 +215,16 @@ namespace FBOLinx.Web.Services
             {
                 x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
             });
-            
+
+            _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
+                if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return true;
+                return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
+            }).ToList();
+            _HistoricalDataToUpdate = _HistoricalDataToUpdate.Where(record => {
+                if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return true;
+                return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
+            }).ToList();
+
             await CommitChanges();
         }
 
