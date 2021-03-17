@@ -66,8 +66,8 @@ export class PriceBreakdownComponent implements OnInit {
     public activeHoverPriceItem: any = {};
     public activeHoverDeparturetypes: Array<number> = [];
     public activeHoverFlightTypes: Array<number> = [];
-    public defaultValidDepartureTypes: Array<number> = [ 0, 1, 3 ];
-    public defaultValidFlightTypes: Array<number> = [0, 1, 3];
+    public defaultValidDepartureTypes: Array<number> = [ 0, 1, 2, 3 ];
+    public defaultValidFlightTypes: Array<number> = [0, 1, 2, 3];
     public isCustomerActive: boolean = true;
     @ViewChild('feeAndTaxBreakdown')
     private feeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
