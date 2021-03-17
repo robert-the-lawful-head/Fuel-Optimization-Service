@@ -1,9 +1,10 @@
 <div #customerTableContainer class="customers-grid">
     <div class="container-fluid">
         <div class="row">
-            <div *ngIf="anySelected()" class="col-2">
+            <div *ngIf="anySelected()" class="col-2 bulk-update">
                 <mat-form-field>
                     <mat-select (selectionChange)="bulkMarginTemplateUpdate($event)"
+                                class="bulk-update-select"
                                 placeholder="Bulk Update Margin Template">
                         <mat-option *ngFor="let pricingTemplate of pricingTemplatesData"
                                     [value]="pricingTemplate">
