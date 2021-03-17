@@ -25,7 +25,7 @@ export class AnalyticsAirportVisitsComponent implements OnInit {
     @Input() tailNumbers: any[] = [];
 
     public chartName = 'airport-visits-table';
-    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'dateTime', 'pastVisits'];
+    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'pastVisits'];
 
     public commercialAircraftTypeCodes = ['A3', 'A5'];
     public commercialAircraftFlightNumber = ['ASA', 'UPS', 'SKW', 'FDX', 'UAL', 'AAL', 'DAL', 'SWA', 'GTI'];
@@ -85,9 +85,7 @@ export class AnalyticsAirportVisitsComponent implements OnInit {
         const data = this.data.filter(x =>
             (!this.isFbolinxCustomers || x.company) &&
             (this.isCommercial ||
-                !(this.commercialAircraftTypeCodes.includes(x.aircraftTypeCode) &&
-                 this.commercialAircraftFlightNumber.find(startNum => x.flightNumber.startsWith(startNum))
-                )
+                !(this.commercialAircraftTypeCodes.includes(x.aircraftTypeCode) || this.commercialAircraftFlightNumber.find(startNum => x.flightNumber.startsWith(startNum)))
             ) &&
             (!this.selectedCustomers.length || this.selectedCustomers.includes(x.companyId)) &&
             (!this.selectedTailNumbers.length || this.selectedTailNumbers.includes(x.tailNumber))

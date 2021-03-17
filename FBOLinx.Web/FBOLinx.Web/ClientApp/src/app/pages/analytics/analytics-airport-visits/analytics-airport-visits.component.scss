@@ -33,12 +33,12 @@ table {
         }
     }
 
-    &.airport-dropdown-tails-filter {
-        ::ng-deep {
-            .p-multiselect {
-                min-width: 12rem;
-                width: 12rem;
-            }
-        }
-    }
+    // &.airport-dropdown-tails-filter {
+    //     ::ng-deep {
+    //         .p-multiselect {
+    //             min-width: 15rem;
+    //             width: 15rem;
+    //         }
+    //     }
+    // }
 }

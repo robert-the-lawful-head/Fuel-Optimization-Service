@@ -63,5 +63,23 @@
 
 
 
+.bulk-update .mat-form-field-hide-placeholder .mat-select-placeholder {
+    color: #2196f3;
+    -webkit-text-fill-color: #2196f3;
+    transition: none;
+    display: block;
+}
+
+.bulk-update .mat-select-value {
+    color: #2196f3;
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-label {
+    display: none;
+}
+
+
+
+
 
 
