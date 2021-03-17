@@ -23,7 +23,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     @Input() tailNumbers: any[] = [];
 
     public chartName = 'airport-arrivals-depatures-table';
-    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'airportIcao', 'dateTime', 'status'];
+    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status'];
 
     public commercialAircraftTypeCodes = ['A3', 'A5'];
     public commercialAircraftFlightNumber = ['ASA', 'UPS', 'SKW', 'FDX', 'UAL', 'AAL', 'DAL', 'SWA', 'GTI'];
@@ -73,9 +73,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         const data = this.data.filter(x =>
             (!this.isFbolinxCustomers || x.company) &&
             (this.isCommercial ||
-                !(this.commercialAircraftTypeCodes.includes(x.aircraftTypeCode) &&
-                 this.commercialAircraftFlightNumber.find(startNum => x.flightNumber.startsWith(startNum))
-                )
+                !(this.commercialAircraftTypeCodes.includes(x.aircraftTypeCode) || this.commercialAircraftFlightNumber.find(startNum => x.flightNumber.startsWith(startNum)))
             ) &&
             (!this.selectedCustomers.length || this.selectedCustomers.includes(x.companyId)) &&
             (!this.selectedTailNumbers.length || this.selectedTailNumbers.includes(x.tailNumber))
