@@ -162,6 +162,9 @@ namespace FBOLinx.Web
             else
                 app.UseCors("CorsPolicy");
 
+            // Enable middleware for Stackify - Prefix performance profiling.
+            app.UseMiddleware<StackifyMiddleware.RequestTracerMiddleware>();
+
             app.UseRouting();
             
             app.UseAuthentication();
