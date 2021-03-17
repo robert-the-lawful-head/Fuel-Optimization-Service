@@ -1,0 +1,4 @@
+﻿TRUNCATE TABLE AirportWatchHistoricalData;
+TRUNCATE TABLE AirportWatchChangeTracker;
+TRUNCATE TABLE AirportWatchAircraftTailNumber;
+TRUNCATE TABLE AirportWatchLiveData;
