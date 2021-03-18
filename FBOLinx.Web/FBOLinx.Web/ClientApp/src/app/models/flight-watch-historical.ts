@@ -5,6 +5,7 @@ export enum FlightWatchStatus {
 }
 
 export type FlightWatchHistorical = {
+    customerInfoByGroupID: number;
     companyId: number;
     company: string;
     dateTime: Date;

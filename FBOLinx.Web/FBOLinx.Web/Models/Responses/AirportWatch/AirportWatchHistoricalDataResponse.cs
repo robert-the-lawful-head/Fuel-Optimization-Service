@@ -5,6 +5,8 @@ namespace FBOLinx.Web.Models.Responses.AirportWatch
 {
     public class AirportWatchHistoricalDataResponse
     {
+        public int CustomerInfoByGroupID { get; set; }
+        public int CompanyId { get; set; }
         public string Company { get; set; }
         public DateTime DateTime { get; set; }
         public string TailNumber { get; set; }
@@ -15,7 +17,6 @@ namespace FBOLinx.Web.Models.Responses.AirportWatch
         public AircraftStatusType Status { get; set; }
         public int? PastVisits { get; set; }
         public string Originated { get; set; }
-        public int CompanyId { get; set; }
         public string AirportIcao { get; set; }
     }
 }

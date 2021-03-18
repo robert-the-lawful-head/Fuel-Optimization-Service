@@ -65,7 +65,8 @@ namespace FBOLinx.Web.Services
             var customersData = historicalData
                 .Select(h => new AirportWatchHistoricalDataResponse
                 {
-                    CompanyId = h.CustomerInfoByGroupID,
+                    CustomerInfoByGroupID = h.CustomerInfoByGroupID,
+                    CompanyId = h.CustomerId,
                     Company = h.Company,
                     DateTime = h.AircraftPositionDateTimeUtc,
                     TailNumber = h.TailNumber,
@@ -89,7 +90,8 @@ namespace FBOLinx.Web.Services
                 .Where(h => h.Company == null)
                 .Select(h => new AirportWatchHistoricalDataResponse
                 {
-                    CompanyId = h.CustomerInfoByGroupID,
+                    CustomerInfoByGroupID = h.CustomerInfoByGroupID,
+                    CompanyId = h.CustomerId,
                     Company = h.Company,
                     DateTime = h.AircraftPositionDateTimeUtc,
                     TailNumber = h.TailNumber,
@@ -116,7 +118,8 @@ namespace FBOLinx.Web.Services
 
                     return new AirportWatchHistoricalDataResponse
                     {
-                        CompanyId = latest.CustomerInfoByGroupID,
+                        CustomerInfoByGroupID = latest.CustomerInfoByGroupID,
+                        CompanyId = latest.CustomerId,
                         Company = latest.Company,
                         DateTime = latest.AircraftPositionDateTimeUtc,
                         TailNumber = latest.TailNumber,

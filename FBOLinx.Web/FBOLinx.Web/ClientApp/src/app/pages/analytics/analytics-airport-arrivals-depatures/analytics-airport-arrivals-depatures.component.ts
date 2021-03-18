@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-// import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject } from 'rxjs';
@@ -9,6 +9,8 @@ import { Subject } from 'rxjs';
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { FlightWatchHistorical } from '../../../models/flight-watch-historical';
+import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
+import { CustomersListType } from '../../../models/customer';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -17,10 +19,10 @@ import { FlightWatchHistorical } from '../../../models/flight-watch-historical';
 })
 export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
-    // @ViewChild(MatPaginator) paginator: MatPaginator;
 
-    @Input() customers: any[] = [];
+    @Input() customers: CustomersListType[] = [];
     @Input() tailNumbers: any[] = [];
+    @Output() refreshCustomers = new EventEmitter();
 
     public chartName = 'airport-arrivals-depatures-table';
     public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status'];
@@ -40,6 +42,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     public filtersChanged: Subject<any> = new Subject<any>();
 
     constructor(
+        public newCustomerAircraftDialog: MatDialog,
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
@@ -75,16 +78,48 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
             (this.isCommercial ||
                 !(this.commercialAircraftTypeCodes.includes(x.aircraftTypeCode) || this.commercialAircraftFlightNumber.find(startNum => x.flightNumber.startsWith(startNum)))
             ) &&
-            (!this.selectedCustomers.length || this.selectedCustomers.includes(x.companyId)) &&
+            (!this.selectedCustomers.length || this.selectedCustomers.includes(x.customerInfoByGroupID)) &&
             (!this.selectedTailNumbers.length || this.selectedTailNumbers.includes(x.tailNumber))
         );
 
         this.dataSource = new MatTableDataSource(data);
         this.dataSource.sort = this.sort;
-        // this.dataSource.paginator = this.paginator;
     }
 
     filterChanged() {
         this.filtersChanged.next();
+    }
+
+    onClickAircraft(row: FlightWatchHistorical) {
+        if (!row.company) {
+            const dialogRef = this.newCustomerAircraftDialog.open<AircraftAssignModalComponent, Partial<NewCustomerAircraftDialogData>>(
+                AircraftAssignModalComponent,
+                {
+                    width: '450px',
+                    data: {
+                        tailNumber: row.flightNumber,
+                        customers: this.customers,
+                    },
+                    panelClass: 'aircraft-assign-modal'
+                }
+            );
+
+            dialogRef.afterClosed().subscribe((result: Partial<FlightWatchHistorical>) => {
+                if (result) {
+                    // const aircrafts = this.data.filter(record => record.flightNumber === row.flightNumber);
+                    for (let i = 0; i < this.data.length; i++){
+                        if (this.data[i].flightNumber === row.flightNumber) {
+                            this.data[i] = {
+                                ...this.data[i],
+                                ...result,
+                                tailNumber: row.flightNumber,
+                            };
+                        }
+                    }
+                    this.refreshDataSource();
+                    this.refreshCustomers.emit();
+                }
+            });
+        }
     }
 }

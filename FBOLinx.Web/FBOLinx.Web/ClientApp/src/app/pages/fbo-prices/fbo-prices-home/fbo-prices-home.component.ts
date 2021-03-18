@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { interval, Observable } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 import * as moment from 'moment';
 
 // Services
@@ -95,6 +95,9 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     priceShiftSubscription: any;
     priceShiftLoading: boolean;
 
+    currentPricesSubscription: Subscription;
+    stagedPricesSubscription: Subscription;
+
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
         private fboPricesService: FbopricesService,
@@ -133,18 +136,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     }
 
     ngOnDestroy(): void {
-        if (this.locationChangedSubscription) {
-            this.locationChangedSubscription.unsubscribe();
-        }
-        if (this.tooltipSubscription) {
-            this.tooltipSubscription.unsubscribe();
-        }
-        if (this.tailNumberFormControlSubscription) {
-            this.tailNumberFormControlSubscription.unsubscribe();
-        }
-        if (this.priceShiftSubscription) {
-            this.priceShiftSubscription.unsubscribe();
-        }
+        this.locationChangedSubscription?.unsubscribe();
+        this.tooltipSubscription?.unsubscribe();
+        this.tailNumberFormControlSubscription?.unsubscribe();
+        this.priceShiftSubscription?.unsubscribe();
+        this.stagedPricesSubscription?.unsubscribe();
+        this.currentPricesSubscription?.unsubscribe();
     }
 
     resetAll() {
@@ -795,8 +792,8 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     private loadAllPrices() {
         this.priceShiftLoading = true;
-        this.loadCurrentFboPrices().subscribe(() => {
-            this.loadStagedFboPrices().subscribe(() => {
+        this.currentPricesSubscription = this.loadCurrentFboPrices().subscribe(() => {
+            this.stagedPricesSubscription = this.loadStagedFboPrices().subscribe(() => {
                 this.priceShiftLoading = false;
             });
         });

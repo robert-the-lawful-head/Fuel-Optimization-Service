@@ -165,7 +165,8 @@ namespace FBOLinx.Web.Services
                 .Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
                 .Select(x => new CustomerListResponse
                 {
-                    Oid = x.Oid,
+                    CustomerInfoByGroupID = x.Oid,
+                    CompanyId = x.CustomerId,
                     Company = x.Company
                 })
                 .ToListAsync();

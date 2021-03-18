@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+import { CustomersListType } from '../../../models/customer';
 
 const BREADCRUMBS: any[] = [
     {
@@ -28,7 +29,7 @@ export class AnalyticsHomeComponent implements OnInit {
     public filterStartDate: Date;
     public filterEndDate: Date;
     public pastThirtyDaysStartDate: Date;
-    public customers: any[] = [];
+    public customers: CustomersListType[] = [];
     public tailNumbers: any[] = [];
 
     constructor(

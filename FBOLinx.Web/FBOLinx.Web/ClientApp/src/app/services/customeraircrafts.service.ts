@@ -94,4 +94,10 @@ export class CustomeraircraftsService {
             headers: this.headers,
         });
     }
+
+    public createAircraftWithCustomer(payload) {
+        return this.http.post(this.accessPointUrl + '/create-with-customer', payload, {
+            headers: this.headers,
+        });
+    }
 }
