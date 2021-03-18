@@ -10,11 +10,8 @@ import { CustomersListType } from '../../../models/customer';
 import { FlightWatchHistorical } from 'src/app/models/flight-watch-historical';
 
 export interface NewCustomerAircraftDialogData {
-    aircraftId: number;
     tailNumber: string;
-    size: number;
     customers: CustomersListType[];
-    selectedCompany: number | string;
 }
 
 @Component({
@@ -29,6 +26,7 @@ export class AircraftAssignModalComponent implements OnInit {
     public aircraftTypes: Array<any>;
     public selectedAircraft: any;
     public loading: boolean;
+    public selectedCompany: number | string;
 
     constructor(
         public dialogRef: MatDialogRef<AircraftAssignModalComponent>,
@@ -48,12 +46,6 @@ export class AircraftAssignModalComponent implements OnInit {
             .subscribe((data: any) => (this.aircraftSizes = data));
     }
 
-    // Public Methods
-    public onAircraftTypeChanged() {
-        this.data.aircraftId = this.selectedAircraft.aircraftId;
-        this.data.size = this.selectedAircraft.size;
-    }
-
     public onClose() {
         this.dialogRef.close();
     }
@@ -63,12 +55,12 @@ export class AircraftAssignModalComponent implements OnInit {
         const payload: any = {
             fboId: this.sharedService.currentUser.fboId,
             groupId: this.sharedService.currentUser.groupId,
-            aircraftId: this.data.aircraftId,
+            aircraftId: this.selectedAircraft.aircraftId,
             tailNumber: this.data.tailNumber,
-            size: this.data.size,
+            size: this.selectedAircraft.size,
         };
-        if (typeof this.data.selectedCompany === 'string') {
-            payload.customer = this.data.selectedCompany;
+        if (typeof this.selectedCompany === 'string') {
+            payload.customer = this.selectedCompany;
             this.customerAircraftsService.createAircraftWithCustomer(payload)
                 .subscribe((customerInfoByGroup: any) => {
                     this.dialogRef.close({
@@ -79,10 +71,10 @@ export class AircraftAssignModalComponent implements OnInit {
                     } as Partial<FlightWatchHistorical>);
                 });
         } else {
-            payload.customerId = this.data.selectedCompany;
+            payload.customerId = this.selectedCompany;
             this.customerAircraftsService.add(payload)
                 .subscribe(() => {
-                    const selectedCompany = this.data.customers.find(customer => customer.companyId === this.data.selectedCompany);
+                    const selectedCompany = this.data.customers.find(customer => customer.companyId === this.selectedCompany);
                     this.dialogRef.close({
                         customerInfoByGroupID: selectedCompany.customerInfoByGroupID,
                         companyId: selectedCompany.companyId,

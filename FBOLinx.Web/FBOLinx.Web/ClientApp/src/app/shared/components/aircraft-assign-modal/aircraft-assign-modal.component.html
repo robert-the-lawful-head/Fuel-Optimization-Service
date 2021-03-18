@@ -8,19 +8,10 @@
     </div>
     <div>
         <mat-form-field>
-            <mat-select (selectionChange)="onAircraftTypeChanged()" [(ngModel)]="selectedAircraft"
+            <mat-select [(ngModel)]="selectedAircraft"
                         placeholder="Aircraft Make/Model">
                 <mat-option *ngFor="let aircraftType of aircraftTypes" [value]="aircraftType">
                     {{aircraftType.make}} {{aircraftType.model}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
-    <div>
-        <mat-form-field>
-            <mat-select [(ngModel)]="data.size" placeholder="Aircraft Size">
-                <mat-option *ngFor="let aircraftSize of aircraftSizes" [value]="aircraftSize.value">
-                    {{aircraftSize.description}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -30,7 +21,7 @@
         <p-dropdown
             class="customers-filter"
             [options]="data.customers"
-            [(ngModel)]="data.selectedCompany"
+            [(ngModel)]="selectedCompany"
             optionLabel="company"
             optionValue="companyId"
             [editable]="true"
@@ -40,7 +31,7 @@
 </div>
 <div mat-dialog-actions class="mt-5 text-center">
     <button
-        [disabled]="loading || !data.tailNumber || !selectedAircraft || !data.size || !data.selectedCompany"
+        [disabled]="loading || !data.tailNumber || !selectedAircraft || !selectedCompany"
         (click)="onSubmit()"
         class="mr-1"
         color="accent"
