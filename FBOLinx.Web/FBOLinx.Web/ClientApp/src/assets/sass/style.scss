@@ -406,3 +406,52 @@ button.mat-icon-button {
 
 /*END Tax and Fee Breakdown*/
 
+
+/*Customers Grid Bulk Update*/
+.bulk-update .mat-form-field-hide-placeholder .mat-select-placeholder {
+    color: #2196f3;
+    -webkit-text-fill-color: #2196f3;
+    transition: none;
+    display: block;
+}
+
+.bulk-update .mat-form-field-appearance-legacy .mat-form-field-underline {
+    background-color: #2196f3;
+}
+
+.bulk-update .mat-select-arrow {
+    color: #2196f3;
+}
+
+.bulk-update .mat-form-field-appearance-legacy .mat-form-field-label {
+    color: transparent;
+}
+
+.bulk-update .mat-form-field.mat-focused .mat-form-field-label {
+    color: #0c7cd5;
+}
+
+
+.bulk-update .mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: #0a6ebd;
+}
+
+.bulk-update .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+    color: #0a6ebd;
+}
+
+/*End Customers Grid Bulk Update*/
+
+
+/*Dashboard Price Lookup*/
+
+.price-checker.prices-board-item .card-wrap.collapsible .card-content {
+    overflow: initial !important;
+}
+/*End Dashboard Price Lookup*/
+
+.aircraft-assign-modal {
+    .mat-dialog-container {
+        overflow: visible;
+    }
+}

@@ -60,7 +60,19 @@
         <mat-tab label="Flight Watch">
             <div class="row mt-3">
                 <div class="col-12">
-                    <app-analytics-airport-watch-table></app-analytics-airport-watch-table>
+                    <app-analytics-airport-arrivals-depatures
+                        [customers]="customers"
+                        [tailNumbers]="tailNumbers"
+                        (refreshCustomers)="getCustomersList()"
+                    ></app-analytics-airport-arrivals-depatures>
+                </div>
+
+                <div class="col-12">
+                    <app-analytics-airport-visits
+                        [customers]="customers"
+                        [tailNumbers]="tailNumbers"
+                        (refreshCustomers)="getCustomersList()"
+                    ></app-analytics-airport-visits>
                 </div>
             </div>
         </mat-tab>

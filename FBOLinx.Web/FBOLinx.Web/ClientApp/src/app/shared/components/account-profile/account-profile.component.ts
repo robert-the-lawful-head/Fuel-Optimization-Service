@@ -35,6 +35,9 @@ export class AccountProfileComponent {
     availableroles: any[];
     systemContactsForm: FormGroup;
     emailDistributionForm: FormGroup;
+    theFile: any = null;
+    logoUrl: string;
+    isUploadingLogo: boolean;
 
     constructor(
         public dialogRef: MatDialogRef<AccountProfileComponent>,
@@ -113,7 +116,57 @@ export class AccountProfileComponent {
         }
     }
 
+    onFileChange(event) {
+        this.theFile = null;
+        if (event.target.files && event.target.files.length > 0) {
+                // Set theFile property
+                this.theFile = event.target.files[0];
+        }
+    }
+
+    uploadFile(): void {
+        if (this.theFile != null) {
+            this.isUploadingLogo = true;
+            this.readAndUploadFile(this.theFile);
+        }
+    }
+
+    deleteFile(): void {
+        this.fbosService.deleteLogo(this.fboInfo.oid)
+            .subscribe((logoData: any) => {
+                this.logoUrl = "";
+            });
+    }
+
     // Private Methods
+    private readAndUploadFile(theFile: any) {
+        let file = { // Set File Information
+            FileName: theFile.name,
+            ContentType: theFile.type,
+            FileData: null,
+            FboId: this.fboInfo.oid
+        }
+
+        // Use FileReader() object to get file to upload
+        // NOTE: FileReader only works with newer browsers
+        let reader = new FileReader();
+
+        // Setup onload event for reader
+        reader.onload = () => {
+            // Store base64 encoded representation of file
+            file.FileData = reader.result.toString();
+
+            // POST to server
+            this.fbosService.uploadLogo(file).subscribe((resp: any) => {
+                this.isUploadingLogo = false;
+                this.logoUrl = resp.message;
+            });
+        }
+
+        // Read the file
+        reader.readAsDataURL(theFile);
+    }
+
     private loadFboInfo(): void {
         if (
             !this.sharedService.currentUser.fboId ||
@@ -136,7 +189,13 @@ export class AccountProfileComponent {
                 this.fboInfo = fboData;
                 this.fboContactsService
                     .getForFbo(this.fboInfo)
-                    .subscribe((data: any) => (this.contactsData = data));
+                    .subscribe((data: any) => {
+                        this.contactsData = data
+                        this.fbosService.getLogo(this.fboInfo.oid)
+                            .subscribe((logoData: any) => {
+                                this.logoUrl = logoData.message
+                            });
+                    });
             });
     }
 

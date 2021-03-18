@@ -238,6 +238,20 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerCount);
         }
 
+        [HttpGet("group/{groupId}/fbo/{fboId}/list")]
+        public async Task<IActionResult> GetCustomersListAsync([FromRoute] int groupId, [FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //View model for customers dropdown list
+            var list = await _customerService.GetCustomersListByGroupAndFbo(groupId, fboId);
+
+            return Ok(list);
+        }
+
         // GET: api/CustomerInfoByGroup/CertificateTypes
         [HttpGet("CertificateTypes")]
         public IEnumerable<Core.Utilities.Enum.EnumDescriptionValue> GetCertificateTypes()

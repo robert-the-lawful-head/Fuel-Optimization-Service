@@ -317,7 +317,8 @@ namespace FBOLinx.Web.Services
                                       where ap.PriceTemplateId == aircraftPricingTemplate.Oid
                                             && ca.CustomerId == customer.CustomerId
                                             && ca.GroupId == _GroupId
-                                      select ca.TailNumber).ToList();
+                                            && !string.IsNullOrEmpty(ca.TailNumber)
+                                      select ca.TailNumber.Trim()).ToList();
                 if (tailNumberList == null || tailNumberList.Count == 0)
                     continue;
                 aircraftPricingTemplate.Name += " - " + string.Join(",", tailNumberList);
@@ -328,7 +329,7 @@ namespace FBOLinx.Web.Services
             //Set the applicable tail numbers for the standard/default templates
             var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == groupId).ToListAsync();
 
-            standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber).ToList());
+            standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !string.IsNullOrEmpty(c.TailNumber) && !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber.Trim()).ToList());
 
             return result;
         }
@@ -391,8 +392,13 @@ namespace FBOLinx.Web.Services
         public async Task<List<PricingTemplatesGridViewModel>> GetPricingTemplates(int fboId, int groupId)
         {
             //Load customer assignments by template ID
-            var customerAssignments = await _context.CustomCustomerTypes.Where(x => x.Fboid == fboId).ToListAsync();
-            
+            var customerAssignments = await (from cibg in _context.CustomerInfoByGroup
+                                             join cct in _context.CustomCustomerTypes on cibg.CustomerId equals cct.CustomerId
+                                             join c in _context.Customers on cibg.CustomerId equals c.Oid
+                                             where cct.Fboid == fboId && cibg.GroupId == groupId && (c.Suspended == null || c.Suspended == false)
+                                             select new
+                                             { CustomerType = cct.CustomerType }).ToListAsync();
+
             //Separate inner queries first for FBO Prices and Margin Tiers
             var tempFboPrices = await _context.Fboprices
                                                 .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();

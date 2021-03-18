@@ -127,6 +127,14 @@ namespace FBOLinx.Web.Controllers
             return Ok(result);
         }
 
+        [HttpGet("group/{groupId}/fbo/{fboId}/list")]
+        public async Task<IActionResult> GetCustomerAircraftsListByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId)
+        {
+            var result = await _CustomerAircraftService.GetAircraftsList(groupId, fboId);
+
+            return Ok(result);
+        }
+
         [HttpGet("group/{groupId}/count")]
         public async Task<IActionResult> GetCustomerAircraftsCountByGroupId([FromRoute] int groupId)
         {
@@ -264,6 +272,68 @@ namespace FBOLinx.Web.Controllers
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
 
+        [HttpPost("create-with-customer")]
+        public async Task<IActionResult> PostCustomerAircraftsWithCustomer([FromBody] CreateAircraftsWithCustomerRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                var customer = new Customers
+                {
+                    Company = request.Customer
+                };
+
+                _context.Customers.Add(customer);
+                _context.SaveChanges();
+
+                var customerViewedByFbo = new CustomersViewedByFbo
+                {
+                    Fboid = request.FboId,
+                    CustomerId = customer.Oid,
+                    ViewDate = DateTime.Now,
+                };
+                _context.CustomersViewedByFbo.Add(customerViewedByFbo);
+
+                var customerInfoByGroup = new CustomerInfoByGroup
+                {
+                    GroupId = request.GroupId,
+                    Company = request.Customer,
+                    CustomerId = customer.Oid,
+                    Active = true,
+                };
+                _context.CustomerInfoByGroup.Add(customerInfoByGroup);
+
+
+                var customerAircraft = new CustomerAircrafts
+                {
+                    GroupId = request.GroupId,
+                    AircraftId = request.AircraftId,
+                    TailNumber = request.TailNumber,
+                    Size = request.Size,
+                    CustomerId = customer.Oid,
+                };
+                _context.CustomerAircrafts.Add(customerAircraft);
+
+                _context.SaveChanges();
+
+                await transaction.CommitAsync();
+
+                return Ok(customerInfoByGroup);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                return BadRequest(ex);
+            }
+        }
+
+
         [HttpPost("import")]
         public async Task<IActionResult> ImportCustomerAircrafts([FromBody] List<AircraftImportVM> customerAircrafts)
         {
@@ -348,8 +418,8 @@ namespace FBOLinx.Web.Controllers
         #region Integration Partner APIs
         [AllowAnonymous]
         [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
-        [HttpPost("fuelerlinx-aircraft-release")]
-        public async Task<IActionResult> GetFuelPricesForFuelerlinx([FromBody] FuelerLinxAircraftReleaseRequest request)
+        [HttpPost("fuelerlinx-aircraft")]
+        public async Task<IActionResult> FuelerLinxAircraft([FromBody] FuelerLinxAircraftRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -357,36 +427,60 @@ namespace FBOLinx.Web.Controllers
             }
             try
             {
-                var customerAircrafts = await (
-                                        from ca in _context.CustomerAircrafts
-                                        join c in _context.Customers on ca.CustomerId equals c.Oid
-                                        where c.FuelerlinxId == request.FuelerlinxCompanyID && ca.TailNumber == request.TailNumber
-                                        select ca
-                                        ).ToListAsync();
-
-                if (customerAircrafts.Count == 0)
+                if (request.TailNumbers != null && request.TailNumbers.Split(',').Length == 1)
+                    return await ChangeFuelerLinxCustomerAircraftsAddedFrom(request, false);
+                else
                 {
-                    return Ok(new { Message = "The FBOLinx company has no aircraft with the provided Tail Number!" });
+                    if (request.FuelerlinxCompanyID > 0)
+                        return await ChangeFuelerLinxCustomerAircraftsAddedFrom(request, true);
+                    else
+                        return await ChangeFuelerLinxCustomerAircraftsAddedFrom(request, false);
                 }
-
-                customerAircrafts.ForEach(ca => ca.AddedFrom = 0);
-
-                _context.CustomerAircrafts.UpdateRange(customerAircrafts);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { Message = "Successfully released the fuelerlinx aircrafts!" });
             }
             catch (Exception ex)
             {
                 return BadRequest(ex);
             }
         }
-
         #endregion
 
         private bool CustomerAircraftsExists(int id)
         {
             return _context.CustomerAircrafts.Any(e => e.Oid == id);
+        }
+
+        private async Task<IActionResult> ChangeFuelerLinxCustomerAircraftsAddedFrom(FuelerLinxAircraftRequest request, bool isActivate)
+        {
+            var customerAircrafts = new List<FBOLinx.DB.Models.CustomerAircrafts>();
+            var tailNumbers = request.TailNumbers.Split(',');
+            if (tailNumbers.Length == 1)
+                customerAircrafts = await (
+                                    from ca in _context.CustomerAircrafts
+                                    join c in _context.Customers on ca.CustomerId equals c.Oid
+                                    where c.FuelerlinxId == request.FuelerlinxCompanyID && ca.TailNumber == tailNumbers[0]
+                                    select ca
+                                    ).ToListAsync();
+            else
+                customerAircrafts = await (
+                                    from ca in _context.CustomerAircrafts
+                                    join c in _context.Customers on ca.CustomerId equals c.Oid
+                                    where c.FuelerlinxId == request.FuelerlinxCompanyID 
+                                    select ca
+                                    ).ToListAsync();
+
+            customerAircrafts = customerAircrafts.Where(a => tailNumbers.Contains(a.TailNumber)).ToList();
+
+            if (customerAircrafts.Count == 0)
+            {
+                return Ok(new { Message = "The tail numbers provided did not match any FBOlinx customer" });
+            }
+
+            customerAircrafts.ForEach(ca => ca.AddedFrom = isActivate ? 1 : 0);
+
+            _context.CustomerAircrafts.UpdateRange(customerAircrafts);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Successfully " + (isActivate ? "activated" : "deactivated") + " the FuelerLinx aircrafts!" });
         }
     }
 }
