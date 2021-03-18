@@ -46,6 +46,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { TextMaskModule } from 'angular2-text-mask';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
+import { MatFileUploadModule } from 'mat-file-upload';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import {
     FilterService,
@@ -220,6 +221,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         MatTooltipModule,
         NgxChartsModule,
         TextMaskModule,
+        MatFileUploadModule,
         RichTextEditorAllModule,
         AppPipesModule,
         NgbPopoverModule,

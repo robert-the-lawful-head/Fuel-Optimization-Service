@@ -1,0 +1,30 @@
+USE [fileStorage]
+GO
+
+/****** Object:  Table [dbo].[FuelerLinxImageFileData]    Script Date: 3/16/2021 9:08:48 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[FboLinxImageFileData](
+	[OID] [int] IDENTITY(1,1) NOT NULL,
+	[FileData] [varbinary](max) NULL,
+	[FileName] [varchar](200) NULL,
+	[ContentType] [varchar](100) NULL,
+	[FboId] int NULL,
+ CONSTRAINT [PK_FboLinxImageFileData] PRIMARY KEY CLUSTERED 
+(
+	[OID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
+CREATE NONCLUSTERED INDEX [INX_FboLinxImageFileData_FboId] ON [dbo].[FboLinxImageFileData]
+(
+	FboId ASC
+)
+INCLUDE([OID], FileData, ContentType, [FileName]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
