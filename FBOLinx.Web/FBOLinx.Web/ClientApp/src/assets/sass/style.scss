@@ -449,3 +449,9 @@ button.mat-icon-button {
     overflow: initial !important;
 }
 /*End Dashboard Price Lookup*/
+
+.aircraft-assign-modal {
+    .mat-dialog-container {
+        overflow: visible;
+    }
+}

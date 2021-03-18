@@ -7,7 +7,8 @@ namespace FBOLinx.Web.Models.Responses
 {
     public class CustomerListResponse
     {
-        public int Oid { get; set; }
+        public int CustomerInfoByGroupID { get; set; }
+        public int CompanyId { get; set; }
         public string Company { get; set; }
     }
 }

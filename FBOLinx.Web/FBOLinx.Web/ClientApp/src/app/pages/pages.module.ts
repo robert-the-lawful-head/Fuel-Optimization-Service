@@ -57,6 +57,7 @@ import {
 } from '@syncfusion/ej2-angular-grids';
 import { ResizableModule } from 'angular-resizable-element';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { DropdownModule } from 'primeng/dropdown';
 
 // Popover
 import { PopoverModule } from 'ngx-smart-popover';
@@ -161,6 +162,8 @@ import { TableColumnFilterComponent } from '../shared/components/table-column-fi
 import { TableGlobalSearchComponent } from '../shared/components/table-global-search/table-global-search.component';
 import { FeeAndTaxBreakdownComponent } from '../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 import { TableSettingsComponent } from '../shared/components/table-settings/table-settings.component';
+import { AircraftAssignModalComponent } from '../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
+
 // Pipes
 import { AppPipesModule } from '../app-pipes.module';
 
@@ -226,6 +229,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         PopoverModule,
         ResizableModule,
         MultiSelectModule,
+        DropdownModule,
     ],
     declarations: [
         AuthtokenComponent,
@@ -321,6 +325,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         GroupAnalyticsGenerateDialogComponent,
         FeeAndTaxBreakdownComponent,
         TableSettingsComponent,
+        AircraftAssignModalComponent,
         FlightWatchComponent,
         FlightWatchMapComponent,
         FlightWatchAircraftInfoComponent,
