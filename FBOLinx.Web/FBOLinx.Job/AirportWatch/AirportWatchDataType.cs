@@ -1,4 +1,4 @@
-﻿namespace FBOLinx.Job.Types
+﻿namespace FBOLinx.Job.AirportWatch
 {
     public class AirportWatchDataType
     {

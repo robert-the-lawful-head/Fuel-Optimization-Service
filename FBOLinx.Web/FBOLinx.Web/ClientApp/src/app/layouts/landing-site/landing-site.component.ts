@@ -163,7 +163,7 @@ export class LandingSiteLayoutComponent {
                 return;
             }
 
-            this.userService.resetPassword(result).subscribe(
+            this.userService.requestResetPassword(result).subscribe(
                 () => {
                     this.snackBar.open(
                         'An email has been sent with access instructions',

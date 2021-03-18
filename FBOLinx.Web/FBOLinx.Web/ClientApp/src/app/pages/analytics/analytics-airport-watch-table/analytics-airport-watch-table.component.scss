@@ -1,0 +1,18 @@
+@import "../../../../assets/sass/variable";
+
+.chart-container {
+    width: 100%;
+}
+
+.table-container {
+    height: calc(100vh - 425px);
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-form-field {
+    font-size: 14px;
+}

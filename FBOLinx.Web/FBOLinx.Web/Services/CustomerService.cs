@@ -138,8 +138,10 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<CustomerInfoByGroup>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
         {
+            //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
             var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && (customerInfoByGroupId == 0 || x.Oid == customerInfoByGroupId))
                 .Include(x => x.Customer)
+                .Where(x => !x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value)
                 .Include(x => x.Customer.CustomCustomerType)
                 .Where(x => x.Customer.CustomCustomerType.Fboid == fboId)
                 .Include(x => x.Customer.CustomCustomerType.PricingTemplate)

@@ -1,17 +1,14 @@
 ﻿using FBOLinx.DB.Models;
 using FBOLinx.Job.Base;
-using FBOLinx.Job.Types;
+using FBOLinx.Job.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using TinyCsvParser;
 
-namespace FBOLinx.Job.Jobs
+namespace FBOLinx.Job.AirportWatch
 {
     public class AirportWatchJobRunner : IJobRunner
     {
@@ -26,7 +23,6 @@ namespace FBOLinx.Job.Jobs
             _apiClient = new ApiClient(config["FBOLinxApiUrl"]);
         }
 
-        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public void Run()
         {
             using (FileSystemWatcher watcher = new FileSystemWatcher())
@@ -86,26 +82,17 @@ namespace FBOLinx.Job.Jobs
 
             var data = new List<AirportWatchDataType>();
 
-            while (true)
+            try
             {
-                try
-                {
-                    CsvParserOptions csvParserOptions = new CsvParserOptions(false, ',');
-                    CsvAirportWatchDataTypeMapping csvMapper = new CsvAirportWatchDataTypeMapping();
-                    CsvParser<AirportWatchDataType> csvParser = new CsvParser<AirportWatchDataType>(csvParserOptions, csvMapper);
+                AirportWatchCsvParser csvParser = new AirportWatchCsvParser(filePath);
 
-                    var records = csvParser
-                        .ReadFromFile(filePath, Encoding.ASCII);
+                data = csvParser.GetRecords(_lastWatchedFileRecordIndex);
 
-                    var recordsCount = records.Count();
-
-                    data = records.Select(r => r.Result).Skip(_lastWatchedFileRecordIndex).ToList();
-
-                    _lastWatchedFileRecordIndex = recordsCount;
-                    _lastWatchedFile = fileName;
-                    break;
-                }
-                catch { }
+                _lastWatchedFileRecordIndex += data.Count;
+                _lastWatchedFile = fileName;
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
             }
 
             return data;
@@ -240,7 +227,7 @@ namespace FBOLinx.Job.Jobs
             }
 
             return airportWatchData
-                .OrderByDescending(row => row.BoxTransmissionDateTimeUtc)
+                .OrderByDescending(row => row.AircraftPositionDateTimeUtc)
                 .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
                 .Select(grouped => grouped.First())
                 .ToList();

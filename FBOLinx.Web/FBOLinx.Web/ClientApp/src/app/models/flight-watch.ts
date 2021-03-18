@@ -1,9 +1,3 @@
-export enum AircraftStatusType {
-    Landing = 0,
-    Takeoff = 1,
-    Parking = 2,
-};
-
 export type FlightWatch = {
     oid: number;
     boxTransmissionDateTimeUtc: Date;
@@ -21,5 +15,4 @@ export type FlightWatch = {
     aircraftTypeCode: string;
     gpsAltitude?: number;
     isAircraftOnGround: boolean;
-    aircraftStatus: AircraftStatusType;
 };

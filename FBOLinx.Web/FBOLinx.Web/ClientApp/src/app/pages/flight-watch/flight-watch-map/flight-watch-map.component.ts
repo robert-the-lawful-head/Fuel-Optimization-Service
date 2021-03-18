@@ -1,83 +1,64 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { interval, Subscription } from 'rxjs';
-import { keyBy, keys } from 'lodash';
-import { AirportWatchService } from '../../../services/airportwatch.service';
-import { SharedService } from '../../../layouts/shared-service';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { isEqual, keys } from 'lodash';
 import { FlightWatch } from '../../../models/flight-watch';
-
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '/default-layout',
-    },
-    {
-        title: 'Flight Watch',
-        link: '/default-layout/flight-watch',
-    },
-];
+import { AircraftIcons } from './aircraft-icons';
 
 @Component({
     selector: 'app-flight-watch-map',
     templateUrl: './flight-watch-map.component.html',
     styleUrls: [ './flight-watch-map.component.scss' ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FlightWatchMapComponent implements OnInit, OnDestroy {
-    pageTitle = 'Analytics';
-    breadcrumb: any[] = BREADCRUMBS;
-
-    // Map Options
-    lat: number;
-    lng: number;
-    zoom = 15;
-    markerImg = '/assets/img/airportMarker.png';
-
-    mapInitialized = false;
-    loading = false;
-    airportWatchMap: {
+export class FlightWatchMapComponent implements OnChanges {
+    @ViewChild('map') map: google.maps.Map;
+    @Input() center: google.maps.LatLngLiteral;
+    @Input() data: {
         [oid: number]: FlightWatch;
     };
+    @Input() isStable: boolean;
+    @Output() markerClicked = new EventEmitter<FlightWatch>();
 
-    mapLoadSubscription: Subscription;
+    // Map Options
+    zoom = 8;
+    markerIcons = AircraftIcons;
+    keys: string[] = [];
 
-    constructor(
-        private airportWatchService: AirportWatchService,
-        private sharedService: SharedService
-    ) {
-        this.sharedService.titleChange(this.pageTitle);
+    bounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(85, -180),
+        new google.maps.LatLng(-85, 180)
+    );
+
+    constructor() {
     }
 
-    ngOnInit() {
-        this.mapLoadSubscription = interval(5000).subscribe(() => this.loadAirportWatchData());
-    }
-
-    ngOnDestroy() {
-        if (this.mapLoadSubscription) {
-            this.mapLoadSubscription.unsubscribe();
+    ngOnChanges(changes: SimpleChanges): void {
+        const currentData = changes.data.currentValue;
+        const oldData = changes.data.previousValue;
+        if (!isEqual(currentData, oldData)) {
+            this.updateKeys(currentData);
         }
     }
 
-    get airportWatchData() {
-        return keys(this.airportWatchMap);
+    onFlightWatchClick(flightWatch: FlightWatch) {
+        this.markerClicked.emit(flightWatch);
     }
 
-    loadAirportWatchData() {
-        if (!this.loading) {
-            this.loading = true;
-            this.airportWatchService.getAll()
-                .subscribe((data: FlightWatch[]) => {
-                    if (!this.lat || !this.lng) {
-                        this.lat = data[data.length - 1]?.latitude || 0;
-                        this.lng = data[data.length - 1]?.longitude || 0;
-                    }
+    boundsChanged() {
+        this.updateKeys(this.data);
+    }
 
-                    this.airportWatchMap = keyBy(data, row => row.oid);
+    updateKeys(data: { [oid: number]: FlightWatch }) {
+        let newKeys = keys(data);
 
-                    this.loading = false;
-                });
+        if (this.map) {
+            const bound = this.map.getBounds();
+            newKeys = newKeys.filter(id => {
+                const flightWatch = data[Number(id)];
+                const flightWatchPosition = new google.maps.LatLng(flightWatch.latitude, flightWatch.longitude);
+                return bound.contains(flightWatchPosition);
+            });
         }
-    }
 
-    mapReady() {
-        this.mapInitialized = true;
+        this.keys = newKeys.splice(0, 200);
     }
 }

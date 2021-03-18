@@ -1,8 +1,7 @@
-import { AgmCoreModule } from '@agm/core';
-import { AgmMarkerClustererModule  } from '@agm/markerclusterer';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
@@ -12,6 +11,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
+import { GoogleMapsModule } from '@angular/google-maps';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -55,6 +55,7 @@ import {
     SortService,
     ToolbarService
 } from '@syncfusion/ej2-angular-grids';
+import { ResizableModule } from 'angular-resizable-element';
 
 // Popover
 import { PopoverModule } from 'ngx-smart-popover';
@@ -110,6 +111,14 @@ import { RampFeesDialogNewFeeComponent } from './ramp-fees/ramp-fees-dialog-new-
 import { RampFeesImportInformationComponent } from './ramp-fees/ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component';
 import { RampFeesHomeComponent } from './ramp-fees/ramp-fees-home/ramp-fees-home.component';
 import { AnalyticsHomeComponent } from './analytics/analytics-home/analytics-home.component';
+import { AnalyticsOrdersQuoteChartComponent } from './analytics/analytics-orders-quote-chart/analytics-orders-quote-chart.component';
+import { AnalyticsOrdersOverTimeChartComponent } from './analytics/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component';
+import { AnalyticsVolumesNearbyAirportChartComponent } from './analytics/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component';
+import { AnalyticsCustomerBreakdownChartComponent } from './analytics/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component';
+import { AnalyticsCompaniesQuotesDealTableComponent } from './analytics/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component';
+import { AnalyticsFuelVendorSourceChartComponent } from './analytics/analytics-fuel-vendor-source-chart/analytics-fuel-vendor-source-chart.component';
+import { AnalyticsMarketShareFboAirportChartComponent } from './analytics/analytics-market-share-fbo-airport-chart/analytics-market-share-fbo-airport-chart.component';
+import { AnalyticsAirportWatchTableComponent } from './analytics/analytics-airport-watch-table/analytics-airport-watch-table.component';
 import { UsersDialogNewUserComponent } from './users/users-dialog-new-user/users-dialog-new-user.component';
 import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
@@ -117,7 +126,10 @@ import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { SystemcontactsNewContactModalComponent } from './contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 import { GroupAnalyticsHomeComponent } from './group-analytics/group-analytics-home/group-analytics-home.component';
 import { GroupAnalyticsGenerateDialogComponent } from './group-analytics/group-analytics-generate-dialog/group-analytics-generate-dialog.component';
+import { FlightWatchComponent } from './flight-watch/flight-watch/flight-watch.component';
 import { FlightWatchMapComponent } from './flight-watch/flight-watch-map/flight-watch-map.component';
+import { FlightWatchAircraftInfoComponent } from './flight-watch/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
+import { FlightWatchSettingsComponent } from './flight-watch/flight-watch-settings/flight-watch-settings.component';
 
 // Shared
 import { FboPricesPanelComponent } from '../shared/components/fbo-prices-panel/fbo-prices-panel.component';
@@ -141,13 +153,6 @@ import { StatisticsOrdersByLocationComponent } from '../shared/components/statis
 import { StatisticsTotalAircraftComponent } from '../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
 import { StatisticsTotalCustomersComponent } from '../shared/components/statistics-total-customers/statistics-total-customers.component';
 import { StatisticsTotalOrdersComponent } from '../shared/components/statistics-total-orders/statistics-total-orders.component';
-import { AnalyticsOrdersQuoteChartComponent } from '../shared/components/analytics-orders-quote-chart/analytics-orders-quote-chart.component';
-import { AnalyticsOrdersOverTimeChartComponent } from '../shared/components/analytics-orders-over-time-chart/analytics-orders-over-time-chart.component';
-import { AnalyticsVolumesNearbyAirportChartComponent } from '../shared/components/analytics-volumes-nearby-airport-chart/analytics-volumes-nearby-airport-chart.component';
-import { AnalyticsCustomerBreakdownChartComponent } from '../shared/components/analytics-customer-breakdown-chart/analytics-customer-breakdown-chart.component';
-import { AnalyticsCompaniesQuotesDealTableComponent } from '../shared/components/analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component';
-import { AnalyticsFuelVendorSourceChartComponent } from '../shared/components/analytics-fuel-vendor-source-chart/analytics-fuel-vendor-source-chart.component';
-import { AnalyticsMarketShareFboAirportChartComponent } from '../shared/components/analytics-market-share-fbo-airport-chart/analytics-market-share-fbo-airport-chart.component';
 import { FuelReqsExportModalComponent } from '../shared/components/fuelreqs-export/fuelreqs-export.component';
 import { CustomerMatchDialogComponent } from './customers/customer-match-dialog/customer-match-dialog.component';
 import { TableColumnFilterComponent } from '../shared/components/table-column-filter/table-column-filter.component';
@@ -158,18 +163,15 @@ import { TableSettingsComponent } from '../shared/components/table-settings/tabl
 import { AppPipesModule } from '../app-pipes.module';
 
 import { ClickStopPropagationDirective } from '../shared/directives/click-stop-propagation.directive';
-
-import { environment } from '../../environments/environment';
-
+import { FlightWatchMapMarkerIconPipe } from './flight-watch/flight-watch-map/flight-watch-map-marker.pipe';
+import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-airport-watch-table/analytics-airport-watch-status-marker.pipe';
 
 @NgModule({
     imports: [
-        AgmCoreModule.forRoot({
-            apiKey: environment.googleMapApiKey
-        }),
-        AgmMarkerClustererModule,
         CommonModule,
+        BrowserAnimationsModule,
         FormsModule,
+        GoogleMapsModule,
         DragDropModule,
         A11yModule,
         ClipboardModule,
@@ -219,7 +221,8 @@ import { environment } from '../../environments/environment';
         NgxUiLoaderModule,
         GridModule,
         RouterModule,
-        PopoverModule
+        PopoverModule,
+        ResizableModule,
     ],
     declarations: [
         AuthtokenComponent,
@@ -282,6 +285,7 @@ import { environment } from '../../environments/environment';
         AnalyticsCompaniesQuotesDealTableComponent,
         AnalyticsFuelVendorSourceChartComponent,
         AnalyticsMarketShareFboAirportChartComponent,
+        AnalyticsAirportWatchTableComponent,
         DeleteConfirmationComponent,
         ProceedConfirmationComponent,
         CloseConfirmationComponent,
@@ -313,7 +317,12 @@ import { environment } from '../../environments/environment';
         GroupAnalyticsGenerateDialogComponent,
         FeeAndTaxBreakdownComponent,
         TableSettingsComponent,
+        FlightWatchComponent,
         FlightWatchMapComponent,
+        FlightWatchAircraftInfoComponent,
+        FlightWatchSettingsComponent,
+        FlightWatchMapMarkerIconPipe,
+        AnalyticsAirportWatchStatusMarkerPipe,
     ],
     exports: [
         ClickStopPropagationDirective,

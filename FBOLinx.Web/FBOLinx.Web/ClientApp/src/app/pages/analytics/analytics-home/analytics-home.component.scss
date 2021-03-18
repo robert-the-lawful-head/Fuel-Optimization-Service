@@ -1,4 +1,13 @@
 ﻿:host {
     position: relative;
     display: block;
+
+    ::ng-deep {
+        .mat-tab-body {
+            .row {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+    }
 }

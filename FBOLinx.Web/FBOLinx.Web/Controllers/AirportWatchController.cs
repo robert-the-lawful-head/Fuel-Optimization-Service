@@ -7,6 +7,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
+using FBOLinx.Web.Models.Requests;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,17 +18,31 @@ namespace FBOLinx.Web.Controllers
     public class AirportWatchController : ControllerBase
     {
         private readonly AirportWatchService _airportWatchService;
+        private readonly FboService _fboService;
 
-        public AirportWatchController(AirportWatchService airportWatchService)
+        public AirportWatchController(AirportWatchService airportWatchService, FboService fboService)
         {
             _airportWatchService = airportWatchService;
+            _fboService = fboService;
         }
 
-        [HttpGet("list")]
-        public async Task<ActionResult<List<AirportWatchHistoricalData>>> GetAirportWatchHistoricalData()
+        [HttpGet("list/fbo/{fboId}")]
+        public async Task<IActionResult> GetAirportLiveData([FromRoute] int fboId)
         {
-            var data = await _airportWatchService.GetAirportWatchHistoricalData();
-            return data;
+            var fboLocation = await _fboService.GetFBOLocaiton(fboId);
+            var data = await _airportWatchService.GetAirportWatchLiveData();
+            return Ok(new
+            {
+                FBOLocation = fboLocation,
+                FlightWatchData = data,
+            });
+        }
+
+        [HttpPost("group/{groupId}/historical-data")]
+        public async Task<IActionResult> GetHistoricalData([FromRoute] int groupId, [FromBody] AirportWatchHistoricalDataRequest request)
+        {
+            var data = await _airportWatchService.GetHistoricalData(groupId, request);
+            return Ok(data);
         }
 
         [AllowAnonymous]

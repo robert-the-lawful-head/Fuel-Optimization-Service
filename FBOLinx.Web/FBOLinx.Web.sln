@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FBOLinx.Core", "FBOLinx.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FBOLinx.ServiceLayer", "FBOLinx.ServiceLayer\FBOLinx.ServiceLayer.csproj", "{56998985-35D4-4866-9015-F480D999AF8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FBOLinx.Job", "FBOLinx.Job\FBOLinx.Job.csproj", "{58D6944F-225E-4128-8F21-91EEBD426D8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FBOLinx.Job", "FBOLinx.Job\FBOLinx.Job.csproj", "{58D6944F-225E-4128-8F21-91EEBD426D8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FBOLinx.Job.Test", "FBOLinx.Job.Test\FBOLinx.Job.Test.csproj", "{9C603C7D-6550-492F-A0C9-E01A16EB86DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{58D6944F-225E-4128-8F21-91EEBD426D8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58D6944F-225E-4128-8F21-91EEBD426D8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58D6944F-225E-4128-8F21-91EEBD426D8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C603C7D-6550-492F-A0C9-E01A16EB86DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C603C7D-6550-492F-A0C9-E01A16EB86DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C603C7D-6550-492F-A0C9-E01A16EB86DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C603C7D-6550-492F-A0C9-E01A16EB86DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

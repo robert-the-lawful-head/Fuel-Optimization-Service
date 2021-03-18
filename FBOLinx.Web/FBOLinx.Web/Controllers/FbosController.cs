@@ -25,15 +25,15 @@ namespace FBOLinx.Web.Controllers
     public class FbosController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private IServiceScopeFactory _serviceScopeFactory;
+        private readonly DegaContext _degaContext;
         private GroupFboService _groupFboService;
         private readonly FboService _fboService;
 
-        public FbosController(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, FboService fboService)
+        public FbosController(FboLinxContext context, DegaContext degaContext, GroupFboService groupFboService, FboService fboService)
         {
             _groupFboService = groupFboService;
             _context = context;
-            _serviceScopeFactory = serviceScopeFactory;
+            _degaContext = degaContext;
             _fboService = fboService;
         }
 
@@ -147,6 +147,8 @@ namespace FBOLinx.Web.Controllers
                     _context.Fboprices.UpdateRange(fboPrices);
                 }
             }
+
+            fbos.Fbo = fbos.Fbo.Trim();
 
             _context.Fbos.Update(fbos);
 
