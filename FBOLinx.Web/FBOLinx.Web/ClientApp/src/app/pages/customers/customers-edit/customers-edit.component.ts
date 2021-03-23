@@ -5,7 +5,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { combineLatest, EMPTY, of } from 'rxjs';
-import { find } from 'lodash';
 
 // Services
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
@@ -60,7 +59,6 @@ export class CustomersEditComponent implements OnInit {
     customCustomerType: any;
     certificateTypes: any[];
     customerCompanyTypes: any[];
-    hasContactForPriceDistribution = false;
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
     @ViewChild('priceBreakdownPreview')
@@ -123,9 +121,6 @@ export class CustomersEditComponent implements OnInit {
         this.customerAircraftsData = results[3] as any[];
         this.customCustomerType = results[4];
         this.customerCompanyTypes = results[5] as any[];
-        if (find(this.contactsData, c => c.copyAlerts)) {
-            this.hasContactForPriceDistribution = true;
-        }
 
         this.customerForm = this.formBuilder.group({
             active: [ this.customerInfoByGroup.active ],
@@ -211,6 +206,7 @@ export class CustomersEditComponent implements OnInit {
             oid: 0,
             contactId: 0,
             groupId: this.sharedService.currentUser.groupId,
+            copyAlerts: true
         };
 
         const dialogRef = this.newContactDialog.open(
@@ -326,14 +322,8 @@ export class CustomersEditComponent implements OnInit {
             .subscribe((data: any) => {
                 this.contactsData = data;
                 this.currentContactInfoByGroup = null;
-                this.hasContactForPriceDistribution = false;
                 if (!this.contactsData) {
                     return;
-                }
-                for (const contact of this.contactsData) {
-                    if (contact.copyAlerts) {
-                        this.hasContactForPriceDistribution = true;
-                    }
                 }
             });
     }

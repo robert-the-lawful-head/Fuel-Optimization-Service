@@ -125,6 +125,11 @@ namespace FBOLinx.Web.Services
             DistributionQueue distributionQueueRecord = new DistributionQueue();
             try
             {
+                var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
+
+                if (customerAircrafts.Count == 0)
+                    return;
+
                 var validPricingTemplates = await GetValidPricingTemplates(customer);
                 if (validPricingTemplates == null || validPricingTemplates.Count == 0)
                 {
