@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
@@ -12,6 +13,7 @@ import { AirportWatchService } from '../../../services/airportwatch.service';
 import { FlightWatchHistorical } from '../../../models/flight-watch-historical';
 import { CustomersListType } from '../../../models/customer';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
+import { AircraftIcons } from '../../flight-watch/flight-watch-map/aircraft-icons';
 
 @Component({
     selector: 'app-analytics-airport-visits',
@@ -20,6 +22,7 @@ import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../
 })
 export class AnalyticsAirportVisitsComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
 
     @Input() customers: CustomersListType[] = [];
     @Input() tailNumbers: any[] = [];
@@ -44,6 +47,8 @@ export class AnalyticsAirportVisitsComponent implements OnInit {
     public selectedTailNumbers: string[] = [];
 
     public filtersChanged: Subject<any> = new Subject<any>();
+
+    public aircraftTypes = AircraftIcons;
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,
@@ -95,6 +100,7 @@ export class AnalyticsAirportVisitsComponent implements OnInit {
 
         this.dataSource = new MatTableDataSource(data);
         this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
     }
 
     filterChanged() {

@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject } from 'rxjs';
 
@@ -11,6 +13,7 @@ import { AirportWatchService } from '../../../services/airportwatch.service';
 import { FlightWatchHistorical } from '../../../models/flight-watch-historical';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
 import { CustomersListType } from '../../../models/customer';
+import { AircraftIcons } from '../../flight-watch/flight-watch-map/aircraft-icons';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -19,6 +22,7 @@ import { CustomersListType } from '../../../models/customer';
 })
 export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
 
     @Input() customers: CustomersListType[] = [];
     @Input() tailNumbers: any[] = [];
@@ -26,6 +30,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     public chartName = 'airport-arrivals-depatures-table';
     public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status'];
+
+    public filterStartDate: Date;
+    public filterEndDate: Date;
 
     public commercialAircraftTypeCodes = ['A3', 'A5'];
     public commercialAircraftFlightNumber = ['ASA', 'UPS', 'SKW', 'FDX', 'UAL', 'AAL', 'DAL', 'SWA', 'GTI'];
@@ -41,12 +48,16 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     public filtersChanged: Subject<any> = new Subject<any>();
 
+    public aircraftTypes = AircraftIcons;
+
     constructor(
         public newCustomerAircraftDialog: MatDialog,
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
     ) {
+        this.filterStartDate = new Date(moment().add(-1, 'M').format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshDataSource());
@@ -61,6 +72,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         this.airportWatchService.getArrivalsDepartures(
             this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId,
+            {
+                startDateTime: this.filterStartDate,
+                endDateTime: this.filterEndDate,
+            }
         )
             .subscribe((data) => {
                 this.data = data;
@@ -84,6 +99,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
         this.dataSource = new MatTableDataSource(data);
         this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
     }
 
     filterChanged() {

@@ -1,4 +1,4 @@
-<ni-card [headerBgColor]="'gray'" title="Users Summary Stats by Company/Aircraft" class="mt-3">
+<ni-card [headerBgColor]="'gray'" title="Visits by Company/Aircraft" class="mt-3">
     <div class="chart-container">
         <div class="flex">
             <div class="d-inline-block mr-2 ml-2" style="width: 130px">
@@ -86,7 +86,7 @@
                     [(ngModel)]="isCommercial"
                     (change)="filterChanged()"
                 >
-                    Commercial
+                    Hide Commercial Flights
                 </mat-slide-toggle>
             </div>
         </div>
@@ -125,13 +125,13 @@
                 </ng-container>
 
                 <ng-container matColumnDef="aircraftTypeCode">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Aircraft ICAO Code</th>
-                    <td *matCellDef="let info" mat-cell> {{info.aircraftTypeCode}} </td>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Aircraft Type</th>
+                    <td *matCellDef="let info" mat-cell> {{aircraftTypes[info.aircraftTypeCode].label}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="dateTime">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Last Seen</th>
-                    <td *matCellDef="let info" mat-cell> {{info.flightNumber ? (info.dateTime | date:'M/d/YYYY H:m') : "N/A"}} </td>
+                    <td *matCellDef="let info" mat-cell> {{info.flightNumber ? (info.dateTime | date:'MM/dd/YYYY HH:mm') : "N/A"}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="pastVisits">
@@ -146,6 +146,8 @@
                     (click)="onClickAircraft(row)"
                 ></tr>
             </table>
+
+            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons class="mat-paginator-sticky"></mat-paginator>
         </div>
     </div>
     <ngx-ui-loader
