@@ -48,15 +48,17 @@ namespace FBOLinx.Web.Services
         private IHttpContextAccessor _HttpContextAccessor;
         private MailTemplateService _MailTemplateService;
         private PriceFetchingService _PriceFetchingService;
+        private readonly FilestorageContext _fileStorageContext;
 
         #region Constructors
-        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService, PriceFetchingService priceFetchingService)
+        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService, PriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
             _MailSettings = mailSettings.Value;
+            _fileStorageContext = fileStorageContext;
         }
         #endregion
 
@@ -123,6 +125,11 @@ namespace FBOLinx.Web.Services
             DistributionQueue distributionQueueRecord = new DistributionQueue();
             try
             {
+                var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
+
+                if (customerAircrafts.Count == 0)
+                    return;
+
                 var validPricingTemplates = await GetValidPricingTemplates(customer);
                 if (validPricingTemplates == null || validPricingTemplates.Count == 0)
                 {
@@ -166,8 +173,8 @@ namespace FBOLinx.Web.Services
                 //Add the price breakdown as an image to prevent parsing
                 byte[] priceBreakdownImage = await GetPriceBreakdownImage(customer, validPricingTemplates);
 
-                var fbo = _context.Fbos.FirstOrDefault(s => s.Oid == _DistributePricingRequest.FboId);
-                var fboIcao = _context.Fboairports.FirstOrDefault(s => s.Fboid == fbo.Oid).Icao;
+                var fbo = await _context.Fbos.Where(s => s.Oid == _DistributePricingRequest.FboId).SingleOrDefaultAsync();
+                var fboIcao = await _context.Fboairports.Where(s => s.Fboid == fbo.Oid).SingleOrDefaultAsync();
 
                 //Convert to a SendGrid message and use their API to send it
                 Services.MailService mailService = new MailService(_MailSettings);
@@ -201,7 +208,7 @@ namespace FBOLinx.Web.Services
                     templateEmailBodyMessage = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Email),
                     templateNotesMessage = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Notes),
                     fboName = fbo.Fbo,
-                    fboICAOCode = fboIcao,
+                    fboICAOCode = fboIcao.Icao,
                     fboAddress = fbo.Address,
                     fboCity = fbo.City,
                     fboState = fbo.State,
@@ -211,14 +218,25 @@ namespace FBOLinx.Web.Services
                 };
                 sendGridMessageWithTemplate.SetTemplateData(dynamicTemplateData);
 
-                var newAttachment = new SendGrid.Helpers.Mail.Attachment();
-                newAttachment.Disposition = "inline";
-                newAttachment.Content = Convert.ToBase64String(priceBreakdownImage);
-                newAttachment.Filename = "prices.png";
-                newAttachment.Type = "image/png";
-                newAttachment.ContentId = "Prices";
-
-                sendGridMessageWithTemplate.AddAttachment(newAttachment);
+                var pricesAttachment = new SendGrid.Helpers.Mail.Attachment();
+                pricesAttachment.Disposition = "inline";
+                pricesAttachment.Content = Convert.ToBase64String(priceBreakdownImage);
+                pricesAttachment.Filename = "prices.png";
+                pricesAttachment.Type = "image/png";
+                pricesAttachment.ContentId = "Prices";
+                sendGridMessageWithTemplate.AddAttachment(pricesAttachment);
+                
+                var logo =_fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fbo.Oid).ToList();
+                if (logo.Count > 0)
+                {
+                    var logoAttachment = new SendGrid.Helpers.Mail.Attachment();
+                    logoAttachment.Disposition = "inline";
+                    logoAttachment.Content = Convert.ToBase64String(logo[0].FileData);
+                    logoAttachment.Filename = "logo." + logo[0].ContentType.Split('/')[1];
+                    logoAttachment.Type = logo[0].ContentType;
+                    logoAttachment.ContentId = "Logo";
+                    sendGridMessageWithTemplate.AddAttachment(logoAttachment);
+                }
 
                 sendGridMessageWithTemplate.TemplateId = "d-537f958228a6490b977e372ad8389b71";
                 var result = mailService.SendAsync(sendGridMessageWithTemplate).Result;

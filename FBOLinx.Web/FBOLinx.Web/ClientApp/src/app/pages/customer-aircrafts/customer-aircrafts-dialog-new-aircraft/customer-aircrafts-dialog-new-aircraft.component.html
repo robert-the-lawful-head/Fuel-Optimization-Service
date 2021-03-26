@@ -16,19 +16,10 @@
             </mat-select>
         </mat-form-field>
     </div>
-    <div>
-        <mat-form-field>
-            <mat-select [(ngModel)]="data.size" placeholder="Aircraft Size">
-                <mat-option *ngFor="let aircraftSize of aircraftSizes" [value]="aircraftSize.value">
-                    {{aircraftSize.description}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
 </div>
 <div class="mt-2 text-center">
     <button
-        [disabled]="!data.tailNumber || !data.selectedAircraft || !data.size"
+        [disabled]="!data.tailNumber || !data.selectedAircraft"
         [mat-dialog-close]="data"
         class="mr-1"
         color="accent"

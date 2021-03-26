@@ -49,7 +49,7 @@
                     [options]="customers"
                     [(ngModel)]="selectedCustomers"
                     optionLabel="company"
-                    optionValue="oid"
+                    optionValue="customerInfoByGroupID"
                     display="chip"
                     placeholder="Select Customers"
                     (onChange)="filterChanged()"
@@ -140,10 +140,12 @@
                 </ng-container>
 
                 <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-                <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+                <tr
+                    *matRowDef="let row; columns: displayedColumns;"
+                    mat-row
+                    (click)="onClickAircraft(row)"
+                ></tr>
             </table>
-
-            <!-- <mat-paginator [pageSizeOptions]="[50, 100, 200]" showFirstLastButtons></mat-paginator> -->
         </div>
     </div>
     <ngx-ui-loader

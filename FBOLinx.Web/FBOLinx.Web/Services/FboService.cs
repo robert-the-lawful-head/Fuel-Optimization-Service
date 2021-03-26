@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using Geolocation;
+using FBOLinx.Web.Models.Requests;
+using System.IO;
 
 namespace FBOLinx.Web.Services
 {
@@ -14,12 +16,14 @@ namespace FBOLinx.Web.Services
     {
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
+        private readonly FilestorageContext _fileStorageContext;
         private readonly IServiceProvider _services;
-        public FboService(FboLinxContext context, DegaContext degaContext, IServiceProvider services)
+        public FboService(FboLinxContext context, DegaContext degaContext, IServiceProvider services, FilestorageContext fileStorageContext)
         {
             _context = context;
             _degaContext = degaContext;
             _services = services;
+            _fileStorageContext = fileStorageContext;
         }
 
         public async Task DoLegacyGroupTransition(int groupId)
@@ -69,6 +73,56 @@ namespace FBOLinx.Web.Services
             if (lngDirection != "E") longitude = -longitude;
 
             return new Coordinate(latitude, longitude);
+        }
+
+        public async Task<string> UploadLogo(FboLogoRequest fboLogoRequest)
+        {
+            var imageAsArray = Convert.FromBase64String(fboLogoRequest.FileData);
+
+            var existingRecord = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fboLogoRequest.FboId).ToListAsync();
+            if (existingRecord.Count > 0)
+            {
+                existingRecord[0].FileData = imageAsArray;
+                existingRecord[0].FileName = fboLogoRequest.FileName;
+                existingRecord[0].ContentType = fboLogoRequest.ContentType;
+                _fileStorageContext.FboLinxImageFileData.Update(existingRecord[0]);
+            }
+            else
+            {
+                FBOLinx.DB.Models.FboLinxImageFileData fboLinxImageFileData = new DB.Models.FboLinxImageFileData();
+                fboLinxImageFileData.FileData = imageAsArray;
+                fboLinxImageFileData.FileName = fboLogoRequest.FileName;
+                fboLinxImageFileData.ContentType = fboLogoRequest.ContentType;
+                fboLinxImageFileData.FboId = fboLogoRequest.FboId;
+                _fileStorageContext.FboLinxImageFileData.Add(fboLinxImageFileData);
+            }
+
+            await _fileStorageContext.SaveChangesAsync();
+
+            var imageBase64 = Convert.ToBase64String(imageAsArray, 0, imageAsArray.Length);
+            return fboLogoRequest.ContentType + ";base64," + imageBase64;
+        }
+
+        public async Task<string> GetLogo(int fboId)
+        {
+            var existingRecord = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fboId).ToListAsync();
+            if (existingRecord.Count > 0)
+            {
+                var imageBase64 = Convert.ToBase64String(existingRecord[0].FileData, 0, existingRecord[0].FileData.Length);
+                return existingRecord[0].ContentType + ";base64," + imageBase64;
+            }
+
+            return "";
+        }
+
+        public async Task DeleteLogo(int fboId)
+        {
+            var existingRecord = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fboId).SingleOrDefaultAsync();
+            if (existingRecord.Oid > 0)
+            {
+                _fileStorageContext.FboLinxImageFileData.Remove(existingRecord);
+                await _fileStorageContext.SaveChangesAsync();
+            }
         }
 
         public async Task<string> GetFBOIcao(int fboId)

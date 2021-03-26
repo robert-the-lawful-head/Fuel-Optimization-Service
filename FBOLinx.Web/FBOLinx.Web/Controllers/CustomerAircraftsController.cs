@@ -272,6 +272,68 @@ namespace FBOLinx.Web.Controllers
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
 
+        [HttpPost("create-with-customer")]
+        public async Task<IActionResult> PostCustomerAircraftsWithCustomer([FromBody] CreateAircraftsWithCustomerRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                var customer = new Customers
+                {
+                    Company = request.Customer
+                };
+
+                _context.Customers.Add(customer);
+                _context.SaveChanges();
+
+                var customerViewedByFbo = new CustomersViewedByFbo
+                {
+                    Fboid = request.FboId,
+                    CustomerId = customer.Oid,
+                    ViewDate = DateTime.Now,
+                };
+                _context.CustomersViewedByFbo.Add(customerViewedByFbo);
+
+                var customerInfoByGroup = new CustomerInfoByGroup
+                {
+                    GroupId = request.GroupId,
+                    Company = request.Customer,
+                    CustomerId = customer.Oid,
+                    Active = true,
+                };
+                _context.CustomerInfoByGroup.Add(customerInfoByGroup);
+
+
+                var customerAircraft = new CustomerAircrafts
+                {
+                    GroupId = request.GroupId,
+                    AircraftId = request.AircraftId,
+                    TailNumber = request.TailNumber,
+                    Size = request.Size,
+                    CustomerId = customer.Oid,
+                };
+                _context.CustomerAircrafts.Add(customerAircraft);
+
+                _context.SaveChanges();
+
+                await transaction.CommitAsync();
+
+                return Ok(customerInfoByGroup);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                return BadRequest(ex);
+            }
+        }
+
+
         [HttpPost("import")]
         public async Task<IActionResult> ImportCustomerAircrafts([FromBody] List<AircraftImportVM> customerAircrafts)
         {

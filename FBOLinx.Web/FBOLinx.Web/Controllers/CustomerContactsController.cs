@@ -134,6 +134,7 @@ namespace FBOLinx.Web.Controllers
             var emails = (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
                              join c in _context.Customers on cg.CustomerId equals c.Oid
                              join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
+                             join ca in _context.CustomerAircrafts.Where(x => x.GroupId == groupId).Distinct() on cg.CustomerId equals ca.CustomerId
                              join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                              join co in _context.Contacts on custc.ContactId equals co.Oid
                              join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
@@ -141,6 +142,7 @@ namespace FBOLinx.Web.Controllers
                                    && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
                                    && (cibg.CopyAlerts ?? false) == true
                                    && !string.IsNullOrEmpty(cibg.Email)
+                                   && cibg.GroupId == groupId
                              select co).Count();
 
             return Ok(emails);

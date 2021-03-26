@@ -1,0 +1,44 @@
+<h1 mat-dialog-title>Add Aircraft To Customer</h1>
+<div mat-dialog-content>
+    <div>
+        <mat-form-field>
+            <input [(ngModel)]="data.tailNumber" aria-label="Tail Number" cdkFocusInitial matInput
+                   placeholder="Tail Number">
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field>
+            <mat-select [(ngModel)]="selectedAircraft"
+                        placeholder="Aircraft Make/Model">
+                <mat-option *ngFor="let aircraftType of aircraftTypes" [value]="aircraftType">
+                    {{aircraftType.make}} {{aircraftType.model}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div>
+        Customer:&nbsp;&nbsp;
+        <p-dropdown
+            class="customers-filter"
+            [options]="data.customers"
+            [(ngModel)]="selectedCompany"
+            optionLabel="company"
+            optionValue="companyId"
+            [editable]="true"
+            [filter]="true"
+        ></p-dropdown>
+    </div>
+</div>
+<div mat-dialog-actions class="mt-5 text-center">
+    <button
+        [disabled]="loading || !data.tailNumber || !selectedAircraft || !selectedCompany"
+        (click)="onSubmit()"
+        class="mr-1"
+        color="accent"
+        mat-flat-button
+    >
+        {{ loading ? "" : "Add Aircraft" }}
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    </button>
+    <button (click)="onClose()" mat-stroked-button>Cancel</button>
+</div>
