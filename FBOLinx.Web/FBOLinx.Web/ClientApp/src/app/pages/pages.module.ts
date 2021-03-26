@@ -164,6 +164,7 @@ import { TableGlobalSearchComponent } from '../shared/components/table-global-se
 import { FeeAndTaxBreakdownComponent } from '../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 import { TableSettingsComponent } from '../shared/components/table-settings/table-settings.component';
 import { AircraftAssignModalComponent } from '../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
+import { CsvExportModalComponent } from '../shared/components/csv-export-modal/csv-export-modal.component';
 
 // Pipes
 import { AppPipesModule } from '../app-pipes.module';
@@ -334,6 +335,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         FlightWatchSettingsComponent,
         FlightWatchMapMarkerIconPipe,
         AnalyticsAirportWatchStatusMarkerPipe,
+        CsvExportModalComponent,
     ],
     exports: [
         ClickStopPropagationDirective,

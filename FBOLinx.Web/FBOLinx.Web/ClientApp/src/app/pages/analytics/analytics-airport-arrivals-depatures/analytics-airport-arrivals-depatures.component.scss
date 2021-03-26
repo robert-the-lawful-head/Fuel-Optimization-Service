@@ -5,12 +5,14 @@
 }
 
 .table-container {
-    height: 300px;
+    position: relative;
+    height: 593px;
     overflow: auto;
 }
 
 table {
     width: 100%;
+    margin: 0;
 }
 
 .mat-form-field {
@@ -32,13 +34,17 @@ table {
             font-size: 13px;
         }
     }
+}
 
-    // &.airport-dropdown-tails-filter {
-    //     ::ng-deep {
-    //         .p-multiselect {
-    //             min-width: 12rem;
-    //             width: 12rem;
-    //         }
-    //     }
-    // }
+.mat-paginator-sticky {
+    bottom: 0px;
+    position: absolute;
+    width: 100%;
+}
+
+.actions {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
 }

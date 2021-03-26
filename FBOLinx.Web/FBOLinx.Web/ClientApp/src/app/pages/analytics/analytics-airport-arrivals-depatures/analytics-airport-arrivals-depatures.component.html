@@ -1,6 +1,48 @@
 <ni-card [headerBgColor]="'gray'" title="Airport Departures and Arrivals" class="mb-1">
     <div class="chart-container">
-        <div class="flex mb-2">
+        <div class="flex mb-2 position-relative">
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input
+                        (dateChange)="refreshData()"
+                        (focus)="dashboardSettingsStartDateFilter.open()"
+                        [(ngModel)]="filterStartDate"
+                        [matDatepicker]="dashboardSettingsStartDateFilter"
+                        [max]="filterEndDate"
+                        matInput
+                        placeholder="Start Date"
+                    />
+                    <mat-datepicker-toggle
+                        [for]="dashboardSettingsStartDateFilter"
+                        matSuffix
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsStartDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input
+                        (dateChange)="refreshData()"
+                        (focus)="dashboardSettingsEndDateFilter.open()"
+                        [(ngModel)]="filterEndDate"
+                        [matDatepicker]="dashboardSettingsEndDateFilter"
+                        [min]="filterStartDate"
+                        matInput
+                        placeholder="End Date"
+                    />
+                    <mat-datepicker-toggle
+                        [for]="dashboardSettingsEndDateFilter"
+                        matSuffix
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsEndDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
+                </mat-form-field>
+            </div>
             <div class="d-inline-block mr-2 ml-2">
                 <p-multiSelect
                     class="airport-dropdown-filter"
@@ -44,8 +86,16 @@
                     [(ngModel)]="isCommercial"
                     (change)="filterChanged()"
                 >
-                    Commercial
+                    Hide Commercial Flights
                 </mat-slide-toggle>
+            </div>
+            <div class="actions">
+                <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                    <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+                </button>
+                <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
+                    <button (click)="onExport()" mat-menu-item>Export</button>
+                </mat-menu>
             </div>
         </div>
 
@@ -83,13 +133,13 @@
                 </ng-container>
 
                 <ng-container matColumnDef="aircraftTypeCode">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Aircraft ICAO Code</th>
-                    <td *matCellDef="let info" mat-cell> {{info.aircraftTypeCode}} </td>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Aircraft Type</th>
+                    <td *matCellDef="let info" mat-cell> {{aircraftTypes[info.aircraftTypeCode].label}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="dateTime">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header> Date and Time</th>
-                    <td *matCellDef="let info" mat-cell> {{info.flightNumber ? (info.dateTime | date:'M/d/YYYY H:m') : "N/A"}} </td>
+                    <td *matCellDef="let info" mat-cell> {{info.flightNumber ? (info.dateTime | date:'MM/dd/YYYY HH:mm') : "N/A"}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="status">
@@ -104,6 +154,9 @@
                     (click)="onClickAircraft(row)"
                 ></tr>
             </table>
+
+            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons class="mat-paginator-sticky"></mat-paginator>
+
             <ngx-ui-loader
                 [loaderId]="chartName"
                 bgsColor="rgb(100, 181, 246)"
