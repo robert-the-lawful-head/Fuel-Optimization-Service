@@ -17,7 +17,7 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="result", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "result")]
-    public FboLinxFbo Result { get; set; }
+    public FBOLinxFbo Result { get; set; }
 
     /// <summary>
     /// Gets or Sets Success

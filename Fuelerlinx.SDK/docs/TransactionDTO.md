@@ -78,6 +78,9 @@ Name | Type | Description | Notes
 **FboNotes** | [**List&lt;FboByCompanyNotesDTO&gt;**](FboByCompanyNotesDTO.md) |  | [optional] 
 **RampFeeNotes** | [**List&lt;RampFeeByCompanyNoteDTO&gt;**](RampFeeByCompanyNoteDTO.md) |  | [optional] 
 **PreUpliftPriceSync** | [**PriceSyncTransactionDTO**](PriceSyncTransactionDTO.md) |  | [optional] 
+**ChangedTripNotification** | [**TransactionForChangedTripDTO**](TransactionForChangedTripDTO.md) |  | [optional] 
+**TransactionAccountingData** | [**TransactionAccountingDataDTO**](TransactionAccountingDataDTO.md) |  | [optional] 
+**TransactionAccountingTransfer** | [**TransactionAccountingTransferDTO**](TransactionAccountingTransferDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

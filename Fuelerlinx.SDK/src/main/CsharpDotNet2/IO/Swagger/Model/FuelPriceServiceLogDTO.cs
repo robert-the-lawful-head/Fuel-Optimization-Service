@@ -68,6 +68,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "icaos")]
     public string Icaos { get; set; }
 
+    /// <summary>
+    /// Gets or Sets SerializedRequest
+    /// </summary>
+    [DataMember(Name="serializedRequest", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "serializedRequest")]
+    public string SerializedRequest { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -84,6 +91,7 @@ namespace IO.Swagger.Model {
       sb.Append("  FuelerName: ").Append(FuelerName).Append("\n");
       sb.Append("  FuelerId: ").Append(FuelerId).Append("\n");
       sb.Append("  Icaos: ").Append(Icaos).Append("\n");
+      sb.Append("  SerializedRequest: ").Append(SerializedRequest).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

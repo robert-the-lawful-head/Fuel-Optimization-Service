@@ -9,6 +9,7 @@ Method | HTTP request | Description
 [**GetCurrentScheduledTrips**](ScheduledTripApi.md#getcurrentscheduledtrips) | **GET** /api/ScheduledTrip/current | Fetch upcoming scheduled trip info pulled from the user&#39;s scheduling system.
 [**GetFuelOrderDetailsForScheduledLeg**](ScheduledTripApi.md#getfuelorderdetailsforscheduledleg) | **GET** /api/ScheduledTrip/integration/fuelorderdetails/{legIdentifier} | Fetch the [transaction] and [generatedFuelComment] associated with the fuel order that was placed for the specified leg tied to the [legIdentifier].
 [**GetScheduledTripSettings**](ScheduledTripApi.md#getscheduledtripsettings) | **GET** /api/ScheduledTrip/settings | 
+[**GetScheduledTripsByDateRange**](ScheduledTripApi.md#getscheduledtripsbydaterange) | **GET** /api/ScheduledTrip/by-date-range | Fetch scheduled trip info pulled from the user&#39;s scheduling system by date range.
 [**PostScheduledLegData**](ScheduledTripApi.md#postscheduledlegdata) | **POST** /api/ScheduledTrip/integration/leg | Post a leg from the user&#39;s scheduling system as an object [ScheduledLegData] and it&#39;s corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner&#39;s side.
 [**PostScheduledTripSettings**](ScheduledTripApi.md#postscheduledtripsettings) | **POST** /api/ScheduledTrip/settings | 
 [**UpdateScheduledTripSettings**](ScheduledTripApi.md#updatescheduledtripsettings) | **PUT** /api/ScheduledTrip/settings | 
@@ -341,6 +342,79 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**ScheduledTripSettingsResponse**](ScheduledTripSettingsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getscheduledtripsbydaterange"></a>
+# **GetScheduledTripsByDateRange**
+> CurrentScheduledTripsResponse GetScheduledTripsByDateRange (DateTime? startDate, DateTime? endDate)
+
+Fetch scheduled trip info pulled from the user's scheduling system by date range.
+
+Only records that are scheduled to depart after the startDate and before the endDate will be returned.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetScheduledTripsByDateRangeExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ScheduledTripApi();
+            var startDate = 2013-10-20T19:20:30+01:00;  // DateTime? |  (optional) 
+            var endDate = 2013-10-20T19:20:30+01:00;  // DateTime? |  (optional) 
+
+            try
+            {
+                // Fetch scheduled trip info pulled from the user's scheduling system by date range.
+                CurrentScheduledTripsResponse result = apiInstance.GetScheduledTripsByDateRange(startDate, endDate);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ScheduledTripApi.GetScheduledTripsByDateRange: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **startDate** | **DateTime?**|  | [optional] 
+ **endDate** | **DateTime?**|  | [optional] 
+
+### Return type
+
+[**CurrentScheduledTripsResponse**](CurrentScheduledTripsResponse.md)
 
 ### Authorization
 

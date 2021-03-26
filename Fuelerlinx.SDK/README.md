@@ -84,20 +84,25 @@ All URIs are relative to *https://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *AccountingApi* | [**CheckSageCredentials**](docs/AccountingApi.md#checksagecredentials) | **POST** /api/Accounting/sage/check-credentials | Get Sage Credentials
+*AccountingApi* | [**DeleteAccountingContractMappings**](docs/AccountingApi.md#deleteaccountingcontractmappings) | **DELETE** /api/Accounting/accounting-contract-mappings/{id} | Deletes accounting contract mappings record based on ID
 *AccountingApi* | [**DeleteAccountingIntegrationItemCodes**](docs/AccountingApi.md#deleteaccountingintegrationitemcodes) | **DELETE** /api/Accounting/integration-item-codes/{id} | Deletes accounting integration item code record based on ID
 *AccountingApi* | [**DeleteSupplierDetails**](docs/AccountingApi.md#deletesupplierdetails) | **DELETE** /api/Accounting/supplier-details/{id} | Deletes supplier-details record based on ID
+*AccountingApi* | [**GetAccountingContractMappingList**](docs/AccountingApi.md#getaccountingcontractmappinglist) | **GET** /api/Accounting/accounting-contract-mappings/list | Gets accounting contract mappings by company Id
+*AccountingApi* | [**GetAccountingContractMappingListForTransactions**](docs/AccountingApi.md#getaccountingcontractmappinglistfortransactions) | **GET** /api/Accounting/accounting-contract-mappings/list/{transactionIds} | Gets accounting contract mappings by comma-delimited {transactionIds}
 *AccountingApi* | [**GetAccountingDepartmentList**](docs/AccountingApi.md#getaccountingdepartmentlist) | **GET** /api/Accounting/department/list | Get department list from the company's accounting integration
 *AccountingApi* | [**GetAccountingIntegrationItemCodesById**](docs/AccountingApi.md#getaccountingintegrationitemcodesbyid) | **GET** /api/Accounting/integration-item-codes/{id} | Gets single accounting integration item code record
 *AccountingApi* | [**GetAccountingItemMappingList**](docs/AccountingApi.md#getaccountingitemmappinglist) | **GET** /api/Accounting/mapping/items/list | Gets accounting integration mappings for line items
 *AccountingApi* | [**GetAccountingItemMappingListForTransactions**](docs/AccountingApi.md#getaccountingitemmappinglistfortransactions) | **GET** /api/Accounting/mapping/items/list/{transactionIds} | Gets accounting integration mappings for line items by comma-delimited {transactionIds}
+*AccountingApi* | [**GetGeneralLedgerAccountsFromIntegration**](docs/AccountingApi.md#getgeneralledgeraccountsfromintegration) | **GET** /api/Accounting/integration/gl-accounts/list | Get GL account details from the accounting integration if available
 *AccountingApi* | [**GetPendingAccountingExport**](docs/AccountingApi.md#getpendingaccountingexport) | **GET** /api/Accounting/oracle/accounting-export/pending | 
 *AccountingApi* | [**GetSageCredentials**](docs/AccountingApi.md#getsagecredentials) | **GET** /api/Accounting/sage/credentials | Get Sage Credentials
-*AccountingApi* | [**GetSageGlAccounts**](docs/AccountingApi.md#getsageglaccounts) | **GET** /api/Accounting/sage/gl-accounts | Get Sage GL Account Details
-*AccountingApi* | [**GetSageVendorAccounts**](docs/AccountingApi.md#getsagevendoraccounts) | **GET** /api/Accounting/sage/vendor-accounts | Get Sage GL Account Details
 *AccountingApi* | [**GetSupplierDetailsById**](docs/AccountingApi.md#getsupplierdetailsbyid) | **GET** /api/Accounting/supplier-details/{id} | Fetch supplier-details for a particular FBO or Vendor based on the provided [ID].
+*AccountingApi* | [**GetVendorAccountsFromIntegration**](docs/AccountingApi.md#getvendoraccountsfromintegration) | **GET** /api/Accounting/integration/vendor-accounts/list | Get GL vendors from the accounting integration if available
+*AccountingApi* | [**PostAccountingContractMappings**](docs/AccountingApi.md#postaccountingcontractmappings) | **POST** /api/Accounting/accounting-contract-mappings | Adds new accounting contract mapping record
 *AccountingApi* | [**PostAccountingIntegrationItemCodesDetails**](docs/AccountingApi.md#postaccountingintegrationitemcodesdetails) | **POST** /api/Accounting/integration-item-codes | Adds new accounting integration item code record
-*AccountingApi* | [**PostSageBill**](docs/AccountingApi.md#postsagebill) | **POST** /api/Accounting/sage/bill/{transactionid} | Insert new bill in Sage
+*AccountingApi* | [**PostBillToAccounting**](docs/AccountingApi.md#postbilltoaccounting) | **POST** /api/Accounting/integration/bill/{transactionId} | 
 *AccountingApi* | [**PostSupplierDetails**](docs/AccountingApi.md#postsupplierdetails) | **POST** /api/Accounting/supplier-details | Adds a new record for supplier-details of an FBO or Vendor.
+*AccountingApi* | [**UpdateAccountingContractMappings**](docs/AccountingApi.md#updateaccountingcontractmappings) | **PUT** /api/Accounting/accounting-contract-mappings | Updates accounting contract mapping record
 *AccountingApi* | [**UpdateAccountingIntegrationItemCodesDetails**](docs/AccountingApi.md#updateaccountingintegrationitemcodesdetails) | **PUT** /api/Accounting/integration-item-codes | Updates accounting integration item code record
 *AccountingApi* | [**UpdateSageCredentials**](docs/AccountingApi.md#updatesagecredentials) | **POST** /api/Accounting/sage/update-credentials | Get Sage Credentials
 *AccountingApi* | [**UpdateSupplierDetails**](docs/AccountingApi.md#updatesupplierdetails) | **PUT** /api/Accounting/supplier-details | Updates current supplier detail record
@@ -170,23 +175,28 @@ Class | Method | HTTP request | Description
 *CompanyApi* | [**UpdateCompany**](docs/CompanyApi.md#updatecompany) | **PUT** /api/Company/{id} | Internal use only - Update an existing company with the provided information.
 *CompanyApi* | [**UpdateCompanyAccountSettings**](docs/CompanyApi.md#updatecompanyaccountsettings) | **PUT** /api/Company/account-settings | 
 *CurrencyApi* | [**GetCurrencyList**](docs/CurrencyApi.md#getcurrencylist) | **GET** /api/Currency/list | Fetch a list of currencies with their current rate-to-dollar conversion value.
+*CurrencyApi* | [**SyncLatestExchangeRates**](docs/CurrencyApi.md#synclatestexchangerates) | **POST** /api/Currency/exchange-rates/sync-latest | Internal use only - Sync the latest exchange rates with the European Central Bank
 *DispatchingApi* | [**CancelFuelOrder**](docs/DispatchingApi.md#cancelfuelorder) | **POST** /api/Dispatching/cancel-fuel-order | Cancel a previously dispatched fuel order by it's transaction id.
 *DispatchingApi* | [**OrderFuel**](docs/DispatchingApi.md#orderfuel) | **POST** /api/Dispatching/orderfuel | Places a fuel order based on the requested details.  This will notify the fuel vendor and any additional integrations the customer has enabled.
 *FBOApi* | [**DeleteFboAlias**](docs/FBOApi.md#deletefboalias) | **DELETE** /api/FBO/fboAlias/{id} | 
 *FBOApi* | [**DeleteFboDetailsByCompany**](docs/FBOApi.md#deletefbodetailsbycompany) | **DELETE** /api/FBO/company-specific-details/{fboDetailsByCompanyId} | Delete company-specific details for a particular FBO.
 *FBOApi* | [**DeleteFboDetailsByCompanyNotes**](docs/FBOApi.md#deletefbodetailsbycompanynotes) | **DELETE** /api/FBO/company-specific-details/{fboDetailsByCompanyId}/notes/{noteId} | Delete a company-specific note for a particular FBO.  The note will be changed to a \"deleted\" state but will not be removed from the database to allow for change-tracking.
+*FBOApi* | [**DeleteLocationSpecificPaymentMethod**](docs/FBOApi.md#deletelocationspecificpaymentmethod) | **DELETE** /api/FBO/location-specific-payment-method/{id} | Delete a location specific payment method by the Id
 *FBOApi* | [**GetFBOLinxFboByAcukwikId**](docs/FBOApi.md#getfbolinxfbobyacukwikid) | **GET** /api/FBO/fbolinx/fbo-by-acukwik-id/{acukwikId} | 
 *FBOApi* | [**GetFboAliasByAirport**](docs/FBOApi.md#getfboaliasbyairport) | **GET** /api/FBO/fboAlias/by-airport/{icao} | 
 *FBOApi* | [**GetFboAliasList**](docs/FBOApi.md#getfboaliaslist) | **GET** /api/FBO/fboAlias/list | 
 *FBOApi* | [**GetFboDetailsByCompany**](docs/FBOApi.md#getfbodetailsbycompany) | **GET** /api/FBO/company-specific-details/{fboDetailsByCompanyId} | Fetch company-specific details for a particular FBO based on the provided [fboDetailsByCompanyId].
 *FBOApi* | [**GetFboDetailsByCompanyByLocation**](docs/FBOApi.md#getfbodetailsbycompanybylocation) | **GET** /api/FBO/company-specific-details/by-location/{icao}/{fboName} | Fetch company-specific details for a particular FBO based on the provided [icao] and [fboName].
 *FBOApi* | [**GetFboDetailsByCompanyNotes**](docs/FBOApi.md#getfbodetailsbycompanynotes) | **GET** /api/FBO/company-specific-details/{fboDetailsByCompanyId}/notes | Fetch company-specific notes for a particular FBO based on the provided [fboDetailsByCompanyId].
+*FBOApi* | [**GetLocationSpecificPaymentMethod**](docs/FBOApi.md#getlocationspecificpaymentmethod) | **GET** /api/FBO/location-specific-payment-method/by-location/{icao}/fbo/{fboName} | Get a location specific payment method from icao and company Id
 *FBOApi* | [**PostFboAliasAsync**](docs/FBOApi.md#postfboaliasasync) | **POST** /api/FBO/fboAlias | 
 *FBOApi* | [**PostFboDetailsByCompany**](docs/FBOApi.md#postfbodetailsbycompany) | **POST** /api/FBO/company-specific-details | Add company-specific details for a particular FBO.  If a record already exists for this FBO, the previous record will be replaced.
 *FBOApi* | [**PostFboDetailsByCompanyNotes**](docs/FBOApi.md#postfbodetailsbycompanynotes) | **POST** /api/FBO/company-specific-details/notes | Add company-specific notes for a particular FBO.  The note must be associated with a company-specific FBO record.
+*FBOApi* | [**PostLocationSpecificPaymentMethod**](docs/FBOApi.md#postlocationspecificpaymentmethod) | **POST** /api/FBO/location-specific-payment-method | Post a location specific payment method
 *FBOApi* | [**UpdateFboAlias**](docs/FBOApi.md#updatefboalias) | **PUT** /api/FBO/fboAlias | 
 *FBOApi* | [**UpdateFboDetailsByCompany**](docs/FBOApi.md#updatefbodetailsbycompany) | **PUT** /api/FBO/company-specific-details | Update company-specific details for a particular FBO.
 *FBOApi* | [**UpdateFboDetailsByCompanyNotes**](docs/FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
+*FBOApi* | [**UpdateLocationSpecificPaymentMethod**](docs/FBOApi.md#updatelocationspecificpaymentmethod) | **PUT** /api/FBO/location-specific-payment-method | Update a location specific payment method
 *FBOLinxApi* | [**GetAircraftTailsGroupedByCompany**](docs/FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
 *FBOLinxApi* | [**GetContractFuelOrders**](docs/FBOLinxApi.md#getcontractfuelorders) | **POST** /api/FBOLinx/get-contract-orders | 
 *FBOLinxApi* | [**GetContractFuelVendorsTransactionsCount**](docs/FBOLinxApi.md#getcontractfuelvendorstransactionscount) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-count-at-airport | 
@@ -205,6 +215,7 @@ Class | Method | HTTP request | Description
 *FeeApi* | [**UpdateServicesAndFeesByCompany**](docs/FeeApi.md#updateservicesandfeesbycompany) | **PUT** /api/Fee/company-specific | Update a company-specific service/fee.
 *FileDataApi* | [**DeleteImageFileData**](docs/FileDataApi.md#deleteimagefiledata) | **DELETE** /api/FileData/image-file-data/{id} | Internal use only - Delete image file data by {id}.
 *FileDataApi* | [**DeleteImportFileCapture**](docs/FileDataApi.md#deleteimportfilecapture) | **DELETE** /api/FileData/import-file-capture/{id} | Internal use only - Delete a file captured during an import.
+*FileDataApi* | [**DeleteJobFileData**](docs/FileDataApi.md#deletejobfiledata) | **DELETE** /api/FileData/job-file-data/{id} | Deletes job file data by Id
 *FileDataApi* | [**DeletePriceSheetFileData**](docs/FileDataApi.md#deletepricesheetfiledata) | **DELETE** /api/FileData/price-sheet-file-data/{id} | Delete price sheet file data by the provided {id}.
 *FileDataApi* | [**DeleteSupportedInvoiceFileDataTemplate**](docs/FileDataApi.md#deletesupportedinvoicefiledatatemplate) | **DELETE** /api/FileData/invoice-file/supported-template/{id} | Internal use only - Delete a supported invoice file template by it's Id.
 *FileDataApi* | [**DeleteTransactionFileData**](docs/FileDataApi.md#deletetransactionfiledata) | **DELETE** /api/FileData/transaction-file-data/{id} | Delete transaction file data by the provided {id}.
@@ -214,13 +225,16 @@ Class | Method | HTTP request | Description
 *FileDataApi* | [**GetSupportedInvoiceFileTemplatesByCompany**](docs/FileDataApi.md#getsupportedinvoicefiletemplatesbycompany) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName}/company/{companyId} | Internal use only - Fetch a supported invoice file template by fuel vendor and company.
 *FileDataApi* | [**GetSupportedInvoiceFileTemplatesByFuelVendor**](docs/FileDataApi.md#getsupportedinvoicefiletemplatesbyfuelvendor) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName} | Internal use only - Fetch a supported invoice file template by fuel vendor.
 *FileDataApi* | [**GetTransactionFileData**](docs/FileDataApi.md#gettransactionfiledata) | **GET** /api/FileData/transaction-file-data/{id} | Fetch transaction file data for an invoice, receipt, or fuel release.
+*FileDataApi* | [**GetsJobFileDataById**](docs/FileDataApi.md#getsjobfiledatabyid) | **GET** /api/FileData/job-file-data/by-id/{id} | Gets job file data by Id
 *FileDataApi* | [**PostImageFileData**](docs/FileDataApi.md#postimagefiledata) | **POST** /api/FileData/image-file-data | Internal use only - Post new image file data.
 *FileDataApi* | [**PostImportFileCapture**](docs/FileDataApi.md#postimportfilecapture) | **POST** /api/FileData/import-file-capture | Internal use only - Add a captured file that was recently imported.
+*FileDataApi* | [**PostJobFileData**](docs/FileDataApi.md#postjobfiledata) | **POST** /api/FileData/job-file-data | Post job file data
 *FileDataApi* | [**PostPriceSheetFileData**](docs/FileDataApi.md#postpricesheetfiledata) | **POST** /api/FileData/price-sheet-file-data | Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing.
 *FileDataApi* | [**PostSupportedInvoiceFileTemplate**](docs/FileDataApi.md#postsupportedinvoicefiletemplate) | **POST** /api/FileData/invoice-file/supported-template | Internal use only - Add a supported invoice file template.
 *FileDataApi* | [**PostTransactionFileData**](docs/FileDataApi.md#posttransactionfiledata) | **POST** /api/FileData/transaction-file-data | Add transaction file data for an invoice, receipt, or fuel release.  The file data should be passed as a base64 string.
 *FileDataApi* | [**UpdateImageFileData**](docs/FileDataApi.md#updateimagefiledata) | **PUT** /api/FileData/image-file-data/{id} | Internal use only - Update an existing record of image file data.
 *FileDataApi* | [**UpdateImportFileCapture**](docs/FileDataApi.md#updateimportfilecapture) | **PUT** /api/FileData/import-file-capture/{id} | Internal use only - Update a file captured during an import.
+*FileDataApi* | [**UpdateJobFileData**](docs/FileDataApi.md#updatejobfiledata) | **PUT** /api/FileData/job-file-data | Updates job file data
 *FileDataApi* | [**UpdatePriceSheetFileData**](docs/FileDataApi.md#updatepricesheetfiledata) | **PUT** /api/FileData/price-sheet-file-data | Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
 *FileDataApi* | [**UpdateSupportedInvoiceFileDataTemplate**](docs/FileDataApi.md#updatesupportedinvoicefiledatatemplate) | **PUT** /api/FileData/invoice-file/supported-template | Internal use only - Update a supported invoice file template.
 *FileDataApi* | [**UpdateTransactionFileData**](docs/FileDataApi.md#updatetransactionfiledata) | **PUT** /api/FileData/transaction-file-data | Update transaction file data for an invoice, receipt, or fuel release.
@@ -239,12 +253,14 @@ Class | Method | HTTP request | Description
 *FlightTypeApi* | [**GetFlightTypeMappingList**](docs/FlightTypeApi.md#getflighttypemappinglist) | **GET** /api/FlightType/list/mapping | Internal use only - Fetch all flight type mappings.
 *FlightTypeApi* | [**PostFlightTypeMapping**](docs/FlightTypeApi.md#postflighttypemapping) | **POST** /api/FlightType/mapping | Internal use only - Add a flight type mapping record.
 *FlightTypeApi* | [**UpdateFlightTypeMapping**](docs/FlightTypeApi.md#updateflighttypemapping) | **PUT** /api/FlightType/mapping | Internal use only - Update a flight type mapping record.
+*FuelPricingApi* | [**DeleteCurrentPricingForCompany**](docs/FuelPricingApi.md#deletecurrentpricingforcompany) | **DELETE** /api/FuelPricing/current | Internal use only - delete all cached pricing for a currently authenticated company.
 *FuelPricingApi* | [**DeleteWeeklyPricingForFuelVendor**](docs/FuelPricingApi.md#deleteweeklypricingforfuelvendor) | **DELETE** /api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId} | Internal use only - delete all weekly pricing records for a particular fuel vendor.
 *FuelPricingApi* | [**GetAssociatedDetailsForFuelOption**](docs/FuelPricingApi.md#getassociateddetailsforfueloption) | **POST** /api/FuelPricing/associated-details | 
 *FuelPricingApi* | [**GetCurrentPricingForLocation**](docs/FuelPricingApi.md#getcurrentpricingforlocation) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
 *FuelPricingApi* | [**GetCurrentPricingForLocationAndFlightType**](docs/FuelPricingApi.md#getcurrentpricingforlocationandflighttype) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos}/flight-type/{flightType} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
 *FuelPricingApi* | [**GetLiveQuoteForLocations**](docs/FuelPricingApi.md#getlivequoteforlocations) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos} | Retrieves a live quote from all vendor web services tied to the flight department's account using their default flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.
 *FuelPricingApi* | [**GetLiveQuoteForLocationsAndFlightType**](docs/FuelPricingApi.md#getlivequoteforlocationsandflighttype) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos}/flight-type/{flightType} | Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.
+*FuelPricingApi* | [**GetLiveQuoteForLocationsAndFlightTypeAndVendor**](docs/FuelPricingApi.md#getlivequoteforlocationsandflighttypeandvendor) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos}/flight-type/{flightType}/fuel-vendor/{fuelVendorId} | Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
 *FuelPricingApi* | [**GetQuotFromEpic**](docs/FuelPricingApi.md#getquotfromepic) | **GET** /api/FuelPricing/quoting/epic/{commaDelimitedAirportIdentifiers} | Internal use only - Fetch a quote response from the EPIC Aviation web service.
 *FuelPricingApi* | [**GetWeeklyPricingForFuelerAndLocation**](docs/FuelPricingApi.md#getweeklypricingforfuelerandlocation) | **GET** /api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId}/by-locations/{commaDelimitedIcaos} | If available, will fetch records from the weekly price sheet received each week for the specified [commaDelimitedIcaos] and [fuelVendorId].  These are to be used as a fallback option when a vendor's service is unavailable.
 *FuelPricingApi* | [**GetWeeklyPricingForLocation**](docs/FuelPricingApi.md#getweeklypricingforlocation) | **GET** /api/FuelPricing/weekly-pricing/by-locations/{commaDelimitedIcaos} | /// If available, will fetch records from the weekly price sheet received each week for the specified [commaDelimitedIcaos].  These are to be used as a fallback option when a vendor's service is unavailable.
@@ -285,6 +301,26 @@ Class | Method | HTTP request | Description
 *IntegrationFuelOrderDetailsApi* | [**AddIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#addintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails | Internal use only - associates a fuel order transaction with an integration record.
 *IntegrationFuelOrderDetailsApi* | [**CancelIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#cancelintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails/cancel | Internal use only - cancel an integration record from being tied to a transaction and notify the partner.
 *IntegrationFuelOrderDetailsApi* | [**UpdateIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#updateintegrationfuelorderdetails) | **PUT** /api/IntegrationFuelOrderDetails | Internal use only - update an integration record associated with a fuel order transaction.
+*JobQueueApi* | [**DeleteJobQueue**](docs/JobQueueApi.md#deletejobqueue) | **DELETE** /api/JobQueue/job-queue/{id} | Delete job queue by Id
+*JobQueueApi* | [**DeleteJobQueueFiles**](docs/JobQueueApi.md#deletejobqueuefiles) | **DELETE** /api/JobQueue/job-queue-files/{id} | Delete job queue files by Id
+*JobQueueApi* | [**DeleteJobQueueResultEvents**](docs/JobQueueApi.md#deletejobqueueresultevents) | **DELETE** /api/JobQueue/job-queue-result-events/{id} | Deletes job queue result events by Id
+*JobQueueApi* | [**DeleteJobQueueResults**](docs/JobQueueApi.md#deletejobqueueresults) | **DELETE** /api/JobQueue/job-queue-results/{id} | 
+*JobQueueApi* | [**GetJobQueue**](docs/JobQueueApi.md#getjobqueue) | **GET** /api/JobQueue/job-queue/by-id/{id} | Get job queue by Id
+*JobQueueApi* | [**GetJobQueueFiles**](docs/JobQueueApi.md#getjobqueuefiles) | **GET** /api/JobQueue/job-queue-files/by-jobQueueId/{jobQueueId} | Get job queue files by jobQueueId
+*JobQueueApi* | [**GetJobQueueResultEvents**](docs/JobQueueApi.md#getjobqueueresultevents) | **GET** /api/JobQueue/job-queue-result-events/by-jobQueueResultId/{jobQueueResultId} | Get job queue result events by jobQueueResultId
+*JobQueueApi* | [**GetJobQueueResults**](docs/JobQueueApi.md#getjobqueueresults) | **GET** /api/JobQueue/job-queue-results/by-jobQueueId/{jobQueueId} | Get job queue results by jobQueueId
+*JobQueueApi* | [**PostJobQueue**](docs/JobQueueApi.md#postjobqueue) | **POST** /api/JobQueue/job-queue | Post job queue
+*JobQueueApi* | [**PostJobQueueFiles**](docs/JobQueueApi.md#postjobqueuefiles) | **POST** /api/JobQueue/job-queue-files | Post job queue files
+*JobQueueApi* | [**PostJobQueueResultEvents**](docs/JobQueueApi.md#postjobqueueresultevents) | **POST** /api/JobQueue/job-queue-result-events | Post job queue result events
+*JobQueueApi* | [**PostJobQueueResults**](docs/JobQueueApi.md#postjobqueueresults) | **POST** /api/JobQueue/job-queue-results | Post job queue results
+*JobQueueApi* | [**UpdateJobQueue**](docs/JobQueueApi.md#updatejobqueue) | **PUT** /api/JobQueue/job-queue | Update job queue
+*JobQueueApi* | [**UpdateJobQueueFiles**](docs/JobQueueApi.md#updatejobqueuefiles) | **PUT** /api/JobQueue/job-queue-files | Update job queue files
+*JobQueueApi* | [**UpdateJobQueueResultEvents**](docs/JobQueueApi.md#updatejobqueueresultevents) | **PUT** /api/JobQueue/job-queue-result-events | Updates job queue result events
+*JobQueueApi* | [**UpdateJobQueueResults**](docs/JobQueueApi.md#updatejobqueueresults) | **PUT** /api/JobQueue/job-queue-results | Updates job queue results
+*MobileAppSettingsApi* | [**DeleteSetting**](docs/MobileAppSettingsApi.md#deletesetting) | **DELETE** /api/MobileAppSettings/setting/{id} | Internal use only - Delete a mobile app setting by id.
+*MobileAppSettingsApi* | [**GetSettingByKey**](docs/MobileAppSettingsApi.md#getsettingbykey) | **GET** /api/MobileAppSettings/setting/{key} | Internal use only - Fetch a mobile app setting by a key.
+*MobileAppSettingsApi* | [**PostSetting**](docs/MobileAppSettingsApi.md#postsetting) | **POST** /api/MobileAppSettings/setting | Internal use only - Add a mobile app setting.
+*MobileAppSettingsApi* | [**UpdateSetting**](docs/MobileAppSettingsApi.md#updatesetting) | **PUT** /api/MobileAppSettings/setting | Internal use only - Update a mobile app setting.
 *PartnerApi* | [**ApplyPartnerCredentialsByTypeAndAffiliation**](docs/PartnerApi.md#applypartnercredentialsbytypeandaffiliation) | **POST** /api/Partner/credentials | Apply credential changes for a certain type/afiiliation of integration partner.
 *PartnerApi* | [**CheckCredentials**](docs/PartnerApi.md#checkcredentials) | **POST** /api/Partner/check-credentials | Check integration credentials for validity with the partner's service.
 *PartnerApi* | [**DeleteCompanyActiveIntegration**](docs/PartnerApi.md#deletecompanyactiveintegration) | **DELETE** /api/Partner/active-integration/{id} | 
@@ -306,7 +342,7 @@ Class | Method | HTTP request | Description
 *RampFeeApi* | [**GetCrowdSourcedRampFeeByScenario**](docs/RampFeeApi.md#getcrowdsourcedrampfeebyscenario) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a crowd-sourced ramp fee pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
 *RampFeeApi* | [**GetCrowdSourcedRampFeeByScenarioList**](docs/RampFeeApi.md#getcrowdsourcedrampfeebyscenariolist) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName}/list | Fetch all crowd-sourced ramp fees pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
 *RampFeeApi* | [**GetRampFeeByCompany**](docs/RampFeeApi.md#getrampfeebycompany) | **GET** /api/RampFee/company-specific/{id} | Get a company-specific ramp fee by it's [id].
-*RampFeeApi* | [**GetRampFeeByCompanyByScenario**](docs/RampFeeApi.md#getrampfeebycompanybyscenario) | **GET** /api/RampFee/company-specific/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}.
+*RampFeeApi* | [**GetRampFeeByCompanyByScenario**](docs/RampFeeApi.md#getrampfeebycompanybyscenario) | **GET** /api/RampFee/company-specific/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a company-specific ramp fee based on the provided {tailNumber}, {icao}, and {fboName}.
 *RampFeeApi* | [**GetRampFeeByCompanyNotes**](docs/RampFeeApi.md#getrampfeebycompanynotes) | **GET** /api/RampFee/company-specific/{id}/notes | Fetch all company-specific notes for the specified [rampFeeByCompanyId].
 *RampFeeApi* | [**GetRampFeesByCompanyForAirport**](docs/RampFeeApi.md#getrampfeesbycompanyforairport) | **GET** /api/RampFee/company-specific/by-airport/{icao} | Get a list of company-specific ramp fees at the the provided [icao].
 *RampFeeApi* | [**GetRampFeesByCompanyForLocation**](docs/RampFeeApi.md#getrampfeesbycompanyforlocation) | **GET** /api/RampFee/company-specific/by-location/{icao}/{fboName} | Get a list of company-specific ramp fees at the the provided [icao] and [fboName].
@@ -327,10 +363,12 @@ Class | Method | HTTP request | Description
 *ScheduledTripApi* | [**GetCurrentScheduledTrips**](docs/ScheduledTripApi.md#getcurrentscheduledtrips) | **GET** /api/ScheduledTrip/current | Fetch upcoming scheduled trip info pulled from the user's scheduling system.
 *ScheduledTripApi* | [**GetFuelOrderDetailsForScheduledLeg**](docs/ScheduledTripApi.md#getfuelorderdetailsforscheduledleg) | **GET** /api/ScheduledTrip/integration/fuelorderdetails/{legIdentifier} | Fetch the [transaction] and [generatedFuelComment] associated with the fuel order that was placed for the specified leg tied to the [legIdentifier].
 *ScheduledTripApi* | [**GetScheduledTripSettings**](docs/ScheduledTripApi.md#getscheduledtripsettings) | **GET** /api/ScheduledTrip/settings | 
+*ScheduledTripApi* | [**GetScheduledTripsByDateRange**](docs/ScheduledTripApi.md#getscheduledtripsbydaterange) | **GET** /api/ScheduledTrip/by-date-range | Fetch scheduled trip info pulled from the user's scheduling system by date range.
 *ScheduledTripApi* | [**PostScheduledLegData**](docs/ScheduledTripApi.md#postscheduledlegdata) | **POST** /api/ScheduledTrip/integration/leg | Post a leg from the user's scheduling system as an object [ScheduledLegData] and it's corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner's side.
 *ScheduledTripApi* | [**PostScheduledTripSettings**](docs/ScheduledTripApi.md#postscheduledtripsettings) | **POST** /api/ScheduledTrip/settings | 
 *ScheduledTripApi* | [**UpdateScheduledTripSettings**](docs/ScheduledTripApi.md#updatescheduledtripsettings) | **PUT** /api/ScheduledTrip/settings | 
 *ServiceLogsApi* | [**DeleteCompanyAircraftChangeLog**](docs/ServiceLogsApi.md#deletecompanyaircraftchangelog) | **DELETE** /api/ServiceLogs/companyAircraftChangeLog/{id} | Delete a company aircraft change log record by the record id.
+*ServiceLogsApi* | [**DeleteCompanyFboChangeLog**](docs/ServiceLogsApi.md#deletecompanyfbochangelog) | **DELETE** /api/ServiceLogs/company-fbo-change-log/{id} | Delete a company fbo change log record by the record id.
 *ServiceLogsApi* | [**DeleteCompanyFuelerChangeLog**](docs/ServiceLogsApi.md#deletecompanyfuelerchangelog) | **DELETE** /api/ServiceLogs/companyFuelerChangeLog/{id} | Delete a company fueler change log record by the record id.
 *ServiceLogsApi* | [**DeleteDispatchEmailLog**](docs/ServiceLogsApi.md#deletedispatchemaillog) | **DELETE** /api/ServiceLogs/dispatchEmailLog/{id} | Delete a dispatch email log record by the record id.
 *ServiceLogsApi* | [**DeleteFuelOrderServiceLog**](docs/ServiceLogsApi.md#deletefuelorderservicelog) | **DELETE** /api/ServiceLogs/fuelOrderServiceLog/{id} | Delete a fuel order service log record by the record id.
@@ -341,6 +379,8 @@ Class | Method | HTTP request | Description
 *ServiceLogsApi* | [**DeleteTankeringApiCalculationLog**](docs/ServiceLogsApi.md#deletetankeringapicalculationlog) | **DELETE** /api/ServiceLogs/tankeringApiCalculationLog/{id} | Delete a tankering api calculation log record by the record id.
 *ServiceLogsApi* | [**GetCompanyAircraftChangeLogByTailNumber**](docs/ServiceLogsApi.md#getcompanyaircraftchangelogbytailnumber) | **GET** /api/ServiceLogs/companyAircraftChangeLog/by-tailNumber/{tailNumber} | Fetch company aircraft change log by tailNumber.
 *ServiceLogsApi* | [**GetCompanyAircraftChangeLogByUserId**](docs/ServiceLogsApi.md#getcompanyaircraftchangelogbyuserid) | **GET** /api/ServiceLogs/companyAircraftChangeLog/by-userId/{userId} | Fetch company aircraft change log by userId.
+*ServiceLogsApi* | [**GetCompanyFboChangeLogByCompanyId**](docs/ServiceLogsApi.md#getcompanyfbochangelogbycompanyid) | **GET** /api/ServiceLogs/company-fbo-change-log/by-companyId/{companyId} | Fetch company fueler change log by company Id
+*ServiceLogsApi* | [**GetCompanyFboChangeLogByIcao**](docs/ServiceLogsApi.md#getcompanyfbochangelogbyicao) | **GET** /api/ServiceLogs/company-fbo-change-log/by-icao/{companyId}/{icao} | Fetch company fueler change log by ICAO
 *ServiceLogsApi* | [**GetCompanyFuelerChangeLogByCompanyId**](docs/ServiceLogsApi.md#getcompanyfuelerchangelogbycompanyid) | **GET** /api/ServiceLogs/companyFuelerChangeLog/by-companyId/{companyId} | Fetch company fueler change log by companyId.
 *ServiceLogsApi* | [**GetCompanyFuelerChangeLogByFuelerId**](docs/ServiceLogsApi.md#getcompanyfuelerchangelogbyfuelerid) | **GET** /api/ServiceLogs/companyFuelerChangeLog/by-fuelerId/{companyId}/{fuelerId} | Fetch company fueler change log by fuelerId.
 *ServiceLogsApi* | [**GetDispatchEmailLogByTailNumber**](docs/ServiceLogsApi.md#getdispatchemaillogbytailnumber) | **GET** /api/ServiceLogs/dispatchEmailLog/by-tailNumber/{tailNumber} | Fetch dispatch email log by tailNumber.
@@ -356,6 +396,7 @@ Class | Method | HTTP request | Description
 *ServiceLogsApi* | [**GetSchedulingIntegrationServiceLogByDate**](docs/ServiceLogsApi.md#getschedulingintegrationservicelogbydate) | **GET** /api/ServiceLogs/schedulingIntegrationServiceLog/by-date/{companyId}/{dateTimeRecorded} | Fetch scheduling integration service log by date.
 *ServiceLogsApi* | [**GetTankeringApiCalculationLog**](docs/ServiceLogsApi.md#gettankeringapicalculationlog) | **GET** /api/ServiceLogs/tankeringApiCalculationLog/{companyId}/{startDateTime}/{endDateTime} | Fetch tankering api calculation log.
 *ServiceLogsApi* | [**PostCompanyAircraftChangeLogAsync**](docs/ServiceLogsApi.md#postcompanyaircraftchangelogasync) | **POST** /api/ServiceLogs/companyAircraftChangeLog | Post company aircraft change log.
+*ServiceLogsApi* | [**PostCompanyFboChangeLogAsync**](docs/ServiceLogsApi.md#postcompanyfbochangelogasync) | **POST** /api/ServiceLogs/company-fbo-change-log | Post company fbo change log
 *ServiceLogsApi* | [**PostCompanyFuelerChangeLogAsync**](docs/ServiceLogsApi.md#postcompanyfuelerchangelogasync) | **POST** /api/ServiceLogs/companyFuelerChangeLog | Post company fueler change log.
 *ServiceLogsApi* | [**PostDispatchEmailLogAsync**](docs/ServiceLogsApi.md#postdispatchemaillogasync) | **POST** /api/ServiceLogs/dispatchEmailLog | Post dispatch email log.
 *ServiceLogsApi* | [**PostFuelOrderServiceLogAsync**](docs/ServiceLogsApi.md#postfuelorderservicelogasync) | **POST** /api/ServiceLogs/fuelOrderServiceLog | Post fuel order service log.
@@ -365,6 +406,7 @@ Class | Method | HTTP request | Description
 *ServiceLogsApi* | [**PostSchedulingIntegrationServiceLogAsync**](docs/ServiceLogsApi.md#postschedulingintegrationservicelogasync) | **POST** /api/ServiceLogs/schedulingIntegrationServiceLog | Post scheduling integration service log.
 *ServiceLogsApi* | [**PostTankeringApiCalculationLogAsync**](docs/ServiceLogsApi.md#posttankeringapicalculationlogasync) | **POST** /api/ServiceLogs/tankeringApiCalculationLog | Post tankering api calculation log.
 *ServiceLogsApi* | [**UpdateCompanyAircraftChangeLog**](docs/ServiceLogsApi.md#updatecompanyaircraftchangelog) | **PUT** /api/ServiceLogs/companyAircraftChangeLog | Update the company aircraft change log.
+*ServiceLogsApi* | [**UpdateCompanyFboChangeLog**](docs/ServiceLogsApi.md#updatecompanyfbochangelog) | **PUT** /api/ServiceLogs/company-fbo-change-log | Update the company fbo change log.
 *ServiceLogsApi* | [**UpdateCompanyFuelerChangeLog**](docs/ServiceLogsApi.md#updatecompanyfuelerchangelog) | **PUT** /api/ServiceLogs/companyFuelerChangeLog | Update the company fueler change log.
 *ServiceLogsApi* | [**UpdateDispatchEmailLog**](docs/ServiceLogsApi.md#updatedispatchemaillog) | **PUT** /api/ServiceLogs/dispatchEmailLog | Update the dispatch email log.
 *ServiceLogsApi* | [**UpdateFuelOrderServiceLog**](docs/ServiceLogsApi.md#updatefuelorderservicelog) | **PUT** /api/ServiceLogs/fuelOrderServiceLog | Update the fuel order service log.
@@ -388,6 +430,9 @@ Class | Method | HTTP request | Description
 *TransactionApi* | [**DeleteTransactionAttachment**](docs/TransactionApi.md#deletetransactionattachment) | **DELETE** /api/Transaction/attachment/{id} | Delete an attachment record from a transaction by the attachment's {id}.
 *TransactionApi* | [**DeleteTransactionNote**](docs/TransactionApi.md#deletetransactionnote) | **DELETE** /api/Transaction/note/{id} | Delete an existing note from a transaction by it's {id}.  The note will be changed to a \"deleted\" state but will not be removed from the database.
 *TransactionApi* | [**GetAutoReconciledFile**](docs/TransactionApi.md#getautoreconciledfile) | **GET** /api/Transaction/invoice-import/file-capture/process/{processId} | Internal use only - Fetch all files captured during an invoice import by the process ID.
+*TransactionApi* | [**GetDistinctAirportsForAllTransactions**](docs/TransactionApi.md#getdistinctairportsforalltransactions) | **GET** /api/Transaction/airport/distinct-identifiers | Fetch all distinct airports ever used for transactions for the authenticated company.
+*TransactionApi* | [**GetDistinctFuelVendorsForAllTransactions**](docs/TransactionApi.md#getdistinctfuelvendorsforalltransactions) | **GET** /api/Transaction/fuelvendor/distinct | Fetch all distinct fuel vendors ever used for transactions for the authenticated company.
+*TransactionApi* | [**GetDistinctTailsForAllTransactions**](docs/TransactionApi.md#getdistincttailsforalltransactions) | **GET** /api/Transaction/aircraft/distinct-tails | Fetch all distinct tails ever used for transactions for the authenticated company.
 *TransactionApi* | [**GetInvoiceImportByProcessId**](docs/TransactionApi.md#getinvoiceimportbyprocessid) | **GET** /api/Transaction/invoice-import/process/{processId} | Internal use only - Fetch an invoice import by the process ID.
 *TransactionApi* | [**GetInvoiceImportsByDateRange**](docs/TransactionApi.md#getinvoiceimportsbydaterange) | **GET** /api/Transaction/invoice-import/by-date-range/list | Internal use only - Fetch all invoice imports across a date range.
 *TransactionApi* | [**GetPendingInvoiceImportsByCompany**](docs/TransactionApi.md#getpendinginvoiceimportsbycompany) | **GET** /api/Transaction/invoice-import/pending | Internal use only - Fetch all pending invoice imports for a company.
@@ -401,8 +446,10 @@ Class | Method | HTTP request | Description
 *TransactionApi* | [**GetTransactionNote**](docs/TransactionApi.md#gettransactionnote) | **GET** /api/Transaction/note/{id} | Fetch a transaction note by the provided {id}
 *TransactionApi* | [**GetTransactionsByAirportAndTailNumber**](docs/TransactionApi.md#gettransactionsbyairportandtailnumber) | **GET** /api/Transaction/by-airport/{airportIdentifier}/tailNumber/{tailNumber} | Get all transactions for the specified airport, tail, and date range.  This can include both fuel orders and service-only transactions.
 *TransactionApi* | [**GetTransactionsByDateRange**](docs/TransactionApi.md#gettransactionsbydaterange) | **GET** /api/Transaction/by-date-range | Get all transactions for the specified date range.  This can include both fuel orders and service-only transactions.
+*TransactionApi* | [**GetTransactionsByIdList**](docs/TransactionApi.md#gettransactionsbyidlist) | **GET** /api/Transaction/by-id-list/{commaDelimitedIds} | Fetch a list of transactions by their Ids.  Format of [commaDelimitedIds] parameter should be \"333,444,555\".
 *TransactionApi* | [**GetTransactionsByInvoiceNumber**](docs/TransactionApi.md#gettransactionsbyinvoicenumber) | **GET** /api/Transaction/by-invoice-number/{invoiceNumber}/fueler/{fuelerId} | Get all transactions for the specified invoice number.  This can include both fuel orders and service-only transactions.
 *TransactionApi* | [**GetTransactionsFromInvoiceImport**](docs/TransactionApi.md#gettransactionsfrominvoiceimport) | **GET** /api/Transaction/invoice-import/transaction-list/{processId} | 
+*TransactionApi* | [**GetUpcomingTransactionsScheduleChangeReview**](docs/TransactionApi.md#getupcomingtransactionsschedulechangereview) | **GET** /api/Transaction/upcoming/schedule-change-review | 
 *TransactionApi* | [**PostAutoReconciledFile**](docs/TransactionApi.md#postautoreconciledfile) | **POST** /api/Transaction/invoice-import/file-capture | Internal use only - Add a file captured by an invoice import.
 *TransactionApi* | [**PostInvoiceImport**](docs/TransactionApi.md#postinvoiceimport) | **POST** /api/Transaction/invoice-import | Internal use only - Add an invoice import record.
 *TransactionApi* | [**PostTransactionAccountTransferStatus**](docs/TransactionApi.md#posttransactionaccounttransferstatus) | **POST** /api/Transaction/accounting-transfer | Internal use only - Post a new accounting transfer status for a particular transaction.
@@ -443,14 +490,23 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AccessibleFeaturesDTO](docs/AccessibleFeaturesDTO.md)
  - [IO.Swagger.Model.AccountInfoAndSettingsDTO](docs/AccountInfoAndSettingsDTO.md)
  - [IO.Swagger.Model.AccountInfoAndSettingsSubFeaturesDTO](docs/AccountInfoAndSettingsSubFeaturesDTO.md)
+ - [IO.Swagger.Model.AccountingBill](docs/AccountingBill.md)
+ - [IO.Swagger.Model.AccountingBillCreationResponse](docs/AccountingBillCreationResponse.md)
+ - [IO.Swagger.Model.AccountingContractMappingsDTO](docs/AccountingContractMappingsDTO.md)
+ - [IO.Swagger.Model.AccountingContractMappingsResponse](docs/AccountingContractMappingsResponse.md)
  - [IO.Swagger.Model.AccountingDepartment](docs/AccountingDepartment.md)
  - [IO.Swagger.Model.AccountingDepartmentListResponse](docs/AccountingDepartmentListResponse.md)
+ - [IO.Swagger.Model.AccountingGeneralLedger](docs/AccountingGeneralLedger.md)
+ - [IO.Swagger.Model.AccountingGeneralLedgerListResponse](docs/AccountingGeneralLedgerListResponse.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesDTO](docs/AccountingIntegrationItemCodesDTO.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesDetailsResponse](docs/AccountingIntegrationItemCodesDetailsResponse.md)
  - [IO.Swagger.Model.AccountingIntegrationItemCodesListResponse](docs/AccountingIntegrationItemCodesListResponse.md)
+ - [IO.Swagger.Model.AccountingVendor](docs/AccountingVendor.md)
+ - [IO.Swagger.Model.AccountingVendorListResponse](docs/AccountingVendorListResponse.md)
  - [IO.Swagger.Model.AcukwikAirportDTO](docs/AcukwikAirportDTO.md)
  - [IO.Swagger.Model.AcukwikAirportResponse](docs/AcukwikAirportResponse.md)
  - [IO.Swagger.Model.AcukwikFboHandlerDetailDTO](docs/AcukwikFboHandlerDetailDTO.md)
+ - [IO.Swagger.Model.AcukwikFboHandlerLookupDTO](docs/AcukwikFboHandlerLookupDTO.md)
  - [IO.Swagger.Model.AircraftDTO](docs/AircraftDTO.md)
  - [IO.Swagger.Model.AircraftDataDTO](docs/AircraftDataDTO.md)
  - [IO.Swagger.Model.AircraftDataListResponse](docs/AircraftDataListResponse.md)
@@ -519,6 +575,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CompanyAircraftChangeLogDTO](docs/CompanyAircraftChangeLogDTO.md)
  - [IO.Swagger.Model.CompanyAircraftChangeLogResponse](docs/CompanyAircraftChangeLogResponse.md)
  - [IO.Swagger.Model.CompanyDTO](docs/CompanyDTO.md)
+ - [IO.Swagger.Model.CompanyFboChangeLogDTO](docs/CompanyFboChangeLogDTO.md)
+ - [IO.Swagger.Model.CompanyFboChangeLogResponse](docs/CompanyFboChangeLogResponse.md)
  - [IO.Swagger.Model.CompanyFuelerChangeLogDTO](docs/CompanyFuelerChangeLogDTO.md)
  - [IO.Swagger.Model.CompanyFuelerChangeLogResponse](docs/CompanyFuelerChangeLogResponse.md)
  - [IO.Swagger.Model.CompanyFuelerDTO](docs/CompanyFuelerDTO.md)
@@ -550,6 +608,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CurrentScheduledTripsResponse](docs/CurrentScheduledTripsResponse.md)
  - [IO.Swagger.Model.DataLabels](docs/DataLabels.md)
  - [IO.Swagger.Model.DateTimeLabelFormats](docs/DateTimeLabelFormats.md)
+ - [IO.Swagger.Model.DeleteAccountingContractMappingsResponse](docs/DeleteAccountingContractMappingsResponse.md)
  - [IO.Swagger.Model.DeleteAccountingIntegrationItemCodesDetailsResponse](docs/DeleteAccountingIntegrationItemCodesDetailsResponse.md)
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyNoteResponse](docs/DeleteAirportDetailsByCompanyNoteResponse.md)
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyResponse](docs/DeleteAirportDetailsByCompanyResponse.md)
@@ -557,6 +616,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteAutoReconciledFileResponse](docs/DeleteAutoReconciledFileResponse.md)
  - [IO.Swagger.Model.DeleteCompanyActiveIntegrationResponse](docs/DeleteCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.DeleteCompanyAircraftChangeLogResponse](docs/DeleteCompanyAircraftChangeLogResponse.md)
+ - [IO.Swagger.Model.DeleteCompanyFboChangeLogResponse](docs/DeleteCompanyFboChangeLogResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerChangeLogResponse](docs/DeleteCompanyFuelerChangeLogResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerNotesResponse](docs/DeleteCompanyFuelerNotesResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFuelerPriceAdjustmentResponse](docs/DeleteCompanyFuelerPriceAdjustmentResponse.md)
@@ -566,6 +626,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteCompanyResponse](docs/DeleteCompanyResponse.md)
  - [IO.Swagger.Model.DeleteCompanyUserProfilesResponse](docs/DeleteCompanyUserProfilesResponse.md)
  - [IO.Swagger.Model.DeleteCredentialsResponse](docs/DeleteCredentialsResponse.md)
+ - [IO.Swagger.Model.DeleteCurrentPricingResponse](docs/DeleteCurrentPricingResponse.md)
  - [IO.Swagger.Model.DeleteDeploymentNotesResponse](docs/DeleteDeploymentNotesResponse.md)
  - [IO.Swagger.Model.DeleteDispatchEmailLogResponse](docs/DeleteDispatchEmailLogResponse.md)
  - [IO.Swagger.Model.DeleteEmailBlastEmailAddressesResponse](docs/DeleteEmailBlastEmailAddressesResponse.md)
@@ -580,6 +641,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteImportFileCaptureResponse](docs/DeleteImportFileCaptureResponse.md)
  - [IO.Swagger.Model.DeleteIntegrationAuthorizationResponse](docs/DeleteIntegrationAuthorizationResponse.md)
  - [IO.Swagger.Model.DeleteIntegrationFuelOrderDetailsResponse](docs/DeleteIntegrationFuelOrderDetailsResponse.md)
+ - [IO.Swagger.Model.DeleteJobFileDataResponse](docs/DeleteJobFileDataResponse.md)
+ - [IO.Swagger.Model.DeleteJobQueueFilesResponse](docs/DeleteJobQueueFilesResponse.md)
+ - [IO.Swagger.Model.DeleteJobQueueResponse](docs/DeleteJobQueueResponse.md)
+ - [IO.Swagger.Model.DeleteJobQueueResultEventsResponse](docs/DeleteJobQueueResultEventsResponse.md)
+ - [IO.Swagger.Model.DeleteJobQueueResultsResponse](docs/DeleteJobQueueResultsResponse.md)
+ - [IO.Swagger.Model.DeleteLocationSpecificPaymentMethodResponse](docs/DeleteLocationSpecificPaymentMethodResponse.md)
+ - [IO.Swagger.Model.DeleteMobileAppSettingsResponse](docs/DeleteMobileAppSettingsResponse.md)
  - [IO.Swagger.Model.DeletePriceSheetFileDataResponse](docs/DeletePriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.DeleteRampFeeByCompanyNotesResponse](docs/DeleteRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.DeleteRampFeeByCompanyResponse](docs/DeleteRampFeeByCompanyResponse.md)
@@ -626,10 +694,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ExchangeRefreshTokenResponse](docs/ExchangeRefreshTokenResponse.md)
  - [IO.Swagger.Model.Exporting](docs/Exporting.md)
  - [IO.Swagger.Model.FBOContact](docs/FBOContact.md)
+ - [IO.Swagger.Model.FBOLinxContact](docs/FBOLinxContact.md)
  - [IO.Swagger.Model.FBOLinxContractFuelOrdersResponse](docs/FBOLinxContractFuelOrdersResponse.md)
  - [IO.Swagger.Model.FBOLinxFBOResponse](docs/FBOLinxFBOResponse.md)
+ - [IO.Swagger.Model.FBOLinxFbo](docs/FBOLinxFbo.md)
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateRequest](docs/FBOLinxFuelVendorUpdateRequest.md)
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateResponse](docs/FBOLinxFuelVendorUpdateResponse.md)
+ - [IO.Swagger.Model.FBOLinxGroup](docs/FBOLinxGroup.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsModel](docs/FBOLinxNearbyAirportsModel.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsRequest](docs/FBOLinxNearbyAirportsRequest.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsResponse](docs/FBOLinxNearbyAirportsResponse.md)
@@ -643,12 +714,9 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FboDetailsByCompanyNotesResponse](docs/FboDetailsByCompanyNotesResponse.md)
  - [IO.Swagger.Model.FboDetailsByCompanyResponse](docs/FboDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.FboLinxAircraftsResponse](docs/FboLinxAircraftsResponse.md)
- - [IO.Swagger.Model.FboLinxContact](docs/FboLinxContact.md)
  - [IO.Swagger.Model.FboLinxContractFuelVendorsCountResponse](docs/FboLinxContractFuelVendorsCountResponse.md)
  - [IO.Swagger.Model.FboLinxCustomerTransactionsCountAtAirportResponse](docs/FboLinxCustomerTransactionsCountAtAirportResponse.md)
- - [IO.Swagger.Model.FboLinxFbo](docs/FboLinxFbo.md)
  - [IO.Swagger.Model.FboLinxFbosTransactionsCountResponse](docs/FboLinxFbosTransactionsCountResponse.md)
- - [IO.Swagger.Model.FboLinxGroup](docs/FboLinxGroup.md)
  - [IO.Swagger.Model.FbolinxAircraftDTO](docs/FbolinxAircraftDTO.md)
  - [IO.Swagger.Model.FbolinxContractFuelVendorTransactionsCountAtAirport](docs/FbolinxContractFuelVendorTransactionsCountAtAirport.md)
  - [IO.Swagger.Model.FbolinxCustomerTransactionsCountAtAirport](docs/FbolinxCustomerTransactionsCountAtAirport.md)
@@ -713,12 +781,24 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.IntegrationSettingsDTO](docs/IntegrationSettingsDTO.md)
  - [IO.Swagger.Model.InternationalSettingsDTO](docs/InternationalSettingsDTO.md)
  - [IO.Swagger.Model.ItemStyle](docs/ItemStyle.md)
+ - [IO.Swagger.Model.JobFileDataDTO](docs/JobFileDataDTO.md)
+ - [IO.Swagger.Model.JobFileDataResponse](docs/JobFileDataResponse.md)
+ - [IO.Swagger.Model.JobQueueDTO](docs/JobQueueDTO.md)
+ - [IO.Swagger.Model.JobQueueFilesDTO](docs/JobQueueFilesDTO.md)
+ - [IO.Swagger.Model.JobQueueFilesResponse](docs/JobQueueFilesResponse.md)
+ - [IO.Swagger.Model.JobQueueResponse](docs/JobQueueResponse.md)
+ - [IO.Swagger.Model.JobQueueResultEventsDTO](docs/JobQueueResultEventsDTO.md)
+ - [IO.Swagger.Model.JobQueueResultEventsResponse](docs/JobQueueResultEventsResponse.md)
+ - [IO.Swagger.Model.JobQueueResultsDTO](docs/JobQueueResultsDTO.md)
+ - [IO.Swagger.Model.JobQueueResultsResponse](docs/JobQueueResultsResponse.md)
  - [IO.Swagger.Model.Labels](docs/Labels.md)
  - [IO.Swagger.Model.Leg](docs/Leg.md)
  - [IO.Swagger.Model.LegFlightPlanningRequest](docs/LegFlightPlanningRequest.md)
  - [IO.Swagger.Model.LegTankeringOptions](docs/LegTankeringOptions.md)
  - [IO.Swagger.Model.Legend](docs/Legend.md)
  - [IO.Swagger.Model.Localization](docs/Localization.md)
+ - [IO.Swagger.Model.LocationSpecificPaymentMethodDTO](docs/LocationSpecificPaymentMethodDTO.md)
+ - [IO.Swagger.Model.LocationSpecificPaymentMethodListResponse](docs/LocationSpecificPaymentMethodListResponse.md)
  - [IO.Swagger.Model.MailBoxJobDTO](docs/MailBoxJobDTO.md)
  - [IO.Swagger.Model.MainMenuFeatureDTO](docs/MainMenuFeatureDTO.md)
  - [IO.Swagger.Model.MainMenuFeatureSubFeaturesDTO](docs/MainMenuFeatureSubFeaturesDTO.md)
@@ -728,6 +808,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.MarkerStates](docs/MarkerStates.md)
  - [IO.Swagger.Model.MenuDTO](docs/MenuDTO.md)
  - [IO.Swagger.Model.MenuFeatureDTO](docs/MenuFeatureDTO.md)
+ - [IO.Swagger.Model.MobileAppSettingsDTO](docs/MobileAppSettingsDTO.md)
+ - [IO.Swagger.Model.MobileAppSettingsResponse](docs/MobileAppSettingsResponse.md)
  - [IO.Swagger.Model.MostCommonReportedRampFeeResultDTO](docs/MostCommonReportedRampFeeResultDTO.md)
  - [IO.Swagger.Model.MultiLegOption](docs/MultiLegOption.md)
  - [IO.Swagger.Model.NavigationLog](docs/NavigationLog.md)
@@ -747,6 +829,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PlotOptionsSeries](docs/PlotOptionsSeries.md)
  - [IO.Swagger.Model.PlotPointEvents](docs/PlotPointEvents.md)
  - [IO.Swagger.Model.PointEvents](docs/PointEvents.md)
+ - [IO.Swagger.Model.PostAccountingContractMappingsRequest](docs/PostAccountingContractMappingsRequest.md)
+ - [IO.Swagger.Model.PostAccountingContractMappingsResponse](docs/PostAccountingContractMappingsResponse.md)
  - [IO.Swagger.Model.PostAccountingIntegrationItemCodesRequest](docs/PostAccountingIntegrationItemCodesRequest.md)
  - [IO.Swagger.Model.PostAccountingIntegrationItemCodesResponse](docs/PostAccountingIntegrationItemCodesResponse.md)
  - [IO.Swagger.Model.PostAirportDetailsByCompanyNotesRequest](docs/PostAirportDetailsByCompanyNotesRequest.md)
@@ -761,6 +845,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostCompanyActiveIntegrationResponse](docs/PostCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.PostCompanyAircraftChangeLogRequest](docs/PostCompanyAircraftChangeLogRequest.md)
  - [IO.Swagger.Model.PostCompanyAircraftChangeLogResponse](docs/PostCompanyAircraftChangeLogResponse.md)
+ - [IO.Swagger.Model.PostCompanyFboChangeLogRequest](docs/PostCompanyFboChangeLogRequest.md)
+ - [IO.Swagger.Model.PostCompanyFboChangeLogResponse](docs/PostCompanyFboChangeLogResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerChangeLogRequest](docs/PostCompanyFuelerChangeLogRequest.md)
  - [IO.Swagger.Model.PostCompanyFuelerChangeLogResponse](docs/PostCompanyFuelerChangeLogResponse.md)
  - [IO.Swagger.Model.PostCompanyFuelerNotesRequest](docs/PostCompanyFuelerNotesRequest.md)
@@ -807,6 +893,20 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostImportFileCaptureResponse](docs/PostImportFileCaptureResponse.md)
  - [IO.Swagger.Model.PostIntegrationPartnerCredentialsRequest](docs/PostIntegrationPartnerCredentialsRequest.md)
  - [IO.Swagger.Model.PostIntegrationPartnerCredentialsResponse](docs/PostIntegrationPartnerCredentialsResponse.md)
+ - [IO.Swagger.Model.PostJobFileDataRequest](docs/PostJobFileDataRequest.md)
+ - [IO.Swagger.Model.PostJobFileDataResponse](docs/PostJobFileDataResponse.md)
+ - [IO.Swagger.Model.PostJobQueueFilesRequest](docs/PostJobQueueFilesRequest.md)
+ - [IO.Swagger.Model.PostJobQueueFilesResponse](docs/PostJobQueueFilesResponse.md)
+ - [IO.Swagger.Model.PostJobQueueRequest](docs/PostJobQueueRequest.md)
+ - [IO.Swagger.Model.PostJobQueueResponse](docs/PostJobQueueResponse.md)
+ - [IO.Swagger.Model.PostJobQueueResultEventsRequest](docs/PostJobQueueResultEventsRequest.md)
+ - [IO.Swagger.Model.PostJobQueueResultEventsResponse](docs/PostJobQueueResultEventsResponse.md)
+ - [IO.Swagger.Model.PostJobQueueResultsRequest](docs/PostJobQueueResultsRequest.md)
+ - [IO.Swagger.Model.PostJobQueueResultsResponse](docs/PostJobQueueResultsResponse.md)
+ - [IO.Swagger.Model.PostLocationSpecificPaymentMethodRequest](docs/PostLocationSpecificPaymentMethodRequest.md)
+ - [IO.Swagger.Model.PostLocationSpecificPaymentMethodResponse](docs/PostLocationSpecificPaymentMethodResponse.md)
+ - [IO.Swagger.Model.PostMobileAppSettingsRequest](docs/PostMobileAppSettingsRequest.md)
+ - [IO.Swagger.Model.PostMobileAppSettingsResponse](docs/PostMobileAppSettingsResponse.md)
  - [IO.Swagger.Model.PostPaymentInformationRequest](docs/PostPaymentInformationRequest.md)
  - [IO.Swagger.Model.PostPaymentInformationResponse](docs/PostPaymentInformationResponse.md)
  - [IO.Swagger.Model.PostPriceSheetFileDataRequest](docs/PostPriceSheetFileDataRequest.md)
@@ -888,13 +988,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.RouteDetailsCalculation](docs/RouteDetailsCalculation.md)
  - [IO.Swagger.Model.RouteDetailsCalculationAircraftData](docs/RouteDetailsCalculationAircraftData.md)
  - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)
- - [IO.Swagger.Model.SageBillVM](docs/SageBillVM.md)
- - [IO.Swagger.Model.SageCreateBillResponse](docs/SageCreateBillResponse.md)
  - [IO.Swagger.Model.SageCredentialsRequest](docs/SageCredentialsRequest.md)
- - [IO.Swagger.Model.SageGeneralLedgerResponse](docs/SageGeneralLedgerResponse.md)
- - [IO.Swagger.Model.SageGeneralLedgerVM](docs/SageGeneralLedgerVM.md)
- - [IO.Swagger.Model.SageVendorResponse](docs/SageVendorResponse.md)
- - [IO.Swagger.Model.SageVendorVM](docs/SageVendorVM.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerRequest](docs/SaveCompanyToIFlightPlannerRequest.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerResponse](docs/SaveCompanyToIFlightPlannerResponse.md)
  - [IO.Swagger.Model.SaveUserToIFlightPlannerRequest](docs/SaveUserToIFlightPlannerRequest.md)
@@ -933,6 +1027,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.SupplierDetailsResponse](docs/SupplierDetailsResponse.md)
  - [IO.Swagger.Model.SupportedInvoiceFileTemplateDTO](docs/SupportedInvoiceFileTemplateDTO.md)
  - [IO.Swagger.Model.SupportedInvoiceFileTemplateResponse](docs/SupportedInvoiceFileTemplateResponse.md)
+ - [IO.Swagger.Model.SyncLatestExchangeRatesResponse](docs/SyncLatestExchangeRatesResponse.md)
  - [IO.Swagger.Model.TankeringApiCalculationLogDTO](docs/TankeringApiCalculationLogDTO.md)
  - [IO.Swagger.Model.TankeringApiCalculationLogResponse](docs/TankeringApiCalculationLogResponse.md)
  - [IO.Swagger.Model.TankeringDTO](docs/TankeringDTO.md)
@@ -952,8 +1047,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.TransactionAttachmentResponse](docs/TransactionAttachmentResponse.md)
  - [IO.Swagger.Model.TransactionDTO](docs/TransactionDTO.md)
  - [IO.Swagger.Model.TransactionDetailsDTO](docs/TransactionDetailsDTO.md)
+ - [IO.Swagger.Model.TransactionDistinctAirportIdentifiersResponse](docs/TransactionDistinctAirportIdentifiersResponse.md)
+ - [IO.Swagger.Model.TransactionDistinctFuelVendorDTO](docs/TransactionDistinctFuelVendorDTO.md)
+ - [IO.Swagger.Model.TransactionDistinctFuelVendorsResponse](docs/TransactionDistinctFuelVendorsResponse.md)
+ - [IO.Swagger.Model.TransactionDistinctTailsResponse](docs/TransactionDistinctTailsResponse.md)
  - [IO.Swagger.Model.TransactionFileDataDTO](docs/TransactionFileDataDTO.md)
  - [IO.Swagger.Model.TransactionFileDataResponse](docs/TransactionFileDataResponse.md)
+ - [IO.Swagger.Model.TransactionForChangedTripDTO](docs/TransactionForChangedTripDTO.md)
  - [IO.Swagger.Model.TransactionFuelPriceResponse](docs/TransactionFuelPriceResponse.md)
  - [IO.Swagger.Model.TransactionFuelPriceResultDTO](docs/TransactionFuelPriceResultDTO.md)
  - [IO.Swagger.Model.TransactionFuelTaxDTO](docs/TransactionFuelTaxDTO.md)
@@ -973,6 +1073,9 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.TripPlanningDTO](docs/TripPlanningDTO.md)
  - [IO.Swagger.Model.TripTankeringOptions](docs/TripTankeringOptions.md)
  - [IO.Swagger.Model.TripTimeResults](docs/TripTimeResults.md)
+ - [IO.Swagger.Model.UpcomingTransactionsScheduleChangeReviewResponse](docs/UpcomingTransactionsScheduleChangeReviewResponse.md)
+ - [IO.Swagger.Model.UpdateAccountingContractMappingsRequest](docs/UpdateAccountingContractMappingsRequest.md)
+ - [IO.Swagger.Model.UpdateAccountingContractMappingsResponse](docs/UpdateAccountingContractMappingsResponse.md)
  - [IO.Swagger.Model.UpdateAccountingIntegrationItemCodesDetailsRequest](docs/UpdateAccountingIntegrationItemCodesDetailsRequest.md)
  - [IO.Swagger.Model.UpdateAirportDetailsByCompanyNotesRequest](docs/UpdateAirportDetailsByCompanyNotesRequest.md)
  - [IO.Swagger.Model.UpdateAirportDetailsByCompanyNotesResponse](docs/UpdateAirportDetailsByCompanyNotesResponse.md)
@@ -988,6 +1091,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateCompanyActiveIntegrationResponse](docs/UpdateCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.UpdateCompanyAircraftChangeLogRequest](docs/UpdateCompanyAircraftChangeLogRequest.md)
  - [IO.Swagger.Model.UpdateCompanyAircraftChangeLogResponse](docs/UpdateCompanyAircraftChangeLogResponse.md)
+ - [IO.Swagger.Model.UpdateCompanyFboChangeLogRequest](docs/UpdateCompanyFboChangeLogRequest.md)
+ - [IO.Swagger.Model.UpdateCompanyFboChangeLogResponse](docs/UpdateCompanyFboChangeLogResponse.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerChangeLogRequest](docs/UpdateCompanyFuelerChangeLogRequest.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerChangeLogResponse](docs/UpdateCompanyFuelerChangeLogResponse.md)
  - [IO.Swagger.Model.UpdateCompanyFuelerNotesRequest](docs/UpdateCompanyFuelerNotesRequest.md)
@@ -1030,6 +1135,20 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateImageFileDataResponse](docs/UpdateImageFileDataResponse.md)
  - [IO.Swagger.Model.UpdateImportFileCaptureRequest](docs/UpdateImportFileCaptureRequest.md)
  - [IO.Swagger.Model.UpdateImportFileCaptureResponse](docs/UpdateImportFileCaptureResponse.md)
+ - [IO.Swagger.Model.UpdateJobFileDataRequest](docs/UpdateJobFileDataRequest.md)
+ - [IO.Swagger.Model.UpdateJobFileDataResponse](docs/UpdateJobFileDataResponse.md)
+ - [IO.Swagger.Model.UpdateJobQueueFilesRequest](docs/UpdateJobQueueFilesRequest.md)
+ - [IO.Swagger.Model.UpdateJobQueueFilesResponse](docs/UpdateJobQueueFilesResponse.md)
+ - [IO.Swagger.Model.UpdateJobQueueRequest](docs/UpdateJobQueueRequest.md)
+ - [IO.Swagger.Model.UpdateJobQueueResponse](docs/UpdateJobQueueResponse.md)
+ - [IO.Swagger.Model.UpdateJobQueueResultEventsRequest](docs/UpdateJobQueueResultEventsRequest.md)
+ - [IO.Swagger.Model.UpdateJobQueueResultEventsResponse](docs/UpdateJobQueueResultEventsResponse.md)
+ - [IO.Swagger.Model.UpdateJobQueueResultsRequest](docs/UpdateJobQueueResultsRequest.md)
+ - [IO.Swagger.Model.UpdateJobQueueResultsResponse](docs/UpdateJobQueueResultsResponse.md)
+ - [IO.Swagger.Model.UpdateLocationSpecificPaymentMethodRequest](docs/UpdateLocationSpecificPaymentMethodRequest.md)
+ - [IO.Swagger.Model.UpdateLocationSpecificPaymentMethodResponse](docs/UpdateLocationSpecificPaymentMethodResponse.md)
+ - [IO.Swagger.Model.UpdateMobileAppSettingsRequest](docs/UpdateMobileAppSettingsRequest.md)
+ - [IO.Swagger.Model.UpdateMobileAppSettingsResponse](docs/UpdateMobileAppSettingsResponse.md)
  - [IO.Swagger.Model.UpdatePriceSheetFileDataRequest](docs/UpdatePriceSheetFileDataRequest.md)
  - [IO.Swagger.Model.UpdatePriceSheetFileDataResponse](docs/UpdatePriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyNotesRequest](docs/UpdateRampFeeByCompanyNotesRequest.md)

@@ -53,7 +53,7 @@ namespace IO.Swagger.Api
         /// <returns>RampFeeByCompanyResponse</returns>
         RampFeeByCompanyResponse GetRampFeeByCompany (int? id);
         /// <summary>
-        /// Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}. 
+        /// Fetch a company-specific ramp fee based on the provided {tailNumber}, {icao}, and {fboName}. 
         /// </summary>
         /// <param name="tailNumber"></param>
         /// <param name="icao"></param>
@@ -397,7 +397,7 @@ path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName))
         }
     
         /// <summary>
-        /// Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}. 
+        /// Fetch a company-specific ramp fee based on the provided {tailNumber}, {icao}, and {fboName}. 
         /// </summary>
         /// <param name="tailNumber"></param> 
         /// <param name="icao"></param> 

@@ -7,18 +7,22 @@ Method | HTTP request | Description
 [**DeleteFboAlias**](FBOApi.md#deletefboalias) | **DELETE** /api/FBO/fboAlias/{id} | 
 [**DeleteFboDetailsByCompany**](FBOApi.md#deletefbodetailsbycompany) | **DELETE** /api/FBO/company-specific-details/{fboDetailsByCompanyId} | Delete company-specific details for a particular FBO.
 [**DeleteFboDetailsByCompanyNotes**](FBOApi.md#deletefbodetailsbycompanynotes) | **DELETE** /api/FBO/company-specific-details/{fboDetailsByCompanyId}/notes/{noteId} | Delete a company-specific note for a particular FBO.  The note will be changed to a \&quot;deleted\&quot; state but will not be removed from the database to allow for change-tracking.
+[**DeleteLocationSpecificPaymentMethod**](FBOApi.md#deletelocationspecificpaymentmethod) | **DELETE** /api/FBO/location-specific-payment-method/{id} | Delete a location specific payment method by the Id
 [**GetFBOLinxFboByAcukwikId**](FBOApi.md#getfbolinxfbobyacukwikid) | **GET** /api/FBO/fbolinx/fbo-by-acukwik-id/{acukwikId} | 
 [**GetFboAliasByAirport**](FBOApi.md#getfboaliasbyairport) | **GET** /api/FBO/fboAlias/by-airport/{icao} | 
 [**GetFboAliasList**](FBOApi.md#getfboaliaslist) | **GET** /api/FBO/fboAlias/list | 
 [**GetFboDetailsByCompany**](FBOApi.md#getfbodetailsbycompany) | **GET** /api/FBO/company-specific-details/{fboDetailsByCompanyId} | Fetch company-specific details for a particular FBO based on the provided [fboDetailsByCompanyId].
 [**GetFboDetailsByCompanyByLocation**](FBOApi.md#getfbodetailsbycompanybylocation) | **GET** /api/FBO/company-specific-details/by-location/{icao}/{fboName} | Fetch company-specific details for a particular FBO based on the provided [icao] and [fboName].
 [**GetFboDetailsByCompanyNotes**](FBOApi.md#getfbodetailsbycompanynotes) | **GET** /api/FBO/company-specific-details/{fboDetailsByCompanyId}/notes | Fetch company-specific notes for a particular FBO based on the provided [fboDetailsByCompanyId].
+[**GetLocationSpecificPaymentMethod**](FBOApi.md#getlocationspecificpaymentmethod) | **GET** /api/FBO/location-specific-payment-method/by-location/{icao}/fbo/{fboName} | Get a location specific payment method from icao and company Id
 [**PostFboAliasAsync**](FBOApi.md#postfboaliasasync) | **POST** /api/FBO/fboAlias | 
 [**PostFboDetailsByCompany**](FBOApi.md#postfbodetailsbycompany) | **POST** /api/FBO/company-specific-details | Add company-specific details for a particular FBO.  If a record already exists for this FBO, the previous record will be replaced.
 [**PostFboDetailsByCompanyNotes**](FBOApi.md#postfbodetailsbycompanynotes) | **POST** /api/FBO/company-specific-details/notes | Add company-specific notes for a particular FBO.  The note must be associated with a company-specific FBO record.
+[**PostLocationSpecificPaymentMethod**](FBOApi.md#postlocationspecificpaymentmethod) | **POST** /api/FBO/location-specific-payment-method | Post a location specific payment method
 [**UpdateFboAlias**](FBOApi.md#updatefboalias) | **PUT** /api/FBO/fboAlias | 
 [**UpdateFboDetailsByCompany**](FBOApi.md#updatefbodetailsbycompany) | **PUT** /api/FBO/company-specific-details | Update company-specific details for a particular FBO.
 [**UpdateFboDetailsByCompanyNotes**](FBOApi.md#updatefbodetailsbycompanynotes) | **PUT** /api/FBO/company-specific-details/notes | Update a company-specific note for a particular FBO.
+[**UpdateLocationSpecificPaymentMethod**](FBOApi.md#updatelocationspecificpaymentmethod) | **PUT** /api/FBO/location-specific-payment-method | Update a location specific payment method
 
 
 <a name="deletefboalias"></a>
@@ -217,6 +221,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteFboDetailsByCompanyNotesResponse**](DeleteFboDetailsByCompanyNotesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletelocationspecificpaymentmethod"></a>
+# **DeleteLocationSpecificPaymentMethod**
+> DeleteLocationSpecificPaymentMethodResponse DeleteLocationSpecificPaymentMethod (int? id)
+
+Delete a location specific payment method by the Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteLocationSpecificPaymentMethodExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FBOApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Delete a location specific payment method by the Id
+                DeleteLocationSpecificPaymentMethodResponse result = apiInstance.DeleteLocationSpecificPaymentMethod(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FBOApi.DeleteLocationSpecificPaymentMethod: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteLocationSpecificPaymentMethodResponse**](DeleteLocationSpecificPaymentMethodResponse.md)
 
 ### Authorization
 
@@ -638,6 +711,77 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="getlocationspecificpaymentmethod"></a>
+# **GetLocationSpecificPaymentMethod**
+> LocationSpecificPaymentMethodListResponse GetLocationSpecificPaymentMethod (string icao, string fboName)
+
+Get a location specific payment method from icao and company Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetLocationSpecificPaymentMethodExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FBOApi();
+            var icao = icao_example;  // string | 
+            var fboName = fboName_example;  // string | 
+
+            try
+            {
+                // Get a location specific payment method from icao and company Id
+                LocationSpecificPaymentMethodListResponse result = apiInstance.GetLocationSpecificPaymentMethod(icao, fboName);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FBOApi.GetLocationSpecificPaymentMethod: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **icao** | **string**|  | 
+ **fboName** | **string**|  | 
+
+### Return type
+
+[**LocationSpecificPaymentMethodListResponse**](LocationSpecificPaymentMethodListResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="postfboaliasasync"></a>
 # **PostFboAliasAsync**
 > PostFboAliasResponse PostFboAliasAsync (PostFboAliasRequest body)
@@ -844,6 +988,75 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="postlocationspecificpaymentmethod"></a>
+# **PostLocationSpecificPaymentMethod**
+> PostLocationSpecificPaymentMethodResponse PostLocationSpecificPaymentMethod (PostLocationSpecificPaymentMethodRequest body)
+
+Post a location specific payment method
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostLocationSpecificPaymentMethodExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FBOApi();
+            var body = new PostLocationSpecificPaymentMethodRequest(); // PostLocationSpecificPaymentMethodRequest |  (optional) 
+
+            try
+            {
+                // Post a location specific payment method
+                PostLocationSpecificPaymentMethodResponse result = apiInstance.PostLocationSpecificPaymentMethod(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FBOApi.PostLocationSpecificPaymentMethod: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostLocationSpecificPaymentMethodRequest**](PostLocationSpecificPaymentMethodRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostLocationSpecificPaymentMethodResponse**](PostLocationSpecificPaymentMethodResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="updatefboalias"></a>
 # **UpdateFboAlias**
 > UpdateFboAliasResponse UpdateFboAlias (UpdateFboAliasRequest body)
@@ -1038,6 +1251,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**UpdateFboDetailsByCompanyNotesResponse**](UpdateFboDetailsByCompanyNotesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatelocationspecificpaymentmethod"></a>
+# **UpdateLocationSpecificPaymentMethod**
+> UpdateLocationSpecificPaymentMethodResponse UpdateLocationSpecificPaymentMethod (UpdateLocationSpecificPaymentMethodRequest body)
+
+Update a location specific payment method
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateLocationSpecificPaymentMethodExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FBOApi();
+            var body = new UpdateLocationSpecificPaymentMethodRequest(); // UpdateLocationSpecificPaymentMethodRequest |  (optional) 
+
+            try
+            {
+                // Update a location specific payment method
+                UpdateLocationSpecificPaymentMethodResponse result = apiInstance.UpdateLocationSpecificPaymentMethod(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FBOApi.UpdateLocationSpecificPaymentMethod: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateLocationSpecificPaymentMethodRequest**](UpdateLocationSpecificPaymentMethodRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateLocationSpecificPaymentMethodResponse**](UpdateLocationSpecificPaymentMethodResponse.md)
 
 ### Authorization
 

@@ -12,6 +12,11 @@ namespace IO.Swagger.Api
     public interface IFuelPricingApi
     {
         /// <summary>
+        /// Internal use only - delete all cached pricing for a currently authenticated company. 
+        /// </summary>
+        /// <returns>DeleteCurrentPricingResponse</returns>
+        DeleteCurrentPricingResponse DeleteCurrentPricingForCompany ();
+        /// <summary>
         /// Internal use only - delete all weekly pricing records for a particular fuel vendor. 
         /// </summary>
         /// <param name="fuelVendorId"></param>
@@ -49,6 +54,14 @@ namespace IO.Swagger.Api
         /// <param name="flightType"></param>
         /// <returns>CurrentPricingResponse</returns>
         CurrentPricingResponse GetLiveQuoteForLocationsAndFlightType (string commaDelimitedIcaos, string flightType);
+        /// <summary>
+        /// Retrieves a live quote from all vendor web services tied to the flight department&#39;s account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}. It is always recommended to do a live quote for pricing if one hasn&#39;t been done in the last few hours for the desired airports.
+        /// </summary>
+        /// <param name="commaDelimitedIcaos"></param>
+        /// <param name="flightType"></param>
+        /// <param name="fuelVendorId"></param>
+        /// <returns>CurrentPricingResponse</returns>
+        CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId);
         /// <summary>
         /// Internal use only - Fetch a quote response from the EPIC Aviation web service. 
         /// </summary>
@@ -128,6 +141,38 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        /// Internal use only - delete all cached pricing for a currently authenticated company. 
+        /// </summary>
+        /// <returns>DeleteCurrentPricingResponse</returns>            
+        public DeleteCurrentPricingResponse DeleteCurrentPricingForCompany ()
+        {
+            
+    
+            var path = "/api/FuelPricing/current";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCurrentPricingForCompany: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCurrentPricingForCompany: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteCurrentPricingResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCurrentPricingResponse), response.Headers);
+        }
     
         /// <summary>
         /// Internal use only - delete all weekly pricing records for a particular fuel vendor. 
@@ -354,6 +399,53 @@ path = path.Replace("{" + "flightType" + "}", ApiClient.ParameterToString(flight
                 throw new ApiException ((int)response.StatusCode, "Error calling GetLiveQuoteForLocationsAndFlightType: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetLiveQuoteForLocationsAndFlightType: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CurrentPricingResponse) ApiClient.Deserialize(response.Content, typeof(CurrentPricingResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Retrieves a live quote from all vendor web services tied to the flight department&#39;s account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}. It is always recommended to do a live quote for pricing if one hasn&#39;t been done in the last few hours for the desired airports.
+        /// </summary>
+        /// <param name="commaDelimitedIcaos"></param> 
+        /// <param name="flightType"></param> 
+        /// <param name="fuelVendorId"></param> 
+        /// <returns>CurrentPricingResponse</returns>            
+        public CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId)
+        {
+            
+            // verify the required parameter 'commaDelimitedIcaos' is set
+            if (commaDelimitedIcaos == null) throw new ApiException(400, "Missing required parameter 'commaDelimitedIcaos' when calling GetLiveQuoteForLocationsAndFlightTypeAndVendor");
+            
+            // verify the required parameter 'flightType' is set
+            if (flightType == null) throw new ApiException(400, "Missing required parameter 'flightType' when calling GetLiveQuoteForLocationsAndFlightTypeAndVendor");
+            
+            // verify the required parameter 'fuelVendorId' is set
+            if (fuelVendorId == null) throw new ApiException(400, "Missing required parameter 'fuelVendorId' when calling GetLiveQuoteForLocationsAndFlightTypeAndVendor");
+            
+    
+            var path = "/api/FuelPricing/live-quote/{commaDelimitedIcaos}/flight-type/{flightType}/fuel-vendor/{fuelVendorId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "commaDelimitedIcaos" + "}", ApiClient.ParameterToString(commaDelimitedIcaos));
+path = path.Replace("{" + "flightType" + "}", ApiClient.ParameterToString(flightType));
+path = path.Replace("{" + "fuelVendorId" + "}", ApiClient.ParameterToString(fuelVendorId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetLiveQuoteForLocationsAndFlightTypeAndVendor: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetLiveQuoteForLocationsAndFlightTypeAndVendor: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CurrentPricingResponse) ApiClient.Deserialize(response.Content, typeof(CurrentPricingResponse), response.Headers);
         }

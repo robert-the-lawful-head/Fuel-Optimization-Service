@@ -4,17 +4,84 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**DeleteCurrentPricingForCompany**](FuelPricingApi.md#deletecurrentpricingforcompany) | **DELETE** /api/FuelPricing/current | Internal use only - delete all cached pricing for a currently authenticated company.
 [**DeleteWeeklyPricingForFuelVendor**](FuelPricingApi.md#deleteweeklypricingforfuelvendor) | **DELETE** /api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId} | Internal use only - delete all weekly pricing records for a particular fuel vendor.
 [**GetAssociatedDetailsForFuelOption**](FuelPricingApi.md#getassociateddetailsforfueloption) | **POST** /api/FuelPricing/associated-details | 
 [**GetCurrentPricingForLocation**](FuelPricingApi.md#getcurrentpricingforlocation) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
 [**GetCurrentPricingForLocationAndFlightType**](FuelPricingApi.md#getcurrentpricingforlocationandflighttype) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos}/flight-type/{flightType} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
 [**GetLiveQuoteForLocations**](FuelPricingApi.md#getlivequoteforlocations) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos} | Retrieves a live quote from all vendor web services tied to the flight department&#39;s account using their default flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.
 [**GetLiveQuoteForLocationsAndFlightType**](FuelPricingApi.md#getlivequoteforlocationsandflighttype) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos}/flight-type/{flightType} | Retrieves a live quote from all vendor web services tied to the flight department&#39;s account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.
+[**GetLiveQuoteForLocationsAndFlightTypeAndVendor**](FuelPricingApi.md#getlivequoteforlocationsandflighttypeandvendor) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos}/flight-type/{flightType}/fuel-vendor/{fuelVendorId} | Retrieves a live quote from all vendor web services tied to the flight department&#39;s account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
 [**GetQuotFromEpic**](FuelPricingApi.md#getquotfromepic) | **GET** /api/FuelPricing/quoting/epic/{commaDelimitedAirportIdentifiers} | Internal use only - Fetch a quote response from the EPIC Aviation web service.
 [**GetWeeklyPricingForFuelerAndLocation**](FuelPricingApi.md#getweeklypricingforfuelerandlocation) | **GET** /api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId}/by-locations/{commaDelimitedIcaos} | If available, will fetch records from the weekly price sheet received each week for the specified [commaDelimitedIcaos] and [fuelVendorId].  These are to be used as a fallback option when a vendor&#39;s service is unavailable.
 [**GetWeeklyPricingForLocation**](FuelPricingApi.md#getweeklypricingforlocation) | **GET** /api/FuelPricing/weekly-pricing/by-locations/{commaDelimitedIcaos} | /// If available, will fetch records from the weekly price sheet received each week for the specified [commaDelimitedIcaos].  These are to be used as a fallback option when a vendor&#39;s service is unavailable.
 [**PostFuelOrder**](FuelPricingApi.md#postfuelorder) | **POST** /api/FuelPricing/fuel-order | Internal use only - Please use the \&quot;dispatching\&quot; API to dispatch a full fuel order.  This API method is strictly for notifying the fuel vendor.
 
+
+<a name="deletecurrentpricingforcompany"></a>
+# **DeleteCurrentPricingForCompany**
+> DeleteCurrentPricingResponse DeleteCurrentPricingForCompany ()
+
+Internal use only - delete all cached pricing for a currently authenticated company.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteCurrentPricingForCompanyExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FuelPricingApi();
+
+            try
+            {
+                // Internal use only - delete all cached pricing for a currently authenticated company.
+                DeleteCurrentPricingResponse result = apiInstance.DeleteCurrentPricingForCompany();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FuelPricingApi.DeleteCurrentPricingForCompany: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**DeleteCurrentPricingResponse**](DeleteCurrentPricingResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 <a name="deleteweeklypricingforfuelvendor"></a>
 # **DeleteWeeklyPricingForFuelVendor**
@@ -421,6 +488,81 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **commaDelimitedIcaos** | **string**|  | 
  **flightType** | **string**|  | 
+
+### Return type
+
+[**CurrentPricingResponse**](CurrentPricingResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getlivequoteforlocationsandflighttypeandvendor"></a>
+# **GetLiveQuoteForLocationsAndFlightTypeAndVendor**
+> CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId)
+
+Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
+
+It is always recommended to do a live quote for pricing if one hasn't been done in the last few hours for the desired airports.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetLiveQuoteForLocationsAndFlightTypeAndVendorExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FuelPricingApi();
+            var commaDelimitedIcaos = commaDelimitedIcaos_example;  // string | 
+            var flightType = flightType_example;  // string | 
+            var fuelVendorId = 56;  // int? | 
+
+            try
+            {
+                // Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
+                CurrentPricingResponse result = apiInstance.GetLiveQuoteForLocationsAndFlightTypeAndVendor(commaDelimitedIcaos, flightType, fuelVendorId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FuelPricingApi.GetLiveQuoteForLocationsAndFlightTypeAndVendor: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **commaDelimitedIcaos** | **string**|  | 
+ **flightType** | **string**|  | 
+ **fuelVendorId** | **int?**|  | 
 
 ### Return type
 

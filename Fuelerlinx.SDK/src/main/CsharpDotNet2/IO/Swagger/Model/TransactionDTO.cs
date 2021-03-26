@@ -540,6 +540,27 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "preUpliftPriceSync")]
     public PriceSyncTransactionDTO PreUpliftPriceSync { get; set; }
 
+    /// <summary>
+    /// Gets or Sets ChangedTripNotification
+    /// </summary>
+    [DataMember(Name="changedTripNotification", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "changedTripNotification")]
+    public TransactionForChangedTripDTO ChangedTripNotification { get; set; }
+
+    /// <summary>
+    /// Gets or Sets TransactionAccountingData
+    /// </summary>
+    [DataMember(Name="transactionAccountingData", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "transactionAccountingData")]
+    public TransactionAccountingDataDTO TransactionAccountingData { get; set; }
+
+    /// <summary>
+    /// Gets or Sets TransactionAccountingTransfer
+    /// </summary>
+    [DataMember(Name="transactionAccountingTransfer", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "transactionAccountingTransfer")]
+    public TransactionAccountingTransferDTO TransactionAccountingTransfer { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -623,6 +644,9 @@ namespace IO.Swagger.Model {
       sb.Append("  FboNotes: ").Append(FboNotes).Append("\n");
       sb.Append("  RampFeeNotes: ").Append(RampFeeNotes).Append("\n");
       sb.Append("  PreUpliftPriceSync: ").Append(PreUpliftPriceSync).Append("\n");
+      sb.Append("  ChangedTripNotification: ").Append(ChangedTripNotification).Append("\n");
+      sb.Append("  TransactionAccountingData: ").Append(TransactionAccountingData).Append("\n");
+      sb.Append("  TransactionAccountingTransfer: ").Append(TransactionAccountingTransfer).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

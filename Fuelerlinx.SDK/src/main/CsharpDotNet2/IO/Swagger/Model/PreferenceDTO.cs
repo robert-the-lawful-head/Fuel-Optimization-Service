@@ -41,13 +41,6 @@ namespace IO.Swagger.Model {
     public bool? SortByAllInclusivePricing { get; set; }
 
     /// <summary>
-    /// Gets or Sets IsPostedRetailSeparated
-    /// </summary>
-    [DataMember(Name="IsPostedRetailSeparated", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "IsPostedRetailSeparated")]
-    public bool? IsPostedRetailSeparated { get; set; }
-
-    /// <summary>
     /// Gets or Sets IsPriceMasked
     /// </summary>
     [DataMember(Name="IsPriceMasked", EmitDefaultValue=false)]
@@ -181,7 +174,6 @@ namespace IO.Swagger.Model {
       sb.Append("  FuelOptionSorting: ").Append(FuelOptionSorting).Append("\n");
       sb.Append("  IsAllInclusivePricingPrioritized: ").Append(IsAllInclusivePricingPrioritized).Append("\n");
       sb.Append("  SortByAllInclusivePricing: ").Append(SortByAllInclusivePricing).Append("\n");
-      sb.Append("  IsPostedRetailSeparated: ").Append(IsPostedRetailSeparated).Append("\n");
       sb.Append("  IsPriceMasked: ").Append(IsPriceMasked).Append("\n");
       sb.Append("  OmitFromDispatchConfirmation: ").Append(OmitFromDispatchConfirmation).Append("\n");
       sb.Append("  FuelOn: ").Append(FuelOn).Append("\n");

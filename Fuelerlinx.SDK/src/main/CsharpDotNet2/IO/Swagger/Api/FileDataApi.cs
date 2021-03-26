@@ -24,6 +24,12 @@ namespace IO.Swagger.Api
         /// <returns>DeleteImportFileCaptureResponse</returns>
         DeleteImportFileCaptureResponse DeleteImportFileCapture (int? id);
         /// <summary>
+        /// Deletes job file data by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteJobFileDataResponse</returns>
+        DeleteJobFileDataResponse DeleteJobFileData (int? id);
+        /// <summary>
         /// Delete price sheet file data by the provided {id}. 
         /// </summary>
         /// <param name="id"></param>
@@ -79,6 +85,12 @@ namespace IO.Swagger.Api
         /// <returns>TransactionFileDataResponse</returns>
         TransactionFileDataResponse GetTransactionFileData (int? id);
         /// <summary>
+        /// Gets job file data by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>JobFileDataResponse</returns>
+        JobFileDataResponse GetsJobFileDataById (int? id);
+        /// <summary>
         /// Internal use only - Post new image file data. 
         /// </summary>
         /// <param name="body"></param>
@@ -90,6 +102,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostImportFileCaptureResponse</returns>
         PostImportFileCaptureResponse PostImportFileCapture (PostImportFileCaptureRequest body);
+        /// <summary>
+        /// Post job file data 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostJobFileDataResponse</returns>
+        PostJobFileDataResponse PostJobFileData (PostJobFileDataRequest body);
         /// <summary>
         /// Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing. 
         /// </summary>
@@ -122,6 +140,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateImportFileCaptureResponse</returns>
         UpdateImportFileCaptureResponse UpdateImportFileCapture (int? id, UpdateImportFileCaptureRequest body);
+        /// <summary>
+        /// Updates job file data 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateJobFileDataResponse</returns>
+        UpdateJobFileDataResponse UpdateJobFileData (UpdateJobFileDataRequest body);
         /// <summary>
         /// Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing. 
         /// </summary>
@@ -267,6 +291,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteImportFileCapture: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteImportFileCaptureResponse) ApiClient.Deserialize(response.Content, typeof(DeleteImportFileCaptureResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Deletes job file data by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteJobFileDataResponse</returns>            
+        public DeleteJobFileDataResponse DeleteJobFileData (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteJobFileData");
+            
+    
+            var path = "/api/FileData/job-file-data/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteJobFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteJobFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteJobFileDataResponse) ApiClient.Deserialize(response.Content, typeof(DeleteJobFileDataResponse), response.Headers);
         }
     
         /// <summary>
@@ -608,6 +669,43 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         }
     
         /// <summary>
+        /// Gets job file data by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>JobFileDataResponse</returns>            
+        public JobFileDataResponse GetsJobFileDataById (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetsJobFileDataById");
+            
+    
+            var path = "/api/FileData/job-file-data/by-id/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetsJobFileDataById: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetsJobFileDataById: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (JobFileDataResponse) ApiClient.Deserialize(response.Content, typeof(JobFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Internal use only - Post new image file data. 
         /// </summary>
         /// <param name="body"></param> 
@@ -673,6 +771,40 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
                 throw new ApiException ((int)response.StatusCode, "Error calling PostImportFileCapture: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostImportFileCaptureResponse) ApiClient.Deserialize(response.Content, typeof(PostImportFileCaptureResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Post job file data 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostJobFileDataResponse</returns>            
+        public PostJobFileDataResponse PostJobFileData (PostJobFileDataRequest body)
+        {
+            
+    
+            var path = "/api/FileData/job-file-data";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostJobFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostJobFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostJobFileDataResponse) ApiClient.Deserialize(response.Content, typeof(PostJobFileDataResponse), response.Headers);
         }
     
         /// <summary>
@@ -853,6 +985,40 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateImportFileCapture: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateImportFileCaptureResponse) ApiClient.Deserialize(response.Content, typeof(UpdateImportFileCaptureResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates job file data 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateJobFileDataResponse</returns>            
+        public UpdateJobFileDataResponse UpdateJobFileData (UpdateJobFileDataRequest body)
+        {
+            
+    
+            var path = "/api/FileData/job-file-data";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateJobFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateJobFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateJobFileDataResponse) ApiClient.Deserialize(response.Content, typeof(UpdateJobFileDataResponse), response.Headers);
         }
     
         /// <summary>
