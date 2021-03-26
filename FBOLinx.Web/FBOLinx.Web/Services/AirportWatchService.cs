@@ -77,6 +77,7 @@ namespace FBOLinx.Web.Services
                     AirportIcao = h.AirportICAO,
                     AircraftTypeCode = h.AircraftTypeCode,
                 })
+                .OrderByDescending(h => h.DateTime)
                 .ToList();
 
             return customersData;
@@ -134,7 +135,7 @@ namespace FBOLinx.Web.Services
                 })
                 .ToList();
 
-            return noCustomerData.Concat(customerData).ToList();
+            return noCustomerData.Concat(customerData).OrderByDescending(h => h.DateTime).ToList();
         }
 
         public async Task ProcessAirportWatchData(List<AirportWatchLiveData> data)

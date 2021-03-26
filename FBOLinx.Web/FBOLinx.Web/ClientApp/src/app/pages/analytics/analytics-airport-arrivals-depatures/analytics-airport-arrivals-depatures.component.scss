@@ -41,3 +41,10 @@ table {
     position: absolute;
     width: 100%;
 }
+
+.actions {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}

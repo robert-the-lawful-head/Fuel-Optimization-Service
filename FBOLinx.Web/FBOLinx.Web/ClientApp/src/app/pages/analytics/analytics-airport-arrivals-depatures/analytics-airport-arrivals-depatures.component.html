@@ -1,6 +1,6 @@
 <ni-card [headerBgColor]="'gray'" title="Airport Departures and Arrivals" class="mb-1">
     <div class="chart-container">
-        <div class="flex mb-2">
+        <div class="flex mb-2 position-relative">
             <div class="d-inline-block mr-2 ml-2" style="width: 130px">
                 <mat-form-field>
                     <input
@@ -88,6 +88,14 @@
                 >
                     Hide Commercial Flights
                 </mat-slide-toggle>
+            </div>
+            <div class="actions">
+                <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                    <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+                </button>
+                <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
+                    <button (click)="onExport()" mat-menu-item>Export</button>
+                </mat-menu>
             </div>
         </div>
 

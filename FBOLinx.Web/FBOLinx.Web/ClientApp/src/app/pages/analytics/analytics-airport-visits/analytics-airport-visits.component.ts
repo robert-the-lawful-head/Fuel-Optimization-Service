@@ -6,6 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
+import * as XLSX from 'xlsx';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -14,6 +15,7 @@ import { FlightWatchHistorical } from '../../../models/flight-watch-historical';
 import { CustomersListType } from '../../../models/customer';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
 import { AircraftIcons } from '../../flight-watch/flight-watch-map/aircraft-icons';
+import { CsvExportModalComponent, ICsvExportModalData } from 'src/app/shared/components/csv-export-modal/csv-export-modal.component';
 
 @Component({
     selector: 'app-analytics-airport-visits',
@@ -52,6 +54,7 @@ export class AnalyticsAirportVisitsComponent implements OnInit {
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,
+        public exportDialog: MatDialog,
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
@@ -68,16 +71,20 @@ export class AnalyticsAirportVisitsComponent implements OnInit {
         this.refreshData();
     }
 
-    refreshData() {
-        this.ngxLoader.startLoader(this.chartName);
-        this.airportWatchService.getVisits(
+    fetchData(startDate: Date, endDate: Date) {
+        return this.airportWatchService.getVisits(
             this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId,
             {
-                startDateTime: this.filterStartDate,
-                endDateTime: this.filterEndDate,
+                startDateTime: startDate,
+                endDateTime: endDate,
             }
-        )
+        );
+    }
+
+    refreshData() {
+        this.ngxLoader.startLoader(this.chartName);
+        this.fetchData(this.filterStartDate, this.filterEndDate)
             .subscribe((data) => {
                 this.data = data;
 
@@ -139,5 +146,47 @@ export class AnalyticsAirportVisitsComponent implements OnInit {
                 }
             });
         }
+    }
+
+    onExport() {
+        const dialogRef = this.exportDialog.open<CsvExportModalComponent, ICsvExportModalData, ICsvExportModalData>(
+            CsvExportModalComponent,
+            {
+                data: {
+                    title: 'Export Airport Departures and Arrivals',
+                    filterStartDate: this.filterStartDate,
+                    filterEndDate: this.filterEndDate,
+                },
+            }
+        );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.exportCsv(result.filterStartDate, result.filterEndDate);
+        });
+    }
+
+    exportCsv(startDate: Date, endDate: Date) {
+        this.fetchData(startDate, endDate)
+            .subscribe((data) => {
+                const exportData = data.map((item) => ({
+                    Company: item.company,
+                    'Tail #': item.tailNumber,
+                    'Flight #': item.flightNumber,
+                    'Hex #': item.hexCode,
+                    Aircraft: item.aircraftType,
+                    'Aircraft Type': this.aircraftTypes[item.aircraftTypeCode].label,
+                    'Last Seen': item.dateTime,
+                    'Past Visits': item.pastVisits,
+                }));
+                const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
+                const wb: XLSX.WorkBook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Visits by Company & Aircraft');
+
+                /* save to file */
+                XLSX.writeFile(wb, 'Visits by Company/Aircraft.xlsx');
+            });
     }
 }

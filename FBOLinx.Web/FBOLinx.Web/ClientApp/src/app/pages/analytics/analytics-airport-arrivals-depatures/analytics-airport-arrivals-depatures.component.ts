@@ -6,14 +6,16 @@ import { MatSort } from '@angular/material/sort';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject } from 'rxjs';
+import * as XLSX from 'xlsx';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportWatchService } from '../../../services/airportwatch.service';
-import { FlightWatchHistorical } from '../../../models/flight-watch-historical';
+import { FlightWatchHistorical, FlightWatchStatus } from '../../../models/flight-watch-historical';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
 import { CustomersListType } from '../../../models/customer';
 import { AircraftIcons } from '../../flight-watch/flight-watch-map/aircraft-icons';
+import { CsvExportModalComponent, ICsvExportModalData } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -52,6 +54,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,
+        public exportDialog: MatDialog,
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
@@ -67,16 +70,20 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         this.refreshData();
     }
 
-    refreshData() {
-        this.ngxLoader.startLoader(this.chartName);
-        this.airportWatchService.getArrivalsDepartures(
+    fetchData(startDate: Date, endDate: Date) {
+        return this.airportWatchService.getArrivalsDepartures(
             this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId,
             {
-                startDateTime: this.filterStartDate,
-                endDateTime: this.filterEndDate,
+                startDateTime: startDate,
+                endDateTime: endDate,
             }
-        )
+        );
+    }
+
+    refreshData() {
+        this.ngxLoader.startLoader(this.chartName);
+        this.fetchData(this.filterStartDate, this.filterEndDate)
             .subscribe((data) => {
                 this.data = data;
 
@@ -137,5 +144,47 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
                 }
             });
         }
+    }
+
+    onExport() {
+        const dialogRef = this.exportDialog.open<CsvExportModalComponent, ICsvExportModalData, ICsvExportModalData>(
+            CsvExportModalComponent,
+            {
+                data: {
+                    title: 'Export Airport Departures and Arrivals',
+                    filterStartDate: this.filterStartDate,
+                    filterEndDate: this.filterEndDate,
+                },
+            }
+        );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.exportCsv(result.filterStartDate, result.filterEndDate);
+        });
+    }
+
+    exportCsv(startDate: Date, endDate: Date) {
+        this.fetchData(startDate, endDate)
+            .subscribe((data) => {
+                const exportData = data.map((item) => ({
+                    Company: item.company,
+                    'Tail #': item.tailNumber,
+                    'Flight #': item.flightNumber,
+                    'Hex #': item.hexCode,
+                    Aircraft: item.aircraftType,
+                    'Aircraft Type': this.aircraftTypes[item.aircraftTypeCode].label,
+                    'Date and Time': item.dateTime,
+                    'Departure / Arrival': item.status === FlightWatchStatus.Landing ? 'Arrival' : 'Departure',
+                }));
+                const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
+                const wb: XLSX.WorkBook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Airport Departures and Arrivals');
+
+                /* save to file */
+                XLSX.writeFile(wb, 'Airport Departures and Arrivals.xlsx');
+            });
     }
 }
