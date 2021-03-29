@@ -16,6 +16,7 @@ Method | HTTP request | Description
 [**PostJobQueueFiles**](JobQueueApi.md#postjobqueuefiles) | **POST** /api/JobQueue/job-queue-files | Post job queue files
 [**PostJobQueueResultEvents**](JobQueueApi.md#postjobqueueresultevents) | **POST** /api/JobQueue/job-queue-result-events | Post job queue result events
 [**PostJobQueueResults**](JobQueueApi.md#postjobqueueresults) | **POST** /api/JobQueue/job-queue-results | Post job queue results
+[**RunJobById**](JobQueueApi.md#runjobbyid) | **POST** /api/JobQueue/job-queue/run/{id} | 
 [**UpdateJobQueue**](JobQueueApi.md#updatejobqueue) | **PUT** /api/JobQueue/job-queue | Update job queue
 [**UpdateJobQueueFiles**](JobQueueApi.md#updatejobqueuefiles) | **PUT** /api/JobQueue/job-queue-files | Update job queue files
 [**UpdateJobQueueResultEvents**](JobQueueApi.md#updatejobqueueresultevents) | **PUT** /api/JobQueue/job-queue-result-events | Updates job queue result events
@@ -24,7 +25,7 @@ Method | HTTP request | Description
 
 <a name="deletejobqueue"></a>
 # **DeleteJobQueue**
-> DeleteJobQueueResponse DeleteJobQueue (string id2, int? id)
+> DeleteJobQueueResponse DeleteJobQueue (int? id)
 
 Delete job queue by Id
 
@@ -53,13 +54,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new JobQueueApi();
-            var id2 = id_example;  // string | 
-            var id = 56;  // int? |  (optional) 
+            var id = 56;  // int? | 
 
             try
             {
                 // Delete job queue by Id
-                DeleteJobQueueResponse result = apiInstance.DeleteJobQueue(id2, id);
+                DeleteJobQueueResponse result = apiInstance.DeleteJobQueue(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -75,8 +75,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id2** | **string**|  | 
- **id** | **int?**|  | [optional] 
+ **id** | **int?**|  | 
 
 ### Return type
 
@@ -95,7 +94,7 @@ Name | Type | Description  | Notes
 
 <a name="deletejobqueuefiles"></a>
 # **DeleteJobQueueFiles**
-> DeleteJobQueueFilesResponse DeleteJobQueueFiles (string id2, int? id)
+> DeleteJobQueueFilesResponse DeleteJobQueueFiles (int? id)
 
 Delete job queue files by Id
 
@@ -124,13 +123,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new JobQueueApi();
-            var id2 = id_example;  // string | 
-            var id = 56;  // int? |  (optional) 
+            var id = 56;  // int? | 
 
             try
             {
                 // Delete job queue files by Id
-                DeleteJobQueueFilesResponse result = apiInstance.DeleteJobQueueFiles(id2, id);
+                DeleteJobQueueFilesResponse result = apiInstance.DeleteJobQueueFiles(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -146,8 +144,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id2** | **string**|  | 
- **id** | **int?**|  | [optional] 
+ **id** | **int?**|  | 
 
 ### Return type
 
@@ -166,7 +163,7 @@ Name | Type | Description  | Notes
 
 <a name="deletejobqueueresultevents"></a>
 # **DeleteJobQueueResultEvents**
-> DeleteJobQueueResultEventsResponse DeleteJobQueueResultEvents (string id2, int? id)
+> DeleteJobQueueResultEventsResponse DeleteJobQueueResultEvents (int? id)
 
 Deletes job queue result events by Id
 
@@ -195,13 +192,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new JobQueueApi();
-            var id2 = id_example;  // string | 
-            var id = 56;  // int? |  (optional) 
+            var id = 56;  // int? | 
 
             try
             {
                 // Deletes job queue result events by Id
-                DeleteJobQueueResultEventsResponse result = apiInstance.DeleteJobQueueResultEvents(id2, id);
+                DeleteJobQueueResultEventsResponse result = apiInstance.DeleteJobQueueResultEvents(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -217,8 +213,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id2** | **string**|  | 
- **id** | **int?**|  | [optional] 
+ **id** | **int?**|  | 
 
 ### Return type
 
@@ -237,7 +232,7 @@ Name | Type | Description  | Notes
 
 <a name="deletejobqueueresults"></a>
 # **DeleteJobQueueResults**
-> DeleteJobQueueResultsResponse DeleteJobQueueResults (string id2, int? id)
+> DeleteJobQueueResultsResponse DeleteJobQueueResults (int? id)
 
 
 
@@ -266,12 +261,11 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new JobQueueApi();
-            var id2 = id_example;  // string | 
-            var id = 56;  // int? |  (optional) 
+            var id = 56;  // int? | 
 
             try
             {
-                DeleteJobQueueResultsResponse result = apiInstance.DeleteJobQueueResults(id2, id);
+                DeleteJobQueueResultsResponse result = apiInstance.DeleteJobQueueResults(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -287,8 +281,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id2** | **string**|  | 
- **id** | **int?**|  | [optional] 
+ **id** | **int?**|  | 
 
 ### Return type
 
@@ -853,6 +846,74 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="runjobbyid"></a>
+# **RunJobById**
+> RunJobQueueResponse RunJobById (int? id)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class RunJobByIdExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new JobQueueApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                RunJobQueueResponse result = apiInstance.RunJobById(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling JobQueueApi.RunJobById: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**RunJobQueueResponse**](RunJobQueueResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

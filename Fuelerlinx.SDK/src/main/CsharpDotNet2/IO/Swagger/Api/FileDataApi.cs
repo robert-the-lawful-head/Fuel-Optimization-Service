@@ -42,6 +42,42 @@ namespace IO.Swagger.Api
         /// <returns>DeleteSupportedInvoiceFileTemplateResponse</returns>
         DeleteSupportedInvoiceFileTemplateResponse DeleteSupportedInvoiceFileDataTemplate (int? id);
         /// <summary>
+        /// Deletes Supported Invoice Import File Data 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteSupportedInvoiceImportFileDataResponse</returns>
+        DeleteSupportedInvoiceImportFileDataResponse DeleteSupportedInvoiceImportFileData (int? id);
+        /// <summary>
+        /// Deletes Supported Invoice Import File Tests by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteSupportedInvoiceImportFileTestsResponse</returns>
+        DeleteSupportedInvoiceImportFileTestsResponse DeleteSupportedInvoiceImportFileTests (int? id);
+        /// <summary>
+        /// Deletes Supported Invoice Import Files 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteSupportedInvoiceImportFilesResponse</returns>
+        DeleteSupportedInvoiceImportFilesResponse DeleteSupportedInvoiceImportFiles (int? id);
+        /// <summary>
+        /// Deletes Supported Price Sheet File Data By Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteSupportedPriceSheetFileDataResponse</returns>
+        DeleteSupportedPriceSheetFileDataResponse DeleteSupportedPriceSheetFileData (int? id);
+        /// <summary>
+        /// Delete Supported Price Sheet File Tests by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteSupportedPriceSheetFileTestsResponse</returns>
+        DeleteSupportedPriceSheetFileTestsResponse DeleteSupportedPriceSheetFileTests (int? id);
+        /// <summary>
+        /// Deletes Supported Price Sheet Files by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteSupportedPriceSheetFilesResponse</returns>
+        DeleteSupportedPriceSheetFilesResponse DeleteSupportedPriceSheetFiles (int? id);
+        /// <summary>
         /// Delete transaction file data by the provided {id}. 
         /// </summary>
         /// <param name="id"></param>
@@ -78,6 +114,42 @@ namespace IO.Swagger.Api
         /// <param name="fuelerProcessName"></param>
         /// <returns>SupportedInvoiceFileTemplateResponse</returns>
         SupportedInvoiceFileTemplateResponse GetSupportedInvoiceFileTemplatesByFuelVendor (string fuelerProcessName);
+        /// <summary>
+        /// Get Supported Invoice Import File Data By Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>SupportedInvoiceImportFileDataResponse</returns>
+        SupportedInvoiceImportFileDataResponse GetSupportedInvoiceImportFileData (int? id);
+        /// <summary>
+        /// Get Supported Invoice Import File Tests By supportedInvoiceImportFileId 
+        /// </summary>
+        /// <param name="supportedInvoiceImportFileId"></param>
+        /// <returns>SupportedInvoiceImportFileTestsResponse</returns>
+        SupportedInvoiceImportFileTestsResponse GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId (int? supportedInvoiceImportFileId);
+        /// <summary>
+        /// Gets Supported Invoice Import Files By supportedInvoiceImportFileDataId 
+        /// </summary>
+        /// <param name="supportedInvoiceImportFileDataId"></param>
+        /// <returns>SupportedInvoiceImportFilesResponse</returns>
+        SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId (int? supportedInvoiceImportFileDataId);
+        /// <summary>
+        /// Get Supported Price Sheet File Data By Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>SupportedPriceSheetFileDataResponse</returns>
+        SupportedPriceSheetFileDataResponse GetSupportedPriceSheetFileData (int? id);
+        /// <summary>
+        /// Gets Supported Price Sheet File Tests by supportedPriceSheetFileId 
+        /// </summary>
+        /// <param name="supportedPriceSheetFileId"></param>
+        /// <returns>SupportedPriceSheetFileTestsResponse</returns>
+        SupportedPriceSheetFileTestsResponse GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId (int? supportedPriceSheetFileId);
+        /// <summary>
+        /// Gets Supported Price Sheet Files by SupportedPriceSheetFileDataId 
+        /// </summary>
+        /// <param name="supportedPriceSheetFileDataId"></param>
+        /// <returns>SupportedPriceSheetFilesResponse</returns>
+        SupportedPriceSheetFilesResponse GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId (int? supportedPriceSheetFileDataId);
         /// <summary>
         /// Fetch transaction file data for an invoice, receipt, or fuel release. 
         /// </summary>
@@ -121,6 +193,42 @@ namespace IO.Swagger.Api
         /// <returns>PostSupportedInvoiceFileTemplateResponse</returns>
         PostSupportedInvoiceFileTemplateResponse PostSupportedInvoiceFileTemplate (PostSupportedInvoiceFileTemplateRequest body);
         /// <summary>
+        /// Post Supported Invoice Import File Data 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostSupportedInvoiceImportFileDataResponse</returns>
+        PostSupportedInvoiceImportFileDataResponse PostSupportedInvoiceImportFileData (PostSupportedPriceSheetFileDataRequest body);
+        /// <summary>
+        /// Post Supported Invoice Import File Tests 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostSupportedInvoiceImportFileTestsResponse</returns>
+        PostSupportedInvoiceImportFileTestsResponse PostSupportedInvoiceImportFileTests (PostSupportedInvoiceImportFileTestsRequest body);
+        /// <summary>
+        /// Post Supported Invoice Import Files 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostSupportedInvoiceImportFilesResponse</returns>
+        PostSupportedInvoiceImportFilesResponse PostSupportedInvoiceImportFiles (PostSupportedInvoiceImportFilesRequest body);
+        /// <summary>
+        /// Post Supported Price Sheet File Data 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostSupportedPriceSheetFileDataResponse</returns>
+        PostSupportedPriceSheetFileDataResponse PostSupportedPriceSheetFileData (PostSupportedPriceSheetFileDataRequest body);
+        /// <summary>
+        /// Post Supported Price Sheet File Tests 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostSupportedPriceSheetFileTestsResponse</returns>
+        PostSupportedPriceSheetFileTestsResponse PostSupportedPriceSheetFileTests (PostSupportedPriceSheetFileTestsRequest body);
+        /// <summary>
+        /// Post Supported Price Sheet Files 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostSupportedPriceSheetFilesResponse</returns>
+        PostSupportedPriceSheetFilesResponse PostSupportedPriceSheetFiles (PostSupportedPriceSheetFilesRequest body);
+        /// <summary>
         /// Add transaction file data for an invoice, receipt, or fuel release.  The file data should be passed as a base64 string. 
         /// </summary>
         /// <param name="body"></param>
@@ -158,6 +266,44 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateSupportedInvoiceFileTemplateResponse</returns>
         UpdateSupportedInvoiceFileTemplateResponse UpdateSupportedInvoiceFileDataTemplate (UpdateSupportedFileTemplateRequest body);
+        /// <summary>
+        /// Updates Supported Invoice Import File Data 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="body"></param>
+        /// <returns>UpdateSupportedInvoiceImportFileDataResponse</returns>
+        UpdateSupportedInvoiceImportFileDataResponse UpdateSupportedInvoiceImportFileData (int? id, UpdateSupportedInvoiceImportFileDataRequest body);
+        /// <summary>
+        /// Updates Supported Invoice Import File Tests 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateSupportedInvoiceImportFileTestsResponse</returns>
+        UpdateSupportedInvoiceImportFileTestsResponse UpdateSupportedInvoiceImportFileTests (UpdateSupportedInvoiceImportFileTestsRequest body);
+        /// <summary>
+        /// Updates Supported Invoice Import Files 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateSupportedInvoiceImportFilesResponse</returns>
+        UpdateSupportedInvoiceImportFilesResponse UpdateSupportedInvoiceImportFiles (UpdateSupportedInvoiceImportFilesRequest body);
+        /// <summary>
+        /// Updates Supported Price Sheet File Data 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="body"></param>
+        /// <returns>UpdateSupportedPriceSheetFileDataResponse</returns>
+        UpdateSupportedPriceSheetFileDataResponse UpdateSupportedPriceSheetFileData (int? id, UpdateSupportedPriceSheetFileDataRequest body);
+        /// <summary>
+        /// Updates Supported Price Sheet File Tests 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateSupportedPriceSheetFileTestsResponse</returns>
+        UpdateSupportedPriceSheetFileTestsResponse UpdateSupportedPriceSheetFileTests (UpdateSupportedPriceSheetFileTestsRequest body);
+        /// <summary>
+        /// Updates Supported Price Sheet Files 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateSupportedPriceSheetFilesResponse</returns>
+        UpdateSupportedPriceSheetFilesResponse UpdateSupportedPriceSheetFiles (UpdateSupportedPriceSheetFilesRequest body);
         /// <summary>
         /// Update transaction file data for an invoice, receipt, or fuel release. 
         /// </summary>
@@ -405,6 +551,228 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Deletes Supported Invoice Import File Data 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteSupportedInvoiceImportFileDataResponse</returns>            
+        public DeleteSupportedInvoiceImportFileDataResponse DeleteSupportedInvoiceImportFileData (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedInvoiceImportFileData");
+            
+    
+            var path = "/api/FileData/supported-invoice-import-file-data/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteSupportedInvoiceImportFileDataResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedInvoiceImportFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Deletes Supported Invoice Import File Tests by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteSupportedInvoiceImportFileTestsResponse</returns>            
+        public DeleteSupportedInvoiceImportFileTestsResponse DeleteSupportedInvoiceImportFileTests (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedInvoiceImportFileTests");
+            
+    
+            var path = "/api/FileData/supported-invoice-import-file-tests/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFileTests: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFileTests: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteSupportedInvoiceImportFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedInvoiceImportFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Deletes Supported Invoice Import Files 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteSupportedInvoiceImportFilesResponse</returns>            
+        public DeleteSupportedInvoiceImportFilesResponse DeleteSupportedInvoiceImportFiles (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedInvoiceImportFiles");
+            
+    
+            var path = "/api/FileData/supported-invoice-import-files/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFiles: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFiles: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteSupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedInvoiceImportFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Deletes Supported Price Sheet File Data By Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteSupportedPriceSheetFileDataResponse</returns>            
+        public DeleteSupportedPriceSheetFileDataResponse DeleteSupportedPriceSheetFileData (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedPriceSheetFileData");
+            
+    
+            var path = "/api/FileData/supported-price-sheet-file-data/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteSupportedPriceSheetFileDataResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedPriceSheetFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Delete Supported Price Sheet File Tests by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteSupportedPriceSheetFileTestsResponse</returns>            
+        public DeleteSupportedPriceSheetFileTestsResponse DeleteSupportedPriceSheetFileTests (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedPriceSheetFileTests");
+            
+    
+            var path = "/api/FileData/supported-price-sheet-file-tests/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFileTests: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFileTests: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteSupportedPriceSheetFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedPriceSheetFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Deletes Supported Price Sheet Files by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteSupportedPriceSheetFilesResponse</returns>            
+        public DeleteSupportedPriceSheetFilesResponse DeleteSupportedPriceSheetFiles (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedPriceSheetFiles");
+            
+    
+            var path = "/api/FileData/supported-price-sheet-files/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFiles: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFiles: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteSupportedPriceSheetFilesResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedPriceSheetFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Delete transaction file data by the provided {id}. 
         /// </summary>
         /// <param name="id"></param> 
@@ -629,6 +997,228 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
                 throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceFileTemplatesByFuelVendor: " + response.ErrorMessage, response.ErrorMessage);
     
             return (SupportedInvoiceFileTemplateResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceFileTemplateResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Get Supported Invoice Import File Data By Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>SupportedInvoiceImportFileDataResponse</returns>            
+        public SupportedInvoiceImportFileDataResponse GetSupportedInvoiceImportFileData (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetSupportedInvoiceImportFileData");
+            
+    
+            var path = "/api/FileData/supported-invoice-import-file-data/by-Id/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedInvoiceImportFileDataResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Get Supported Invoice Import File Tests By supportedInvoiceImportFileId 
+        /// </summary>
+        /// <param name="supportedInvoiceImportFileId"></param> 
+        /// <returns>SupportedInvoiceImportFileTestsResponse</returns>            
+        public SupportedInvoiceImportFileTestsResponse GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId (int? supportedInvoiceImportFileId)
+        {
+            
+            // verify the required parameter 'supportedInvoiceImportFileId' is set
+            if (supportedInvoiceImportFileId == null) throw new ApiException(400, "Missing required parameter 'supportedInvoiceImportFileId' when calling GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId");
+            
+    
+            var path = "/api/FileData/supported-invoice-import-file-tests/by-supportedInvoiceImportFileId/{supportedInvoiceImportFileId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "supportedInvoiceImportFileId" + "}", ApiClient.ParameterToString(supportedInvoiceImportFileId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedInvoiceImportFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Gets Supported Invoice Import Files By supportedInvoiceImportFileDataId 
+        /// </summary>
+        /// <param name="supportedInvoiceImportFileDataId"></param> 
+        /// <returns>SupportedInvoiceImportFilesResponse</returns>            
+        public SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId (int? supportedInvoiceImportFileDataId)
+        {
+            
+            // verify the required parameter 'supportedInvoiceImportFileDataId' is set
+            if (supportedInvoiceImportFileDataId == null) throw new ApiException(400, "Missing required parameter 'supportedInvoiceImportFileDataId' when calling GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId");
+            
+    
+            var path = "/api/FileData/supported-invoice-import-files/by-supportedInvoiceImportFileDataId/{supportedInvoiceImportFileDataId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "supportedInvoiceImportFileDataId" + "}", ApiClient.ParameterToString(supportedInvoiceImportFileDataId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Get Supported Price Sheet File Data By Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>SupportedPriceSheetFileDataResponse</returns>            
+        public SupportedPriceSheetFileDataResponse GetSupportedPriceSheetFileData (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetSupportedPriceSheetFileData");
+            
+    
+            var path = "/api/FileData/supported-price-sheet-file-data/by-Id/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedPriceSheetFileDataResponse) ApiClient.Deserialize(response.Content, typeof(SupportedPriceSheetFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Gets Supported Price Sheet File Tests by supportedPriceSheetFileId 
+        /// </summary>
+        /// <param name="supportedPriceSheetFileId"></param> 
+        /// <returns>SupportedPriceSheetFileTestsResponse</returns>            
+        public SupportedPriceSheetFileTestsResponse GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId (int? supportedPriceSheetFileId)
+        {
+            
+            // verify the required parameter 'supportedPriceSheetFileId' is set
+            if (supportedPriceSheetFileId == null) throw new ApiException(400, "Missing required parameter 'supportedPriceSheetFileId' when calling GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId");
+            
+    
+            var path = "/api/FileData/supported-price-sheet-file-tests/by-supportedInvoiceImportFileId/{supportedPriceSheetFileId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "supportedPriceSheetFileId" + "}", ApiClient.ParameterToString(supportedPriceSheetFileId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedPriceSheetFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(SupportedPriceSheetFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Gets Supported Price Sheet Files by SupportedPriceSheetFileDataId 
+        /// </summary>
+        /// <param name="supportedPriceSheetFileDataId"></param> 
+        /// <returns>SupportedPriceSheetFilesResponse</returns>            
+        public SupportedPriceSheetFilesResponse GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId (int? supportedPriceSheetFileDataId)
+        {
+            
+            // verify the required parameter 'supportedPriceSheetFileDataId' is set
+            if (supportedPriceSheetFileDataId == null) throw new ApiException(400, "Missing required parameter 'supportedPriceSheetFileDataId' when calling GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId");
+            
+    
+            var path = "/api/FileData/supported-price-sheet-files/by-supportedInvoiceImportFileId/{supportedPriceSheetFileDataId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "supportedPriceSheetFileDataId" + "}", ApiClient.ParameterToString(supportedPriceSheetFileDataId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedPriceSheetFilesResponse) ApiClient.Deserialize(response.Content, typeof(SupportedPriceSheetFilesResponse), response.Headers);
         }
     
         /// <summary>
@@ -876,6 +1466,210 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         }
     
         /// <summary>
+        /// Post Supported Invoice Import File Data 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostSupportedInvoiceImportFileDataResponse</returns>            
+        public PostSupportedInvoiceImportFileDataResponse PostSupportedInvoiceImportFileData (PostSupportedPriceSheetFileDataRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-invoice-import-file-data";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostSupportedInvoiceImportFileDataResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceImportFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Post Supported Invoice Import File Tests 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostSupportedInvoiceImportFileTestsResponse</returns>            
+        public PostSupportedInvoiceImportFileTestsResponse PostSupportedInvoiceImportFileTests (PostSupportedInvoiceImportFileTestsRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-invoice-import-file-tests";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFileTests: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFileTests: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostSupportedInvoiceImportFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceImportFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Post Supported Invoice Import Files 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostSupportedInvoiceImportFilesResponse</returns>            
+        public PostSupportedInvoiceImportFilesResponse PostSupportedInvoiceImportFiles (PostSupportedInvoiceImportFilesRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-invoice-import-files";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFiles: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFiles: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostSupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceImportFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Post Supported Price Sheet File Data 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostSupportedPriceSheetFileDataResponse</returns>            
+        public PostSupportedPriceSheetFileDataResponse PostSupportedPriceSheetFileData (PostSupportedPriceSheetFileDataRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-price-sheet-file-data";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostSupportedPriceSheetFileDataResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedPriceSheetFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Post Supported Price Sheet File Tests 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostSupportedPriceSheetFileTestsResponse</returns>            
+        public PostSupportedPriceSheetFileTestsResponse PostSupportedPriceSheetFileTests (PostSupportedPriceSheetFileTestsRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-price-sheet-file-tests";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFileTests: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFileTests: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostSupportedPriceSheetFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedPriceSheetFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Post Supported Price Sheet Files 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostSupportedPriceSheetFilesResponse</returns>            
+        public PostSupportedPriceSheetFilesResponse PostSupportedPriceSheetFiles (PostSupportedPriceSheetFilesRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-price-sheet-files";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFiles: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFiles: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostSupportedPriceSheetFilesResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedPriceSheetFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Add transaction file data for an invoice, receipt, or fuel release.  The file data should be passed as a base64 string. 
         /// </summary>
         /// <param name="body"></param> 
@@ -1087,6 +1881,220 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceFileDataTemplate: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateSupportedInvoiceFileTemplateResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedInvoiceFileTemplateResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Supported Invoice Import File Data 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <param name="body"></param> 
+        /// <returns>UpdateSupportedInvoiceImportFileDataResponse</returns>            
+        public UpdateSupportedInvoiceImportFileDataResponse UpdateSupportedInvoiceImportFileData (int? id, UpdateSupportedInvoiceImportFileDataRequest body)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling UpdateSupportedInvoiceImportFileData");
+            
+    
+            var path = "/api/FileData/supported-invoice-import-file-data/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateSupportedInvoiceImportFileDataResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedInvoiceImportFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Supported Invoice Import File Tests 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateSupportedInvoiceImportFileTestsResponse</returns>            
+        public UpdateSupportedInvoiceImportFileTestsResponse UpdateSupportedInvoiceImportFileTests (UpdateSupportedInvoiceImportFileTestsRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-invoice-import-file-tests";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFileTests: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFileTests: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateSupportedInvoiceImportFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedInvoiceImportFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Supported Invoice Import Files 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateSupportedInvoiceImportFilesResponse</returns>            
+        public UpdateSupportedInvoiceImportFilesResponse UpdateSupportedInvoiceImportFiles (UpdateSupportedInvoiceImportFilesRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-invoice-import-files";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFiles: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFiles: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateSupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedInvoiceImportFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Supported Price Sheet File Data 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <param name="body"></param> 
+        /// <returns>UpdateSupportedPriceSheetFileDataResponse</returns>            
+        public UpdateSupportedPriceSheetFileDataResponse UpdateSupportedPriceSheetFileData (int? id, UpdateSupportedPriceSheetFileDataRequest body)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling UpdateSupportedPriceSheetFileData");
+            
+    
+            var path = "/api/FileData/supported-price-sheet-file-data/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateSupportedPriceSheetFileDataResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedPriceSheetFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Supported Price Sheet File Tests 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateSupportedPriceSheetFileTestsResponse</returns>            
+        public UpdateSupportedPriceSheetFileTestsResponse UpdateSupportedPriceSheetFileTests (UpdateSupportedPriceSheetFileTestsRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-price-sheet-file-tests";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFileTests: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFileTests: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateSupportedPriceSheetFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedPriceSheetFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Supported Price Sheet Files 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateSupportedPriceSheetFilesResponse</returns>            
+        public UpdateSupportedPriceSheetFilesResponse UpdateSupportedPriceSheetFiles (UpdateSupportedPriceSheetFilesRequest body)
+        {
+            
+    
+            var path = "/api/FileData/supported-price-sheet-files";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFiles: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFiles: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateSupportedPriceSheetFilesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedPriceSheetFilesResponse), response.Headers);
         }
     
         /// <summary>

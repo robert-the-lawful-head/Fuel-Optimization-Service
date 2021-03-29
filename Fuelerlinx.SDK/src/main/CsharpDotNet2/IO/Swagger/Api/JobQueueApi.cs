@@ -14,31 +14,27 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Delete job queue by Id 
         /// </summary>
-        /// <param name="id2"></param>
         /// <param name="id"></param>
         /// <returns>DeleteJobQueueResponse</returns>
-        DeleteJobQueueResponse DeleteJobQueue (string id2, int? id);
+        DeleteJobQueueResponse DeleteJobQueue (int? id);
         /// <summary>
         /// Delete job queue files by Id 
         /// </summary>
-        /// <param name="id2"></param>
         /// <param name="id"></param>
         /// <returns>DeleteJobQueueFilesResponse</returns>
-        DeleteJobQueueFilesResponse DeleteJobQueueFiles (string id2, int? id);
+        DeleteJobQueueFilesResponse DeleteJobQueueFiles (int? id);
         /// <summary>
         /// Deletes job queue result events by Id 
         /// </summary>
-        /// <param name="id2"></param>
         /// <param name="id"></param>
         /// <returns>DeleteJobQueueResultEventsResponse</returns>
-        DeleteJobQueueResultEventsResponse DeleteJobQueueResultEvents (string id2, int? id);
+        DeleteJobQueueResultEventsResponse DeleteJobQueueResultEvents (int? id);
         /// <summary>
         ///  
         /// </summary>
-        /// <param name="id2"></param>
         /// <param name="id"></param>
         /// <returns>DeleteJobQueueResultsResponse</returns>
-        DeleteJobQueueResultsResponse DeleteJobQueueResults (string id2, int? id);
+        DeleteJobQueueResultsResponse DeleteJobQueueResults (int? id);
         /// <summary>
         /// Get job queue by Id 
         /// </summary>
@@ -87,6 +83,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostJobQueueResultsResponse</returns>
         PostJobQueueResultsResponse PostJobQueueResults (PostJobQueueResultsRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>RunJobQueueResponse</returns>
+        RunJobQueueResponse RunJobById (int? id);
         /// <summary>
         /// Update job queue 
         /// </summary>
@@ -169,19 +171,18 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Delete job queue by Id 
         /// </summary>
-        /// <param name="id2"></param> 
         /// <param name="id"></param> 
         /// <returns>DeleteJobQueueResponse</returns>            
-        public DeleteJobQueueResponse DeleteJobQueue (string id2, int? id)
+        public DeleteJobQueueResponse DeleteJobQueue (int? id)
         {
             
-            // verify the required parameter 'id2' is set
-            if (id2 == null) throw new ApiException(400, "Missing required parameter 'id2' when calling DeleteJobQueue");
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteJobQueue");
             
     
             var path = "/api/JobQueue/job-queue/{id}";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id2));
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
     
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
@@ -189,8 +190,7 @@ namespace IO.Swagger.Api
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                         if (id != null) headerParams.Add("id", ApiClient.ParameterToString(id)); // header parameter
-                            
+                                                    
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
     
@@ -208,19 +208,18 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Delete job queue files by Id 
         /// </summary>
-        /// <param name="id2"></param> 
         /// <param name="id"></param> 
         /// <returns>DeleteJobQueueFilesResponse</returns>            
-        public DeleteJobQueueFilesResponse DeleteJobQueueFiles (string id2, int? id)
+        public DeleteJobQueueFilesResponse DeleteJobQueueFiles (int? id)
         {
             
-            // verify the required parameter 'id2' is set
-            if (id2 == null) throw new ApiException(400, "Missing required parameter 'id2' when calling DeleteJobQueueFiles");
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteJobQueueFiles");
             
     
             var path = "/api/JobQueue/job-queue-files/{id}";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id2));
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
     
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
@@ -228,8 +227,7 @@ namespace IO.Swagger.Api
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                         if (id != null) headerParams.Add("id", ApiClient.ParameterToString(id)); // header parameter
-                            
+                                                    
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
     
@@ -247,19 +245,18 @@ namespace IO.Swagger.Api
         /// <summary>
         /// Deletes job queue result events by Id 
         /// </summary>
-        /// <param name="id2"></param> 
         /// <param name="id"></param> 
         /// <returns>DeleteJobQueueResultEventsResponse</returns>            
-        public DeleteJobQueueResultEventsResponse DeleteJobQueueResultEvents (string id2, int? id)
+        public DeleteJobQueueResultEventsResponse DeleteJobQueueResultEvents (int? id)
         {
             
-            // verify the required parameter 'id2' is set
-            if (id2 == null) throw new ApiException(400, "Missing required parameter 'id2' when calling DeleteJobQueueResultEvents");
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteJobQueueResultEvents");
             
     
             var path = "/api/JobQueue/job-queue-result-events/{id}";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id2));
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
     
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
@@ -267,8 +264,7 @@ namespace IO.Swagger.Api
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                         if (id != null) headerParams.Add("id", ApiClient.ParameterToString(id)); // header parameter
-                            
+                                                    
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
     
@@ -286,19 +282,18 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <param name="id2"></param> 
         /// <param name="id"></param> 
         /// <returns>DeleteJobQueueResultsResponse</returns>            
-        public DeleteJobQueueResultsResponse DeleteJobQueueResults (string id2, int? id)
+        public DeleteJobQueueResultsResponse DeleteJobQueueResults (int? id)
         {
             
-            // verify the required parameter 'id2' is set
-            if (id2 == null) throw new ApiException(400, "Missing required parameter 'id2' when calling DeleteJobQueueResults");
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteJobQueueResults");
             
     
             var path = "/api/JobQueue/job-queue-results/{id}";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id2));
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
     
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
@@ -306,8 +301,7 @@ namespace IO.Swagger.Api
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                         if (id != null) headerParams.Add("id", ApiClient.ParameterToString(id)); // header parameter
-                            
+                                                    
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
     
@@ -604,6 +598,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling PostJobQueueResults: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostJobQueueResultsResponse) ApiClient.Deserialize(response.Content, typeof(PostJobQueueResultsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>RunJobQueueResponse</returns>            
+        public RunJobQueueResponse RunJobById (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling RunJobById");
+            
+    
+            var path = "/api/JobQueue/job-queue/run/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling RunJobById: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling RunJobById: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (RunJobQueueResponse) ApiClient.Deserialize(response.Content, typeof(RunJobQueueResponse), response.Headers);
         }
     
         /// <summary>

@@ -9,12 +9,24 @@ Method | HTTP request | Description
 [**DeleteJobFileData**](FileDataApi.md#deletejobfiledata) | **DELETE** /api/FileData/job-file-data/{id} | Deletes job file data by Id
 [**DeletePriceSheetFileData**](FileDataApi.md#deletepricesheetfiledata) | **DELETE** /api/FileData/price-sheet-file-data/{id} | Delete price sheet file data by the provided {id}.
 [**DeleteSupportedInvoiceFileDataTemplate**](FileDataApi.md#deletesupportedinvoicefiledatatemplate) | **DELETE** /api/FileData/invoice-file/supported-template/{id} | Internal use only - Delete a supported invoice file template by it&#39;s Id.
+[**DeleteSupportedInvoiceImportFileData**](FileDataApi.md#deletesupportedinvoiceimportfiledata) | **DELETE** /api/FileData/supported-invoice-import-file-data/{id} | Deletes Supported Invoice Import File Data
+[**DeleteSupportedInvoiceImportFileTests**](FileDataApi.md#deletesupportedinvoiceimportfiletests) | **DELETE** /api/FileData/supported-invoice-import-file-tests/{id} | Deletes Supported Invoice Import File Tests by Id
+[**DeleteSupportedInvoiceImportFiles**](FileDataApi.md#deletesupportedinvoiceimportfiles) | **DELETE** /api/FileData/supported-invoice-import-files/{id} | Deletes Supported Invoice Import Files
+[**DeleteSupportedPriceSheetFileData**](FileDataApi.md#deletesupportedpricesheetfiledata) | **DELETE** /api/FileData/supported-price-sheet-file-data/{id} | Deletes Supported Price Sheet File Data By Id
+[**DeleteSupportedPriceSheetFileTests**](FileDataApi.md#deletesupportedpricesheetfiletests) | **DELETE** /api/FileData/supported-price-sheet-file-tests/{id} | Delete Supported Price Sheet File Tests by Id
+[**DeleteSupportedPriceSheetFiles**](FileDataApi.md#deletesupportedpricesheetfiles) | **DELETE** /api/FileData/supported-price-sheet-files/{id} | Deletes Supported Price Sheet Files by Id
 [**DeleteTransactionFileData**](FileDataApi.md#deletetransactionfiledata) | **DELETE** /api/FileData/transaction-file-data/{id} | Delete transaction file data by the provided {id}.
 [**GetImageFileDataById**](FileDataApi.md#getimagefiledatabyid) | **GET** /api/FileData/image-file-data/{id} | Internal use only - Fetch image file data by {id}.
 [**GetImportFileCaptureById**](FileDataApi.md#getimportfilecapturebyid) | **GET** /api/FileData/import-file-capture/{id} | Internal use only - Fetch a captured file import by Id.
 [**GetPriceSheetFileData**](FileDataApi.md#getpricesheetfiledata) | **GET** /api/FileData/price-sheet-file-data/{id} | Fetch price sheet file data captured during an upload of pricing info.
 [**GetSupportedInvoiceFileTemplatesByCompany**](FileDataApi.md#getsupportedinvoicefiletemplatesbycompany) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName}/company/{companyId} | Internal use only - Fetch a supported invoice file template by fuel vendor and company.
 [**GetSupportedInvoiceFileTemplatesByFuelVendor**](FileDataApi.md#getsupportedinvoicefiletemplatesbyfuelvendor) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName} | Internal use only - Fetch a supported invoice file template by fuel vendor.
+[**GetSupportedInvoiceImportFileData**](FileDataApi.md#getsupportedinvoiceimportfiledata) | **GET** /api/FileData/supported-invoice-import-file-data/by-Id/{id} | Get Supported Invoice Import File Data By Id
+[**GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId**](FileDataApi.md#getsupportedinvoiceimportfiletestsbysupportedinvoiceimportfileid) | **GET** /api/FileData/supported-invoice-import-file-tests/by-supportedInvoiceImportFileId/{supportedInvoiceImportFileId} | Get Supported Invoice Import File Tests By supportedInvoiceImportFileId
+[**GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId**](FileDataApi.md#getsupportedinvoiceimportfilesbysupportedinvoiceimportfiledataid) | **GET** /api/FileData/supported-invoice-import-files/by-supportedInvoiceImportFileDataId/{supportedInvoiceImportFileDataId} | Gets Supported Invoice Import Files By supportedInvoiceImportFileDataId
+[**GetSupportedPriceSheetFileData**](FileDataApi.md#getsupportedpricesheetfiledata) | **GET** /api/FileData/supported-price-sheet-file-data/by-Id/{id} | Get Supported Price Sheet File Data By Id
+[**GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId**](FileDataApi.md#getsupportedpricesheetfiletestsbysupportedpricesheetfileid) | **GET** /api/FileData/supported-price-sheet-file-tests/by-supportedInvoiceImportFileId/{supportedPriceSheetFileId} | Gets Supported Price Sheet File Tests by supportedPriceSheetFileId
+[**GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId**](FileDataApi.md#getsupportedpricesheetfilesbysupportedpricesheetfiledataid) | **GET** /api/FileData/supported-price-sheet-files/by-supportedInvoiceImportFileId/{supportedPriceSheetFileDataId} | Gets Supported Price Sheet Files by SupportedPriceSheetFileDataId
 [**GetTransactionFileData**](FileDataApi.md#gettransactionfiledata) | **GET** /api/FileData/transaction-file-data/{id} | Fetch transaction file data for an invoice, receipt, or fuel release.
 [**GetsJobFileDataById**](FileDataApi.md#getsjobfiledatabyid) | **GET** /api/FileData/job-file-data/by-id/{id} | Gets job file data by Id
 [**PostImageFileData**](FileDataApi.md#postimagefiledata) | **POST** /api/FileData/image-file-data | Internal use only - Post new image file data.
@@ -22,12 +34,24 @@ Method | HTTP request | Description
 [**PostJobFileData**](FileDataApi.md#postjobfiledata) | **POST** /api/FileData/job-file-data | Post job file data
 [**PostPriceSheetFileData**](FileDataApi.md#postpricesheetfiledata) | **POST** /api/FileData/price-sheet-file-data | Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing.
 [**PostSupportedInvoiceFileTemplate**](FileDataApi.md#postsupportedinvoicefiletemplate) | **POST** /api/FileData/invoice-file/supported-template | Internal use only - Add a supported invoice file template.
+[**PostSupportedInvoiceImportFileData**](FileDataApi.md#postsupportedinvoiceimportfiledata) | **POST** /api/FileData/supported-invoice-import-file-data | Post Supported Invoice Import File Data
+[**PostSupportedInvoiceImportFileTests**](FileDataApi.md#postsupportedinvoiceimportfiletests) | **POST** /api/FileData/supported-invoice-import-file-tests | Post Supported Invoice Import File Tests
+[**PostSupportedInvoiceImportFiles**](FileDataApi.md#postsupportedinvoiceimportfiles) | **POST** /api/FileData/supported-invoice-import-files | Post Supported Invoice Import Files
+[**PostSupportedPriceSheetFileData**](FileDataApi.md#postsupportedpricesheetfiledata) | **POST** /api/FileData/supported-price-sheet-file-data | Post Supported Price Sheet File Data
+[**PostSupportedPriceSheetFileTests**](FileDataApi.md#postsupportedpricesheetfiletests) | **POST** /api/FileData/supported-price-sheet-file-tests | Post Supported Price Sheet File Tests
+[**PostSupportedPriceSheetFiles**](FileDataApi.md#postsupportedpricesheetfiles) | **POST** /api/FileData/supported-price-sheet-files | Post Supported Price Sheet Files
 [**PostTransactionFileData**](FileDataApi.md#posttransactionfiledata) | **POST** /api/FileData/transaction-file-data | Add transaction file data for an invoice, receipt, or fuel release.  The file data should be passed as a base64 string.
 [**UpdateImageFileData**](FileDataApi.md#updateimagefiledata) | **PUT** /api/FileData/image-file-data/{id} | Internal use only - Update an existing record of image file data.
 [**UpdateImportFileCapture**](FileDataApi.md#updateimportfilecapture) | **PUT** /api/FileData/import-file-capture/{id} | Internal use only - Update a file captured during an import.
 [**UpdateJobFileData**](FileDataApi.md#updatejobfiledata) | **PUT** /api/FileData/job-file-data | Updates job file data
 [**UpdatePriceSheetFileData**](FileDataApi.md#updatepricesheetfiledata) | **PUT** /api/FileData/price-sheet-file-data | Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
 [**UpdateSupportedInvoiceFileDataTemplate**](FileDataApi.md#updatesupportedinvoicefiledatatemplate) | **PUT** /api/FileData/invoice-file/supported-template | Internal use only - Update a supported invoice file template.
+[**UpdateSupportedInvoiceImportFileData**](FileDataApi.md#updatesupportedinvoiceimportfiledata) | **PUT** /api/FileData/supported-invoice-import-file-data/{id} | Updates Supported Invoice Import File Data
+[**UpdateSupportedInvoiceImportFileTests**](FileDataApi.md#updatesupportedinvoiceimportfiletests) | **PUT** /api/FileData/supported-invoice-import-file-tests | Updates Supported Invoice Import File Tests
+[**UpdateSupportedInvoiceImportFiles**](FileDataApi.md#updatesupportedinvoiceimportfiles) | **PUT** /api/FileData/supported-invoice-import-files | Updates Supported Invoice Import Files
+[**UpdateSupportedPriceSheetFileData**](FileDataApi.md#updatesupportedpricesheetfiledata) | **PUT** /api/FileData/supported-price-sheet-file-data/{id} | Updates Supported Price Sheet File Data
+[**UpdateSupportedPriceSheetFileTests**](FileDataApi.md#updatesupportedpricesheetfiletests) | **PUT** /api/FileData/supported-price-sheet-file-tests | Updates Supported Price Sheet File Tests
+[**UpdateSupportedPriceSheetFiles**](FileDataApi.md#updatesupportedpricesheetfiles) | **PUT** /api/FileData/supported-price-sheet-files | Updates Supported Price Sheet Files
 [**UpdateTransactionFileData**](FileDataApi.md#updatetransactionfiledata) | **PUT** /api/FileData/transaction-file-data | Update transaction file data for an invoice, receipt, or fuel release.
 
 
@@ -364,6 +388,420 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteSupportedInvoiceFileTemplateResponse**](DeleteSupportedInvoiceFileTemplateResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletesupportedinvoiceimportfiledata"></a>
+# **DeleteSupportedInvoiceImportFileData**
+> DeleteSupportedInvoiceImportFileDataResponse DeleteSupportedInvoiceImportFileData (int? id)
+
+Deletes Supported Invoice Import File Data
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteSupportedInvoiceImportFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Deletes Supported Invoice Import File Data
+                DeleteSupportedInvoiceImportFileDataResponse result = apiInstance.DeleteSupportedInvoiceImportFileData(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.DeleteSupportedInvoiceImportFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteSupportedInvoiceImportFileDataResponse**](DeleteSupportedInvoiceImportFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletesupportedinvoiceimportfiletests"></a>
+# **DeleteSupportedInvoiceImportFileTests**
+> DeleteSupportedInvoiceImportFileTestsResponse DeleteSupportedInvoiceImportFileTests (int? id)
+
+Deletes Supported Invoice Import File Tests by Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteSupportedInvoiceImportFileTestsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Deletes Supported Invoice Import File Tests by Id
+                DeleteSupportedInvoiceImportFileTestsResponse result = apiInstance.DeleteSupportedInvoiceImportFileTests(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.DeleteSupportedInvoiceImportFileTests: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteSupportedInvoiceImportFileTestsResponse**](DeleteSupportedInvoiceImportFileTestsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletesupportedinvoiceimportfiles"></a>
+# **DeleteSupportedInvoiceImportFiles**
+> DeleteSupportedInvoiceImportFilesResponse DeleteSupportedInvoiceImportFiles (int? id)
+
+Deletes Supported Invoice Import Files
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteSupportedInvoiceImportFilesExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Deletes Supported Invoice Import Files
+                DeleteSupportedInvoiceImportFilesResponse result = apiInstance.DeleteSupportedInvoiceImportFiles(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.DeleteSupportedInvoiceImportFiles: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteSupportedInvoiceImportFilesResponse**](DeleteSupportedInvoiceImportFilesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletesupportedpricesheetfiledata"></a>
+# **DeleteSupportedPriceSheetFileData**
+> DeleteSupportedPriceSheetFileDataResponse DeleteSupportedPriceSheetFileData (int? id)
+
+Deletes Supported Price Sheet File Data By Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteSupportedPriceSheetFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Deletes Supported Price Sheet File Data By Id
+                DeleteSupportedPriceSheetFileDataResponse result = apiInstance.DeleteSupportedPriceSheetFileData(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.DeleteSupportedPriceSheetFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteSupportedPriceSheetFileDataResponse**](DeleteSupportedPriceSheetFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletesupportedpricesheetfiletests"></a>
+# **DeleteSupportedPriceSheetFileTests**
+> DeleteSupportedPriceSheetFileTestsResponse DeleteSupportedPriceSheetFileTests (int? id)
+
+Delete Supported Price Sheet File Tests by Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteSupportedPriceSheetFileTestsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Delete Supported Price Sheet File Tests by Id
+                DeleteSupportedPriceSheetFileTestsResponse result = apiInstance.DeleteSupportedPriceSheetFileTests(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.DeleteSupportedPriceSheetFileTests: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteSupportedPriceSheetFileTestsResponse**](DeleteSupportedPriceSheetFileTestsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletesupportedpricesheetfiles"></a>
+# **DeleteSupportedPriceSheetFiles**
+> DeleteSupportedPriceSheetFilesResponse DeleteSupportedPriceSheetFiles (int? id)
+
+Deletes Supported Price Sheet Files by Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteSupportedPriceSheetFilesExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Deletes Supported Price Sheet Files by Id
+                DeleteSupportedPriceSheetFilesResponse result = apiInstance.DeleteSupportedPriceSheetFiles(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.DeleteSupportedPriceSheetFiles: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteSupportedPriceSheetFilesResponse**](DeleteSupportedPriceSheetFilesResponse.md)
 
 ### Authorization
 
@@ -780,6 +1218,420 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**SupportedInvoiceFileTemplateResponse**](SupportedInvoiceFileTemplateResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getsupportedinvoiceimportfiledata"></a>
+# **GetSupportedInvoiceImportFileData**
+> SupportedInvoiceImportFileDataResponse GetSupportedInvoiceImportFileData (int? id)
+
+Get Supported Invoice Import File Data By Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetSupportedInvoiceImportFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Get Supported Invoice Import File Data By Id
+                SupportedInvoiceImportFileDataResponse result = apiInstance.GetSupportedInvoiceImportFileData(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.GetSupportedInvoiceImportFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**SupportedInvoiceImportFileDataResponse**](SupportedInvoiceImportFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getsupportedinvoiceimportfiletestsbysupportedinvoiceimportfileid"></a>
+# **GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId**
+> SupportedInvoiceImportFileTestsResponse GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId (int? supportedInvoiceImportFileId)
+
+Get Supported Invoice Import File Tests By supportedInvoiceImportFileId
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileIdExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var supportedInvoiceImportFileId = 56;  // int? | 
+
+            try
+            {
+                // Get Supported Invoice Import File Tests By supportedInvoiceImportFileId
+                SupportedInvoiceImportFileTestsResponse result = apiInstance.GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId(supportedInvoiceImportFileId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **supportedInvoiceImportFileId** | **int?**|  | 
+
+### Return type
+
+[**SupportedInvoiceImportFileTestsResponse**](SupportedInvoiceImportFileTestsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getsupportedinvoiceimportfilesbysupportedinvoiceimportfiledataid"></a>
+# **GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId**
+> SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId (int? supportedInvoiceImportFileDataId)
+
+Gets Supported Invoice Import Files By supportedInvoiceImportFileDataId
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataIdExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var supportedInvoiceImportFileDataId = 56;  // int? | 
+
+            try
+            {
+                // Gets Supported Invoice Import Files By supportedInvoiceImportFileDataId
+                SupportedInvoiceImportFilesResponse result = apiInstance.GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId(supportedInvoiceImportFileDataId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **supportedInvoiceImportFileDataId** | **int?**|  | 
+
+### Return type
+
+[**SupportedInvoiceImportFilesResponse**](SupportedInvoiceImportFilesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getsupportedpricesheetfiledata"></a>
+# **GetSupportedPriceSheetFileData**
+> SupportedPriceSheetFileDataResponse GetSupportedPriceSheetFileData (int? id)
+
+Get Supported Price Sheet File Data By Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetSupportedPriceSheetFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Get Supported Price Sheet File Data By Id
+                SupportedPriceSheetFileDataResponse result = apiInstance.GetSupportedPriceSheetFileData(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.GetSupportedPriceSheetFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**SupportedPriceSheetFileDataResponse**](SupportedPriceSheetFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getsupportedpricesheetfiletestsbysupportedpricesheetfileid"></a>
+# **GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId**
+> SupportedPriceSheetFileTestsResponse GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId (int? supportedPriceSheetFileId)
+
+Gets Supported Price Sheet File Tests by supportedPriceSheetFileId
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileIdExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var supportedPriceSheetFileId = 56;  // int? | 
+
+            try
+            {
+                // Gets Supported Price Sheet File Tests by supportedPriceSheetFileId
+                SupportedPriceSheetFileTestsResponse result = apiInstance.GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId(supportedPriceSheetFileId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **supportedPriceSheetFileId** | **int?**|  | 
+
+### Return type
+
+[**SupportedPriceSheetFileTestsResponse**](SupportedPriceSheetFileTestsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getsupportedpricesheetfilesbysupportedpricesheetfiledataid"></a>
+# **GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId**
+> SupportedPriceSheetFilesResponse GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId (int? supportedPriceSheetFileDataId)
+
+Gets Supported Price Sheet Files by SupportedPriceSheetFileDataId
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataIdExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var supportedPriceSheetFileDataId = 56;  // int? | 
+
+            try
+            {
+                // Gets Supported Price Sheet Files by SupportedPriceSheetFileDataId
+                SupportedPriceSheetFilesResponse result = apiInstance.GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId(supportedPriceSheetFileDataId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.GetSupportedPriceSheetFilesBySupportedPriceSheetFileDataId: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **supportedPriceSheetFileDataId** | **int?**|  | 
+
+### Return type
+
+[**SupportedPriceSheetFilesResponse**](SupportedPriceSheetFilesResponse.md)
 
 ### Authorization
 
@@ -1275,6 +2127,420 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="postsupportedinvoiceimportfiledata"></a>
+# **PostSupportedInvoiceImportFileData**
+> PostSupportedInvoiceImportFileDataResponse PostSupportedInvoiceImportFileData (PostSupportedPriceSheetFileDataRequest body)
+
+Post Supported Invoice Import File Data
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostSupportedInvoiceImportFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new PostSupportedPriceSheetFileDataRequest(); // PostSupportedPriceSheetFileDataRequest |  (optional) 
+
+            try
+            {
+                // Post Supported Invoice Import File Data
+                PostSupportedInvoiceImportFileDataResponse result = apiInstance.PostSupportedInvoiceImportFileData(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.PostSupportedInvoiceImportFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostSupportedPriceSheetFileDataRequest**](PostSupportedPriceSheetFileDataRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostSupportedInvoiceImportFileDataResponse**](PostSupportedInvoiceImportFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="postsupportedinvoiceimportfiletests"></a>
+# **PostSupportedInvoiceImportFileTests**
+> PostSupportedInvoiceImportFileTestsResponse PostSupportedInvoiceImportFileTests (PostSupportedInvoiceImportFileTestsRequest body)
+
+Post Supported Invoice Import File Tests
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostSupportedInvoiceImportFileTestsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new PostSupportedInvoiceImportFileTestsRequest(); // PostSupportedInvoiceImportFileTestsRequest |  (optional) 
+
+            try
+            {
+                // Post Supported Invoice Import File Tests
+                PostSupportedInvoiceImportFileTestsResponse result = apiInstance.PostSupportedInvoiceImportFileTests(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.PostSupportedInvoiceImportFileTests: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostSupportedInvoiceImportFileTestsRequest**](PostSupportedInvoiceImportFileTestsRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostSupportedInvoiceImportFileTestsResponse**](PostSupportedInvoiceImportFileTestsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="postsupportedinvoiceimportfiles"></a>
+# **PostSupportedInvoiceImportFiles**
+> PostSupportedInvoiceImportFilesResponse PostSupportedInvoiceImportFiles (PostSupportedInvoiceImportFilesRequest body)
+
+Post Supported Invoice Import Files
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostSupportedInvoiceImportFilesExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new PostSupportedInvoiceImportFilesRequest(); // PostSupportedInvoiceImportFilesRequest |  (optional) 
+
+            try
+            {
+                // Post Supported Invoice Import Files
+                PostSupportedInvoiceImportFilesResponse result = apiInstance.PostSupportedInvoiceImportFiles(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.PostSupportedInvoiceImportFiles: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostSupportedInvoiceImportFilesRequest**](PostSupportedInvoiceImportFilesRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostSupportedInvoiceImportFilesResponse**](PostSupportedInvoiceImportFilesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="postsupportedpricesheetfiledata"></a>
+# **PostSupportedPriceSheetFileData**
+> PostSupportedPriceSheetFileDataResponse PostSupportedPriceSheetFileData (PostSupportedPriceSheetFileDataRequest body)
+
+Post Supported Price Sheet File Data
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostSupportedPriceSheetFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new PostSupportedPriceSheetFileDataRequest(); // PostSupportedPriceSheetFileDataRequest |  (optional) 
+
+            try
+            {
+                // Post Supported Price Sheet File Data
+                PostSupportedPriceSheetFileDataResponse result = apiInstance.PostSupportedPriceSheetFileData(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.PostSupportedPriceSheetFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostSupportedPriceSheetFileDataRequest**](PostSupportedPriceSheetFileDataRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostSupportedPriceSheetFileDataResponse**](PostSupportedPriceSheetFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="postsupportedpricesheetfiletests"></a>
+# **PostSupportedPriceSheetFileTests**
+> PostSupportedPriceSheetFileTestsResponse PostSupportedPriceSheetFileTests (PostSupportedPriceSheetFileTestsRequest body)
+
+Post Supported Price Sheet File Tests
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostSupportedPriceSheetFileTestsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new PostSupportedPriceSheetFileTestsRequest(); // PostSupportedPriceSheetFileTestsRequest |  (optional) 
+
+            try
+            {
+                // Post Supported Price Sheet File Tests
+                PostSupportedPriceSheetFileTestsResponse result = apiInstance.PostSupportedPriceSheetFileTests(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.PostSupportedPriceSheetFileTests: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostSupportedPriceSheetFileTestsRequest**](PostSupportedPriceSheetFileTestsRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostSupportedPriceSheetFileTestsResponse**](PostSupportedPriceSheetFileTestsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="postsupportedpricesheetfiles"></a>
+# **PostSupportedPriceSheetFiles**
+> PostSupportedPriceSheetFilesResponse PostSupportedPriceSheetFiles (PostSupportedPriceSheetFilesRequest body)
+
+Post Supported Price Sheet Files
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostSupportedPriceSheetFilesExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new PostSupportedPriceSheetFilesRequest(); // PostSupportedPriceSheetFilesRequest |  (optional) 
+
+            try
+            {
+                // Post Supported Price Sheet Files
+                PostSupportedPriceSheetFilesResponse result = apiInstance.PostSupportedPriceSheetFiles(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.PostSupportedPriceSheetFiles: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostSupportedPriceSheetFilesRequest**](PostSupportedPriceSheetFilesRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostSupportedPriceSheetFilesResponse**](PostSupportedPriceSheetFilesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="posttransactionfiledata"></a>
 # **PostTransactionFileData**
 > PostTransactionFileDataResponse PostTransactionFileData (PostTransactionFileDataRequest body)
@@ -1681,6 +2947,424 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**UpdateSupportedInvoiceFileTemplateResponse**](UpdateSupportedInvoiceFileTemplateResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatesupportedinvoiceimportfiledata"></a>
+# **UpdateSupportedInvoiceImportFileData**
+> UpdateSupportedInvoiceImportFileDataResponse UpdateSupportedInvoiceImportFileData (int? id, UpdateSupportedInvoiceImportFileDataRequest body)
+
+Updates Supported Invoice Import File Data
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateSupportedInvoiceImportFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+            var body = new UpdateSupportedInvoiceImportFileDataRequest(); // UpdateSupportedInvoiceImportFileDataRequest |  (optional) 
+
+            try
+            {
+                // Updates Supported Invoice Import File Data
+                UpdateSupportedInvoiceImportFileDataResponse result = apiInstance.UpdateSupportedInvoiceImportFileData(id, body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.UpdateSupportedInvoiceImportFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+ **body** | [**UpdateSupportedInvoiceImportFileDataRequest**](UpdateSupportedInvoiceImportFileDataRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateSupportedInvoiceImportFileDataResponse**](UpdateSupportedInvoiceImportFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatesupportedinvoiceimportfiletests"></a>
+# **UpdateSupportedInvoiceImportFileTests**
+> UpdateSupportedInvoiceImportFileTestsResponse UpdateSupportedInvoiceImportFileTests (UpdateSupportedInvoiceImportFileTestsRequest body)
+
+Updates Supported Invoice Import File Tests
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateSupportedInvoiceImportFileTestsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new UpdateSupportedInvoiceImportFileTestsRequest(); // UpdateSupportedInvoiceImportFileTestsRequest |  (optional) 
+
+            try
+            {
+                // Updates Supported Invoice Import File Tests
+                UpdateSupportedInvoiceImportFileTestsResponse result = apiInstance.UpdateSupportedInvoiceImportFileTests(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.UpdateSupportedInvoiceImportFileTests: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateSupportedInvoiceImportFileTestsRequest**](UpdateSupportedInvoiceImportFileTestsRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateSupportedInvoiceImportFileTestsResponse**](UpdateSupportedInvoiceImportFileTestsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatesupportedinvoiceimportfiles"></a>
+# **UpdateSupportedInvoiceImportFiles**
+> UpdateSupportedInvoiceImportFilesResponse UpdateSupportedInvoiceImportFiles (UpdateSupportedInvoiceImportFilesRequest body)
+
+Updates Supported Invoice Import Files
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateSupportedInvoiceImportFilesExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new UpdateSupportedInvoiceImportFilesRequest(); // UpdateSupportedInvoiceImportFilesRequest |  (optional) 
+
+            try
+            {
+                // Updates Supported Invoice Import Files
+                UpdateSupportedInvoiceImportFilesResponse result = apiInstance.UpdateSupportedInvoiceImportFiles(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.UpdateSupportedInvoiceImportFiles: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateSupportedInvoiceImportFilesRequest**](UpdateSupportedInvoiceImportFilesRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateSupportedInvoiceImportFilesResponse**](UpdateSupportedInvoiceImportFilesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatesupportedpricesheetfiledata"></a>
+# **UpdateSupportedPriceSheetFileData**
+> UpdateSupportedPriceSheetFileDataResponse UpdateSupportedPriceSheetFileData (int? id, UpdateSupportedPriceSheetFileDataRequest body)
+
+Updates Supported Price Sheet File Data
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateSupportedPriceSheetFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+            var body = new UpdateSupportedPriceSheetFileDataRequest(); // UpdateSupportedPriceSheetFileDataRequest |  (optional) 
+
+            try
+            {
+                // Updates Supported Price Sheet File Data
+                UpdateSupportedPriceSheetFileDataResponse result = apiInstance.UpdateSupportedPriceSheetFileData(id, body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.UpdateSupportedPriceSheetFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+ **body** | [**UpdateSupportedPriceSheetFileDataRequest**](UpdateSupportedPriceSheetFileDataRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateSupportedPriceSheetFileDataResponse**](UpdateSupportedPriceSheetFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatesupportedpricesheetfiletests"></a>
+# **UpdateSupportedPriceSheetFileTests**
+> UpdateSupportedPriceSheetFileTestsResponse UpdateSupportedPriceSheetFileTests (UpdateSupportedPriceSheetFileTestsRequest body)
+
+Updates Supported Price Sheet File Tests
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateSupportedPriceSheetFileTestsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new UpdateSupportedPriceSheetFileTestsRequest(); // UpdateSupportedPriceSheetFileTestsRequest |  (optional) 
+
+            try
+            {
+                // Updates Supported Price Sheet File Tests
+                UpdateSupportedPriceSheetFileTestsResponse result = apiInstance.UpdateSupportedPriceSheetFileTests(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.UpdateSupportedPriceSheetFileTests: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateSupportedPriceSheetFileTestsRequest**](UpdateSupportedPriceSheetFileTestsRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateSupportedPriceSheetFileTestsResponse**](UpdateSupportedPriceSheetFileTestsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatesupportedpricesheetfiles"></a>
+# **UpdateSupportedPriceSheetFiles**
+> UpdateSupportedPriceSheetFilesResponse UpdateSupportedPriceSheetFiles (UpdateSupportedPriceSheetFilesRequest body)
+
+Updates Supported Price Sheet Files
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateSupportedPriceSheetFilesExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new UpdateSupportedPriceSheetFilesRequest(); // UpdateSupportedPriceSheetFilesRequest |  (optional) 
+
+            try
+            {
+                // Updates Supported Price Sheet Files
+                UpdateSupportedPriceSheetFilesResponse result = apiInstance.UpdateSupportedPriceSheetFiles(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.UpdateSupportedPriceSheetFiles: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateSupportedPriceSheetFilesRequest**](UpdateSupportedPriceSheetFilesRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateSupportedPriceSheetFilesResponse**](UpdateSupportedPriceSheetFilesResponse.md)
 
 ### Authorization
 
