@@ -1,6 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { RouterEvent, NavigationStart, Router  } from '@angular/router';
 import * as moment from 'moment';
+import { filter } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 // Services
 import { FbopricesService } from '../../services/fboprices.service';
@@ -10,6 +13,8 @@ import { SharedService } from '../shared-service';
 // Components
 import { PricingExpiredNotificationComponent } from '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 import { fboChangedEvent, fboPricesUpdatedEvent, locationChangedEvent } from '../../models/sharedEvents';
+import { State } from '../../store/reducers';
+import { customerGridClear } from '../../store/actions';
 
 @Component({
     selector: 'default-layout',
@@ -35,7 +40,9 @@ export class DefaultLayoutComponent implements OnInit {
         private sharedService: SharedService,
         private fboPricesService: FbopricesService,
         private pricingTemplatesService: PricingtemplatesService,
-        private expiredPricingDialog: MatDialog
+        private expiredPricingDialog: MatDialog,
+        private router: Router,
+        private store: Store<State>,
     ) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -50,6 +57,14 @@ export class DefaultLayoutComponent implements OnInit {
                 setTimeout(() => this.pageTitle = title, 100);
             });
         }
+
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationStart)
+        ).subscribe((event: RouterEvent) => {
+            if (!event.url.startsWith('/default-layout/customers')) {
+                this.store.dispatch(customerGridClear());
+            }
+        });
     }
 
     get isCsr() {
