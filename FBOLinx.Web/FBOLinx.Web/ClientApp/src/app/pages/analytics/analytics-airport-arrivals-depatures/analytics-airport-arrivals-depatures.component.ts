@@ -40,7 +40,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     public commercialAircraftFlightNumber = ['ASA', 'UPS', 'SKW', 'FDX', 'UAL', 'AAL', 'DAL', 'SWA', 'GTI'];
 
     public isFbolinxCustomers = true;
-    public isCommercial = true;
+    public isCommercialInvisible = true;
 
     public data: FlightWatchHistorical[];
     public dataSource: MatTableDataSource<FlightWatchHistorical>;
@@ -97,7 +97,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     refreshDataSource() {
         const data = this.data.filter(x =>
             (!this.isFbolinxCustomers || x.company) &&
-            (this.isCommercial ||
+            (!this.isCommercialInvisible ||
                 !(this.commercialAircraftTypeCodes.includes(x.aircraftTypeCode) || this.commercialAircraftFlightNumber.find(startNum => x.flightNumber.startsWith(startNum)))
             ) &&
             (!this.selectedCustomers.length || this.selectedCustomers.includes(x.customerInfoByGroupID)) &&
