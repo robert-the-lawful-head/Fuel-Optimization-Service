@@ -12,6 +12,7 @@
                     <div class="col-12">
                         <span class="card-header-title">{{ customerForm.value.company }}</span>
                         <button
+                            [disabled]="isEditing"
                             (click)="cancelCustomerEdit()"
                             class="float-right close-btn"
                             mat-icon-button
