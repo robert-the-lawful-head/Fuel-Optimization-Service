@@ -54,6 +54,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "fuelerId")]
     public int? FuelerId { get; set; }
 
+    /// <summary>
+    /// Gets or Sets SupportedInvoiceImportFileTests
+    /// </summary>
+    [DataMember(Name="supportedInvoiceImportFileTests", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "supportedInvoiceImportFileTests")]
+    public List<SupportedInvoiceImportFileTestsDTO> SupportedInvoiceImportFileTests { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -68,6 +75,7 @@ namespace IO.Swagger.Model {
       sb.Append("  DateAddedUtc: ").Append(DateAddedUtc).Append("\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  FuelerId: ").Append(FuelerId).Append("\n");
+      sb.Append("  SupportedInvoiceImportFileTests: ").Append(SupportedInvoiceImportFileTests).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
