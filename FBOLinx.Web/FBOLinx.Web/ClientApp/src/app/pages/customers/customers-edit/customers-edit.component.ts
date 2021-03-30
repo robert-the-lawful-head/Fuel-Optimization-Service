@@ -24,7 +24,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
 import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
-import { catchError, debounceTime, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, map, switchMap } from 'rxjs/operators';
 
 const BREADCRUMBS: any[] = [
     {
@@ -61,6 +61,7 @@ export class CustomersEditComponent implements OnInit {
     customerCompanyTypes: any[];
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
+    isEditing: boolean;
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
 
@@ -140,7 +141,10 @@ export class CustomersEditComponent implements OnInit {
             customerMarginTemplate: [ this.customCustomerType.customerType ],
         });
         this.customerForm.valueChanges.pipe(
-            debounceTime(1000),
+            map(() => {
+                this.isEditing = true;
+            }),
+            debounceTime(500),
             switchMap(async () => {
                 const customerInfoByGroup = {
                     ...this.customerInfoByGroup,
@@ -155,6 +159,7 @@ export class CustomersEditComponent implements OnInit {
                     await this.customCustomerTypesService.update(this.customCustomerType).toPromise();
                 }
                 this.customerInfoByGroup = customerInfoByGroup;
+                this.isEditing = false;
             }),
             catchError((err: Error) => {
                 console.error(err);
@@ -162,6 +167,7 @@ export class CustomersEditComponent implements OnInit {
                     duration: 5000,
                     panelClass: [ 'blue-snackbar' ],
                 });
+                this.isEditing = false;
                 return of(EMPTY);
             })
         ).subscribe();
