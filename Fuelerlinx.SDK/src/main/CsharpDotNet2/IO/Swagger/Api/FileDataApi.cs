@@ -48,18 +48,6 @@ namespace IO.Swagger.Api
         /// <returns>DeleteSupportedInvoiceImportFileDataResponse</returns>
         DeleteSupportedInvoiceImportFileDataResponse DeleteSupportedInvoiceImportFileData (int? id);
         /// <summary>
-        /// Deletes Supported Invoice Import File Tests by Id 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>DeleteSupportedInvoiceImportFileTestsResponse</returns>
-        DeleteSupportedInvoiceImportFileTestsResponse DeleteSupportedInvoiceImportFileTests (int? id);
-        /// <summary>
-        /// Deletes Supported Invoice Import Files 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>DeleteSupportedInvoiceImportFilesResponse</returns>
-        DeleteSupportedInvoiceImportFilesResponse DeleteSupportedInvoiceImportFiles (int? id);
-        /// <summary>
         /// Deletes Supported Price Sheet File Data By Id 
         /// </summary>
         /// <param name="id"></param>
@@ -120,18 +108,6 @@ namespace IO.Swagger.Api
         /// <param name="id"></param>
         /// <returns>SupportedInvoiceImportFileDataResponse</returns>
         SupportedInvoiceImportFileDataResponse GetSupportedInvoiceImportFileData (int? id);
-        /// <summary>
-        /// Get Supported Invoice Import File Tests By supportedInvoiceImportFileId 
-        /// </summary>
-        /// <param name="supportedInvoiceImportFileId"></param>
-        /// <returns>SupportedInvoiceImportFileTestsResponse</returns>
-        SupportedInvoiceImportFileTestsResponse GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId (int? supportedInvoiceImportFileId);
-        /// <summary>
-        /// Gets Supported Invoice Import Files By supportedInvoiceImportFileDataId 
-        /// </summary>
-        /// <param name="supportedInvoiceImportFileDataId"></param>
-        /// <returns>SupportedInvoiceImportFilesResponse</returns>
-        SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId (int? supportedInvoiceImportFileDataId);
         /// <summary>
         /// Get Supported Price Sheet File Data By Id 
         /// </summary>
@@ -197,19 +173,7 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <param name="body"></param>
         /// <returns>PostSupportedInvoiceImportFileDataResponse</returns>
-        PostSupportedInvoiceImportFileDataResponse PostSupportedInvoiceImportFileData (PostSupportedPriceSheetFileDataRequest body);
-        /// <summary>
-        /// Post Supported Invoice Import File Tests 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>PostSupportedInvoiceImportFileTestsResponse</returns>
-        PostSupportedInvoiceImportFileTestsResponse PostSupportedInvoiceImportFileTests (PostSupportedInvoiceImportFileTestsRequest body);
-        /// <summary>
-        /// Post Supported Invoice Import Files 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>PostSupportedInvoiceImportFilesResponse</returns>
-        PostSupportedInvoiceImportFilesResponse PostSupportedInvoiceImportFiles (PostSupportedInvoiceImportFilesRequest body);
+        PostSupportedInvoiceImportFileDataResponse PostSupportedInvoiceImportFileData (PostSupportedInvoiceImportFileDataRequest body);
         /// <summary>
         /// Post Supported Price Sheet File Data 
         /// </summary>
@@ -273,18 +237,6 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateSupportedInvoiceImportFileDataResponse</returns>
         UpdateSupportedInvoiceImportFileDataResponse UpdateSupportedInvoiceImportFileData (int? id, UpdateSupportedInvoiceImportFileDataRequest body);
-        /// <summary>
-        /// Updates Supported Invoice Import File Tests 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>UpdateSupportedInvoiceImportFileTestsResponse</returns>
-        UpdateSupportedInvoiceImportFileTestsResponse UpdateSupportedInvoiceImportFileTests (UpdateSupportedInvoiceImportFileTestsRequest body);
-        /// <summary>
-        /// Updates Supported Invoice Import Files 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>UpdateSupportedInvoiceImportFilesResponse</returns>
-        UpdateSupportedInvoiceImportFilesResponse UpdateSupportedInvoiceImportFiles (UpdateSupportedInvoiceImportFilesRequest body);
         /// <summary>
         /// Updates Supported Price Sheet File Data 
         /// </summary>
@@ -585,80 +537,6 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFileData: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteSupportedInvoiceImportFileDataResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedInvoiceImportFileDataResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Deletes Supported Invoice Import File Tests by Id 
-        /// </summary>
-        /// <param name="id"></param> 
-        /// <returns>DeleteSupportedInvoiceImportFileTestsResponse</returns>            
-        public DeleteSupportedInvoiceImportFileTestsResponse DeleteSupportedInvoiceImportFileTests (int? id)
-        {
-            
-            // verify the required parameter 'id' is set
-            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedInvoiceImportFileTests");
-            
-    
-            var path = "/api/FileData/supported-invoice-import-file-tests/{id}";
-            path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
-    
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFileTests: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFileTests: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (DeleteSupportedInvoiceImportFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedInvoiceImportFileTestsResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Deletes Supported Invoice Import Files 
-        /// </summary>
-        /// <param name="id"></param> 
-        /// <returns>DeleteSupportedInvoiceImportFilesResponse</returns>            
-        public DeleteSupportedInvoiceImportFilesResponse DeleteSupportedInvoiceImportFiles (int? id)
-        {
-            
-            // verify the required parameter 'id' is set
-            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedInvoiceImportFiles");
-            
-    
-            var path = "/api/FileData/supported-invoice-import-files/{id}";
-            path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
-    
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFiles: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFiles: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (DeleteSupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedInvoiceImportFilesResponse), response.Headers);
         }
     
         /// <summary>
@@ -1037,80 +915,6 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         }
     
         /// <summary>
-        /// Get Supported Invoice Import File Tests By supportedInvoiceImportFileId 
-        /// </summary>
-        /// <param name="supportedInvoiceImportFileId"></param> 
-        /// <returns>SupportedInvoiceImportFileTestsResponse</returns>            
-        public SupportedInvoiceImportFileTestsResponse GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId (int? supportedInvoiceImportFileId)
-        {
-            
-            // verify the required parameter 'supportedInvoiceImportFileId' is set
-            if (supportedInvoiceImportFileId == null) throw new ApiException(400, "Missing required parameter 'supportedInvoiceImportFileId' when calling GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId");
-            
-    
-            var path = "/api/FileData/supported-invoice-import-file-tests/by-supportedInvoiceImportFileId/{supportedInvoiceImportFileId}";
-            path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "supportedInvoiceImportFileId" + "}", ApiClient.ParameterToString(supportedInvoiceImportFileId));
-    
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (SupportedInvoiceImportFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFileTestsResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Gets Supported Invoice Import Files By supportedInvoiceImportFileDataId 
-        /// </summary>
-        /// <param name="supportedInvoiceImportFileDataId"></param> 
-        /// <returns>SupportedInvoiceImportFilesResponse</returns>            
-        public SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId (int? supportedInvoiceImportFileDataId)
-        {
-            
-            // verify the required parameter 'supportedInvoiceImportFileDataId' is set
-            if (supportedInvoiceImportFileDataId == null) throw new ApiException(400, "Missing required parameter 'supportedInvoiceImportFileDataId' when calling GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId");
-            
-    
-            var path = "/api/FileData/supported-invoice-import-files/by-supportedInvoiceImportFileDataId/{supportedInvoiceImportFileDataId}";
-            path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "supportedInvoiceImportFileDataId" + "}", ApiClient.ParameterToString(supportedInvoiceImportFileDataId));
-    
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFilesBySupportedInvoiceImportFileDataId: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (SupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFilesResponse), response.Headers);
-        }
-    
-        /// <summary>
         /// Get Supported Price Sheet File Data By Id 
         /// </summary>
         /// <param name="id"></param> 
@@ -1470,7 +1274,7 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         /// </summary>
         /// <param name="body"></param> 
         /// <returns>PostSupportedInvoiceImportFileDataResponse</returns>            
-        public PostSupportedInvoiceImportFileDataResponse PostSupportedInvoiceImportFileData (PostSupportedPriceSheetFileDataRequest body)
+        public PostSupportedInvoiceImportFileDataResponse PostSupportedInvoiceImportFileData (PostSupportedInvoiceImportFileDataRequest body)
         {
             
     
@@ -1497,74 +1301,6 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
                 throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFileData: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostSupportedInvoiceImportFileDataResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceImportFileDataResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Post Supported Invoice Import File Tests 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>PostSupportedInvoiceImportFileTestsResponse</returns>            
-        public PostSupportedInvoiceImportFileTestsResponse PostSupportedInvoiceImportFileTests (PostSupportedInvoiceImportFileTestsRequest body)
-        {
-            
-    
-            var path = "/api/FileData/supported-invoice-import-file-tests";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFileTests: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFileTests: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (PostSupportedInvoiceImportFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceImportFileTestsResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Post Supported Invoice Import Files 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>PostSupportedInvoiceImportFilesResponse</returns>            
-        public PostSupportedInvoiceImportFilesResponse PostSupportedInvoiceImportFiles (PostSupportedInvoiceImportFilesRequest body)
-        {
-            
-    
-            var path = "/api/FileData/supported-invoice-import-files";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFiles: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFiles: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (PostSupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceImportFilesResponse), response.Headers);
         }
     
         /// <summary>
@@ -1920,74 +1656,6 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFileData: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateSupportedInvoiceImportFileDataResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedInvoiceImportFileDataResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Updates Supported Invoice Import File Tests 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>UpdateSupportedInvoiceImportFileTestsResponse</returns>            
-        public UpdateSupportedInvoiceImportFileTestsResponse UpdateSupportedInvoiceImportFileTests (UpdateSupportedInvoiceImportFileTestsRequest body)
-        {
-            
-    
-            var path = "/api/FileData/supported-invoice-import-file-tests";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFileTests: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFileTests: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (UpdateSupportedInvoiceImportFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedInvoiceImportFileTestsResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Updates Supported Invoice Import Files 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>UpdateSupportedInvoiceImportFilesResponse</returns>            
-        public UpdateSupportedInvoiceImportFilesResponse UpdateSupportedInvoiceImportFiles (UpdateSupportedInvoiceImportFilesRequest body)
-        {
-            
-    
-            var path = "/api/FileData/supported-invoice-import-files";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFiles: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceImportFiles: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (UpdateSupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedInvoiceImportFilesResponse), response.Headers);
         }
     
         /// <summary>

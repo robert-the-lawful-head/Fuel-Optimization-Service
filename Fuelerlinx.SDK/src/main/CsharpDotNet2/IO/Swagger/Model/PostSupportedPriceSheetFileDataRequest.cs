@@ -20,13 +20,6 @@ namespace IO.Swagger.Model {
     public int? Id { get; set; }
 
     /// <summary>
-    /// Gets or Sets FileData
-    /// </summary>
-    [DataMember(Name="fileData", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "fileData")]
-    public byte[] FileData { get; set; }
-
-    /// <summary>
     /// Gets or Sets FileName
     /// </summary>
     [DataMember(Name="fileName", EmitDefaultValue=false)]
@@ -56,7 +49,6 @@ namespace IO.Swagger.Model {
       var sb = new StringBuilder();
       sb.Append("class PostSupportedPriceSheetFileDataRequest {\n");
       sb.Append("  Id: ").Append(Id).Append("\n");
-      sb.Append("  FileData: ").Append(FileData).Append("\n");
       sb.Append("  FileName: ").Append(FileName).Append("\n");
       sb.Append("  ContentType: ").Append(ContentType).Append("\n");
       sb.Append("  FileDataAsBase64String: ").Append(FileDataAsBase64String).Append("\n");

@@ -4,7 +4,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Id** | **int?** |  | [optional] 
-**FileData** | **byte[]** |  | [optional] 
 **FileName** | **string** |  | [optional] 
 **ContentType** | **string** |  | [optional] 
 **FileDataAsBase64String** | **string** |  | [optional] 

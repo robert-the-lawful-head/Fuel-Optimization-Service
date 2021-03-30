@@ -11,13 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class SupportedInvoiceImportFileDataDTO {
+  public class PostSupportedInvoiceImportFileDataRequest {
     /// <summary>
     /// Gets or Sets Id
     /// </summary>
     [DataMember(Name="id", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "id")]
     public int? Id { get; set; }
+
+    /// <summary>
+    /// Gets or Sets FileData
+    /// </summary>
+    [DataMember(Name="fileData", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fileData")]
+    public byte[] FileData { get; set; }
 
     /// <summary>
     /// Gets or Sets FileName
@@ -47,8 +54,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class SupportedInvoiceImportFileDataDTO {\n");
+      sb.Append("class PostSupportedInvoiceImportFileDataRequest {\n");
       sb.Append("  Id: ").Append(Id).Append("\n");
+      sb.Append("  FileData: ").Append(FileData).Append("\n");
       sb.Append("  FileName: ").Append(FileName).Append("\n");
       sb.Append("  ContentType: ").Append(ContentType).Append("\n");
       sb.Append("  FileDataAsBase64String: ").Append(FileDataAsBase64String).Append("\n");
