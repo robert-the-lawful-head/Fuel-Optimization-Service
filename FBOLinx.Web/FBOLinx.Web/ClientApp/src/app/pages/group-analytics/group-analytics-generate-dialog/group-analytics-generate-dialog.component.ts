@@ -1,7 +1,7 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild, OnInit } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { GridComponent } from '@syncfusion/ej2-angular-grids';
+import { GridComponent, SelectionService } from '@syncfusion/ej2-angular-grids';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { SharedService } from '../../../layouts/shared-service';
 
@@ -9,9 +9,9 @@ import { SharedService } from '../../../layouts/shared-service';
     selector: 'app-group-analytics-generate-dialog',
     templateUrl: './group-analytics-generate-dialog.component.html',
     styleUrls: [ './group-analytics-generate-dialog.component.scss' ],
-    providers: [ SharedService ]
+    providers: [ SharedService, SelectionService ]
 })
-export class GroupAnalyticsGenerateDialogComponent {
+export class GroupAnalyticsGenerateDialogComponent implements OnInit {
     @ViewChild('grid') public grid: GridComponent;
 
     // Public Members
@@ -20,6 +20,12 @@ export class GroupAnalyticsGenerateDialogComponent {
     selectedCustomers: any[];
     loading: boolean;
     exportedCustomersCount: number;
+    public selectOptions: Object;
+    public editSettings: Object;
+    public toolbar: string[];
+    public filterOptions = {
+        mode: 'Immediate', immediateModeDelay: 1000  };
+    public sortSettings: Object;
 
     constructor(
         public dialogRef: MatDialogRef<GroupAnalyticsGenerateDialogComponent>,
@@ -27,7 +33,15 @@ export class GroupAnalyticsGenerateDialogComponent {
         private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService
     ) {
-        this.dataSources = data.customers;
+        
+    }
+
+    public ngOnInit(): void {
+        this.dataSources = this.data.customers;
+        this.selectOptions = { persistSelection: true };
+        this.editSettings = { allowDeleting: true };
+        this.sortSettings = { columns: [{ field: 'company' }] };
+        this.toolbar = ['Delete'];
     }
 
     onCancelClick(): void {

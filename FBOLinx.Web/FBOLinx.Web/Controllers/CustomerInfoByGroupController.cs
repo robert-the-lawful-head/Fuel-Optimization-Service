@@ -648,6 +648,17 @@ namespace FBOLinx.Web.Controllers
                 groupCustomerResponse.AddGroupedFboPrices(FlightTypeClassifications.Commercial, priceResults[FlightTypeClassifications.Commercial].Where(x => x.Company == groupCustomerResponse.Company && x.TailNumbers == groupCustomerResponse.TailNumbers).ToList());
                 groupCustomerResponse.AddGroupedFboPrices(FlightTypeClassifications.Private, priceResults[FlightTypeClassifications.Private].Where(x => x.Company == groupCustomerResponse.Company && x.TailNumbers == groupCustomerResponse.TailNumbers).ToList());
             }
+            
+            var maxPriceType = result.Select(x => x.GroupCustomerFbos.Max(y => y.Prices.Max(z => z.PriceBreakdownDisplayType))).Max();
+            if (maxPriceType == PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+                maxPriceType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
+            result.ForEach(r =>
+            {
+                r.GroupCustomerFbos?.ForEach(g =>
+                {
+                    g.Prices?.ForEach(p => p.PriceBreakdownDisplayType = maxPriceType);
+                });
+            });
 
             return Ok(result);
         }
