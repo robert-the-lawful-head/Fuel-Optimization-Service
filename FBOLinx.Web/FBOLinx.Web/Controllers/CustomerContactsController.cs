@@ -143,6 +143,7 @@ namespace FBOLinx.Web.Controllers
                                    && (cibg.CopyAlerts ?? false) == true
                                    && !string.IsNullOrEmpty(cibg.Email)
                                    && cibg.GroupId == groupId
+                                   && (c.Suspended ?? false) == false
                              select co).Count();
 
             return Ok(emails);

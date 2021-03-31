@@ -244,7 +244,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                     const dialogRef = this.templateDialog.open(
                         NotificationComponent,
                         {
-                            data: { text: 'Please assign the template to a customer before proceeding.' }
+                            data: { text: 'Please add a contact with an email to a customer assigned to this template before proceeding.' }
                         }
                     );
 
