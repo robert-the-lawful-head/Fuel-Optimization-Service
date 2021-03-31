@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Models;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.DTO
 {
@@ -42,7 +43,8 @@ namespace FBOLinx.Web.DTO
         public string FuelDeskEmail { get; set; }
         public string CopyEmails { get; set; }
         public string Product { get; set; }
-
+        public PriceDistributionService.PriceBreakdownDisplayTypes? PriceBreakdownDisplayType { get; set; }
+        
         public double? BasePrice
         {
             get

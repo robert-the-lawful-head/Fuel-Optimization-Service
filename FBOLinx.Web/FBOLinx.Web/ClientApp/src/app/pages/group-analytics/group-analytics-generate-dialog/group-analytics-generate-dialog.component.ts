@@ -38,15 +38,23 @@ export class GroupAnalyticsGenerateDialogComponent {
         this.loading = true;
         this.exportedCustomersCount = 0;
 
-        this.customerInfoByGroupService.getGroupAnalytics(
-            this.sharedService.currentUser.groupId,
-            this.selectedCustomers.map(customer => customer.customerId),
-        ).subscribe(async (data: any[]) => {
-            for (const customerFbos of data) {
-                await this.exportReportForCustomer(customerFbos.company, customerFbos.groupCustomerFbos);
-            }
-            this.loading = false;
-        });
+        for (var selectedCustomer of this.selectedCustomers) {
+            this.customerInfoByGroupService.getGroupAnalytics(
+                this.sharedService.currentUser.groupId,
+                [selectedCustomer.customerId],
+            ).subscribe(async (data: any[]) => {
+                var exportData: any[] = [];
+                for (const customerFbos of data) {
+                    this.populateExportDataForCustomer(customerFbos.company,
+                        customerFbos.tailNumbers,
+                        customerFbos.groupCustomerFbos,
+                        exportData);
+                }
+                if (data.length > 0)
+                    await this.exportReportForCustomer(exportData, data[0].company);
+                this.loading = false;
+            });
+        }
     }
 
     applyFilter(filter: string) {
@@ -64,32 +72,46 @@ export class GroupAnalyticsGenerateDialogComponent {
         this.selectedCustomers = this.grid.getSelectedRecords();
     }
 
-    exportReportForCustomer(company: string, data: any) {
-        return new Promise((resolve) => {
-            const exportData: any[] = [];
-            for (const fboPrice of data) {
-                for (let i = 0; i < fboPrice.prices.length; i++) {
-                    exportData.push({
-                        FBO: i === 0 ? fboPrice.icao : '',
-                        'Volume Tier': fboPrice.prices[i].volumeTier,
-                        'Int/Comm': fboPrice.prices[i].intComm?.toFixed(4),
-                        'Int/Private': fboPrice.prices[i].intPrivate?.toFixed(4),
-                        'Dom/Comm': fboPrice.prices[i].domComm?.toFixed(4),
-                        'Dom/Private': fboPrice.prices[i].domPrivate?.toFixed(4),
-                    });
+    populateExportDataForCustomer(company: string, tailNumbers: string, data: any, exportData: any[]) {
+        for (const fboPrice of data) {
+            for (let i = 0; i < fboPrice.prices.length; i++) {
+                var row: any = {};
+                row = {};
+                row['FBO'] = i === 0 ? fboPrice.icao : '';
+                row['Volume Tier'] = fboPrice.prices[i].volumeTier;
+                if (fboPrice.prices[i].priceBreakdownDisplayType == 0) {
+                    row['Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
+                } else if (fboPrice.prices[i].priceBreakdownDisplayType == 1) {
+                    row['International Price'] = fboPrice.prices[i].intPrivate?.toFixed(4);
+                    row['Domestic Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
+                } else if (fboPrice.prices[i].priceBreakdownDisplayType == 2) {
+                    row['Commercial Price'] = fboPrice.prices[i].domComm?.toFixed(4);
+                    row['Private Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
+                } else {
+                    row['Int/Comm Price'] = fboPrice.prices[i].intComm?.toFixed(4);
+                    row['Int/Private Price'] = fboPrice.prices[i].intPrivate?.toFixed(4);
+                    row['Dom/Comm Price'] = fboPrice.prices[i].domComm?.toFixed(4);
+                    row['Dom/Private Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
                 }
-                if (!fboPrice.prices.length) {
-                    exportData.push({
-                        FBO: fboPrice.icao,
-                        'Volume Tier': '',
-                        'Int/Comm': '',
-                        'Int/Private': '',
-                        'Dom/Comm': '',
-                        'Dom/Private': '',
-                    });
-                }
+                row['Tail Numbers'] = tailNumbers;
+                exportData.push(row);
             }
+            if (!fboPrice.prices.length) {
+                exportData.push({
+                    FBO: fboPrice.icao,
+                    'Volume Tier': '',
+                    'Int/Comm': '',
+                    'Int/Private': '',
+                    'Dom/Comm': '',
+                    'Dom/Private': '',
+                    'Tail Numbers': ''
+                });
+            }
+        }
+    }
 
+    exportReportForCustomer(exportData: any[], company: string) {
+        return new Promise((resolve) => {
             // TODO
             const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
             const wb: XLSX.WorkBook = XLSX.utils.book_new();

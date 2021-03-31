@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
@@ -132,7 +133,7 @@ namespace FBOLinx.Web.Services
                 var customerCompanyTypes = await _context.CustomerCompanyTypes
                     .Where(x => x.GroupId == groupId && x.Fboid == fboId).ToListAsync();
                 var fbo = await _FboService.GetFbo(fboId);
-
+                var priceBreakdownDisplayType = await GetPriceBreakdownDisplayType(fboId);
 
                 //Prepare fees/taxes based on the provided departure type and flight type
                 if (feesAndTaxes == null)
@@ -226,7 +227,8 @@ namespace FBOLinx.Web.Services
                         Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),
                         Notes = (pt == null ? "" : pt.Notes),
                         Fbo = (fbo == null ? "" : fbo.Fbo),
-                        Group = (fbo.Group == null ? "" : fbo.Group.GroupName)
+                        Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
+                        PriceBreakdownDisplayType = priceBreakdownDisplayType
                     }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToList();
 
                 if (feesAndTaxes.Count == 0)
@@ -487,6 +489,45 @@ namespace FBOLinx.Web.Services
 
             return result;
         }
+
+        public async Task<PriceDistributionService.PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId)
+        {
+            bool hasDepartureTypeRule = false;
+            bool hasFlightTypeRule = false;
+            var priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.SingleColumnAllFlights;
+
+            var taxesAndFees = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).ToListAsync();
+            foreach (FboFeesAndTaxes fee in taxesAndFees)
+            {
+                if (fee.DepartureType == FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly || fee.DepartureType == FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly)
+                {
+                    hasDepartureTypeRule = true;
+                }
+                if (fee.FlightTypeClassification == FBOLinx.Core.Enums.FlightTypeClassifications.Private || fee.FlightTypeClassification == FBOLinx.Core.Enums.FlightTypeClassifications.Commercial)
+                {
+                    hasFlightTypeRule = true;
+                }
+            }
+
+            if (!hasDepartureTypeRule && !hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.SingleColumnAllFlights;
+            }
+            else if (!hasDepartureTypeRule && hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly;
+            }
+            else if (hasDepartureTypeRule && !hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly;
+            }
+            else if (hasDepartureTypeRule && hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
+            }
+
+            return priceBreakdownDisplayType;
+        }
         #endregion
 
         #region Private Methods
@@ -496,12 +537,9 @@ namespace FBOLinx.Web.Services
             var oldPrices = await _context.Fboprices.Where(f =>
                     f.EffectiveTo <= DateTime.UtcNow && (f.Fboid.HasValue && fboIds.Contains(f.Fboid.Value)) && f.Price != null && f.Expired != true)
                 .ToListAsync();
-            foreach (var p in oldPrices)
-            {
-                p.Expired = true;
-                _context.Fboprices.Update(p);
-            }
-            await _context.SaveChangesAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            await _context.BulkUpdateAsync(oldPrices);
+            await transaction.CommitAsync();
         }
         #endregion
     }
