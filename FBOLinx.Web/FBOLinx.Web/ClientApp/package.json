@@ -27,7 +27,7 @@
     "@ngrx/store": "^11.0.0",
     "@ngrx/store-devtools": "^11.0.0",
     "@swimlane/ngx-charts": "^17.0.0",
-    "@syncfusion/ej2-angular-grids": "^18.4.42",
+    "@syncfusion/ej2-angular-grids": "^18.4.49",
     "@syncfusion/ej2-angular-richtexteditor": "^18.4.42",
     "@syncfusion/ej2-material-theme": "~18.4.42",
     "angular-resizable-element": "^3.3.5",

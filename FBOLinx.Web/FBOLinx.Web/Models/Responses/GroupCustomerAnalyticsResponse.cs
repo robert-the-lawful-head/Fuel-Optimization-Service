@@ -73,6 +73,8 @@ namespace FBOLinx.Web.Models.Responses
 
         public void SetPrice(double price, string product, FlightTypeClassifications flightTypeClassification)
         {
+            if (string.IsNullOrEmpty(product))
+                product = "";
             bool isInternational = product.ToLower().Contains("international") || !product.ToLower().Contains("domestic");
             bool isDomestic = product.ToLower().Contains("domestic") || !product.ToLower().Contains("international");
             if (flightTypeClassification == FlightTypeClassifications.Private)
