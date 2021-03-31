@@ -103,6 +103,18 @@
                         </mat-form-field>
                     </div>
                 </div>
+                <div *ngIf="[9].indexOf(column.columnFormat) > -1" class="col-12">
+                    <div (click)="$event.stopPropagation()">
+                        <mat-form-field *ngIf="isFilterOpen">
+                            <mat-label>{{column.heading}} Filter</mat-label>
+                            <mat-select [(ngModel)]="filter.stringFilter">
+                                <mat-option value="">--Select One--</mat-option>
+                                <mat-option value="true">Is Empty</mat-option>
+                                <mat-option value="false">Is Not Empty</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
                 <div *ngIf="[1,5,6].indexOf(column.columnFormat) > -1" class="col-12">
                     <div>
                         <div>
