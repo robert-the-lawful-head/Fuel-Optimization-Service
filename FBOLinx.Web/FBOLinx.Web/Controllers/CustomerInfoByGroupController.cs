@@ -20,6 +20,7 @@ using System.Globalization;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -33,13 +34,17 @@ namespace FBOLinx.Web.Controllers
 
         private readonly PriceFetchingService _priceFetchingService;
         private readonly CustomerService _customerService;
+        private readonly FboService _fboService;
+        private readonly AirportWatchService _airportWatchService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, PriceFetchingService priceFetchingService)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, PriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
             _priceFetchingService = priceFetchingService;
             _customerService = customerService;
+            _fboService = fboService;
+            _airportWatchService = airportWatchService;
         }
 
         // GET: api/CustomerInfoByGroup
@@ -658,6 +663,8 @@ namespace FBOLinx.Web.Controllers
             {
                 List<PricingTemplatesGridViewModel> pricingTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
 
+                var fboIcao = await _fboService.GetFBOIcao(fboId);
+
                 PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
                     .Where(x => x.Fboid == fboId && (x.Default ?? false)).FirstOrDefaultAsync();
 
@@ -687,6 +694,8 @@ namespace FBOLinx.Web.Controllers
                 var contactInfoByGroupForAlerts =
                     await _context.ContactInfoByGroup.Where(x => x.GroupId == groupId && x.CopyAlerts == true).Include(x => x.Contact).ToListAsync();
 
+                var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
+
                 List<CustomersGridViewModel> customerGridVM = (
                         from cg in customerInfoByGroup
                         join ccot in companyTypes on new
@@ -709,9 +718,11 @@ namespace FBOLinx.Web.Controllers
                             } equals new { TemplateId = ai.Oid}
                             into leftJoinAi
                         from ai in leftJoinAi.DefaultIfEmpty()
+                        join hd in historicalData on cg.CustomerId equals hd.CustomerId into leftJoinHd
+                        from hd in leftJoinHd.DefaultIfEmpty()
                         where cg.GroupId == groupId && !(cg.Suspended ?? false)
 
-                        group cg by new
+                        group new { cg, hd } by new
                         {
                             cg.CustomerId,
                             CustomerInfoByGroupId = cg.Oid,
@@ -727,7 +738,7 @@ namespace FBOLinx.Web.Controllers
                             Tails = customerAircraft.FirstOrDefault(x => x.CustomerId == cg.CustomerId)?.Tails,
                             FleetSize = customerAircraft.FirstOrDefault(x => x.CustomerId == cg.CustomerId)?.Count,
                             AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
-                            PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid
+                            PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid,
                         }
                         into resultsGroup
                         select new CustomersGridViewModel()
@@ -747,6 +758,7 @@ namespace FBOLinx.Web.Controllers
                             PricingTemplateName = resultsGroup.Key.PricingTemplateName,
                             SelectAll = false,
                             TailNumbers = resultsGroup.Key.Tails,
+                            AircraftsVisits = resultsGroup.Count(a => a.hd != null && a.hd.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing)
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())

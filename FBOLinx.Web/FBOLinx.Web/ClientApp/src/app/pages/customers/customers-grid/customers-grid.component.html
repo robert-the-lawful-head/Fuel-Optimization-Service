@@ -250,6 +250,28 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="aircraftsVisits">
+                <th *matHeaderCellDef class="overflow-label"
+                    mat-header-cell
+                    mat-sort-header
+                >
+                    <div>
+                        <div>Previous</div>
+                        <div>Visits</div>
+                    </div>
+                    <span *ngIf="customersDataSource">
+                  <app-table-column-filter [columnFormat]="1"
+                                           [matDataSource]="customersDataSource"
+                                           [matSort]="sort"
+                                           columnId="aircraftsVisits"
+                                           propertyName="aircraftsVisits"></app-table-column-filter>
+                </span>
+                </th>
+                <td *matCellDef="let customer" mat-cell>
+                    {{ customer.aircraftsVisits }}
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="delete">
                 <th *matHeaderCellDef mat-header-cell>
                     <div class="pull-right">
