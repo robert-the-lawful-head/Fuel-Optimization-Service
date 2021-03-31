@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using EFCore.BulkExtensions;
 using FBOLinx.DB;
+using System.Collections;
 
 namespace FBOLinx.Web.Services
 {
@@ -60,7 +61,7 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDepartures(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
-            var historicalData = await GetHistoricalDataAssociatedWithFbo(groupId, fboId, request);
+            var historicalData = await GetAircraftsHistoricalDataAssociatedWithFbo(groupId, fboId, request);
 
             var customersData = historicalData
                 .Select(h => new AirportWatchHistoricalDataResponse
@@ -85,7 +86,7 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<AirportWatchHistoricalDataResponse>> GetVisits(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
-            var historicalData = await GetHistoricalDataAssociatedWithFbo(groupId, fboId, request);
+            var historicalData = await GetAircraftsHistoricalDataAssociatedWithFbo(groupId, fboId, request);
 
             var noCustomerData = historicalData
                 .Where(h => h.Company == null)
@@ -232,6 +233,92 @@ namespace FBOLinx.Web.Services
             await CommitChanges();
         }
 
+        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithFbo(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
+        {
+            var fboIcao = await _fboService.GetFBOIcao(fboId);
+
+            var historicalData = await (from awhd in _context.AirportWatchHistoricalData
+                                        join awat in _context.AirportWatchAircraftTailNumber on new { awhd.AircraftHexCode, awhd.AtcFlightNumber } equals new { awat.AircraftHexCode, awat.AtcFlightNumber }
+                                        join ca in (
+                                            from ca in _context.CustomerAircrafts
+                                            join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 } equals new { cig.CustomerId, cig.GroupId }
+                                            where ca.GroupId == groupId
+                                            select new
+                                            {
+                                                ca.GroupId,
+                                                ca.CustomerId,
+                                                ca.TailNumber,
+                                                ca.AircraftId,
+                                                cig.Company,
+                                                CustomerInfoByGroupID = cig.Oid,
+                                            }
+                                        ) on awat.AtcFlightNumber equals ca.TailNumber
+                                        into leftJoinedCustomers
+                                        from ca in leftJoinedCustomers.DefaultIfEmpty()
+                                        where
+                                            awhd.AirportICAO == fboIcao &&
+                                            (request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime()) &&
+                                            (request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
+                                        group awhd by new
+                                        {
+                                            AirportWatchHistoricalDataID = awhd.Oid,
+                                            awhd.AircraftHexCode,
+                                            awhd.AtcFlightNumber,
+                                            awhd.AircraftPositionDateTimeUtc,
+                                            awhd.AircraftStatus,
+                                            awhd.AirportICAO,
+                                            awhd.AircraftTypeCode,
+                                            ca.Company,
+                                            ca.CustomerId,
+                                            ca.TailNumber,
+                                            ca.AircraftId,
+                                            ca.CustomerInfoByGroupID,
+                                        }
+                                        into groupedResult
+                                        select new FboHistoricalDataModel
+                                        {
+                                            AirportWatchHistoricalDataID = groupedResult.Key.AirportWatchHistoricalDataID,
+                                            AircraftHexCode = groupedResult.Key.AircraftHexCode,
+                                            AtcFlightNumber = groupedResult.Key.AtcFlightNumber,
+                                            AircraftPositionDateTimeUtc = groupedResult.Key.AircraftPositionDateTimeUtc,
+                                            AircraftStatus = groupedResult.Key.AircraftStatus,
+                                            AircraftTypeCode = groupedResult.Key.AircraftTypeCode,
+                                            Company = groupedResult.Key.Company,
+                                            CustomerId = groupedResult.Key.CustomerId,
+                                            TailNumber = groupedResult.Key.TailNumber,
+                                            AircraftId = groupedResult.Key.AircraftId,
+                                            AirportICAO = groupedResult.Key.AirportICAO,
+                                            CustomerInfoByGroupID = groupedResult.Key.CustomerInfoByGroupID,
+                                        }).ToListAsync();
+            return historicalData;
+        }
+
+        public async Task<List<FboHistoricalDataModel>> GetAircraftsHistoricalDataAssociatedWithFbo(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
+        {
+            var historicalData = await GetHistoricalDataAssociatedWithFbo(groupId, fboId, request);
+            var result = (from h in historicalData
+                          join a in _aircraftService.GetAllAircraftsOnlyAsQueryable() on h.AircraftId equals a.AircraftId
+                          into leftJoinedAircrafts
+                          from a in leftJoinedAircrafts.DefaultIfEmpty()
+                          orderby h.AircraftPositionDateTimeUtc descending
+                          select new FboHistoricalDataModel
+                          {
+                              CustomerId = h.CustomerId,
+                              Company = h.Company,
+                              AircraftPositionDateTimeUtc = h.AircraftPositionDateTimeUtc,
+                              TailNumber = h.TailNumber,
+                              AtcFlightNumber = h.AtcFlightNumber,
+                              AircraftHexCode = h.AircraftHexCode,
+                              AircraftTypeCode = h.AircraftTypeCode,
+                              Make = a?.Make,
+                              Model = a?.Model,
+                              AircraftStatus = h.AircraftStatus,
+                              AirportICAO = h.AirportICAO,
+                              CustomerInfoByGroupID = h.CustomerInfoByGroupID,
+                          }).ToList();
+            return result;
+        }
+
         private void AddPossibleParkingOccurrence(AirportWatchHistoricalData oldAirportWatchHistoricalData, AirportWatchHistoricalData airportWatchHistoricalData)
         {
             // Parking occurrences
@@ -347,89 +434,9 @@ namespace FBOLinx.Web.Services
 
             return new Tuple<double, double>(latitude, longitude);
         }
-
-        private async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithFbo(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
-        {
-            var fboIcao = await _fboService.GetFBOIcao(fboId);
-
-            var historicalData = await(from awhd in _context.AirportWatchHistoricalData
-                                       join awat in _context.AirportWatchAircraftTailNumber on new { awhd.AircraftHexCode, awhd.AtcFlightNumber } equals new { awat.AircraftHexCode, awat.AtcFlightNumber }
-                                       join ca in (
-                                           from ca in _context.CustomerAircrafts
-                                           join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 } equals new { cig.CustomerId, cig.GroupId }
-                                           where ca.GroupId == groupId
-                                           select new
-                                           {
-                                               ca.GroupId,
-                                               ca.CustomerId,
-                                               ca.TailNumber,
-                                               ca.AircraftId,
-                                               cig.Company,
-                                               CustomerInfoByGroupID = cig.Oid,
-                                           }
-                                       ) on awat.AtcFlightNumber equals ca.TailNumber
-                                       into leftJoinedCustomers
-                                       from ca in leftJoinedCustomers.DefaultIfEmpty()
-                                       where
-                                           awhd.AirportICAO == fboIcao &&
-                                           (request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime()) &&
-                                           (request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
-                                       group awhd by new
-                                       {
-                                           AirportWatchHistoricalDataID = awhd.Oid,
-                                           awhd.AircraftHexCode,
-                                           awhd.AtcFlightNumber,
-                                           awhd.AircraftPositionDateTimeUtc,
-                                           awhd.AircraftStatus,
-                                           awhd.AirportICAO,
-                                           awhd.AircraftTypeCode,
-                                           ca.Company,
-                                           ca.CustomerId,
-                                           ca.TailNumber,
-                                           ca.AircraftId,
-                                           ca.CustomerInfoByGroupID,
-                                       }
-                                        into groupedResult
-                                       select new
-                                       {
-                                           AirportWatchHistoricalDataID = groupedResult.Key.AirportWatchHistoricalDataID,
-                                           AircraftHexCode = groupedResult.Key.AircraftHexCode,
-                                           AtcFlightNumber = groupedResult.Key.AtcFlightNumber,
-                                           AircraftPositionDateTimeUtc = groupedResult.Key.AircraftPositionDateTimeUtc,
-                                           AircraftStatus = groupedResult.Key.AircraftStatus,
-                                           AircraftTypeCode = groupedResult.Key.AircraftTypeCode,
-                                           Company = groupedResult.Key.Company,
-                                           CustomerId = groupedResult.Key.CustomerId,
-                                           TailNumber = groupedResult.Key.TailNumber,
-                                           AircraftId = groupedResult.Key.AircraftId,
-                                           AirportICAO = groupedResult.Key.AirportICAO,
-                                           CustomerInfoByGroupID = groupedResult.Key.CustomerInfoByGroupID,
-                                       }).ToListAsync();
-            var result = (from h in historicalData
-                          join a in _aircraftService.GetAllAircraftsOnlyAsQueryable() on h.AircraftId equals a.AircraftId
-                          into leftJoinedAircrafts
-                          from a in leftJoinedAircrafts.DefaultIfEmpty()
-                          orderby h.AircraftPositionDateTimeUtc descending
-                          select new FboHistoricalDataModel
-                          {
-                              CustomerId = h.CustomerId,
-                              Company = h.Company,
-                              AircraftPositionDateTimeUtc = h.AircraftPositionDateTimeUtc,
-                              TailNumber = h.TailNumber,
-                              AtcFlightNumber = h.AtcFlightNumber,
-                              AircraftHexCode = h.AircraftHexCode,
-                              AircraftTypeCode = h.AircraftTypeCode,
-                              Make = a?.Make,
-                              Model = a?.Model,
-                              AircraftStatus = h.AircraftStatus,
-                              AirportICAO = h.AirportICAO,
-                              CustomerInfoByGroupID = h.CustomerInfoByGroupID,
-                          }).ToList();
-            return result;
-        }
     }
 
-    class FboHistoricalDataModel
+    public class FboHistoricalDataModel
     {
         public int AirportWatchHistoricalDataID { get; set; }
         public string AircraftHexCode { get; set; }

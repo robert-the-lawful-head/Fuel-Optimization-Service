@@ -59,6 +59,10 @@ const initialColumns: ColumnType[] = [
         name: 'Fleet Size',
     },
     {
+        id: 'aircraftsVisits',
+        name: 'Previous Visits',
+    },
+    {
         id: 'delete',
         name: 'Actions',
     },
@@ -256,6 +260,7 @@ export class CustomersGridComponent implements OnInit {
             'Certificate Type': item.certificateTypeDescription,
             'ITP Margin Template': item.pricingTemplateName,
             'Fleet Size': item.fleetSize,
+            'Previous Visits': item.aircraftsVisits,
         }));
         exportData = sortBy(exportData, [
             (item) => item.Company.toLowerCase(),
