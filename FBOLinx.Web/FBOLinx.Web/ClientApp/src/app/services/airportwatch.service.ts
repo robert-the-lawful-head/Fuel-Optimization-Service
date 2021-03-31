@@ -33,4 +33,8 @@ export class AirportWatchService {
             { headers: this.headers },
         );
     }
+
+    public getStartDate() {
+        return this.http.get<any>(this.accessPointUrl + '/start-date', { headers: this.headers });
+    }
 }

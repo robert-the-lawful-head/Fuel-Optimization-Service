@@ -251,9 +251,11 @@
             </ng-container>
 
             <ng-container matColumnDef="aircraftsVisits">
-                <th *matHeaderCellDef class="overflow-label"
+                <th *matHeaderCellDef
+                    class="overflow-label"
                     mat-header-cell
                     mat-sort-header
+                    [matTooltip]="'Since ' + (airportWatchStartDate | date:'MM/dd/YYYY')"
                 >
                     <div>
                         <div>Previous</div>
