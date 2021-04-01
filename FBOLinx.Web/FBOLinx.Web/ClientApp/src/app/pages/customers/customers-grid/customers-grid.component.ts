@@ -21,6 +21,7 @@ import { ColumnType, TableSettingsComponent } from '../../../shared/components/t
 import { CustomermarginsService } from '../../../services/customermargins.service';
 import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
 import { CustomerGridState } from '../../../store/reducers/customer';
+import { AirportWatchService } from '../../../services/airportwatch.service';
 
 import * as SharedEvents from '../../../models/sharedEvents';
 
@@ -59,6 +60,10 @@ const initialColumns: ColumnType[] = [
         name: 'Fleet Size',
     },
     {
+        id: 'aircraftsVisits',
+        name: 'Previous Visits',
+    },
+    {
         id: 'delete',
         name: 'Actions',
     },
@@ -93,6 +98,7 @@ export class CustomersGridComponent implements OnInit {
     pageIndex = 0;
     pageSize = 100;
     columns: ColumnType[] = [];
+    airportWatchStartDate: Date = new Date();
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
@@ -108,7 +114,8 @@ export class CustomersGridComponent implements OnInit {
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customersViewedByFboService: CustomersviewedbyfboService,
-        private customerMarginsService: CustomermarginsService
+        private customerMarginsService: CustomermarginsService,
+        private airportWatchService: AirportWatchService,
     ) {
     }
 
@@ -139,6 +146,10 @@ export class CustomersGridComponent implements OnInit {
         if (this.customerGridState.orderBy) {
             this.sort.direction = this.customerGridState.orderBy as SortDirection;
         }
+        this.airportWatchService.getStartDate()
+            .subscribe((date) => {
+                this.airportWatchStartDate = new Date(date);
+            });
     }
 
     onPageChanged(event: any) {
@@ -256,6 +267,7 @@ export class CustomersGridComponent implements OnInit {
             'Certificate Type': item.certificateTypeDescription,
             'ITP Margin Template': item.pricingTemplateName,
             'Fleet Size': item.fleetSize,
+            'Previous Visits': item.aircraftsVisits,
         }));
         exportData = sortBy(exportData, [
             (item) => item.Company.toLowerCase(),

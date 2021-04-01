@@ -122,6 +122,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(companiesByGroup);
         }
 
+        //Temp comment for a release build2
         private bool CompaniesByGroupExists(int id)
         {
             return _context.CompaniesByGroup.Any(e => e.Oid == id);

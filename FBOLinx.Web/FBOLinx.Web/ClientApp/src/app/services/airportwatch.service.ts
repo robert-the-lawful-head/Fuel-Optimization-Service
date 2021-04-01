@@ -18,10 +18,10 @@ export class AirportWatchService {
         return this.http.get<any>(this.accessPointUrl + '/list/fbo/' + fboId, { headers: this.headers });
     }
 
-    public getArrivalsDepartures(groupId: number, fboId: number) {
+    public getArrivalsDepartures(groupId: number, fboId: number, body: AirportWatchHistoricalDataRequest) {
         return this.http.post<FlightWatchHistorical[]>(
             this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId + '/arrivals-depatures',
-            {},
+            body,
             { headers: this.headers },
         );
     }
@@ -32,5 +32,9 @@ export class AirportWatchService {
             body,
             { headers: this.headers },
         );
+    }
+
+    public getStartDate() {
+        return this.http.get<any>(this.accessPointUrl + '/start-date', { headers: this.headers });
     }
 }

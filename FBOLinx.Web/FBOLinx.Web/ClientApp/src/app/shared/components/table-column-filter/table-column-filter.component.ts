@@ -32,7 +32,7 @@ import * as moment from 'moment';
 export class TableColumnFilterComponent implements OnInit {
     @Input() columnId: string;
     @Input() column: any;
-    @Input() columnFormat = 0; // Text = 0,Number = 1,Date = 2,Time = 3,DateTime = 4,Currency = 5,Weight = 6,TimeStandard = 7, YesNo = 8
+    @Input() columnFormat = 0; // Text = 0,Number = 1,Date = 2,Time = 3,DateTime = 4,Currency = 5,Weight = 6,TimeStandard = 7, YesNo = 8, EmptyNotEmpty = 9
     @Input() propertyName: string;
     @Input() matDataSource: any = null;
     @Input() matSort: MatSort;
@@ -203,6 +203,11 @@ export class TableColumnFilterComponent implements OnInit {
                     }
 
                     let columnValue = data[element.propertyName];
+
+                    if ([9].indexOf(element.columnFormat) > -1) {
+                        return (element.filter.stringFilter === 'true' && !columnValue) ||
+                            (element.filter.stringFilter === 'false' && !!columnValue);
+                    }
 
                     if (columnValue === null || columnValue === '') {
                         return false;

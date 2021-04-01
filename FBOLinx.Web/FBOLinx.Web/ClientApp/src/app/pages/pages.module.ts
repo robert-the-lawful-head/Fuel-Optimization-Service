@@ -122,7 +122,6 @@ import { AnalyticsCompaniesQuotesDealTableComponent } from './analytics/analytic
 import { AnalyticsFuelVendorSourceChartComponent } from './analytics/analytics-fuel-vendor-source-chart/analytics-fuel-vendor-source-chart.component';
 import { AnalyticsMarketShareFboAirportChartComponent } from './analytics/analytics-market-share-fbo-airport-chart/analytics-market-share-fbo-airport-chart.component';
 import { AnalyticsAirportArrivalsDepaturesComponent } from './analytics/analytics-airport-arrivals-depatures/analytics-airport-arrivals-depatures.component';
-import { AnalyticsAirportVisitsComponent } from './analytics/analytics-airport-visits/analytics-airport-visits.component';
 import { UsersDialogNewUserComponent } from './users/users-dialog-new-user/users-dialog-new-user.component';
 import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
@@ -164,6 +163,7 @@ import { TableGlobalSearchComponent } from '../shared/components/table-global-se
 import { FeeAndTaxBreakdownComponent } from '../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 import { TableSettingsComponent } from '../shared/components/table-settings/table-settings.component';
 import { AircraftAssignModalComponent } from '../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
+import { CsvExportModalComponent } from '../shared/components/csv-export-modal/csv-export-modal.component';
 
 // Pipes
 import { AppPipesModule } from '../app-pipes.module';
@@ -295,7 +295,6 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         AnalyticsFuelVendorSourceChartComponent,
         AnalyticsMarketShareFboAirportChartComponent,
         AnalyticsAirportArrivalsDepaturesComponent,
-        AnalyticsAirportVisitsComponent,
         DeleteConfirmationComponent,
         ProceedConfirmationComponent,
         CloseConfirmationComponent,
@@ -334,6 +333,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         FlightWatchSettingsComponent,
         FlightWatchMapMarkerIconPipe,
         AnalyticsAirportWatchStatusMarkerPipe,
+        CsvExportModalComponent,
     ],
     exports: [
         ClickStopPropagationDirective,

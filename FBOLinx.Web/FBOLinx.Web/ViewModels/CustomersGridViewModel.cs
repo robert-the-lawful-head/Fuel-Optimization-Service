@@ -43,6 +43,7 @@ namespace FBOLinx.Web.ViewModels
         public bool? PricingTemplateRemoved { get; set; }
 
         public bool? Active { get; set; }
+        public int AircraftsVisits { get; set; }
 
         public string CertificateTypeDescription
         {

@@ -12,6 +12,7 @@
                     <div class="col-12">
                         <span class="card-header-title">{{ customerForm.value.company }}</span>
                         <button
+                            [disabled]="isEditing"
                             (click)="cancelCustomerEdit()"
                             class="float-right close-btn"
                             mat-icon-button
@@ -147,17 +148,6 @@
                     <mat-tab label="Pricing">
                         <div class="container-fluid">
                             <h5>Price & Margin Information</h5>
-
-                            <div class="row mb-2">
-                                <div class="col-md-3">
-                                    <mat-slide-toggle *ngIf="hasContactForPriceDistribution"
-                                                      color="accent"
-                                                      formControlName="distribute">
-                                        {{customerInfoByGroup.customerType == 1 ? "Push pricing into FuelerLinx" : "Distribute fuel pricing email"}}
-                                    </mat-slide-toggle>
-                                </div>
-                            </div>
-
                             <table>
                                 <thead>
                                 <tr>

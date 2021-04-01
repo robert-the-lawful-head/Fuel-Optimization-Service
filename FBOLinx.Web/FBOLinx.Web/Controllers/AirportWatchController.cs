@@ -8,6 +8,8 @@ using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Models.Requests;
+using FBOLinx.DB.Context;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,11 +21,13 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly AirportWatchService _airportWatchService;
         private readonly FboService _fboService;
+        private readonly FboLinxContext _context;
 
-        public AirportWatchController(AirportWatchService airportWatchService, FboService fboService)
+        public AirportWatchController(AirportWatchService airportWatchService, FboService fboService, FboLinxContext context)
         {
             _airportWatchService = airportWatchService;
             _fboService = fboService;
+            _context = context;
         }
 
         [HttpGet("list/fbo/{fboId}")]
@@ -65,6 +69,14 @@ namespace FBOLinx.Web.Controllers
             {
                 return Ok(new AiriportWatchDataPostResponse(false, exception.Message));
             }
+        }
+
+        [HttpGet("start-date")]
+        public async Task<IActionResult> GetAirportWatchStartDate()
+        {
+            var startRecord = await _context.AirportWatchHistoricalData.OrderBy(item => item.AircraftPositionDateTimeUtc).FirstOrDefaultAsync();
+
+            return Ok(startRecord.AircraftPositionDateTimeUtc);
         }
     }
 }

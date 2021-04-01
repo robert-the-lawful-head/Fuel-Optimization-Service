@@ -125,6 +125,11 @@ namespace FBOLinx.Web.Services
             DistributionQueue distributionQueueRecord = new DistributionQueue();
             try
             {
+                var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
+
+                if (customerAircrafts.Count == 0)
+                    return;
+
                 var validPricingTemplates = await GetValidPricingTemplates(customer);
                 if (validPricingTemplates == null || validPricingTemplates.Count == 0)
                 {
@@ -315,41 +320,10 @@ namespace FBOLinx.Web.Services
             var privateInternationalPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
             var commercialDomesticPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
             var privateDomesticPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
-
-            bool hasDepartureTypeRule = false;
-            bool hasFlightTypeRule = false;
-            var priceBreakdownDisplayType = PriceBreakdownDisplayTypes.SingleColumnAllFlights;
-
-            var taxesAndFees = await _context.FbofeesAndTaxes.Where(x => x.Fboid == _DistributePricingRequest.FboId).ToListAsync();
-            foreach(FboFeesAndTaxes fee in taxesAndFees)
-            {
-                if (fee.DepartureType == FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly || fee.DepartureType == FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly)
-                {
-                    hasDepartureTypeRule = true;
-                }
-                if (fee.FlightTypeClassification == FBOLinx.Core.Enums.FlightTypeClassifications.Private || fee.FlightTypeClassification == FBOLinx.Core.Enums.FlightTypeClassifications.Commercial)
-                {
-                    hasFlightTypeRule = true;
-                }
-            }
-
-            if (!hasDepartureTypeRule && !hasFlightTypeRule)
-            {
-                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.SingleColumnAllFlights;
-            }
-            else if (!hasDepartureTypeRule && hasFlightTypeRule)
-            {
-                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly;
-            }
-            else if (hasDepartureTypeRule && !hasFlightTypeRule)
-            {
-                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly;
-            }
-            else if (hasDepartureTypeRule && hasFlightTypeRule)
-            {
-                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.FourColumnsAllRules;
-            }
-
+            
+            var priceBreakdownDisplayType =
+                await _PriceFetchingService.GetPriceBreakdownDisplayType(_DistributePricingRequest.FboId);
+            
             privateDomesticPricingResults = privateDomesticPricingResults.OrderBy(s => s.MinGallons).ToList();
 
             string priceBreakdownTemplate = GetPriceBreakdownTemplate(priceBreakdownDisplayType);
