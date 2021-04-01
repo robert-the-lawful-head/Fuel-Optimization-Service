@@ -264,7 +264,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     return;
                 }
 
-                console.log(group);
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
                 localStorage.setItem('managerGroupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.groupId = group.oid;
