@@ -45,6 +45,10 @@ export class AuthenticationService {
               'currentUser',
               JSON.stringify(user)
             );
+            localStorage.setItem(
+              'groupId',
+              JSON.stringify(user.groupId)
+            );
             this.currentUserSubject.next(user);
           }
 
