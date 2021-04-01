@@ -95,8 +95,7 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
     priceShiftSubscription: any;
     priceShiftLoading: boolean;
 
-    currentPricesSubscription: Subscription;
-    stagedPricesSubscription: Subscription;
+    subscriptions: Subscription[] = [];
 
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
@@ -140,19 +139,19 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         this.tooltipSubscription?.unsubscribe();
         this.tailNumberFormControlSubscription?.unsubscribe();
         this.priceShiftSubscription?.unsubscribe();
-        this.stagedPricesSubscription?.unsubscribe();
-        this.currentPricesSubscription?.unsubscribe();
+        this.subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
     resetAll() {
         this.currentPrices = undefined;
         this.stagedPrices = undefined;
         this.NgxUiLoader.startLoader(this.pricingLoader);
-        this.loadCurrentFboPrices().subscribe(() => {
-            this.loadStagedFboPrices().subscribe(() => {
-                this.NgxUiLoader.stopLoader(this.pricingLoader);
-            });
-        });
+        this.subscriptions.push(
+            this.loadCurrentFboPrices().subscribe(() => {
+                this.subscriptions.push(this.loadStagedFboPrices().subscribe(() => {
+                    this.NgxUiLoader.stopLoader(this.pricingLoader);
+                }));
+            }));
         this.loadFeesAndTaxes();
         this.checkDefaultTemplate();
     }
@@ -475,12 +474,14 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
             this.fboPricesService
                 .suspendPricing(oid)
                 .subscribe(() => {
-                    this.loadCurrentFboPrices().subscribe(() => {
-                        if (product === 'retail') {
-                            this.isLoadingRetail = false;
-                        }
-                        this.isLoadingCost = false;
-                    });
+                    this.subscriptions.push(
+                        this.loadCurrentFboPrices().subscribe(() => {
+                            if (product === 'retail') {
+                                this.isLoadingRetail = false;
+                            }
+                            this.isLoadingCost = false;
+                        })
+                    );
                 });
         }
     }
@@ -624,9 +625,9 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         this.fboPricesService
             .checkifExistFboPrice(this.sharedService.currentUser.fboId, price)
             .subscribe(() => {
-                this.loadCurrentFboPrices().subscribe(() => {
+                this.subscriptions.push(this.loadCurrentFboPrices().subscribe(() => {
                     this.NgxUiLoader.stopLoader(this.pricingLoader);
-                });
+                }));
             });
     }
 
@@ -792,10 +793,11 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     private loadAllPrices() {
         this.priceShiftLoading = true;
-        this.currentPricesSubscription = this.loadCurrentFboPrices().subscribe(() => {
-            this.stagedPricesSubscription = this.loadStagedFboPrices().subscribe(() => {
-                this.priceShiftLoading = false;
-            });
-        });
+        this.subscriptions.push(
+            this.loadCurrentFboPrices().subscribe(() => {
+                this.subscriptions.push(this.loadStagedFboPrices().subscribe(() => {
+                    this.priceShiftLoading = false;
+                }));
+            }));
     }
 }
