@@ -683,8 +683,7 @@ namespace FBOLinx.Web.Controllers
 
                 await pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
                 
-                var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.GroupId == groupId).ToListAsync();
-
+                var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.Fboid == fboId || x.Fboid == 0).ToListAsync();
                 
                 var customerAircraft = 
                     (from aircraftByCustomer in (await _context.CustomerAircrafts.Where(x => x.GroupId == groupId).ToListAsync())
@@ -709,17 +708,7 @@ namespace FBOLinx.Web.Controllers
 
                 List<CustomersGridViewModel> customerGridVM = (
                         from cg in customerInfoByGroup
-                        join ccot in companyTypes on new
-                            {
-                                CustomerCompanyType = (cg.CustomerCompanyType ?? 0),
-                                cg.GroupId
-                            }
-                            equals new
-                            {
-                                CustomerCompanyType = ccot.Oid,
-                                GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId
-                            }
-                            into leftJoinCCOT
+                        join ccot in companyTypes on cg.CustomerCompanyType equals ccot.Oid into leftJoinCCOT
                         from ccot in leftJoinCCOT.DefaultIfEmpty()
                         join ai in pricingTemplates on new
                             {
