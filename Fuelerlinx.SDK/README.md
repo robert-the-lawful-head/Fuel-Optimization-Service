@@ -213,6 +213,7 @@ Class | Method | HTTP request | Description
 *FeeApi* | [**GetServicesAndFeesByCompanyId**](docs/FeeApi.md#getservicesandfeesbycompanyid) | **GET** /api/Fee/company-specific/by-company-id/{companyId} | 
 *FeeApi* | [**PostServicesAndFeesByCompany**](docs/FeeApi.md#postservicesandfeesbycompany) | **POST** /api/Fee/company-specific | Add a new company-specific service/fee.
 *FeeApi* | [**UpdateServicesAndFeesByCompany**](docs/FeeApi.md#updateservicesandfeesbycompany) | **PUT** /api/Fee/company-specific | Update a company-specific service/fee.
+*FileDataApi* | [**DeleteBytescoutFileData**](docs/FileDataApi.md#deletebytescoutfiledata) | **DELETE** /api/FileData/bytescout-file-data/{id} | Deletes Bytescout file data by Id
 *FileDataApi* | [**DeleteImageFileData**](docs/FileDataApi.md#deleteimagefiledata) | **DELETE** /api/FileData/image-file-data/{id} | Internal use only - Delete image file data by {id}.
 *FileDataApi* | [**DeleteImportFileCapture**](docs/FileDataApi.md#deleteimportfilecapture) | **DELETE** /api/FileData/import-file-capture/{id} | Internal use only - Delete a file captured during an import.
 *FileDataApi* | [**DeleteJobFileData**](docs/FileDataApi.md#deletejobfiledata) | **DELETE** /api/FileData/job-file-data/{id} | Deletes job file data by Id
@@ -221,6 +222,7 @@ Class | Method | HTTP request | Description
 *FileDataApi* | [**DeleteSupportedInvoiceImportFileData**](docs/FileDataApi.md#deletesupportedinvoiceimportfiledata) | **DELETE** /api/FileData/supported-invoice-import-file-data/{id} | Deletes Supported Invoice Import File Data
 *FileDataApi* | [**DeleteSupportedPriceSheetFileData**](docs/FileDataApi.md#deletesupportedpricesheetfiledata) | **DELETE** /api/FileData/supported-price-sheet-file-data/{id} | Deletes Supported Price Sheet File Data By Id
 *FileDataApi* | [**DeleteTransactionFileData**](docs/FileDataApi.md#deletetransactionfiledata) | **DELETE** /api/FileData/transaction-file-data/{id} | Delete transaction file data by the provided {id}.
+*FileDataApi* | [**GetBytescoutFileData**](docs/FileDataApi.md#getbytescoutfiledata) | **GET** /api/FileData/bytescout-file-data/by-Id/{id} | Gets Bytescout file data by Id
 *FileDataApi* | [**GetImageFileDataById**](docs/FileDataApi.md#getimagefiledatabyid) | **GET** /api/FileData/image-file-data/{id} | Internal use only - Fetch image file data by {id}.
 *FileDataApi* | [**GetImportFileCaptureById**](docs/FileDataApi.md#getimportfilecapturebyid) | **GET** /api/FileData/import-file-capture/{id} | Internal use only - Fetch a captured file import by Id.
 *FileDataApi* | [**GetPriceSheetFileData**](docs/FileDataApi.md#getpricesheetfiledata) | **GET** /api/FileData/price-sheet-file-data/{id} | Fetch price sheet file data captured during an upload of pricing info.
@@ -230,6 +232,7 @@ Class | Method | HTTP request | Description
 *FileDataApi* | [**GetSupportedPriceSheetFileData**](docs/FileDataApi.md#getsupportedpricesheetfiledata) | **GET** /api/FileData/supported-price-sheet-file-data/by-Id/{id} | Get Supported Price Sheet File Data By Id
 *FileDataApi* | [**GetTransactionFileData**](docs/FileDataApi.md#gettransactionfiledata) | **GET** /api/FileData/transaction-file-data/{id} | Fetch transaction file data for an invoice, receipt, or fuel release.
 *FileDataApi* | [**GetsJobFileDataById**](docs/FileDataApi.md#getsjobfiledatabyid) | **GET** /api/FileData/job-file-data/by-id/{id} | Gets job file data by Id
+*FileDataApi* | [**PostBytescoutFileData**](docs/FileDataApi.md#postbytescoutfiledata) | **POST** /api/FileData/bytescout-file-data | Post Bytescout file data
 *FileDataApi* | [**PostImageFileData**](docs/FileDataApi.md#postimagefiledata) | **POST** /api/FileData/image-file-data | Internal use only - Post new image file data.
 *FileDataApi* | [**PostImportFileCapture**](docs/FileDataApi.md#postimportfilecapture) | **POST** /api/FileData/import-file-capture | Internal use only - Add a captured file that was recently imported.
 *FileDataApi* | [**PostJobFileData**](docs/FileDataApi.md#postjobfiledata) | **POST** /api/FileData/job-file-data | Post job file data
@@ -238,6 +241,7 @@ Class | Method | HTTP request | Description
 *FileDataApi* | [**PostSupportedInvoiceImportFileData**](docs/FileDataApi.md#postsupportedinvoiceimportfiledata) | **POST** /api/FileData/supported-invoice-import-file-data | Post Supported Invoice Import File Data
 *FileDataApi* | [**PostSupportedPriceSheetFileData**](docs/FileDataApi.md#postsupportedpricesheetfiledata) | **POST** /api/FileData/supported-price-sheet-file-data | Post Supported Price Sheet File Data
 *FileDataApi* | [**PostTransactionFileData**](docs/FileDataApi.md#posttransactionfiledata) | **POST** /api/FileData/transaction-file-data | Add transaction file data for an invoice, receipt, or fuel release.  The file data should be passed as a base64 string.
+*FileDataApi* | [**UpdateBytescoutFileData**](docs/FileDataApi.md#updatebytescoutfiledata) | **PUT** /api/FileData/bytescout-file-data/{id} | Updates Bytescout file data by Id
 *FileDataApi* | [**UpdateImageFileData**](docs/FileDataApi.md#updateimagefiledata) | **PUT** /api/FileData/image-file-data/{id} | Internal use only - Update an existing record of image file data.
 *FileDataApi* | [**UpdateImportFileCapture**](docs/FileDataApi.md#updateimportfilecapture) | **PUT** /api/FileData/import-file-capture/{id} | Internal use only - Update a file captured during an import.
 *FileDataApi* | [**UpdateJobFileData**](docs/FileDataApi.md#updatejobfiledata) | **PUT** /api/FileData/job-file-data | Updates job file data
@@ -318,13 +322,17 @@ Class | Method | HTTP request | Description
 *IntegrationFuelOrderDetailsApi* | [**AddIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#addintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails | Internal use only - associates a fuel order transaction with an integration record.
 *IntegrationFuelOrderDetailsApi* | [**CancelIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#cancelintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails/cancel | Internal use only - cancel an integration record from being tied to a transaction and notify the partner.
 *IntegrationFuelOrderDetailsApi* | [**UpdateIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#updateintegrationfuelorderdetails) | **PUT** /api/IntegrationFuelOrderDetails | Internal use only - update an integration record associated with a fuel order transaction.
+*InvoiceManagementApi* | [**DeleteBytescoutFile**](docs/InvoiceManagementApi.md#deletebytescoutfile) | **DELETE** /api/InvoiceManagement/bytescout-file/{id} | Deletes Bytescout file by Id
 *InvoiceManagementApi* | [**DeleteSupportedInvoiceImportFileTests**](docs/InvoiceManagementApi.md#deletesupportedinvoiceimportfiletests) | **DELETE** /api/InvoiceManagement/supported-invoice-import-file-tests/{id} | Deletes Supported Invoice Import File Tests by Id
 *InvoiceManagementApi* | [**DeleteSupportedInvoiceImportFiles**](docs/InvoiceManagementApi.md#deletesupportedinvoiceimportfiles) | **DELETE** /api/InvoiceManagement/supported-invoice-import-files/{id} | Deletes Supported Invoice Import Files
+*InvoiceManagementApi* | [**GetBytescoutFile**](docs/InvoiceManagementApi.md#getbytescoutfile) | **GET** /api/InvoiceManagement/bytescout-file/by-id/{id} | Gets Bytescout file by Id
 *InvoiceManagementApi* | [**GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId**](docs/InvoiceManagementApi.md#getsupportedinvoiceimportfiletestsbysupportedinvoiceimportfileid) | **GET** /api/InvoiceManagement/supported-invoice-import-file-tests/by-supportedInvoiceImportFileId/{supportedInvoiceImportFileId} | Get Supported Invoice Import File Tests By supportedInvoiceImportFileId
 *InvoiceManagementApi* | [**GetSupportedInvoiceImportFilesByFuelVendorId**](docs/InvoiceManagementApi.md#getsupportedinvoiceimportfilesbyfuelvendorid) | **GET** /api/InvoiceManagement/supported-invoice-import-files/by-fuel-vendor/{fuelVendorId} | Gets Supported Invoice Import Files By FuelVendorId
 *InvoiceManagementApi* | [**GetSupportedInvoiceImportFilesById**](docs/InvoiceManagementApi.md#getsupportedinvoiceimportfilesbyid) | **GET** /api/InvoiceManagement/supported-invoice-import-files/{id} | Gets Supported Invoice Import Files By Id
+*InvoiceManagementApi* | [**PostBytescoutFile**](docs/InvoiceManagementApi.md#postbytescoutfile) | **POST** /api/InvoiceManagement/bytescout-file | Post Bytescout files
 *InvoiceManagementApi* | [**PostSupportedInvoiceImportFileTests**](docs/InvoiceManagementApi.md#postsupportedinvoiceimportfiletests) | **POST** /api/InvoiceManagement/supported-invoice-import-file-tests | Post Supported Invoice Import File Tests
 *InvoiceManagementApi* | [**PostSupportedInvoiceImportFiles**](docs/InvoiceManagementApi.md#postsupportedinvoiceimportfiles) | **POST** /api/InvoiceManagement/supported-invoice-import-files | Post Supported Invoice Import Files
+*InvoiceManagementApi* | [**UpdateBytescoutFile**](docs/InvoiceManagementApi.md#updatebytescoutfile) | **PUT** /api/InvoiceManagement/bytescout-file | Updates Bytescout files by Id
 *InvoiceManagementApi* | [**UpdateSupportedInvoiceImportFileTests**](docs/InvoiceManagementApi.md#updatesupportedinvoiceimportfiletests) | **PUT** /api/InvoiceManagement/supported-invoice-import-file-tests | Updates Supported Invoice Import File Tests
 *InvoiceManagementApi* | [**UpdateSupportedInvoiceImportFiles**](docs/InvoiceManagementApi.md#updatesupportedinvoiceimportfiles) | **PUT** /api/InvoiceManagement/supported-invoice-import-files | Updates Supported Invoice Import Files
 *JobQueueApi* | [**DeleteJobQueue**](docs/JobQueueApi.md#deletejobqueue) | **DELETE** /api/JobQueue/job-queue/{id} | Delete job queue by Id
@@ -577,6 +585,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.Background](docs/Background.md)
  - [IO.Swagger.Model.BuildVersionResponse](docs/BuildVersionResponse.md)
  - [IO.Swagger.Model.ButtonOptions](docs/ButtonOptions.md)
+ - [IO.Swagger.Model.BytescoutFileDataDTO](docs/BytescoutFileDataDTO.md)
+ - [IO.Swagger.Model.BytescoutFileDataResponse](docs/BytescoutFileDataResponse.md)
+ - [IO.Swagger.Model.BytescoutFilesDTO](docs/BytescoutFilesDTO.md)
+ - [IO.Swagger.Model.BytescoutFilesResponse](docs/BytescoutFilesResponse.md)
  - [IO.Swagger.Model.CSSObject](docs/CSSObject.md)
  - [IO.Swagger.Model.CalculateRouteDetailsRequest](docs/CalculateRouteDetailsRequest.md)
  - [IO.Swagger.Model.CalculateRouteDetailsResponse](docs/CalculateRouteDetailsResponse.md)
@@ -641,6 +653,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyResponse](docs/DeleteAirportDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconProcessResponse](docs/DeleteAutoReconProcessResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconciledFileResponse](docs/DeleteAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.DeleteBytescoutFileDataResponse](docs/DeleteBytescoutFileDataResponse.md)
+ - [IO.Swagger.Model.DeleteBytescoutFileResponse](docs/DeleteBytescoutFileResponse.md)
  - [IO.Swagger.Model.DeleteCompanyActiveIntegrationResponse](docs/DeleteCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.DeleteCompanyAircraftChangeLogResponse](docs/DeleteCompanyAircraftChangeLogResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFboChangeLogResponse](docs/DeleteCompanyFboChangeLogResponse.md)
@@ -874,6 +888,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostAutoReconProcessResponse](docs/PostAutoReconProcessResponse.md)
  - [IO.Swagger.Model.PostAutoReconciledFileRequest](docs/PostAutoReconciledFileRequest.md)
  - [IO.Swagger.Model.PostAutoReconciledFileResponse](docs/PostAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.PostBytescoutFileDataRequest](docs/PostBytescoutFileDataRequest.md)
+ - [IO.Swagger.Model.PostBytescoutFileDataResponse](docs/PostBytescoutFileDataResponse.md)
+ - [IO.Swagger.Model.PostBytescoutFilesRequest](docs/PostBytescoutFilesRequest.md)
+ - [IO.Swagger.Model.PostBytescoutFilesResponse](docs/PostBytescoutFilesResponse.md)
  - [IO.Swagger.Model.PostCompanyActiveIntegrationRequest](docs/PostCompanyActiveIntegrationRequest.md)
  - [IO.Swagger.Model.PostCompanyActiveIntegrationResponse](docs/PostCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.PostCompanyAircraftChangeLogRequest](docs/PostCompanyAircraftChangeLogRequest.md)
@@ -1143,6 +1161,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateAutoReconProcessResponse](docs/UpdateAutoReconProcessResponse.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileRequest](docs/UpdateAutoReconciledFileRequest.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileResponse](docs/UpdateAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.UpdateBytescoutFileDataRequest](docs/UpdateBytescoutFileDataRequest.md)
+ - [IO.Swagger.Model.UpdateBytescoutFileDataResponse](docs/UpdateBytescoutFileDataResponse.md)
+ - [IO.Swagger.Model.UpdateBytescoutFilesRequest](docs/UpdateBytescoutFilesRequest.md)
+ - [IO.Swagger.Model.UpdateBytescoutFilesResponse](docs/UpdateBytescoutFilesResponse.md)
  - [IO.Swagger.Model.UpdateCompanyAccountSettingsRequest](docs/UpdateCompanyAccountSettingsRequest.md)
  - [IO.Swagger.Model.UpdateCompanyAccountSettingsResponse](docs/UpdateCompanyAccountSettingsResponse.md)
  - [IO.Swagger.Model.UpdateCompanyActiveIntegrationRequest](docs/UpdateCompanyActiveIntegrationRequest.md)

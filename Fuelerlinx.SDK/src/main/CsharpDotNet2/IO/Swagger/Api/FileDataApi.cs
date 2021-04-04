@@ -12,6 +12,12 @@ namespace IO.Swagger.Api
     public interface IFileDataApi
     {
         /// <summary>
+        /// Deletes Bytescout file data by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteBytescoutFileDataResponse</returns>
+        DeleteBytescoutFileDataResponse DeleteBytescoutFileData (int? id);
+        /// <summary>
         /// Internal use only - Delete image file data by {id}. 
         /// </summary>
         /// <param name="id"></param>
@@ -59,6 +65,12 @@ namespace IO.Swagger.Api
         /// <param name="id"></param>
         /// <returns>DeleteTransactionFileDataResponse</returns>
         DeleteTransactionFileDataResponse DeleteTransactionFileData (int? id);
+        /// <summary>
+        /// Gets Bytescout file data by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>BytescoutFileDataResponse</returns>
+        BytescoutFileDataResponse GetBytescoutFileData (int? id);
         /// <summary>
         /// Internal use only - Fetch image file data by {id}. 
         /// </summary>
@@ -115,6 +127,12 @@ namespace IO.Swagger.Api
         /// <returns>JobFileDataResponse</returns>
         JobFileDataResponse GetsJobFileDataById (int? id);
         /// <summary>
+        /// Post Bytescout file data 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostBytescoutFileDataResponse</returns>
+        PostBytescoutFileDataResponse PostBytescoutFileData (PostBytescoutFileDataRequest body);
+        /// <summary>
         /// Internal use only - Post new image file data. 
         /// </summary>
         /// <param name="body"></param>
@@ -162,6 +180,13 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostTransactionFileDataResponse</returns>
         PostTransactionFileDataResponse PostTransactionFileData (PostTransactionFileDataRequest body);
+        /// <summary>
+        /// Updates Bytescout file data by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="body"></param>
+        /// <returns>UpdateBytescoutFileDataResponse</returns>
+        UpdateBytescoutFileDataResponse UpdateBytescoutFileData (int? id, UpdateBytescoutFileDataRequest body);
         /// <summary>
         /// Internal use only - Update an existing record of image file data. 
         /// </summary>
@@ -268,6 +293,43 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        /// Deletes Bytescout file data by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteBytescoutFileDataResponse</returns>            
+        public DeleteBytescoutFileDataResponse DeleteBytescoutFileData (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteBytescoutFileData");
+            
+    
+            var path = "/api/FileData/bytescout-file-data/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteBytescoutFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteBytescoutFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteBytescoutFileDataResponse) ApiClient.Deserialize(response.Content, typeof(DeleteBytescoutFileDataResponse), response.Headers);
+        }
     
         /// <summary>
         /// Internal use only - Delete image file data by {id}. 
@@ -563,6 +625,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteTransactionFileData: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteTransactionFileDataResponse) ApiClient.Deserialize(response.Content, typeof(DeleteTransactionFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Gets Bytescout file data by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>BytescoutFileDataResponse</returns>            
+        public BytescoutFileDataResponse GetBytescoutFileData (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetBytescoutFileData");
+            
+    
+            var path = "/api/FileData/bytescout-file-data/by-Id/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetBytescoutFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetBytescoutFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (BytescoutFileDataResponse) ApiClient.Deserialize(response.Content, typeof(BytescoutFileDataResponse), response.Headers);
         }
     
         /// <summary>
@@ -904,6 +1003,40 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         }
     
         /// <summary>
+        /// Post Bytescout file data 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostBytescoutFileDataResponse</returns>            
+        public PostBytescoutFileDataResponse PostBytescoutFileData (PostBytescoutFileDataRequest body)
+        {
+            
+    
+            var path = "/api/FileData/bytescout-file-data";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostBytescoutFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostBytescoutFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostBytescoutFileDataResponse) ApiClient.Deserialize(response.Content, typeof(PostBytescoutFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Internal use only - Post new image file data. 
         /// </summary>
         /// <param name="body"></param> 
@@ -1173,6 +1306,45 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
                 throw new ApiException ((int)response.StatusCode, "Error calling PostTransactionFileData: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostTransactionFileDataResponse) ApiClient.Deserialize(response.Content, typeof(PostTransactionFileDataResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Bytescout file data by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <param name="body"></param> 
+        /// <returns>UpdateBytescoutFileDataResponse</returns>            
+        public UpdateBytescoutFileDataResponse UpdateBytescoutFileData (int? id, UpdateBytescoutFileDataRequest body)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling UpdateBytescoutFileData");
+            
+    
+            var path = "/api/FileData/bytescout-file-data/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateBytescoutFileData: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateBytescoutFileData: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateBytescoutFileDataResponse) ApiClient.Deserialize(response.Content, typeof(UpdateBytescoutFileDataResponse), response.Headers);
         }
     
         /// <summary>

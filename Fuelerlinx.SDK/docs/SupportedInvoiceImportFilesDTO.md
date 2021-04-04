@@ -9,7 +9,8 @@ Name | Type | Description | Notes
 **DateAddedUtc** | **DateTime?** |  | [optional] 
 **CompanyId** | **int?** |  | [optional] 
 **FuelerId** | **int?** |  | [optional] 
-**SupportedInvoiceImportFileTests** | [**List&lt;SupportedInvoiceImportFileTestsDTO&gt;**](SupportedInvoiceImportFileTestsDTO.md) |  | [optional] 
+**SupportedInvoiceImportFileTests** | [**SupportedInvoiceImportFileTestsDTO**](SupportedInvoiceImportFileTestsDTO.md) |  | [optional] 
+**Company** | [**CompanyDTO**](CompanyDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

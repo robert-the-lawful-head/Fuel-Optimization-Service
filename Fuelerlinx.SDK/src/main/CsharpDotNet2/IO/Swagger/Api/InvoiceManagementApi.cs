@@ -12,6 +12,12 @@ namespace IO.Swagger.Api
     public interface IInvoiceManagementApi
     {
         /// <summary>
+        /// Deletes Bytescout file by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteBytescoutFileResponse</returns>
+        DeleteBytescoutFileResponse DeleteBytescoutFile (int? id);
+        /// <summary>
         /// Deletes Supported Invoice Import File Tests by Id 
         /// </summary>
         /// <param name="id"></param>
@@ -23,6 +29,12 @@ namespace IO.Swagger.Api
         /// <param name="id"></param>
         /// <returns>DeleteSupportedInvoiceImportFilesResponse</returns>
         DeleteSupportedInvoiceImportFilesResponse DeleteSupportedInvoiceImportFiles (int? id);
+        /// <summary>
+        /// Gets Bytescout file by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>BytescoutFilesResponse</returns>
+        BytescoutFilesResponse GetBytescoutFile (int? id);
         /// <summary>
         /// Get Supported Invoice Import File Tests By supportedInvoiceImportFileId 
         /// </summary>
@@ -42,6 +54,12 @@ namespace IO.Swagger.Api
         /// <returns>SupportedInvoiceImportFilesResponse</returns>
         SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesById (int? id);
         /// <summary>
+        /// Post Bytescout files 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostBytescoutFilesResponse</returns>
+        PostBytescoutFilesResponse PostBytescoutFile (PostBytescoutFilesRequest body);
+        /// <summary>
         /// Post Supported Invoice Import File Tests 
         /// </summary>
         /// <param name="body"></param>
@@ -53,6 +71,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostSupportedInvoiceImportFilesResponse</returns>
         PostSupportedInvoiceImportFilesResponse PostSupportedInvoiceImportFiles (PostSupportedInvoiceImportFilesRequest body);
+        /// <summary>
+        /// Updates Bytescout files by Id 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateBytescoutFilesResponse</returns>
+        UpdateBytescoutFilesResponse UpdateBytescoutFile (UpdateBytescoutFilesRequest body);
         /// <summary>
         /// Updates Supported Invoice Import File Tests 
         /// </summary>
@@ -119,6 +143,43 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        /// Deletes Bytescout file by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteBytescoutFileResponse</returns>            
+        public DeleteBytescoutFileResponse DeleteBytescoutFile (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteBytescoutFile");
+            
+    
+            var path = "/api/InvoiceManagement/bytescout-file/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteBytescoutFile: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteBytescoutFile: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteBytescoutFileResponse) ApiClient.Deserialize(response.Content, typeof(DeleteBytescoutFileResponse), response.Headers);
+        }
     
         /// <summary>
         /// Deletes Supported Invoice Import File Tests by Id 
@@ -192,6 +253,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceImportFiles: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteSupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedInvoiceImportFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Gets Bytescout file by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>BytescoutFilesResponse</returns>            
+        public BytescoutFilesResponse GetBytescoutFile (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetBytescoutFile");
+            
+    
+            var path = "/api/InvoiceManagement/bytescout-file/by-id/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetBytescoutFile: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetBytescoutFile: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (BytescoutFilesResponse) ApiClient.Deserialize(response.Content, typeof(BytescoutFilesResponse), response.Headers);
         }
     
         /// <summary>
@@ -306,6 +404,40 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Post Bytescout files 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostBytescoutFilesResponse</returns>            
+        public PostBytescoutFilesResponse PostBytescoutFile (PostBytescoutFilesRequest body)
+        {
+            
+    
+            var path = "/api/InvoiceManagement/bytescout-file";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostBytescoutFile: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostBytescoutFile: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostBytescoutFilesResponse) ApiClient.Deserialize(response.Content, typeof(PostBytescoutFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Post Supported Invoice Import File Tests 
         /// </summary>
         /// <param name="body"></param> 
@@ -371,6 +503,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFiles: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostSupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceImportFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Bytescout files by Id 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateBytescoutFilesResponse</returns>            
+        public UpdateBytescoutFilesResponse UpdateBytescoutFile (UpdateBytescoutFilesRequest body)
+        {
+            
+    
+            var path = "/api/InvoiceManagement/bytescout-file";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateBytescoutFile: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateBytescoutFile: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateBytescoutFilesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateBytescoutFilesResponse), response.Headers);
         }
     
         /// <summary>

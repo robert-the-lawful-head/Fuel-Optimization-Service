@@ -4,6 +4,7 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**DeleteBytescoutFileData**](FileDataApi.md#deletebytescoutfiledata) | **DELETE** /api/FileData/bytescout-file-data/{id} | Deletes Bytescout file data by Id
 [**DeleteImageFileData**](FileDataApi.md#deleteimagefiledata) | **DELETE** /api/FileData/image-file-data/{id} | Internal use only - Delete image file data by {id}.
 [**DeleteImportFileCapture**](FileDataApi.md#deleteimportfilecapture) | **DELETE** /api/FileData/import-file-capture/{id} | Internal use only - Delete a file captured during an import.
 [**DeleteJobFileData**](FileDataApi.md#deletejobfiledata) | **DELETE** /api/FileData/job-file-data/{id} | Deletes job file data by Id
@@ -12,6 +13,7 @@ Method | HTTP request | Description
 [**DeleteSupportedInvoiceImportFileData**](FileDataApi.md#deletesupportedinvoiceimportfiledata) | **DELETE** /api/FileData/supported-invoice-import-file-data/{id} | Deletes Supported Invoice Import File Data
 [**DeleteSupportedPriceSheetFileData**](FileDataApi.md#deletesupportedpricesheetfiledata) | **DELETE** /api/FileData/supported-price-sheet-file-data/{id} | Deletes Supported Price Sheet File Data By Id
 [**DeleteTransactionFileData**](FileDataApi.md#deletetransactionfiledata) | **DELETE** /api/FileData/transaction-file-data/{id} | Delete transaction file data by the provided {id}.
+[**GetBytescoutFileData**](FileDataApi.md#getbytescoutfiledata) | **GET** /api/FileData/bytescout-file-data/by-Id/{id} | Gets Bytescout file data by Id
 [**GetImageFileDataById**](FileDataApi.md#getimagefiledatabyid) | **GET** /api/FileData/image-file-data/{id} | Internal use only - Fetch image file data by {id}.
 [**GetImportFileCaptureById**](FileDataApi.md#getimportfilecapturebyid) | **GET** /api/FileData/import-file-capture/{id} | Internal use only - Fetch a captured file import by Id.
 [**GetPriceSheetFileData**](FileDataApi.md#getpricesheetfiledata) | **GET** /api/FileData/price-sheet-file-data/{id} | Fetch price sheet file data captured during an upload of pricing info.
@@ -21,6 +23,7 @@ Method | HTTP request | Description
 [**GetSupportedPriceSheetFileData**](FileDataApi.md#getsupportedpricesheetfiledata) | **GET** /api/FileData/supported-price-sheet-file-data/by-Id/{id} | Get Supported Price Sheet File Data By Id
 [**GetTransactionFileData**](FileDataApi.md#gettransactionfiledata) | **GET** /api/FileData/transaction-file-data/{id} | Fetch transaction file data for an invoice, receipt, or fuel release.
 [**GetsJobFileDataById**](FileDataApi.md#getsjobfiledatabyid) | **GET** /api/FileData/job-file-data/by-id/{id} | Gets job file data by Id
+[**PostBytescoutFileData**](FileDataApi.md#postbytescoutfiledata) | **POST** /api/FileData/bytescout-file-data | Post Bytescout file data
 [**PostImageFileData**](FileDataApi.md#postimagefiledata) | **POST** /api/FileData/image-file-data | Internal use only - Post new image file data.
 [**PostImportFileCapture**](FileDataApi.md#postimportfilecapture) | **POST** /api/FileData/import-file-capture | Internal use only - Add a captured file that was recently imported.
 [**PostJobFileData**](FileDataApi.md#postjobfiledata) | **POST** /api/FileData/job-file-data | Post job file data
@@ -29,6 +32,7 @@ Method | HTTP request | Description
 [**PostSupportedInvoiceImportFileData**](FileDataApi.md#postsupportedinvoiceimportfiledata) | **POST** /api/FileData/supported-invoice-import-file-data | Post Supported Invoice Import File Data
 [**PostSupportedPriceSheetFileData**](FileDataApi.md#postsupportedpricesheetfiledata) | **POST** /api/FileData/supported-price-sheet-file-data | Post Supported Price Sheet File Data
 [**PostTransactionFileData**](FileDataApi.md#posttransactionfiledata) | **POST** /api/FileData/transaction-file-data | Add transaction file data for an invoice, receipt, or fuel release.  The file data should be passed as a base64 string.
+[**UpdateBytescoutFileData**](FileDataApi.md#updatebytescoutfiledata) | **PUT** /api/FileData/bytescout-file-data/{id} | Updates Bytescout file data by Id
 [**UpdateImageFileData**](FileDataApi.md#updateimagefiledata) | **PUT** /api/FileData/image-file-data/{id} | Internal use only - Update an existing record of image file data.
 [**UpdateImportFileCapture**](FileDataApi.md#updateimportfilecapture) | **PUT** /api/FileData/import-file-capture/{id} | Internal use only - Update a file captured during an import.
 [**UpdateJobFileData**](FileDataApi.md#updatejobfiledata) | **PUT** /api/FileData/job-file-data | Updates job file data
@@ -38,6 +42,75 @@ Method | HTTP request | Description
 [**UpdateSupportedPriceSheetFileData**](FileDataApi.md#updatesupportedpricesheetfiledata) | **PUT** /api/FileData/supported-price-sheet-file-data/{id} | Updates Supported Price Sheet File Data
 [**UpdateTransactionFileData**](FileDataApi.md#updatetransactionfiledata) | **PUT** /api/FileData/transaction-file-data | Update transaction file data for an invoice, receipt, or fuel release.
 
+
+<a name="deletebytescoutfiledata"></a>
+# **DeleteBytescoutFileData**
+> DeleteBytescoutFileDataResponse DeleteBytescoutFileData (int? id)
+
+Deletes Bytescout file data by Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteBytescoutFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Deletes Bytescout file data by Id
+                DeleteBytescoutFileDataResponse result = apiInstance.DeleteBytescoutFileData(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.DeleteBytescoutFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteBytescoutFileDataResponse**](DeleteBytescoutFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 <a name="deleteimagefiledata"></a>
 # **DeleteImageFileData**
@@ -579,6 +652,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteTransactionFileDataResponse**](DeleteTransactionFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getbytescoutfiledata"></a>
+# **GetBytescoutFileData**
+> BytescoutFileDataResponse GetBytescoutFileData (int? id)
+
+Gets Bytescout file data by Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetBytescoutFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Gets Bytescout file data by Id
+                BytescoutFileDataResponse result = apiInstance.GetBytescoutFileData(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.GetBytescoutFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**BytescoutFileDataResponse**](BytescoutFileDataResponse.md)
 
 ### Authorization
 
@@ -1214,6 +1356,75 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="postbytescoutfiledata"></a>
+# **PostBytescoutFileData**
+> PostBytescoutFileDataResponse PostBytescoutFileData (PostBytescoutFileDataRequest body)
+
+Post Bytescout file data
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostBytescoutFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var body = new PostBytescoutFileDataRequest(); // PostBytescoutFileDataRequest |  (optional) 
+
+            try
+            {
+                // Post Bytescout file data
+                PostBytescoutFileDataResponse result = apiInstance.PostBytescoutFileData(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.PostBytescoutFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostBytescoutFileDataRequest**](PostBytescoutFileDataRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostBytescoutFileDataResponse**](PostBytescoutFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="postimagefiledata"></a>
 # **PostImageFileData**
 > PostImageFileDataResponse PostImageFileData (PostImageFileDataRequest body)
@@ -1754,6 +1965,77 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PostTransactionFileDataResponse**](PostTransactionFileDataResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatebytescoutfiledata"></a>
+# **UpdateBytescoutFileData**
+> UpdateBytescoutFileDataResponse UpdateBytescoutFileData (int? id, UpdateBytescoutFileDataRequest body)
+
+Updates Bytescout file data by Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateBytescoutFileDataExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FileDataApi();
+            var id = 56;  // int? | 
+            var body = new UpdateBytescoutFileDataRequest(); // UpdateBytescoutFileDataRequest |  (optional) 
+
+            try
+            {
+                // Updates Bytescout file data by Id
+                UpdateBytescoutFileDataResponse result = apiInstance.UpdateBytescoutFileData(id, body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FileDataApi.UpdateBytescoutFileData: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+ **body** | [**UpdateBytescoutFileDataRequest**](UpdateBytescoutFileDataRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateBytescoutFileDataResponse**](UpdateBytescoutFileDataResponse.md)
 
 ### Authorization
 

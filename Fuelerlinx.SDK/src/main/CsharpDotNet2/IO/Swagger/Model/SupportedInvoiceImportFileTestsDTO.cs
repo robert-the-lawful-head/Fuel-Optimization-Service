@@ -55,11 +55,11 @@ namespace IO.Swagger.Model {
     public string ExpectedTails { get; set; }
 
     /// <summary>
-    /// Gets or Sets HasFboonAllItems
+    /// Gets or Sets HasFboOnAllItems
     /// </summary>
-    [DataMember(Name="hasFboonAllItems", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "hasFboonAllItems")]
-    public bool? HasFboonAllItems { get; set; }
+    [DataMember(Name="hasFboOnAllItems", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "hasFboOnAllItems")]
+    public bool? HasFboOnAllItems { get; set; }
 
 
     /// <summary>
@@ -75,7 +75,7 @@ namespace IO.Swagger.Model {
       sb.Append("  ExpectedInvoiceNumbersCount: ").Append(ExpectedInvoiceNumbersCount).Append("\n");
       sb.Append("  ExpectedTotal: ").Append(ExpectedTotal).Append("\n");
       sb.Append("  ExpectedTails: ").Append(ExpectedTails).Append("\n");
-      sb.Append("  HasFboonAllItems: ").Append(HasFboonAllItems).Append("\n");
+      sb.Append("  HasFboOnAllItems: ").Append(HasFboOnAllItems).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
