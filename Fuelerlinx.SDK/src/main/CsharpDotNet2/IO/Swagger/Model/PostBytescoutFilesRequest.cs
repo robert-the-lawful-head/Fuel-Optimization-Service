@@ -13,18 +13,18 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class PostBytescoutFilesRequest {
     /// <summary>
-    /// Gets or Sets Id
-    /// </summary>
-    [DataMember(Name="id", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "id")]
-    public int? Id { get; set; }
-
-    /// <summary>
     /// Gets or Sets FileName
     /// </summary>
     [DataMember(Name="fileName", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "fileName")]
     public string FileName { get; set; }
+
+    /// <summary>
+    /// Gets or Sets BytescoutFileDataId
+    /// </summary>
+    [DataMember(Name="bytescoutFileDataId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "bytescoutFileDataId")]
+    public int? BytescoutFileDataId { get; set; }
 
     /// <summary>
     /// Gets or Sets DateAddedUtc
@@ -41,8 +41,8 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class PostBytescoutFilesRequest {\n");
-      sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  FileName: ").Append(FileName).Append("\n");
+      sb.Append("  BytescoutFileDataId: ").Append(BytescoutFileDataId).Append("\n");
       sb.Append("  DateAddedUtc: ").Append(DateAddedUtc).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
