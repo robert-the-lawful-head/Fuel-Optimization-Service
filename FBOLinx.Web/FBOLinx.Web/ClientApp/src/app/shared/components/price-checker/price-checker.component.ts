@@ -43,6 +43,8 @@ enum PriceCheckerLookupTypes {
     styleUrls: [ './price-checker.component.scss' ]
 })
 export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
+    @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
+
     public customerForTailLookup: any;
     public tailNumberForTailLookup = '';
     public customersForTail: Array<any>;
@@ -64,9 +66,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         EnumOptions.strictFlightTypeClassificationOptions;
     public sampleCalculation: PriceLookupRequest;
     public tailLoader = 'tail-loader';
-    public isPriceBreakdownCustomerActive: boolean = true;
-    @ViewChild('priceBreakdownPreview')
-    private priceBreakdownPreview: PriceBreakdownComponent;
+    public isPriceBreakdownCustomerActive = true;
 
     constructor(private sharedService: SharedService,
                 private aircraftsService: AircraftsService,
