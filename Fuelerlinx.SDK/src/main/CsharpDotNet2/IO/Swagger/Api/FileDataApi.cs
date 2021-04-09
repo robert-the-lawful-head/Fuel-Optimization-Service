@@ -45,8 +45,8 @@ namespace IO.Swagger.Api
         /// Internal use only - Delete a supported invoice file template by it&#39;s Id. 
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>DeleteSupportedInvoiceFileTemplateResponse</returns>
-        DeleteSupportedInvoiceFileTemplateResponse DeleteSupportedInvoiceFileDataTemplate (int? id);
+        /// <returns>DeleteSupportedInvoiceImportTemplateResponse</returns>
+        DeleteSupportedInvoiceImportTemplateResponse DeleteSupportedInvoiceFileDataTemplate (int? id);
         /// <summary>
         /// Deletes Supported Invoice Import File Data 
         /// </summary>
@@ -94,14 +94,14 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <param name="fuelerProcessName"></param>
         /// <param name="companyId"></param>
-        /// <returns>SupportedInvoiceFileTemplateResponse</returns>
-        SupportedInvoiceFileTemplateResponse GetSupportedInvoiceFileTemplatesByCompany (string fuelerProcessName, int? companyId);
+        /// <returns>SupportedInvoiceImportTemplateResponse</returns>
+        SupportedInvoiceImportTemplateResponse GetSupportedInvoiceFileTemplatesByCompany (string fuelerProcessName, int? companyId);
         /// <summary>
         /// Internal use only - Fetch a supported invoice file template by fuel vendor. 
         /// </summary>
         /// <param name="fuelerProcessName"></param>
-        /// <returns>SupportedInvoiceFileTemplateResponse</returns>
-        SupportedInvoiceFileTemplateResponse GetSupportedInvoiceFileTemplatesByFuelVendor (string fuelerProcessName);
+        /// <returns>SupportedInvoiceImportTemplateResponse</returns>
+        SupportedInvoiceImportTemplateResponse GetSupportedInvoiceFileTemplatesByFuelVendor (string fuelerProcessName);
         /// <summary>
         /// Get Supported Invoice Import File Data By Id 
         /// </summary>
@@ -160,8 +160,8 @@ namespace IO.Swagger.Api
         /// Internal use only - Add a supported invoice file template. 
         /// </summary>
         /// <param name="body"></param>
-        /// <returns>PostSupportedInvoiceFileTemplateResponse</returns>
-        PostSupportedInvoiceFileTemplateResponse PostSupportedInvoiceFileTemplate (PostSupportedInvoiceFileTemplateRequest body);
+        /// <returns>PostSupportedInvoiceImportTemplateResponse</returns>
+        PostSupportedInvoiceImportTemplateResponse PostSupportedInvoiceFileTemplate (PostSupportedInvoiceImportTemplateRequest body);
         /// <summary>
         /// Post Supported Invoice Import File Data 
         /// </summary>
@@ -217,8 +217,8 @@ namespace IO.Swagger.Api
         /// Internal use only - Update a supported invoice file template. 
         /// </summary>
         /// <param name="body"></param>
-        /// <returns>UpdateSupportedInvoiceFileTemplateResponse</returns>
-        UpdateSupportedInvoiceFileTemplateResponse UpdateSupportedInvoiceFileDataTemplate (UpdateSupportedFileTemplateRequest body);
+        /// <returns>UpdateSupportedInvoiceImportTemplateResponse</returns>
+        UpdateSupportedInvoiceImportTemplateResponse UpdateSupportedInvoiceFileDataTemplate (UpdateSupportedFileTemplateRequest body);
         /// <summary>
         /// Updates Supported Invoice Import File Data 
         /// </summary>
@@ -483,8 +483,8 @@ namespace IO.Swagger.Api
         /// Internal use only - Delete a supported invoice file template by it&#39;s Id. 
         /// </summary>
         /// <param name="id"></param> 
-        /// <returns>DeleteSupportedInvoiceFileTemplateResponse</returns>            
-        public DeleteSupportedInvoiceFileTemplateResponse DeleteSupportedInvoiceFileDataTemplate (int? id)
+        /// <returns>DeleteSupportedInvoiceImportTemplateResponse</returns>            
+        public DeleteSupportedInvoiceImportTemplateResponse DeleteSupportedInvoiceFileDataTemplate (int? id)
         {
             
             // verify the required parameter 'id' is set
@@ -513,7 +513,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedInvoiceFileDataTemplate: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (DeleteSupportedInvoiceFileTemplateResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedInvoiceFileTemplateResponse), response.Headers);
+            return (DeleteSupportedInvoiceImportTemplateResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedInvoiceImportTemplateResponse), response.Headers);
         }
     
         /// <summary>
@@ -780,8 +780,8 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <param name="fuelerProcessName"></param> 
         /// <param name="companyId"></param> 
-        /// <returns>SupportedInvoiceFileTemplateResponse</returns>            
-        public SupportedInvoiceFileTemplateResponse GetSupportedInvoiceFileTemplatesByCompany (string fuelerProcessName, int? companyId)
+        /// <returns>SupportedInvoiceImportTemplateResponse</returns>            
+        public SupportedInvoiceImportTemplateResponse GetSupportedInvoiceFileTemplatesByCompany (string fuelerProcessName, int? companyId)
         {
             
             // verify the required parameter 'fuelerProcessName' is set
@@ -814,15 +814,15 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceFileTemplatesByCompany: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (SupportedInvoiceFileTemplateResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceFileTemplateResponse), response.Headers);
+            return (SupportedInvoiceImportTemplateResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportTemplateResponse), response.Headers);
         }
     
         /// <summary>
         /// Internal use only - Fetch a supported invoice file template by fuel vendor. 
         /// </summary>
         /// <param name="fuelerProcessName"></param> 
-        /// <returns>SupportedInvoiceFileTemplateResponse</returns>            
-        public SupportedInvoiceFileTemplateResponse GetSupportedInvoiceFileTemplatesByFuelVendor (string fuelerProcessName)
+        /// <returns>SupportedInvoiceImportTemplateResponse</returns>            
+        public SupportedInvoiceImportTemplateResponse GetSupportedInvoiceFileTemplatesByFuelVendor (string fuelerProcessName)
         {
             
             // verify the required parameter 'fuelerProcessName' is set
@@ -851,7 +851,7 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceFileTemplatesByFuelVendor: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (SupportedInvoiceFileTemplateResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceFileTemplateResponse), response.Headers);
+            return (SupportedInvoiceImportTemplateResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportTemplateResponse), response.Headers);
         }
     
         /// <summary>
@@ -1176,8 +1176,8 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         /// Internal use only - Add a supported invoice file template. 
         /// </summary>
         /// <param name="body"></param> 
-        /// <returns>PostSupportedInvoiceFileTemplateResponse</returns>            
-        public PostSupportedInvoiceFileTemplateResponse PostSupportedInvoiceFileTemplate (PostSupportedInvoiceFileTemplateRequest body)
+        /// <returns>PostSupportedInvoiceImportTemplateResponse</returns>            
+        public PostSupportedInvoiceImportTemplateResponse PostSupportedInvoiceFileTemplate (PostSupportedInvoiceImportTemplateRequest body)
         {
             
     
@@ -1203,7 +1203,7 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceFileTemplate: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (PostSupportedInvoiceFileTemplateResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceFileTemplateResponse), response.Headers);
+            return (PostSupportedInvoiceImportTemplateResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceImportTemplateResponse), response.Headers);
         }
     
         /// <summary>
@@ -1497,8 +1497,8 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
         /// Internal use only - Update a supported invoice file template. 
         /// </summary>
         /// <param name="body"></param> 
-        /// <returns>UpdateSupportedInvoiceFileTemplateResponse</returns>            
-        public UpdateSupportedInvoiceFileTemplateResponse UpdateSupportedInvoiceFileDataTemplate (UpdateSupportedFileTemplateRequest body)
+        /// <returns>UpdateSupportedInvoiceImportTemplateResponse</returns>            
+        public UpdateSupportedInvoiceImportTemplateResponse UpdateSupportedInvoiceFileDataTemplate (UpdateSupportedFileTemplateRequest body)
         {
             
     
@@ -1524,7 +1524,7 @@ path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(company
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedInvoiceFileDataTemplate: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (UpdateSupportedInvoiceFileTemplateResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedInvoiceFileTemplateResponse), response.Headers);
+            return (UpdateSupportedInvoiceImportTemplateResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedInvoiceImportTemplateResponse), response.Headers);
         }
     
         /// <summary>

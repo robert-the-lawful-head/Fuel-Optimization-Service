@@ -1,9 +1,11 @@
-# IO.Swagger.Model.UpdateSupportedFileTemplateRequest
+# IO.Swagger.Model.PostSupportedInvoiceImportTemplateRequest
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**SupportedInvoiceImportTemplate** | [**SupportedInvoiceImportTemplateDTO**](SupportedInvoiceImportTemplateDTO.md) |  | 
+**CompanyId** | **int?** |  | [optional] 
+**FuelerProcessName** | **string** |  | [optional] 
+**InvoiceFileTemplatesJson** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

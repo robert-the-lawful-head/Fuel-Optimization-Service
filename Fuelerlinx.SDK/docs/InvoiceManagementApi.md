@@ -4,20 +4,92 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**CreateInvoiceTestFromPreviousImport**](InvoiceManagementApi.md#createinvoicetestfrompreviousimport) | **GET** /api/InvoiceManagement/supported-invoice-import-file/create-test/from-import/{importProcessId} | Create an invoice parsing test from the results of a previous import.
 [**DeleteBytescoutFile**](InvoiceManagementApi.md#deletebytescoutfile) | **DELETE** /api/InvoiceManagement/bytescout-file/{id} | Deletes Bytescout file by Id
 [**DeleteSupportedInvoiceImportFileTests**](InvoiceManagementApi.md#deletesupportedinvoiceimportfiletests) | **DELETE** /api/InvoiceManagement/supported-invoice-import-file-tests/{id} | Deletes Supported Invoice Import File Tests by Id
 [**DeleteSupportedInvoiceImportFiles**](InvoiceManagementApi.md#deletesupportedinvoiceimportfiles) | **DELETE** /api/InvoiceManagement/supported-invoice-import-files/{id} | Deletes Supported Invoice Import Files
 [**GetBytescoutFile**](InvoiceManagementApi.md#getbytescoutfile) | **GET** /api/InvoiceManagement/bytescout-file/by-id/{id} | Gets Bytescout file by Id
+[**GetSupportedInvoiceFileValidationTestResult**](InvoiceManagementApi.md#getsupportedinvoicefilevalidationtestresult) | **GET** /api/InvoiceManagement/supported-invoice-import-file/validation-test-result/{supportedInvoiceImportFileId} | 
 [**GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId**](InvoiceManagementApi.md#getsupportedinvoiceimportfiletestsbysupportedinvoiceimportfileid) | **GET** /api/InvoiceManagement/supported-invoice-import-file-tests/by-supportedInvoiceImportFileId/{supportedInvoiceImportFileId} | Get Supported Invoice Import File Tests By supportedInvoiceImportFileId
 [**GetSupportedInvoiceImportFilesByFuelVendorId**](InvoiceManagementApi.md#getsupportedinvoiceimportfilesbyfuelvendorid) | **GET** /api/InvoiceManagement/supported-invoice-import-files/by-fuel-vendor/{fuelVendorId} | Gets Supported Invoice Import Files By FuelVendorId
 [**GetSupportedInvoiceImportFilesById**](InvoiceManagementApi.md#getsupportedinvoiceimportfilesbyid) | **GET** /api/InvoiceManagement/supported-invoice-import-files/{id} | Gets Supported Invoice Import Files By Id
 [**PostBytescoutFile**](InvoiceManagementApi.md#postbytescoutfile) | **POST** /api/InvoiceManagement/bytescout-file | Post Bytescout files
 [**PostSupportedInvoiceImportFileTests**](InvoiceManagementApi.md#postsupportedinvoiceimportfiletests) | **POST** /api/InvoiceManagement/supported-invoice-import-file-tests | Post Supported Invoice Import File Tests
 [**PostSupportedInvoiceImportFiles**](InvoiceManagementApi.md#postsupportedinvoiceimportfiles) | **POST** /api/InvoiceManagement/supported-invoice-import-files | Post Supported Invoice Import Files
+[**ProcessInvoiceFile**](InvoiceManagementApi.md#processinvoicefile) | **POST** /api/InvoiceManagement/process-file | Internal use only - Process an invoice for a customer/fuel vendor.  This will update transactions unless marked as \&quot;preview only\&quot;.
 [**UpdateBytescoutFile**](InvoiceManagementApi.md#updatebytescoutfile) | **PUT** /api/InvoiceManagement/bytescout-file | Updates Bytescout files by Id
 [**UpdateSupportedInvoiceImportFileTests**](InvoiceManagementApi.md#updatesupportedinvoiceimportfiletests) | **PUT** /api/InvoiceManagement/supported-invoice-import-file-tests | Updates Supported Invoice Import File Tests
 [**UpdateSupportedInvoiceImportFiles**](InvoiceManagementApi.md#updatesupportedinvoiceimportfiles) | **PUT** /api/InvoiceManagement/supported-invoice-import-files | Updates Supported Invoice Import Files
 
+
+<a name="createinvoicetestfrompreviousimport"></a>
+# **CreateInvoiceTestFromPreviousImport**
+> SupportedInvoiceImportFileTestsDTO CreateInvoiceTestFromPreviousImport (int? importProcessId)
+
+Create an invoice parsing test from the results of a previous import.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class CreateInvoiceTestFromPreviousImportExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new InvoiceManagementApi();
+            var importProcessId = 56;  // int? | 
+
+            try
+            {
+                // Create an invoice parsing test from the results of a previous import.
+                SupportedInvoiceImportFileTestsDTO result = apiInstance.CreateInvoiceTestFromPreviousImport(importProcessId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling InvoiceManagementApi.CreateInvoiceTestFromPreviousImport: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **importProcessId** | **int?**|  | 
+
+### Return type
+
+[**SupportedInvoiceImportFileTestsDTO**](SupportedInvoiceImportFileTestsDTO.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 <a name="deletebytescoutfile"></a>
 # **DeleteBytescoutFile**
@@ -295,6 +367,74 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="getsupportedinvoicefilevalidationtestresult"></a>
+# **GetSupportedInvoiceFileValidationTestResult**
+> InvoiceFileValidationTestResponse GetSupportedInvoiceFileValidationTestResult (int? supportedInvoiceImportFileId)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetSupportedInvoiceFileValidationTestResultExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new InvoiceManagementApi();
+            var supportedInvoiceImportFileId = 56;  // int? | 
+
+            try
+            {
+                InvoiceFileValidationTestResponse result = apiInstance.GetSupportedInvoiceFileValidationTestResult(supportedInvoiceImportFileId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling InvoiceManagementApi.GetSupportedInvoiceFileValidationTestResult: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **supportedInvoiceImportFileId** | **int?**|  | 
+
+### Return type
+
+[**InvoiceFileValidationTestResponse**](InvoiceFileValidationTestResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="getsupportedinvoiceimportfiletestsbysupportedinvoiceimportfileid"></a>
 # **GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId**
 > SupportedInvoiceImportFileTestsResponse GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId (int? supportedInvoiceImportFileId)
@@ -366,7 +506,7 @@ Name | Type | Description  | Notes
 
 <a name="getsupportedinvoiceimportfilesbyfuelvendorid"></a>
 # **GetSupportedInvoiceImportFilesByFuelVendorId**
-> SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesByFuelVendorId (int? fuelVendorId)
+> SupportedInvoiceImportFileListResponse GetSupportedInvoiceImportFilesByFuelVendorId (int? fuelVendorId)
 
 Gets Supported Invoice Import Files By FuelVendorId
 
@@ -400,7 +540,7 @@ namespace Example
             try
             {
                 // Gets Supported Invoice Import Files By FuelVendorId
-                SupportedInvoiceImportFilesResponse result = apiInstance.GetSupportedInvoiceImportFilesByFuelVendorId(fuelVendorId);
+                SupportedInvoiceImportFileListResponse result = apiInstance.GetSupportedInvoiceImportFilesByFuelVendorId(fuelVendorId);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -420,7 +560,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**SupportedInvoiceImportFilesResponse**](SupportedInvoiceImportFilesResponse.md)
+[**SupportedInvoiceImportFileListResponse**](SupportedInvoiceImportFileListResponse.md)
 
 ### Authorization
 
@@ -435,7 +575,7 @@ Name | Type | Description  | Notes
 
 <a name="getsupportedinvoiceimportfilesbyid"></a>
 # **GetSupportedInvoiceImportFilesById**
-> SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesById (int? id)
+> SupportedInvoiceImportFileResponse GetSupportedInvoiceImportFilesById (int? id)
 
 Gets Supported Invoice Import Files By Id
 
@@ -469,7 +609,7 @@ namespace Example
             try
             {
                 // Gets Supported Invoice Import Files By Id
-                SupportedInvoiceImportFilesResponse result = apiInstance.GetSupportedInvoiceImportFilesById(id);
+                SupportedInvoiceImportFileResponse result = apiInstance.GetSupportedInvoiceImportFilesById(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -489,7 +629,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**SupportedInvoiceImportFilesResponse**](SupportedInvoiceImportFilesResponse.md)
+[**SupportedInvoiceImportFileResponse**](SupportedInvoiceImportFileResponse.md)
 
 ### Authorization
 
@@ -697,6 +837,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PostSupportedInvoiceImportFilesResponse**](PostSupportedInvoiceImportFilesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="processinvoicefile"></a>
+# **ProcessInvoiceFile**
+> ProcessInvoiceFileResponse ProcessInvoiceFile (ProcessInvoiceFileRequest body)
+
+Internal use only - Process an invoice for a customer/fuel vendor.  This will update transactions unless marked as \"preview only\".
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class ProcessInvoiceFileExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new InvoiceManagementApi();
+            var body = new ProcessInvoiceFileRequest(); // ProcessInvoiceFileRequest |  (optional) 
+
+            try
+            {
+                // Internal use only - Process an invoice for a customer/fuel vendor.  This will update transactions unless marked as \"preview only\".
+                ProcessInvoiceFileResponse result = apiInstance.ProcessInvoiceFile(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling InvoiceManagementApi.ProcessInvoiceFile: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**ProcessInvoiceFileRequest**](ProcessInvoiceFileRequest.md)|  | [optional] 
+
+### Return type
+
+[**ProcessInvoiceFileResponse**](ProcessInvoiceFileResponse.md)
 
 ### Authorization
 

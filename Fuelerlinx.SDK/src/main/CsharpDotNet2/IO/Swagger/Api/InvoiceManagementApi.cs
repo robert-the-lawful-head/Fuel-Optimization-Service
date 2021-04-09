@@ -12,6 +12,12 @@ namespace IO.Swagger.Api
     public interface IInvoiceManagementApi
     {
         /// <summary>
+        /// Create an invoice parsing test from the results of a previous import. 
+        /// </summary>
+        /// <param name="importProcessId"></param>
+        /// <returns>SupportedInvoiceImportFileTestsDTO</returns>
+        SupportedInvoiceImportFileTestsDTO CreateInvoiceTestFromPreviousImport (int? importProcessId);
+        /// <summary>
         /// Deletes Bytescout file by Id 
         /// </summary>
         /// <param name="id"></param>
@@ -36,6 +42,12 @@ namespace IO.Swagger.Api
         /// <returns>BytescoutFilesResponse</returns>
         BytescoutFilesResponse GetBytescoutFile (int? id);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="supportedInvoiceImportFileId"></param>
+        /// <returns>InvoiceFileValidationTestResponse</returns>
+        InvoiceFileValidationTestResponse GetSupportedInvoiceFileValidationTestResult (int? supportedInvoiceImportFileId);
+        /// <summary>
         /// Get Supported Invoice Import File Tests By supportedInvoiceImportFileId 
         /// </summary>
         /// <param name="supportedInvoiceImportFileId"></param>
@@ -45,14 +57,14 @@ namespace IO.Swagger.Api
         /// Gets Supported Invoice Import Files By FuelVendorId 
         /// </summary>
         /// <param name="fuelVendorId"></param>
-        /// <returns>SupportedInvoiceImportFilesResponse</returns>
-        SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesByFuelVendorId (int? fuelVendorId);
+        /// <returns>SupportedInvoiceImportFileListResponse</returns>
+        SupportedInvoiceImportFileListResponse GetSupportedInvoiceImportFilesByFuelVendorId (int? fuelVendorId);
         /// <summary>
         /// Gets Supported Invoice Import Files By Id 
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>SupportedInvoiceImportFilesResponse</returns>
-        SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesById (int? id);
+        /// <returns>SupportedInvoiceImportFileResponse</returns>
+        SupportedInvoiceImportFileResponse GetSupportedInvoiceImportFilesById (int? id);
         /// <summary>
         /// Post Bytescout files 
         /// </summary>
@@ -71,6 +83,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostSupportedInvoiceImportFilesResponse</returns>
         PostSupportedInvoiceImportFilesResponse PostSupportedInvoiceImportFiles (PostSupportedInvoiceImportFilesRequest body);
+        /// <summary>
+        /// Internal use only - Process an invoice for a customer/fuel vendor.  This will update transactions unless marked as \&quot;preview only\&quot;. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>ProcessInvoiceFileResponse</returns>
+        ProcessInvoiceFileResponse ProcessInvoiceFile (ProcessInvoiceFileRequest body);
         /// <summary>
         /// Updates Bytescout files by Id 
         /// </summary>
@@ -143,6 +161,43 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        /// Create an invoice parsing test from the results of a previous import. 
+        /// </summary>
+        /// <param name="importProcessId"></param> 
+        /// <returns>SupportedInvoiceImportFileTestsDTO</returns>            
+        public SupportedInvoiceImportFileTestsDTO CreateInvoiceTestFromPreviousImport (int? importProcessId)
+        {
+            
+            // verify the required parameter 'importProcessId' is set
+            if (importProcessId == null) throw new ApiException(400, "Missing required parameter 'importProcessId' when calling CreateInvoiceTestFromPreviousImport");
+            
+    
+            var path = "/api/InvoiceManagement/supported-invoice-import-file/create-test/from-import/{importProcessId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "importProcessId" + "}", ApiClient.ParameterToString(importProcessId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling CreateInvoiceTestFromPreviousImport: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling CreateInvoiceTestFromPreviousImport: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedInvoiceImportFileTestsDTO) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFileTestsDTO), response.Headers);
+        }
     
         /// <summary>
         /// Deletes Bytescout file by Id 
@@ -293,6 +348,43 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="supportedInvoiceImportFileId"></param> 
+        /// <returns>InvoiceFileValidationTestResponse</returns>            
+        public InvoiceFileValidationTestResponse GetSupportedInvoiceFileValidationTestResult (int? supportedInvoiceImportFileId)
+        {
+            
+            // verify the required parameter 'supportedInvoiceImportFileId' is set
+            if (supportedInvoiceImportFileId == null) throw new ApiException(400, "Missing required parameter 'supportedInvoiceImportFileId' when calling GetSupportedInvoiceFileValidationTestResult");
+            
+    
+            var path = "/api/InvoiceManagement/supported-invoice-import-file/validation-test-result/{supportedInvoiceImportFileId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "supportedInvoiceImportFileId" + "}", ApiClient.ParameterToString(supportedInvoiceImportFileId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceFileValidationTestResult: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceFileValidationTestResult: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (InvoiceFileValidationTestResponse) ApiClient.Deserialize(response.Content, typeof(InvoiceFileValidationTestResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Get Supported Invoice Import File Tests By supportedInvoiceImportFileId 
         /// </summary>
         /// <param name="supportedInvoiceImportFileId"></param> 
@@ -333,8 +425,8 @@ namespace IO.Swagger.Api
         /// Gets Supported Invoice Import Files By FuelVendorId 
         /// </summary>
         /// <param name="fuelVendorId"></param> 
-        /// <returns>SupportedInvoiceImportFilesResponse</returns>            
-        public SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesByFuelVendorId (int? fuelVendorId)
+        /// <returns>SupportedInvoiceImportFileListResponse</returns>            
+        public SupportedInvoiceImportFileListResponse GetSupportedInvoiceImportFilesByFuelVendorId (int? fuelVendorId)
         {
             
             // verify the required parameter 'fuelVendorId' is set
@@ -363,15 +455,15 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFilesByFuelVendorId: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (SupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFilesResponse), response.Headers);
+            return (SupportedInvoiceImportFileListResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFileListResponse), response.Headers);
         }
     
         /// <summary>
         /// Gets Supported Invoice Import Files By Id 
         /// </summary>
         /// <param name="id"></param> 
-        /// <returns>SupportedInvoiceImportFilesResponse</returns>            
-        public SupportedInvoiceImportFilesResponse GetSupportedInvoiceImportFilesById (int? id)
+        /// <returns>SupportedInvoiceImportFileResponse</returns>            
+        public SupportedInvoiceImportFileResponse GetSupportedInvoiceImportFilesById (int? id)
         {
             
             // verify the required parameter 'id' is set
@@ -400,7 +492,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedInvoiceImportFilesById: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (SupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFilesResponse), response.Headers);
+            return (SupportedInvoiceImportFileResponse) ApiClient.Deserialize(response.Content, typeof(SupportedInvoiceImportFileResponse), response.Headers);
         }
     
         /// <summary>
@@ -503,6 +595,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedInvoiceImportFiles: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostSupportedInvoiceImportFilesResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedInvoiceImportFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Process an invoice for a customer/fuel vendor.  This will update transactions unless marked as \&quot;preview only\&quot;. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>ProcessInvoiceFileResponse</returns>            
+        public ProcessInvoiceFileResponse ProcessInvoiceFile (ProcessInvoiceFileRequest body)
+        {
+            
+    
+            var path = "/api/InvoiceManagement/process-file";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling ProcessInvoiceFile: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling ProcessInvoiceFile: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (ProcessInvoiceFileResponse) ApiClient.Deserialize(response.Content, typeof(ProcessInvoiceFileResponse), response.Headers);
         }
     
         /// <summary>

@@ -11,14 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class PostSupportedInvoiceFileTemplateResponse {
-    /// <summary>
-    /// Gets or Sets Result
-    /// </summary>
-    [DataMember(Name="result", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "result")]
-    public SupportedInvoiceFileTemplateDTO Result { get; set; }
-
+  public class UpdateSupportedInvoiceImportTemplateResponse {
     /// <summary>
     /// Gets or Sets Success
     /// </summary>
@@ -40,8 +33,7 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class PostSupportedInvoiceFileTemplateResponse {\n");
-      sb.Append("  Result: ").Append(Result).Append("\n");
+      sb.Append("class UpdateSupportedInvoiceImportTemplateResponse {\n");
       sb.Append("  Success: ").Append(Success).Append("\n");
       sb.Append("  Message: ").Append(Message).Append("\n");
       sb.Append("}\n");

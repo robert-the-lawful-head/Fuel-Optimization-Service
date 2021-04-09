@@ -11,7 +11,14 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class PostSupportedInvoiceFileTemplateRequest {
+  public class SupportedInvoiceImportTemplateDTO {
+    /// <summary>
+    /// Gets or Sets Id
+    /// </summary>
+    [DataMember(Name="id", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "id")]
+    public int? Id { get; set; }
+
     /// <summary>
     /// Gets or Sets CompanyId
     /// </summary>
@@ -27,11 +34,11 @@ namespace IO.Swagger.Model {
     public string FuelerProcessName { get; set; }
 
     /// <summary>
-    /// Gets or Sets InvoiceFileTemplatesJson
+    /// Gets or Sets InvoiceImportTemplatesJson
     /// </summary>
-    [DataMember(Name="invoiceFileTemplatesJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "invoiceFileTemplatesJson")]
-    public string InvoiceFileTemplatesJson { get; set; }
+    [DataMember(Name="invoiceImportTemplatesJson", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "invoiceImportTemplatesJson")]
+    public string InvoiceImportTemplatesJson { get; set; }
 
 
     /// <summary>
@@ -40,10 +47,11 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class PostSupportedInvoiceFileTemplateRequest {\n");
+      sb.Append("class SupportedInvoiceImportTemplateDTO {\n");
+      sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  FuelerProcessName: ").Append(FuelerProcessName).Append("\n");
-      sb.Append("  InvoiceFileTemplatesJson: ").Append(InvoiceFileTemplatesJson).Append("\n");
+      sb.Append("  InvoiceImportTemplatesJson: ").Append(InvoiceImportTemplatesJson).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

@@ -1,9 +1,9 @@
-# IO.Swagger.Model.SupportedInvoiceImportFilesResponse
+# IO.Swagger.Model.ProcessInvoiceFileResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**SupportedInvoiceImportFilesDTO**](SupportedInvoiceImportFilesDTO.md) |  | [optional] 
+**Result** | [**AutoReconProcessDTO**](AutoReconProcessDTO.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

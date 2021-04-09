@@ -11,14 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class SupportedInvoiceFileTemplateDTO {
-    /// <summary>
-    /// Gets or Sets Id
-    /// </summary>
-    [DataMember(Name="id", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "id")]
-    public int? Id { get; set; }
-
+  public class PostSupportedInvoiceImportTemplateRequest {
     /// <summary>
     /// Gets or Sets CompanyId
     /// </summary>
@@ -47,8 +40,7 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class SupportedInvoiceFileTemplateDTO {\n");
-      sb.Append("  Id: ").Append(Id).Append("\n");
+      sb.Append("class PostSupportedInvoiceImportTemplateRequest {\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  FuelerProcessName: ").Append(FuelerProcessName).Append("\n");
       sb.Append("  InvoiceFileTemplatesJson: ").Append(InvoiceFileTemplatesJson).Append("\n");

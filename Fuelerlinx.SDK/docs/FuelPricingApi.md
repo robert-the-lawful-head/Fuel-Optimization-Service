@@ -866,7 +866,7 @@ Name | Type | Description  | Notes
 
 <a name="getsupportedpricesheetfilesbybyfuelvendorid"></a>
 # **GetSupportedPriceSheetFilesByByFuelVendorId**
-> SupportedPriceSheetFilesResponse GetSupportedPriceSheetFilesByByFuelVendorId (int? fuelVendorId)
+> SupportedPriceSheetFileListResponse GetSupportedPriceSheetFilesByByFuelVendorId (int? fuelVendorId)
 
 Gets Supported Price Sheet Files by FuelVendorId
 
@@ -900,7 +900,7 @@ namespace Example
             try
             {
                 // Gets Supported Price Sheet Files by FuelVendorId
-                SupportedPriceSheetFilesResponse result = apiInstance.GetSupportedPriceSheetFilesByByFuelVendorId(fuelVendorId);
+                SupportedPriceSheetFileListResponse result = apiInstance.GetSupportedPriceSheetFilesByByFuelVendorId(fuelVendorId);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -920,7 +920,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**SupportedPriceSheetFilesResponse**](SupportedPriceSheetFilesResponse.md)
+[**SupportedPriceSheetFileListResponse**](SupportedPriceSheetFileListResponse.md)
 
 ### Authorization
 

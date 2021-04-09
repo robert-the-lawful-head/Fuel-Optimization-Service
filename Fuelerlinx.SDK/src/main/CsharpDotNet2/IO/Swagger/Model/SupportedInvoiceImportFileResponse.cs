@@ -11,7 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class SupportedInvoiceImportFilesResponse {
+  public class SupportedInvoiceImportFileResponse {
     /// <summary>
     /// Gets or Sets Result
     /// </summary>
@@ -40,7 +40,7 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class SupportedInvoiceImportFilesResponse {\n");
+      sb.Append("class SupportedInvoiceImportFileResponse {\n");
       sb.Append("  Result: ").Append(Result).Append("\n");
       sb.Append("  Success: ").Append(Success).Append("\n");
       sb.Append("  Message: ").Append(Message).Append("\n");

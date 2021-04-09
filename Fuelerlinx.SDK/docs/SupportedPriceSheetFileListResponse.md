@@ -1,9 +1,9 @@
-# IO.Swagger.Model.PostSupportedInvoiceFileTemplateResponse
+# IO.Swagger.Model.SupportedPriceSheetFileListResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**SupportedInvoiceFileTemplateDTO**](SupportedInvoiceFileTemplateDTO.md) |  | [optional] 
+**Result** | [**List&lt;SupportedPriceSheetFilesDTO&gt;**](SupportedPriceSheetFilesDTO.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

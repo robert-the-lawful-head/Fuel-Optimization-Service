@@ -11,13 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class UpdateSupportedFileTemplateRequest {
+  public class InvoiceFileTestValidationResult {
     /// <summary>
-    /// Gets or Sets SupportedInvoiceImportTemplate
+    /// Gets or Sets ValidationFailures
     /// </summary>
-    [DataMember(Name="supportedInvoiceImportTemplate", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "supportedInvoiceImportTemplate")]
-    public SupportedInvoiceImportTemplateDTO SupportedInvoiceImportTemplate { get; set; }
+    [DataMember(Name="validationFailures", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "validationFailures")]
+    public List<string> ValidationFailures { get; set; }
+
+    /// <summary>
+    /// Gets or Sets IsValid
+    /// </summary>
+    [DataMember(Name="isValid", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "isValid")]
+    public bool? IsValid { get; set; }
 
 
     /// <summary>
@@ -26,8 +33,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class UpdateSupportedFileTemplateRequest {\n");
-      sb.Append("  SupportedInvoiceImportTemplate: ").Append(SupportedInvoiceImportTemplate).Append("\n");
+      sb.Append("class InvoiceFileTestValidationResult {\n");
+      sb.Append("  ValidationFailures: ").Append(ValidationFailures).Append("\n");
+      sb.Append("  IsValid: ").Append(IsValid).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

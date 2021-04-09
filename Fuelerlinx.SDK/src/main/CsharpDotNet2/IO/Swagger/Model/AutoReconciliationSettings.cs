@@ -11,13 +11,13 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class UpdateSupportedFileTemplateRequest {
+  public class AutoReconciliationSettings {
     /// <summary>
-    /// Gets or Sets SupportedInvoiceImportTemplate
+    /// Gets or Sets IsPreviewOnly
     /// </summary>
-    [DataMember(Name="supportedInvoiceImportTemplate", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "supportedInvoiceImportTemplate")]
-    public SupportedInvoiceImportTemplateDTO SupportedInvoiceImportTemplate { get; set; }
+    [DataMember(Name="isPreviewOnly", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "isPreviewOnly")]
+    public bool? IsPreviewOnly { get; set; }
 
 
     /// <summary>
@@ -26,8 +26,8 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class UpdateSupportedFileTemplateRequest {\n");
-      sb.Append("  SupportedInvoiceImportTemplate: ").Append(SupportedInvoiceImportTemplate).Append("\n");
+      sb.Append("class AutoReconciliationSettings {\n");
+      sb.Append("  IsPreviewOnly: ").Append(IsPreviewOnly).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

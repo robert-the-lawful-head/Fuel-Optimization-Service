@@ -90,8 +90,8 @@ namespace IO.Swagger.Api
         /// Gets Supported Price Sheet Files by FuelVendorId 
         /// </summary>
         /// <param name="fuelVendorId"></param>
-        /// <returns>SupportedPriceSheetFilesResponse</returns>
-        SupportedPriceSheetFilesResponse GetSupportedPriceSheetFilesByByFuelVendorId (int? fuelVendorId);
+        /// <returns>SupportedPriceSheetFileListResponse</returns>
+        SupportedPriceSheetFileListResponse GetSupportedPriceSheetFilesByByFuelVendorId (int? fuelVendorId);
         /// <summary>
         /// Get Supported Price Sheet Files by Id 
         /// </summary>
@@ -656,8 +656,8 @@ path = path.Replace("{" + "fuelVendorId" + "}", ApiClient.ParameterToString(fuel
         /// Gets Supported Price Sheet Files by FuelVendorId 
         /// </summary>
         /// <param name="fuelVendorId"></param> 
-        /// <returns>SupportedPriceSheetFilesResponse</returns>            
-        public SupportedPriceSheetFilesResponse GetSupportedPriceSheetFilesByByFuelVendorId (int? fuelVendorId)
+        /// <returns>SupportedPriceSheetFileListResponse</returns>            
+        public SupportedPriceSheetFileListResponse GetSupportedPriceSheetFilesByByFuelVendorId (int? fuelVendorId)
         {
             
             // verify the required parameter 'fuelVendorId' is set
@@ -686,7 +686,7 @@ path = path.Replace("{" + "fuelVendorId" + "}", ApiClient.ParameterToString(fuel
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFilesByByFuelVendorId: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (SupportedPriceSheetFilesResponse) ApiClient.Deserialize(response.Content, typeof(SupportedPriceSheetFilesResponse), response.Headers);
+            return (SupportedPriceSheetFileListResponse) ApiClient.Deserialize(response.Content, typeof(SupportedPriceSheetFileListResponse), response.Headers);
         }
     
         /// <summary>

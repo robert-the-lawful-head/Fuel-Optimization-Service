@@ -1,9 +1,9 @@
-# IO.Swagger.Model.SupportedInvoiceFileTemplateResponse
+# IO.Swagger.Model.SupportedInvoiceImportFileListResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**SupportedInvoiceFileTemplateDTO**](SupportedInvoiceFileTemplateDTO.md) |  | [optional] 
+**Result** | [**List&lt;SupportedInvoiceImportFilesDTO&gt;**](SupportedInvoiceImportFilesDTO.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

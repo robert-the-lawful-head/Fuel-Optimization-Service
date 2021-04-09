@@ -322,16 +322,19 @@ Class | Method | HTTP request | Description
 *IntegrationFuelOrderDetailsApi* | [**AddIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#addintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails | Internal use only - associates a fuel order transaction with an integration record.
 *IntegrationFuelOrderDetailsApi* | [**CancelIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#cancelintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails/cancel | Internal use only - cancel an integration record from being tied to a transaction and notify the partner.
 *IntegrationFuelOrderDetailsApi* | [**UpdateIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#updateintegrationfuelorderdetails) | **PUT** /api/IntegrationFuelOrderDetails | Internal use only - update an integration record associated with a fuel order transaction.
+*InvoiceManagementApi* | [**CreateInvoiceTestFromPreviousImport**](docs/InvoiceManagementApi.md#createinvoicetestfrompreviousimport) | **GET** /api/InvoiceManagement/supported-invoice-import-file/create-test/from-import/{importProcessId} | Create an invoice parsing test from the results of a previous import.
 *InvoiceManagementApi* | [**DeleteBytescoutFile**](docs/InvoiceManagementApi.md#deletebytescoutfile) | **DELETE** /api/InvoiceManagement/bytescout-file/{id} | Deletes Bytescout file by Id
 *InvoiceManagementApi* | [**DeleteSupportedInvoiceImportFileTests**](docs/InvoiceManagementApi.md#deletesupportedinvoiceimportfiletests) | **DELETE** /api/InvoiceManagement/supported-invoice-import-file-tests/{id} | Deletes Supported Invoice Import File Tests by Id
 *InvoiceManagementApi* | [**DeleteSupportedInvoiceImportFiles**](docs/InvoiceManagementApi.md#deletesupportedinvoiceimportfiles) | **DELETE** /api/InvoiceManagement/supported-invoice-import-files/{id} | Deletes Supported Invoice Import Files
 *InvoiceManagementApi* | [**GetBytescoutFile**](docs/InvoiceManagementApi.md#getbytescoutfile) | **GET** /api/InvoiceManagement/bytescout-file/by-id/{id} | Gets Bytescout file by Id
+*InvoiceManagementApi* | [**GetSupportedInvoiceFileValidationTestResult**](docs/InvoiceManagementApi.md#getsupportedinvoicefilevalidationtestresult) | **GET** /api/InvoiceManagement/supported-invoice-import-file/validation-test-result/{supportedInvoiceImportFileId} | 
 *InvoiceManagementApi* | [**GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId**](docs/InvoiceManagementApi.md#getsupportedinvoiceimportfiletestsbysupportedinvoiceimportfileid) | **GET** /api/InvoiceManagement/supported-invoice-import-file-tests/by-supportedInvoiceImportFileId/{supportedInvoiceImportFileId} | Get Supported Invoice Import File Tests By supportedInvoiceImportFileId
 *InvoiceManagementApi* | [**GetSupportedInvoiceImportFilesByFuelVendorId**](docs/InvoiceManagementApi.md#getsupportedinvoiceimportfilesbyfuelvendorid) | **GET** /api/InvoiceManagement/supported-invoice-import-files/by-fuel-vendor/{fuelVendorId} | Gets Supported Invoice Import Files By FuelVendorId
 *InvoiceManagementApi* | [**GetSupportedInvoiceImportFilesById**](docs/InvoiceManagementApi.md#getsupportedinvoiceimportfilesbyid) | **GET** /api/InvoiceManagement/supported-invoice-import-files/{id} | Gets Supported Invoice Import Files By Id
 *InvoiceManagementApi* | [**PostBytescoutFile**](docs/InvoiceManagementApi.md#postbytescoutfile) | **POST** /api/InvoiceManagement/bytescout-file | Post Bytescout files
 *InvoiceManagementApi* | [**PostSupportedInvoiceImportFileTests**](docs/InvoiceManagementApi.md#postsupportedinvoiceimportfiletests) | **POST** /api/InvoiceManagement/supported-invoice-import-file-tests | Post Supported Invoice Import File Tests
 *InvoiceManagementApi* | [**PostSupportedInvoiceImportFiles**](docs/InvoiceManagementApi.md#postsupportedinvoiceimportfiles) | **POST** /api/InvoiceManagement/supported-invoice-import-files | Post Supported Invoice Import Files
+*InvoiceManagementApi* | [**ProcessInvoiceFile**](docs/InvoiceManagementApi.md#processinvoicefile) | **POST** /api/InvoiceManagement/process-file | Internal use only - Process an invoice for a customer/fuel vendor.  This will update transactions unless marked as \"preview only\".
 *InvoiceManagementApi* | [**UpdateBytescoutFile**](docs/InvoiceManagementApi.md#updatebytescoutfile) | **PUT** /api/InvoiceManagement/bytescout-file | Updates Bytescout files by Id
 *InvoiceManagementApi* | [**UpdateSupportedInvoiceImportFileTests**](docs/InvoiceManagementApi.md#updatesupportedinvoiceimportfiletests) | **PUT** /api/InvoiceManagement/supported-invoice-import-file-tests | Updates Supported Invoice Import File Tests
 *InvoiceManagementApi* | [**UpdateSupportedInvoiceImportFiles**](docs/InvoiceManagementApi.md#updatesupportedinvoiceimportfiles) | **PUT** /api/InvoiceManagement/supported-invoice-import-files | Updates Supported Invoice Import Files
@@ -578,6 +581,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AutoReconciledFileDTO](docs/AutoReconciledFileDTO.md)
  - [IO.Swagger.Model.AutoReconciledFileResponse](docs/AutoReconciledFileResponse.md)
  - [IO.Swagger.Model.AutoReconciledLineItemDTO](docs/AutoReconciledLineItemDTO.md)
+ - [IO.Swagger.Model.AutoReconciliationSettings](docs/AutoReconciliationSettings.md)
  - [IO.Swagger.Model.AveragePriceByAirportDTO](docs/AveragePriceByAirportDTO.md)
  - [IO.Swagger.Model.AveragePriceByAirportListResponse](docs/AveragePriceByAirportListResponse.md)
  - [IO.Swagger.Model.AviationProfiles](docs/AviationProfiles.md)
@@ -702,10 +706,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteSchedulingIntegrationServiceLogResponse](docs/DeleteSchedulingIntegrationServiceLogResponse.md)
  - [IO.Swagger.Model.DeleteServicesAndFeesByCompanyResponse](docs/DeleteServicesAndFeesByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteSupplierDetailsResponse](docs/DeleteSupplierDetailsResponse.md)
- - [IO.Swagger.Model.DeleteSupportedInvoiceFileTemplateResponse](docs/DeleteSupportedInvoiceFileTemplateResponse.md)
  - [IO.Swagger.Model.DeleteSupportedInvoiceImportFileDataResponse](docs/DeleteSupportedInvoiceImportFileDataResponse.md)
  - [IO.Swagger.Model.DeleteSupportedInvoiceImportFileTestsResponse](docs/DeleteSupportedInvoiceImportFileTestsResponse.md)
  - [IO.Swagger.Model.DeleteSupportedInvoiceImportFilesResponse](docs/DeleteSupportedInvoiceImportFilesResponse.md)
+ - [IO.Swagger.Model.DeleteSupportedInvoiceImportTemplateResponse](docs/DeleteSupportedInvoiceImportTemplateResponse.md)
  - [IO.Swagger.Model.DeleteSupportedPriceSheetFileDataResponse](docs/DeleteSupportedPriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.DeleteSupportedPriceSheetFileTestsResponse](docs/DeleteSupportedPriceSheetFileTestsResponse.md)
  - [IO.Swagger.Model.DeleteSupportedPriceSheetFilesResponse](docs/DeleteSupportedPriceSheetFilesResponse.md)
@@ -827,6 +831,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.IntegrationPartnerWebHooksDTO](docs/IntegrationPartnerWebHooksDTO.md)
  - [IO.Swagger.Model.IntegrationSettingsDTO](docs/IntegrationSettingsDTO.md)
  - [IO.Swagger.Model.InternationalSettingsDTO](docs/InternationalSettingsDTO.md)
+ - [IO.Swagger.Model.InvoiceFileTestValidationResult](docs/InvoiceFileTestValidationResult.md)
+ - [IO.Swagger.Model.InvoiceFileValidationTestResponse](docs/InvoiceFileValidationTestResponse.md)
  - [IO.Swagger.Model.ItemStyle](docs/ItemStyle.md)
  - [IO.Swagger.Model.JobFileDataDTO](docs/JobFileDataDTO.md)
  - [IO.Swagger.Model.JobFileDataResponse](docs/JobFileDataResponse.md)
@@ -987,14 +993,14 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostServicesAndFeesByCompanyResponse](docs/PostServicesAndFeesByCompanyResponse.md)
  - [IO.Swagger.Model.PostSupplierDetailsRequest](docs/PostSupplierDetailsRequest.md)
  - [IO.Swagger.Model.PostSupplierDetailsResponse](docs/PostSupplierDetailsResponse.md)
- - [IO.Swagger.Model.PostSupportedInvoiceFileTemplateRequest](docs/PostSupportedInvoiceFileTemplateRequest.md)
- - [IO.Swagger.Model.PostSupportedInvoiceFileTemplateResponse](docs/PostSupportedInvoiceFileTemplateResponse.md)
  - [IO.Swagger.Model.PostSupportedInvoiceImportFileDataRequest](docs/PostSupportedInvoiceImportFileDataRequest.md)
  - [IO.Swagger.Model.PostSupportedInvoiceImportFileDataResponse](docs/PostSupportedInvoiceImportFileDataResponse.md)
  - [IO.Swagger.Model.PostSupportedInvoiceImportFileTestsRequest](docs/PostSupportedInvoiceImportFileTestsRequest.md)
  - [IO.Swagger.Model.PostSupportedInvoiceImportFileTestsResponse](docs/PostSupportedInvoiceImportFileTestsResponse.md)
  - [IO.Swagger.Model.PostSupportedInvoiceImportFilesRequest](docs/PostSupportedInvoiceImportFilesRequest.md)
  - [IO.Swagger.Model.PostSupportedInvoiceImportFilesResponse](docs/PostSupportedInvoiceImportFilesResponse.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportTemplateRequest](docs/PostSupportedInvoiceImportTemplateRequest.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportTemplateResponse](docs/PostSupportedInvoiceImportTemplateResponse.md)
  - [IO.Swagger.Model.PostSupportedPriceSheetFileDataRequest](docs/PostSupportedPriceSheetFileDataRequest.md)
  - [IO.Swagger.Model.PostSupportedPriceSheetFileDataResponse](docs/PostSupportedPriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.PostSupportedPriceSheetFileTestsRequest](docs/PostSupportedPriceSheetFileTestsRequest.md)
@@ -1026,6 +1032,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PriceSyncTransactionDTO](docs/PriceSyncTransactionDTO.md)
  - [IO.Swagger.Model.PricingData](docs/PricingData.md)
  - [IO.Swagger.Model.PricingTier](docs/PricingTier.md)
+ - [IO.Swagger.Model.ProcessInvoiceFileRequest](docs/ProcessInvoiceFileRequest.md)
+ - [IO.Swagger.Model.ProcessInvoiceFileResponse](docs/ProcessInvoiceFileResponse.md)
  - [IO.Swagger.Model.RampFeeByCompanyDTO](docs/RampFeeByCompanyDTO.md)
  - [IO.Swagger.Model.RampFeeByCompanyListResponse](docs/RampFeeByCompanyListResponse.md)
  - [IO.Swagger.Model.RampFeeByCompanyNoteDTO](docs/RampFeeByCompanyNoteDTO.md)
@@ -1089,16 +1097,18 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.SummaryOptions](docs/SummaryOptions.md)
  - [IO.Swagger.Model.SupplierDetailsDTO](docs/SupplierDetailsDTO.md)
  - [IO.Swagger.Model.SupplierDetailsResponse](docs/SupplierDetailsResponse.md)
- - [IO.Swagger.Model.SupportedInvoiceFileTemplateDTO](docs/SupportedInvoiceFileTemplateDTO.md)
- - [IO.Swagger.Model.SupportedInvoiceFileTemplateResponse](docs/SupportedInvoiceFileTemplateResponse.md)
  - [IO.Swagger.Model.SupportedInvoiceImportFileDataDTO](docs/SupportedInvoiceImportFileDataDTO.md)
  - [IO.Swagger.Model.SupportedInvoiceImportFileDataResponse](docs/SupportedInvoiceImportFileDataResponse.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportFileListResponse](docs/SupportedInvoiceImportFileListResponse.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportFileResponse](docs/SupportedInvoiceImportFileResponse.md)
  - [IO.Swagger.Model.SupportedInvoiceImportFileTestsDTO](docs/SupportedInvoiceImportFileTestsDTO.md)
  - [IO.Swagger.Model.SupportedInvoiceImportFileTestsResponse](docs/SupportedInvoiceImportFileTestsResponse.md)
  - [IO.Swagger.Model.SupportedInvoiceImportFilesDTO](docs/SupportedInvoiceImportFilesDTO.md)
- - [IO.Swagger.Model.SupportedInvoiceImportFilesResponse](docs/SupportedInvoiceImportFilesResponse.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportTemplateDTO](docs/SupportedInvoiceImportTemplateDTO.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportTemplateResponse](docs/SupportedInvoiceImportTemplateResponse.md)
  - [IO.Swagger.Model.SupportedPriceSheetFileDataDTO](docs/SupportedPriceSheetFileDataDTO.md)
  - [IO.Swagger.Model.SupportedPriceSheetFileDataResponse](docs/SupportedPriceSheetFileDataResponse.md)
+ - [IO.Swagger.Model.SupportedPriceSheetFileListResponse](docs/SupportedPriceSheetFileListResponse.md)
  - [IO.Swagger.Model.SupportedPriceSheetFileTestsDTO](docs/SupportedPriceSheetFileTestsDTO.md)
  - [IO.Swagger.Model.SupportedPriceSheetFileTestsResponse](docs/SupportedPriceSheetFileTestsResponse.md)
  - [IO.Swagger.Model.SupportedPriceSheetFilesDTO](docs/SupportedPriceSheetFilesDTO.md)
@@ -1254,13 +1264,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateSupplierDetailsRequest](docs/UpdateSupplierDetailsRequest.md)
  - [IO.Swagger.Model.UpdateSupplierDetailsResponse](docs/UpdateSupplierDetailsResponse.md)
  - [IO.Swagger.Model.UpdateSupportedFileTemplateRequest](docs/UpdateSupportedFileTemplateRequest.md)
- - [IO.Swagger.Model.UpdateSupportedInvoiceFileTemplateResponse](docs/UpdateSupportedInvoiceFileTemplateResponse.md)
  - [IO.Swagger.Model.UpdateSupportedInvoiceImportFileDataRequest](docs/UpdateSupportedInvoiceImportFileDataRequest.md)
  - [IO.Swagger.Model.UpdateSupportedInvoiceImportFileDataResponse](docs/UpdateSupportedInvoiceImportFileDataResponse.md)
  - [IO.Swagger.Model.UpdateSupportedInvoiceImportFileTestsRequest](docs/UpdateSupportedInvoiceImportFileTestsRequest.md)
  - [IO.Swagger.Model.UpdateSupportedInvoiceImportFileTestsResponse](docs/UpdateSupportedInvoiceImportFileTestsResponse.md)
  - [IO.Swagger.Model.UpdateSupportedInvoiceImportFilesRequest](docs/UpdateSupportedInvoiceImportFilesRequest.md)
  - [IO.Swagger.Model.UpdateSupportedInvoiceImportFilesResponse](docs/UpdateSupportedInvoiceImportFilesResponse.md)
+ - [IO.Swagger.Model.UpdateSupportedInvoiceImportTemplateResponse](docs/UpdateSupportedInvoiceImportTemplateResponse.md)
  - [IO.Swagger.Model.UpdateSupportedPriceSheetFileDataRequest](docs/UpdateSupportedPriceSheetFileDataRequest.md)
  - [IO.Swagger.Model.UpdateSupportedPriceSheetFileDataResponse](docs/UpdateSupportedPriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.UpdateSupportedPriceSheetFileTestsRequest](docs/UpdateSupportedPriceSheetFileTestsRequest.md)

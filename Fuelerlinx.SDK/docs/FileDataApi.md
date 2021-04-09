@@ -390,7 +390,7 @@ Name | Type | Description  | Notes
 
 <a name="deletesupportedinvoicefiledatatemplate"></a>
 # **DeleteSupportedInvoiceFileDataTemplate**
-> DeleteSupportedInvoiceFileTemplateResponse DeleteSupportedInvoiceFileDataTemplate (int? id)
+> DeleteSupportedInvoiceImportTemplateResponse DeleteSupportedInvoiceFileDataTemplate (int? id)
 
 Internal use only - Delete a supported invoice file template by it's Id.
 
@@ -424,7 +424,7 @@ namespace Example
             try
             {
                 // Internal use only - Delete a supported invoice file template by it's Id.
-                DeleteSupportedInvoiceFileTemplateResponse result = apiInstance.DeleteSupportedInvoiceFileDataTemplate(id);
+                DeleteSupportedInvoiceImportTemplateResponse result = apiInstance.DeleteSupportedInvoiceFileDataTemplate(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -444,7 +444,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteSupportedInvoiceFileTemplateResponse**](DeleteSupportedInvoiceFileTemplateResponse.md)
+[**DeleteSupportedInvoiceImportTemplateResponse**](DeleteSupportedInvoiceImportTemplateResponse.md)
 
 ### Authorization
 
@@ -942,7 +942,7 @@ Name | Type | Description  | Notes
 
 <a name="getsupportedinvoicefiletemplatesbycompany"></a>
 # **GetSupportedInvoiceFileTemplatesByCompany**
-> SupportedInvoiceFileTemplateResponse GetSupportedInvoiceFileTemplatesByCompany (string fuelerProcessName, int? companyId)
+> SupportedInvoiceImportTemplateResponse GetSupportedInvoiceFileTemplatesByCompany (string fuelerProcessName, int? companyId)
 
 Internal use only - Fetch a supported invoice file template by fuel vendor and company.
 
@@ -977,7 +977,7 @@ namespace Example
             try
             {
                 // Internal use only - Fetch a supported invoice file template by fuel vendor and company.
-                SupportedInvoiceFileTemplateResponse result = apiInstance.GetSupportedInvoiceFileTemplatesByCompany(fuelerProcessName, companyId);
+                SupportedInvoiceImportTemplateResponse result = apiInstance.GetSupportedInvoiceFileTemplatesByCompany(fuelerProcessName, companyId);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -998,7 +998,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**SupportedInvoiceFileTemplateResponse**](SupportedInvoiceFileTemplateResponse.md)
+[**SupportedInvoiceImportTemplateResponse**](SupportedInvoiceImportTemplateResponse.md)
 
 ### Authorization
 
@@ -1013,7 +1013,7 @@ Name | Type | Description  | Notes
 
 <a name="getsupportedinvoicefiletemplatesbyfuelvendor"></a>
 # **GetSupportedInvoiceFileTemplatesByFuelVendor**
-> SupportedInvoiceFileTemplateResponse GetSupportedInvoiceFileTemplatesByFuelVendor (string fuelerProcessName)
+> SupportedInvoiceImportTemplateResponse GetSupportedInvoiceFileTemplatesByFuelVendor (string fuelerProcessName)
 
 Internal use only - Fetch a supported invoice file template by fuel vendor.
 
@@ -1047,7 +1047,7 @@ namespace Example
             try
             {
                 // Internal use only - Fetch a supported invoice file template by fuel vendor.
-                SupportedInvoiceFileTemplateResponse result = apiInstance.GetSupportedInvoiceFileTemplatesByFuelVendor(fuelerProcessName);
+                SupportedInvoiceImportTemplateResponse result = apiInstance.GetSupportedInvoiceFileTemplatesByFuelVendor(fuelerProcessName);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1067,7 +1067,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**SupportedInvoiceFileTemplateResponse**](SupportedInvoiceFileTemplateResponse.md)
+[**SupportedInvoiceImportTemplateResponse**](SupportedInvoiceImportTemplateResponse.md)
 
 ### Authorization
 
@@ -1703,7 +1703,7 @@ Name | Type | Description  | Notes
 
 <a name="postsupportedinvoicefiletemplate"></a>
 # **PostSupportedInvoiceFileTemplate**
-> PostSupportedInvoiceFileTemplateResponse PostSupportedInvoiceFileTemplate (PostSupportedInvoiceFileTemplateRequest body)
+> PostSupportedInvoiceImportTemplateResponse PostSupportedInvoiceFileTemplate (PostSupportedInvoiceImportTemplateRequest body)
 
 Internal use only - Add a supported invoice file template.
 
@@ -1732,12 +1732,12 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new FileDataApi();
-            var body = new PostSupportedInvoiceFileTemplateRequest(); // PostSupportedInvoiceFileTemplateRequest |  (optional) 
+            var body = new PostSupportedInvoiceImportTemplateRequest(); // PostSupportedInvoiceImportTemplateRequest |  (optional) 
 
             try
             {
                 // Internal use only - Add a supported invoice file template.
-                PostSupportedInvoiceFileTemplateResponse result = apiInstance.PostSupportedInvoiceFileTemplate(body);
+                PostSupportedInvoiceImportTemplateResponse result = apiInstance.PostSupportedInvoiceFileTemplate(body);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1753,11 +1753,11 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**PostSupportedInvoiceFileTemplateRequest**](PostSupportedInvoiceFileTemplateRequest.md)|  | [optional] 
+ **body** | [**PostSupportedInvoiceImportTemplateRequest**](PostSupportedInvoiceImportTemplateRequest.md)|  | [optional] 
 
 ### Return type
 
-[**PostSupportedInvoiceFileTemplateResponse**](PostSupportedInvoiceFileTemplateResponse.md)
+[**PostSupportedInvoiceImportTemplateResponse**](PostSupportedInvoiceImportTemplateResponse.md)
 
 ### Authorization
 
@@ -2330,7 +2330,7 @@ Name | Type | Description  | Notes
 
 <a name="updatesupportedinvoicefiledatatemplate"></a>
 # **UpdateSupportedInvoiceFileDataTemplate**
-> UpdateSupportedInvoiceFileTemplateResponse UpdateSupportedInvoiceFileDataTemplate (UpdateSupportedFileTemplateRequest body)
+> UpdateSupportedInvoiceImportTemplateResponse UpdateSupportedInvoiceFileDataTemplate (UpdateSupportedFileTemplateRequest body)
 
 Internal use only - Update a supported invoice file template.
 
@@ -2364,7 +2364,7 @@ namespace Example
             try
             {
                 // Internal use only - Update a supported invoice file template.
-                UpdateSupportedInvoiceFileTemplateResponse result = apiInstance.UpdateSupportedInvoiceFileDataTemplate(body);
+                UpdateSupportedInvoiceImportTemplateResponse result = apiInstance.UpdateSupportedInvoiceFileDataTemplate(body);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -2384,7 +2384,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**UpdateSupportedInvoiceFileTemplateResponse**](UpdateSupportedInvoiceFileTemplateResponse.md)
+[**UpdateSupportedInvoiceImportTemplateResponse**](UpdateSupportedInvoiceImportTemplateResponse.md)
 
 ### Authorization
 
