@@ -149,8 +149,11 @@
             [popoverOnHover]="true"
             [popover]="feeAndTaxPopover" class="hover-mouseenter">
             <div>
-                ${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}</div>
-            <i aria-hidden="true" class="fa fa-info-circle"></i>
+                <div class="d-inline-block">
+                    ${{domesticCommercialPricing.pricingList[indexOfRow].allInPrice | number: "1.4-4"}}
+                </div>
+                <i aria-hidden="true" class="fa fa-info-circle"></i>
+            </div>
         </td>
     </tr>
     </tbody>
