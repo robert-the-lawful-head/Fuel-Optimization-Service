@@ -66,6 +66,18 @@ namespace FBOLinx.Web.Controllers
             return Ok(result);
         }
 
+        [HttpGet("fbo/{fboId}/pricing-template/{pricingTemplateId}")]
+        public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndPricingTemplate([FromRoute] int fboId, [FromRoute] int pricingTemplateId)
+        {
+            var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).Include(x => x.OmitsByPricingTemplate).ToListAsync();
+            result.ForEach(x =>
+            {
+                x.IsOmitted = (x.OmitsByPricingTemplate != null && x.OmitsByPricingTemplate.Any(o => o.PricingTemplateId == pricingTemplateId));
+            });
+            //var result = await _context.FboFeeAndTaxOmitsByCustomer.FirstOrDefaultAsync(x => x.Oid == id);
+            return Ok(result);
+        }
+
         // PUT: api/FboFeesAndTaxes/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFboFeesAndTaxes(int id, FboFeesAndTaxes fboFeesAndTaxes)

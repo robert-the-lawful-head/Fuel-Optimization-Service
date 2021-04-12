@@ -71,6 +71,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<RefreshTokens> RefreshTokens { get; set; }
         public virtual DbSet<FboFeesAndTaxes> FbofeesAndTaxes { get; set; }
         public virtual DbSet<FboFeeAndTaxOmitsByCustomer> FboFeeAndTaxOmitsByCustomer { get; set; }
+        public virtual DbSet<FboFeeAndTaxOmitsByPricingTemplate> FboFeeAndTaxOmitsByPricingTemplate { get; set; }
         public virtual DbSet<AirportWatchHistoricalData> AirportWatchHistoricalData { get; set; }
         public virtual DbSet<AirportWatchAircraftTailNumber> AirportWatchAircraftTailNumber { get; set; }
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
@@ -884,6 +885,8 @@ namespace FBOLinx.DB.Context
             });
 
             modelBuilder.Entity<FboFeeAndTaxOmitsByCustomer>(entity => { entity.HasKey(e => e.Oid); });
+
+            modelBuilder.Entity<FboFeeAndTaxOmitsByPricingTemplate>(entity => { entity.HasKey(e => e.Oid); });
 
             modelBuilder.Entity<AirportWatchHistoricalData>(entity =>
             {
