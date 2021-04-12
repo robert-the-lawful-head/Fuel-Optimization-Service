@@ -141,6 +141,7 @@ import { AirportAutocompleteComponent } from '../shared/components/airport-autoc
 import { DeleteConfirmationComponent } from '../shared/components/delete-confirmation/delete-confirmation.component';
 import { ProceedConfirmationComponent } from '../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { CloseConfirmationComponent } from '../shared/components/close-confirmation/close-confirmation.component';
+import { SaveConfirmationComponent } from '../shared/components/save-confirmation/save-confirmation.component';
 import { DistributionWizardMainComponent } from '../shared/components/distribution-wizard/distribution-wizard-main/distribution-wizard-main.component';
 import { DistributionWizardReviewComponent } from '../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { EmailContentEditComponent } from '../shared/components/email-content-edit/email-content-edit.component';
@@ -298,6 +299,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         DeleteConfirmationComponent,
         ProceedConfirmationComponent,
         CloseConfirmationComponent,
+        SaveConfirmationComponent,
         DistributionWizardMainComponent,
         DistributionWizardReviewComponent,
         FboPricesPanelComponent,

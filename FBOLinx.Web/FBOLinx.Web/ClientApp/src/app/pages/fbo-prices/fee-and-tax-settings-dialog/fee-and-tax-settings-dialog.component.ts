@@ -13,7 +13,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
-import { CloseConfirmationComponent, CloseConfirmationData } from '../../../shared/components/close-confirmation/close-confirmation.component';
+import { SaveConfirmationComponent, SaveConfirmationData } from '../../../shared/components/save-confirmation/save-confirmation.component';
 
 
 export interface FeeAndTaxDialogData {
@@ -70,7 +70,7 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: Array<FeeAndTaxDialogData>,
         public dialogRef: MatDialogRef<FeeAndTaxSettingsDialogComponent>,
-        public closeConfirmationDialog: MatDialog,
+        public saveConfirmationDialog: MatDialog,
         private feesAndTaxesService: FbofeesandtaxesService,
         private sharedService: SharedService,
         private pricingTemplateService: PricingtemplatesService
@@ -157,17 +157,20 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
 
     public onCancelClick(): void {
         if (this.requiresSaving) {
-            const dialogRef = this.closeConfirmationDialog.open(CloseConfirmationComponent, {
+            const dialogRef = this.saveConfirmationDialog.open(SaveConfirmationComponent, {
                 data: {
                     customText: 'You have unsaved changes. Are you sure to close?',
-                    ok: 'Discard Changes',
+                    save: 'Save & Close',
+                    discard: 'Discard Changes',
                     cancel: 'Cancel',
-                } as CloseConfirmationData,
+                } as SaveConfirmationData,
                 autoFocus: false,
             });
 
             dialogRef.afterClosed().subscribe((confirmed) => {
-                if (confirmed) {
+                if (confirmed === 'save') {
+                    this.saveChanges();
+                } else if (confirmed === 'discard') {
                     this.dialogRef.close();
                 }
             });
