@@ -10,6 +10,7 @@ Method | HTTP request | Description
 [**DeleteJobQueueResults**](JobQueueApi.md#deletejobqueueresults) | **DELETE** /api/JobQueue/job-queue-results/{id} | 
 [**GetJobQueue**](JobQueueApi.md#getjobqueue) | **GET** /api/JobQueue/job-queue/by-id/{id} | Get job queue by Id
 [**GetJobQueueFiles**](JobQueueApi.md#getjobqueuefiles) | **GET** /api/JobQueue/job-queue-files/by-jobQueueId/{jobQueueId} | Get job queue files by jobQueueId
+[**GetJobQueueListByDateRange**](JobQueueApi.md#getjobqueuelistbydaterange) | **GET** /api/JobQueue/job-queue/by-date-range | 
 [**GetJobQueueResultEvents**](JobQueueApi.md#getjobqueueresultevents) | **GET** /api/JobQueue/job-queue-result-events/by-jobQueueResultId/{jobQueueResultId} | Get job queue result events by jobQueueResultId
 [**GetJobQueueResults**](JobQueueApi.md#getjobqueueresults) | **GET** /api/JobQueue/job-queue-results/by-jobQueueId/{jobQueueId} | Get job queue results by jobQueueId
 [**PostJobQueue**](JobQueueApi.md#postjobqueue) | **POST** /api/JobQueue/job-queue | Post job queue
@@ -424,6 +425,76 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**JobQueueFilesResponse**](JobQueueFilesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getjobqueuelistbydaterange"></a>
+# **GetJobQueueListByDateRange**
+> JobQueueListResponse GetJobQueueListByDateRange (DateTime? startDateUtc, DateTime? endDateUtc)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetJobQueueListByDateRangeExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new JobQueueApi();
+            var startDateUtc = 2013-10-20T19:20:30+01:00;  // DateTime? |  (optional) 
+            var endDateUtc = 2013-10-20T19:20:30+01:00;  // DateTime? |  (optional) 
+
+            try
+            {
+                JobQueueListResponse result = apiInstance.GetJobQueueListByDateRange(startDateUtc, endDateUtc);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling JobQueueApi.GetJobQueueListByDateRange: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **startDateUtc** | **DateTime?**|  | [optional] 
+ **endDateUtc** | **DateTime?**|  | [optional] 
+
+### Return type
+
+[**JobQueueListResponse**](JobQueueListResponse.md)
 
 ### Authorization
 

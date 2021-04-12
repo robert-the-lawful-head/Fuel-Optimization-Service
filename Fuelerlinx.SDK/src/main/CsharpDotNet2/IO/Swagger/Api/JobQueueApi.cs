@@ -48,6 +48,13 @@ namespace IO.Swagger.Api
         /// <returns>JobQueueFilesResponse</returns>
         JobQueueFilesResponse GetJobQueueFiles (int? jobQueueId);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="startDateUtc"></param>
+        /// <param name="endDateUtc"></param>
+        /// <returns>JobQueueListResponse</returns>
+        JobQueueListResponse GetJobQueueListByDateRange (DateTime? startDateUtc, DateTime? endDateUtc);
+        /// <summary>
         /// Get job queue result events by jobQueueResultId 
         /// </summary>
         /// <param name="jobQueueResultId"></param>
@@ -388,6 +395,42 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetJobQueueFiles: " + response.ErrorMessage, response.ErrorMessage);
     
             return (JobQueueFilesResponse) ApiClient.Deserialize(response.Content, typeof(JobQueueFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="startDateUtc"></param> 
+        /// <param name="endDateUtc"></param> 
+        /// <returns>JobQueueListResponse</returns>            
+        public JobQueueListResponse GetJobQueueListByDateRange (DateTime? startDateUtc, DateTime? endDateUtc)
+        {
+            
+    
+            var path = "/api/JobQueue/job-queue/by-date-range";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+             if (startDateUtc != null) queryParams.Add("startDateUtc", ApiClient.ParameterToString(startDateUtc)); // query parameter
+ if (endDateUtc != null) queryParams.Add("endDateUtc", ApiClient.ParameterToString(endDateUtc)); // query parameter
+                                        
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetJobQueueListByDateRange: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetJobQueueListByDateRange: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (JobQueueListResponse) ApiClient.Deserialize(response.Content, typeof(JobQueueListResponse), response.Headers);
         }
     
         /// <summary>

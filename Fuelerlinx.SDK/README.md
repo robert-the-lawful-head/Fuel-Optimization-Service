@@ -344,6 +344,7 @@ Class | Method | HTTP request | Description
 *JobQueueApi* | [**DeleteJobQueueResults**](docs/JobQueueApi.md#deletejobqueueresults) | **DELETE** /api/JobQueue/job-queue-results/{id} | 
 *JobQueueApi* | [**GetJobQueue**](docs/JobQueueApi.md#getjobqueue) | **GET** /api/JobQueue/job-queue/by-id/{id} | Get job queue by Id
 *JobQueueApi* | [**GetJobQueueFiles**](docs/JobQueueApi.md#getjobqueuefiles) | **GET** /api/JobQueue/job-queue-files/by-jobQueueId/{jobQueueId} | Get job queue files by jobQueueId
+*JobQueueApi* | [**GetJobQueueListByDateRange**](docs/JobQueueApi.md#getjobqueuelistbydaterange) | **GET** /api/JobQueue/job-queue/by-date-range | 
 *JobQueueApi* | [**GetJobQueueResultEvents**](docs/JobQueueApi.md#getjobqueueresultevents) | **GET** /api/JobQueue/job-queue-result-events/by-jobQueueResultId/{jobQueueResultId} | Get job queue result events by jobQueueResultId
 *JobQueueApi* | [**GetJobQueueResults**](docs/JobQueueApi.md#getjobqueueresults) | **GET** /api/JobQueue/job-queue-results/by-jobQueueId/{jobQueueId} | Get job queue results by jobQueueId
 *JobQueueApi* | [**PostJobQueue**](docs/JobQueueApi.md#postjobqueue) | **POST** /api/JobQueue/job-queue | Post job queue
@@ -839,6 +840,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.JobQueueDTO](docs/JobQueueDTO.md)
  - [IO.Swagger.Model.JobQueueFilesDTO](docs/JobQueueFilesDTO.md)
  - [IO.Swagger.Model.JobQueueFilesResponse](docs/JobQueueFilesResponse.md)
+ - [IO.Swagger.Model.JobQueueListResponse](docs/JobQueueListResponse.md)
  - [IO.Swagger.Model.JobQueueResponse](docs/JobQueueResponse.md)
  - [IO.Swagger.Model.JobQueueResultEventsDTO](docs/JobQueueResultEventsDTO.md)
  - [IO.Swagger.Model.JobQueueResultEventsResponse](docs/JobQueueResultEventsResponse.md)
