@@ -139,6 +139,20 @@
                                     </tr>
                                 </tbody>
                             </table>
+
+                            <h5 class="mt-2">Tax/Fee Exclusions</h5>
+                            <div class="tax-fee-exclusions" *ngIf="feesAndTaxes">
+                                <price-breakdown
+                                    #priceBreakdownPreview
+                                    (omitCheckChanged)="omitFeeAndTaxCheckChanged($event)"
+                                    [feeAndTaxDisplayMode]="1"
+                                    [feesAndTaxes]="feesAndTaxes"
+                                    [priceTemplateId]="pricingTemplate.oid"
+                                    priceBreakdownLoader="ITP-tax-fees-exclusion-loader"
+                                    tooltipPlacement="left"
+                                    [hidePriceTierBreakdown]="true"
+                                ></price-breakdown>
+                            </div>
         
                             <h5 class="mt-2">Fuel Uplift Notes</h5>
                             <ejs-richtexteditor #typeRTE
@@ -169,10 +183,10 @@
 
                             <div class="sub-widget">
                                 <price-breakdown #priceBreakdownPreview
-                                                    [hideFeeAndTaxGeneralBreakdown]="true"
-                                                    [priceTemplateId]="pricingTemplate.oid">
-    
-                                </price-breakdown>
+                                                [hideFeeAndTaxGeneralBreakdown]="true"
+                                                [priceTemplateId]="pricingTemplate.oid"
+                                                priceBreakdownLoader="ITP-scenario-pricing-loader"
+                                ></price-breakdown>
                             </div>
                         </mat-tab>
                     </mat-tab-group>

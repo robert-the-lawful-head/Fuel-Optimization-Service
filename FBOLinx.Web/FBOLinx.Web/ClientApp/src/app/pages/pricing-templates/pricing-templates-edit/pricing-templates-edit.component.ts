@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild, } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
@@ -12,6 +12,8 @@ import { CustomermarginsService } from '../../../services/customermargins.servic
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
+import { FbofeeandtaxomitsbypricingtemplateService } from '../../../services/fbofeeandtaxomitsbypricingtemplate.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 // Components
@@ -38,19 +40,17 @@ const BREADCRUMBS: any[] = [
     styleUrls: [ './pricing-templates-edit.component.scss' ],
 })
 export class PricingTemplatesEditComponent implements OnInit {
+    @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
+    @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
+    @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
+
     // Input/Output Bindings
-    @Output()
-    savePricingTemplateClicked = new EventEmitter<any>();
-    @Input()
+    @Output() savePricingTemplateClicked = new EventEmitter<any>();
+
     pricingTemplate: any;
-    @ViewChild('typeRTE')
-    rteObj: RichTextEditorComponent;
-    @ViewChild('typeEmail')
-    rteEmail: RichTextEditorComponent;
-    pricingTemplateForm: FormGroup;
-    // Members
-    pageTitle = 'Edit Margin Template';
     breadcrumb: any[] = BREADCRUMBS;
+    pricingTemplateForm: FormGroup;
+    pageTitle = 'Edit Margin Template';
     marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
         { text: 'Retail -', value: 1 },
@@ -58,11 +58,11 @@ export class PricingTemplatesEditComponent implements OnInit {
     canSave: boolean;
     jetACost: number;
     jetARetail: number;
-    public isSaving = false;
-    public hasSaved = false;
-    public isSaveQueued = false;
-    @ViewChild('priceBreakdownPreview')
-    private priceBreakdownPreview: PriceBreakdownComponent;
+    isSaving = false;
+    hasSaved = false;
+    isSaveQueued = false;
+
+    feesAndTaxes: Array<any>;
 
     constructor(
         private route: ActivatedRoute,
@@ -72,6 +72,8 @@ export class PricingTemplatesEditComponent implements OnInit {
         private priceTiersService: PricetiersService,
         private pricingTemplatesService: PricingtemplatesService,
         private fboPricesService: FbopricesService,
+        private fboFeesAndTaxesService: FbofeesandtaxesService,
+        private fboFeeAndTaxOmitsbyPricingTemplateService: FbofeeandtaxomitsbypricingtemplateService,
         private sharedService: SharedService
     ) {
         this.sharedService.titleChange(this.pageTitle);
@@ -81,15 +83,15 @@ export class PricingTemplatesEditComponent implements OnInit {
         return this.pricingTemplateForm.controls.customerMargins as FormArray;
     }
 
-    public ngOnInit(): void {
+    async ngOnInit() {
         // Check for passed in id
         const id = this.route.snapshot.paramMap.get('id');
+        this.pricingTemplate = await this.pricingTemplatesService.get({ oid: id }).toPromise();
 
         combineLatest([
-            this.pricingTemplatesService.get({ oid: id }),
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(id),
             this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId),
-        ]).subscribe(([ pricingTemplateData, customerMarginsData, fboPricesData ]) => {
+        ]).subscribe(([ customerMarginsData, fboPricesData ]) => {
             const jetACostRecords = (fboPricesData as any).filter(item => item.product === 'JetA Cost');
             const jetARetailRecords = (fboPricesData as any).filter(item => item.product === 'JetA Retail');
             if (jetACostRecords && jetACostRecords.length > 0) {
@@ -99,7 +101,6 @@ export class PricingTemplatesEditComponent implements OnInit {
                 this.jetARetail = jetARetailRecords[0].price;
             }
 
-            this.pricingTemplate = pricingTemplateData;
             this.pricingTemplate.customerMargins =
                 this.updateMargins(customerMarginsData, this.pricingTemplate.marginType);
             let customerMargins: FormArray = this.formBuilder.array([]);
@@ -154,9 +155,11 @@ export class PricingTemplatesEditComponent implements OnInit {
                 this.savePricingTemplate();
             });
         });
+
+        this.loadPricingTemplateFeesAndTaxes();
     }
 
-    public savePricingTemplate(): void {
+    savePricingTemplate(): void {
         const self = this;
         if (this.isSaving) {
             // Save already in queue - no need to double-up the queue
@@ -238,6 +241,50 @@ export class PricingTemplatesEditComponent implements OnInit {
                 group[key] = [ value ];
             });
         this.customerMarginsFormArray.push(this.formBuilder.group(group, { updateOn: 'blur' }));
+    }
+
+    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
+        if (!feeAndTax.omitsByPricingTemplate) {
+            feeAndTax.omitsByPricingTemplate = [];
+        }
+        let omitRecord: any = {
+            oid: 0,
+            fboFeeAndTaxId: feeAndTax.oid,
+            pricingTemplateId: this.pricingTemplate.oid
+        };
+        if (feeAndTax.omitsByPricingTemplate.length > 0) {
+            omitRecord = feeAndTax.omitsByPricingTemplate[0];
+        } else {
+            feeAndTax.omitsByPricingTemplate.push(omitRecord);
+        }
+        omitRecord.fboFeeAndTaxId = feeAndTax.oid;
+        if (feeAndTax.isOmitted) {
+            this.fboFeeAndTaxOmitsbyPricingTemplateService.add(omitRecord).subscribe((response: any) => {
+                omitRecord.oid = response.oid;
+                this.recalculatePriceBreakdown();
+            });
+        } else {
+            this.fboFeeAndTaxOmitsbyPricingTemplateService.remove(omitRecord).subscribe(() => {
+                feeAndTax.omitsByPricingTemplate = [];
+                this.recalculatePriceBreakdown();
+            });
+        }
+    }
+
+    private loadPricingTemplateFeesAndTaxes(): void {
+        this.fboFeesAndTaxesService
+            .getByFboAndPricingTemplate(this.sharedService.currentUser.fboId, this.pricingTemplate.oid).subscribe(
+            (response: any[]) => {
+                this.feesAndTaxes = response;
+            });
+    }
+
+    private recalculatePriceBreakdown(): void {
+        // Set a timeout so the child component is aware of model changes
+        const self = this;
+        setTimeout(() => {
+            self.priceBreakdownPreview.performRecalculation();
+        });
     }
 
     private updateMargins(oldMargins, marginType) {
