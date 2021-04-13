@@ -7,6 +7,7 @@ import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
@@ -68,12 +69,15 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     public tailLoader = 'tail-loader';
     public isPriceBreakdownCustomerActive = true;
 
+    public feesAndTaxes: Array<any>;
+
     constructor(private sharedService: SharedService,
                 private aircraftsService: AircraftsService,
                 private NgxUiLoader: NgxUiLoaderService,
                 private pricingTemplateService: PricingtemplatesService,
                 private customerInfoByGroupService: CustomerinfobygroupService,
-                private customerAircraftsService: CustomeraircraftsService
+                private customerAircraftsService: CustomeraircraftsService,
+                private fboFeesAndTaxesService: FbofeesandtaxesService,
     ) {
         // Register change subscription for tail number entry
         this.tailNumberFormControlSubscription = this.tailNumberForLookupControl.valueChanges.debounceTime(1000)
@@ -158,13 +162,12 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
                 tailNumber,
                 customerInfoByGroupId
             };
-            const self = this;
-            setTimeout(() => {
-                if (self.priceBreakdownPreview) {
-                    self.priceBreakdownPreview.feesAndTaxes = null;
-                    self.priceBreakdownPreview.performRecalculation();
-                }
-            });
+        }
+
+        if (this.priceCheckerLookupType === PriceCheckerLookupTypes.ByPricingTemplate) {
+            this.loadPricingTemplateFeesAndTaxes();
+        } else {
+            this.loadCustomerFeesAndTaxes();
         }
     }
 
@@ -267,5 +270,37 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
             return this.pricingTemplateId;
         }
+    }
+
+    private loadPricingTemplateFeesAndTaxes(): void {
+        this.fboFeesAndTaxesService
+            .getByFboAndPricingTemplate(this.sharedService.currentUser.fboId, this.pricingTemplateId)
+            .subscribe((response: any[]) => {
+                this.feesAndTaxes = response;
+                const self = this;
+                setTimeout(() => {
+                    self.priceBreakdownPreview?.performRecalculation();
+                });
+            });
+    }
+
+    private loadCustomerFeesAndTaxes(): void {
+        const customerId = this.priceCheckerLookupType === PriceCheckerLookupTypes.ByCustomer
+            ? this.customerForCustomerLookup?.customerId
+            : this.customerForTailLookup?.customerId;
+
+        if (!customerId) {
+            return;
+        }
+
+        this.fboFeesAndTaxesService
+            .getByFboAndCustomer(this.sharedService.currentUser.fboId, customerId)
+            .subscribe((response: any[]) => {
+                this.feesAndTaxes = response;
+                const self = this;
+                setTimeout(() => {
+                    self.priceBreakdownPreview?.performRecalculation();
+                });
+            });
     }
 }
