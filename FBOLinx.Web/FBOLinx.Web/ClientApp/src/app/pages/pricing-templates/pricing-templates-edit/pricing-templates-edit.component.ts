@@ -41,6 +41,7 @@ const BREADCRUMBS: any[] = [
 })
 export class PricingTemplatesEditComponent implements OnInit {
     @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
+    @ViewChild('feeAndTaxGeneralBreakdown') private feeAndTaxGeneralBreakdown: PriceBreakdownComponent;
     @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
     @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
 
@@ -195,6 +196,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             this.isSaving = false;
             this.hasSaved = true;
             this.priceBreakdownPreview.performRecalculation();
+            this.feeAndTaxGeneralBreakdown.performRecalculation();
 
             this.sharedService.NotifyPricingTemplateComponent('updateComponent');
         });
@@ -284,6 +286,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         const self = this;
         setTimeout(() => {
             self.priceBreakdownPreview.performRecalculation();
+            self.feeAndTaxGeneralBreakdown.performRecalculation();
         });
     }
 
