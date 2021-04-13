@@ -143,7 +143,7 @@
                             <h5 class="mt-2">Tax/Fee Exclusions</h5>
                             <div class="tax-fee-exclusions" *ngIf="feesAndTaxes">
                                 <price-breakdown
-                                    #priceBreakdownPreview
+                                    #feeAndTaxGeneralBreakdown
                                     (omitCheckChanged)="omitFeeAndTaxCheckChanged($event)"
                                     [feeAndTaxDisplayMode]="1"
                                     [feesAndTaxes]="feesAndTaxes"
@@ -179,12 +179,14 @@
                         </mat-tab>
 
                         <mat-tab label="Scenario Pricing">
-                            <h5>Template Prices</h5>
+                            <h5 class="mt-4">Template Prices</h5>
 
-                            <div class="sub-widget">
+                            <div class="mt-4 sub-widget">
                                 <price-breakdown #priceBreakdownPreview
                                                 [hideFeeAndTaxGeneralBreakdown]="true"
                                                 [priceTemplateId]="pricingTemplate.oid"
+                                                [feesAndTaxes]="feesAndTaxes"
+                                                tooltipPlacement="bottom"
                                                 priceBreakdownLoader="ITP-scenario-pricing-loader"
                                 ></price-breakdown>
                             </div>
