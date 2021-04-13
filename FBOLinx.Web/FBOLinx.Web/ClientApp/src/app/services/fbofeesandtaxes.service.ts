@@ -41,6 +41,13 @@ export class FbofeesandtaxesService {
             });
     }
 
+    public getByFboAndAircraft(fboId, aircraftId) {
+        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/aircraft/' + aircraftId,
+            {
+                headers: this.headers,
+            });
+    }
+
     public add(payload) {
         return this.http.post(this.accessPointUrl,
             payload,
