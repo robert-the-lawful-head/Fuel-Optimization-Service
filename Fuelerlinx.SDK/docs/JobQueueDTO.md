@@ -9,8 +9,12 @@ Name | Type | Description | Notes
 **DateCreatedUtc** | **DateTime?** |  | [optional] 
 **LastRanUtc** | **DateTime?** |  | [optional] 
 **Source** | **int?** |  | [optional] 
+**SourceDescription** | **string** |  | [optional] 
 **Status** | **int?** |  | [optional] 
+**StatusDescription** | **string** |  | [optional] 
 **JobType** | **int?** |  | [optional] 
+**JobTypeDescription** | **string** |  | [optional] 
+**FileNames** | **string** |  | [optional] 
 **JobQueueResults** | [**List&lt;JobQueueResultsDTO&gt;**](JobQueueResultsDTO.md) |  | [optional] 
 **JobQueueFiles** | [**List&lt;JobQueueFilesDTO&gt;**](JobQueueFilesDTO.md) |  | [optional] 
 
