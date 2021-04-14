@@ -82,6 +82,12 @@ export class PriceBreakdownComponent implements OnInit {
         this.activeHoverPriceItem = priceItem;
         this.activeHoverDeparturetypes = departureTypes;
         this.activeHoverFlightTypes = flightTypes;
+        if (priceItem.feesAndTaxes != null) {
+            this.feeAndTaxCloneForPopOver = [];
+            priceItem.feesAndTaxes.forEach(val => this.feeAndTaxCloneForPopOver.push(Object.assign({}, val)));
+        } else {
+            this.feeAndTaxCloneForPopOver = [];
+        }
         const self = this;
         setTimeout(() => {
             if (self.dynamicFeeAndTaxBreakdown) {
