@@ -138,10 +138,10 @@
 
 <div *ngIf="sampleCalculation" class="container-fluid pb-4 sub-widget">
     <div class="row mt-4 mb-2" *ngIf="isPriceBreakdownCustomerActive">
-        <div class="col font-weight-bold" style="padding-left: 53px;">
+        <div *ngIf="!hideFeeAndTaxGeneralBreakdown" class="col font-weight-bold" style="padding-left: 53px;">
             Taxes and Fees
         </div>
-        <div class="col font-weight-bold" style="padding-left: 16px;">
+        <div *ngIf="!hidePriceTierBreakdown" class="col font-weight-bold" style="padding-left: 16px;">
             Customer's All-In Rate
         </div>
     </div>
@@ -151,6 +151,8 @@
             <price-breakdown #priceBreakdownPreview
                              (calculationsComplated)="priceBreakdownCalculationsCompleted($event)"
                              [customerInfoByGroupId]="sampleCalculation.customerInfoByGroupId"
+                             [hideFeeAndTaxGeneralBreakdown]="hideFeeAndTaxGeneralBreakdown"
+                             [hidePriceTierBreakdown]="hidePriceTierBreakdown"
                              [feeAndTaxDisplayMode]="2"
                              [priceTemplateId]="sampleCalculation.pricingTemplateId"
                              [showFeeAndTaxLineSeparator]="true"
