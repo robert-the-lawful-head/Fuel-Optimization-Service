@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 
@@ -45,6 +45,8 @@ enum PriceCheckerLookupTypes {
 })
 export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
+    @Input() hideFeeAndTaxGeneralBreakdown = false;
+    @Input() hidePriceTierBreakdown = false;
 
     public customerForTailLookup: any;
     public tailNumberForTailLookup = '';
