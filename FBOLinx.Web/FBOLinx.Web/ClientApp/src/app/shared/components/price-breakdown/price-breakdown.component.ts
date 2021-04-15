@@ -11,7 +11,7 @@ import {
 } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 
 import { forkJoin, Observable } from 'rxjs';
-import { CustomerinfobygroupService } from "../../../services/customerinfobygroup.service";
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 
 
 export enum PriceBreakdownDisplayTypes {
@@ -27,31 +27,23 @@ export enum PriceBreakdownDisplayTypes {
     styleUrls: [ './price-breakdown.component.scss' ]
 })
 export class PriceBreakdownComponent implements OnInit {
+    @ViewChild('feeAndTaxBreakdown') private feeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    @ViewChild('dynamicFeeAndTaxBreakdown') private dynamicFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
 
-    @Input()
-    priceTemplateId = 0;
-    @Input()
-    tailNumber = '';
-    @Input()
-    customerInfoByGroupId = 0;
-    @Input()
-    feesAndTaxes: Array<any>;
-    @Input()
-    hideFeeAndTaxGeneralBreakdown = false;
-    @Input()
-    hidePriceTierBreakdown = false;
-    @Input()
-    feeAndTaxDisplayMode: FeeAndTaxBreakdownDisplayModes = FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
-    @Input()
-    showFeeAndTaxLineSeparator = false;
-    @Input()
-    tooltipPlacement = 'top-left';
-    @Output()
-    omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
-    @Output()
-    calculationsComplated: EventEmitter<any> = new EventEmitter<any>();
-    @Output()
-    customerActiveCheckCompleted: EventEmitter<any> = new EventEmitter<any>();
+    @Input() priceTemplateId = 0;
+    @Input() tailNumber = '';
+    @Input() customerInfoByGroupId = 0;
+    @Input() feesAndTaxes: Array<any>;
+    @Input() hideFeeAndTaxGeneralBreakdown = false;
+    @Input() hidePriceTierBreakdown = false;
+    @Input() feeAndTaxDisplayMode: FeeAndTaxBreakdownDisplayModes = FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
+    @Input() showFeeAndTaxLineSeparator = false;
+    @Input() tooltipPlacement = 'top-left';
+    @Input() priceBreakdownLoader = 'price-breakdown-loader';
+    @Output() omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() calculationsComplated: EventEmitter<any> = new EventEmitter<any>();
+    @Output() customerActiveCheckCompleted: EventEmitter<any> = new EventEmitter<any>();
+
     public internationalCommercialPricing: any;
     public internationalPrivatePricing: any;
     public domesticCommercialPricing: any;
@@ -62,17 +54,12 @@ export class PriceBreakdownComponent implements OnInit {
     public domesticPrivateFeesAndTaxes: Array<any>;
     public feeAndTaxCloneForPopOver: Array<any>;
     public priceBreakdownDisplayType: PriceBreakdownDisplayTypes = PriceBreakdownDisplayTypes.SingleColumnAllFlights;
-    public priceBreakdownLoader = 'price-breakdown-loader';
     public activeHoverPriceItem: any = {};
     public activeHoverDeparturetypes: Array<number> = [];
     public activeHoverFlightTypes: Array<number> = [];
     public defaultValidDepartureTypes: Array<number> = [ 0, 1, 2, 3 ];
     public defaultValidFlightTypes: Array<number> = [0, 1, 2, 3];
-    public isCustomerActive: boolean = true;
-    @ViewChild('feeAndTaxBreakdown')
-    private feeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-    @ViewChild('dynamicFeeAndTaxBreakdown')
-    private dynamicFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
+    public isCustomerActive = true;
 
     constructor(private feesAndTaxesService: FbofeesandtaxesService,
                 private sharedService: SharedService,
@@ -95,6 +82,12 @@ export class PriceBreakdownComponent implements OnInit {
         this.activeHoverPriceItem = priceItem;
         this.activeHoverDeparturetypes = departureTypes;
         this.activeHoverFlightTypes = flightTypes;
+        if (priceItem.feesAndTaxes != null) {
+            this.feeAndTaxCloneForPopOver = [];
+            priceItem.feesAndTaxes.forEach(val => this.feeAndTaxCloneForPopOver.push(Object.assign({}, val)));
+        } else {
+            this.feeAndTaxCloneForPopOver = [];
+        }
         const self = this;
         setTimeout(() => {
             if (self.dynamicFeeAndTaxBreakdown) {

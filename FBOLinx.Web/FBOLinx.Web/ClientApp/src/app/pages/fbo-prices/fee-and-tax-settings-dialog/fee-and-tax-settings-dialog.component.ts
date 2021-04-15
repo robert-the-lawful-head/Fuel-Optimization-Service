@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, } from '@angular/material/dialog';
 
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
@@ -13,6 +13,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
+import { SaveConfirmationComponent, SaveConfirmationData } from '../../../shared/components/save-confirmation/save-confirmation.component';
 
 
 export interface FeeAndTaxDialogData {
@@ -43,6 +44,8 @@ export interface SampleCalculation {
     providers: [ SharedService, PricingtemplatesService, FbopricesService, NgxUiLoaderService ]
 })
 export class FeeAndTaxSettingsDialogComponent implements OnInit {
+    @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
+
     public calculationLoader = 'calculation-loader';
     public feeAndTaxDatasource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [ 'name', 'calculationType', 'whenToApply', 'value', 'flightTypeClassification', 'departureType', 'delete' ];
@@ -63,11 +66,11 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
         inclusivePrice: 0
     };
     public requiresSaving = false;
-    @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: Array<FeeAndTaxDialogData>,
         public dialogRef: MatDialogRef<FeeAndTaxSettingsDialogComponent>,
+        public saveConfirmationDialog: MatDialog,
         private feesAndTaxesService: FbofeesandtaxesService,
         private sharedService: SharedService,
         private pricingTemplateService: PricingtemplatesService
@@ -153,7 +156,27 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     }
 
     public onCancelClick(): void {
-        this.dialogRef.close();
+        if (this.requiresSaving) {
+            const dialogRef = this.saveConfirmationDialog.open(SaveConfirmationComponent, {
+                data: {
+                    customText: 'You have unsaved changes. Are you sure to close?',
+                    save: 'Save & Close',
+                    discard: 'Discard Changes',
+                    cancel: 'Cancel',
+                } as SaveConfirmationData,
+                autoFocus: false,
+            });
+
+            dialogRef.afterClosed().subscribe((confirmed) => {
+                if (confirmed === 'save') {
+                    this.saveChanges();
+                } else if (confirmed === 'discard') {
+                    this.dialogRef.close();
+                }
+            });
+        } else {
+            this.dialogRef.close();
+        }
     }
 
     // Private Methods

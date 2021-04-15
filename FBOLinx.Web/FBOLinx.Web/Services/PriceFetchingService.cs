@@ -138,17 +138,13 @@ namespace FBOLinx.Web.Services
                 //Prepare fees/taxes based on the provided departure type and flight type
                 if (feesAndTaxes == null)
                 {
-                    feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Where(x =>
+                    feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Include(x => x.OmitsByPricingTemplate).Where(x =>
                         x.Fboid == fboId && (x.FlightTypeClassification == FlightTypeClassifications.All ||
                                              x.FlightTypeClassification == flightTypeClassifications ||
                                              flightTypeClassifications == FlightTypeClassifications.All)).ToListAsync();
                     if (departureType != ApplicableTaxFlights.All)
                         feesAndTaxes = feesAndTaxes.Where(x =>
                             x.DepartureType == departureType || x.DepartureType == ApplicableTaxFlights.All).ToList();
-                    feesAndTaxes.ForEach(x =>
-                    {
-                        x.IsOmitted = (x.OmitsByCustomer != null && x.OmitsByCustomer.Any(o => o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId));
-                    });
                 }
                 else
                 {
@@ -233,7 +229,7 @@ namespace FBOLinx.Web.Services
 
                 if (feesAndTaxes.Count == 0)
                     return customerPricingResults;
-
+                
                 //Add domestic-departure-only price options
                 List<CustomerWithPricing> domesticOptions = new List<CustomerWithPricing>();
                 if ((feesAndTaxes.Any(x => x.DepartureType == ApplicableTaxFlights.DomesticOnly) &&
@@ -245,7 +241,8 @@ namespace FBOLinx.Web.Services
                         x.Product = "JetA (Domestic Departure)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.DomesticOnly ||
-                            fee.DepartureType == ApplicableTaxFlights.All).ToList();
+                            fee.DepartureType == ApplicableTaxFlights.All)                                                                                                            
+                            .ToList().Clone<FboFeesAndTaxes>().ToList();
                     });
                 }
 
@@ -261,7 +258,13 @@ namespace FBOLinx.Web.Services
                         x.Product = "JetA (International Departure)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
-                            fee.DepartureType == ApplicableTaxFlights.All).ToList();
+                            fee.DepartureType == ApplicableTaxFlights.All)
+                            .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != x.PricingTemplateId))
+                            .ToList();
+                        x.FeesAndTaxes = feesAndTaxes.Where(fee =>
+                                fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
+                                fee.DepartureType == ApplicableTaxFlights.All)                                                                                                        
+                            .ToList().Clone<FboFeesAndTaxes>().ToList();
                     });
                 }
 
@@ -281,7 +284,8 @@ namespace FBOLinx.Web.Services
                             productName += " (International Departure)";
                         x.Product = productName;
                         x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.All)
-                            .ToList();
+                            .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != x.PricingTemplateId))
+                            .ToList().Clone<FboFeesAndTaxes>().ToList();
                     });
                 }
 
@@ -289,6 +293,15 @@ namespace FBOLinx.Web.Services
                 resultsWithFees.AddRange(domesticOptions);
                 resultsWithFees.AddRange(internationalOptions);
                 resultsWithFees.AddRange(allDepartureOptions);
+                
+                //Set the "IsOmitted" case for all fees that might be omitted from a pricing template or customer specifically
+                //Each collection of fees is cloned so updating the flag of one collection does not affect other pricing results where the template did not omit it
+                resultsWithFees.ForEach(x =>
+                {
+                    x.FeesAndTaxes.ForEach(fee => fee.IsOmitted = (fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o => o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId)) 
+                                                                  || 
+                                                                  (fee.OmitsByPricingTemplate != null && fee.OmitsByPricingTemplate.Any(o => o.PricingTemplateId == x.PricingTemplateId)));
+                });
                 return resultsWithFees;
             }
             catch (System.Exception exception)

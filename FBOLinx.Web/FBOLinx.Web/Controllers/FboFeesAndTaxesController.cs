@@ -57,12 +57,28 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fbo/{fboId}/customer/{customerId}")]
         public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndCustomer([FromRoute] int fboId, [FromRoute] int customerId)
         {
-            var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).Include(x => x.OmitsByCustomer).ToListAsync();
+            var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId)
+                .Include(x => x.OmitsByCustomer)
+                .Include(x => x.OmitsByPricingTemplate)
+                .ToListAsync();
             result.ForEach(x =>
             {
                 x.IsOmitted = (x.OmitsByCustomer != null && x.OmitsByCustomer.Any(o => o.CustomerId == customerId));
             });
-            //var result = await _context.FboFeeAndTaxOmitsByCustomer.FirstOrDefaultAsync(x => x.Oid == id);
+            return Ok(result);
+        }
+
+        [HttpGet("fbo/{fboId}/pricing-template/{pricingTemplateId}")]
+        public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndPricingTemplate([FromRoute] int fboId, [FromRoute] int pricingTemplateId)
+        {
+            var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId)
+                .Include(x => x.OmitsByPricingTemplate)
+                .Include(x => x.OmitsByPricingTemplate)
+                .ToListAsync();
+            result.ForEach(x =>
+            {
+                x.IsOmitted = (x.OmitsByPricingTemplate != null && x.OmitsByPricingTemplate.Any(o => o.PricingTemplateId == pricingTemplateId));
+            });
             return Ok(result);
         }
 

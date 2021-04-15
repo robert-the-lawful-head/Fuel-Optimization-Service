@@ -123,7 +123,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("suspendpricing/{oid}")]
-        public async Task<IActionResult> SuspendPricing([FromRoute] int oid)
+        public async Task<IActionResult> SuspendPricing([FromRoute] int oid)    
         {
             if (!ModelState.IsValid)
             {

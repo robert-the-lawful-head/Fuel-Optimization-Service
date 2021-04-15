@@ -81,7 +81,7 @@ namespace FBOLinx.Web.Controllers
             if (string.IsNullOrEmpty(tailNumber))
                 return Ok(new List<CustomerInfoByGroup>());
             
-            var customerAircraft = await _context.CustomerAircrafts.Where(x => x.TailNumber == tailNumber).ToListAsync();
+            var customerAircraft = await _context.CustomerAircrafts.Where(x => x.TailNumber == tailNumber && x.GroupId == groupId).ToListAsync();
             if (customerAircraft == null)
                 return Ok(new List<CustomerInfoByGroup>());
 

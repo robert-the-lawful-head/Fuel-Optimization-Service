@@ -265,11 +265,11 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 }
 
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
-                localStorage.setItem('managerGroupId', this.sharedService.currentUser.managerGroupId.toString());
+                localStorage.setItem('managerGroupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.groupId = group.oid;
-                localStorage.setItem('groupId', this.sharedService.currentUser.groupId.toString());
-                this.sharedService.currentUser.impersonatedRole = 2;
+                localStorage.setItem('groupId', group.oid);
                 localStorage.setItem('impersonatedrole', '2');
+                this.sharedService.currentUser.impersonatedRole = 2;
                 this.router.navigate([ '/default-layout/fbos/' ]);
             });
         }
