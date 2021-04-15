@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **EventLabel** | **string** |  | [optional] 
 **EventDescription** | **string** |  | [optional] 
 **EventType** | **int?** |  | [optional] 
+**EventTypeDescription** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

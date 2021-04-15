@@ -25,6 +25,7 @@ Method | HTTP request | Description
 [**PostSupportedPriceSheetFiles**](FuelPricingApi.md#postsupportedpricesheetfiles) | **POST** /api/FuelPricing/supported-price-sheet-files | Post Supported Price Sheet Files
 [**UpdateSupportedPriceSheetFileTests**](FuelPricingApi.md#updatesupportedpricesheetfiletests) | **PUT** /api/FuelPricing/supported-price-sheet-file-tests | Updates Supported Price Sheet File Tests
 [**UpdateSupportedPriceSheetFiles**](FuelPricingApi.md#updatesupportedpricesheetfiles) | **PUT** /api/FuelPricing/supported-price-sheet-files | Updates Supported Price Sheet Files
+[**VerifyVendorServiceCredentials**](FuelPricingApi.md#verifyvendorservicecredentials) | **GET** /api/FuelPricing/verify-vendor-service-credentials/{vendorId} | Internal use only - verify credentials for a vendor service.
 
 
 <a name="deletecurrentpricingforcompany"></a>
@@ -1483,6 +1484,75 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="verifyvendorservicecredentials"></a>
+# **VerifyVendorServiceCredentials**
+> bool? VerifyVendorServiceCredentials (int? vendorId)
+
+Internal use only - verify credentials for a vendor service.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class VerifyVendorServiceCredentialsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FuelPricingApi();
+            var vendorId = 56;  // int? | 
+
+            try
+            {
+                // Internal use only - verify credentials for a vendor service.
+                bool? result = apiInstance.VerifyVendorServiceCredentials(vendorId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FuelPricingApi.VerifyVendorServiceCredentials: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **vendorId** | **int?**|  | 
+
+### Return type
+
+**bool?**
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

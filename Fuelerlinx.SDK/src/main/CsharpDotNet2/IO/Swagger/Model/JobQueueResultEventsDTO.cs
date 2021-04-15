@@ -48,6 +48,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "eventType")]
     public int? EventType { get; set; }
 
+    /// <summary>
+    /// Gets or Sets EventTypeDescription
+    /// </summary>
+    [DataMember(Name="eventTypeDescription", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "eventTypeDescription")]
+    public string EventTypeDescription { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -61,6 +68,7 @@ namespace IO.Swagger.Model {
       sb.Append("  EventLabel: ").Append(EventLabel).Append("\n");
       sb.Append("  EventDescription: ").Append(EventDescription).Append("\n");
       sb.Append("  EventType: ").Append(EventType).Append("\n");
+      sb.Append("  EventTypeDescription: ").Append(EventTypeDescription).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
