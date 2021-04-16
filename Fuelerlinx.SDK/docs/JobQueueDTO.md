@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **StatusDescription** | **string** |  | [optional] 
 **JobType** | **int?** |  | [optional] 
 **JobTypeDescription** | **string** |  | [optional] 
+**SearchTerms** | **string** |  | [optional] 
 **FileNames** | **string** |  | [optional] 
 **JobQueueResults** | [**List&lt;JobQueueResultsDTO&gt;**](JobQueueResultsDTO.md) |  | [optional] 
 **JobQueueFiles** | [**List&lt;JobQueueFilesDTO&gt;**](JobQueueFilesDTO.md) |  | [optional] 

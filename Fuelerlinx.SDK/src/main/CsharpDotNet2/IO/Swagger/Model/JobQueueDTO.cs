@@ -93,6 +93,13 @@ namespace IO.Swagger.Model {
     public string JobTypeDescription { get; set; }
 
     /// <summary>
+    /// Gets or Sets SearchTerms
+    /// </summary>
+    [DataMember(Name="searchTerms", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "searchTerms")]
+    public string SearchTerms { get; set; }
+
+    /// <summary>
     /// Gets or Sets FileNames
     /// </summary>
     [DataMember(Name="fileNames", EmitDefaultValue=false)]
@@ -132,6 +139,7 @@ namespace IO.Swagger.Model {
       sb.Append("  StatusDescription: ").Append(StatusDescription).Append("\n");
       sb.Append("  JobType: ").Append(JobType).Append("\n");
       sb.Append("  JobTypeDescription: ").Append(JobTypeDescription).Append("\n");
+      sb.Append("  SearchTerms: ").Append(SearchTerms).Append("\n");
       sb.Append("  FileNames: ").Append(FileNames).Append("\n");
       sb.Append("  JobQueueResults: ").Append(JobQueueResults).Append("\n");
       sb.Append("  JobQueueFiles: ").Append(JobQueueFiles).Append("\n");
