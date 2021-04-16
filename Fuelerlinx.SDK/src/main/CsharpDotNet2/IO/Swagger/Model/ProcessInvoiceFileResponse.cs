@@ -13,11 +13,18 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class ProcessInvoiceFileResponse {
     /// <summary>
-    /// Gets or Sets Result
+    /// Gets or Sets AutoReconProcess
     /// </summary>
-    [DataMember(Name="result", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "result")]
-    public AutoReconProcessDTO Result { get; set; }
+    [DataMember(Name="autoReconProcess", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "autoReconProcess")]
+    public AutoReconProcessDTO AutoReconProcess { get; set; }
+
+    /// <summary>
+    /// Gets or Sets JobQueueResultEvents
+    /// </summary>
+    [DataMember(Name="jobQueueResultEvents", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "jobQueueResultEvents")]
+    public List<JobQueueResultEventsDTO> JobQueueResultEvents { get; set; }
 
     /// <summary>
     /// Gets or Sets Success
@@ -41,7 +48,8 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class ProcessInvoiceFileResponse {\n");
-      sb.Append("  Result: ").Append(Result).Append("\n");
+      sb.Append("  AutoReconProcess: ").Append(AutoReconProcess).Append("\n");
+      sb.Append("  JobQueueResultEvents: ").Append(JobQueueResultEvents).Append("\n");
       sb.Append("  Success: ").Append(Success).Append("\n");
       sb.Append("  Message: ").Append(Message).Append("\n");
       sb.Append("}\n");

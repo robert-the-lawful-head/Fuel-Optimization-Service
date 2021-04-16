@@ -3,7 +3,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**AutoReconProcessDTO**](AutoReconProcessDTO.md) |  | [optional] 
+**AutoReconProcess** | [**AutoReconProcessDTO**](AutoReconProcessDTO.md) |  | [optional] 
+**JobQueueResultEvents** | [**List&lt;JobQueueResultEventsDTO&gt;**](JobQueueResultEventsDTO.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 
