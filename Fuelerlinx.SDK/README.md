@@ -368,9 +368,11 @@ Class | Method | HTTP request | Description
 *PartnerApi* | [**GetAvailablePartnersByType**](docs/PartnerApi.md#getavailablepartnersbytype) | **GET** /api/Partner/list/type/{partnerType} | Fetch all integration partners of a certain type.
 *PartnerApi* | [**GetCompanyActiveIntegrationById**](docs/PartnerApi.md#getcompanyactiveintegrationbyid) | **GET** /api/Partner/active-integration/{id} | Fetch an active integration for the authenticated company by it's {id}.
 *PartnerApi* | [**GetCompanyActiveIntegrations**](docs/PartnerApi.md#getcompanyactiveintegrations) | **GET** /api/Partner/active-integration/list | 
+*PartnerApi* | [**GetOAuthUrlForPartner**](docs/PartnerApi.md#getoauthurlforpartner) | **POST** /api/Partner/oath-url | Internal use only - Fetch the OAuth url to be used for authentication with a partner.
 *PartnerApi* | [**GetPartnerCredentialsByTypeAndAffiliation**](docs/PartnerApi.md#getpartnercredentialsbytypeandaffiliation) | **GET** /api/Partner/credentials/type/{partnerType}/affiliation/{affiliation} | Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user's data.
 *PartnerApi* | [**GetPartnerInfo**](docs/PartnerApi.md#getpartnerinfo) | **GET** /api/Partner | Fetch the integration partner by the provided API key.
 *PartnerApi* | [**PostCompanyActiveIntegration**](docs/PartnerApi.md#postcompanyactiveintegration) | **POST** /api/Partner/active-integration | 
+*PartnerApi* | [**PostOAuthCallbackForPartner**](docs/PartnerApi.md#postoauthcallbackforpartner) | **POST** /api/Partner/oath-callback | Internal use only - Post the OAuth code to the partner to receive an access/auth token.
 *PartnerApi* | [**UpdateCompanyActiveIntegration**](docs/PartnerApi.md#updatecompanyactiveintegration) | **PUT** /api/Partner/active-integration | 
 *PaymentsApi* | [**CancelPayment**](docs/PaymentsApi.md#cancelpayment) | **POST** /api/Payments/cancelPayment | 
 *PaymentsApi* | [**CheckAuthenticate**](docs/PaymentsApi.md#checkauthenticate) | **GET** /api/Payments/checkAuth | 
@@ -800,6 +802,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FuelVendorPaymentInformationDTO](docs/FuelVendorPaymentInformationDTO.md)
  - [IO.Swagger.Model.FuelerTaxByTierDTO](docs/FuelerTaxByTierDTO.md)
  - [IO.Swagger.Model.GeneralAirportInformation](docs/GeneralAirportInformation.md)
+ - [IO.Swagger.Model.GetOAuthUrlForPartnerRequest](docs/GetOAuthUrlForPartnerRequest.md)
+ - [IO.Swagger.Model.GetOAuthUrlForPartnerResponse](docs/GetOAuthUrlForPartnerResponse.md)
  - [IO.Swagger.Model.GroupedTransactionCountByFBOAtAirport](docs/GroupedTransactionCountByFBOAtAirport.md)
  - [IO.Swagger.Model.HeaderMenuFeatureDTO](docs/HeaderMenuFeatureDTO.md)
  - [IO.Swagger.Model.HeaderMenuFeatureSubFeaturesDTO](docs/HeaderMenuFeatureSubFeaturesDTO.md)
@@ -967,6 +971,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostLocationSpecificPaymentMethodResponse](docs/PostLocationSpecificPaymentMethodResponse.md)
  - [IO.Swagger.Model.PostMobileAppSettingsRequest](docs/PostMobileAppSettingsRequest.md)
  - [IO.Swagger.Model.PostMobileAppSettingsResponse](docs/PostMobileAppSettingsResponse.md)
+ - [IO.Swagger.Model.PostPartnerOAuthCallbackReponse](docs/PostPartnerOAuthCallbackReponse.md)
+ - [IO.Swagger.Model.PostPartnerOAuthCallbackRequest](docs/PostPartnerOAuthCallbackRequest.md)
  - [IO.Swagger.Model.PostPaymentInformationRequest](docs/PostPaymentInformationRequest.md)
  - [IO.Swagger.Model.PostPaymentInformationResponse](docs/PostPaymentInformationResponse.md)
  - [IO.Swagger.Model.PostPriceSheetFileDataRequest](docs/PostPriceSheetFileDataRequest.md)
