@@ -47,6 +47,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
     @Input() hideFeeAndTaxGeneralBreakdown = false;
     @Input() hidePriceTierBreakdown = false;
+    @Input() hideTooltips = false;
 
     public customerForTailLookup: any;
     public tailNumberForTailLookup = '';
