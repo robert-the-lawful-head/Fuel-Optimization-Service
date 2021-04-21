@@ -37,7 +37,7 @@ namespace FBOLinx.Web.Controllers
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
 
-            var user = _userService.CheckUserByCredentials(userParam.Username, userParam.Password);
+            var user = await _userService.GetUserByCredentials(userParam.Username, userParam.Password);
 
             if (user == null)
             {
