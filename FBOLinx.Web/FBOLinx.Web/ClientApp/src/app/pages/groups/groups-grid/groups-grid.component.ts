@@ -145,7 +145,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 { template: this.needAttentionTemplate },
                 { template: this.lastLoginTemplate, headerText: 'Last Login Date', width: 200 },
                 { field: 'active', headerText: 'Active', width: 100 },
-                { template: this.usersTemplate, headerText: 'Users' },
+                { template: this.usersTemplate, headerText: 'Users', width: 100 },
                 { template: this.fboManageTemplate, width: 150 },
             ],
             load() {

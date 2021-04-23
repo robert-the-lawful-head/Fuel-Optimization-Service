@@ -119,6 +119,13 @@ namespace FBOLinx.Web.Controllers
                 f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Sum(c => c.CustomersNeedingAttention);
             });
 
+            groups.ForEach(g =>
+            {
+                var groupFbos = fbos.Where(f => f.GroupId == g.Oid).ToList();
+                g.FboCount = groupFbos.Count();
+                g.ExpiredFboCount = groupFbos.Where(f => f.PricingExpired == true).Count();
+            });
+
             return Ok(new GroupFboViewModel
             {
                 Groups = groups,
