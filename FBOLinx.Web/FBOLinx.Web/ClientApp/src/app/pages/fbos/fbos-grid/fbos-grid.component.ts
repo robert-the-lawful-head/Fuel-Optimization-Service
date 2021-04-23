@@ -169,19 +169,8 @@ export class FbosGridComponent implements OnInit {
         });
     }
 
-    public editRecord(record, $event) {
-        if (
-            $event !== null &&
-            ($event.srcElement.nodeName.toLowerCase() === 'button' ||
-                $event.srcElement.nodeName.toLowerCase() === 'select' ||
-                ($event.srcElement.nodeName.toLowerCase() === 'input' &&
-                    $event.srcElement.getAttribute('type') === 'checkbox'))
-        ) {
-            $event.stopPropagation();
-            return;
-        }
-        const clonedRecord = Object.assign({}, record);
-        this.editFboClicked.emit(clonedRecord);
+    public editRecord(record) {
+        this.editFboClicked.emit(record);
     }
 
     public newRecord() {
@@ -204,7 +193,7 @@ export class FbosGridComponent implements OnInit {
                         panelClass: [ 'blue-snackbar' ],
                     });
                     sessionStorage.setItem('isNewFbo', 'yes');
-                    this.editRecord(result, null);
+                    this.editRecord(result);
                 }
             });
         } else {
@@ -243,7 +232,19 @@ export class FbosGridComponent implements OnInit {
         }
     }
 
-    public manageFBO(fbo) {
+    public manageFBO(fbo, $event) {
+        if ((
+            $event !== null &&
+            ($event.srcElement.nodeName.toLowerCase() === 'button' ||
+                $event.srcElement.nodeName.toLowerCase() === 'select' ||
+                ($event.srcElement.nodeName.toLowerCase() === 'input' &&
+                    $event.srcElement.getAttribute('type') === 'checkbox'))
+        ) || !this.canManageFbo
+        ) {
+            $event.stopPropagation();
+            return;
+        }
+
         if (!fbo.active) {
             this.notification.open(
                 NotificationComponent,

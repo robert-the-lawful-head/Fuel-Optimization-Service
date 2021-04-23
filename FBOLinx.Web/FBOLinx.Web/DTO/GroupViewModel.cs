@@ -11,5 +11,7 @@ namespace FBOLinx.Web.DTO
     {
         public int NeedAttentionCustomers { get; set; }
         public DateTime? LastLogin { get; set; }
+        public int FboCount { get; set; }
+        public int ExpiredFboCount { get; set; }
     }
 }
