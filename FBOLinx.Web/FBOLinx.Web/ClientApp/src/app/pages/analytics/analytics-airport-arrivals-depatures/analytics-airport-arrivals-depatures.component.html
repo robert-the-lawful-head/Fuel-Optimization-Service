@@ -80,6 +80,11 @@
                     Hide Commercial Flights
                 </mat-slide-toggle>
             </div>
+            <div class="d-inline-block ml-2">
+                <button (click)="clearAllFilters()" [view]="'error'" ni-button size="small">
+                    Clear All Filters
+                </button>
+            </div>
             <div class="actions">
                 <button [matMenuTriggerFor]="gridActions" mat-icon-button>
                     <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
@@ -246,7 +251,7 @@
                 ></tr>
             </table>
 
-            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons class="mat-paginator-sticky"></mat-paginator>
+            <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons class="mat-paginator-sticky"></mat-paginator>
 
             <ngx-ui-loader
                 [loaderId]="chartName"
