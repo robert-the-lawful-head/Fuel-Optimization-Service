@@ -1,54 +1,77 @@
-<div>
-    <mat-form-field class="filter">
-        <input (keyup)="applyFilter($event.target.value)" [value]="searchValue" matInput
-               placeholder="Search by Group, FBO, User, ...">
-        <span matPrefix><i class="fa fa-search"></i></span>
-    </mat-form-field>
+<div class="row">
+    <div class="col-6 col-md-10">
+        <mat-form-field class="filter">
+            <input (keyup)="applyFilter($event.target.value)" [value]="searchValue" matInput
+                placeholder="Search by Group, FBO, User, ...">
+            <span matPrefix><i class="fa fa-search"></i></span>
+        </mat-form-field>
 
-    <button
-        (click)="mergeGroups()"
-        color="warn"
-        mat-flat-button
-        [disabled]="selectedRows.length < 2"
-    >
-        <mat-icon>merge_type</mat-icon>
-        Merge Groups
-    </button>
+        <button
+            (click)="mergeGroups()"
+            color="warn"
+            mat-flat-button
+            [disabled]="selectedRows.length < 2"
+        >
+            <mat-icon>merge_type</mat-icon>
+            Merge Groups
+        </button>
+    </div>
+
+    <div class="actions col-6 col-md-2">
+        <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+            <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+        </button>
+        <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
+            <button (click)="openSettings()" mat-menu-item>Settings</button>
+        </mat-menu>
+    </div>
 </div>
 
 <ejs-grid
     #grid
     (rowDeselected)="rowDeselected()"
     (rowSelected)="rowSelected($event)"
+    (actionComplete)='actionHandler($event)'
     [allowPaging]='true'
+    [allowSorting]='true'
+    [allowFiltering]='true'
     [childGrid]='childGrid'
     [dataSource]='groupDataSource'
+    [filterSettings]='filterSettings'
     [pageSettings]='pageSettings'
     [selectionSettings]='selectionOptions'
+    [showColumnMenu]='true'
 >
     <e-columns>
         <e-column type='checkbox' width='50'></e-column>
         <e-column field='groupName' headerText='Group'></e-column>
-        <e-column>
+        <e-column field='expiredFboCount' headerText='Expired'>
             <ng-template #template let-data>
-                <span [ngClass]="{'good': allChildFbosPricingLive(data.index)}" class="status">
-                    {{fbosPricingExpired(data.index)}}
+                <span [ngClass]="{'good': data.expiredFboCount === 0}" class="status">
+                    {{data.expiredFboCount === 0
+                        ? 'All Pricing Live'
+                        : data.expiredFboCount + ' of ' + data.fboCount + ' Expired'}}
                 </span>
             </ng-template>
         </e-column>
-        <e-column>
+        <e-column field='needAttentionCustomers' headerText='Need Attentions'>
             <ng-template #template let-data>
                 <span [ngClass]="{'good': data.needAttentionCustomers == 0 }" class="status">
                     {{data.needAttentionCustomers}} Need Attentions
                 </span>
             </ng-template>
         </e-column>
-        <e-column field='lastLogin' headerText='Last Login Date'>
+        <e-column field='lastLogin' headerText='Last Login Date' [sortComparer]='dateSortComparer'>
             <ng-template #template let-data>
                 {{data.lastLogin | date:'medium'}}
             </ng-template>
         </e-column>
         <e-column field='active' headerText='Active'></e-column>
+        <e-column field='users' headerText='Users'>
+            <ng-template #template let-data>
+                {{data.users.length}}
+            </ng-template>
+        </e-column>
         <e-column width=200>
             <ng-template #headerTemplate let-data>
                 <button (click)="addNewGroupOrFbo()" [view]="'accent'" beforeIcon="fa fa-plus" ni-button>Add New
@@ -105,6 +128,10 @@
     <span [ngClass]="{'good': data.needAttentionCustomers == 0 }" class="status">
         {{data.needAttentionCustomers}} Need Attentions
     </span>
+</ng-template>
+
+<ng-template #usersTemplate let-data>
+    <span>{{data.users.length}}</span>
 </ng-template>
 
 <ng-template #lastLoginTemplate let-data>

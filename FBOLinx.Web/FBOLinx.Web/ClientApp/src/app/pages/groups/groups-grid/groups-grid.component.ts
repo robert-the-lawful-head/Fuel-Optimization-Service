@@ -12,11 +12,15 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import {
+    Column,
+    ColumnMenuService,
     DetailRowService,
+    FilterSettingsModel,
     GridComponent,
     GridModel,
     RecordClickEventArgs,
-    SelectionSettingsModel
+    SelectionSettingsModel,
+    SortEventArgs,
 } from '@syncfusion/ej2-angular-grids';
 
 // Services
@@ -32,13 +36,44 @@ import { ManageConfirmationComponent } from '../../../shared/components/manage-c
 import { fboChangedEvent } from '../../../models/sharedEvents';
 import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
-import { GroupGridState } from 'src/app/store/reducers/group';
+import { GroupGridState } from '../../../store/reducers/group';
+import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
+import { first, last } from 'lodash';
+
+const initialColumns: ColumnType[] = [
+    {
+        id: 'groupName',
+        name: 'Group',
+        sort: 'asc',
+    },
+    {
+        id: 'expiredFboCount',
+        name: 'Expired',
+    },
+    {
+        id: 'needAttentionCustomers',
+        name: 'Need Attentions',
+    },
+    {
+        id: 'lastLogin',
+        name: 'Last Login Date',
+    },
+    {
+        id: 'active',
+        name: 'Active',
+    },
+    {
+        id: 'users',
+        name: 'Users'
+    }
+];
+
 
 @Component({
     selector: 'app-groups-grid',
     templateUrl: './groups-grid.component.html',
     styleUrls: [ './groups-grid.component.scss' ],
-    providers: [ DetailRowService ],
+    providers: [ DetailRowService, ColumnMenuService ],
 })
 export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('grid') public grid: GridComponent;
@@ -46,6 +81,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('needAttentionTemplate', { static: true }) public needAttentionTemplate: any;
     @ViewChild('lastLoginTemplate', { static: true }) public lastLoginTemplate: any;
     @ViewChild('pricingExpiredTemplate', { static: true }) public pricingExpiredTemplate: any;
+    @ViewChild('usersTemplate', { static: true }) public usersTemplate: any;
 
     // Input/Output Bindings
     @Input() groupsFbosData: any;
@@ -65,11 +101,15 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         pageSizes: [ 25, 50, 100, 'All' ],
         pageSize: 25,
     };
+    public filterSettings: FilterSettingsModel = { type: 'Menu' };
 
     groupDataSource: any[];
     fboDataSource: any[];
 
     selectedRows: any[] = [];
+
+    tableLocalStorageKey = 'conductor-group-grid-settings';
+    columns: ColumnType[] = [];
 
     constructor(
         private router: Router,
@@ -84,7 +124,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private notification: MatDialog,
         private manageDialog: MatDialog,
         private mergeGroupsDialog: MatDialog,
-        private snackBar: MatSnackBar
+        private tableSettingsDialog: MatDialog,
+        private snackBar: MatSnackBar,
     ) {
     }
 
@@ -104,6 +145,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 { template: this.needAttentionTemplate },
                 { template: this.lastLoginTemplate, headerText: 'Last Login Date', width: 200 },
                 { field: 'active', headerText: 'Active', width: 100 },
+                { template: this.usersTemplate, headerText: 'Users' },
                 { template: this.fboManageTemplate, width: 150 },
             ],
             load() {
@@ -118,6 +160,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         if (this.groupGridState.filter) {
             this.applyFilter(this.groupGridState.filter);
         }
+
+        // if (localStorage.getItem(this.tableLocalStorageKey)) {
+        //     this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+        // } else {
+            this.columns = initialColumns;
+        // }
     }
 
     ngAfterViewInit() {
@@ -132,6 +180,17 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         this.pricingExpiredTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
         this.pricingExpiredTemplate.elementRef.nativeElement.propName = 'template';
+
+        this.usersTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
+        this.usersTemplate.elementRef.nativeElement.propName = 'template';
+
+        setTimeout(() => {
+            this.refreshColumns();
+        }, 100);
+    }
+
+    get columnsString() {
+        return this.columns.map(column => column.id + ' ' + (column.hidden ? 'hidden' : 'visible')).join(', ');
     }
 
     deleteGroup(record) {
@@ -421,27 +480,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         return this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
     }
 
-    allChildFbosPricingLive(groupIndex: number) {
-        const group = (this.grid.dataSource as any[])[groupIndex];
-        if (!group) {
-            return true;
-        }
-        const fbos: any[] = this.groupsFbosData.fbos?.filter(fbo => fbo.groupId === group.oid) || [];
-        return fbos.every(fbo => !fbo.pricingExpired);
-    }
-
-    fbosPricingExpired(groupIndex: number) {
-        const group = (this.grid.dataSource as any[])[groupIndex];
-        if (!group) {
-            return '';
-        }
-        const fbos: any[] = this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
-        const all = fbos.length;
-        const expired = fbos.filter(fbo => fbo.pricingExpired).length;
-        if (!expired) {
-            return 'All Pricing Live';
-        }
-        return `${ expired } of ${ all } Expired`;
+    fbosPricingExpired(group: any) {
+        console.log(group);
     }
 
     ifStringContains(str1: string, str2: string) {
@@ -460,5 +500,83 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             fbo,
             searchValue: this.searchValue
         });
+    }
+
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
+            data: [...this.columns]
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.columns = [ ...result ];
+
+            this.refreshColumns();
+            this.saveSettings();
+        });
+    }
+
+    saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+    }
+
+    refreshColumns() {
+        const invisibleColumns = this.columns.filter(c => c.hidden).map(c => c.id);
+        const visibleColumns = this.columns.filter(c => !c.hidden).map(c => c.id);
+
+        const sortedColumn = this.columns.filter(c => c.sort)[0];
+
+        this.grid.showColumns(visibleColumns);
+        this.grid.hideColumns(invisibleColumns);
+
+        this.grid.reorderColumns(visibleColumns.slice(1), visibleColumns[0]);
+
+        this.reorderColumns();
+
+        if (sortedColumn) {
+            this.grid.sortColumn(sortedColumn.id, sortedColumn.sort === 'asc' ? 'Ascending' : 'Descending');
+        }
+    }
+
+    reorderColumns() {
+        const gridColumns = this.grid.columns as Column[];
+        const newColumns: Column[] = [first(gridColumns)];
+
+        for (const column of this.columns) {
+            newColumns.push(gridColumns.find(c => c.field === column.id));
+        }
+
+        newColumns.push(last(gridColumns));
+
+        this.grid.columns = newColumns;
+    }
+
+    dateSortComparer(reference: string, comparer: string) {
+        const a = reference ? new Date(reference) : new Date(-8640000000000000);
+        const b = comparer ? new Date(comparer) : new Date(-8640000000000000);
+
+        if (a < b) {
+            return -1;
+        }
+        if (a > b) {
+            return 1;
+        }
+        return 0;
+    }
+
+    actionHandler(args: SortEventArgs) {
+        if (args.requestType === 'sorting') {
+            this.columns = this.columns.map(column => column.id === args.columnName ? ({
+                ...column,
+                sort: args.direction === 'Ascending' ? 'asc' : 'desc'
+            }) : ({
+                id: column.id,
+                name: column.name
+            }));
+
+            this.saveSettings();
+        }
     }
 }
