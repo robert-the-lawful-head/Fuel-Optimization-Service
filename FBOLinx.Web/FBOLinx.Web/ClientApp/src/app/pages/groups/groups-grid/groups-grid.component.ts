@@ -480,10 +480,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         return this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
     }
 
-    fbosPricingExpired(group: any) {
-        console.log(group);
-    }
-
     ifStringContains(str1: string, str2: string) {
         return (!str1 ? '' : str1).toLowerCase().includes((!str2 ? '' : str2).toLowerCase());
     }
