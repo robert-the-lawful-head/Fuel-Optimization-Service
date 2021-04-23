@@ -166,6 +166,10 @@ export class FbosEditComponent implements OnInit {
         this.currentContact = null;
     }
 
+    get isConductor() {
+        return this.sharedService.currentUser.role === 3;
+    }
+
     // Private Methods
     private loadAdditionalFboInfo() {
         this.fboContactsService

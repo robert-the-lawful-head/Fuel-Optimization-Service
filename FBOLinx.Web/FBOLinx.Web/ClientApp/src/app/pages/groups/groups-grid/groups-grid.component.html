@@ -45,12 +45,12 @@
     <e-columns>
         <e-column type='checkbox' width='50'></e-column>
         <e-column field='groupName' headerText='Group'></e-column>
-        <e-column field='expiredFboCount' headerText='Expired'>
+        <e-column field='expiredFboPricingCount' headerText='Pricing Expired'>
             <ng-template #template let-data>
-                <span [ngClass]="{'good': data.expiredFboCount === 0}" class="status">
-                    {{data.expiredFboCount === 0
+                <span [ngClass]="{'good': data.expiredFboPricingCount === 0}" class="status">
+                    {{data.expiredFboPricingCount === 0
                         ? 'All Pricing Live'
-                        : data.expiredFboCount + ' of ' + data.fboCount + ' Expired'}}
+                        : data.expiredFboPricingCount + ' of ' + data.fboCount + ' Expired'}}
                 </span>
             </ng-template>
         </e-column>
@@ -70,6 +70,17 @@
         <e-column field='users' headerText='Users'>
             <ng-template #template let-data>
                 {{data.users.length}}
+            </ng-template>
+        </e-column>
+        <e-column field='quotes30Days' headerText='Quotes (last 30 days)'></e-column>
+        <e-column field='orders30Days' headerText='Fuel Orders (last 30 days)'></e-column>
+        <e-column field='expiredFboAccountCount' headerText='Accounts Expired'>
+            <ng-template #template let-data>
+                <span [ngClass]="{'good': data.expiredFboAccountCount === 0}" class="status">
+                    {{data.expiredFboAccountCount === 0
+                        ? 'All Active'
+                        : data.expiredFboAccountCount + ' of ' + data.fboCount + ' Inactive'}}
+                </span>
             </ng-template>
         </e-column>
         <e-column width=200>
@@ -137,3 +148,10 @@
 <ng-template #lastLoginTemplate let-data>
     {{data.lastLogin | date:'medium'}}
 </ng-template>
+
+<ng-template #accountExpiredTemplate let-data>
+    <span [ngClass]="{'good': !data.accountExpired }" class="status">
+        {{data.accountExpired ? 'Inactive' : 'Active'}}
+    </span>
+</ng-template>
+

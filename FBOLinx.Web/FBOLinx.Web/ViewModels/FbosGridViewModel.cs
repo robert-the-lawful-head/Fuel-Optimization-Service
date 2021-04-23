@@ -17,7 +17,10 @@ namespace FBOLinx.Web.ViewModels
         public int GroupId { get; set; }
         public int NeedAttentionCustomers { get; set; }
         public bool PricingExpired { get; set; }
+        public bool AccountExpired { get; set; }
         public DateTime? LastLogin { get; set; }
         public ICollection<User> Users { get; set; }
+        public int Quotes30Days { get; set; }
+        public int Orders30Days { get; set; }
     }
 }
