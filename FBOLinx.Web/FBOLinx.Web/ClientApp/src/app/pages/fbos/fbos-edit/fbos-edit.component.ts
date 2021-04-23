@@ -15,12 +15,12 @@ import { SharedService } from '../../../layouts/shared-service';
     styleUrls: [ './fbos-edit.component.scss' ],
 })
 export class FbosEditComponent implements OnInit {
-    @Output() saveClicked = new EventEmitter<any>();
-    @Output() cancelClicked = new EventEmitter<any>();
     @Input() fboInfo: any;
     @Input() fboAirportInfo: any;
     @Input() groupInfo: any;
     @Input() embed: boolean;
+    @Output() saveClicked = new EventEmitter<any>();
+    @Output() cancelClicked = new EventEmitter<any>();
 
     // Members
     breadcrumb: any[];
@@ -105,11 +105,7 @@ export class FbosEditComponent implements OnInit {
                 .update(this.fboAirportInfo)
                 .subscribe(() => {
                     this.saveClicked.emit(this.fboInfo);
-                    if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
-                        this.router.navigate([ '/default-layout/groups/' ]);
-                    } else {
-                        this.router.navigate([ '/default-layout/fbos/' ]);
-                    }
+                    this.navigateToParent();
                 });
         });
     }
@@ -121,11 +117,20 @@ export class FbosEditComponent implements OnInit {
                 this.saveClicked.emit(this.fboInfo);
             });
         } else {
-            if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
-                this.router.navigate([ '/default-layout/groups/' ]);
+            this.cancelClicked.emit();
+            this.navigateToParent();
+        }
+    }
+
+    navigateToParent() {
+        if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
+            if (this.groupInfo) {
+                this.router.navigate([ '/default-layout/groups/' + this.groupInfo.oid ]);
             } else {
-                this.router.navigate([ '/default-layout/fbos/' ]);
+                this.router.navigate([ '/default-layout/groups/' ]);
             }
+        } else {
+            this.router.navigate([ '/default-layout/fbos/' ]);
         }
     }
 

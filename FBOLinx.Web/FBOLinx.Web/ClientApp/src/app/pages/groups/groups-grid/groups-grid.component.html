@@ -59,9 +59,9 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                    <button (click)="manageGroup(data)" clickStopPropagation mat-menu-item>
-                        <mat-icon>business_center</mat-icon>
-                        <span>Manage</span>
+                    <button (click)="editGroup(data)" clickStopPropagation mat-menu-item>
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit Group</span>
                     </button>
                     <button (click)="addNewFbo(data)" clickStopPropagation mat-menu-item>
                         <mat-icon>add</mat-icon>
@@ -96,8 +96,8 @@
 </ng-template>
 
 <ng-template #fboManageTemplate let-data>
-    <button (click)="manageFBO(data)" [view]="'warning'" beforeIcon="fa fa-briefcase" clickStopPropagation ni-button
-            size="small">Manage
+    <button (click)="editFBO(data)" [view]="'warning'" beforeIcon="fa fa-pencil" clickStopPropagation ni-button
+            size="small">Edit FBO
     </button>
 </ng-template>
 

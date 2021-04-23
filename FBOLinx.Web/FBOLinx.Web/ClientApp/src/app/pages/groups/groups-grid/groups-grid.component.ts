@@ -32,6 +32,7 @@ import { ManageConfirmationComponent } from '../../../shared/components/manage-c
 import { fboChangedEvent } from '../../../models/sharedEvents';
 import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
+import { GroupGridState } from 'src/app/store/reducers/group';
 
 @Component({
     selector: 'app-groups-grid',
@@ -48,6 +49,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
     // Input/Output Bindings
     @Input() groupsFbosData: any;
+    @Input() groupGridState: GroupGridState;
     @Output() editGroupClicked = new EventEmitter<any>();
     @Output() editFboClicked = new EventEmitter<any>();
 
@@ -110,9 +112,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     = ((this as GridComponent).parentDetails.parentRowData as { oid?: string }).oid;
             },
             recordClick: (args: RecordClickEventArgs) => {
-                self.editFboClicked.emit(args.rowData);
+                self.manageFBO(args.rowData);
             },
         };
+        if (this.groupGridState.filter) {
+            this.applyFilter(this.groupGridState.filter);
+        }
     }
 
     ngAfterViewInit() {
@@ -186,7 +191,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
     rowSelected(event: any) {
         if (!event.isInteracted) {
-            this.editGroupClicked.emit(event.data);
+            this.manageGroup(event.data);
         } else {
             this.selectedRows = this.grid.getSelectedRecords();
         }
@@ -441,5 +446,19 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
     ifStringContains(str1: string, str2: string) {
         return (!str1 ? '' : str1).toLowerCase().includes((!str2 ? '' : str2).toLowerCase());
+    }
+
+    editGroup(group: any) {
+        this.editGroupClicked.emit({
+            group,
+            searchValue: this.searchValue
+        });
+    }
+
+    editFBO(fbo: any) {
+        this.editFboClicked.emit({
+            fbo,
+            searchValue: this.searchValue
+        });
     }
 }
