@@ -47,8 +47,8 @@ const initialColumns: ColumnType[] = [
         sort: 'asc',
     },
     {
-        id: 'expiredFboCount',
-        name: 'Expired',
+        id: 'expiredFboPricingCount',
+        name: 'Pricing Expired',
     },
     {
         id: 'needAttentionCustomers',
@@ -65,9 +65,20 @@ const initialColumns: ColumnType[] = [
     {
         id: 'users',
         name: 'Users'
-    }
+    },
+    {
+        id: 'quotes30Days',
+        name: 'Quotes (last 30 days)'
+    },
+    {
+        id: 'orders30Days',
+        name: 'Fuel Orders (last 30 days)'
+    },
+    {
+        id: 'expiredFboAccountCount',
+        name: 'Account Expired'
+    },
 ];
-
 
 @Component({
     selector: 'app-groups-grid',
@@ -81,6 +92,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('needAttentionTemplate', { static: true }) public needAttentionTemplate: any;
     @ViewChild('lastLoginTemplate', { static: true }) public lastLoginTemplate: any;
     @ViewChild('pricingExpiredTemplate', { static: true }) public pricingExpiredTemplate: any;
+    @ViewChild('accountExpiredTemplate', { static: true }) public accountExpiredTemplate: any;
     @ViewChild('usersTemplate', { static: true }) public usersTemplate: any;
 
     // Input/Output Bindings
@@ -139,13 +151,16 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             dataSource: this.fboDataSource,
             queryString: 'groupId',
             columns: [
-                { field: 'icao', headerText: 'ICAO', width: 100 },
+                { field: 'icao', headerText: 'ICAO' },
                 { field: 'fbo', headerText: 'FBO' },
-                { template: this.pricingExpiredTemplate },
-                { template: this.needAttentionTemplate },
-                { template: this.lastLoginTemplate, headerText: 'Last Login Date', width: 200 },
-                { field: 'active', headerText: 'Active', width: 100 },
-                { template: this.usersTemplate, headerText: 'Users', width: 100 },
+                { template: this.pricingExpiredTemplate, headerText: 'Pricing Expired' },
+                { template: this.needAttentionTemplate, headerText: 'Need Attentions' },
+                { template: this.lastLoginTemplate, headerText: 'Last Login Date' },
+                { field: 'active', headerText: 'Active' },
+                { template: this.usersTemplate, headerText: 'Users' },
+                { field: 'quotes30Days', headerText: 'Quotes (last 30 days)' },
+                { field: 'orders30Days', headerText: 'Fuel Orders (last 30 days)' },
+                { template: this.accountExpiredTemplate, headerText: 'Account Expired' },
                 { template: this.fboManageTemplate, width: 150 },
             ],
             load() {
@@ -161,11 +176,16 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             this.applyFilter(this.groupGridState.filter);
         }
 
-        // if (localStorage.getItem(this.tableLocalStorageKey)) {
-        //     this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
-        // } else {
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            const savedColumns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey)) as ColumnType[];
+            if (savedColumns.length === initialColumns.length) {
+                this.columns = savedColumns;
+            } else {
+                this.columns = initialColumns;
+            }
+        } else {
             this.columns = initialColumns;
-        // }
+        }
     }
 
     ngAfterViewInit() {
@@ -180,6 +200,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         this.pricingExpiredTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
         this.pricingExpiredTemplate.elementRef.nativeElement.propName = 'template';
+
+        this.accountExpiredTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
+        this.accountExpiredTemplate.elementRef.nativeElement.propName = 'template';
 
         this.usersTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
         this.usersTemplate.elementRef.nativeElement.propName = 'template';
