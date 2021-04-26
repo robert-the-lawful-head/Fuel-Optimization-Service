@@ -1,9 +1,21 @@
 <div class="row">
     <div class="col-6 col-md-10">
         <mat-form-field class="filter">
-            <input (keyup)="applyFilter($event.target.value)" [value]="searchValue" matInput
+            <input
+                (keyup)="applyFilter($event.target.value)"
+                [value]="searchValue"
+                matInput
                 placeholder="Search by Group, FBO, User, ...">
             <span matPrefix><i class="fa fa-search"></i></span>
+        </mat-form-field>
+
+        <mat-form-field class="account-filter">
+            <mat-label>Account</mat-label>
+            <mat-select [(ngModel)]="accountType" (selectionChange)="filterChanged()">
+                <mat-option value="all">All</mat-option>
+                <mat-option value="active">Active</mat-option>
+                <mat-option value="inactive">Inactive</mat-option>
+            </mat-select>
         </mat-form-field>
 
         <button

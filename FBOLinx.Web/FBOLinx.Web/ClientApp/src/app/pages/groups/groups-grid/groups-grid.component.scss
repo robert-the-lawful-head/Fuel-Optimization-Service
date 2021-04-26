@@ -35,7 +35,7 @@
 
 .filter {
     max-width: 400px;
-    margin-right: 50px;
+    margin-right: 20px;
 }
 
 .actions {
@@ -43,4 +43,9 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+}
+
+.account-filter {
+    max-width: 100px;
+    margin-right: 50px;
 }
