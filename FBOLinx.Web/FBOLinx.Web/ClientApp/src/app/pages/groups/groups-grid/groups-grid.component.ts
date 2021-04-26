@@ -109,6 +109,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     // Members
     pageTitle = 'Groups';
     searchValue = '';
+    accountType: 'all' | 'active' | 'inactive' = 'all';
     pageSettings: any = {
         pageSizes: [ 25, 50, 100, 'All' ],
         pageSize: 25,
@@ -448,23 +449,36 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     applyFilter(filterValue: string) {
         this.searchValue = filterValue;
 
-        if (!filterValue || !filterValue.length) {
-            this.groupDataSource = this.groupsFbosData.groups;
-            this.fboDataSource = this.groupsFbosData.fbos;
+        const filteredFbos = this.groupsFbosData.fbos.filter(fbo =>
+            this.accountType === 'all' ||
+            (this.accountType === 'active' && !fbo.accountExpired) ||
+            (this.accountType === 'inactive' && fbo.accountExpired)
+        );
+        const filteredGroups = this.groupsFbosData.groups.filter(group =>
+            filteredFbos.find(fbo => fbo.groupId === group.oid)
+        );
+
+        if (!filterValue) {
+            this.groupDataSource = filteredGroups;
+            this.fboDataSource = filteredFbos;
             this.childGrid.dataSource = this.fboDataSource;
             return;
         }
 
-        const firstFilteredFbos = this.groupsFbosData.fbos.filter(fbo =>
+        const firstFilteredFbos = filteredFbos.filter(fbo =>
+            (this.accountType === 'all' ||
+                (this.accountType === 'active' && fbo.accountExpired) ||
+                (this.accountType === 'inactive' && !fbo.accountExpired)
+            ) && (
             this.ifStringContains(fbo.icao, filterValue) ||
             this.ifStringContains(fbo.fbo, filterValue) ||
             fbo.users?.find(user =>
                 this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
                 this.ifStringContains(user.username, filterValue)
-            )
+            ))
         );
 
-        const firstFilteredGroups = this.groupsFbosData.groups.filter(group =>
+        const firstFilteredGroups = filteredGroups.filter(group =>
             this.ifStringContains(group.groupName, filterValue) ||
             group.users?.find(user =>
                 this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
@@ -472,7 +486,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             )
         );
 
-        const secondFilteredGroups = this.groupsFbosData.groups.filter(group =>
+        const secondFilteredGroups = filteredGroups.filter(group =>
             this.ifStringContains(group.groupName, filterValue) ||
             group.users?.find(user =>
                 this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
@@ -480,13 +494,18 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             ) || firstFilteredFbos.find(fbo => fbo.groupId === group.oid)
         );
 
-        const secondFilteredFbos = this.groupsFbosData.fbos.filter(fbo =>
-            firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
-            this.ifStringContains(fbo.icao, filterValue) ||
-            this.ifStringContains(fbo.fbo, filterValue) ||
-            fbo.users?.find(user =>
-                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
-                this.ifStringContains(user.username, filterValue)
+        const secondFilteredFbos = filteredFbos.filter(fbo =>
+            (this.accountType === 'all' ||
+                (this.accountType === 'active' && fbo.accountExpired) ||
+                (this.accountType === 'inactive' && !fbo.accountExpired)
+            ) && (
+                firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
+                this.ifStringContains(fbo.icao, filterValue) ||
+                this.ifStringContains(fbo.fbo, filterValue) ||
+                fbo.users?.find(user =>
+                    this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                    this.ifStringContains(user.username, filterValue)
+                )
             )
         );
 
@@ -501,10 +520,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             return [];
         }
         return this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
-    }
-
-    ifStringContains(str1: string, str2: string) {
-        return (!str1 ? '' : str1).toLowerCase().includes((!str2 ? '' : str2).toLowerCase());
     }
 
     editGroup(group: any) {
@@ -537,40 +552,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         });
     }
 
-    saveSettings() {
-        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
-    }
-
-    refreshColumns() {
-        const invisibleColumns = this.columns.filter(c => c.hidden).map(c => c.name);
-        const visibleColumns = this.columns.filter(c => !c.hidden).map(c => c.name);
-
-        const sortedColumn = this.columns.filter(c => c.sort)[0];
-
-        this.reorderColumns();
-
-        this.grid.showColumns(visibleColumns);
-        this.grid.hideColumns(invisibleColumns);
-
-
-        if (sortedColumn) {
-            this.grid.sortColumn(sortedColumn.id, sortedColumn.sort === 'asc' ? 'Ascending' : 'Descending');
-        }
-    }
-
-    reorderColumns() {
-        const gridColumns = this.grid.columns as Column[];
-        const newColumns: Column[] = [first(gridColumns)];
-
-        for (const column of this.columns) {
-            newColumns.push(gridColumns.find(c => c.field === column.id));
-        }
-
-        newColumns.push(last(gridColumns));
-
-        this.grid.columns = newColumns;
-    }
-
     dateSortComparer(reference: string, comparer: string) {
         const a = reference ? new Date(reference) : new Date(-8640000000000000);
         const b = comparer ? new Date(comparer) : new Date(-8640000000000000);
@@ -597,5 +578,47 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
             this.saveSettings();
         }
+    }
+
+    filterChanged() {
+        this.applyFilter(this.searchValue);
+    }
+
+    private saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+    }
+
+    private refreshColumns() {
+        const invisibleColumns = this.columns.filter(c => c.hidden).map(c => c.name);
+        const visibleColumns = this.columns.filter(c => !c.hidden).map(c => c.name);
+
+        const sortedColumn = this.columns.filter(c => c.sort)[0];
+
+        this.reorderColumns();
+
+        this.grid.showColumns(visibleColumns);
+        this.grid.hideColumns(invisibleColumns);
+
+
+        if (sortedColumn) {
+            this.grid.sortColumn(sortedColumn.id, sortedColumn.sort === 'asc' ? 'Ascending' : 'Descending');
+        }
+    }
+
+    private reorderColumns() {
+        const gridColumns = this.grid.columns as Column[];
+        const newColumns: Column[] = [first(gridColumns)];
+
+        for (const column of this.columns) {
+            newColumns.push(gridColumns.find(c => c.field === column.id));
+        }
+
+        newColumns.push(last(gridColumns));
+
+        this.grid.columns = newColumns;
+    }
+
+    private ifStringContains(str1: string, str2: string) {
+        return (!str1 ? '' : str1).toLowerCase().includes((!str2 ? '' : str2).toLowerCase());
     }
 }
