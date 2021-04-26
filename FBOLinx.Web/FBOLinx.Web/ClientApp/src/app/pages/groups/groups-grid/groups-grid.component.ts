@@ -76,7 +76,7 @@ const initialColumns: ColumnType[] = [
     },
     {
         id: 'expiredFboAccountCount',
-        name: 'Account Expired'
+        name: 'Accounts Expired'
     },
 ];
 
@@ -542,17 +542,16 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     }
 
     refreshColumns() {
-        const invisibleColumns = this.columns.filter(c => c.hidden).map(c => c.id);
-        const visibleColumns = this.columns.filter(c => !c.hidden).map(c => c.id);
+        const invisibleColumns = this.columns.filter(c => c.hidden).map(c => c.name);
+        const visibleColumns = this.columns.filter(c => !c.hidden).map(c => c.name);
 
         const sortedColumn = this.columns.filter(c => c.sort)[0];
+
+        this.reorderColumns();
 
         this.grid.showColumns(visibleColumns);
         this.grid.hideColumns(invisibleColumns);
 
-        this.grid.reorderColumns(visibleColumns.slice(1), visibleColumns[0]);
-
-        this.reorderColumns();
 
         if (sortedColumn) {
             this.grid.sortColumn(sortedColumn.id, sortedColumn.sort === 'asc' ? 'Ascending' : 'Descending');
@@ -587,12 +586,13 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
     actionHandler(args: SortEventArgs) {
         if (args.requestType === 'sorting') {
-            this.columns = this.columns.map(column => column.id === args.columnName ? ({
+            this.columns = this.columns.map(column => column.id === args.columnName && !column.hidden ? ({
                 ...column,
                 sort: args.direction === 'Ascending' ? 'asc' : 'desc'
             }) : ({
                 id: column.id,
-                name: column.name
+                name: column.name,
+                hidden: column.hidden,
             }));
 
             this.saveSettings();
