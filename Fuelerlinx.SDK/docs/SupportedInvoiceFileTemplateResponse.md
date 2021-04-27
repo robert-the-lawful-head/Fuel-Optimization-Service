@@ -1,9 +1,11 @@
-# IO.Swagger.Model.UpdateSupportedFileTemplateRequest
+# IO.Swagger.Model.SupportedInvoiceFileTemplateResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**SupportedInvoiceFileTemplate** | [**SupportedInvoiceFileTemplateDTO**](SupportedInvoiceFileTemplateDTO.md) |  | 
+**Result** | [**SupportedInvoiceFileTemplateDTO**](SupportedInvoiceFileTemplateDTO.md) |  | [optional] 
+**Success** | **bool?** |  | [optional] 
+**Message** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

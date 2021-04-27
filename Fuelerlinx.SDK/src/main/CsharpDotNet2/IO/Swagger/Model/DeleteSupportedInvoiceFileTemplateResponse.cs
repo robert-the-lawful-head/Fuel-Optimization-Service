@@ -11,13 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class UpdateSupportedFileTemplateRequest {
+  public class DeleteSupportedInvoiceFileTemplateResponse {
     /// <summary>
-    /// Gets or Sets SupportedInvoiceFileTemplate
+    /// Gets or Sets Success
     /// </summary>
-    [DataMember(Name="supportedInvoiceFileTemplate", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "supportedInvoiceFileTemplate")]
-    public SupportedInvoiceFileTemplateDTO SupportedInvoiceFileTemplate { get; set; }
+    [DataMember(Name="success", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "success")]
+    public bool? Success { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Message
+    /// </summary>
+    [DataMember(Name="message", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "message")]
+    public string Message { get; set; }
 
 
     /// <summary>
@@ -26,8 +33,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class UpdateSupportedFileTemplateRequest {\n");
-      sb.Append("  SupportedInvoiceFileTemplate: ").Append(SupportedInvoiceFileTemplate).Append("\n");
+      sb.Append("class DeleteSupportedInvoiceFileTemplateResponse {\n");
+      sb.Append("  Success: ").Append(Success).Append("\n");
+      sb.Append("  Message: ").Append(Message).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

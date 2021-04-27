@@ -561,13 +561,6 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "transactionAccountingTransfer")]
     public TransactionAccountingTransferDTO TransactionAccountingTransfer { get; set; }
 
-    /// <summary>
-    /// Gets or Sets User
-    /// </summary>
-    [DataMember(Name="user", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "user")]
-    public UserDTO User { get; set; }
-
 
     /// <summary>
     /// Get the string presentation of the object
@@ -654,7 +647,6 @@ namespace IO.Swagger.Model {
       sb.Append("  ChangedTripNotification: ").Append(ChangedTripNotification).Append("\n");
       sb.Append("  TransactionAccountingData: ").Append(TransactionAccountingData).Append("\n");
       sb.Append("  TransactionAccountingTransfer: ").Append(TransactionAccountingTransfer).Append("\n");
-      sb.Append("  User: ").Append(User).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
