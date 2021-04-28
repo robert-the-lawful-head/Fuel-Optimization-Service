@@ -87,6 +87,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostFuelOrderResponse</returns>
         PostFuelOrderResponse PostFuelOrder (PostFuelOrderRequest body);
+        /// <summary>
+        /// Internal use only - verify credentials for a vendor service. 
+        /// </summary>
+        /// <param name="vendorId"></param>
+        /// <returns>bool?</returns>
+        bool? VerifyVendorServiceCredentials (int? vendorId);
     }
   
     /// <summary>
@@ -598,6 +604,43 @@ path = path.Replace("{" + "commaDelimitedIcaos" + "}", ApiClient.ParameterToStri
                 throw new ApiException ((int)response.StatusCode, "Error calling PostFuelOrder: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostFuelOrderResponse) ApiClient.Deserialize(response.Content, typeof(PostFuelOrderResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - verify credentials for a vendor service. 
+        /// </summary>
+        /// <param name="vendorId"></param> 
+        /// <returns>bool?</returns>            
+        public bool? VerifyVendorServiceCredentials (int? vendorId)
+        {
+            
+            // verify the required parameter 'vendorId' is set
+            if (vendorId == null) throw new ApiException(400, "Missing required parameter 'vendorId' when calling VerifyVendorServiceCredentials");
+            
+    
+            var path = "/api/FuelPricing/verify-vendor-service-credentials/{vendorId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "vendorId" + "}", ApiClient.ParameterToString(vendorId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling VerifyVendorServiceCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling VerifyVendorServiceCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (bool?) ApiClient.Deserialize(response.Content, typeof(bool?), response.Headers);
         }
     
     }

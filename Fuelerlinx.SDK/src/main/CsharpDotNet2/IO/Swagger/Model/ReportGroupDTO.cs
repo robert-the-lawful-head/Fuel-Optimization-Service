@@ -55,6 +55,14 @@ namespace IO.Swagger.Model {
     public string SettingsJson { get; set; }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    [DataMember(Name="reportGroupType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "reportGroupType")]
+    public int? ReportGroupType { get; set; }
+
+    /// <summary>
     /// Gets or Sets ReportGroupAssociations
     /// </summary>
     [DataMember(Name="reportGroupAssociations", EmitDefaultValue=false)]
@@ -75,6 +83,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Description: ").Append(Description).Append("\n");
       sb.Append("  DateCreatedUtc: ").Append(DateCreatedUtc).Append("\n");
       sb.Append("  SettingsJson: ").Append(SettingsJson).Append("\n");
+      sb.Append("  ReportGroupType: ").Append(ReportGroupType).Append("\n");
       sb.Append("  ReportGroupAssociations: ").Append(ReportGroupAssociations).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

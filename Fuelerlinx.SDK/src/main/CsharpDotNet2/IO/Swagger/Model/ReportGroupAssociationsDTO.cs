@@ -33,6 +33,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "reportId")]
     public int? ReportId { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Report
+    /// </summary>
+    [DataMember(Name="report", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "report")]
+    public ReportDTO Report { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -44,6 +51,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  ReportGroupId: ").Append(ReportGroupId).Append("\n");
       sb.Append("  ReportId: ").Append(ReportId).Append("\n");
+      sb.Append("  Report: ").Append(Report).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
