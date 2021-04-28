@@ -142,12 +142,17 @@ Class | Method | HTTP request | Description
 *AnalysisApi* | [**DeleteCustomReport**](docs/AnalysisApi.md#deletecustomreport) | **DELETE** /api/Analysis/custom-reports/{id} | Delete a custom report by the provided {id}.
 *AnalysisApi* | [**DeleteEmailAddressesForEmailedAnalysis**](docs/AnalysisApi.md#deleteemailaddressesforemailedanalysis) | **DELETE** /api/Analysis/email-blast/email-addresses/{id} | Internal use only - Delete the subscriber record for an email blast.  This will reset the subscriber list to a company-default for the blast.
 *AnalysisApi* | [**DeleteReportDistributionAssociation**](docs/AnalysisApi.md#deletereportdistributionassociation) | **DELETE** /api/Analysis/custom-reports/distribution-association/{id} | 
+*AnalysisApi* | [**DeleteReportGroupAssociations**](docs/AnalysisApi.md#deletereportgroupassociations) | **DELETE** /api/Analysis/report-groups-associations/{id} | Delete Report Group Associations
+*AnalysisApi* | [**DeleteReportGroups**](docs/AnalysisApi.md#deletereportgroups) | **DELETE** /api/Analysis/report-groups/{id} | Delete Report Groups By Id
 *AnalysisApi* | [**DeleteReportScheduledDistribution**](docs/AnalysisApi.md#deletereportscheduleddistribution) | **DELETE** /api/Analysis/custom-reports/distribution/{id} | Internal use only - Delete a scheduled report distribution record.
 *AnalysisApi* | [**GetCustomReportById**](docs/AnalysisApi.md#getcustomreportbyid) | **GET** /api/Analysis/custom-reports/{id} | Fetch a custom report by it's {id}.
 *AnalysisApi* | [**GetEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#getemailaddressesformonthlyanalysis) | **GET** /api/Analysis/email-blast/{emailBlastId}/email-addresses | Internal use only - Fetch all subscribers for a particular email blast.
 *AnalysisApi* | [**GetIndustryAveragePriceByTransaction**](docs/AnalysisApi.md#getindustryaveragepricebytransaction) | **GET** /api/Analysis/industry-average/by-transaction/{transactionId} | 
 *AnalysisApi* | [**GetReportData**](docs/AnalysisApi.md#getreportdata) | **POST** /api/Analysis/custom-reports/data | 
 *AnalysisApi* | [**GetReportDataForDistribution**](docs/AnalysisApi.md#getreportdatafordistribution) | **GET** /api/Analysis/custom-reports/data/{reportId}/distribution/{distributionId} | 
+*AnalysisApi* | [**GetReportGroupAssociationsById**](docs/AnalysisApi.md#getreportgroupassociationsbyid) | **GET** /api/Analysis/report-groups-associations/{id} | Get Report Group Associations By Id
+*AnalysisApi* | [**GetReportGroupListForCompany**](docs/AnalysisApi.md#getreportgrouplistforcompany) | **GET** /api/Analysis/report-groups/list | Get report groups for the authenticated company
+*AnalysisApi* | [**GetReportGroupsById**](docs/AnalysisApi.md#getreportgroupsbyid) | **GET** /api/Analysis/report-groups/{id} | Get Report Groups By Id
 *AnalysisApi* | [**GetReportList**](docs/AnalysisApi.md#getreportlist) | **GET** /api/Analysis/custom-reports/list | Fetch a list of reports for the authenticated company.
 *AnalysisApi* | [**GetReportScheduledDistributionById**](docs/AnalysisApi.md#getreportscheduleddistributionbyid) | **GET** /api/Analysis/custom-reports/distribution/{id} | Internal use only - Fetch reports scheduled for distribution by the scheduled distribution {id}.
 *AnalysisApi* | [**GetReportScheduledDistributionList**](docs/AnalysisApi.md#getreportscheduleddistributionlist) | **GET** /api/Analysis/custom-reports/distribution/list | Internal use only - Fetch reports that are scheduled for distribution.
@@ -155,10 +160,14 @@ Class | Method | HTTP request | Description
 *AnalysisApi* | [**PostCustomReport**](docs/AnalysisApi.md#postcustomreport) | **POST** /api/Analysis/custom-reports | Add a new custom report for the authenticated company.
 *AnalysisApi* | [**PostEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#postemailaddressesformonthlyanalysis) | **POST** /api/Analysis/email-blast/email-addresses | Internal use only - Add a new subscriber-set record to an email blast.
 *AnalysisApi* | [**PostReportDistributionAssociation**](docs/AnalysisApi.md#postreportdistributionassociation) | **POST** /api/Analysis/custom-reports/distribution-association | 
+*AnalysisApi* | [**PostReportGroupAssociations**](docs/AnalysisApi.md#postreportgroupassociations) | **POST** /api/Analysis/report-groups-associations | Post Report Group Associations
+*AnalysisApi* | [**PostReportGroups**](docs/AnalysisApi.md#postreportgroups) | **POST** /api/Analysis/report-groups | Post Report Groups
 *AnalysisApi* | [**PostReportScheduledDistribution**](docs/AnalysisApi.md#postreportscheduleddistribution) | **POST** /api/Analysis/custom-reports/distribution | Internal use only - Post a new scheduled report distribution record.
 *AnalysisApi* | [**SendReportScheduledDistribution**](docs/AnalysisApi.md#sendreportscheduleddistribution) | **POST** /api/Analysis/custom-reports/distribution/send | 
 *AnalysisApi* | [**UpdateCustomReport**](docs/AnalysisApi.md#updatecustomreport) | **PUT** /api/Analysis/custom-reports | Update a custom report.
 *AnalysisApi* | [**UpdateEmailAddressesForEmailedAnalysis**](docs/AnalysisApi.md#updateemailaddressesforemailedanalysis) | **PUT** /api/Analysis/email-blast/email-addresses/{id} | Internal use only - Update an existing record of subscribers for an email blast.
+*AnalysisApi* | [**UpdateReportGroupAssociations**](docs/AnalysisApi.md#updatereportgroupassociations) | **PUT** /api/Analysis/report-groups-associations | Update Report Group Associations
+*AnalysisApi* | [**UpdateReportGroups**](docs/AnalysisApi.md#updatereportgroups) | **PUT** /api/Analysis/report-groups | Update Report Groups
 *AnalysisApi* | [**UpdateReportScheduledDistribution**](docs/AnalysisApi.md#updatereportscheduleddistribution) | **PUT** /api/Analysis/custom-reports/distribution | Internal use only - Update a scheduled report distribution record.
 *ApplicationApi* | [**DeleteDeploymentNotes**](docs/ApplicationApi.md#deletedeploymentnotes) | **DELETE** /api/Application/deployment-notes/{id} | Internal use only - Delete the specific deployment notes.
 *ApplicationApi* | [**GetBuildVersion**](docs/ApplicationApi.md#getbuildversion) | **GET** /api/Application/build-version | Returns the current build version of the API.
@@ -627,6 +636,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteRampFeeByCompanyNotesResponse](docs/DeleteRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.DeleteRampFeeByCompanyResponse](docs/DeleteRampFeeByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteReportDistributionAssociationResponse](docs/DeleteReportDistributionAssociationResponse.md)
+ - [IO.Swagger.Model.DeleteReportGroupAssociationsResponse](docs/DeleteReportGroupAssociationsResponse.md)
+ - [IO.Swagger.Model.DeleteReportGroupResponse](docs/DeleteReportGroupResponse.md)
  - [IO.Swagger.Model.DeleteReportResponse](docs/DeleteReportResponse.md)
  - [IO.Swagger.Model.DeleteReportScheduledDistributionResponse](docs/DeleteReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.DeleteSavedTripLegResponse](docs/DeleteSavedTripLegResponse.md)
@@ -871,6 +882,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostRampFeeByCompanyRequest](docs/PostRampFeeByCompanyRequest.md)
  - [IO.Swagger.Model.PostReportDistributionAssociationRequest](docs/PostReportDistributionAssociationRequest.md)
  - [IO.Swagger.Model.PostReportDistributionAssociationResponse](docs/PostReportDistributionAssociationResponse.md)
+ - [IO.Swagger.Model.PostReportGroupAssociationsRequest](docs/PostReportGroupAssociationsRequest.md)
+ - [IO.Swagger.Model.PostReportGroupAssociationsResponse](docs/PostReportGroupAssociationsResponse.md)
+ - [IO.Swagger.Model.PostReportGroupRequest](docs/PostReportGroupRequest.md)
+ - [IO.Swagger.Model.PostReportGroupResponse](docs/PostReportGroupResponse.md)
  - [IO.Swagger.Model.PostReportRequest](docs/PostReportRequest.md)
  - [IO.Swagger.Model.PostReportResponse](docs/PostReportResponse.md)
  - [IO.Swagger.Model.PostReportScheduledDistributionRequest](docs/PostReportScheduledDistributionRequest.md)
@@ -933,6 +948,11 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ReportDataResponse](docs/ReportDataResponse.md)
  - [IO.Swagger.Model.ReportDistributionAssociationDTO](docs/ReportDistributionAssociationDTO.md)
  - [IO.Swagger.Model.ReportFilter](docs/ReportFilter.md)
+ - [IO.Swagger.Model.ReportGroupAssociationsDTO](docs/ReportGroupAssociationsDTO.md)
+ - [IO.Swagger.Model.ReportGroupAssociationsResponse](docs/ReportGroupAssociationsResponse.md)
+ - [IO.Swagger.Model.ReportGroupDTO](docs/ReportGroupDTO.md)
+ - [IO.Swagger.Model.ReportGroupListResponse](docs/ReportGroupListResponse.md)
+ - [IO.Swagger.Model.ReportGroupResponse](docs/ReportGroupResponse.md)
  - [IO.Swagger.Model.ReportListResponse](docs/ReportListResponse.md)
  - [IO.Swagger.Model.ReportResponse](docs/ReportResponse.md)
  - [IO.Swagger.Model.ReportScheduledDistributionDTO](docs/ReportScheduledDistributionDTO.md)
@@ -1100,6 +1120,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateRampFeeByCompanyNotesResponse](docs/UpdateRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyRequest](docs/UpdateRampFeeByCompanyRequest.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyResponse](docs/UpdateRampFeeByCompanyResponse.md)
+ - [IO.Swagger.Model.UpdateReportGroupAssociationsRequest](docs/UpdateReportGroupAssociationsRequest.md)
+ - [IO.Swagger.Model.UpdateReportGroupAssociationsResponse](docs/UpdateReportGroupAssociationsResponse.md)
+ - [IO.Swagger.Model.UpdateReportGroupRequest](docs/UpdateReportGroupRequest.md)
+ - [IO.Swagger.Model.UpdateReportGroupResponse](docs/UpdateReportGroupResponse.md)
  - [IO.Swagger.Model.UpdateReportRequest](docs/UpdateReportRequest.md)
  - [IO.Swagger.Model.UpdateReportResponse](docs/UpdateReportResponse.md)
  - [IO.Swagger.Model.UpdateReportScheduledDistributionRequest](docs/UpdateReportScheduledDistributionRequest.md)
