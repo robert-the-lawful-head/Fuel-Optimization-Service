@@ -49,7 +49,7 @@ GO
 
 --END
 --GO
-/****** Object:  StoredProcedure [dbo].[up_Load_VolumeDiscountsForFuelerlinx]    Script Date: 4/14/2021 5:15:37 PM ******/
+/****** Object:  StoredProcedure [dbo].[up_Load_ParagonPricesForFuelerlinx]    Script Date: 4/29/2021 10:26:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -96,10 +96,10 @@ BEGIN
 	  IF (@MaxAircraftPricesNewId > @MaxAircraftPricesId)
 	  BEGIN
 		INSERT INTO AircraftPricesInsertLog(DateTimeRecorded, SP, GroupId, FboId, AircraftPricesIdBefore, AircraftPricesIdAfter)
-		VALUES (GETDATE(), 'up_Load_ParagonPricesForFuelerlinx ' + @ICAO, 1, 0, @MaxAircraftPricesId, @MaxAircraftPricesNewId)
+		VALUES (GETDATE(), 'up_Load_ParagonPricesForFuelerlinx ' + @ICAOList, 1, 0, @MaxAircraftPricesId, @MaxAircraftPricesNewId)
 	  END	
 
-	INSERT INTO CompanyPricingLog (CompanyID, ICAO) VALUES(@FuelerlinxCompanyID, @ICAO)
+	INSERT INTO CompanyPricingLog (CompanyID, ICAO) VALUES(@FuelerlinxCompanyID, @ICAOList)
 
 
 DECLARE @date datetime
@@ -109,7 +109,6 @@ DECLARE @date datetime
 			SELECT
 			FA.ICAO AS ICAO, 
 			F.Fbo AS FBO,
-			'paragon' as Fueler,
 			'JetA' AS Product,
 			ISNULL(P.[Min], 0) AS MinVolume,
 			CASE WHEN P.[Max] = 0 THEN 99999 ELSE P.[Max] END AS MaxVolume,
@@ -118,7 +117,6 @@ DECLARE @date datetime
 															THEN FP.Price + ISNULL(P.Amount, 0)
 															ELSE(((FP.Price/(1 + ISNULL(FP.SalesTax, 0))) - VSD.Margin+ ISNULL(P.Amount, 0)) * (1 + ISNULL(FP.SalesTax, 0)))
 															END AS Price,
-			'Paragon Net.' as FuelerDisplayName,
 			T.[Notes] AS Notes,
 			FP.EffectiveFrom,
 			FP.EffectiveTo
@@ -171,7 +169,6 @@ DECLARE @date datetime
 	where ((vsd.JetAVolumeDiscount is not null and vsd.JetAVolumeDiscount = T.OID)
 		OR
 		(vsd.JetAVolumeDiscount is null and T.[Default] = 1))
-	and FA.ICAO = @ICAO
 	and CIBG.CustomerID = @CompanyID
 	ORDER BY FBO, Product, ISNULL([Min], 1), EffectiveFrom
 END
