@@ -300,9 +300,15 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 return;
             }
             if (result.type === 'group') {
-                this.editGroupClicked.emit(result.data);
+                this.editGroupClicked.emit({
+                    group: result.data,
+                    searchValue: this.searchValue
+                });
             } else {
-                this.editFboClicked.emit(result.data);
+                this.editFboClicked.emit({
+                    fbo: result.data,
+                    searchValue: this.searchValue
+                });
             }
 
         });
