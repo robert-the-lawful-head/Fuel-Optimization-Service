@@ -24,7 +24,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<Fboairports> Fboairports { get; set; }
         public virtual DbSet<Fbos> Fbos { get; set; }
         public virtual DbSet<Group> Group { get; set; }
-        public DbSet<Fbocontacts> Fbocontacts { get; set; }
+        public virtual DbSet<Fbocontacts> Fbocontacts { get; set; }
         public virtual DbSet<CustomCustomerTypes> CustomCustomerTypes { get; set; }
         public virtual DbSet<CustomerMargins> CustomerMargins { get; set; }
         public virtual DbSet<CustomersViewedByFbo> CustomersViewedByFbo { get; set; }

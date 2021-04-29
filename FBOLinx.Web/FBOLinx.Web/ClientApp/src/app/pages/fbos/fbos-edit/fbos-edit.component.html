@@ -124,17 +124,33 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4">
-                                <mat-slide-toggle [(ngModel)]="fboInfo.active"
-                                                  color="accent">
+                            <div class="col-3">
+                                <mat-slide-toggle [(ngModel)]="fboInfo.active" color="accent">
                                     Active
                                 </mat-slide-toggle>
                             </div>
-                            <div class="col-md-4">
-                                <mat-slide-toggle [(ngModel)]="fboInfo.suspended"
-                                                  color="warn">
+
+                            <div class="col-3">
+                                <mat-slide-toggle [(ngModel)]="fboInfo.suspended" color="warn">
                                     Suspended
                                 </mat-slide-toggle>
+                            </div>
+                            <div *ngIf="isConductor" class="col-6">
+                                <div class="expiration-date">
+                                    <mat-form-field>
+                                        <input
+                                            [(ngModel)]="fboInfo.expirationDate"
+                                            [matDatepicker]="expirationDatePicker"
+                                            matInput
+                                            placeholder="Account Expires"
+                                        />
+                                        <mat-datepicker-toggle [for]="expirationDatePicker" matSuffix></mat-datepicker-toggle>
+                                        <mat-datepicker-toggle matSuffix (click)="fboInfo.expirationDate = null">
+                                            <mat-icon matDatepickerToggleIcon>clear</mat-icon>
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #expirationDatePicker></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
                             </div>
                         </div>
 

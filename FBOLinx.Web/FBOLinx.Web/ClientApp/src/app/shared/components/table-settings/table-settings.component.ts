@@ -22,7 +22,7 @@ export class TableSettingsComponent {
         private dialogRef: MatDialogRef<TableSettingsComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ColumnType[]
     ) {
-        this.columns = [].concat(data);
+        this.columns = [...data];
     }
 
     drop(event: CdkDragDrop<string[]>) {
@@ -56,7 +56,10 @@ export class TableSettingsComponent {
     }
 
     toggleColumnVisible(column: ColumnType) {
-        column.hidden = !column.hidden;
+        this.columns = this.columns.map(c => c.id === column.id ? ({
+            ...column,
+            hidden: !column.hidden
+        }): c);
     }
 
     onSave() {

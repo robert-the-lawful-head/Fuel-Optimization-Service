@@ -74,6 +74,7 @@ namespace FBOLinx.DB.Models
         public bool DisableCost { get; set; }
         [Column("AcukwikFBOHandlerID")]
         public int? AcukwikFBOHandlerId { get; set; }
+        public DateTime? ExpirationDate { get; set; }
         public string SenderAddress
         {
             get

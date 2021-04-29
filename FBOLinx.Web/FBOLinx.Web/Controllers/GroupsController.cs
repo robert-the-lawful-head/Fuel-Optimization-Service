@@ -58,7 +58,30 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("group-fbo")]
         public async Task<IActionResult> GetGroupsAndFbos()
         {
+            await DisableExpiredAccounts();
+
             var customersNeedAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
+
+            var companyPricingLogs = await (from cpl in _context.CompanyPricingLog
+                                            join fa in _context.Fboairports on cpl.ICAO equals fa.Icao
+                                            join f in _context.Fbos on fa.Fboid equals f.Oid
+                                            where cpl.CreatedDate >= DateTime.UtcNow.AddDays(-30) && f.Active == true
+                                            select new
+                                            {
+                                                cpl.Oid,
+                                                FboId = f.Oid,
+                                                f.GroupId
+                                            }).ToListAsync();
+
+            var fuelReqs = await (from fr in _context.FuelReq
+                                  join f in _context.Fbos on fr.Fboid equals f.Oid
+                                  where fr.DateCreated >= DateTime.UtcNow.AddDays(-30) && f.Active == true
+                                  select new
+                                  {
+                                      fr.Oid,
+                                      fr.Fboid,
+                                      f.GroupId
+                                  }).ToListAsync();
 
             var groups = await _context.Group
                             .Where(x => !string.IsNullOrEmpty(x.GroupName))
@@ -85,6 +108,8 @@ namespace FBOLinx.Web.Controllers
             {
                 var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Oid).ToList();
                 group.NeedAttentionCustomers = needingAttentions.Count > 0 ? needingAttentions.Sum(c => c.CustomersNeedingAttention) : 0;
+                group.Quotes30Days = companyPricingLogs.Count(x => x.GroupId == group.Oid);
+                group.Orders30Days = fuelReqs.Count(x => x.GroupId == group.Oid);
             }
 
             var fboPrices = from f in _context.Fboprices
@@ -109,7 +134,8 @@ namespace FBOLinx.Web.Controllers
                                   Oid = f.Oid,
                                   GroupId = f.GroupId ?? 0,
                                   PricingExpired = fprices.fboId == null,
-                                  LastLogin = f.LastLogin
+                                  LastLogin = f.LastLogin,
+                                  AccountExpired = f.ExpirationDate != null && f.ExpirationDate < DateTime.UtcNow
                               }).ToListAsync();
 
             var users = (await _context.User.ToListAsync()).GroupBy(t => t.FboId);
@@ -117,6 +143,16 @@ namespace FBOLinx.Web.Controllers
             {
                 f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
                 f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Sum(c => c.CustomersNeedingAttention);
+                f.Quotes30Days = companyPricingLogs.Count(cpl => cpl.FboId == f.Oid);
+                f.Orders30Days = fuelReqs.Count(fr => fr.Fboid == f.Oid);
+            });
+
+            groups.ForEach(g =>
+            {
+                var groupFbos = fbos.Where(f => f.GroupId == g.Oid).ToList();
+                g.FboCount = groupFbos.Count();
+                g.ExpiredFboPricingCount = groupFbos.Count(f => f.PricingExpired == true);
+                g.ExpiredFboAccountCount = groupFbos.Count(f => f.AccountExpired == true);
             });
 
             return Ok(new GroupFboViewModel
@@ -427,6 +463,20 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(@group);
+        }
+    
+        private async Task DisableExpiredAccounts()
+        {
+            var expiredFbos = await _context.Fbos
+                .Where(f => f.ExpirationDate != null && f.ExpirationDate < DateTime.UtcNow)
+                .ToListAsync();
+
+            expiredFbos.ForEach(fbo =>
+            {
+                fbo.Active = false;
+            });
+
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -33,10 +33,10 @@ namespace FBOLinx.Web.Controllers
         private readonly MailSettings _MailSettings;
         private readonly FboService _fboService;
         private IServiceProvider _Services;
-        private EncryptionService _encryptionService;
+        private IEncryptionService _encryptionService;
         private ResetPasswordService _ResetPasswordService;
 
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService, EncryptionService encryptionService, ResetPasswordService resetPasswordService)
+        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;
@@ -64,13 +64,13 @@ namespace FBOLinx.Web.Controllers
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
 
-            var user = await _userService.Authenticate(userParam.Username, userParam.Password, false);
+            var user = await _userService.GetUserByCredentials(userParam.Username, userParam.Password, true);
 
             if (user == null)
             {
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
-
+            
             var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
             if (fbo != null)
             {
@@ -145,7 +145,7 @@ namespace FBOLinx.Web.Controllers
             var group = await _context.Group.FindAsync(groupId);
 
             if (group != null)
-                _userService.CreateGroupLoginIfNeeded(group);
+                await _userService.CreateGroupLoginIfNeeded(group);
 
             var users = await _context.User.Where((x => x.GroupId == groupId && x.FboId == 0)).ToListAsync();
 
@@ -165,7 +165,7 @@ namespace FBOLinx.Web.Controllers
             var fbo = await _context.Fbos.FindAsync(fboId);
 
             if (fbo != null)
-                _userService.CreateFBOLoginIfNeeded(fbo);
+                await _userService.CreateFBOLoginIfNeeded(fbo);
 
             var users = await _context.User.Where((x => x.FboId == fboId)).ToListAsync();
 

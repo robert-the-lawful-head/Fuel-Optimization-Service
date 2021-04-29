@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FBOLinx.Web;
+using Newtonsoft.Json;
 
 namespace FBOLinx.DB.Models
 {
@@ -17,6 +18,7 @@ namespace FBOLinx.DB.Models
         public int PricingTemplateId { get; set; }
 
         #region Relationships
+        [JsonIgnore]
         [ForeignKey("FboFeeAndTaxId")]
         [InverseProperty("OmitsByPricingTemplate")]
         public FboFeesAndTaxes FboFeeAndTax { get; set; }
