@@ -16,5 +16,6 @@ namespace FBOLinx.Web.ViewModels
         public string Title { get; set; }
         public bool? Primary { get; set; }
         public bool? CopyAlerts { get; set; }
+        public bool? CopyOrders { get; set; }
     }
 }

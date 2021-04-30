@@ -1,79 +1,78 @@
 <div class="">
-    <table
-        [dataSource]="contactsDataSource"
-        class="mat-elevation-z8 col-md-12"
-        mat-table
-        matSort
-        style="box-shadow: none !important;"
-    >
+    <table [dataSource]="contactsDataSource"
+           class="mat-elevation-z8 col-md-12"
+           mat-table
+           matSort
+           style="box-shadow: none !important;">
         <ng-container matColumnDef="firstName">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>
                 First Name
             </th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
+            <td *matCellDef="let contact"
+                mat-cell>
                 {{ contact.firstName }}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="lastName">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>Last Name</th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
+            <td *matCellDef="let contact"
+                mat-cell>
                 {{ contact.lastName }}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="title">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>Title</th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
+            <td *matCellDef="let contact"
+                mat-cell>
                 {{ contact.title }}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="email">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
+            <td *matCellDef="let contact"
+                mat-cell>
                 {{ contact.email }}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="phone">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>Phone</th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
+            <td *matCellDef="let contact"
+                mat-cell>
                 {{ contact.phone }}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="copyAlerts">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                <span style="margin-right: 15px;">Copy All</span>
-                <mat-slide-toggle
-                    (change)="updateAllCopyAlertsValues()"
-                    [checked]="copyAll"
-                    color="accent"
-                ></mat-slide-toggle>
+                <span style="margin-right: 15px;">Copy All Distribution</span>
+                <mat-slide-toggle (change)="updateAllCopyAlertsValues()"
+                                  [checked]="copyAllAlerts"
+                                  color="accent"></mat-slide-toggle>
             </th>
             <td *matCellDef="let contact" clickStopPropagation mat-cell>
-                <mat-slide-toggle
-                    (change)="updateCopyAlertsValue(contact)"
-                    [(ngModel)]="contact.copyAlerts"
-                    [checked]="contact.copyAlerts"
-                    color="accent"
-                ></mat-slide-toggle>
+                <mat-slide-toggle (change)="updateCopyAlertsValue(contact)"
+                                  [(ngModel)]="contact.copyAlerts"
+                                  [checked]="contact.copyAlerts"
+                                  color="accent"></mat-slide-toggle>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="copyOrders">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                <span style="margin-right: 15px;">Copy All Orders</span>
+                <mat-slide-toggle (change)="updateAllCopyOrdersValues()"
+                                  [checked]="copyAllOrders"
+                                  color="accent"></mat-slide-toggle>
+            </th>
+            <td *matCellDef="let contact" clickStopPropagation mat-cell>
+                <mat-slide-toggle (change)="updateCopyOrdersValue(contact)"
+                                  [(ngModel)]="contact.copyOrders"
+                                  [checked]="contact.copyOrders"
+                                  color="accent"></mat-slide-toggle>
             </td>
         </ng-container>
 
@@ -89,7 +88,8 @@
                         <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
                     </button>
                     <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
-                        <button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>Import
+                        <button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>
+                            Import
                         </button>
                     </mat-menu>
                 </div>
@@ -100,10 +100,8 @@
         </ng-container>
 
         <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-        <tr
-            (click)="editRecord(row)"
+        <tr (click)="editRecord(row)"
             *matRowDef="let row; columns: displayedColumns"
-            mat-row
-        ></tr>
+            mat-row></tr>
     </table>
 </div>
