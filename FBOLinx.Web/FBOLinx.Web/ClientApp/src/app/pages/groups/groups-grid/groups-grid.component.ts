@@ -157,7 +157,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 { template: this.pricingExpiredTemplate, headerText: 'Pricing Expired' },
                 { template: this.needAttentionTemplate, headerText: 'Need Attentions' },
                 { template: this.lastLoginTemplate, headerText: 'Last Login Date' },
-                { field: 'active', headerText: 'Active' },
                 { template: this.usersTemplate, headerText: 'Users' },
                 { field: 'quotes30Days', headerText: 'Quotes (last 30 days)' },
                 { field: 'orders30Days', headerText: 'Fuel Orders (last 30 days)' },

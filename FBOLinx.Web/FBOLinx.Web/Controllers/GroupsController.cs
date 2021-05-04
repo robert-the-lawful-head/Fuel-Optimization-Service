@@ -135,7 +135,7 @@ namespace FBOLinx.Web.Controllers
                                   GroupId = f.GroupId ?? 0,
                                   PricingExpired = fprices.fboId == null,
                                   LastLogin = f.LastLogin,
-                                  AccountExpired = f.ExpirationDate != null && f.ExpirationDate < DateTime.UtcNow
+                                  AccountExpired = f.Active != true
                               }).ToListAsync();
 
             var users = (await _context.User.ToListAsync()).GroupBy(t => t.FboId);
