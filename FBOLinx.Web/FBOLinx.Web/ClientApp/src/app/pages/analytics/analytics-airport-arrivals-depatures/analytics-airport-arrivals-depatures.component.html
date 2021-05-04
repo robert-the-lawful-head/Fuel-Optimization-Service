@@ -244,6 +244,23 @@
                         <td *matCellDef="let info" mat-cell>{{info.flightNumber ? (info.status | airportWatchStatus) : ""}}</td>
                     </ng-container>
 
+                    <ng-container matColumnDef="pastVisits">
+                        <th *matHeaderCellDef
+                            mat-header-cell
+                            mat-sort-header
+                        >
+                            <span>Past Visits</span>
+                            <span *ngIf="dataSource">
+                                <app-table-column-filter [matDataSource]="dataSource"
+                                                        [matSort]="sort"
+                                                        columnId="pastVisits"
+                                                        propertyName="pastVisits"
+                                ></app-table-column-filter>
+                            </span>
+                        </th>
+                        <td *matCellDef="let info" mat-cell>{{info.pastVisits}}</td>
+                    </ng-container>
+
                     <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
                     <tr
                         *matRowDef="let row; columns: displayedColumns;"

@@ -31,7 +31,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     @Output() refreshCustomers = new EventEmitter();
 
     public chartName = 'airport-arrivals-depatures-table';
-    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status'];
+    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status', 'pastVisits'];
 
     public filterStartDate: Date;
     public filterEndDate: Date;
