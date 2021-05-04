@@ -468,7 +468,7 @@ namespace FBOLinx.Web.Controllers
         private async Task DisableExpiredAccounts()
         {
             var expiredFbos = await _context.Fbos
-                .Where(f => f.ExpirationDate != null && f.ExpirationDate < DateTime.UtcNow)
+                .Where(f => f.Active == true && f.ExpirationDate != null && f.ExpirationDate < DateTime.UtcNow)
                 .ToListAsync();
 
             expiredFbos.ForEach(fbo =>
