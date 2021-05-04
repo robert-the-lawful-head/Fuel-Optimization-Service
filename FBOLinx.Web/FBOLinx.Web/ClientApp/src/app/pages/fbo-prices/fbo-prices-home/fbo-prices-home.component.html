@@ -572,7 +572,11 @@
                      outline="true"
                      theme="small"
                      title="Price Lookup">
-                <price-checker #priceChecker></price-checker>
+                <price-checker
+                    #priceChecker
+                    [hideFeeAndTaxGeneralBreakdown]="isCsr"
+                    [hideTooltips]="isCsr"
+                ></price-checker>
             </ni-card>
         </div>
     </div>

@@ -54,7 +54,7 @@ import {
     GroupService,
     PageService,
     SortService,
-    ToolbarService
+    ToolbarService,
 } from '@syncfusion/ej2-angular-grids';
 import { ResizableModule } from 'angular-resizable-element';
 import { MultiSelectModule } from 'primeng/multiselect';

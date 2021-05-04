@@ -34,18 +34,18 @@
             </td>
         </ng-container>
 
-        <ng-container *ngIf="canManageFbo" matColumnDef="manage">
+        <ng-container matColumnDef="manage">
             <th *matHeaderCellDef mat-header-cell></th>
             <td *matCellDef="let fbo" mat-cell>
                 <div class="pull-right">
                     <button
-                        (click)="manageFBO(fbo); $event.stopPropagation()"
+                        (click)="editRecord(fbo); $event.stopPropagation()"
                         [view]="'warning'"
-                        beforeIcon="fa fa-briefcase"
+                        beforeIcon="fa fa-pencil"
                         ni-button
                         size="small"
                     >
-                        Manage
+                        Edit
                     </button>
                 </div>
             </td>
@@ -82,7 +82,7 @@
 
         <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
         <tr
-            (click)="editRecord(row, $event)"
+            (click)="manageFBO(row, $event)"
             *matRowDef="let row; columns: displayedColumns"
             mat-row
         ></tr>

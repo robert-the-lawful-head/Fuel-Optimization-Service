@@ -185,4 +185,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
                 XLSX.writeFile(wb, 'Airport Departures and Arrivals.xlsx');
             });
     }
+
+    clearAllFilters() {
+        this.selectedCustomers = [];
+        this.selectedTailNumbers = [];
+        this.isCommercialInvisible = true;
+
+        this.filterChanged();
+    }
 }

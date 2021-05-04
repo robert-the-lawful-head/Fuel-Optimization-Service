@@ -12,11 +12,15 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import {
+    Column,
+    ColumnMenuService,
     DetailRowService,
+    FilterSettingsModel,
     GridComponent,
     GridModel,
     RecordClickEventArgs,
-    SelectionSettingsModel
+    SelectionSettingsModel,
+    SortEventArgs,
 } from '@syncfusion/ej2-angular-grids';
 
 // Services
@@ -32,12 +36,55 @@ import { ManageConfirmationComponent } from '../../../shared/components/manage-c
 import { fboChangedEvent } from '../../../models/sharedEvents';
 import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
+import { GroupGridState } from '../../../store/reducers/group';
+import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
+import { first, last } from 'lodash';
+
+const initialColumns: ColumnType[] = [
+    {
+        id: 'groupName',
+        name: 'Group',
+        sort: 'asc',
+    },
+    {
+        id: 'expiredFboPricingCount',
+        name: 'Pricing Expired',
+    },
+    {
+        id: 'needAttentionCustomers',
+        name: 'Need Attentions',
+    },
+    {
+        id: 'lastLogin',
+        name: 'Last Login Date',
+    },
+    {
+        id: 'active',
+        name: 'Active',
+    },
+    {
+        id: 'users',
+        name: 'Users'
+    },
+    {
+        id: 'quotes30Days',
+        name: 'Quotes (last 30 days)'
+    },
+    {
+        id: 'orders30Days',
+        name: 'Fuel Orders (last 30 days)'
+    },
+    {
+        id: 'expiredFboAccountCount',
+        name: 'Accounts Expired'
+    },
+];
 
 @Component({
     selector: 'app-groups-grid',
     templateUrl: './groups-grid.component.html',
     styleUrls: [ './groups-grid.component.scss' ],
-    providers: [ DetailRowService ],
+    providers: [ DetailRowService, ColumnMenuService ],
 })
 export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('grid') public grid: GridComponent;
@@ -45,9 +92,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('needAttentionTemplate', { static: true }) public needAttentionTemplate: any;
     @ViewChild('lastLoginTemplate', { static: true }) public lastLoginTemplate: any;
     @ViewChild('pricingExpiredTemplate', { static: true }) public pricingExpiredTemplate: any;
+    @ViewChild('accountExpiredTemplate', { static: true }) public accountExpiredTemplate: any;
+    @ViewChild('usersTemplate', { static: true }) public usersTemplate: any;
 
     // Input/Output Bindings
     @Input() groupsFbosData: any;
+    @Input() groupGridState: GroupGridState;
     @Output() editGroupClicked = new EventEmitter<any>();
     @Output() editFboClicked = new EventEmitter<any>();
 
@@ -59,15 +109,20 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     // Members
     pageTitle = 'Groups';
     searchValue = '';
+    accountType: 'all' | 'active' | 'inactive' = 'all';
     pageSettings: any = {
         pageSizes: [ 25, 50, 100, 'All' ],
         pageSize: 25,
     };
+    public filterSettings: FilterSettingsModel = { type: 'Menu' };
 
     groupDataSource: any[];
     fboDataSource: any[];
 
     selectedRows: any[] = [];
+
+    tableLocalStorageKey = 'conductor-group-grid-settings';
+    columns: ColumnType[] = [];
 
     constructor(
         private router: Router,
@@ -82,7 +137,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private notification: MatDialog,
         private manageDialog: MatDialog,
         private mergeGroupsDialog: MatDialog,
-        private snackBar: MatSnackBar
+        private tableSettingsDialog: MatDialog,
+        private snackBar: MatSnackBar,
     ) {
     }
 
@@ -96,12 +152,16 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             dataSource: this.fboDataSource,
             queryString: 'groupId',
             columns: [
-                { field: 'icao', headerText: 'ICAO', width: 100 },
+                { field: 'icao', headerText: 'ICAO' },
                 { field: 'fbo', headerText: 'FBO' },
-                { template: this.pricingExpiredTemplate },
-                { template: this.needAttentionTemplate },
-                { template: this.lastLoginTemplate, headerText: 'Last Login Date', width: 200 },
-                { field: 'active', headerText: 'Active', width: 100 },
+                { template: this.pricingExpiredTemplate, headerText: 'Pricing Expired' },
+                { template: this.needAttentionTemplate, headerText: 'Need Attentions' },
+                { template: this.lastLoginTemplate, headerText: 'Last Login Date' },
+                { field: 'active', headerText: 'Active' },
+                { template: this.usersTemplate, headerText: 'Users' },
+                { field: 'quotes30Days', headerText: 'Quotes (last 30 days)' },
+                { field: 'orders30Days', headerText: 'Fuel Orders (last 30 days)' },
+                { template: this.accountExpiredTemplate, headerText: 'Account Expired' },
                 { template: this.fboManageTemplate, width: 150 },
             ],
             load() {
@@ -110,9 +170,23 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     = ((this as GridComponent).parentDetails.parentRowData as { oid?: string }).oid;
             },
             recordClick: (args: RecordClickEventArgs) => {
-                self.editFboClicked.emit(args.rowData);
+                self.manageFBO(args.rowData);
             },
         };
+        if (this.groupGridState.filter) {
+            this.applyFilter(this.groupGridState.filter);
+        }
+
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            const savedColumns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey)) as ColumnType[];
+            if (savedColumns.length === initialColumns.length) {
+                this.columns = savedColumns;
+            } else {
+                this.columns = initialColumns;
+            }
+        } else {
+            this.columns = initialColumns;
+        }
     }
 
     ngAfterViewInit() {
@@ -127,6 +201,20 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         this.pricingExpiredTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
         this.pricingExpiredTemplate.elementRef.nativeElement.propName = 'template';
+
+        this.accountExpiredTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
+        this.accountExpiredTemplate.elementRef.nativeElement.propName = 'template';
+
+        this.usersTemplate.elementRef.nativeElement._viewContainerRef = this.viewContainerRef;
+        this.usersTemplate.elementRef.nativeElement.propName = 'template';
+
+        setTimeout(() => {
+            this.refreshColumns();
+        }, 100);
+    }
+
+    get columnsString() {
+        return this.columns.map(column => column.id + ' ' + (column.hidden ? 'hidden' : 'visible')).join(', ');
     }
 
     deleteGroup(record) {
@@ -186,7 +274,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
     rowSelected(event: any) {
         if (!event.isInteracted) {
-            this.editGroupClicked.emit(event.data);
+            this.manageGroup(event.data);
         } else {
             this.selectedRows = this.grid.getSelectedRecords();
         }
@@ -361,23 +449,36 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     applyFilter(filterValue: string) {
         this.searchValue = filterValue;
 
-        if (!filterValue || !filterValue.length) {
-            this.groupDataSource = this.groupsFbosData.groups;
-            this.fboDataSource = this.groupsFbosData.fbos;
+        const filteredFbos = this.groupsFbosData.fbos.filter(fbo =>
+            this.accountType === 'all' ||
+            (this.accountType === 'active' && !fbo.accountExpired) ||
+            (this.accountType === 'inactive' && fbo.accountExpired)
+        );
+        const filteredGroups = this.groupsFbosData.groups.filter(group =>
+            filteredFbos.find(fbo => fbo.groupId === group.oid)
+        );
+
+        if (!filterValue) {
+            this.groupDataSource = filteredGroups;
+            this.fboDataSource = filteredFbos;
             this.childGrid.dataSource = this.fboDataSource;
             return;
         }
 
-        const firstFilteredFbos = this.groupsFbosData.fbos.filter(fbo =>
+        const firstFilteredFbos = filteredFbos.filter(fbo =>
+            (this.accountType === 'all' ||
+                (this.accountType === 'active' && fbo.accountExpired) ||
+                (this.accountType === 'inactive' && !fbo.accountExpired)
+            ) && (
             this.ifStringContains(fbo.icao, filterValue) ||
             this.ifStringContains(fbo.fbo, filterValue) ||
             fbo.users?.find(user =>
                 this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
                 this.ifStringContains(user.username, filterValue)
-            )
+            ))
         );
 
-        const firstFilteredGroups = this.groupsFbosData.groups.filter(group =>
+        const firstFilteredGroups = filteredGroups.filter(group =>
             this.ifStringContains(group.groupName, filterValue) ||
             group.users?.find(user =>
                 this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
@@ -385,7 +486,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             )
         );
 
-        const secondFilteredGroups = this.groupsFbosData.groups.filter(group =>
+        const secondFilteredGroups = filteredGroups.filter(group =>
             this.ifStringContains(group.groupName, filterValue) ||
             group.users?.find(user =>
                 this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
@@ -393,13 +494,18 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             ) || firstFilteredFbos.find(fbo => fbo.groupId === group.oid)
         );
 
-        const secondFilteredFbos = this.groupsFbosData.fbos.filter(fbo =>
-            firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
-            this.ifStringContains(fbo.icao, filterValue) ||
-            this.ifStringContains(fbo.fbo, filterValue) ||
-            fbo.users?.find(user =>
-                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
-                this.ifStringContains(user.username, filterValue)
+        const secondFilteredFbos = filteredFbos.filter(fbo =>
+            (this.accountType === 'all' ||
+                (this.accountType === 'active' && fbo.accountExpired) ||
+                (this.accountType === 'inactive' && !fbo.accountExpired)
+            ) && (
+                firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
+                this.ifStringContains(fbo.icao, filterValue) ||
+                this.ifStringContains(fbo.fbo, filterValue) ||
+                fbo.users?.find(user =>
+                    this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                    this.ifStringContains(user.username, filterValue)
+                )
             )
         );
 
@@ -416,30 +522,103 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         return this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
     }
 
-    allChildFbosPricingLive(groupIndex: number) {
-        const group = (this.grid.dataSource as any[])[groupIndex];
-        if (!group) {
-            return true;
-        }
-        const fbos: any[] = this.groupsFbosData.fbos?.filter(fbo => fbo.groupId === group.oid) || [];
-        return fbos.every(fbo => !fbo.pricingExpired);
+    editGroup(group: any) {
+        this.editGroupClicked.emit({
+            group,
+            searchValue: this.searchValue
+        });
     }
 
-    fbosPricingExpired(groupIndex: number) {
-        const group = (this.grid.dataSource as any[])[groupIndex];
-        if (!group) {
-            return '';
-        }
-        const fbos: any[] = this.groupsFbosData.fbos.filter(fbo => fbo.groupId === group.oid);
-        const all = fbos.length;
-        const expired = fbos.filter(fbo => fbo.pricingExpired).length;
-        if (!expired) {
-            return 'All Pricing Live';
-        }
-        return `${ expired } of ${ all } Expired`;
+    editFBO(fbo: any) {
+        this.editFboClicked.emit({
+            fbo,
+            searchValue: this.searchValue
+        });
     }
 
-    ifStringContains(str1: string, str2: string) {
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
+            data: [...this.columns]
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.columns = [ ...result ];
+
+            this.refreshColumns();
+            this.saveSettings();
+        });
+    }
+
+    dateSortComparer(reference: string, comparer: string) {
+        const a = reference ? new Date(reference) : new Date(-8640000000000000);
+        const b = comparer ? new Date(comparer) : new Date(-8640000000000000);
+
+        if (a < b) {
+            return -1;
+        }
+        if (a > b) {
+            return 1;
+        }
+        return 0;
+    }
+
+    actionHandler(args: SortEventArgs) {
+        if (args.requestType === 'sorting') {
+            this.columns = this.columns.map(column => column.id === args.columnName && !column.hidden ? ({
+                ...column,
+                sort: args.direction === 'Ascending' ? 'asc' : 'desc'
+            }) : ({
+                id: column.id,
+                name: column.name,
+                hidden: column.hidden,
+            }));
+
+            this.saveSettings();
+        }
+    }
+
+    filterChanged() {
+        this.applyFilter(this.searchValue);
+    }
+
+    private saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+    }
+
+    private refreshColumns() {
+        const invisibleColumns = this.columns.filter(c => c.hidden).map(c => c.name);
+        const visibleColumns = this.columns.filter(c => !c.hidden).map(c => c.name);
+
+        const sortedColumn = this.columns.filter(c => c.sort)[0];
+
+        this.reorderColumns();
+
+        this.grid.showColumns(visibleColumns);
+        this.grid.hideColumns(invisibleColumns);
+
+
+        if (sortedColumn) {
+            this.grid.sortColumn(sortedColumn.id, sortedColumn.sort === 'asc' ? 'Ascending' : 'Descending');
+        }
+    }
+
+    private reorderColumns() {
+        const gridColumns = this.grid.columns as Column[];
+        const newColumns: Column[] = [first(gridColumns)];
+
+        for (const column of this.columns) {
+            newColumns.push(gridColumns.find(c => c.field === column.id));
+        }
+
+        newColumns.push(last(gridColumns));
+
+        this.grid.columns = newColumns;
+    }
+
+    private ifStringContains(str1: string, str2: string) {
         return (!str1 ? '' : str1).toLowerCase().includes((!str2 ? '' : str2).toLowerCase());
     }
 }
