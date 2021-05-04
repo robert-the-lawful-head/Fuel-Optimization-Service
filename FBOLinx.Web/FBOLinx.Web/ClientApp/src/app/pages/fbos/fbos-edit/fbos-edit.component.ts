@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
@@ -8,6 +9,7 @@ import { FbocontactsService } from '../../../services/fbocontacts.service';
 import { ContactsService } from '../../../services/contacts.service';
 import { GroupsService } from '../../../services/groups.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { CloseConfirmationComponent, CloseConfirmationData } from '../../../shared/components/close-confirmation/close-confirmation.component';
 
 @Component({
     selector: 'app-fbos-edit',
@@ -39,7 +41,8 @@ export class FbosEditComponent implements OnInit {
         private fboContactsService: FbocontactsService,
         private contactsService: ContactsService,
         private groupsService: GroupsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private confirmDialog: MatDialog,
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
@@ -164,6 +167,29 @@ export class FbosEditComponent implements OnInit {
 
     cancelEditContactClicked() {
         this.currentContact = null;
+    }
+
+    onActiveToggle(event) {
+        if (event.checked && this.fboInfo.expirationDate) {
+            this.confirmDialog
+                .open(CloseConfirmationComponent, {
+                    data: {
+                        customTitle: 'Account Expired!',
+                        customText: 'Account Expiry date is set. If you activate this account, it will be removed.',
+                        ok: 'Set Active',
+                        cancel: 'Cancel',
+                    } as CloseConfirmationData
+                })
+                .afterClosed()
+                .subscribe((confirmed) => {
+                    if (!confirmed) {
+                        this.fboInfo.active = false;
+                        return;
+                    }
+
+                    this.fboInfo.expirationDate = null;
+                });
+        }
     }
 
     get isConductor() {
