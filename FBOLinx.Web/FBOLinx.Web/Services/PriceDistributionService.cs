@@ -70,7 +70,7 @@ namespace FBOLinx.Web.Services
             _IsPreview = isPreview;
 
             var customers = new List<CustomerInfoByGroup>();
-                customers = GetCustomersForDistribution(request);
+            customers = GetCustomersForDistribution(request);
 
             PerformPreDistributionTasks(customers);
 
@@ -84,6 +84,38 @@ namespace FBOLinx.Web.Services
                 foreach (var customer in customers)
                 {
                     await GenerateDistributionMailMessage(customer);
+                }
+
+                var systemContacts = new List<Contacts>();
+                systemContacts = GetSystemContactsForDistribution();
+
+                if (systemContacts != null)
+                {
+                    foreach (var systemContact in systemContacts)
+                    {
+                        if (systemContact.CopyAlerts.GetValueOrDefault())
+                        {
+                            _IsPreview = true;
+                            _DistributePricingRequest.PreviewEmail = systemContact.Email;
+                            await GenerateDistributionMailMessage(customers.FirstOrDefault());
+                        }
+                    }
+                }
+
+                var users = new List<User>();
+                users = GetUsersForDistribution();
+
+                if (users != null)
+                {
+                    foreach (var user in users)
+                    {
+                        if (user.CopyAlerts.GetValueOrDefault() && user.Username.Contains('@'))
+                        {
+                            _IsPreview = true;
+                            _DistributePricingRequest.PreviewEmail = user.Username;
+                            await GenerateDistributionMailMessage(customers.FirstOrDefault());
+                        }
+                    }
                 }
             }
         }
@@ -117,6 +149,23 @@ namespace FBOLinx.Web.Services
                           where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid
                           && !(c.Suspended ?? false)
                           select cg).ToList();
+            return result;
+        }
+
+        private List<Contacts> GetSystemContactsForDistribution()
+        {
+            var result = (from fc in _context.Fbocontacts
+                          join c in _context.Contacts on fc.ContactId equals c.Oid
+                          where fc.Fboid == _DistributePricingRequest.FboId && c.Email != null && c.Email != ""
+                          select c).ToList();
+            return result;
+        }
+
+        private List<User> GetUsersForDistribution()
+        {
+            var result = (from u in _context.User
+                          where u.GroupId == _DistributePricingRequest.GroupId && (u.FboId == 0 || u.FboId == _DistributePricingRequest.FboId)
+                          select u).ToList();
             return result;
         }
 
@@ -420,38 +469,7 @@ namespace FBOLinx.Web.Services
 
         private void PerformPreDistributionTasks(List<CustomerInfoByGroup> customers)
         {
-            SaveEmailContent();
             LogDistributionRecord();
-        }
-
-        private void SaveEmailContent()
-        {
-            try
-            {
-                if (_DistributePricingRequest.EmailContentGreeting.Oid == 0)
-                {
-                    _DistributePricingRequest.EmailContentGreeting.FboId = _DistributePricingRequest.FboId;
-                    _context.EmailContent.Add(_DistributePricingRequest.EmailContentGreeting);
-                }
-                else
-                {
-                    _context.Entry(_DistributePricingRequest.EmailContentGreeting).State = EntityState.Modified;
-                }
-                if (_DistributePricingRequest.EmailContentSignature.Oid == 0)
-                {
-                    _DistributePricingRequest.EmailContentSignature.FboId = _DistributePricingRequest.FboId;
-                    _context.EmailContent.Add(_DistributePricingRequest.EmailContentSignature);
-                }
-                else
-                {
-                    _context.Entry(_DistributePricingRequest.EmailContentSignature).State = EntityState.Modified;
-                }
-                _context.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                //Do nothing
-            }
         }
 
         private void LogDistributionRecord()

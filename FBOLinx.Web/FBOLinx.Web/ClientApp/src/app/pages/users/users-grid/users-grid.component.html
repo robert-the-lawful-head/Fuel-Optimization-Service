@@ -8,14 +8,12 @@
         <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
 
-    <table
-        [dataSource]="usersDataSource"
-        class="col-md-12"
-        mat-table
-        matSort
-        matSortActive="lastName"
-        matSortDirection="asc"
-    >
+    <table [dataSource]="usersDataSource"
+           class="col-md-12"
+           mat-table
+           matSort
+           matSortActive="lastName"
+           matSortDirection="asc">
         <ng-container matColumnDef="firstName">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>
                 First Name
@@ -43,24 +41,32 @@
                 Copy On Distribution?
             </th>
             <td *matCellDef="let user" mat-cell>
-                <mat-slide-toggle
-                    (click)="UpdateCopyAlertsValue(user)"
-                    [(ngModel)]="user.copyAlerts"
-                    [checked]="user.copyAlerts"
-                    color="accent"
-                ></mat-slide-toggle>
+                <mat-slide-toggle (click)="UpdateCopyAlertsValue(user)"
+                                  [(ngModel)]="user.copyAlerts"
+                                  [checked]="user.copyAlerts"
+                                  color="accent"></mat-slide-toggle>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="copyOrders">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                Copy On Orders?
+            </th>
+            <td *matCellDef="let user" mat-cell>
+                <mat-slide-toggle (click)="UpdateCopyOrdersValue(user)"
+                                  [(ngModel)]="user.copyOrders"
+                                  [checked]="user.copyOrders"
+                                  color="accent"></mat-slide-toggle>
             </td>
         </ng-container>
 
         <ng-container matColumnDef="delete">
             <th *matHeaderCellDef mat-header-cell>
                 <div class="pull-right">
-                    <button
-                        (click)="newRecord()"
-                        [view]="'accent'"
-                        beforeIcon="fa fa-plus"
-                        ni-button
-                    >
+                    <button (click)="newRecord()"
+                            [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            ni-button>
                         Add New
                     </button>
                 </div>
@@ -77,11 +83,9 @@
         </ng-container>
 
         <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-        <tr
-            (click)="editRecord(row, $event)"
+        <tr (click)="editRecord(row, $event)"
             *matRowDef="let row; columns: displayedColumns"
-            mat-row
-        ></tr>
+            mat-row></tr>
     </table>
 </div>
 

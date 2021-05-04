@@ -72,15 +72,25 @@ namespace FBOLinx.Web.Services
                 List<CustomerWithPricing> pricing =
                     await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
 
-                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyAlerts.HasValue && x.Contact.CopyAlerts.Value).Select(x => x.Contact.Email).ToListAsync();
+                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyOrders.HasValue && x.Contact.CopyOrders.Value).Select(x => x.Contact.Email).ToListAsync();
 
-                foreach(var price in pricing)
+                List<string> alertEmailAddressesUsers = await _context.User.Where(x => x.GroupId == fbo.GroupId && (x.FboId == 0 || x.FboId == fbo.Oid) && x.CopyAlerts.HasValue && x.CopyOrders.Value).Select(x => x.Username).ToListAsync();
+
+                foreach (var price in pricing)
                 {
                     var template = templates.FirstOrDefault(x => x.Oid == price.PricingTemplateId);
                     if (template != null && template.TailNumbers != null)
                         price.TailNumbers = string.Join(",", template.TailNumbers);
                     if (alertEmailAddresses != null)
                         price.CopyEmails = string.Join(";", alertEmailAddresses);
+                    if(alertEmailAddressesUsers!=null)
+                    {
+                        foreach(var email in alertEmailAddressesUsers)
+                        {
+                            if (email.Contains('@'))
+                                price.CopyEmails += ";" + email;
+                        }
+                    }
                     price.FuelDeskEmail = fbo.FuelDeskEmail;
                 }
 
