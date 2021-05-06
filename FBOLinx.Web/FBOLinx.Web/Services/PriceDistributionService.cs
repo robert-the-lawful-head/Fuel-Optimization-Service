@@ -7,17 +7,12 @@ using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -26,11 +21,18 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using MailSettings = FBOLinx.Web.Configurations.MailSettings;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using Microsoft.Extensions.Options;
+using System.Net.Mail;
 
 namespace FBOLinx.Web.Services
 {
-    public class PriceDistributionService
+    public interface IPriceDistributionService
+    {
+        Task DistributePricing(DistributePricingRequest request, bool isPreview);
+    }
+
+    public class PriceDistributionService : IPriceDistributionService
     {
         public enum PriceBreakdownDisplayTypes : short
         {
@@ -40,7 +42,6 @@ namespace FBOLinx.Web.Services
             FourColumnsAllRules = 3
         }
 
-        private MailSettings _MailSettings;
         private DistributePricingRequest _DistributePricingRequest;
         private FboLinxContext _context;
         private bool _IsPreview = false;
@@ -49,16 +50,17 @@ namespace FBOLinx.Web.Services
         private MailTemplateService _MailTemplateService;
         private PriceFetchingService _PriceFetchingService;
         private readonly FilestorageContext _fileStorageContext;
+        private IMailService _MailService;
 
         #region Constructors
-        public PriceDistributionService(IOptions<MailSettings> mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService, PriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService, PriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
-            _MailSettings = mailSettings.Value;
             _fileStorageContext = fileStorageContext;
+            _MailService = mailService;
         }
         #endregion
 
@@ -225,33 +227,35 @@ namespace FBOLinx.Web.Services
                 var fbo = await _context.Fbos.Where(s => s.Oid == _DistributePricingRequest.FboId).SingleOrDefaultAsync();
                 var fboIcao = await _context.Fboairports.Where(s => s.Fboid == fbo.Oid).SingleOrDefaultAsync();
 
-                //Convert to a SendGrid message and use their API to send it
-                Services.MailService mailService = new MailService(_MailSettings);
-
-                var sendGridMessageWithTemplate = new SendGridMessage();
-                sendGridMessageWithTemplate.From = new EmailAddress(fbo.SenderAddress + "@fbolinx.com");
+                //Add email content to MailMessage
+                FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+                mailMessage.From = new MailAddress(fbo.SenderAddress + "@fbolinx.com");
                 if (fbo.ReplyTo != null && fbo.ReplyTo != "")
-                    sendGridMessageWithTemplate.ReplyTo = new EmailAddress(fbo.ReplyTo);
-                Personalization personalization = new Personalization();
-
-                personalization.Tos = new System.Collections.Generic.List<EmailAddress>();
-
+                    mailMessage.ReplyToList.Add(fbo.ReplyTo);
                 if (!_IsPreview)
                 {
                     foreach (ContactInfoByGroup contactInfoByGroup in recipients)
                     {
-                        if (_MailSettings.IsValidEmailRecipient(contactInfoByGroup.Email))
-                            personalization.Tos.Add(new EmailAddress(contactInfoByGroup.Email));
+                        if (_MailService.IsValidEmailRecipient(contactInfoByGroup.Email))
+                            mailMessage.To.Add(contactInfoByGroup.Email);
                     }
                 }
                 else
-                    personalization.Tos.Add(new EmailAddress(_DistributePricingRequest.PreviewEmail));
+                    mailMessage.To.Add(_DistributePricingRequest.PreviewEmail);
 
-                sendGridMessageWithTemplate.Personalizations = new List<Personalization>();
-                sendGridMessageWithTemplate.Personalizations.Add(personalization);
+                mailMessage.AttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
+
+                var logo = _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fbo.Oid).ToList();
+                if (logo.Count > 0)
+                {
+                    mailMessage.Logo = new LogoDetails();
+                    mailMessage.Logo.Filename = "logo." + logo[0].ContentType.Split('/')[1];
+                    mailMessage.Logo.ContentType = logo[0].ContentType;
+                    mailMessage.Logo.Base64String = Convert.ToBase64String(logo[0].FileData);
+                }
 
                 _DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
-                var dynamicTemplateData = new TemplateData
+                var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridTemplateData
                 {
                     recipientCompanyName = _IsPreview ? fbo.Fbo : customer.Company,
                     templateEmailBodyMessage = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Email),
@@ -265,39 +269,12 @@ namespace FBOLinx.Web.Services
                     Subject = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Subject) ?? "Distribution pricing",
                     expiration = validUntil
                 };
-                sendGridMessageWithTemplate.SetTemplateData(dynamicTemplateData);
+                mailMessage.SendGridTemplateData = dynamicTemplateData;
 
-                var pricesAttachment = new SendGrid.Helpers.Mail.Attachment();
-                pricesAttachment.Disposition = "inline";
-                pricesAttachment.Content = Convert.ToBase64String(priceBreakdownImage);
-                pricesAttachment.Filename = "prices.png";
-                pricesAttachment.Type = "image/png";
-                pricesAttachment.ContentId = "Prices";
-                sendGridMessageWithTemplate.AddAttachment(pricesAttachment);
-                
-                var logo =_fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fbo.Oid).ToList();
-                if (logo.Count > 0)
-                {
-                    var logoAttachment = new SendGrid.Helpers.Mail.Attachment();
-                    logoAttachment.Disposition = "inline";
-                    logoAttachment.Content = Convert.ToBase64String(logo[0].FileData);
-                    logoAttachment.Filename = "logo." + logo[0].ContentType.Split('/')[1];
-                    logoAttachment.Type = logo[0].ContentType;
-                    logoAttachment.ContentId = "Logo";
-                    sendGridMessageWithTemplate.AddAttachment(logoAttachment);
-                }
-
-                sendGridMessageWithTemplate.TemplateId = "d-537f958228a6490b977e372ad8389b71";
-                var result = mailService.SendAsync(sendGridMessageWithTemplate).Result;
-
-                if (result.StatusCode == HttpStatusCode.OK || result.StatusCode == HttpStatusCode.Accepted)
+                //Send email
+                var result = _MailService.SendAsync(mailMessage).Result;
+                if (result)
                     MarkDistributionRecordAsComplete(distributionQueueRecord);
-                else
-                {
-                    var mailError = await result.Body.ReadAsStringAsync();
-                    throw new System.Exception(mailError);
-                }
-
             }
             catch (System.Exception exception)
             {
@@ -494,41 +471,6 @@ namespace FBOLinx.Web.Services
         private class PriceDistributionCustomer
         {
             
-        }
-
-        private class TemplateData
-        {
-            [JsonProperty("recipientCompanyName")]
-            public string recipientCompanyName { get; set; }
-
-            [JsonProperty("templateEmailBodyMessage")]
-            public string templateEmailBodyMessage { get; set; }
-
-            [JsonProperty("fboName")]
-            public string fboName { get; set; }
-
-            [JsonProperty("fboICAOCode")]
-            public string fboICAOCode { get; set; }
-
-            [JsonProperty("fboAddress")]
-            public string fboAddress { get; set; }
-
-            [JsonProperty("fboCity")]
-            public string fboCity { get; set; }
-
-            [JsonProperty("fboState")]
-            public string fboState { get; set; }
-
-            [JsonProperty("fboZip")]
-            public string fboZip { get; set; }
-
-            [JsonProperty("templateNotesMessage")]
-            public string templateNotesMessage { get; set; }
-
-            [JsonProperty("Subject")]
-            public string Subject { get; set; }
-            [JsonProperty("expiration")]
-            public string expiration { get; set; }
         }
         
         #endregion

@@ -7,6 +7,7 @@ using FBOLinx.Core.Utilities;
 using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -16,24 +17,24 @@ namespace FBOLinx.Web.Services
 {
     public class ResetPasswordService
     {
-        private FBOLinx.Web.Configurations.MailSettings _MailSettings;
+        private IMailService _MailService;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private MailTemplateService _MailTemplateService;
 
-        public ResetPasswordService(IOptions< FBOLinx.Web.Configurations.MailSettings> mailSettings, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService)
+        public ResetPasswordService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService)
         {
             _MailTemplateService = mailTemplateService;
             _HttpContextAccessor = httpContextAccessor;
-            _MailSettings = mailSettings.Value;
+            _MailService = mailService;
         }
 
         #region Public Methods
         public async Task SendResetPasswordEmailAsync(string name, string emailAddress, string token)
         {
-            if (string.IsNullOrEmpty(emailAddress) || !(_MailSettings.IsValidEmailRecipient(emailAddress)))
+            if (string.IsNullOrEmpty(emailAddress) || !(_MailService.IsValidEmailRecipient(emailAddress)))
                 return;
 
-            MailMessage mailMessage = new MailMessage();
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
             string body = GetResetPasswordEmailTemplate();
             body = body.Replace("%USERNAME%", name);
             body = body.Replace("%RESETPASSWORDLINK%", _HttpContextAccessor.HttpContext.Request.Scheme + "://" + _HttpContextAccessor.HttpContext.Request.Host + "/reset-password?token=" + token);
@@ -43,10 +44,7 @@ namespace FBOLinx.Web.Services
             mailMessage.IsBodyHtml = true;
             mailMessage.Subject = "Reset Your Password";
 
-            //Convert to a SendGrid message and use their API to send it
-            Services.MailService mailService = new MailService(_MailSettings);
-            var sendGridMessage = mailMessage.GetSendGridMessage();
-            await mailService.SendAsync(sendGridMessage);
+            await _MailService.SendAsync(mailMessage);
         }
         #endregion
 
