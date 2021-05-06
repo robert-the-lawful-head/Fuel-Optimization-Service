@@ -109,7 +109,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     // Members
     pageTitle = 'Groups';
     searchValue = '';
-    accountType: 'all' | 'active' | 'inactive' = 'all';
+    accountType: 'all' | 'active' | 'inactive' = 'active';
     pageSettings: any = {
         pageSizes: [ 25, 50, 100, 'All' ],
         pageSize: 25,
@@ -172,9 +172,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 self.manageFBO(args.rowData);
             },
         };
-        if (this.groupGridState.filter) {
-            this.applyFilter(this.groupGridState.filter);
-        }
 
         if (localStorage.getItem(this.tableLocalStorageKey)) {
             const savedColumns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey)) as ColumnType[];
@@ -185,6 +182,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             }
         } else {
             this.columns = initialColumns;
+        }
+
+        if (this.groupGridState.filter) {
+            this.applyFilter(this.groupGridState.filter);
+        } else {
+            this.applyFilter('');
         }
     }
 
