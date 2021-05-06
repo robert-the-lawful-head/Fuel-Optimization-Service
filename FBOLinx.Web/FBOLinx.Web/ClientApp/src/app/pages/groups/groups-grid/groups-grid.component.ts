@@ -460,6 +460,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             (this.accountType === 'inactive' && fbo.accountExpired)
         );
         const filteredGroups = this.groupsFbosData.groups.filter(group =>
+            this.accountType === 'all' ||
             filteredFbos.find(fbo => fbo.groupId === group.oid)
         );
 
