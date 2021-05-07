@@ -2,41 +2,41 @@
     <a (click)="confirmDelete(data)" *ngIf="data.firstName" class="btn btn-danger btn-sm"
        style="color:white; cursor:pointer;">Delete Contact</a>
 </h1>
-<form (ngSubmit)="onSave()" [formGroup]="contactForm">
-    <div *ngIf="data" mat-dialog-content>
-        <div class="row">
-            <div class="col-xs-12 col-md-6">
-                <mat-form-field>
-                    <input formControlName="firstName" matInput placeholder="First Name" />
-                </mat-form-field>
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <mat-form-field>
-                    <input formControlName="lastName" matInput placeholder="Last Name" />
-                </mat-form-field>
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <mat-form-field>
-                    <input formControlName="email" matInput placeholder="Email" required />
-                </mat-form-field>
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <div class="copyAlerts">
-                    <mat-slide-toggle color="accent" formControlName="copyAlerts">
-                        Copy on Distribution
-                    </mat-slide-toggle>
+    <div mat-dialog-content>
+        <div *ngIf="data">
+            <form (ngSubmit)="onSave()" [formGroup]="contactForm">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <mat-form-field>
+                                <input formControlName="firstName" matInput placeholder="First Name" />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <mat-form-field>
+                                <input formControlName="lastName" matInput placeholder="Last Name" />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <mat-form-field>
+                                <input formControlName="email" matInput placeholder="Email" required />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="copyAlerts">
+                                <mat-slide-toggle color="accent" formControlName="copyAlerts">
+                                    Copy on Distribution
+                                </mat-slide-toggle>
+                            </div>
+                            <div class="copyAlerts">
+                                <mat-slide-toggle color="accent" formControlName="copyOrders">
+                                    Copy on Orders
+                                </mat-slide-toggle>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-xs-12 col-md-6">
-               &nbsp;
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <div class="copyAlerts">
-                    <mat-slide-toggle color="accent" formControlName="copyOrders">
-                        Copy on Orders
-                    </mat-slide-toggle>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
     <div mat-dialog-actions>
@@ -51,4 +51,3 @@
         </button>
         <button mat-dialog-close mat-stroked-button>Cancel</button>
     </div>
-</form>

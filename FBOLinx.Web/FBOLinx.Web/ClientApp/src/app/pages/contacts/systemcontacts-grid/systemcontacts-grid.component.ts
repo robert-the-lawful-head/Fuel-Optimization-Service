@@ -86,6 +86,8 @@ export class SystemcontactsGridComponent implements OnInit {
         const dialogRef = this.newContactDialog.open(
             SystemcontactsNewContactModalComponent,
             {
+                height: '350px',
+                width: '1100px',
                 data: Object.assign({}, record),
             }
         );
