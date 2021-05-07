@@ -9,6 +9,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models;
+using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.ViewModels;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,9 @@ using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
 
 namespace FBOLinx.Web.Services
 {
-    public class PriceFetchingService
+
+
+    public class PriceFetchingService: IPriceFetchingService
     {
         private FboLinxContext _context;
         private int _FboId;
@@ -35,7 +38,9 @@ namespace FBOLinx.Web.Services
 
         #region Public Methods
 
-        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId, Core.Enums.FlightTypeClassifications flightTypeClassifications, Core.Enums.ApplicableTaxFlights departureType = Core.Enums.ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
+            string icao, int customerId, FlightTypeClassifications flightTypeClassifications, 
+            ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
         {
             List<string> airports = icao.Split(',').Select(x => x.Trim()).ToList();
             List<CustomerWithPricing> result = new List<CustomerWithPricing>();
