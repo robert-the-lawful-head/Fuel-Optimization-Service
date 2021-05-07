@@ -82,7 +82,10 @@ namespace FBOLinx.Web.Services
         //    }
         //}
 
-
+        public static string GetFboLinxAddress(string address)
+        {
+            return address + "@fbolinx.com";
+        }
 
         #region Private Methods
         private void AddDistributionEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)

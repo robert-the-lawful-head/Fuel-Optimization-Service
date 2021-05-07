@@ -24,6 +24,7 @@ using MailSettings = FBOLinx.Web.Configurations.MailSettings;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using Microsoft.Extensions.Options;
 using System.Net.Mail;
+using FBOLinx.Web.Services.Interfaces;
 
 namespace FBOLinx.Web.Services
 {
@@ -47,13 +48,13 @@ namespace FBOLinx.Web.Services
         private bool _IsPreview = false;
         private int _DistributionLogID = 0;
         private IHttpContextAccessor _HttpContextAccessor;
-        private MailTemplateService _MailTemplateService;
-        private PriceFetchingService _PriceFetchingService;
+        private IMailTemplateService _MailTemplateService;
+        private IPriceFetchingService _PriceFetchingService;
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
 
         #region Constructors
-        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService, PriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -187,7 +188,7 @@ namespace FBOLinx.Web.Services
                     return;
                 }
 
-                storeSingleCustomer(customer);
+                StoreSingleCustomer(customer);
 
                 distributionQueueRecord = _context.DistributionQueue.Where((x =>
                     x.CustomerId == customer.CustomerId && x.Fboid == _DistributePricingRequest.FboId &&
@@ -229,7 +230,7 @@ namespace FBOLinx.Web.Services
 
                 //Add email content to MailMessage
                 FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
-                mailMessage.From = new MailAddress(fbo.SenderAddress + "@fbolinx.com");
+                mailMessage.From = new MailAddress(MailService.GetFboLinxAddress(fbo.SenderAddress));
                 if (fbo.ReplyTo != null && fbo.ReplyTo != "")
                     mailMessage.ReplyToList.Add(fbo.ReplyTo);
                 if (!_IsPreview)
@@ -306,7 +307,7 @@ namespace FBOLinx.Web.Services
             _context.SaveChanges();
         }
 
-        private void storeSingleCustomer(CustomerInfoByGroup customer)
+        private void StoreSingleCustomer(CustomerInfoByGroup customer)
         {
             DistributionQueue queue = new DistributionQueue()
             {
@@ -315,6 +316,7 @@ namespace FBOLinx.Web.Services
                 Fboid = _DistributePricingRequest.FboId,
                 GroupId = _DistributePricingRequest.GroupId
             };
+            //_context.Set<DistributionQueue>().Add(queue);
             _context.DistributionQueue.Add(queue);
             _context.SaveChanges();
         }

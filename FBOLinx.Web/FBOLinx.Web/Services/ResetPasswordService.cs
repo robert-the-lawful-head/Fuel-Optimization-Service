@@ -19,9 +19,9 @@ namespace FBOLinx.Web.Services
     {
         private IMailService _MailService;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        private MailTemplateService _MailTemplateService;
+        private IMailTemplateService _MailTemplateService;
 
-        public ResetPasswordService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService)
+        public ResetPasswordService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService)
         {
             _MailTemplateService = mailTemplateService;
             _HttpContextAccessor = httpContextAccessor;

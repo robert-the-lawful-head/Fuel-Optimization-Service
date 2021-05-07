@@ -13,6 +13,7 @@ using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Services;
+using FBOLinx.Web.Services.Interfaces;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -22,9 +23,9 @@ namespace FBOLinx.Web.Controllers
     public class PricingTemplatesController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly PriceFetchingService _priceFetchingService;
+        private readonly IPriceFetchingService _priceFetchingService;
 
-        public PricingTemplatesController(FboLinxContext context, PriceFetchingService priceFetchingService)
+        public PricingTemplatesController(FboLinxContext context, IPriceFetchingService priceFetchingService)
         {
             _context = context;
             _priceFetchingService = priceFetchingService;

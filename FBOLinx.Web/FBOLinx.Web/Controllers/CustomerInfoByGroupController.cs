@@ -21,6 +21,7 @@ using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Models.Requests;
+using FBOLinx.Web.Services.Interfaces;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -32,12 +33,12 @@ namespace FBOLinx.Web.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly FboLinxContext _context;
 
-        private readonly PriceFetchingService _priceFetchingService;
+        private readonly IPriceFetchingService _priceFetchingService;
         private readonly CustomerService _customerService;
         private readonly FboService _fboService;
         private readonly AirportWatchService _airportWatchService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, PriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
