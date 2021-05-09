@@ -464,6 +464,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         );
         const filteredGroups = this.groupsFbosData.groups.filter(group =>
             this.accountType === 'all' ||
+            (this.accountType === 'active' && !group.fbos.length) ||
             filteredFbos.find(fbo => fbo.groupId === group.oid)
         );
 
@@ -475,16 +476,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         }
 
         const firstFilteredFbos = filteredFbos.filter(fbo =>
-            (this.accountType === 'all' ||
-                (this.accountType === 'active' && fbo.accountExpired) ||
-                (this.accountType === 'inactive' && !fbo.accountExpired)
-            ) && (
             this.ifStringContains(fbo.icao, filterValue) ||
             this.ifStringContains(fbo.fbo, filterValue) ||
             fbo.users?.find(user =>
                 this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
                 this.ifStringContains(user.username, filterValue)
-            ))
+            )
         );
 
         const firstFilteredGroups = filteredGroups.filter(group =>
@@ -504,17 +501,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         );
 
         const secondFilteredFbos = filteredFbos.filter(fbo =>
-            (this.accountType === 'all' ||
-                (this.accountType === 'active' && fbo.accountExpired) ||
-                (this.accountType === 'inactive' && !fbo.accountExpired)
-            ) && (
-                firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
-                this.ifStringContains(fbo.icao, filterValue) ||
-                this.ifStringContains(fbo.fbo, filterValue) ||
-                fbo.users?.find(user =>
-                    this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
-                    this.ifStringContains(user.username, filterValue)
-                )
+            firstFilteredGroups.find(group => group.oid === fbo.groupId) ||
+            this.ifStringContains(fbo.icao, filterValue) ||
+            this.ifStringContains(fbo.fbo, filterValue) ||
+            fbo.users?.find(user =>
+                this.ifStringContains(user.firstName + ' ' + user.lastName, filterValue) ||
+                this.ifStringContains(user.username, filterValue)
             )
         );
 
