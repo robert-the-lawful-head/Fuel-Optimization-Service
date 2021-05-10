@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ResizeEvent } from 'angular-resizable-element';
+import { LngLatLike } from 'mapbox-gl';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { isEmpty, keyBy } from 'lodash';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
-import { ResizeEvent } from 'angular-resizable-element';
 
 const BREADCRUMBS: any[] = [
     {
@@ -36,7 +37,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     };
     filter: string;
     filteredTypes: string[] = [];
-    center: google.maps.LatLngLiteral;
+    center: LngLatLike;
     selectedFlightWatch: FlightWatch;
     flightWatchDataSource: MatTableDataSource<FlightWatch>;
 

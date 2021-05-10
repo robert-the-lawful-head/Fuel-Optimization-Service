@@ -206,7 +206,7 @@
                                 ></app-table-column-filter>
                             </span>
                         </th>
-                        <td *matCellDef="let info" mat-cell>{{ aircraftTypes[info.aircraftTypeCode].label }}</td>
+                        <td *matCellDef="let info" mat-cell>{{ getAircraftLabel(info.aircraftTypeCode) }}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="dateTime">

@@ -146,7 +146,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     UIModule,
     NiComponentsModule,
     PagesModule,
-    PopoverModule
+    PopoverModule,
   ],
   providers: [
     {

@@ -1,47 +1,4 @@
-<google-map
-    #map
-    [center]="center"
-    [zoom]="zoom"
-    [options]="{
-        streetViewControl: false,
-        fullscreenControl: false,
-        mapTypeControl: false
-    }"
-    (boundsChanged)="boundsChanged()"
->
-    <map-rectangle
-        [bounds]="bounds"
-        [options]="{
-            strokeColor: '#000000',
-            strokeOpacity: 0,
-            strokeWeight: 0,
-            fillOpacity: 0.35
-        }"
-    ></map-rectangle>
-    <map-circle
-        [center]="center"
-        [radius]="250 * 1609.34"
-        [options]="{
-            strokeOpacity: 0,
-            strokeWeight: 0,
-            fillColor: '#585858',
-            fillOpacity: 0.35
-        }"
-    ></map-circle>
-    <ng-container *ngFor="let key of keys">
-        <map-marker
-            [position]="{
-                lat: data[key].latitude,
-                lng: data[key].longitude
-            }"
-            [title]="data[key].aircraftHexCode + '/' + data[key].atcFlightNumber"
-            [options]="{
-                icon: data[key] | markerIcon
-            }"
-            (mapClick)="onFlightWatchClick(data[key])"
-        ></map-marker>
-    </ng-container>
-</google-map>
+<div id="flight-watch-map"></div>
 
 <div *ngIf="!isStable" class="map-error-msg">
     <mat-icon aria-hidden="false" aria-label="Server Error">wifi_tethering_off</mat-icon>
