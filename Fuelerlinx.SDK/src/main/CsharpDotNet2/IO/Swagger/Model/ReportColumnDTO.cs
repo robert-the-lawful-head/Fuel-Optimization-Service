@@ -62,13 +62,6 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "propertyName")]
     public string PropertyName { get; set; }
 
-    /// <summary>
-    /// Gets or Sets Group
-    /// </summary>
-    [DataMember(Name="group", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "group")]
-    public string Group { get; set; }
-
 
     /// <summary>
     /// Get the string presentation of the object
@@ -84,7 +77,6 @@ namespace IO.Swagger.Model {
       sb.Append("  IsVisible: ").Append(IsVisible).Append("\n");
       sb.Append("  Description: ").Append(Description).Append("\n");
       sb.Append("  PropertyName: ").Append(PropertyName).Append("\n");
-      sb.Append("  Group: ").Append(Group).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

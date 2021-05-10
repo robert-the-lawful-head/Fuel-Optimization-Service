@@ -13,11 +13,11 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class UpdateSupportedFileTemplateRequest {
     /// <summary>
-    /// Gets or Sets SupportedInvoiceFileTemplate
+    /// Gets or Sets SupportedInvoiceImportTemplate
     /// </summary>
-    [DataMember(Name="supportedInvoiceFileTemplate", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "supportedInvoiceFileTemplate")]
-    public SupportedInvoiceFileTemplateDTO SupportedInvoiceFileTemplate { get; set; }
+    [DataMember(Name="supportedInvoiceImportTemplate", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "supportedInvoiceImportTemplate")]
+    public SupportedInvoiceImportTemplateDTO SupportedInvoiceImportTemplate { get; set; }
 
 
     /// <summary>
@@ -27,7 +27,7 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class UpdateSupportedFileTemplateRequest {\n");
-      sb.Append("  SupportedInvoiceFileTemplate: ").Append(SupportedInvoiceFileTemplate).Append("\n");
+      sb.Append("  SupportedInvoiceImportTemplate: ").Append(SupportedInvoiceImportTemplate).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

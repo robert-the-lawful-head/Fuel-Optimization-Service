@@ -142,17 +142,12 @@ Class | Method | HTTP request | Description
 *AnalysisApi* | [**DeleteCustomReport**](docs/AnalysisApi.md#deletecustomreport) | **DELETE** /api/Analysis/custom-reports/{id} | Delete a custom report by the provided {id}.
 *AnalysisApi* | [**DeleteEmailAddressesForEmailedAnalysis**](docs/AnalysisApi.md#deleteemailaddressesforemailedanalysis) | **DELETE** /api/Analysis/email-blast/email-addresses/{id} | Internal use only - Delete the subscriber record for an email blast.  This will reset the subscriber list to a company-default for the blast.
 *AnalysisApi* | [**DeleteReportDistributionAssociation**](docs/AnalysisApi.md#deletereportdistributionassociation) | **DELETE** /api/Analysis/custom-reports/distribution-association/{id} | 
-*AnalysisApi* | [**DeleteReportGroupAssociations**](docs/AnalysisApi.md#deletereportgroupassociations) | **DELETE** /api/Analysis/report-groups-associations/{id} | Delete Report Group Associations
-*AnalysisApi* | [**DeleteReportGroups**](docs/AnalysisApi.md#deletereportgroups) | **DELETE** /api/Analysis/report-groups/{id} | Delete Report Groups By Id
 *AnalysisApi* | [**DeleteReportScheduledDistribution**](docs/AnalysisApi.md#deletereportscheduleddistribution) | **DELETE** /api/Analysis/custom-reports/distribution/{id} | Internal use only - Delete a scheduled report distribution record.
 *AnalysisApi* | [**GetCustomReportById**](docs/AnalysisApi.md#getcustomreportbyid) | **GET** /api/Analysis/custom-reports/{id} | Fetch a custom report by it's {id}.
 *AnalysisApi* | [**GetEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#getemailaddressesformonthlyanalysis) | **GET** /api/Analysis/email-blast/{emailBlastId}/email-addresses | Internal use only - Fetch all subscribers for a particular email blast.
 *AnalysisApi* | [**GetIndustryAveragePriceByTransaction**](docs/AnalysisApi.md#getindustryaveragepricebytransaction) | **GET** /api/Analysis/industry-average/by-transaction/{transactionId} | 
 *AnalysisApi* | [**GetReportData**](docs/AnalysisApi.md#getreportdata) | **POST** /api/Analysis/custom-reports/data | 
 *AnalysisApi* | [**GetReportDataForDistribution**](docs/AnalysisApi.md#getreportdatafordistribution) | **GET** /api/Analysis/custom-reports/data/{reportId}/distribution/{distributionId} | 
-*AnalysisApi* | [**GetReportGroupAssociationsById**](docs/AnalysisApi.md#getreportgroupassociationsbyid) | **GET** /api/Analysis/report-groups-associations/{id} | Get Report Group Associations By Id
-*AnalysisApi* | [**GetReportGroupListForCompany**](docs/AnalysisApi.md#getreportgrouplistforcompany) | **GET** /api/Analysis/report-groups/list | Get report groups for the authenticated company
-*AnalysisApi* | [**GetReportGroupsById**](docs/AnalysisApi.md#getreportgroupsbyid) | **GET** /api/Analysis/report-groups/{id} | Get Report Groups By Id
 *AnalysisApi* | [**GetReportList**](docs/AnalysisApi.md#getreportlist) | **GET** /api/Analysis/custom-reports/list | Fetch a list of reports for the authenticated company.
 *AnalysisApi* | [**GetReportScheduledDistributionById**](docs/AnalysisApi.md#getreportscheduleddistributionbyid) | **GET** /api/Analysis/custom-reports/distribution/{id} | Internal use only - Fetch reports scheduled for distribution by the scheduled distribution {id}.
 *AnalysisApi* | [**GetReportScheduledDistributionList**](docs/AnalysisApi.md#getreportscheduleddistributionlist) | **GET** /api/Analysis/custom-reports/distribution/list | Internal use only - Fetch reports that are scheduled for distribution.
@@ -160,14 +155,10 @@ Class | Method | HTTP request | Description
 *AnalysisApi* | [**PostCustomReport**](docs/AnalysisApi.md#postcustomreport) | **POST** /api/Analysis/custom-reports | Add a new custom report for the authenticated company.
 *AnalysisApi* | [**PostEmailAddressesForMonthlyAnalysis**](docs/AnalysisApi.md#postemailaddressesformonthlyanalysis) | **POST** /api/Analysis/email-blast/email-addresses | Internal use only - Add a new subscriber-set record to an email blast.
 *AnalysisApi* | [**PostReportDistributionAssociation**](docs/AnalysisApi.md#postreportdistributionassociation) | **POST** /api/Analysis/custom-reports/distribution-association | 
-*AnalysisApi* | [**PostReportGroupAssociations**](docs/AnalysisApi.md#postreportgroupassociations) | **POST** /api/Analysis/report-groups-associations | Post Report Group Associations
-*AnalysisApi* | [**PostReportGroups**](docs/AnalysisApi.md#postreportgroups) | **POST** /api/Analysis/report-groups | Post Report Groups
 *AnalysisApi* | [**PostReportScheduledDistribution**](docs/AnalysisApi.md#postreportscheduleddistribution) | **POST** /api/Analysis/custom-reports/distribution | Internal use only - Post a new scheduled report distribution record.
 *AnalysisApi* | [**SendReportScheduledDistribution**](docs/AnalysisApi.md#sendreportscheduleddistribution) | **POST** /api/Analysis/custom-reports/distribution/send | 
 *AnalysisApi* | [**UpdateCustomReport**](docs/AnalysisApi.md#updatecustomreport) | **PUT** /api/Analysis/custom-reports | Update a custom report.
 *AnalysisApi* | [**UpdateEmailAddressesForEmailedAnalysis**](docs/AnalysisApi.md#updateemailaddressesforemailedanalysis) | **PUT** /api/Analysis/email-blast/email-addresses/{id} | Internal use only - Update an existing record of subscribers for an email blast.
-*AnalysisApi* | [**UpdateReportGroupAssociations**](docs/AnalysisApi.md#updatereportgroupassociations) | **PUT** /api/Analysis/report-groups-associations | Update Report Group Associations
-*AnalysisApi* | [**UpdateReportGroups**](docs/AnalysisApi.md#updatereportgroups) | **PUT** /api/Analysis/report-groups | Update Report Groups
 *AnalysisApi* | [**UpdateReportScheduledDistribution**](docs/AnalysisApi.md#updatereportscheduleddistribution) | **PUT** /api/Analysis/custom-reports/distribution | Internal use only - Update a scheduled report distribution record.
 *ApplicationApi* | [**DeleteDeploymentNotes**](docs/ApplicationApi.md#deletedeploymentnotes) | **DELETE** /api/Application/deployment-notes/{id} | Internal use only - Delete the specific deployment notes.
 *ApplicationApi* | [**GetBuildVersion**](docs/ApplicationApi.md#getbuildversion) | **GET** /api/Application/build-version | Returns the current build version of the API.
@@ -222,26 +213,42 @@ Class | Method | HTTP request | Description
 *FeeApi* | [**GetServicesAndFeesByCompanyId**](docs/FeeApi.md#getservicesandfeesbycompanyid) | **GET** /api/Fee/company-specific/by-company-id/{companyId} | 
 *FeeApi* | [**PostServicesAndFeesByCompany**](docs/FeeApi.md#postservicesandfeesbycompany) | **POST** /api/Fee/company-specific | Add a new company-specific service/fee.
 *FeeApi* | [**UpdateServicesAndFeesByCompany**](docs/FeeApi.md#updateservicesandfeesbycompany) | **PUT** /api/Fee/company-specific | Update a company-specific service/fee.
+*FileDataApi* | [**DeleteBytescoutFileData**](docs/FileDataApi.md#deletebytescoutfiledata) | **DELETE** /api/FileData/bytescout-file-data/{id} | Deletes Bytescout file data by Id
 *FileDataApi* | [**DeleteImageFileData**](docs/FileDataApi.md#deleteimagefiledata) | **DELETE** /api/FileData/image-file-data/{id} | Internal use only - Delete image file data by {id}.
 *FileDataApi* | [**DeleteImportFileCapture**](docs/FileDataApi.md#deleteimportfilecapture) | **DELETE** /api/FileData/import-file-capture/{id} | Internal use only - Delete a file captured during an import.
+*FileDataApi* | [**DeleteJobFileData**](docs/FileDataApi.md#deletejobfiledata) | **DELETE** /api/FileData/job-file-data/{id} | Deletes job file data by Id
 *FileDataApi* | [**DeletePriceSheetFileData**](docs/FileDataApi.md#deletepricesheetfiledata) | **DELETE** /api/FileData/price-sheet-file-data/{id} | Delete price sheet file data by the provided {id}.
 *FileDataApi* | [**DeleteSupportedInvoiceFileDataTemplate**](docs/FileDataApi.md#deletesupportedinvoicefiledatatemplate) | **DELETE** /api/FileData/invoice-file/supported-template/{id} | Internal use only - Delete a supported invoice file template by it's Id.
+*FileDataApi* | [**DeleteSupportedInvoiceImportFileData**](docs/FileDataApi.md#deletesupportedinvoiceimportfiledata) | **DELETE** /api/FileData/supported-invoice-import-file-data/{id} | Deletes Supported Invoice Import File Data
+*FileDataApi* | [**DeleteSupportedPriceSheetFileData**](docs/FileDataApi.md#deletesupportedpricesheetfiledata) | **DELETE** /api/FileData/supported-price-sheet-file-data/{id} | Deletes Supported Price Sheet File Data By Id
 *FileDataApi* | [**DeleteTransactionFileData**](docs/FileDataApi.md#deletetransactionfiledata) | **DELETE** /api/FileData/transaction-file-data/{id} | Delete transaction file data by the provided {id}.
+*FileDataApi* | [**GetBytescoutFileData**](docs/FileDataApi.md#getbytescoutfiledata) | **GET** /api/FileData/bytescout-file-data/by-Id/{id} | Gets Bytescout file data by Id
 *FileDataApi* | [**GetImageFileDataById**](docs/FileDataApi.md#getimagefiledatabyid) | **GET** /api/FileData/image-file-data/{id} | Internal use only - Fetch image file data by {id}.
 *FileDataApi* | [**GetImportFileCaptureById**](docs/FileDataApi.md#getimportfilecapturebyid) | **GET** /api/FileData/import-file-capture/{id} | Internal use only - Fetch a captured file import by Id.
 *FileDataApi* | [**GetPriceSheetFileData**](docs/FileDataApi.md#getpricesheetfiledata) | **GET** /api/FileData/price-sheet-file-data/{id} | Fetch price sheet file data captured during an upload of pricing info.
 *FileDataApi* | [**GetSupportedInvoiceFileTemplatesByCompany**](docs/FileDataApi.md#getsupportedinvoicefiletemplatesbycompany) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName}/company/{companyId} | Internal use only - Fetch a supported invoice file template by fuel vendor and company.
 *FileDataApi* | [**GetSupportedInvoiceFileTemplatesByFuelVendor**](docs/FileDataApi.md#getsupportedinvoicefiletemplatesbyfuelvendor) | **GET** /api/FileData/invoice-file/supported-template/fueler/{fuelerProcessName} | Internal use only - Fetch a supported invoice file template by fuel vendor.
+*FileDataApi* | [**GetSupportedInvoiceImportFileData**](docs/FileDataApi.md#getsupportedinvoiceimportfiledata) | **GET** /api/FileData/supported-invoice-import-file-data/by-Id/{id} | Get Supported Invoice Import File Data By Id
+*FileDataApi* | [**GetSupportedPriceSheetFileData**](docs/FileDataApi.md#getsupportedpricesheetfiledata) | **GET** /api/FileData/supported-price-sheet-file-data/by-Id/{id} | Get Supported Price Sheet File Data By Id
 *FileDataApi* | [**GetTransactionFileData**](docs/FileDataApi.md#gettransactionfiledata) | **GET** /api/FileData/transaction-file-data/{id} | Fetch transaction file data for an invoice, receipt, or fuel release.
+*FileDataApi* | [**GetsJobFileDataById**](docs/FileDataApi.md#getsjobfiledatabyid) | **GET** /api/FileData/job-file-data/by-id/{id} | Gets job file data by Id
+*FileDataApi* | [**PostBytescoutFileData**](docs/FileDataApi.md#postbytescoutfiledata) | **POST** /api/FileData/bytescout-file-data | Post Bytescout file data
 *FileDataApi* | [**PostImageFileData**](docs/FileDataApi.md#postimagefiledata) | **POST** /api/FileData/image-file-data | Internal use only - Post new image file data.
 *FileDataApi* | [**PostImportFileCapture**](docs/FileDataApi.md#postimportfilecapture) | **POST** /api/FileData/import-file-capture | Internal use only - Add a captured file that was recently imported.
+*FileDataApi* | [**PostJobFileData**](docs/FileDataApi.md#postjobfiledata) | **POST** /api/FileData/job-file-data | Post job file data
 *FileDataApi* | [**PostPriceSheetFileData**](docs/FileDataApi.md#postpricesheetfiledata) | **POST** /api/FileData/price-sheet-file-data | Add price sheet file data for an uploaded fuel price sheet.  The file data should be passed as a base64 string.  This is for capturing purposes only and will NOT update pricing.
 *FileDataApi* | [**PostSupportedInvoiceFileTemplate**](docs/FileDataApi.md#postsupportedinvoicefiletemplate) | **POST** /api/FileData/invoice-file/supported-template | Internal use only - Add a supported invoice file template.
+*FileDataApi* | [**PostSupportedInvoiceImportFileData**](docs/FileDataApi.md#postsupportedinvoiceimportfiledata) | **POST** /api/FileData/supported-invoice-import-file-data | Post Supported Invoice Import File Data
+*FileDataApi* | [**PostSupportedPriceSheetFileData**](docs/FileDataApi.md#postsupportedpricesheetfiledata) | **POST** /api/FileData/supported-price-sheet-file-data | Post Supported Price Sheet File Data
 *FileDataApi* | [**PostTransactionFileData**](docs/FileDataApi.md#posttransactionfiledata) | **POST** /api/FileData/transaction-file-data | Add transaction file data for an invoice, receipt, or fuel release.  The file data should be passed as a base64 string.
+*FileDataApi* | [**UpdateBytescoutFileData**](docs/FileDataApi.md#updatebytescoutfiledata) | **PUT** /api/FileData/bytescout-file-data/{id} | Updates Bytescout file data by Id
 *FileDataApi* | [**UpdateImageFileData**](docs/FileDataApi.md#updateimagefiledata) | **PUT** /api/FileData/image-file-data/{id} | Internal use only - Update an existing record of image file data.
 *FileDataApi* | [**UpdateImportFileCapture**](docs/FileDataApi.md#updateimportfilecapture) | **PUT** /api/FileData/import-file-capture/{id} | Internal use only - Update a file captured during an import.
+*FileDataApi* | [**UpdateJobFileData**](docs/FileDataApi.md#updatejobfiledata) | **PUT** /api/FileData/job-file-data | Updates job file data
 *FileDataApi* | [**UpdatePriceSheetFileData**](docs/FileDataApi.md#updatepricesheetfiledata) | **PUT** /api/FileData/price-sheet-file-data | Update price sheet file data for an uploaded fuel price sheet.  This is for capturing purposes only and will NOT update pricing.
 *FileDataApi* | [**UpdateSupportedInvoiceFileDataTemplate**](docs/FileDataApi.md#updatesupportedinvoicefiledatatemplate) | **PUT** /api/FileData/invoice-file/supported-template | Internal use only - Update a supported invoice file template.
+*FileDataApi* | [**UpdateSupportedInvoiceImportFileData**](docs/FileDataApi.md#updatesupportedinvoiceimportfiledata) | **PUT** /api/FileData/supported-invoice-import-file-data/{id} | Updates Supported Invoice Import File Data
+*FileDataApi* | [**UpdateSupportedPriceSheetFileData**](docs/FileDataApi.md#updatesupportedpricesheetfiledata) | **PUT** /api/FileData/supported-price-sheet-file-data/{id} | Updates Supported Price Sheet File Data
 *FileDataApi* | [**UpdateTransactionFileData**](docs/FileDataApi.md#updatetransactionfiledata) | **PUT** /api/FileData/transaction-file-data | Update transaction file data for an invoice, receipt, or fuel release.
 *FlightPlansByCompanyApi* | [**DeleteIFlightPlannerRouteRequestServiceLog**](docs/FlightPlansByCompanyApi.md#deleteiflightplannerrouterequestservicelog) | **DELETE** /api/FlightPlansByCompany/service-logs/iflightplanner-route-request/{id} | Internal use only - Delete an existing service log record for a iFlightPlanner route request.
 *FlightPlansByCompanyApi* | [**GetCurrentPlannedFlights**](docs/FlightPlansByCompanyApi.md#getcurrentplannedflights) | **GET** /api/FlightPlansByCompany/current | Fetch upcoming trip info pulled from the user's flight planning provider.
@@ -259,6 +266,8 @@ Class | Method | HTTP request | Description
 *FlightTypeApi* | [**PostFlightTypeMapping**](docs/FlightTypeApi.md#postflighttypemapping) | **POST** /api/FlightType/mapping | Internal use only - Add a flight type mapping record.
 *FlightTypeApi* | [**UpdateFlightTypeMapping**](docs/FlightTypeApi.md#updateflighttypemapping) | **PUT** /api/FlightType/mapping | Internal use only - Update a flight type mapping record.
 *FuelPricingApi* | [**DeleteCurrentPricingForCompany**](docs/FuelPricingApi.md#deletecurrentpricingforcompany) | **DELETE** /api/FuelPricing/current | Internal use only - delete all cached pricing for a currently authenticated company.
+*FuelPricingApi* | [**DeleteSupportedPriceSheetFileTests**](docs/FuelPricingApi.md#deletesupportedpricesheetfiletests) | **DELETE** /api/FuelPricing/supported-price-sheet-file-tests/{id} | Delete Supported Price Sheet File Tests by Id
+*FuelPricingApi* | [**DeleteSupportedPriceSheetFiles**](docs/FuelPricingApi.md#deletesupportedpricesheetfiles) | **DELETE** /api/FuelPricing/supported-price-sheet-files/{id} | Deletes Supported Price Sheet Files by Id
 *FuelPricingApi* | [**DeleteWeeklyPricingForFuelVendor**](docs/FuelPricingApi.md#deleteweeklypricingforfuelvendor) | **DELETE** /api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId} | Internal use only - delete all weekly pricing records for a particular fuel vendor.
 *FuelPricingApi* | [**GetAssociatedDetailsForFuelOption**](docs/FuelPricingApi.md#getassociateddetailsforfueloption) | **POST** /api/FuelPricing/associated-details | 
 *FuelPricingApi* | [**GetCurrentPricingForLocation**](docs/FuelPricingApi.md#getcurrentpricingforlocation) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
@@ -267,9 +276,16 @@ Class | Method | HTTP request | Description
 *FuelPricingApi* | [**GetLiveQuoteForLocationsAndFlightType**](docs/FuelPricingApi.md#getlivequoteforlocationsandflighttype) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos}/flight-type/{flightType} | Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.
 *FuelPricingApi* | [**GetLiveQuoteForLocationsAndFlightTypeAndVendor**](docs/FuelPricingApi.md#getlivequoteforlocationsandflighttypeandvendor) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos}/flight-type/{flightType}/fuel-vendor/{fuelVendorId} | Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
 *FuelPricingApi* | [**GetQuotFromEpic**](docs/FuelPricingApi.md#getquotfromepic) | **GET** /api/FuelPricing/quoting/epic/{commaDelimitedAirportIdentifiers} | Internal use only - Fetch a quote response from the EPIC Aviation web service.
+*FuelPricingApi* | [**GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId**](docs/FuelPricingApi.md#getsupportedpricesheetfiletestsbysupportedpricesheetfileid) | **GET** /api/FuelPricing/supported-price-sheet-file-tests/by-supportedInvoiceImportFileId/{supportedPriceSheetFileId} | Gets Supported Price Sheet File Tests by supportedPriceSheetFileId
+*FuelPricingApi* | [**GetSupportedPriceSheetFilesByByFuelVendorId**](docs/FuelPricingApi.md#getsupportedpricesheetfilesbybyfuelvendorid) | **GET** /api/FuelPricing/supported-price-sheet-files/by-fuel-vendor/{fuelVendorId} | Gets Supported Price Sheet Files by FuelVendorId
+*FuelPricingApi* | [**GetSupportedPriceSheetFilesByById**](docs/FuelPricingApi.md#getsupportedpricesheetfilesbybyid) | **GET** /api/FuelPricing/supported-price-sheet-files/{id} | Get Supported Price Sheet Files by Id
 *FuelPricingApi* | [**GetWeeklyPricingForFuelerAndLocation**](docs/FuelPricingApi.md#getweeklypricingforfuelerandlocation) | **GET** /api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId}/by-locations/{commaDelimitedIcaos} | If available, will fetch records from the weekly price sheet received each week for the specified [commaDelimitedIcaos] and [fuelVendorId].  These are to be used as a fallback option when a vendor's service is unavailable.
 *FuelPricingApi* | [**GetWeeklyPricingForLocation**](docs/FuelPricingApi.md#getweeklypricingforlocation) | **GET** /api/FuelPricing/weekly-pricing/by-locations/{commaDelimitedIcaos} | /// If available, will fetch records from the weekly price sheet received each week for the specified [commaDelimitedIcaos].  These are to be used as a fallback option when a vendor's service is unavailable.
 *FuelPricingApi* | [**PostFuelOrder**](docs/FuelPricingApi.md#postfuelorder) | **POST** /api/FuelPricing/fuel-order | Internal use only - Please use the \"dispatching\" API to dispatch a full fuel order.  This API method is strictly for notifying the fuel vendor.
+*FuelPricingApi* | [**PostSupportedPriceSheetFileTests**](docs/FuelPricingApi.md#postsupportedpricesheetfiletests) | **POST** /api/FuelPricing/supported-price-sheet-file-tests | Post Supported Price Sheet File Tests
+*FuelPricingApi* | [**PostSupportedPriceSheetFiles**](docs/FuelPricingApi.md#postsupportedpricesheetfiles) | **POST** /api/FuelPricing/supported-price-sheet-files | Post Supported Price Sheet Files
+*FuelPricingApi* | [**UpdateSupportedPriceSheetFileTests**](docs/FuelPricingApi.md#updatesupportedpricesheetfiletests) | **PUT** /api/FuelPricing/supported-price-sheet-file-tests | Updates Supported Price Sheet File Tests
+*FuelPricingApi* | [**UpdateSupportedPriceSheetFiles**](docs/FuelPricingApi.md#updatesupportedpricesheetfiles) | **PUT** /api/FuelPricing/supported-price-sheet-files | Updates Supported Price Sheet Files
 *FuelPricingApi* | [**VerifyVendorServiceCredentials**](docs/FuelPricingApi.md#verifyvendorservicecredentials) | **GET** /api/FuelPricing/verify-vendor-service-credentials/{vendorId} | Internal use only - verify credentials for a vendor service.
 *FuelVendorApi* | [**DeleteCompanyFueler**](docs/FuelVendorApi.md#deletecompanyfueler) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId} | Delete the company-specific details of a fuel vendor based on the provided {companyFuelerId}.
 *FuelVendorApi* | [**DeleteCompanyFuelerNotes**](docs/FuelVendorApi.md#deletecompanyfuelernotes) | **DELETE** /api/FuelVendor/company-specific/{companyFuelerId}/notes/{noteId} | Delete a company-specific note for the provided {companyFuelerId} record.
@@ -307,6 +323,40 @@ Class | Method | HTTP request | Description
 *IntegrationFuelOrderDetailsApi* | [**AddIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#addintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails | Internal use only - associates a fuel order transaction with an integration record.
 *IntegrationFuelOrderDetailsApi* | [**CancelIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#cancelintegrationfuelorderdetails) | **POST** /api/IntegrationFuelOrderDetails/cancel | Internal use only - cancel an integration record from being tied to a transaction and notify the partner.
 *IntegrationFuelOrderDetailsApi* | [**UpdateIntegrationFuelOrderDetails**](docs/IntegrationFuelOrderDetailsApi.md#updateintegrationfuelorderdetails) | **PUT** /api/IntegrationFuelOrderDetails | Internal use only - update an integration record associated with a fuel order transaction.
+*InvoiceManagementApi* | [**CreateInvoiceTestFromPreviousImport**](docs/InvoiceManagementApi.md#createinvoicetestfrompreviousimport) | **GET** /api/InvoiceManagement/supported-invoice-import-file/create-test/from-import/{importProcessId} | Create an invoice parsing test from the results of a previous import.
+*InvoiceManagementApi* | [**DeleteBytescoutFile**](docs/InvoiceManagementApi.md#deletebytescoutfile) | **DELETE** /api/InvoiceManagement/bytescout-file/{id} | Deletes Bytescout file by Id
+*InvoiceManagementApi* | [**DeleteSupportedInvoiceImportFileTests**](docs/InvoiceManagementApi.md#deletesupportedinvoiceimportfiletests) | **DELETE** /api/InvoiceManagement/supported-invoice-import-file-tests/{id} | Deletes Supported Invoice Import File Tests by Id
+*InvoiceManagementApi* | [**DeleteSupportedInvoiceImportFiles**](docs/InvoiceManagementApi.md#deletesupportedinvoiceimportfiles) | **DELETE** /api/InvoiceManagement/supported-invoice-import-files/{id} | Deletes Supported Invoice Import Files
+*InvoiceManagementApi* | [**GetBytescoutFile**](docs/InvoiceManagementApi.md#getbytescoutfile) | **GET** /api/InvoiceManagement/bytescout-file/by-id/{id} | Gets Bytescout file by Id
+*InvoiceManagementApi* | [**GetSupportedInvoiceFileValidationTestResult**](docs/InvoiceManagementApi.md#getsupportedinvoicefilevalidationtestresult) | **GET** /api/InvoiceManagement/supported-invoice-import-file/validation-test-result/{supportedInvoiceImportFileId} | 
+*InvoiceManagementApi* | [**GetSupportedInvoiceImportFileTestsBySupportedInvoiceImportFileId**](docs/InvoiceManagementApi.md#getsupportedinvoiceimportfiletestsbysupportedinvoiceimportfileid) | **GET** /api/InvoiceManagement/supported-invoice-import-file-tests/by-supportedInvoiceImportFileId/{supportedInvoiceImportFileId} | Get Supported Invoice Import File Tests By supportedInvoiceImportFileId
+*InvoiceManagementApi* | [**GetSupportedInvoiceImportFilesByFuelVendorId**](docs/InvoiceManagementApi.md#getsupportedinvoiceimportfilesbyfuelvendorid) | **GET** /api/InvoiceManagement/supported-invoice-import-files/by-fuel-vendor/{fuelVendorId} | Gets Supported Invoice Import Files By FuelVendorId
+*InvoiceManagementApi* | [**GetSupportedInvoiceImportFilesById**](docs/InvoiceManagementApi.md#getsupportedinvoiceimportfilesbyid) | **GET** /api/InvoiceManagement/supported-invoice-import-files/{id} | Gets Supported Invoice Import Files By Id
+*InvoiceManagementApi* | [**PostBytescoutFile**](docs/InvoiceManagementApi.md#postbytescoutfile) | **POST** /api/InvoiceManagement/bytescout-file | Post Bytescout files
+*InvoiceManagementApi* | [**PostSupportedInvoiceImportFileTests**](docs/InvoiceManagementApi.md#postsupportedinvoiceimportfiletests) | **POST** /api/InvoiceManagement/supported-invoice-import-file-tests | Post Supported Invoice Import File Tests
+*InvoiceManagementApi* | [**PostSupportedInvoiceImportFiles**](docs/InvoiceManagementApi.md#postsupportedinvoiceimportfiles) | **POST** /api/InvoiceManagement/supported-invoice-import-files | Post Supported Invoice Import Files
+*InvoiceManagementApi* | [**ProcessInvoiceFile**](docs/InvoiceManagementApi.md#processinvoicefile) | **POST** /api/InvoiceManagement/process-file | Internal use only - Process an invoice for a customer/fuel vendor.  This will update transactions unless marked as \"preview only\".
+*InvoiceManagementApi* | [**UpdateBytescoutFile**](docs/InvoiceManagementApi.md#updatebytescoutfile) | **PUT** /api/InvoiceManagement/bytescout-file | Updates Bytescout files by Id
+*InvoiceManagementApi* | [**UpdateSupportedInvoiceImportFileTests**](docs/InvoiceManagementApi.md#updatesupportedinvoiceimportfiletests) | **PUT** /api/InvoiceManagement/supported-invoice-import-file-tests | Updates Supported Invoice Import File Tests
+*InvoiceManagementApi* | [**UpdateSupportedInvoiceImportFiles**](docs/InvoiceManagementApi.md#updatesupportedinvoiceimportfiles) | **PUT** /api/InvoiceManagement/supported-invoice-import-files | Updates Supported Invoice Import Files
+*JobQueueApi* | [**DeleteJobQueue**](docs/JobQueueApi.md#deletejobqueue) | **DELETE** /api/JobQueue/job-queue/{id} | Delete job queue by Id
+*JobQueueApi* | [**DeleteJobQueueFiles**](docs/JobQueueApi.md#deletejobqueuefiles) | **DELETE** /api/JobQueue/job-queue-files/{id} | Delete job queue files by Id
+*JobQueueApi* | [**DeleteJobQueueResultEvents**](docs/JobQueueApi.md#deletejobqueueresultevents) | **DELETE** /api/JobQueue/job-queue-result-events/{id} | Deletes job queue result events by Id
+*JobQueueApi* | [**DeleteJobQueueResults**](docs/JobQueueApi.md#deletejobqueueresults) | **DELETE** /api/JobQueue/job-queue-results/{id} | 
+*JobQueueApi* | [**GetJobQueue**](docs/JobQueueApi.md#getjobqueue) | **GET** /api/JobQueue/job-queue/by-id/{id} | Get job queue by Id
+*JobQueueApi* | [**GetJobQueueFiles**](docs/JobQueueApi.md#getjobqueuefiles) | **GET** /api/JobQueue/job-queue-files/by-jobQueueId/{jobQueueId} | Get job queue files by jobQueueId
+*JobQueueApi* | [**GetJobQueueListByDateRange**](docs/JobQueueApi.md#getjobqueuelistbydaterange) | **GET** /api/JobQueue/job-queue/by-date-range | 
+*JobQueueApi* | [**GetJobQueueResultEvents**](docs/JobQueueApi.md#getjobqueueresultevents) | **GET** /api/JobQueue/job-queue-result-events/by-jobQueueResultId/{jobQueueResultId} | Get job queue result events by jobQueueResultId
+*JobQueueApi* | [**GetJobQueueResults**](docs/JobQueueApi.md#getjobqueueresults) | **GET** /api/JobQueue/job-queue-results/by-jobQueueId/{jobQueueId} | Get job queue results by jobQueueId
+*JobQueueApi* | [**PostJobQueue**](docs/JobQueueApi.md#postjobqueue) | **POST** /api/JobQueue/job-queue | Post job queue
+*JobQueueApi* | [**PostJobQueueFiles**](docs/JobQueueApi.md#postjobqueuefiles) | **POST** /api/JobQueue/job-queue-files | Post job queue files
+*JobQueueApi* | [**PostJobQueueResultEvents**](docs/JobQueueApi.md#postjobqueueresultevents) | **POST** /api/JobQueue/job-queue-result-events | Post job queue result events
+*JobQueueApi* | [**PostJobQueueResults**](docs/JobQueueApi.md#postjobqueueresults) | **POST** /api/JobQueue/job-queue-results | Post job queue results
+*JobQueueApi* | [**RunJobById**](docs/JobQueueApi.md#runjobbyid) | **POST** /api/JobQueue/job-queue/run/{id} | 
+*JobQueueApi* | [**UpdateJobQueue**](docs/JobQueueApi.md#updatejobqueue) | **PUT** /api/JobQueue/job-queue | Update job queue
+*JobQueueApi* | [**UpdateJobQueueFiles**](docs/JobQueueApi.md#updatejobqueuefiles) | **PUT** /api/JobQueue/job-queue-files | Update job queue files
+*JobQueueApi* | [**UpdateJobQueueResultEvents**](docs/JobQueueApi.md#updatejobqueueresultevents) | **PUT** /api/JobQueue/job-queue-result-events | Updates job queue result events
+*JobQueueApi* | [**UpdateJobQueueResults**](docs/JobQueueApi.md#updatejobqueueresults) | **PUT** /api/JobQueue/job-queue-results | Updates job queue results
 *MobileAppSettingsApi* | [**DeleteSetting**](docs/MobileAppSettingsApi.md#deletesetting) | **DELETE** /api/MobileAppSettings/setting/{id} | Internal use only - Delete a mobile app setting by id.
 *MobileAppSettingsApi* | [**GetSettingByKey**](docs/MobileAppSettingsApi.md#getsettingbykey) | **GET** /api/MobileAppSettings/setting/{key} | Internal use only - Fetch a mobile app setting by a key.
 *MobileAppSettingsApi* | [**PostSetting**](docs/MobileAppSettingsApi.md#postsetting) | **POST** /api/MobileAppSettings/setting | Internal use only - Add a mobile app setting.
@@ -453,6 +503,7 @@ Class | Method | HTTP request | Description
 *TransactionApi* | [**UpdateTransactionAccountingTransferStatus**](docs/TransactionApi.md#updatetransactionaccountingtransferstatus) | **PUT** /api/Transaction/accounting-transfer | Internal use only - Update the accounting transfer status of a particular transaction.
 *TransactionApi* | [**UpdateTransactionAttachment**](docs/TransactionApi.md#updatetransactionattachment) | **PUT** /api/Transaction/attachment | Update an existing attachment record for a transaction.
 *TransactionApi* | [**UpdateTransactionNote**](docs/TransactionApi.md#updatetransactionnote) | **PUT** /api/Transaction/note | Update an existing note for a transaction.
+*UserApi* | [**ChangeCredentials**](docs/UserApi.md#changecredentials) | **POST** /api/User/change-credentials | Internal use only - Change the username/password for an account if it meets security requirements.
 *UserApi* | [**DeleteCompanyUserProfiles**](docs/UserApi.md#deletecompanyuserprofiles) | **DELETE** /api/User/company-user-profiles/{id} | Deletes company user profile based on Id
 *UserApi* | [**DeleteCredentials**](docs/UserApi.md#deletecredentials) | **DELETE** /api/User/credentials/{id} | Deletes user credentials based on Id
 *UserApi* | [**DeleteUserFromIFlightPlanner**](docs/UserApi.md#deleteuserfromiflightplanner) | **DELETE** /api/User/iflightplanner/user | Internal use only - Delete a user from iFlightPlanner to stop the flight planning integration.
@@ -533,6 +584,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AutoReconciledFileDTO](docs/AutoReconciledFileDTO.md)
  - [IO.Swagger.Model.AutoReconciledFileResponse](docs/AutoReconciledFileResponse.md)
  - [IO.Swagger.Model.AutoReconciledLineItemDTO](docs/AutoReconciledLineItemDTO.md)
+ - [IO.Swagger.Model.AutoReconciliationSettings](docs/AutoReconciliationSettings.md)
  - [IO.Swagger.Model.AveragePriceByAirportDTO](docs/AveragePriceByAirportDTO.md)
  - [IO.Swagger.Model.AveragePriceByAirportListResponse](docs/AveragePriceByAirportListResponse.md)
  - [IO.Swagger.Model.AviationProfiles](docs/AviationProfiles.md)
@@ -540,6 +592,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.Background](docs/Background.md)
  - [IO.Swagger.Model.BuildVersionResponse](docs/BuildVersionResponse.md)
  - [IO.Swagger.Model.ButtonOptions](docs/ButtonOptions.md)
+ - [IO.Swagger.Model.BytescoutFileDataDTO](docs/BytescoutFileDataDTO.md)
+ - [IO.Swagger.Model.BytescoutFileDataResponse](docs/BytescoutFileDataResponse.md)
+ - [IO.Swagger.Model.BytescoutFilesDTO](docs/BytescoutFilesDTO.md)
+ - [IO.Swagger.Model.BytescoutFilesResponse](docs/BytescoutFilesResponse.md)
  - [IO.Swagger.Model.CSSObject](docs/CSSObject.md)
  - [IO.Swagger.Model.CalculateRouteDetailsRequest](docs/CalculateRouteDetailsRequest.md)
  - [IO.Swagger.Model.CalculateRouteDetailsResponse](docs/CalculateRouteDetailsResponse.md)
@@ -596,6 +652,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CurrentPlannedFlightsResponse](docs/CurrentPlannedFlightsResponse.md)
  - [IO.Swagger.Model.CurrentPricingResponse](docs/CurrentPricingResponse.md)
  - [IO.Swagger.Model.CurrentScheduledTripsResponse](docs/CurrentScheduledTripsResponse.md)
+ - [IO.Swagger.Model.CustomerDataDTO](docs/CustomerDataDTO.md)
  - [IO.Swagger.Model.DataLabels](docs/DataLabels.md)
  - [IO.Swagger.Model.DateTimeLabelFormats](docs/DateTimeLabelFormats.md)
  - [IO.Swagger.Model.DeleteAccountingContractMappingsResponse](docs/DeleteAccountingContractMappingsResponse.md)
@@ -604,6 +661,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteAirportDetailsByCompanyResponse](docs/DeleteAirportDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconProcessResponse](docs/DeleteAutoReconProcessResponse.md)
  - [IO.Swagger.Model.DeleteAutoReconciledFileResponse](docs/DeleteAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.DeleteBytescoutFileDataResponse](docs/DeleteBytescoutFileDataResponse.md)
+ - [IO.Swagger.Model.DeleteBytescoutFileResponse](docs/DeleteBytescoutFileResponse.md)
  - [IO.Swagger.Model.DeleteCompanyActiveIntegrationResponse](docs/DeleteCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.DeleteCompanyAircraftChangeLogResponse](docs/DeleteCompanyAircraftChangeLogResponse.md)
  - [IO.Swagger.Model.DeleteCompanyFboChangeLogResponse](docs/DeleteCompanyFboChangeLogResponse.md)
@@ -631,14 +690,17 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteImportFileCaptureResponse](docs/DeleteImportFileCaptureResponse.md)
  - [IO.Swagger.Model.DeleteIntegrationAuthorizationResponse](docs/DeleteIntegrationAuthorizationResponse.md)
  - [IO.Swagger.Model.DeleteIntegrationFuelOrderDetailsResponse](docs/DeleteIntegrationFuelOrderDetailsResponse.md)
+ - [IO.Swagger.Model.DeleteJobFileDataResponse](docs/DeleteJobFileDataResponse.md)
+ - [IO.Swagger.Model.DeleteJobQueueFilesResponse](docs/DeleteJobQueueFilesResponse.md)
+ - [IO.Swagger.Model.DeleteJobQueueResponse](docs/DeleteJobQueueResponse.md)
+ - [IO.Swagger.Model.DeleteJobQueueResultEventsResponse](docs/DeleteJobQueueResultEventsResponse.md)
+ - [IO.Swagger.Model.DeleteJobQueueResultsResponse](docs/DeleteJobQueueResultsResponse.md)
  - [IO.Swagger.Model.DeleteLocationSpecificPaymentMethodResponse](docs/DeleteLocationSpecificPaymentMethodResponse.md)
  - [IO.Swagger.Model.DeleteMobileAppSettingsResponse](docs/DeleteMobileAppSettingsResponse.md)
  - [IO.Swagger.Model.DeletePriceSheetFileDataResponse](docs/DeletePriceSheetFileDataResponse.md)
  - [IO.Swagger.Model.DeleteRampFeeByCompanyNotesResponse](docs/DeleteRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.DeleteRampFeeByCompanyResponse](docs/DeleteRampFeeByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteReportDistributionAssociationResponse](docs/DeleteReportDistributionAssociationResponse.md)
- - [IO.Swagger.Model.DeleteReportGroupAssociationsResponse](docs/DeleteReportGroupAssociationsResponse.md)
- - [IO.Swagger.Model.DeleteReportGroupResponse](docs/DeleteReportGroupResponse.md)
  - [IO.Swagger.Model.DeleteReportResponse](docs/DeleteReportResponse.md)
  - [IO.Swagger.Model.DeleteReportScheduledDistributionResponse](docs/DeleteReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.DeleteSavedTripLegResponse](docs/DeleteSavedTripLegResponse.md)
@@ -648,7 +710,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DeleteSchedulingIntegrationServiceLogResponse](docs/DeleteSchedulingIntegrationServiceLogResponse.md)
  - [IO.Swagger.Model.DeleteServicesAndFeesByCompanyResponse](docs/DeleteServicesAndFeesByCompanyResponse.md)
  - [IO.Swagger.Model.DeleteSupplierDetailsResponse](docs/DeleteSupplierDetailsResponse.md)
- - [IO.Swagger.Model.DeleteSupportedInvoiceFileTemplateResponse](docs/DeleteSupportedInvoiceFileTemplateResponse.md)
+ - [IO.Swagger.Model.DeleteSupportedInvoiceImportFileDataResponse](docs/DeleteSupportedInvoiceImportFileDataResponse.md)
+ - [IO.Swagger.Model.DeleteSupportedInvoiceImportFileTestsResponse](docs/DeleteSupportedInvoiceImportFileTestsResponse.md)
+ - [IO.Swagger.Model.DeleteSupportedInvoiceImportFilesResponse](docs/DeleteSupportedInvoiceImportFilesResponse.md)
+ - [IO.Swagger.Model.DeleteSupportedInvoiceImportTemplateResponse](docs/DeleteSupportedInvoiceImportTemplateResponse.md)
+ - [IO.Swagger.Model.DeleteSupportedPriceSheetFileDataResponse](docs/DeleteSupportedPriceSheetFileDataResponse.md)
+ - [IO.Swagger.Model.DeleteSupportedPriceSheetFileTestsResponse](docs/DeleteSupportedPriceSheetFileTestsResponse.md)
+ - [IO.Swagger.Model.DeleteSupportedPriceSheetFilesResponse](docs/DeleteSupportedPriceSheetFilesResponse.md)
  - [IO.Swagger.Model.DeleteTankeringApiCalculationLogResponse](docs/DeleteTankeringApiCalculationLogResponse.md)
  - [IO.Swagger.Model.DeleteTaxesByCountryResponse](docs/DeleteTaxesByCountryResponse.md)
  - [IO.Swagger.Model.DeleteTransactionAccountingDataResponse](docs/DeleteTransactionAccountingDataResponse.md)
@@ -767,7 +835,20 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.IntegrationPartnerWebHooksDTO](docs/IntegrationPartnerWebHooksDTO.md)
  - [IO.Swagger.Model.IntegrationSettingsDTO](docs/IntegrationSettingsDTO.md)
  - [IO.Swagger.Model.InternationalSettingsDTO](docs/InternationalSettingsDTO.md)
+ - [IO.Swagger.Model.InvoiceFileTestValidationResult](docs/InvoiceFileTestValidationResult.md)
+ - [IO.Swagger.Model.InvoiceFileValidationTestResponse](docs/InvoiceFileValidationTestResponse.md)
  - [IO.Swagger.Model.ItemStyle](docs/ItemStyle.md)
+ - [IO.Swagger.Model.JobFileDataDTO](docs/JobFileDataDTO.md)
+ - [IO.Swagger.Model.JobFileDataResponse](docs/JobFileDataResponse.md)
+ - [IO.Swagger.Model.JobQueueDTO](docs/JobQueueDTO.md)
+ - [IO.Swagger.Model.JobQueueFilesDTO](docs/JobQueueFilesDTO.md)
+ - [IO.Swagger.Model.JobQueueFilesResponse](docs/JobQueueFilesResponse.md)
+ - [IO.Swagger.Model.JobQueueListResponse](docs/JobQueueListResponse.md)
+ - [IO.Swagger.Model.JobQueueResponse](docs/JobQueueResponse.md)
+ - [IO.Swagger.Model.JobQueueResultEventsDTO](docs/JobQueueResultEventsDTO.md)
+ - [IO.Swagger.Model.JobQueueResultEventsResponse](docs/JobQueueResultEventsResponse.md)
+ - [IO.Swagger.Model.JobQueueResultsDTO](docs/JobQueueResultsDTO.md)
+ - [IO.Swagger.Model.JobQueueResultsResponse](docs/JobQueueResultsResponse.md)
  - [IO.Swagger.Model.Labels](docs/Labels.md)
  - [IO.Swagger.Model.Leg](docs/Leg.md)
  - [IO.Swagger.Model.LegFlightPlanningRequest](docs/LegFlightPlanningRequest.md)
@@ -818,6 +899,12 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostAutoReconProcessResponse](docs/PostAutoReconProcessResponse.md)
  - [IO.Swagger.Model.PostAutoReconciledFileRequest](docs/PostAutoReconciledFileRequest.md)
  - [IO.Swagger.Model.PostAutoReconciledFileResponse](docs/PostAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.PostBytescoutFileDataRequest](docs/PostBytescoutFileDataRequest.md)
+ - [IO.Swagger.Model.PostBytescoutFileDataResponse](docs/PostBytescoutFileDataResponse.md)
+ - [IO.Swagger.Model.PostBytescoutFilesRequest](docs/PostBytescoutFilesRequest.md)
+ - [IO.Swagger.Model.PostBytescoutFilesResponse](docs/PostBytescoutFilesResponse.md)
+ - [IO.Swagger.Model.PostChangeCredentialsRequest](docs/PostChangeCredentialsRequest.md)
+ - [IO.Swagger.Model.PostChangeCredentialsResponse](docs/PostChangeCredentialsResponse.md)
  - [IO.Swagger.Model.PostCompanyActiveIntegrationRequest](docs/PostCompanyActiveIntegrationRequest.md)
  - [IO.Swagger.Model.PostCompanyActiveIntegrationResponse](docs/PostCompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.PostCompanyAircraftChangeLogRequest](docs/PostCompanyAircraftChangeLogRequest.md)
@@ -870,6 +957,16 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostImportFileCaptureResponse](docs/PostImportFileCaptureResponse.md)
  - [IO.Swagger.Model.PostIntegrationPartnerCredentialsRequest](docs/PostIntegrationPartnerCredentialsRequest.md)
  - [IO.Swagger.Model.PostIntegrationPartnerCredentialsResponse](docs/PostIntegrationPartnerCredentialsResponse.md)
+ - [IO.Swagger.Model.PostJobFileDataRequest](docs/PostJobFileDataRequest.md)
+ - [IO.Swagger.Model.PostJobFileDataResponse](docs/PostJobFileDataResponse.md)
+ - [IO.Swagger.Model.PostJobQueueFilesRequest](docs/PostJobQueueFilesRequest.md)
+ - [IO.Swagger.Model.PostJobQueueFilesResponse](docs/PostJobQueueFilesResponse.md)
+ - [IO.Swagger.Model.PostJobQueueRequest](docs/PostJobQueueRequest.md)
+ - [IO.Swagger.Model.PostJobQueueResponse](docs/PostJobQueueResponse.md)
+ - [IO.Swagger.Model.PostJobQueueResultEventsRequest](docs/PostJobQueueResultEventsRequest.md)
+ - [IO.Swagger.Model.PostJobQueueResultEventsResponse](docs/PostJobQueueResultEventsResponse.md)
+ - [IO.Swagger.Model.PostJobQueueResultsRequest](docs/PostJobQueueResultsRequest.md)
+ - [IO.Swagger.Model.PostJobQueueResultsResponse](docs/PostJobQueueResultsResponse.md)
  - [IO.Swagger.Model.PostLocationSpecificPaymentMethodRequest](docs/PostLocationSpecificPaymentMethodRequest.md)
  - [IO.Swagger.Model.PostLocationSpecificPaymentMethodResponse](docs/PostLocationSpecificPaymentMethodResponse.md)
  - [IO.Swagger.Model.PostMobileAppSettingsRequest](docs/PostMobileAppSettingsRequest.md)
@@ -883,10 +980,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostRampFeeByCompanyRequest](docs/PostRampFeeByCompanyRequest.md)
  - [IO.Swagger.Model.PostReportDistributionAssociationRequest](docs/PostReportDistributionAssociationRequest.md)
  - [IO.Swagger.Model.PostReportDistributionAssociationResponse](docs/PostReportDistributionAssociationResponse.md)
- - [IO.Swagger.Model.PostReportGroupAssociationsRequest](docs/PostReportGroupAssociationsRequest.md)
- - [IO.Swagger.Model.PostReportGroupAssociationsResponse](docs/PostReportGroupAssociationsResponse.md)
- - [IO.Swagger.Model.PostReportGroupRequest](docs/PostReportGroupRequest.md)
- - [IO.Swagger.Model.PostReportGroupResponse](docs/PostReportGroupResponse.md)
  - [IO.Swagger.Model.PostReportRequest](docs/PostReportRequest.md)
  - [IO.Swagger.Model.PostReportResponse](docs/PostReportResponse.md)
  - [IO.Swagger.Model.PostReportScheduledDistributionRequest](docs/PostReportScheduledDistributionRequest.md)
@@ -907,8 +1000,20 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PostServicesAndFeesByCompanyResponse](docs/PostServicesAndFeesByCompanyResponse.md)
  - [IO.Swagger.Model.PostSupplierDetailsRequest](docs/PostSupplierDetailsRequest.md)
  - [IO.Swagger.Model.PostSupplierDetailsResponse](docs/PostSupplierDetailsResponse.md)
- - [IO.Swagger.Model.PostSupportedInvoiceFileTemplateRequest](docs/PostSupportedInvoiceFileTemplateRequest.md)
- - [IO.Swagger.Model.PostSupportedInvoiceFileTemplateResponse](docs/PostSupportedInvoiceFileTemplateResponse.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportFileDataRequest](docs/PostSupportedInvoiceImportFileDataRequest.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportFileDataResponse](docs/PostSupportedInvoiceImportFileDataResponse.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportFileTestsRequest](docs/PostSupportedInvoiceImportFileTestsRequest.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportFileTestsResponse](docs/PostSupportedInvoiceImportFileTestsResponse.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportFilesRequest](docs/PostSupportedInvoiceImportFilesRequest.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportFilesResponse](docs/PostSupportedInvoiceImportFilesResponse.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportTemplateRequest](docs/PostSupportedInvoiceImportTemplateRequest.md)
+ - [IO.Swagger.Model.PostSupportedInvoiceImportTemplateResponse](docs/PostSupportedInvoiceImportTemplateResponse.md)
+ - [IO.Swagger.Model.PostSupportedPriceSheetFileDataRequest](docs/PostSupportedPriceSheetFileDataRequest.md)
+ - [IO.Swagger.Model.PostSupportedPriceSheetFileDataResponse](docs/PostSupportedPriceSheetFileDataResponse.md)
+ - [IO.Swagger.Model.PostSupportedPriceSheetFileTestsRequest](docs/PostSupportedPriceSheetFileTestsRequest.md)
+ - [IO.Swagger.Model.PostSupportedPriceSheetFileTestsResponse](docs/PostSupportedPriceSheetFileTestsResponse.md)
+ - [IO.Swagger.Model.PostSupportedPriceSheetFilesRequest](docs/PostSupportedPriceSheetFilesRequest.md)
+ - [IO.Swagger.Model.PostSupportedPriceSheetFilesResponse](docs/PostSupportedPriceSheetFilesResponse.md)
  - [IO.Swagger.Model.PostTankeringApiCalculationLogRequest](docs/PostTankeringApiCalculationLogRequest.md)
  - [IO.Swagger.Model.PostTankeringApiCalculationLogResponse](docs/PostTankeringApiCalculationLogResponse.md)
  - [IO.Swagger.Model.PostTaxesByCountryRequest](docs/PostTaxesByCountryRequest.md)
@@ -934,6 +1039,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PriceSyncTransactionDTO](docs/PriceSyncTransactionDTO.md)
  - [IO.Swagger.Model.PricingData](docs/PricingData.md)
  - [IO.Swagger.Model.PricingTier](docs/PricingTier.md)
+ - [IO.Swagger.Model.ProcessInvoiceFileRequest](docs/ProcessInvoiceFileRequest.md)
+ - [IO.Swagger.Model.ProcessInvoiceFileResponse](docs/ProcessInvoiceFileResponse.md)
  - [IO.Swagger.Model.RampFeeByCompanyDTO](docs/RampFeeByCompanyDTO.md)
  - [IO.Swagger.Model.RampFeeByCompanyListResponse](docs/RampFeeByCompanyListResponse.md)
  - [IO.Swagger.Model.RampFeeByCompanyNoteDTO](docs/RampFeeByCompanyNoteDTO.md)
@@ -949,11 +1056,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ReportDataResponse](docs/ReportDataResponse.md)
  - [IO.Swagger.Model.ReportDistributionAssociationDTO](docs/ReportDistributionAssociationDTO.md)
  - [IO.Swagger.Model.ReportFilter](docs/ReportFilter.md)
- - [IO.Swagger.Model.ReportGroupAssociationsDTO](docs/ReportGroupAssociationsDTO.md)
- - [IO.Swagger.Model.ReportGroupAssociationsResponse](docs/ReportGroupAssociationsResponse.md)
- - [IO.Swagger.Model.ReportGroupDTO](docs/ReportGroupDTO.md)
- - [IO.Swagger.Model.ReportGroupListResponse](docs/ReportGroupListResponse.md)
- - [IO.Swagger.Model.ReportGroupResponse](docs/ReportGroupResponse.md)
  - [IO.Swagger.Model.ReportListResponse](docs/ReportListResponse.md)
  - [IO.Swagger.Model.ReportResponse](docs/ReportResponse.md)
  - [IO.Swagger.Model.ReportScheduledDistributionDTO](docs/ReportScheduledDistributionDTO.md)
@@ -964,6 +1066,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.RouteDetailsCalculation](docs/RouteDetailsCalculation.md)
  - [IO.Swagger.Model.RouteDetailsCalculationAircraftData](docs/RouteDetailsCalculationAircraftData.md)
  - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)
+ - [IO.Swagger.Model.RunJobQueueResponse](docs/RunJobQueueResponse.md)
  - [IO.Swagger.Model.SageCredentialsRequest](docs/SageCredentialsRequest.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerRequest](docs/SaveCompanyToIFlightPlannerRequest.md)
  - [IO.Swagger.Model.SaveCompanyToIFlightPlannerResponse](docs/SaveCompanyToIFlightPlannerResponse.md)
@@ -1001,8 +1104,22 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.SummaryOptions](docs/SummaryOptions.md)
  - [IO.Swagger.Model.SupplierDetailsDTO](docs/SupplierDetailsDTO.md)
  - [IO.Swagger.Model.SupplierDetailsResponse](docs/SupplierDetailsResponse.md)
- - [IO.Swagger.Model.SupportedInvoiceFileTemplateDTO](docs/SupportedInvoiceFileTemplateDTO.md)
- - [IO.Swagger.Model.SupportedInvoiceFileTemplateResponse](docs/SupportedInvoiceFileTemplateResponse.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportFileDataDTO](docs/SupportedInvoiceImportFileDataDTO.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportFileDataResponse](docs/SupportedInvoiceImportFileDataResponse.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportFileListResponse](docs/SupportedInvoiceImportFileListResponse.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportFileResponse](docs/SupportedInvoiceImportFileResponse.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportFileTestsDTO](docs/SupportedInvoiceImportFileTestsDTO.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportFileTestsResponse](docs/SupportedInvoiceImportFileTestsResponse.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportFilesDTO](docs/SupportedInvoiceImportFilesDTO.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportTemplateDTO](docs/SupportedInvoiceImportTemplateDTO.md)
+ - [IO.Swagger.Model.SupportedInvoiceImportTemplateResponse](docs/SupportedInvoiceImportTemplateResponse.md)
+ - [IO.Swagger.Model.SupportedPriceSheetFileDataDTO](docs/SupportedPriceSheetFileDataDTO.md)
+ - [IO.Swagger.Model.SupportedPriceSheetFileDataResponse](docs/SupportedPriceSheetFileDataResponse.md)
+ - [IO.Swagger.Model.SupportedPriceSheetFileListResponse](docs/SupportedPriceSheetFileListResponse.md)
+ - [IO.Swagger.Model.SupportedPriceSheetFileTestsDTO](docs/SupportedPriceSheetFileTestsDTO.md)
+ - [IO.Swagger.Model.SupportedPriceSheetFileTestsResponse](docs/SupportedPriceSheetFileTestsResponse.md)
+ - [IO.Swagger.Model.SupportedPriceSheetFilesDTO](docs/SupportedPriceSheetFilesDTO.md)
+ - [IO.Swagger.Model.SupportedPriceSheetFilesResponse](docs/SupportedPriceSheetFilesResponse.md)
  - [IO.Swagger.Model.SyncLatestExchangeRatesResponse](docs/SyncLatestExchangeRatesResponse.md)
  - [IO.Swagger.Model.TankeringApiCalculationLogDTO](docs/TankeringApiCalculationLogDTO.md)
  - [IO.Swagger.Model.TankeringApiCalculationLogResponse](docs/TankeringApiCalculationLogResponse.md)
@@ -1061,6 +1178,10 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateAutoReconProcessResponse](docs/UpdateAutoReconProcessResponse.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileRequest](docs/UpdateAutoReconciledFileRequest.md)
  - [IO.Swagger.Model.UpdateAutoReconciledFileResponse](docs/UpdateAutoReconciledFileResponse.md)
+ - [IO.Swagger.Model.UpdateBytescoutFileDataRequest](docs/UpdateBytescoutFileDataRequest.md)
+ - [IO.Swagger.Model.UpdateBytescoutFileDataResponse](docs/UpdateBytescoutFileDataResponse.md)
+ - [IO.Swagger.Model.UpdateBytescoutFilesRequest](docs/UpdateBytescoutFilesRequest.md)
+ - [IO.Swagger.Model.UpdateBytescoutFilesResponse](docs/UpdateBytescoutFilesResponse.md)
  - [IO.Swagger.Model.UpdateCompanyAccountSettingsRequest](docs/UpdateCompanyAccountSettingsRequest.md)
  - [IO.Swagger.Model.UpdateCompanyAccountSettingsResponse](docs/UpdateCompanyAccountSettingsResponse.md)
  - [IO.Swagger.Model.UpdateCompanyActiveIntegrationRequest](docs/UpdateCompanyActiveIntegrationRequest.md)
@@ -1111,6 +1232,16 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateImageFileDataResponse](docs/UpdateImageFileDataResponse.md)
  - [IO.Swagger.Model.UpdateImportFileCaptureRequest](docs/UpdateImportFileCaptureRequest.md)
  - [IO.Swagger.Model.UpdateImportFileCaptureResponse](docs/UpdateImportFileCaptureResponse.md)
+ - [IO.Swagger.Model.UpdateJobFileDataRequest](docs/UpdateJobFileDataRequest.md)
+ - [IO.Swagger.Model.UpdateJobFileDataResponse](docs/UpdateJobFileDataResponse.md)
+ - [IO.Swagger.Model.UpdateJobQueueFilesRequest](docs/UpdateJobQueueFilesRequest.md)
+ - [IO.Swagger.Model.UpdateJobQueueFilesResponse](docs/UpdateJobQueueFilesResponse.md)
+ - [IO.Swagger.Model.UpdateJobQueueRequest](docs/UpdateJobQueueRequest.md)
+ - [IO.Swagger.Model.UpdateJobQueueResponse](docs/UpdateJobQueueResponse.md)
+ - [IO.Swagger.Model.UpdateJobQueueResultEventsRequest](docs/UpdateJobQueueResultEventsRequest.md)
+ - [IO.Swagger.Model.UpdateJobQueueResultEventsResponse](docs/UpdateJobQueueResultEventsResponse.md)
+ - [IO.Swagger.Model.UpdateJobQueueResultsRequest](docs/UpdateJobQueueResultsRequest.md)
+ - [IO.Swagger.Model.UpdateJobQueueResultsResponse](docs/UpdateJobQueueResultsResponse.md)
  - [IO.Swagger.Model.UpdateLocationSpecificPaymentMethodRequest](docs/UpdateLocationSpecificPaymentMethodRequest.md)
  - [IO.Swagger.Model.UpdateLocationSpecificPaymentMethodResponse](docs/UpdateLocationSpecificPaymentMethodResponse.md)
  - [IO.Swagger.Model.UpdateMobileAppSettingsRequest](docs/UpdateMobileAppSettingsRequest.md)
@@ -1121,10 +1252,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateRampFeeByCompanyNotesResponse](docs/UpdateRampFeeByCompanyNotesResponse.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyRequest](docs/UpdateRampFeeByCompanyRequest.md)
  - [IO.Swagger.Model.UpdateRampFeeByCompanyResponse](docs/UpdateRampFeeByCompanyResponse.md)
- - [IO.Swagger.Model.UpdateReportGroupAssociationsRequest](docs/UpdateReportGroupAssociationsRequest.md)
- - [IO.Swagger.Model.UpdateReportGroupAssociationsResponse](docs/UpdateReportGroupAssociationsResponse.md)
- - [IO.Swagger.Model.UpdateReportGroupRequest](docs/UpdateReportGroupRequest.md)
- - [IO.Swagger.Model.UpdateReportGroupResponse](docs/UpdateReportGroupResponse.md)
  - [IO.Swagger.Model.UpdateReportRequest](docs/UpdateReportRequest.md)
  - [IO.Swagger.Model.UpdateReportResponse](docs/UpdateReportResponse.md)
  - [IO.Swagger.Model.UpdateReportScheduledDistributionRequest](docs/UpdateReportScheduledDistributionRequest.md)
@@ -1144,7 +1271,19 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UpdateSupplierDetailsRequest](docs/UpdateSupplierDetailsRequest.md)
  - [IO.Swagger.Model.UpdateSupplierDetailsResponse](docs/UpdateSupplierDetailsResponse.md)
  - [IO.Swagger.Model.UpdateSupportedFileTemplateRequest](docs/UpdateSupportedFileTemplateRequest.md)
- - [IO.Swagger.Model.UpdateSupportedInvoiceFileTemplateResponse](docs/UpdateSupportedInvoiceFileTemplateResponse.md)
+ - [IO.Swagger.Model.UpdateSupportedInvoiceImportFileDataRequest](docs/UpdateSupportedInvoiceImportFileDataRequest.md)
+ - [IO.Swagger.Model.UpdateSupportedInvoiceImportFileDataResponse](docs/UpdateSupportedInvoiceImportFileDataResponse.md)
+ - [IO.Swagger.Model.UpdateSupportedInvoiceImportFileTestsRequest](docs/UpdateSupportedInvoiceImportFileTestsRequest.md)
+ - [IO.Swagger.Model.UpdateSupportedInvoiceImportFileTestsResponse](docs/UpdateSupportedInvoiceImportFileTestsResponse.md)
+ - [IO.Swagger.Model.UpdateSupportedInvoiceImportFilesRequest](docs/UpdateSupportedInvoiceImportFilesRequest.md)
+ - [IO.Swagger.Model.UpdateSupportedInvoiceImportFilesResponse](docs/UpdateSupportedInvoiceImportFilesResponse.md)
+ - [IO.Swagger.Model.UpdateSupportedInvoiceImportTemplateResponse](docs/UpdateSupportedInvoiceImportTemplateResponse.md)
+ - [IO.Swagger.Model.UpdateSupportedPriceSheetFileDataRequest](docs/UpdateSupportedPriceSheetFileDataRequest.md)
+ - [IO.Swagger.Model.UpdateSupportedPriceSheetFileDataResponse](docs/UpdateSupportedPriceSheetFileDataResponse.md)
+ - [IO.Swagger.Model.UpdateSupportedPriceSheetFileTestsRequest](docs/UpdateSupportedPriceSheetFileTestsRequest.md)
+ - [IO.Swagger.Model.UpdateSupportedPriceSheetFileTestsResponse](docs/UpdateSupportedPriceSheetFileTestsResponse.md)
+ - [IO.Swagger.Model.UpdateSupportedPriceSheetFilesRequest](docs/UpdateSupportedPriceSheetFilesRequest.md)
+ - [IO.Swagger.Model.UpdateSupportedPriceSheetFilesResponse](docs/UpdateSupportedPriceSheetFilesResponse.md)
  - [IO.Swagger.Model.UpdateTankeringApiCalculationLogRequest](docs/UpdateTankeringApiCalculationLogRequest.md)
  - [IO.Swagger.Model.UpdateTankeringApiCalculationLogResponse](docs/UpdateTankeringApiCalculationLogResponse.md)
  - [IO.Swagger.Model.UpdateTaxesByCountryRequest](docs/UpdateTaxesByCountryRequest.md)
@@ -1170,7 +1309,6 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UserAuthTokenFromAccessTokenRequest](docs/UserAuthTokenFromAccessTokenRequest.md)
  - [IO.Swagger.Model.UserAuthTokenFromCredentialsRequest](docs/UserAuthTokenFromCredentialsRequest.md)
  - [IO.Swagger.Model.UserAuthTokenResponse](docs/UserAuthTokenResponse.md)
- - [IO.Swagger.Model.UserDTO](docs/UserDTO.md)
  - [IO.Swagger.Model.UserEmailDTO](docs/UserEmailDTO.md)
  - [IO.Swagger.Model.UserProfile](docs/UserProfile.md)
  - [IO.Swagger.Model.UserResponse](docs/UserResponse.md)

@@ -5,7 +5,6 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **HighChartsChart** | [**ChartOptions**](ChartOptions.md) |  | [optional] 
 **DataJson** | **string** |  | [optional] 
-**DataSummaryJson** | **string** |  | [optional] 
 **ChartOptionsJson** | **string** |  | [optional] 
 **Currency** | **string** |  | [optional] 
 **CurrencySymbol** | **string** |  | [optional] 

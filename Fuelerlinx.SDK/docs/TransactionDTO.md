@@ -81,7 +81,7 @@ Name | Type | Description | Notes
 **ChangedTripNotification** | [**TransactionForChangedTripDTO**](TransactionForChangedTripDTO.md) |  | [optional] 
 **TransactionAccountingData** | [**TransactionAccountingDataDTO**](TransactionAccountingDataDTO.md) |  | [optional] 
 **TransactionAccountingTransfer** | [**TransactionAccountingTransferDTO**](TransactionAccountingTransferDTO.md) |  | [optional] 
-**User** | [**UserDTO**](UserDTO.md) |  | [optional] 
+**User** | [**CustomerDataDTO**](CustomerDataDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

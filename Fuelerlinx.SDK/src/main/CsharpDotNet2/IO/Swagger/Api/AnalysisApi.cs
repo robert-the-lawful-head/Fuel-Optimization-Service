@@ -30,18 +30,6 @@ namespace IO.Swagger.Api
         /// <returns>DeleteReportDistributionAssociationResponse</returns>
         DeleteReportDistributionAssociationResponse DeleteReportDistributionAssociation (int? id);
         /// <summary>
-        /// Delete Report Group Associations 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>DeleteReportGroupAssociationsResponse</returns>
-        DeleteReportGroupAssociationsResponse DeleteReportGroupAssociations (int? id);
-        /// <summary>
-        /// Delete Report Groups By Id 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>DeleteReportGroupResponse</returns>
-        DeleteReportGroupResponse DeleteReportGroups (int? id);
-        /// <summary>
         /// Internal use only - Delete a scheduled report distribution record. 
         /// </summary>
         /// <param name="id"></param>
@@ -78,23 +66,6 @@ namespace IO.Swagger.Api
         /// <param name="distributionId"></param>
         /// <returns>ReportDataResponse</returns>
         ReportDataResponse GetReportDataForDistribution (int? reportId, int? distributionId);
-        /// <summary>
-        /// Get Report Group Associations By Id 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>ReportGroupAssociationsResponse</returns>
-        ReportGroupAssociationsResponse GetReportGroupAssociationsById (int? id);
-        /// <summary>
-        /// Get report groups for the authenticated company 
-        /// </summary>
-        /// <returns>ReportGroupListResponse</returns>
-        ReportGroupListResponse GetReportGroupListForCompany ();
-        /// <summary>
-        /// Get Report Groups By Id 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>ReportGroupResponse</returns>
-        ReportGroupResponse GetReportGroupsById (int? id);
         /// <summary>
         /// Fetch a list of reports for the authenticated company. 
         /// </summary>
@@ -135,18 +106,6 @@ namespace IO.Swagger.Api
         /// <returns>PostReportDistributionAssociationResponse</returns>
         PostReportDistributionAssociationResponse PostReportDistributionAssociation (PostReportDistributionAssociationRequest body);
         /// <summary>
-        /// Post Report Group Associations 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>PostReportGroupAssociationsResponse</returns>
-        PostReportGroupAssociationsResponse PostReportGroupAssociations (PostReportGroupAssociationsRequest body);
-        /// <summary>
-        /// Post Report Groups 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>PostReportGroupResponse</returns>
-        PostReportGroupResponse PostReportGroups (PostReportGroupRequest body);
-        /// <summary>
         /// Internal use only - Post a new scheduled report distribution record. 
         /// </summary>
         /// <param name="body"></param>
@@ -171,18 +130,6 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateEmailBlastEmailAddressesResponse</returns>
         UpdateEmailBlastEmailAddressesResponse UpdateEmailAddressesForEmailedAnalysis (int? id, UpdateEmailBlastEmailAddressesRequest body);
-        /// <summary>
-        /// Update Report Group Associations 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>UpdateReportGroupAssociationsResponse</returns>
-        UpdateReportGroupAssociationsResponse UpdateReportGroupAssociations (UpdateReportGroupAssociationsRequest body);
-        /// <summary>
-        /// Update Report Groups 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>UpdateReportGroupResponse</returns>
-        UpdateReportGroupResponse UpdateReportGroups (UpdateReportGroupRequest body);
         /// <summary>
         /// Internal use only - Update a scheduled report distribution record. 
         /// </summary>
@@ -353,80 +300,6 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteReportDistributionAssociation: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteReportDistributionAssociationResponse) ApiClient.Deserialize(response.Content, typeof(DeleteReportDistributionAssociationResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Delete Report Group Associations 
-        /// </summary>
-        /// <param name="id"></param> 
-        /// <returns>DeleteReportGroupAssociationsResponse</returns>            
-        public DeleteReportGroupAssociationsResponse DeleteReportGroupAssociations (int? id)
-        {
-            
-            // verify the required parameter 'id' is set
-            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteReportGroupAssociations");
-            
-    
-            var path = "/api/Analysis/report-groups-associations/{id}";
-            path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
-    
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteReportGroupAssociations: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteReportGroupAssociations: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (DeleteReportGroupAssociationsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteReportGroupAssociationsResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Delete Report Groups By Id 
-        /// </summary>
-        /// <param name="id"></param> 
-        /// <returns>DeleteReportGroupResponse</returns>            
-        public DeleteReportGroupResponse DeleteReportGroups (int? id)
-        {
-            
-            // verify the required parameter 'id' is set
-            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteReportGroups");
-            
-    
-            var path = "/api/Analysis/report-groups/{id}";
-            path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
-    
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteReportGroups: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling DeleteReportGroups: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (DeleteReportGroupResponse) ApiClient.Deserialize(response.Content, typeof(DeleteReportGroupResponse), response.Headers);
         }
     
         /// <summary>
@@ -651,112 +524,6 @@ path = path.Replace("{" + "distributionId" + "}", ApiClient.ParameterToString(di
                 throw new ApiException ((int)response.StatusCode, "Error calling GetReportDataForDistribution: " + response.ErrorMessage, response.ErrorMessage);
     
             return (ReportDataResponse) ApiClient.Deserialize(response.Content, typeof(ReportDataResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Get Report Group Associations By Id 
-        /// </summary>
-        /// <param name="id"></param> 
-        /// <returns>ReportGroupAssociationsResponse</returns>            
-        public ReportGroupAssociationsResponse GetReportGroupAssociationsById (int? id)
-        {
-            
-            // verify the required parameter 'id' is set
-            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetReportGroupAssociationsById");
-            
-    
-            var path = "/api/Analysis/report-groups-associations/{id}";
-            path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
-    
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetReportGroupAssociationsById: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetReportGroupAssociationsById: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (ReportGroupAssociationsResponse) ApiClient.Deserialize(response.Content, typeof(ReportGroupAssociationsResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Get report groups for the authenticated company 
-        /// </summary>
-        /// <returns>ReportGroupListResponse</returns>            
-        public ReportGroupListResponse GetReportGroupListForCompany ()
-        {
-            
-    
-            var path = "/api/Analysis/report-groups/list";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetReportGroupListForCompany: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetReportGroupListForCompany: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (ReportGroupListResponse) ApiClient.Deserialize(response.Content, typeof(ReportGroupListResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Get Report Groups By Id 
-        /// </summary>
-        /// <param name="id"></param> 
-        /// <returns>ReportGroupResponse</returns>            
-        public ReportGroupResponse GetReportGroupsById (int? id)
-        {
-            
-            // verify the required parameter 'id' is set
-            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetReportGroupsById");
-            
-    
-            var path = "/api/Analysis/report-groups/{id}";
-            path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
-    
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetReportGroupsById: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetReportGroupsById: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (ReportGroupResponse) ApiClient.Deserialize(response.Content, typeof(ReportGroupResponse), response.Headers);
         }
     
         /// <summary>
@@ -995,74 +762,6 @@ path = path.Replace("{" + "distributionId" + "}", ApiClient.ParameterToString(di
         }
     
         /// <summary>
-        /// Post Report Group Associations 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>PostReportGroupAssociationsResponse</returns>            
-        public PostReportGroupAssociationsResponse PostReportGroupAssociations (PostReportGroupAssociationsRequest body)
-        {
-            
-    
-            var path = "/api/Analysis/report-groups-associations";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostReportGroupAssociations: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostReportGroupAssociations: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (PostReportGroupAssociationsResponse) ApiClient.Deserialize(response.Content, typeof(PostReportGroupAssociationsResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Post Report Groups 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>PostReportGroupResponse</returns>            
-        public PostReportGroupResponse PostReportGroups (PostReportGroupRequest body)
-        {
-            
-    
-            var path = "/api/Analysis/report-groups";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostReportGroups: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostReportGroups: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (PostReportGroupResponse) ApiClient.Deserialize(response.Content, typeof(PostReportGroupResponse), response.Headers);
-        }
-    
-        /// <summary>
         /// Internal use only - Post a new scheduled report distribution record. 
         /// </summary>
         /// <param name="body"></param> 
@@ -1201,74 +900,6 @@ path = path.Replace("{" + "distributionId" + "}", ApiClient.ParameterToString(di
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateEmailAddressesForEmailedAnalysis: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateEmailBlastEmailAddressesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateEmailBlastEmailAddressesResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Update Report Group Associations 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>UpdateReportGroupAssociationsResponse</returns>            
-        public UpdateReportGroupAssociationsResponse UpdateReportGroupAssociations (UpdateReportGroupAssociationsRequest body)
-        {
-            
-    
-            var path = "/api/Analysis/report-groups-associations";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateReportGroupAssociations: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateReportGroupAssociations: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (UpdateReportGroupAssociationsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateReportGroupAssociationsResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Update Report Groups 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>UpdateReportGroupResponse</returns>            
-        public UpdateReportGroupResponse UpdateReportGroups (UpdateReportGroupRequest body)
-        {
-            
-    
-            var path = "/api/Analysis/report-groups";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateReportGroups: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling UpdateReportGroups: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (UpdateReportGroupResponse) ApiClient.Deserialize(response.Content, typeof(UpdateReportGroupResponse), response.Headers);
         }
     
         /// <summary>

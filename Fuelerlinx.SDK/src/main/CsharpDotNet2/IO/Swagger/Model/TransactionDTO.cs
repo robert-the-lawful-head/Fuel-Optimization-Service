@@ -566,7 +566,7 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="user", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "user")]
-    public UserDTO User { get; set; }
+    public CustomerDataDTO User { get; set; }
 
 
     /// <summary>

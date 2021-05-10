@@ -17,6 +17,18 @@ namespace IO.Swagger.Api
         /// <returns>DeleteCurrentPricingResponse</returns>
         DeleteCurrentPricingResponse DeleteCurrentPricingForCompany ();
         /// <summary>
+        /// Delete Supported Price Sheet File Tests by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteSupportedPriceSheetFileTestsResponse</returns>
+        DeleteSupportedPriceSheetFileTestsResponse DeleteSupportedPriceSheetFileTests (int? id);
+        /// <summary>
+        /// Deletes Supported Price Sheet Files by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteSupportedPriceSheetFilesResponse</returns>
+        DeleteSupportedPriceSheetFilesResponse DeleteSupportedPriceSheetFiles (int? id);
+        /// <summary>
         /// Internal use only - delete all weekly pricing records for a particular fuel vendor. 
         /// </summary>
         /// <param name="fuelVendorId"></param>
@@ -69,6 +81,24 @@ namespace IO.Swagger.Api
         /// <returns>EpicQuoteResponse</returns>
         EpicQuoteResponse GetQuotFromEpic (string commaDelimitedAirportIdentifiers);
         /// <summary>
+        /// Gets Supported Price Sheet File Tests by supportedPriceSheetFileId 
+        /// </summary>
+        /// <param name="supportedPriceSheetFileId"></param>
+        /// <returns>SupportedPriceSheetFileTestsResponse</returns>
+        SupportedPriceSheetFileTestsResponse GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId (int? supportedPriceSheetFileId);
+        /// <summary>
+        /// Gets Supported Price Sheet Files by FuelVendorId 
+        /// </summary>
+        /// <param name="fuelVendorId"></param>
+        /// <returns>SupportedPriceSheetFileListResponse</returns>
+        SupportedPriceSheetFileListResponse GetSupportedPriceSheetFilesByByFuelVendorId (int? fuelVendorId);
+        /// <summary>
+        /// Get Supported Price Sheet Files by Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>SupportedPriceSheetFilesResponse</returns>
+        SupportedPriceSheetFilesResponse GetSupportedPriceSheetFilesByById (int? id);
+        /// <summary>
         /// If available, will fetch records from the weekly price sheet received each week for the specified [commaDelimitedIcaos] and [fuelVendorId].  These are to be used as a fallback option when a vendor&#39;s service is unavailable. 
         /// </summary>
         /// <param name="fuelVendorId"></param>
@@ -87,6 +117,30 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostFuelOrderResponse</returns>
         PostFuelOrderResponse PostFuelOrder (PostFuelOrderRequest body);
+        /// <summary>
+        /// Post Supported Price Sheet File Tests 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostSupportedPriceSheetFileTestsResponse</returns>
+        PostSupportedPriceSheetFileTestsResponse PostSupportedPriceSheetFileTests (PostSupportedPriceSheetFileTestsRequest body);
+        /// <summary>
+        /// Post Supported Price Sheet Files 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostSupportedPriceSheetFilesResponse</returns>
+        PostSupportedPriceSheetFilesResponse PostSupportedPriceSheetFiles (PostSupportedPriceSheetFilesRequest body);
+        /// <summary>
+        /// Updates Supported Price Sheet File Tests 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateSupportedPriceSheetFileTestsResponse</returns>
+        UpdateSupportedPriceSheetFileTestsResponse UpdateSupportedPriceSheetFileTests (UpdateSupportedPriceSheetFileTestsRequest body);
+        /// <summary>
+        /// Updates Supported Price Sheet Files 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateSupportedPriceSheetFilesResponse</returns>
+        UpdateSupportedPriceSheetFilesResponse UpdateSupportedPriceSheetFiles (UpdateSupportedPriceSheetFilesRequest body);
         /// <summary>
         /// Internal use only - verify credentials for a vendor service. 
         /// </summary>
@@ -178,6 +232,80 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteCurrentPricingForCompany: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteCurrentPricingResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCurrentPricingResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Delete Supported Price Sheet File Tests by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteSupportedPriceSheetFileTestsResponse</returns>            
+        public DeleteSupportedPriceSheetFileTestsResponse DeleteSupportedPriceSheetFileTests (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedPriceSheetFileTests");
+            
+    
+            var path = "/api/FuelPricing/supported-price-sheet-file-tests/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFileTests: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFileTests: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteSupportedPriceSheetFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedPriceSheetFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Deletes Supported Price Sheet Files by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteSupportedPriceSheetFilesResponse</returns>            
+        public DeleteSupportedPriceSheetFilesResponse DeleteSupportedPriceSheetFiles (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteSupportedPriceSheetFiles");
+            
+    
+            var path = "/api/FuelPricing/supported-price-sheet-files/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFiles: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteSupportedPriceSheetFiles: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteSupportedPriceSheetFilesResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSupportedPriceSheetFilesResponse), response.Headers);
         }
     
         /// <summary>
@@ -494,6 +622,117 @@ path = path.Replace("{" + "fuelVendorId" + "}", ApiClient.ParameterToString(fuel
         }
     
         /// <summary>
+        /// Gets Supported Price Sheet File Tests by supportedPriceSheetFileId 
+        /// </summary>
+        /// <param name="supportedPriceSheetFileId"></param> 
+        /// <returns>SupportedPriceSheetFileTestsResponse</returns>            
+        public SupportedPriceSheetFileTestsResponse GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId (int? supportedPriceSheetFileId)
+        {
+            
+            // verify the required parameter 'supportedPriceSheetFileId' is set
+            if (supportedPriceSheetFileId == null) throw new ApiException(400, "Missing required parameter 'supportedPriceSheetFileId' when calling GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId");
+            
+    
+            var path = "/api/FuelPricing/supported-price-sheet-file-tests/by-supportedInvoiceImportFileId/{supportedPriceSheetFileId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "supportedPriceSheetFileId" + "}", ApiClient.ParameterToString(supportedPriceSheetFileId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFileTestsBySupportedPriceSheetFileId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedPriceSheetFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(SupportedPriceSheetFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Gets Supported Price Sheet Files by FuelVendorId 
+        /// </summary>
+        /// <param name="fuelVendorId"></param> 
+        /// <returns>SupportedPriceSheetFileListResponse</returns>            
+        public SupportedPriceSheetFileListResponse GetSupportedPriceSheetFilesByByFuelVendorId (int? fuelVendorId)
+        {
+            
+            // verify the required parameter 'fuelVendorId' is set
+            if (fuelVendorId == null) throw new ApiException(400, "Missing required parameter 'fuelVendorId' when calling GetSupportedPriceSheetFilesByByFuelVendorId");
+            
+    
+            var path = "/api/FuelPricing/supported-price-sheet-files/by-fuel-vendor/{fuelVendorId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "fuelVendorId" + "}", ApiClient.ParameterToString(fuelVendorId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFilesByByFuelVendorId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFilesByByFuelVendorId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedPriceSheetFileListResponse) ApiClient.Deserialize(response.Content, typeof(SupportedPriceSheetFileListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Get Supported Price Sheet Files by Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>SupportedPriceSheetFilesResponse</returns>            
+        public SupportedPriceSheetFilesResponse GetSupportedPriceSheetFilesByById (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetSupportedPriceSheetFilesByById");
+            
+    
+            var path = "/api/FuelPricing/supported-price-sheet-files/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFilesByById: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetSupportedPriceSheetFilesByById: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SupportedPriceSheetFilesResponse) ApiClient.Deserialize(response.Content, typeof(SupportedPriceSheetFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// If available, will fetch records from the weekly price sheet received each week for the specified [commaDelimitedIcaos] and [fuelVendorId].  These are to be used as a fallback option when a vendor&#39;s service is unavailable. 
         /// </summary>
         /// <param name="fuelVendorId"></param> 
@@ -604,6 +843,142 @@ path = path.Replace("{" + "commaDelimitedIcaos" + "}", ApiClient.ParameterToStri
                 throw new ApiException ((int)response.StatusCode, "Error calling PostFuelOrder: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostFuelOrderResponse) ApiClient.Deserialize(response.Content, typeof(PostFuelOrderResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Post Supported Price Sheet File Tests 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostSupportedPriceSheetFileTestsResponse</returns>            
+        public PostSupportedPriceSheetFileTestsResponse PostSupportedPriceSheetFileTests (PostSupportedPriceSheetFileTestsRequest body)
+        {
+            
+    
+            var path = "/api/FuelPricing/supported-price-sheet-file-tests";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFileTests: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFileTests: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostSupportedPriceSheetFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedPriceSheetFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Post Supported Price Sheet Files 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostSupportedPriceSheetFilesResponse</returns>            
+        public PostSupportedPriceSheetFilesResponse PostSupportedPriceSheetFiles (PostSupportedPriceSheetFilesRequest body)
+        {
+            
+    
+            var path = "/api/FuelPricing/supported-price-sheet-files";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFiles: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostSupportedPriceSheetFiles: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostSupportedPriceSheetFilesResponse) ApiClient.Deserialize(response.Content, typeof(PostSupportedPriceSheetFilesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Supported Price Sheet File Tests 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateSupportedPriceSheetFileTestsResponse</returns>            
+        public UpdateSupportedPriceSheetFileTestsResponse UpdateSupportedPriceSheetFileTests (UpdateSupportedPriceSheetFileTestsRequest body)
+        {
+            
+    
+            var path = "/api/FuelPricing/supported-price-sheet-file-tests";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFileTests: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFileTests: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateSupportedPriceSheetFileTestsResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedPriceSheetFileTestsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Updates Supported Price Sheet Files 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateSupportedPriceSheetFilesResponse</returns>            
+        public UpdateSupportedPriceSheetFilesResponse UpdateSupportedPriceSheetFiles (UpdateSupportedPriceSheetFilesRequest body)
+        {
+            
+    
+            var path = "/api/FuelPricing/supported-price-sheet-files";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFiles: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateSupportedPriceSheetFiles: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateSupportedPriceSheetFilesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSupportedPriceSheetFilesResponse), response.Headers);
         }
     
         /// <summary>

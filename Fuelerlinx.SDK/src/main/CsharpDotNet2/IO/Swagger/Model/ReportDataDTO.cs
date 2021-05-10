@@ -27,13 +27,6 @@ namespace IO.Swagger.Model {
     public string DataJson { get; set; }
 
     /// <summary>
-    /// Gets or Sets DataSummaryJson
-    /// </summary>
-    [DataMember(Name="dataSummaryJson", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "dataSummaryJson")]
-    public string DataSummaryJson { get; set; }
-
-    /// <summary>
     /// Gets or Sets ChartOptionsJson
     /// </summary>
     [DataMember(Name="chartOptionsJson", EmitDefaultValue=false)]
@@ -64,7 +57,6 @@ namespace IO.Swagger.Model {
       sb.Append("class ReportDataDTO {\n");
       sb.Append("  HighChartsChart: ").Append(HighChartsChart).Append("\n");
       sb.Append("  DataJson: ").Append(DataJson).Append("\n");
-      sb.Append("  DataSummaryJson: ").Append(DataSummaryJson).Append("\n");
       sb.Append("  ChartOptionsJson: ").Append(ChartOptionsJson).Append("\n");
       sb.Append("  Currency: ").Append(Currency).Append("\n");
       sb.Append("  CurrencySymbol: ").Append(CurrencySymbol).Append("\n");
