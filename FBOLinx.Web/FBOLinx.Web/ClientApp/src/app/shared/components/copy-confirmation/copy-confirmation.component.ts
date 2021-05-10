@@ -4,11 +4,6 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dia
 // Services
 import { Router } from '@angular/router';
 
-export interface ConfirmCopyDialogData {
-    oid: number;
-    name: string;
-}
-
 @Component({
     selector: 'app-copy-confirmation',
     templateUrl: './copy-confirmation.component.html',
@@ -19,7 +14,7 @@ export class CopyConfirmationComponent {
         public dialogRef: MatDialogRef<CopyConfirmationComponent>,
         public closeConfirmationDialog: MatDialog,
         public router: Router,
-        @Inject(MAT_DIALOG_DATA) public data: ConfirmCopyDialogData
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         // Prevent modal close on outside click
         dialogRef.disableClose = true;

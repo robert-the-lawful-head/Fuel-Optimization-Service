@@ -106,6 +106,12 @@ export class EmailTemplatesHomeComponent implements AfterViewInit, OnDestroy, On
         });
     }
 
+    public copyEmailTemplateClicked(emailTemplate) {
+        this.emailContentService.add(emailTemplate).subscribe((response: any) => {
+            this.loadEmailTemplatesData();
+        });
+    }
+
     // Private Methods
     private loadEmailTemplatesData() {
         this.emailTemplates = null;

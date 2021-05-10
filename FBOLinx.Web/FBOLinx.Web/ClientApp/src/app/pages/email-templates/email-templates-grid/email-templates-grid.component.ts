@@ -107,14 +107,22 @@ export class EmailTemplatesGridComponent implements OnInit {
 
     public copyEmailTemplate(emailTemplate) {
         if (emailTemplate) {
+            var clone: any = JSON.parse(JSON.stringify(emailTemplate));
+            clone.oid = 0;
+            clone.name = '';
             const dialogRef = this.copyTemplateDialog.open(
                 CopyConfirmationComponent,
                 {
-                    data: { oid: emailTemplate.oid },
+                    data: clone,
                 }
             );
 
             dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    return;
+                }
+
+                this.copyEmailTemplateClicked.emit(result);;
             });
         }
     }
