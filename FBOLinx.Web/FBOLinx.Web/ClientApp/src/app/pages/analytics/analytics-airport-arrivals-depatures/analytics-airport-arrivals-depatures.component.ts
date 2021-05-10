@@ -14,7 +14,7 @@ import { AirportWatchService } from '../../../services/airportwatch.service';
 import { FlightWatchHistorical, FlightWatchStatus } from '../../../models/flight-watch-historical';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
 import { CustomersListType } from '../../../models/customer';
-import { AircraftIcons } from '../../flight-watch/flight-watch-map/aircraft-icons';
+import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
 import { CsvExportModalComponent, ICsvExportModalData } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
 
 @Component({
@@ -49,7 +49,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     public filtersChanged: Subject<any> = new Subject<any>();
 
-    public aircraftTypes = AircraftIcons;
+    public aircraftTypes = AIRCRAFT_IMAGES;
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,
@@ -173,7 +173,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
                     'Flight #': item.flightNumber,
                     'Hex #': item.hexCode,
                     Aircraft: item.aircraftType,
-                    'Aircraft Type': this.aircraftTypes[item.aircraftTypeCode].label,
+                    'Aircraft Type': this.getAircraftLabel(item.aircraftTypeCode),
                     'Date and Time': item.dateTime,
                     'Departure / Arrival': item.status === FlightWatchStatus.Landing ? 'Arrival' : 'Departure',
                 }));
@@ -192,5 +192,15 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         this.isCommercialInvisible = true;
 
         this.filterChanged();
+    }
+
+    getAircraftLabel(type: string) {
+        const found = this.aircraftTypes.find(a => a.id === type);
+        if (found) {
+            return found.label;
+        }
+        else {
+            return 'Other';
+        }
     }
 }

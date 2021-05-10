@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
-import { keys } from 'lodash';
 import { FlightWatch } from '../../../models/flight-watch';
-import { AircraftIcons } from '../flight-watch-map/aircraft-icons';
+import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
 
 @Component({
     selector: 'app-flight-watch-settings',
@@ -32,13 +31,13 @@ export class FlightWatchSettingsComponent {
     }
 
     get aircraftTypes() {
-        return keys(AircraftIcons)
-            .filter(type => AircraftIcons[type].label !== 'Other')
+        return AIRCRAFT_IMAGES
+            .filter(type => type.label !== 'Other')
             .map(type => ({
-                aircraftType: type,
-                color: AircraftIcons[type].fillColor,
-                label: AircraftIcons[type].label,
-                description: AircraftIcons[type].description,
+                aircraftType: type.id,
+                color: type.fillColor,
+                label: type.label,
+                description: type.description,
             }))
             .concat({
                 aircraftType: 'default',
