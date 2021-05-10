@@ -43,7 +43,6 @@ export class PricingTemplatesEditComponent implements OnInit {
     @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
     @ViewChild('feeAndTaxGeneralBreakdown') private feeAndTaxGeneralBreakdown: PriceBreakdownComponent;
     @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
-    @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
 
     // Input/Output Bindings
     @Output() savePricingTemplateClicked = new EventEmitter<any>();
@@ -127,9 +126,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 default: [ this.pricingTemplate.default ],
                 marginType: [ this.pricingTemplate.marginType ],
                 customerMargins,
-                notes: [ this.pricingTemplate.notes ],
-                subject: [ this.pricingTemplate.subject ],
-                email: [ this.pricingTemplate.email ]
+                notes: [ this.pricingTemplate.notes ]
             });
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {

@@ -30,132 +30,147 @@ import { FlightWatchComponent } from './pages/flight-watch/flight-watch/flight-w
 
 // Guards
 import { AuthGuard } from './guards';
-const defaultRoutes: Routes = [{
-    path: 'customers',
-    component: CustomersHomeComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'customers/:id',
-    component: CustomersEditComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'dashboard',
-    component: DashboardHomeComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'dashboard-fbo',
-    component: DashboardFboComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'dashboard-csr',
-    component: DashboardFboComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'fbo-prices',
-    component: FboPricesHomeComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'groups',
-    component: GroupsHomeComponent,
-    canActivate: [AuthGuard],
-    data: {
-      expectedRoles: [3],
+import { EmailTemplatesEditComponent } from
+    "./pages/email-templates/email-templates-edit/email-templates-edit.component";
+import { EmailTemplatesHomeComponent } from
+    "./pages/email-templates/email-templates-home/email-templates-home.component";
+const defaultRoutes: Routes = [
+    {
+        path: 'customers',
+        component: CustomersHomeComponent,
+        canActivate: [AuthGuard],
     },
-  },
-  {
-    path: 'groups/:id',
-    component: GroupsEditComponent,
-    canActivate: [AuthGuard],
-    data: {
-      expectedRoles: [3],
+    {
+        path: 'customers/:id',
+        component: CustomersEditComponent,
+        canActivate: [AuthGuard],
     },
-  },
-  {
-    path: 'fbos',
-    component: FbosHomeComponent,
-    canActivate: [AuthGuard],
-    data: {
-      expectedRoles: [2, 3],
+    {
+        path: 'dashboard',
+        component: DashboardHomeComponent,
+        canActivate: [AuthGuard],
     },
-  },
-  {
-    path: 'fbos/:id',
-    component: FbosEditComponent,
-    canActivate: [AuthGuard],
-    data: {
-      expectedRoles: [2, 3],
+    {
+        path: 'dashboard-fbo',
+        component: DashboardFboComponent,
+        canActivate: [AuthGuard],
     },
-  },
-  {
-    path: 'group-analytics',
-    component: GroupAnalyticsHomeComponent,
-    canActivate: [AuthGuard],
-    data: {
-      expectedRoles: [2, 3],
+    {
+        path: 'dashboard-csr',
+        component: DashboardFboComponent,
+        canActivate: [AuthGuard],
     },
-  },
-  {
-    path: 'fuelreqs',
-    component: FuelreqsHomeComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'pricing-templates',
-    component: PricingTemplatesHomeComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'pricing-templates/:id',
-    component: PricingTemplatesEditComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'fuelreqs',
-    component: FuelreqsHomeComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'rampfees',
-    component: RampFeesHomeComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'analytics',
-    component: AnalyticsHomeComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'users',
-    component: UsersHomeComponent,
-    canActivate: [AuthGuard],
-    data: {
-      expectedRoles: [1, 2, 3],
+    {
+        path: 'fbo-prices',
+        component: FboPricesHomeComponent,
+        canActivate: [AuthGuard],
     },
-  },
-  {
-    path: 'users/:id',
-    component: UsersEditComponent,
-    canActivate: [AuthGuard],
-    data: {
-      expectedRoles: [1, 2, 3],
+    {
+        path: 'groups',
+        component: GroupsHomeComponent,
+        canActivate: [AuthGuard],
+        data: {
+            expectedRoles: [3],
+        },
     },
-  },
-  {
-    path: 'flight-watch',
-    component: FlightWatchComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: '**',
-    component: DashboardHomeComponent,
-    canActivate: [AuthGuard]
-  },
+    {
+        path: 'groups/:id',
+        component: GroupsEditComponent,
+        canActivate: [AuthGuard],
+        data: {
+            expectedRoles: [3],
+        },
+    },
+    {
+        path: 'fbos',
+        component: FbosHomeComponent,
+        canActivate: [AuthGuard],
+        data: {
+            expectedRoles: [2, 3],
+        },
+    },
+    {
+        path: 'fbos/:id',
+        component: FbosEditComponent,
+        canActivate: [AuthGuard],
+        data: {
+            expectedRoles: [2, 3],
+        },
+    },
+    {
+        path: 'group-analytics',
+        component: GroupAnalyticsHomeComponent,
+        canActivate: [AuthGuard],
+        data: {
+            expectedRoles: [2, 3],
+        },
+    },
+    {
+        path: 'fuelreqs',
+        component: FuelreqsHomeComponent,
+        canActivate: [AuthGuard],
+    },
+    {
+        path: 'pricing-templates',
+        component: PricingTemplatesHomeComponent,
+        canActivate: [AuthGuard],
+    },
+    {
+        path: 'pricing-templates/:id',
+        component: PricingTemplatesEditComponent,
+        canActivate: [AuthGuard],
+    },
+    {
+        path: 'email-templates',
+        component: EmailTemplatesHomeComponent,
+        canActivate: [AuthGuard],
+    },
+    {
+        path: 'email-templates/:id',
+        component: EmailTemplatesEditComponent,
+        canActivate: [AuthGuard],
+    },
+    {
+        path: 'fuelreqs',
+        component: FuelreqsHomeComponent,
+        canActivate: [AuthGuard],
+    },
+    {
+        path: 'rampfees',
+        component: RampFeesHomeComponent,
+        canActivate: [AuthGuard],
+    },
+    {
+        path: 'analytics',
+        component: AnalyticsHomeComponent,
+        canActivate: [AuthGuard],
+    },
+    {
+        path: 'users',
+        component: UsersHomeComponent,
+        canActivate: [AuthGuard],
+        data: {
+            expectedRoles: [1, 2, 3],
+        },
+    },
+    {
+        path: 'users/:id',
+        component: UsersEditComponent,
+        canActivate: [AuthGuard],
+        data: {
+            expectedRoles: [1, 2, 3],
+        },
+    },
+    {
+        path: 'flight-watch',
+        component: FlightWatchComponent,
+        canActivate: [AuthGuard],
+    },
+    {
+        path: '**',
+        component: DashboardHomeComponent,
+        canActivate: [AuthGuard]
+    },
 ];
 
 const landingSiteRoutes: Routes = [{
