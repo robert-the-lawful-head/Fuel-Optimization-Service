@@ -260,7 +260,7 @@ namespace FBOLinx.Web.Services
                 var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridTemplateData
                 {
                     recipientCompanyName = _IsPreview ? fbo.Fbo : customer.Company,
-                    templateEmailBodyMessage = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Email),
+                    templateEmailBodyMessage = HttpUtility.HtmlDecode(_EmailContent.EmailContentHtml ?? ""),
                     templateNotesMessage = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Notes),
                     fboName = fbo.Fbo,
                     fboICAOCode = fboIcao.Icao,
@@ -455,14 +455,20 @@ namespace FBOLinx.Web.Services
 
         private async void GetEmailContent()
         {
-            if (_DistributePricingRequest.PricingTemplate.EmailContentId == 0)
+            if (_DistributePricingRequest.PricingTemplate.EmailContentId == null || _DistributePricingRequest.PricingTemplate.EmailContentId == 0)
             {
                 EmailContent newEmailContent = new EmailContent();
                 newEmailContent.Subject = _DistributePricingRequest.PricingTemplate.Subject;
-                //emailContent.ema = _DistributePricingRequest.PricingTemplate.Email;
+                newEmailContent.EmailContentHtml = _DistributePricingRequest.PricingTemplate.Email;
+                newEmailContent.FboId = _DistributePricingRequest.FboId;
                 _context.EmailContent.Add(newEmailContent);
                 _context.SaveChanges();
                 _DistributePricingRequest.PricingTemplate.EmailContentId = newEmailContent.Oid;
+
+                List<PricingTemplate> pricingTemplates = await _context.PricingTemplate.Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.Oid).ToListAsync();
+                PricingTemplate pricingTemplate = pricingTemplates.FirstOrDefault();
+                pricingTemplate.EmailContentId = _DistributePricingRequest.PricingTemplate.EmailContentId;
+                _context.SaveChanges();
             }
 
             var emailContent = await _context.EmailContent.Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).ToListAsync();

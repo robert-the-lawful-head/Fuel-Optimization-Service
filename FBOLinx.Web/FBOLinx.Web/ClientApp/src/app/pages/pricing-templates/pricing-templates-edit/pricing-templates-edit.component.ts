@@ -15,6 +15,7 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbofeeandtaxomitsbypricingtemplateService } from '../../../services/fbofeeandtaxomitsbypricingtemplate.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { EmailcontentService } from '../../../services/emailcontent.service';
 
 // Components
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
@@ -55,6 +56,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         { text: 'Cost +', value: 0 },
         { text: 'Retail -', value: 1 },
     ];
+    emailTemplatesDataSource: Array<any>;
     canSave: boolean;
     jetACost: number;
     jetARetail: number;
@@ -74,7 +76,8 @@ export class PricingTemplatesEditComponent implements OnInit {
         private fboPricesService: FbopricesService,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private fboFeeAndTaxOmitsbyPricingTemplateService: FbofeeandtaxomitsbypricingtemplateService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private emailContentService: EmailcontentService
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
@@ -126,7 +129,8 @@ export class PricingTemplatesEditComponent implements OnInit {
                 default: [ this.pricingTemplate.default ],
                 marginType: [ this.pricingTemplate.marginType ],
                 customerMargins,
-                notes: [ this.pricingTemplate.notes ]
+                notes: [ this.pricingTemplate.notes ],
+                emailContentId: [ this.pricingTemplate.emailContentId ],
             });
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
@@ -155,6 +159,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         });
 
         this.loadPricingTemplateFeesAndTaxes();
+        this.loadEmailContentTemplate();
     }
 
     savePricingTemplate(): void {
@@ -275,6 +280,13 @@ export class PricingTemplatesEditComponent implements OnInit {
             .getByFboAndPricingTemplate(this.sharedService.currentUser.fboId, this.pricingTemplate.oid).subscribe(
             (response: any[]) => {
                 this.feesAndTaxes = response;
+            });
+    }
+
+    private loadEmailContentTemplate(): void {
+        this.emailContentService.getForFbo(this.sharedService.currentUser.fboId).subscribe(
+            (response: any) => {
+                this.emailTemplatesDataSource = response;
             });
     }
 
