@@ -1,0 +1,98 @@
+<div>
+    <mat-form-field>
+        <input (keyup)="applyFilter($event.target.value)"
+               [value]="emailTemplatesDataSource.filter"
+               matInput
+               placeholder="Search by Name or Type" />
+        <span matPrefix><i class="fa fa-search"></i></span>
+    </mat-form-field>
+
+    <table [dataSource]="emailTemplatesDataSource"
+           class="col-md-12"
+           mat-table
+           matSort
+           matSortActive="name"
+           matSortDirection="asc">
+
+        <ng-container matColumnDef="name">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
+            <td *matCellDef="let emailTemplate" mat-cell>
+                {{ emailTemplate.name }}
+                <sup *ngIf="emailTemplate.default"
+                     style="color: green; font-weight: bold;">Default</sup>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="subject">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                Subject
+            </th>
+            <td *matCellDef="let emailTemplate" mat-cell>
+                {{ emailTemplate.subject }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="copy">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                &nbsp;
+            </th>
+            <td *matCellDef="let emailTemplate" mat-cell>
+                <div class="pull-right">
+                    <button (click)="
+                            copyEmailTemplate(emailTemplate);
+                            $event.stopPropagation()
+                        "
+                            [view]="'blank'"
+                            beforeIcon="fa fa-copy"
+                            ni-button
+                            size="small"
+                            style="
+                            border: 1px solid black;
+                            width: 70px !important;
+                        ">
+                        Copy
+                    </button>
+                </div>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="delete">
+            <th *matHeaderCellDef mat-header-cell>
+                <div class="pull-right">
+                    <button (click)="addNewEmailTemplate()"
+                            [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            ni-button>
+                        Add New
+                    </button>
+                </div>
+            </th>
+            <td *matCellDef="let emailTemplate" mat-cell>
+                <div class="pull-right">
+                    <button (click)="
+                            deleteEmailTemplate(emailTemplate);
+                            $event.stopPropagation()
+                        "
+                            [view]="'error'"
+                            beforeIcon="fa fa-trash"
+                            ni-button
+                            size="small">
+                        Delete
+                    </button>
+                </div>
+            </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr (click)="editEmailTemplate(row)"
+            *matRowDef="let row; columns: displayedColumns"
+            mat-row></tr>
+    </table>
+
+    <div>
+        <mat-paginator (page)="(pageIndexTemplate); onPageChanged($event)"
+                       [length]="emailTemplatesData.length"
+                       [pageSizeOptions]="[10, 25, 50, 100]"
+                       [pageSize]="pageSizeTemplate"></mat-paginator>
+    </div>
+</div>

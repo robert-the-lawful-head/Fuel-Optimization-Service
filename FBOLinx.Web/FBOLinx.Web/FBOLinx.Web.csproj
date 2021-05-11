@@ -61,6 +61,10 @@
     <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-confirm-delete-modal\customer-aircrafts-confirm-delete-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-select-model-dialog\customer-aircrafts-select-model-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\pages\email-templates\email-templates-dialog-new-template\email-templates-dialog-new-template.component.ts" />
+    <None Remove="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
+    <None Remove="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
+    <None Remove="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
@@ -73,6 +77,7 @@
     <None Remove="ClientApp\src\app\services\index.ts" />
     <None Remove="ClientApp\src\app\services\paremeters.service.ts" />
     <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
+    <None Remove="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\price-breakdown\price-breakdown.component.ts" />
@@ -112,6 +117,10 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-confirm-delete-modal\customer-aircrafts-confirm-delete-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-select-model-dialog\customer-aircrafts-select-model-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-dialog-new-template\email-templates-dialog-new-template.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
@@ -122,6 +131,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\paremeters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\price-breakdown\price-breakdown.component.ts" />
