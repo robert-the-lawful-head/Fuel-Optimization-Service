@@ -1,12 +1,17 @@
-import { Component, Inject } from '@angular/core';
+import { Component, EventEmitter, Output, Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import * as _ from 'lodash';
 
 import { ContactsService } from '../../../services/contacts.service';
 import { FbosService } from '../../../services/fbos.service';
 import { FbocontactsService } from '../../../services/fbocontacts.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { UserService } from '../../../services/user.service';
+import { SystemcontactsNewContactModalComponent } from '../../../pages/contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 
 export interface AccountProfileDialogData {
     oid: number;
@@ -28,6 +33,10 @@ export interface AccountProfileDialogData {
     providers: [ SharedService ],
 })
 export class AccountProfileComponent {
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @Output() editContactClicked = new EventEmitter<any>();
+    @Output() newContactClicked = new EventEmitter<any>();
+
     // Members
     fboInfo: any;
     contactsData: any[];
@@ -38,6 +47,9 @@ export class AccountProfileComponent {
     theFile: any = null;
     logoUrl: string;
     isUploadingLogo: boolean;
+    contactsDataSource: MatTableDataSource<any> = null;
+    public copyAllAlerts = false;
+    public copyAllOrders = false;
 
     constructor(
         public dialogRef: MatDialogRef<AccountProfileComponent>,
@@ -47,7 +59,8 @@ export class AccountProfileComponent {
         private fboContactsService: FbocontactsService,
         private fbosService: FbosService,
         private usersService: UserService,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        public newContactDialog: MatDialog
     ) {
         this.systemContactsForm = this.formBuilder.group({
             fuelDeskEmail: new FormControl('', [
@@ -136,6 +149,33 @@ export class AccountProfileComponent {
             .subscribe((logoData: any) => {
                 this.logoUrl = "";
             });
+    }
+
+    public newRecord(e: any) {
+        e.preventDefault();
+
+        const dialogRef = this.newContactDialog.open(
+            SystemcontactsNewContactModalComponent,
+            {
+                data: {},
+                height: '300px',
+            }
+        );
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return;
+            }
+
+            const payload = {
+                ...result,
+                fboId: this.sharedService.currentUser.fboId
+            };
+            this.fboContactsService.addnewcontact(payload).subscribe(newFbocontact => {
+                this.contactsData = null;
+                this.fboContactsService.getForFbo(this.fboInfo).subscribe((data: any) => { this.contactsData = data; });
+                this.fboContactsService.updateFuelvendor(payload).subscribe();
+            });
+        });
     }
 
     // Private Methods

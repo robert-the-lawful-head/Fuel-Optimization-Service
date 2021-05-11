@@ -124,7 +124,7 @@ export class UsersGridComponent implements OnInit {
     }
 
     public newRecord() {
-        const newUser = { oid: 0, fboId: 0, groupId: 0 };
+        const newUser = { oid: 0, fboId: 0, groupId: 0, copyAlerts: true, copyOrders: true };
         if (this.fboInfo) {
             newUser.fboId = this.fboInfo.oid;
             newUser.groupId = this.fboInfo.groupId;

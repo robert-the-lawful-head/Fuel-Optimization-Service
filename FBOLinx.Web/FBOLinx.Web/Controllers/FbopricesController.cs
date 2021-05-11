@@ -19,6 +19,7 @@ using System.Security.Claims;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.Web.Services.Interfaces;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -32,9 +33,9 @@ namespace FBOLinx.Web.Controllers
         private readonly JwtManager _jwtManager;
         private readonly RampFeesService _RampFeesService;
         private readonly AircraftService _aircraftService;
-        private PriceFetchingService _PriceFetchingService;
+        private IPriceFetchingService _PriceFetchingService;
 
-        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService, PriceFetchingService priceFetchingService)
+        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService, IPriceFetchingService priceFetchingService)
         {
             _PriceFetchingService = priceFetchingService;
             _context = context;
