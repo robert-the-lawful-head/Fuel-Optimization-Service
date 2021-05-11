@@ -1,0 +1,2 @@
+ALTER TABLE PricingTemplate
+ADD EmailContentId int

@@ -26,6 +26,13 @@ namespace FBOLinx.DB.Models
         [Column("FBOID")]
         public int? FboId { get; set; }
         public EmailContentTypes EmailContentType { get; set; }
+
+        [NotMapped]
+        public string EmailContentTypeDescription
+        {
+            get { return FBOLinx.Core.Utilities.Enum.GetDescription(EmailContentType); }
+        }
+
         [MaxLength(255)]
         public string Name { get; set; }
         [MaxLength(500)]

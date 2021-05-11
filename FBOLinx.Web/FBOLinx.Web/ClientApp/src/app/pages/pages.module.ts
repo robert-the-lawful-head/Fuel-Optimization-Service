@@ -87,6 +87,10 @@ import { CustomersGridComponent } from './customers/customers-grid/customers-gri
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
 import { DashboardHomeComponent } from './dashboards/dashboard-home/dashboard-home.component';
+import { EmailTemplatesDialogNewTemplateComponent } from './email-templates/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
+import { EmailTemplatesEditComponent } from './email-templates/email-templates-edit/email-templates-edit.component';
+import { EmailTemplatesGridComponent } from './email-templates/email-templates-grid/email-templates-grid.component';
+import { EmailTemplatesHomeComponent } from './email-templates/email-templates-home/email-templates-home.component';
 import { FbosContactsComponent } from './fbos/fbos-contacts/fbos-contacts.component';
 import { FbosDialogNewFboComponent } from './fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { FbosGridNewFboDialogComponent } from './fbos/fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
@@ -138,6 +142,7 @@ import { FlightWatchSettingsComponent } from './flight-watch/flight-watch-settin
 import { FboPricesPanelComponent } from '../shared/components/fbo-prices-panel/fbo-prices-panel.component';
 import { AccountProfileComponent } from '../shared/components/account-profile/account-profile.component';
 import { AirportAutocompleteComponent } from '../shared/components/airport-autocomplete/airport-autocomplete.component';
+import { CopyConfirmationComponent } from '../shared/components/copy-confirmation/copy-confirmation.component';
 import { DeleteConfirmationComponent } from '../shared/components/delete-confirmation/delete-confirmation.component';
 import { ProceedConfirmationComponent } from '../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { CloseConfirmationComponent } from '../shared/components/close-confirmation/close-confirmation.component';
@@ -255,6 +260,10 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         CustomersHomeComponent,
         DashboardFboComponent,
         DashboardHomeComponent,
+        EmailTemplatesDialogNewTemplateComponent,
+        EmailTemplatesEditComponent,
+        EmailTemplatesGridComponent,
+        EmailTemplatesHomeComponent,
         FbosContactsComponent,
         FbosDialogNewFboComponent,
         FbosGridNewFboDialogComponent,
@@ -295,6 +304,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         AnalyticsFuelVendorSourceChartComponent,
         AnalyticsMarketShareFboAirportChartComponent,
         AnalyticsAirportArrivalsDepaturesComponent,
+        CopyConfirmationComponent,
         DeleteConfirmationComponent,
         ProceedConfirmationComponent,
         CloseConfirmationComponent,

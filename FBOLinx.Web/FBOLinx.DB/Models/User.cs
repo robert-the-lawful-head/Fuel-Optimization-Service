@@ -44,6 +44,7 @@ namespace FBOLinx.DB.Models
 
         [Column("FBOID")]
         public int FboId { get; set; }
+        public bool? CopyOrders { get; set; }
 
         [ForeignKey("FboId")]
         [InverseProperty("Users")]

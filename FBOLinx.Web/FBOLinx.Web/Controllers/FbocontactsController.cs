@@ -51,7 +51,8 @@ namespace FBOLinx.Web.Controllers
                                             Oid = f.Oid,
                                             Email = f.Contact.Email,
                                             Primary = f.Contact.Primary,
-                                            CopyAlerts = f.Contact.CopyAlerts
+                                            CopyAlerts = f.Contact.CopyAlerts,
+                                            CopyOrders = f.Contact.CopyOrders
                                         })
                                         .ToListAsync();
             
@@ -155,7 +156,8 @@ namespace FBOLinx.Web.Controllers
                 Title = contact.Title,
                 Oid = fbocontacts.Oid,
                 Primary = contact.Primary,
-                CopyAlerts = contact.CopyAlerts
+                CopyAlerts = contact.CopyAlerts,
+                CopyOrders = contact.CopyOrders
             });
         }
 

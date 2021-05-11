@@ -29,9 +29,9 @@ namespace FBOLinx.Web.Controllers
         private IFileProvider _FileProvider;
         private IOptions<MailSettings> _MailSettings;
         private JwtManager _jwtManager;
-        private PriceDistributionService _PriceDistributionService;
+        private IPriceDistributionService _PriceDistributionService;
 
-        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager, PriceDistributionService priceDistributionService)
+        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager, IPriceDistributionService priceDistributionService)
         {
             _MailSettings = mailSettings;
             _FileProvider = fileProvider;

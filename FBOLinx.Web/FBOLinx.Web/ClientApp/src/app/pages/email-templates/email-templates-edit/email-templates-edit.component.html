@@ -1,0 +1,62 @@
+<ni-breadcrumb *ngIf="breadcrumb" [menu]="breadcrumb"></ni-breadcrumb>
+
+<div class="after-breadcrumb">
+    <div *ngIf="!emailTemplate">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="emailTemplate">
+        <div *ngIf="isSaving" class="ml-1 mb-1 text-success">Saving Changes <i class="fa fa-spinner fa-spin"></i></div>
+        <div *ngIf="hasSaved" class="ml-1 mb-1 text-success">Changes Saved!</div>
+        <div class="card-wrap">
+            <h3 class="card-header h5">
+                <div class="row">
+                    <div class="col-12">
+                        <span class="card-header-title">{{ emailTemplate.name }}</span>
+                        <button (click)="cancelEmailTemplateEdit()"
+                                class="float-right close-btn"
+                                mat-icon-button>
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </h3>
+            <div class="card-content">
+                <div class="container-fluid">
+                    <mat-tab-group>
+                        <mat-tab label="Email Template">
+                            <h5>Setup Your Email</h5>
+
+                            <div>
+                                <div>
+                                    <mat-form-field>
+                                        <input aria-label="Name"
+                                               matInput
+                                               [(ngModel)]="emailTemplate.name"
+                                               placeholder="Name"
+                                               (blur)="formChanged($event)">
+                                    </mat-form-field>
+                                </div>
+                                <div>
+                                    <mat-form-field style="max-width: 600px;">
+                                        <input aria-label="Subject"
+                                               [(ngModel)]="emailTemplate.subject"
+                                               matInput
+                                               placeholder="Subject"
+                                               (blur)="formChanged($event)"/>
+                                    </mat-form-field>
+                                </div>
+
+                                <ejs-richtexteditor #typeEmail
+                                                    id="rteEmail"
+                                                    [(ngModel)]="emailTemplate.emailContentHtml"
+                                                    placeholder="Enter email body here..."
+                                                    (blur)="formChanged($event)"></ejs-richtexteditor>
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

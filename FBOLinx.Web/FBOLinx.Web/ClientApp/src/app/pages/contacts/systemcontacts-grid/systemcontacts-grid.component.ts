@@ -32,9 +32,11 @@ export class SystemcontactsGridComponent implements OnInit {
         'lastName',
         'email',
         'copyAlerts',
+        'copyOrders',
         'delete',
     ];
-    public copyAll = false;
+    public copyAllAlerts = false;
+    public copyAllOrders = false;
 
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
@@ -74,14 +76,18 @@ export class SystemcontactsGridComponent implements OnInit {
         });
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
-        const unselectedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
-        this.copyAll = this.contactsData.length && unselectedIndex === -1 ? true : false;
+        const unselectedIndexAlerts = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
+        this.copyAllAlerts = this.contactsData.length && unselectedIndexAlerts === -1 ? true : false;
+        const unselectedIndexOrders = _.findIndex(this.contactsData, (contact) => !contact.copyOrders);
+        this.copyAllOrders = this.contactsData.length && unselectedIndexOrders === -1 ? true : false;
     }
 
     public editRecord(record: any) {
         const dialogRef = this.newContactDialog.open(
             SystemcontactsNewContactModalComponent,
             {
+                height: '350px',
+                width: '1100px',
                 data: Object.assign({}, record),
             }
         );
@@ -147,8 +153,8 @@ export class SystemcontactsGridComponent implements OnInit {
     }
 
     public updateCopyAlertsValue(value: any) {
-        const unselectedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
-        this.copyAll = unselectedIndex >= 0 ? false : true;
+        const unselectedIndexAlerts = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
+        this.copyAllAlerts = unselectedIndexAlerts >= 0 ? false : true;
 
         value.groupId = this.sharedService.currentUser.groupId;
         const updatedContact = Object.assign({}, value);
@@ -158,9 +164,32 @@ export class SystemcontactsGridComponent implements OnInit {
     }
 
     public updateAllCopyAlertsValues() {
-        this.copyAll = !this.copyAll;
+        this.copyAllAlerts = !this.copyAllAlerts;
         _.forEach(this.contactsData, (contact) => {
-            contact.copyAlerts = this.copyAll;
+            contact.copyAlerts = this.copyAllAlerts;
+            contact.GroupId = this.sharedService.currentUser.groupId;
+            const updatedContact = Object.assign({}, contact);
+            updatedContact.oid = contact.contactId;
+
+            this.contactsService.update(updatedContact).subscribe();
+        });
+    }
+
+    public updateCopyOrdersValue(value: any) {
+        const unselectedIndexOrders = _.findIndex(this.contactsData, (contact) => !contact.copyOrders);
+        this.copyAllOrders = unselectedIndexOrders >= 0 ? false : true;
+
+        value.groupId = this.sharedService.currentUser.groupId;
+        const updatedContact = Object.assign({}, value);
+        updatedContact.oid = value.contactId;
+
+        this.contactsService.update(updatedContact).subscribe();
+    }
+
+    public updateAllCopyOrdersValues() {
+        this.copyAllOrders = !this.copyAllOrders;
+        _.forEach(this.contactsData, (contact) => {
+            contact.copyOrders = this.copyAllOrders;
             contact.GroupId = this.sharedService.currentUser.groupId;
             const updatedContact = Object.assign({}, contact);
             updatedContact.oid = contact.contactId;

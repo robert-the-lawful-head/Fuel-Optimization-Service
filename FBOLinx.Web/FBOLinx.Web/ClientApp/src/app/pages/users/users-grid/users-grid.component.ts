@@ -31,6 +31,7 @@ export class UsersGridComponent implements OnInit {
         'username',
         'roleDescription',
         'copyAlerts',
+        'copyOrders',
         'delete',
     ];
     public resultsLength = 0;
@@ -84,7 +85,25 @@ export class UsersGridComponent implements OnInit {
             value.copyAlerts = true;
         }
 
-        value.GroupId = this.fboInfo.groupId;
+        if (this.fboInfo == null)
+            value.GroupId = this.groupInfo.oid;
+        else
+            value.GroupId = this.fboInfo.groupId;
+        this.userService.update(value).subscribe((data: any) => {
+        });
+    }
+
+    public UpdateCopyOrdersValue(value) {
+        if (value.copyOrders) {
+            value.copyOrders = !value.copyOrders;
+        } else {
+            value.copyOrders = true;
+        }
+
+        if (this.fboInfo == null)
+            value.GroupId = this.groupInfo.oid;
+        else
+            value.GroupId = this.fboInfo.groupId;
         this.userService.update(value).subscribe((data: any) => {
         });
     }
@@ -105,7 +124,7 @@ export class UsersGridComponent implements OnInit {
     }
 
     public newRecord() {
-        const newUser = { oid: 0, fboId: 0, groupId: 0 };
+        const newUser = { oid: 0, fboId: 0, groupId: 0, copyAlerts: true, copyOrders: true };
         if (this.fboInfo) {
             newUser.fboId = this.fboInfo.oid;
             newUser.groupId = this.fboInfo.groupId;
