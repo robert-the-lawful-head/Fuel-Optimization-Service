@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { difference, isEqual, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
 import { FlightWatch } from '../../../models/flight-watch';
@@ -10,7 +10,7 @@ import { AIRCRAFT_IMAGES } from './aircraft-images';
     styleUrls: [ './flight-watch-map.component.scss' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
+export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     @Input() center: mapboxgl.LngLatLike;
     @Input() data: {
         [oid: string]: FlightWatch;
@@ -34,9 +34,9 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy, Af
 
     ngOnInit(): void {
         this.map = new mapboxgl.Map({
-            accessToken: 'pk.eyJ1IjoiYWlyc3VwcG9ydCIsImEiOiJtTVpWZmkwIn0.CUgowMsXxx2FbX07qda6XQ',
+            accessToken: 'pk.eyJ1IjoidGJyZWVzZSIsImEiOiJja280a3M3dDEwMzAyMnFwbjMwZ2VleWdxIn0.CyG67L4gTlEHV9oJiH7FFw',
             container: 'flight-watch-map',
-            style: 'mapbox://styles/mapbox/light-v10',
+            style: 'mapbox://styles/tbreese/ckoj6y81613y818qfsngeei08',
             center: this.center,
             zoom: this.zoom,
         });
@@ -44,21 +44,13 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy, Af
         this.map.on('dragend', this.boundsChanged);
         this.map.on('rotate', this.boundsChanged);
         this.map.on('resize', this.boundsChanged);
-        this.map.on('load', this.boundsChanged);
+        this.map.on('load', () => this.mapLoaded(this));
 
         AIRCRAFT_IMAGES.forEach(image => {
             this.map.loadImage(image.url, (err, imageData) => {
                 this.map.addImage(`aircraft_image_${image.id}`, imageData);
             });
         });
-    }
-
-    ngAfterViewInit(): void {
-        this.map.off('boxzoomend', this.boundsChanged);
-        this.map.off('dragend', this.boundsChanged);
-        this.map.off('rotate', this.boundsChanged);
-        this.map.off('resize', this.boundsChanged);
-        this.map.off('load', this.boundsChanged);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -70,6 +62,15 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy, Af
     }
 
     ngOnDestroy(): void {
+        this.map.off('boxzoomend', this.boundsChanged);
+        this.map.off('dragend', this.boundsChanged);
+        this.map.off('rotate', this.boundsChanged);
+        this.map.off('resize', this.boundsChanged);
+        this.map.off('load', this.mapLoaded);
+    }
+
+    mapLoaded(self: any) {
+        self.boundsChanged();
     }
 
     boundsChanged() {
@@ -174,4 +175,43 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy, Af
     cursorPointer(cursor: string, self: any) {
         self.map.getCanvas().style.cursor = cursor;
     }
+
+    createGeoJSONCircle(center: mapboxgl.LngLat, radiusInKm: number, points: number) {
+        if(!points) {points = 64;}
+
+        const coords = {
+            latitude: center.lat,
+            longitude: center.lng,
+        };
+
+        const km = radiusInKm;
+
+        const ret = [];
+        const distanceX = km/(111.320*Math.cos(coords.latitude*Math.PI/180));
+        const distanceY = km/110.574;
+
+        let theta: number; let x: number; let y: number;
+        for(let i=0; i<points; i++) {
+            theta = (i/points)*(2*Math.PI);
+            x = distanceX*Math.cos(theta);
+            y = distanceY*Math.sin(theta);
+
+            ret.push([coords.longitude+x, coords.latitude+y]);
+        }
+        ret.push(ret[0]);
+
+        return {
+            type: 'geojson',
+            data: {
+                type: 'FeatureCollection',
+                features: [{
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [ret]
+                    }
+                }]
+            }
+        } as mapboxgl.GeoJSONSourceRaw;
+    };
 }
