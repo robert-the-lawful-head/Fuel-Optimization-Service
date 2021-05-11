@@ -44,7 +44,6 @@ export class AccountProfileComponent {
     availableroles: any[];
     systemContactsForm: FormGroup;
     emailDistributionForm: FormGroup;
-    contactForm: FormGroup;
     theFile: any = null;
     logoUrl: string;
     isUploadingLogo: boolean;
@@ -168,30 +167,15 @@ export class AccountProfileComponent {
             }
 
             const payload = {
-                //firstName: result.firstName,
-                //lastName: ,
-                //email: ,
-                //copyAlerts: ,
-                //copyOrders: ,
+                ...result,
                 fboId: this.sharedService.currentUser.fboId
             };
             this.fboContactsService.addnewcontact(payload).subscribe(newFbocontact => {
-                this.contactsData.push(newFbocontact);
-                this.refreshTable();
+                this.contactsData = null;
+                this.fboContactsService.getForFbo(this.fboInfo).subscribe((data: any) => { this.contactsData = data; });
                 this.fboContactsService.updateFuelvendor(payload).subscribe();
             });
         });
-    }
-
-    public refreshTable() {
-        this.sort.sortChange.subscribe(() => {
-        });
-        this.contactsDataSource = new MatTableDataSource(this.contactsData);
-        this.contactsDataSource.sort = this.sort;
-        const unselectedIndexAlerts = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
-        this.copyAllAlerts = this.contactsData.length && unselectedIndexAlerts === -1 ? true : false;
-        const unselectedIndexOrders = _.findIndex(this.contactsData, (contact) => !contact.copyOrders);
-        this.copyAllOrders = this.contactsData.length && unselectedIndexOrders === -1 ? true : false;
     }
 
     // Private Methods

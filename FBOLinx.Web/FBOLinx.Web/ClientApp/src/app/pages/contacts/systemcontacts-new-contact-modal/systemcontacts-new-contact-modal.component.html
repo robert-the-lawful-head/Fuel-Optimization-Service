@@ -41,7 +41,7 @@
     </div>
     <div mat-dialog-actions>
         <button
-            [mat-dialog-close]="data"
+            (click)="onSave()"
             class="mr-1"
             color="green"
             mat-stroked-button
