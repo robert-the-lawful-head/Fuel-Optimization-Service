@@ -34,6 +34,7 @@ namespace FBOLinx.DB.Models
         public string Subject { get; set; }
         public short? Type { get; set; }
         public MarginTypes? MarginType { get; set; }
+        public int EmailContentId { get; set; }
         [NotMapped]
         public List<string> TailNumbers { get; set; }
 

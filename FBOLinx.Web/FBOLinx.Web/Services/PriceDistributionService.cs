@@ -51,6 +51,7 @@ namespace FBOLinx.Web.Services
         private PriceFetchingService _PriceFetchingService;
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
+        private EmailContent _EmailContent;
 
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, MailTemplateService mailTemplateService, PriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
@@ -266,7 +267,7 @@ namespace FBOLinx.Web.Services
                     fboCity = fbo.City,
                     fboState = fbo.State,
                     fboZip = fbo.ZipCode,
-                    Subject = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Subject) ?? "Distribution pricing",
+                    Subject = HttpUtility.HtmlDecode(_EmailContent.Subject) ?? "Distribution pricing",
                     expiration = validUntil
                 };
                 mailMessage.SendGridTemplateData = dynamicTemplateData;
@@ -446,9 +447,25 @@ namespace FBOLinx.Web.Services
 
         private void PerformPreDistributionTasks(List<CustomerInfoByGroup> customers)
         {
+            GetEmailContent();
             LogDistributionRecord();
         }
 
+        private async void GetEmailContent()
+        {
+            if (_DistributePricingRequest.PricingTemplate.EmailContentId == 0)
+            {
+                EmailContent newEmailContent = new EmailContent();
+                newEmailContent.Subject = _DistributePricingRequest.PricingTemplate.Subject;
+                //emailContent.ema = _DistributePricingRequest.PricingTemplate.Email;
+                _context.EmailContent.Add(newEmailContent);
+                _context.SaveChanges();
+                _DistributePricingRequest.PricingTemplate.EmailContentId = newEmailContent.Oid;
+            }
+
+            var emailContent = await _context.EmailContent.Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).ToListAsync();
+            _EmailContent = emailContent.FirstOrDefault();
+        }
         private void LogDistributionRecord()
         {
             var distributionLog = new DistributionLog()
