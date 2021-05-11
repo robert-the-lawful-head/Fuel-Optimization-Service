@@ -34,7 +34,7 @@ namespace FBOLinx.Web.Controllers
         public async Task<IActionResult> GetAirportLiveData([FromRoute] int fboId)
         {
             var fboLocation = await _fboService.GetFBOLocaiton(fboId);
-            var data = await _airportWatchService.GetAirportWatchLiveData();
+            var data = await _airportWatchService.GetAirportWatchLiveData(fboLocation);
             return Ok(new
             {
                 FBOLocation = fboLocation,

@@ -37,8 +37,15 @@ namespace FBOLinx.Web.Services
             _fboService = fboService;
         }
 
-        public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData()
+        public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData(Coordinate coordinate)
         {
+            var distance = 250;
+            CoordinateBoundaries boundaries = new CoordinateBoundaries(coordinate, distance, DistanceUnit.Miles);
+            double minLatitude = boundaries.MinLatitude;
+            double maxLatitude = boundaries.MaxLatitude;
+            double minLongitude = boundaries.MinLongitude;
+            double maxLongitude = boundaries.MaxLongitude;
+
             List<AirportWatchLiveData> filteredResult = new List<AirportWatchLiveData>();
             var timelimit = DateTime.UtcNow.AddMinutes(-2);
 
@@ -47,13 +54,19 @@ namespace FBOLinx.Web.Services
                 new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted },
                 TransactionScopeAsyncFlowOption.Enabled))
             {
-                    filteredResult = await _context.AirportWatchLiveData
+                filteredResult = await _context.AirportWatchLiveData
+                        .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
+                        .Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
                         .Where(x => x.AircraftPositionDateTimeUtc >= timelimit)
                         .OrderBy(x => x.AircraftPositionDateTimeUtc)
                         .ThenBy(x => x.AircraftHexCode)
                         .ThenBy(x => x.AtcFlightNumber)
                         .ThenBy(x => x.GpsAltitude)
                         .ToListAsync();
+                filteredResult = filteredResult
+                    .Where(x => GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, x.Latitude, x.Longitude, 1, DistanceUnit.Miles) <= distance)
+                    .ToList();
+
                     scope.Complete();
             }
             return filteredResult;
