@@ -27,6 +27,11 @@ export class SystemcontactsNewContactModalComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        if (this.data.email == undefined) {
+            this.data.copyAlerts = true;
+            this.data.copyOrders = true;
+        }
+
         this.contactForm = new FormGroup({
             email: new FormControl(this.data.email, [
                 Validators.required,

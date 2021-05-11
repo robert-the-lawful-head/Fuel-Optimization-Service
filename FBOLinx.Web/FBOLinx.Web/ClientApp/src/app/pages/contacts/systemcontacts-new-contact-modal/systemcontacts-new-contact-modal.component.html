@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>Contact Information&nbsp;&nbsp;
-    <a (click)="confirmDelete(data)" *ngIf="data.firstName" class="btn btn-danger btn-sm"
+    <a (click)="confirmDelete(data)" *ngIf="data.email" class="btn btn-danger btn-sm"
        style="color:white; cursor:pointer;">Delete Contact</a>
 </h1>
     <div mat-dialog-content>
@@ -41,6 +41,7 @@
     </div>
     <div mat-dialog-actions>
         <button
+            [mat-dialog-close]="data"
             class="mr-1"
             color="green"
             mat-stroked-button
