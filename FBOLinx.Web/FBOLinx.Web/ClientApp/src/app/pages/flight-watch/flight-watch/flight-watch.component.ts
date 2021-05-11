@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { LngLatLike } from 'mapbox-gl';
@@ -7,6 +7,7 @@ import { isEmpty, keyBy } from 'lodash';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
+import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -25,6 +26,8 @@ const BREADCRUMBS: any[] = [
     styleUrls: [ './flight-watch.component.scss' ],
 })
 export class FlightWatchComponent implements OnInit, OnDestroy {
+    @ViewChild('map') map: FlightWatchMapComponent;
+
     pageTitle = 'Flight Watch';
     breadcrumb: any[] = BREADCRUMBS;
 
@@ -139,6 +142,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.style = {
             width: `${event.rectangle.width}px`,
         };
+
+        setTimeout(() => {
+            this.map.mapResize();
+        });
     }
 
     get mapWidth() {
