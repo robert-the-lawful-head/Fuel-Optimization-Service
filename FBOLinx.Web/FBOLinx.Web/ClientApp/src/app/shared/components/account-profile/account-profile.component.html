@@ -95,17 +95,24 @@
                                    placeholder="FuelDesk Email"
                                    required>
                         </mat-form-field>
-                        <button [disabled]="!systemContactsForm.valid"
-                                class="ml-3"
-                                color="accent"
-                                mat-raised-button
-                                type="submit">
-                            Save Email
-                        </button>
-                        <button (click)="newRecord($event)" [view]="'accent'" beforeIcon="fa fa-plus" class="mr-3"
-                                ni-button>
-                            Add New
-                        </button>
+                        <div class="d-inline-block">
+                            <button [disabled]="!systemContactsForm.valid"
+                                    class="ml-3"
+                                    color="accent"
+                                    mat-raised-button
+                                    type="submit">
+                                Save Email
+                            </button>
+                        </div>
+                        <div class="d-inline-block float-right" style="margin-top:12px;">
+                            <button (click)="newRecord($event)"
+                                    [view]="'accent'"
+                                    beforeIcon="fa fa-plus"
+                                    ni-button>
+                                Add New
+                            </button>
+                        </div>
+                   
                     </div>
                     <!--Contacts Grid-->
                     <div *ngIf="contactsData">
