@@ -443,35 +443,36 @@ namespace FBOLinx.Web.Services
                                                  MinPriceTierValue = cmGroupResult.Min(c => Math.Abs(c.Amount.HasValue ? c.Amount.Value : 0))
                                              }).ToListAsync();
             var tempPricingTemplates = await (_context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync());
-            
+
             //Join the inner queries on the pricing templates
             var pricingTemplates = (from p in tempPricingTemplates
-                join cm in tempMarginTiers on p.Oid equals cm.TemplateId
-                    into leftJoinCmTiers
-                from cm in leftJoinCmTiers.DefaultIfEmpty()
-                join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
-                    into leftJoinFp
-                from fp in leftJoinFp.DefaultIfEmpty()
-                where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
-                              select new
-                              {
-                                  p.CustomerId,
-                                  p.Default,
-                                  p.Fboid,
-                                  Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
-                                  p.MarginType,
-                                  p.Name,
-                                  p.Notes,
-                                  p.Oid,
-                                  p.Type,
-                                  p.Subject,
-                                  p.Email,
-                                  IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
-                                  IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) :
-                                      p.MarginType == MarginTypes.CostPlus ? (fp != null ? fp.Price : 0) + cm.MaxPriceTierValue :
-                                      (p.MarginType == MarginTypes.RetailMinus ? (fp != null ? fp.Price : 0) - cm.MinPriceTierValue : 0),
-                                  TemplateId = cm == null ? 0 : cm.TemplateId
-                              }).ToList();
+                                    join cm in tempMarginTiers on p.Oid equals cm.TemplateId
+                                        into leftJoinCmTiers
+                                    from cm in leftJoinCmTiers.DefaultIfEmpty()
+                                    join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
+                                        into leftJoinFp
+                                    from fp in leftJoinFp.DefaultIfEmpty()
+                                    where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
+                                    select new
+                                    {
+                                        p.CustomerId,
+                                        p.Default,
+                                        p.Fboid,
+                                        Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
+                                        p.MarginType,
+                                        p.Name,
+                                        p.Notes,
+                                        p.Oid,
+                                        p.Type,
+                                        p.Subject,
+                                        p.Email,
+                                        IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
+                                        IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) :
+                                            p.MarginType == MarginTypes.CostPlus ? (fp != null ? fp.Price : 0) + cm.MaxPriceTierValue :
+                                            (p.MarginType == MarginTypes.RetailMinus ? (fp != null ? fp.Price : 0) - cm.MinPriceTierValue : 0),
+                                        TemplateId = cm == null ? 0 : cm.TemplateId,
+                                        p.EmailContentId
+                                    }).ToList();
 
 
             //Group the final result
@@ -492,6 +493,7 @@ namespace FBOLinx.Web.Services
                         pt.IsPricingExpired,
                         pt.IntoPlanePrice,
                         pt.TemplateId,
+                        pt.EmailContentId,
                     }
                     into groupedPt
                     select new PricingTemplatesGridViewModel
@@ -510,7 +512,8 @@ namespace FBOLinx.Web.Services
                         Email = groupedPt.Key.Email,
                         IsPricingExpired = groupedPt.Key.IsPricingExpired,
                         IntoPlanePrice = groupedPt.Key.IntoPlanePrice,
-                        CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == groupedPt.Key.TemplateId ? 1 : 0)
+                        CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == groupedPt.Key.TemplateId ? 1 : 0),
+                        EmailContentId = groupedPt.Key.EmailContentId
                     })
                 .OrderBy(pt => pt.Name)
                 .ToList();
