@@ -82,16 +82,37 @@ namespace FBOLinx.Web.Services
                     return;
 
             if (_IsPreview)
-                await GenerateDistributionMailMessage(customers.FirstOrDefault());
-            else
             {
                 foreach (var customer in customers)
                 {
-                    await GenerateDistributionMailMessage(customer);
+                    var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
+
+                    if (customerAircrafts.Count > 0)
+                    {
+                        await GenerateDistributionMailMessage(customer);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                var customerToSend = new CustomerInfoByGroup();
+
+                foreach (var customer in customers)
+                {
+                    var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
+
+                    if (customerAircrafts.Count > 0)
+                    {
+                        if (customerToSend.Oid == 0)
+                            customerToSend = customer;
+
+                        await GenerateDistributionMailMessage(customer);
+                    }
                 }
 
                 var systemContacts = new List<Contacts>();
-                systemContacts = GetSystemContactsForDistribution();
+                systemContacts = await GetSystemContactsForDistribution();
 
                 if (systemContacts != null)
                 {
@@ -101,7 +122,7 @@ namespace FBOLinx.Web.Services
                         {
                             _IsPreview = true;
                             _DistributePricingRequest.PreviewEmail = systemContact.Email;
-                            await GenerateDistributionMailMessage(customers.FirstOrDefault());
+                            await GenerateDistributionMailMessage(customerToSend);
                         }
                     }
                 }
@@ -117,7 +138,7 @@ namespace FBOLinx.Web.Services
                         {
                             _IsPreview = true;
                             _DistributePricingRequest.PreviewEmail = user.Username;
-                            await GenerateDistributionMailMessage(customers.FirstOrDefault());
+                            await GenerateDistributionMailMessage(customerToSend);
                         }
                     }
                 }
@@ -156,12 +177,12 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private List<Contacts> GetSystemContactsForDistribution()
+        private async Task<List<Contacts>> GetSystemContactsForDistribution()
         {
-            var result = (from fc in _context.Fbocontacts
+            var result = await (from fc in _context.Fbocontacts
                           join c in _context.Contacts on fc.ContactId equals c.Oid
                           where fc.Fboid == _DistributePricingRequest.FboId && c.Email != null && c.Email != ""
-                          select c).ToList();
+                          select c).ToListAsync();
             return result;
         }
 
@@ -178,11 +199,6 @@ namespace FBOLinx.Web.Services
             DistributionQueue distributionQueueRecord = new DistributionQueue();
             try
             {
-                var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
-
-                if (customerAircrafts.Count == 0)
-                    return;
-
                 var validPricingTemplates = await GetValidPricingTemplates(customer);
                 if (validPricingTemplates == null || validPricingTemplates.Count == 0)
                 {
