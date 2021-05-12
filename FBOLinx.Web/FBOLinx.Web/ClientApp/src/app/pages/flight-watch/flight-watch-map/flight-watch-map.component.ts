@@ -4,8 +4,6 @@ import * as mapboxgl from 'mapbox-gl';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from './aircraft-images';
 
-mapboxgl.clearStorage();
-
 @Component({
     selector: 'app-flight-watch-map',
     templateUrl: './flight-watch-map.component.html',
