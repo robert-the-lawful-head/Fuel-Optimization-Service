@@ -74,9 +74,9 @@ namespace FBOLinx.Web.Services
             _IsPreview = isPreview;
 
             var customers = new List<CustomerInfoByGroup>();
-            customers = GetCustomersForDistribution(request);
+            customers = await GetCustomersForDistribution(request);
 
-            PerformPreDistributionTasks(customers);
+            await PerformPreDistributionTasks(customers);
 
             if (customers == null)
                     return;
@@ -107,7 +107,7 @@ namespace FBOLinx.Web.Services
                 }
 
                 var users = new List<User>();
-                users = GetUsersForDistribution();
+                users = await GetUsersForDistribution();
 
                 if (users != null)
                 {
@@ -126,12 +126,12 @@ namespace FBOLinx.Web.Services
         #endregion
 
         #region Private Methods
-        private List<CustomerInfoByGroup> GetCustomersForDistribution(DistributePricingRequest request)
+        private async Task<List<CustomerInfoByGroup>> GetCustomersForDistribution(DistributePricingRequest request)
         {
             List<CustomerInfoByGroup> customers;
             if (request.Customer == null || request.Customer.Oid == 0)
             {
-                customers = GetCustomersForDistribution();
+                customers = await GetCustomersForDistribution();
             }
             else
             {
@@ -144,15 +144,15 @@ namespace FBOLinx.Web.Services
             return customers.Where((x => x.CustomerCompanyType == _DistributePricingRequest.CustomerCompanyType)).ToList();
         }
 
-        private List<CustomerInfoByGroup> GetCustomersForDistribution()
+        private async Task<List<CustomerInfoByGroup>> GetCustomersForDistribution()
         {
-            var result = (from cg in _context.CustomerInfoByGroup
+            var result = await (from cg in _context.CustomerInfoByGroup
                           join c in _context.Customers on cg.CustomerId equals c.Oid
                           join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
                           join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
                           where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid
                           && !(c.Suspended ?? false)
-                          select cg).ToList();
+                          select cg).ToListAsync();
             return result;
         }
 
@@ -165,11 +165,11 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private List<User> GetUsersForDistribution()
+        private async Task<List<User>> GetUsersForDistribution()
         {
-            var result = (from u in _context.User
+            var result = await (from u in _context.User
                           where u.GroupId == _DistributePricingRequest.GroupId && (u.FboId == 0 || u.FboId == _DistributePricingRequest.FboId)
-                          select u).ToList();
+                          select u).ToListAsync();
             return result;
         }
 
@@ -189,16 +189,18 @@ namespace FBOLinx.Web.Services
                     return;
                 }
 
-                StoreSingleCustomer(customer);
+                await StoreSingleCustomer(customer);
 
-                distributionQueueRecord = _context.DistributionQueue.Where((x =>
+                var distributionQueueRecords = await _context.DistributionQueue.Where((x =>
                     x.CustomerId == customer.CustomerId && x.Fboid == _DistributePricingRequest.FboId &&
-                    x.GroupId == _DistributePricingRequest.GroupId && x.DistributionLogId == _DistributionLogID)).FirstOrDefault();
+                    x.GroupId == _DistributePricingRequest.GroupId && x.DistributionLogId == _DistributionLogID)).ToListAsync();
+
+                distributionQueueRecord = distributionQueueRecords.FirstOrDefault();
 
                 var recipients = await GetRecipientsForCustomer(customer);
                 if (!_IsPreview && recipients.Count == 0)
                 {
-                    MarkDistributionRecordAsComplete(distributionQueueRecord);
+                    await MarkDistributionRecordAsComplete(distributionQueueRecord);
                     return;
                 }
 
@@ -247,7 +249,7 @@ namespace FBOLinx.Web.Services
 
                 mailMessage.AttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
 
-                var logo = _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fbo.Oid).ToList();
+                var logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fbo.Oid).ToListAsync();
                 if (logo.Count > 0)
                 {
                     mailMessage.Logo = new LogoDetails();
@@ -276,7 +278,7 @@ namespace FBOLinx.Web.Services
                 //Send email
                 var result = _MailService.SendAsync(mailMessage).Result;
                 if (result)
-                    MarkDistributionRecordAsComplete(distributionQueueRecord);
+                    await MarkDistributionRecordAsComplete(distributionQueueRecord);
             }
             catch (System.Exception exception)
             {
@@ -298,17 +300,17 @@ namespace FBOLinx.Web.Services
             }
         }
 
-        private void MarkDistributionRecordAsComplete(DistributionQueue distributionQueueRecord)
+        private async Task MarkDistributionRecordAsComplete(DistributionQueue distributionQueueRecord)
         {
             if (distributionQueueRecord == null)
                 return;
             distributionQueueRecord.DateSent = DateTime.Now.ToUniversalTime();
             distributionQueueRecord.IsCompleted = true;
-            _context.DistributionQueue.Update(distributionQueueRecord);
-            _context.SaveChanges();
+            await _context.DistributionQueue.BatchUpdateAsync(distributionQueueRecord);
+            await _context.SaveChangesAsync();
         }
 
-        private void StoreSingleCustomer(CustomerInfoByGroup customer)
+        private async Task StoreSingleCustomer(CustomerInfoByGroup customer)
         {
             DistributionQueue queue = new DistributionQueue()
             {
@@ -318,8 +320,8 @@ namespace FBOLinx.Web.Services
                 GroupId = _DistributePricingRequest.GroupId
             };
             //_context.Set<DistributionQueue>().Add(queue);
-            _context.DistributionQueue.Add(queue);
-            _context.SaveChanges();
+            await _context.DistributionQueue.AddAsync(queue);
+            await _context.SaveChangesAsync();
         }
 
         private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroup customer)
@@ -447,34 +449,34 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private void PerformPreDistributionTasks(List<CustomerInfoByGroup> customers)
+        private async Task PerformPreDistributionTasks(List<CustomerInfoByGroup> customers)
         {
-            GetEmailContent();
-            LogDistributionRecord();
+            await GetEmailContent();
+            await LogDistributionRecord();
         }
 
-        private async void GetEmailContent()
+        private async Task GetEmailContent()
         {
             if (_DistributePricingRequest.PricingTemplate.EmailContentId == null || _DistributePricingRequest.PricingTemplate.EmailContentId == 0)
             {
+                List<PricingTemplate> pricingTemplates = await _context.PricingTemplate.Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.Oid).ToListAsync();
+                PricingTemplate pricingTemplate = pricingTemplates.FirstOrDefault();
+
                 EmailContent newEmailContent = new EmailContent();
                 newEmailContent.Subject = _DistributePricingRequest.PricingTemplate.Subject;
                 newEmailContent.EmailContentHtml = _DistributePricingRequest.PricingTemplate.Email;
                 newEmailContent.FboId = _DistributePricingRequest.FboId;
-                _context.EmailContent.Add(newEmailContent);
-                _context.SaveChanges();
+                await _context.EmailContent.AddAsync(newEmailContent);
+                await _context.SaveChangesAsync();
                 _DistributePricingRequest.PricingTemplate.EmailContentId = newEmailContent.Oid;
 
-                List<PricingTemplate> pricingTemplates = await _context.PricingTemplate.Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.Oid).ToListAsync();
-                PricingTemplate pricingTemplate = pricingTemplates.FirstOrDefault();
                 pricingTemplate.EmailContentId = _DistributePricingRequest.PricingTemplate.EmailContentId;
-                _context.SaveChanges();
             }
 
             var emailContent = await _context.EmailContent.Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).ToListAsync();
             _EmailContent = emailContent.FirstOrDefault();
         }
-        private void LogDistributionRecord()
+        private async Task LogDistributionRecord()
         {
             var distributionLog = new DistributionLog()
             {
@@ -486,8 +488,8 @@ namespace FBOLinx.Web.Services
                 PricingTemplateId = _DistributePricingRequest.PricingTemplate?.Oid,
                 UserId = UserService.GetClaimedUserId(_HttpContextAccessor)
             };
-            _context.DistributionLog.Add(distributionLog);
-            _context.SaveChanges();
+            await _context.DistributionLog.AddAsync(distributionLog);
+            await _context.SaveChangesAsync();
             _DistributionLogID = distributionLog.Oid;
         }
         #endregion
