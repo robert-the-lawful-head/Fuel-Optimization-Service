@@ -18,6 +18,7 @@ Name | Type | Description | Notes
 **CompanyUserProfileId** | **int?** |  | [optional] 
 **CredentialsId** | **int?** |  | [optional] 
 **AspNetUserId** | **string** |  | [optional] 
+**RequirePasswordChangeOnLogin** | **bool?** |  | [optional] 
 **Company** | [**CompanyDTO**](CompanyDTO.md) |  | [optional] 
 **Preferences** | [**PreferencesDTO**](PreferencesDTO.md) |  | [optional] 
 **EmailAddresses** | [**List&lt;UserEmailDTO&gt;**](UserEmailDTO.md) |  | [optional] 

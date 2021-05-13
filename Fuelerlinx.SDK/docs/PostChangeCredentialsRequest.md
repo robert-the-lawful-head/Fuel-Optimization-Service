@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 **OldUsername** | **string** |  | 
 **NewUsername** | **string** |  | 
 **IsChangingUsername** | **bool?** |  | [optional] 
-**OldPassword** | **string** |  | 
+**OldPassword** | **string** |  | [optional] 
 **NewPassword** | **string** |  | 
 **IsChangingPassword** | **bool?** |  | [optional] 
 

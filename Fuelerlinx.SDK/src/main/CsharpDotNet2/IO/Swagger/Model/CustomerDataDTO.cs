@@ -119,6 +119,13 @@ namespace IO.Swagger.Model {
     public string AspNetUserId { get; set; }
 
     /// <summary>
+    /// Gets or Sets RequirePasswordChangeOnLogin
+    /// </summary>
+    [DataMember(Name="requirePasswordChangeOnLogin", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "requirePasswordChangeOnLogin")]
+    public bool? RequirePasswordChangeOnLogin { get; set; }
+
+    /// <summary>
     /// Gets or Sets Company
     /// </summary>
     [DataMember(Name="company", EmitDefaultValue=false)]
@@ -176,6 +183,7 @@ namespace IO.Swagger.Model {
       sb.Append("  CompanyUserProfileId: ").Append(CompanyUserProfileId).Append("\n");
       sb.Append("  CredentialsId: ").Append(CredentialsId).Append("\n");
       sb.Append("  AspNetUserId: ").Append(AspNetUserId).Append("\n");
+      sb.Append("  RequirePasswordChangeOnLogin: ").Append(RequirePasswordChangeOnLogin).Append("\n");
       sb.Append("  Company: ").Append(Company).Append("\n");
       sb.Append("  Preferences: ").Append(Preferences).Append("\n");
       sb.Append("  EmailAddresses: ").Append(EmailAddresses).Append("\n");
