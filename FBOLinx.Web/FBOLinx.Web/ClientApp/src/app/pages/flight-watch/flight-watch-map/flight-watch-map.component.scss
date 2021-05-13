@@ -7,49 +7,52 @@
     height: 100%;
 }
 
-::ng-deep {
-    #menu {
-        background: #fff;
-        position: absolute;
-        z-index: 1;
-        top: 10px;
-        right: 10px;
-        border-radius: 3px;
-        width: 120px;
-        border: 1px solid rgba(0, 0, 0, 0.4);
-        font-family: 'Open Sans', sans-serif;
+#menu {
+    background: #fff;
+    position: absolute;
+    z-index: 1;
+    top: 10px;
+    right: 10px;
+    border-radius: 3px;
+    width: 200px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    font-family: 'Open Sans', sans-serif;
 
-        a {
-            font-size: 13px;
+    a {
+        font-size: 13px;
+        color: #404040;
+        display: block;
+        margin: 0;
+        padding: 0;
+        padding: 10px;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+        text-align: center;
+
+        &:last-child {
+            border: none;
+        }
+
+        &:hover {
+            background-color: #f8f8f8;
             color: #404040;
-            display: block;
-            margin: 0;
-            padding: 0;
-            padding: 10px;
-            text-decoration: none;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-            text-align: center;
+        }
 
-            &:last-child {
-                border: none;
-            }
+        &.active {
+            background-color: #3887be;
+            color: #ffffff;
 
             &:hover {
-                background-color: #f8f8f8;
-                color: #404040;
-            }
-
-            &.active {
-                background-color: #3887be;
-                color: #ffffff;
-
-                &:hover {
-                    background: #3074a4;
-                }
+                background: #3074a4;
             }
         }
     }
+
+    .mat-slide-toggle {
+        font-size: 12px;
+    }
 }
+
 
 .map-error-msg {
     animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate; 
