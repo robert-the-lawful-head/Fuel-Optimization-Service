@@ -8,6 +8,7 @@ export interface NewContactDialogData {
     lastName?: string;
     email: string;
     copyAlerts?: boolean;
+    copyOrders?: boolean;
 }
 
 @Component({
@@ -26,6 +27,11 @@ export class SystemcontactsNewContactModalComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        if (this.data.email == undefined) {
+            this.data.copyAlerts = true;
+            this.data.copyOrders = true;
+        }
+
         this.contactForm = new FormGroup({
             email: new FormControl(this.data.email, [
                 Validators.required,
@@ -34,6 +40,7 @@ export class SystemcontactsNewContactModalComponent implements OnInit {
             firstName: new FormControl(this.data.firstName),
             lastName: new FormControl(this.data.lastName),
             copyAlerts: new FormControl(this.data.copyAlerts),
+            copyOrders: new FormControl(this.data.copyOrders),
         });
     }
 
@@ -46,6 +53,7 @@ export class SystemcontactsNewContactModalComponent implements OnInit {
                 lastName: this.contactForm.value.lastName,
                 email: this.contactForm.value.email,
                 copyAlerts: this.contactForm.value.copyAlerts,
+                copyOrders: this.contactForm.value.copyOrders,
             };
             this.dialogRef.close(result);
         }

@@ -8,6 +8,8 @@ import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor'
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { EmailcontentService } from '../../../services/emailcontent.service';
 
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 
@@ -47,6 +49,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             value: 1
         },
     ];
+    emailTemplatesDataSource: Array<any>;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -55,7 +58,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         private formBuilder: FormBuilder,
         private priceTiersService: PricetiersService,
         private pricingTemplatesService: PricingtemplatesService,
-        private fboPricesService: FbopricesService
+        private fboPricesService: FbopricesService,
+        private sharedService: SharedService,
+        private emailContentService: EmailcontentService
     ) {
         this.loadCurrentPrice();
         this.title = 'New Margin Template';
@@ -98,6 +103,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     ngOnInit() {
         this.initForm();
+        this.loadEmailContentTemplate();
     }
 
     initForm() {
@@ -121,10 +127,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 ]),
             }),
             thirdStep: this.formBuilder.group({
-                subject: [ '', Validators.required ],
-                email: [ '', Validators.required ],
-                notes: [ '', Validators.required ],
-            }),
+                emailContentId: [''],
+                notes: [''],
+            })
         });
 
         const secondStep = this.form.controls.secondStep as FormGroup;
@@ -182,8 +187,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             name: this.form.value.firstStep.templateName,
             default: this.form.value.firstStep.templateDefault,
             marginType: this.form.value.secondStep.marginType,
-            subject: this.form.value.thirdStep.subject,
-            email: this.form.value.thirdStep.email,
+            emailContentId: this.form.value.thirdStep.emailContentId,
             notes: this.form.value.thirdStep.notes,
         };
 
@@ -221,6 +225,13 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     resetWizard() {
         this.initForm();
         this.stepper.reset();
+    }
+
+    private loadEmailContentTemplate(): void {
+        this.emailContentService.getForFbo(this.sharedService.currentUser.fboId).subscribe(
+            (response: any) => {
+                this.emailTemplatesDataSource = response;
+            });
     }
 
     private updateMargins(oldMargins, marginType) {

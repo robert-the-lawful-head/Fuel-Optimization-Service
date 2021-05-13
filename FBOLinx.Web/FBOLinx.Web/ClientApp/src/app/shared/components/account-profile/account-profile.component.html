@@ -86,7 +86,7 @@
                 </div>
             </mat-tab>
 
-            <mat-tab *ngIf="contactsData && !isCsr" label="System Contacts">
+            <mat-tab *ngIf="!isCsr" label="System Contacts">
                 <form (ngSubmit)="onSaveSystemContacts()" [formGroup]="systemContactsForm">
                     <div class="mt-4 mb-2 pl-4">
                         <p>Add contacts at your FBO to copy on relevant system emails, such as fuel requests.</p>
@@ -95,18 +95,29 @@
                                    placeholder="FuelDesk Email"
                                    required>
                         </mat-form-field>
-                        <button [disabled]="!systemContactsForm.valid"
-                                class="ml-3"
-                                color="accent"
-                                mat-raised-button
-                                type="submit">
-                            Save Email
-                        </button>
+                        <div class="d-inline-block">
+                            <button [disabled]="!systemContactsForm.valid"
+                                    class="ml-3"
+                                    color="accent"
+                                    mat-raised-button
+                                    type="submit">
+                                Save Email
+                            </button>
+                        </div>
+                        <div class="d-inline-block float-right" style="margin-top:12px;">
+                            <button (click)="newRecord($event)"
+                                    [view]="'accent'"
+                                    beforeIcon="fa fa-plus"
+                                    ni-button>
+                                Add New
+                            </button>
+                        </div>
+                   
                     </div>
                     <!--Contacts Grid-->
                     <div *ngIf="contactsData">
                         <app-systemcontacts-grid (contactDeleted)="contactDeleted($event)"
-                                                 [contactsData]="contactsData"></app-systemcontacts-grid>
+                                                    [contactsData]="contactsData"></app-systemcontacts-grid>
                     </div>
                 </form>
             </mat-tab>
@@ -130,15 +141,15 @@
                                        matTooltipPosition="after" />
                             </mat-form-field>
                         </div>
-                        <div>
-                            <button [disabled]="!emailDistributionForm.valid"
-                                    class="ml-3"
-                                    color="accent"
-                                    mat-raised-button
-                                    type="submit">
-                                Save Emails
-                            </button>
-                        </div>
+                            <div class="mt-4 mb-2 pl-4">
+                                <button [disabled]="!emailDistributionForm.valid"
+                                        class="ml-3"
+                                        color="accent"
+                                        mat-raised-button
+                                        type="submit">
+                                    Save Emails
+                                </button>
+                            </div>
                     </div>
                 </form>
             </mat-tab>

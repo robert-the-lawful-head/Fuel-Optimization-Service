@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using FBOLinx.DB.Models;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.ServiceLayer.Test
 {
@@ -19,6 +20,27 @@ namespace FBOLinx.ServiceLayer.Test
             user.Role = User.UserRoles.Member;
 
             return user;
+        }
+
+        public static DistributePricingRequest CreateDistributePricingRequest()
+        {
+            DistributePricingRequest distributePricingRequest = new DistributePricingRequest();
+            distributePricingRequest.GroupId = 1;
+            distributePricingRequest.PricingTemplate = new PricingTemplate();
+            distributePricingRequest.PricingTemplate.Notes = string.Empty;
+            distributePricingRequest.PricingTemplate.MarginType = PricingTemplate.MarginTypes.CostPlus;
+            distributePricingRequest.Customer = CreateCustomerInfoByGroup();
+            distributePricingRequest.Customer.CustomerId = 1;
+
+            return distributePricingRequest;
+        }
+
+        public static CustomerInfoByGroup CreateCustomerInfoByGroup()
+        {
+            CustomerInfoByGroup customerInfoByGroup = new CustomerInfoByGroup();
+            customerInfoByGroup.Oid = 1;
+
+            return customerInfoByGroup;
         }
     }
 }

@@ -14,8 +14,9 @@ import { AirportWatchService } from '../../../services/airportwatch.service';
 import { FlightWatchHistorical, FlightWatchStatus } from '../../../models/flight-watch-historical';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
 import { CustomersListType } from '../../../models/customer';
-import { AircraftIcons } from '../../flight-watch/flight-watch-map/aircraft-icons';
+import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
 import { CsvExportModalComponent, ICsvExportModalData } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
+import { isCommercialAircraft } from '../../../../utils/aircraft';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -31,13 +32,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     @Output() refreshCustomers = new EventEmitter();
 
     public chartName = 'airport-arrivals-depatures-table';
-    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status'];
+    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status', 'pastVisits'];
 
     public filterStartDate: Date;
     public filterEndDate: Date;
-
-    public commercialAircraftTypeCodes = ['A3', 'A5'];
-    public commercialAircraftFlightNumber = ['ASA', 'UPS', 'SKW', 'FDX', 'UAL', 'AAL', 'DAL', 'SWA', 'GTI'];
 
     public isCommercialInvisible = true;
 
@@ -49,7 +47,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     public filtersChanged: Subject<any> = new Subject<any>();
 
-    public aircraftTypes = AircraftIcons;
+    public aircraftTypes = AIRCRAFT_IMAGES;
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,
@@ -96,7 +94,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     refreshDataSource() {
         const data = this.data.filter(x =>
             (!this.isCommercialInvisible ||
-                !(this.commercialAircraftTypeCodes.includes(x.aircraftTypeCode) || this.commercialAircraftFlightNumber.find(startNum => x.flightNumber.startsWith(startNum)))
+                !isCommercialAircraft(x.aircraftTypeCode, x.flightNumber)
             ) &&
             (!this.selectedCustomers.length || this.selectedCustomers.includes(x.customerInfoByGroupID)) &&
             (!this.selectedTailNumbers.length || this.selectedTailNumbers.includes(x.tailNumber))
@@ -173,7 +171,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
                     'Flight #': item.flightNumber,
                     'Hex #': item.hexCode,
                     Aircraft: item.aircraftType,
-                    'Aircraft Type': this.aircraftTypes[item.aircraftTypeCode].label,
+                    'Aircraft Type': this.getAircraftLabel(item.aircraftTypeCode),
                     'Date and Time': item.dateTime,
                     'Departure / Arrival': item.status === FlightWatchStatus.Landing ? 'Arrival' : 'Departure',
                 }));
@@ -192,5 +190,15 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         this.isCommercialInvisible = true;
 
         this.filterChanged();
+    }
+
+    getAircraftLabel(type: string) {
+        const found = this.aircraftTypes.find(a => a.id === type);
+        if (found) {
+            return found.label;
+        }
+        else {
+            return 'Other';
+        }
     }
 }

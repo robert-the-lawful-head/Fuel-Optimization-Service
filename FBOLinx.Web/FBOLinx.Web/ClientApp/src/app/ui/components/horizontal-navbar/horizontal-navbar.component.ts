@@ -172,7 +172,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
             const dialogRef = this.accountProfileDialog.open(
                 AccountProfileComponent, {
                     height: '550px',
-                    width: '850px',
+                    width: '1000px',
                     data: response,
                 }
             );

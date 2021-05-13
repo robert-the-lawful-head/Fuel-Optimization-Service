@@ -10,6 +10,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Services;
+using FBOLinx.Web.Services.Interfaces;
 using IO.Swagger.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -100,7 +101,7 @@ namespace FBOLinx.Web
             // configure DI for application services
             services.AddScoped<FuelerLinxService, FuelerLinxService>();
             services.AddScoped<RampFeesService, RampFeesService>();
-            services.AddScoped<PriceDistributionService, PriceDistributionService>();
+            services.AddScoped<IPriceDistributionService, PriceDistributionService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<UserRoleAttribute>();
             services.AddScoped<GroupTransitionService, GroupTransitionService>();
@@ -108,15 +109,16 @@ namespace FBOLinx.Web
             services.AddTransient<GroupFboService, GroupFboService>();
             services.AddTransient<CustomerService, CustomerService>();
             services.AddTransient<FboService, FboService>();
-            services.AddTransient<PriceFetchingService, PriceFetchingService>();
+            services.AddTransient<IPriceFetchingService, PriceFetchingService>();
             services.AddTransient<ResetPasswordService, ResetPasswordService>();
 
             //Business Services
             services.AddTransient<AircraftService, AircraftService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
-            services.AddTransient<MailTemplateService, MailTemplateService>();
+            services.AddTransient<IMailTemplateService, MailTemplateService>();
             services.AddTransient<CustomerAircraftService, CustomerAircraftService>();
             services.AddTransient<AirportWatchService, AirportWatchService>();
+            services.AddTransient<IMailService, MailService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

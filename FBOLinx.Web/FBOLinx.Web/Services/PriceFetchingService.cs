@@ -9,6 +9,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models;
+using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.ViewModels;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,9 @@ using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
 
 namespace FBOLinx.Web.Services
 {
-    public class PriceFetchingService
+
+
+    public class PriceFetchingService: IPriceFetchingService
     {
         private FboLinxContext _context;
         private int _FboId;
@@ -35,7 +38,9 @@ namespace FBOLinx.Web.Services
 
         #region Public Methods
 
-        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId, Core.Enums.FlightTypeClassifications flightTypeClassifications, Core.Enums.ApplicableTaxFlights departureType = Core.Enums.ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
+            string icao, int customerId, FlightTypeClassifications flightTypeClassifications, 
+            ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
         {
             List<string> airports = icao.Split(',').Select(x => x.Trim()).ToList();
             List<CustomerWithPricing> result = new List<CustomerWithPricing>();
@@ -72,15 +77,25 @@ namespace FBOLinx.Web.Services
                 List<CustomerWithPricing> pricing =
                     await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
 
-                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyAlerts.HasValue && x.Contact.CopyAlerts.Value).Select(x => x.Contact.Email).ToListAsync();
+                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyOrders.HasValue && x.Contact.CopyOrders.Value).Select(x => x.Contact.Email).ToListAsync();
 
-                foreach(var price in pricing)
+                List<string> alertEmailAddressesUsers = await _context.User.Where(x => x.GroupId == fbo.GroupId && (x.FboId == 0 || x.FboId == fbo.Oid) && x.CopyAlerts.HasValue && x.CopyOrders.Value).Select(x => x.Username).ToListAsync();
+
+                foreach (var price in pricing)
                 {
                     var template = templates.FirstOrDefault(x => x.Oid == price.PricingTemplateId);
                     if (template != null && template.TailNumbers != null)
                         price.TailNumbers = string.Join(",", template.TailNumbers);
                     if (alertEmailAddresses != null)
                         price.CopyEmails = string.Join(";", alertEmailAddresses);
+                    if(alertEmailAddressesUsers!=null)
+                    {
+                        foreach(var email in alertEmailAddressesUsers)
+                        {
+                            if (email.Contains('@'))
+                                price.CopyEmails += ";" + email;
+                        }
+                    }
                     price.FuelDeskEmail = fbo.FuelDeskEmail;
                 }
 
@@ -428,35 +443,36 @@ namespace FBOLinx.Web.Services
                                                  MinPriceTierValue = cmGroupResult.Min(c => Math.Abs(c.Amount.HasValue ? c.Amount.Value : 0))
                                              }).ToListAsync();
             var tempPricingTemplates = await (_context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync());
-            
+
             //Join the inner queries on the pricing templates
             var pricingTemplates = (from p in tempPricingTemplates
-                join cm in tempMarginTiers on p.Oid equals cm.TemplateId
-                    into leftJoinCmTiers
-                from cm in leftJoinCmTiers.DefaultIfEmpty()
-                join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
-                    into leftJoinFp
-                from fp in leftJoinFp.DefaultIfEmpty()
-                where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
-                              select new
-                              {
-                                  p.CustomerId,
-                                  p.Default,
-                                  p.Fboid,
-                                  Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
-                                  p.MarginType,
-                                  p.Name,
-                                  p.Notes,
-                                  p.Oid,
-                                  p.Type,
-                                  p.Subject,
-                                  p.Email,
-                                  IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
-                                  IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) :
-                                      p.MarginType == MarginTypes.CostPlus ? (fp != null ? fp.Price : 0) + cm.MaxPriceTierValue :
-                                      (p.MarginType == MarginTypes.RetailMinus ? (fp != null ? fp.Price : 0) - cm.MinPriceTierValue : 0),
-                                  TemplateId = cm == null ? 0 : cm.TemplateId
-                              }).ToList();
+                                    join cm in tempMarginTiers on p.Oid equals cm.TemplateId
+                                        into leftJoinCmTiers
+                                    from cm in leftJoinCmTiers.DefaultIfEmpty()
+                                    join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
+                                        into leftJoinFp
+                                    from fp in leftJoinFp.DefaultIfEmpty()
+                                    where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
+                                    select new
+                                    {
+                                        p.CustomerId,
+                                        p.Default,
+                                        p.Fboid,
+                                        Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
+                                        p.MarginType,
+                                        p.Name,
+                                        p.Notes,
+                                        p.Oid,
+                                        p.Type,
+                                        p.Subject,
+                                        p.Email,
+                                        IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
+                                        IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) :
+                                            p.MarginType == MarginTypes.CostPlus ? (fp != null ? fp.Price : 0) + cm.MaxPriceTierValue :
+                                            (p.MarginType == MarginTypes.RetailMinus ? (fp != null ? fp.Price : 0) - cm.MinPriceTierValue : 0),
+                                        TemplateId = cm == null ? 0 : cm.TemplateId,
+                                        p.EmailContentId
+                                    }).ToList();
 
 
             //Group the final result
@@ -477,6 +493,7 @@ namespace FBOLinx.Web.Services
                         pt.IsPricingExpired,
                         pt.IntoPlanePrice,
                         pt.TemplateId,
+                        pt.EmailContentId,
                     }
                     into groupedPt
                     select new PricingTemplatesGridViewModel
@@ -495,7 +512,8 @@ namespace FBOLinx.Web.Services
                         Email = groupedPt.Key.Email,
                         IsPricingExpired = groupedPt.Key.IsPricingExpired,
                         IntoPlanePrice = groupedPt.Key.IntoPlanePrice,
-                        CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == groupedPt.Key.TemplateId ? 1 : 0)
+                        CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == groupedPt.Key.TemplateId ? 1 : 0),
+                        EmailContentId = groupedPt.Key.EmailContentId
                     })
                 .OrderBy(pt => pt.Name)
                 .ToList();
