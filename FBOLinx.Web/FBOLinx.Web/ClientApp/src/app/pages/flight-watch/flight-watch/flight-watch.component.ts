@@ -123,6 +123,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
         this.flightWatchDataSubject.next(originalData);
         this.flightWatchDataSubject.asObservable();
+
+        if (this.selectedFlightWatch) {
+            this.selectedFlightWatch = this.filteredFlightWatchData[this.selectedFlightWatch.oid];
+        }
     }
 
     validate(event: ResizeEvent): boolean {

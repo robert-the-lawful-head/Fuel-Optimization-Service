@@ -16,6 +16,7 @@ import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../
 import { CustomersListType } from '../../../models/customer';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
 import { CsvExportModalComponent, ICsvExportModalData } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
+import { isCommercialAircraft } from '../../../../utils/aircraft';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -35,9 +36,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     public filterStartDate: Date;
     public filterEndDate: Date;
-
-    public commercialAircraftTypeCodes = ['A3', 'A5'];
-    public commercialAircraftFlightNumber = ['ASA', 'UPS', 'SKW', 'FDX', 'UAL', 'AAL', 'DAL', 'SWA', 'GTI'];
 
     public isCommercialInvisible = true;
 
@@ -96,7 +94,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     refreshDataSource() {
         const data = this.data.filter(x =>
             (!this.isCommercialInvisible ||
-                !(this.commercialAircraftTypeCodes.includes(x.aircraftTypeCode) || this.commercialAircraftFlightNumber.find(startNum => x.flightNumber.startsWith(startNum)))
+                !isCommercialAircraft(x.aircraftTypeCode, x.flightNumber)
             ) &&
             (!this.selectedCustomers.length || this.selectedCustomers.includes(x.customerInfoByGroupID)) &&
             (!this.selectedTailNumbers.length || this.selectedTailNumbers.includes(x.tailNumber))
