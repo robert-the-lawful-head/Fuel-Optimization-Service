@@ -28,7 +28,7 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./email-templates-home.component.scss'],
 })
 export class EmailTemplatesHomeComponent implements AfterViewInit, OnDestroy, OnInit {
-    public pageTitle = 'ITP Margin Templates';
+    public pageTitle = 'Email Templates';
     public breadcrumb: any[] = BREADCRUMBS;
     public emailTemplates: any[];
     public locationChangedSubscription: any;
