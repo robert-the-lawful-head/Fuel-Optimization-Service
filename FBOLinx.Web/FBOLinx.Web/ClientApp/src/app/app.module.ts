@@ -86,6 +86,7 @@ import { PricetiersService } from './services/pricetiers.service';
 import { PricingtemplatesService } from './services/pricingtemplates.service';
 import { RampfeesService } from './services/rampfees.service';
 import { RampfeesettingsService } from './services/rampfeesettings.service';
+import { SharedService } from './layouts/shared-service';
 import { TemporaryAddOnMarginService } from './services/temporaryaddonmargin.service';
 import { UserService } from './services/user.service';
 import { AppService } from './services/app.service';
@@ -191,6 +192,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     PricingtemplatesService,
     RampfeesService,
     RampfeesettingsService,
+    SharedService,
     TemporaryAddOnMarginService,
     UserService,
     AppService,

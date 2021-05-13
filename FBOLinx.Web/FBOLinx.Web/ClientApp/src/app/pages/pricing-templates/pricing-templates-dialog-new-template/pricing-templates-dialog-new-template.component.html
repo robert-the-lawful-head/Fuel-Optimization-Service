@@ -192,35 +192,19 @@
             </div>
         </mat-step>
         <mat-step formGroupName="thirdStep">
-            <ng-template matStepLabel>Create Email</ng-template>
+            <ng-template matStepLabel>Notes</ng-template>
             <div class="container-fluid inner-content">
                 <div class="row mt-2 mb-2">
                     <div class="col">
                         <mat-form-field>
-                            <input
-                                aria-label="Email Subject"
-                                autocomplete="off"
-                                formControlName="subject"
-                                matInput
-                                placeholder="Email Subject"
-                            />
+                            <mat-select formControlName="emailContentId"
+                                        placeholder="Select Email Template">
+                                <mat-option *ngFor="let emailContentTemplate of emailTemplatesDataSource"
+                                            [value]="emailContentTemplate.oid">
+                                    {{ emailContentTemplate.name }}
+                                </mat-option>
+                            </mat-select>
                         </mat-form-field>
-                    </div>
-                </div>
-                <div class="row mt-2 mb-2" style="font-size: 0.8rem;">
-                    <span class="font-weight-bold" style="font-size: 1rem;">
-                        Email Greeting
-                    </span>
-                    &nbsp;&nbsp;&nbsp; The body of the email to accompany
-                    your distribution emails
-                </div>
-                <div class="row mt-2 mb-2">
-                    <div class="col">
-                        <ejs-richtexteditor
-                            #typeEmail
-                            formControlName="email"
-                            placeholder="Greetings from our FBO! Here are our latest prices..."
-                        ></ejs-richtexteditor>
                     </div>
                 </div>
                 <div class="row mt-2 mb-2" style="font-size: 0.8rem;">
