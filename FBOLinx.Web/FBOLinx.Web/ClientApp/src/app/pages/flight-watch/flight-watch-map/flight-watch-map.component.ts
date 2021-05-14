@@ -5,6 +5,8 @@ import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from './aircraft-images';
 import { isCommercialAircraft } from '../../../../utils/aircraft';
 
+type LayerType = 'airway' | 'streetview' | 'icao';
+
 @Component({
     selector: 'app-flight-watch-map',
     templateUrl: './flight-watch-map.component.html',
@@ -172,18 +174,32 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         this.styleLoaded = true;
     }
 
-    toggleLayer(id: 'airway' | 'streetview', event: MouseEvent) {
-        event.preventDefault();
-        event.stopPropagation();
-
+    getLayersFromType(type: LayerType) {
         const airwayLayers = ['airways-lines', 'airways-labels'];
         const styleLayers = this.map
             .getStyle()
             .layers
             .filter(layer => !layer.id.startsWith('aircraft_') && !airwayLayers.includes(layer.id))
             .map(layer => layer.id);
-        const layers = id === 'airway' ? airwayLayers : styleLayers;
+        const icaoLayers = ['airports-names'];
 
+        if (type === 'airway') {
+            return airwayLayers;
+        }
+        if (type === 'streetview') {
+            return styleLayers;
+        }
+        if (type === 'icao') {
+            return icaoLayers;
+        }
+        return [];
+    }
+
+    toggleLayer(type: LayerType, event: MouseEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const layers = this.getLayersFromType(type);
 
         const visibility = this.map.getLayoutProperty(
             layers[0],
