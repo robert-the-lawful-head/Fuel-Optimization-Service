@@ -11,9 +11,11 @@ Method | HTTP request | Description
 [**GetAvailablePartnersByType**](PartnerApi.md#getavailablepartnersbytype) | **GET** /api/Partner/list/type/{partnerType} | Fetch all integration partners of a certain type.
 [**GetCompanyActiveIntegrationById**](PartnerApi.md#getcompanyactiveintegrationbyid) | **GET** /api/Partner/active-integration/{id} | Fetch an active integration for the authenticated company by it&#39;s {id}.
 [**GetCompanyActiveIntegrations**](PartnerApi.md#getcompanyactiveintegrations) | **GET** /api/Partner/active-integration/list | 
+[**GetOAuthUrlForPartner**](PartnerApi.md#getoauthurlforpartner) | **POST** /api/Partner/oath-url | Internal use only - Fetch the OAuth url to be used for authentication with a partner.
 [**GetPartnerCredentialsByTypeAndAffiliation**](PartnerApi.md#getpartnercredentialsbytypeandaffiliation) | **GET** /api/Partner/credentials/type/{partnerType}/affiliation/{affiliation} | Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user&#39;s data.
 [**GetPartnerInfo**](PartnerApi.md#getpartnerinfo) | **GET** /api/Partner | Fetch the integration partner by the provided API key.
 [**PostCompanyActiveIntegration**](PartnerApi.md#postcompanyactiveintegration) | **POST** /api/Partner/active-integration | 
+[**PostOAuthCallbackForPartner**](PartnerApi.md#postoauthcallbackforpartner) | **POST** /api/Partner/oath-callback | Internal use only - Post the OAuth code to the partner to receive an access/auth token.
 [**UpdateCompanyActiveIntegration**](PartnerApi.md#updatecompanyactiveintegration) | **PUT** /api/Partner/active-integration | 
 
 
@@ -490,6 +492,75 @@ This endpoint does not need any parameter.
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="getoauthurlforpartner"></a>
+# **GetOAuthUrlForPartner**
+> GetOAuthUrlForPartnerResponse GetOAuthUrlForPartner (GetOAuthUrlForPartnerRequest body)
+
+Internal use only - Fetch the OAuth url to be used for authentication with a partner.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetOAuthUrlForPartnerExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new PartnerApi();
+            var body = new GetOAuthUrlForPartnerRequest(); // GetOAuthUrlForPartnerRequest |  (optional) 
+
+            try
+            {
+                // Internal use only - Fetch the OAuth url to be used for authentication with a partner.
+                GetOAuthUrlForPartnerResponse result = apiInstance.GetOAuthUrlForPartner(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling PartnerApi.GetOAuthUrlForPartner: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**GetOAuthUrlForPartnerRequest**](GetOAuthUrlForPartnerRequest.md)|  | [optional] 
+
+### Return type
+
+[**GetOAuthUrlForPartnerResponse**](GetOAuthUrlForPartnerResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="getpartnercredentialsbytypeandaffiliation"></a>
 # **GetPartnerCredentialsByTypeAndAffiliation**
 > IntegrationPartnerCredentialsResponse GetPartnerCredentialsByTypeAndAffiliation (int? partnerType, int? affiliation)
@@ -681,6 +752,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PostCompanyActiveIntegrationResponse**](PostCompanyActiveIntegrationResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="postoauthcallbackforpartner"></a>
+# **PostOAuthCallbackForPartner**
+> PostPartnerOAuthCallbackReponse PostOAuthCallbackForPartner (PostPartnerOAuthCallbackRequest body)
+
+Internal use only - Post the OAuth code to the partner to receive an access/auth token.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostOAuthCallbackForPartnerExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new PartnerApi();
+            var body = new PostPartnerOAuthCallbackRequest(); // PostPartnerOAuthCallbackRequest |  (optional) 
+
+            try
+            {
+                // Internal use only - Post the OAuth code to the partner to receive an access/auth token.
+                PostPartnerOAuthCallbackReponse result = apiInstance.PostOAuthCallbackForPartner(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling PartnerApi.PostOAuthCallbackForPartner: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostPartnerOAuthCallbackRequest**](PostPartnerOAuthCallbackRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostPartnerOAuthCallbackReponse**](PostPartnerOAuthCallbackReponse.md)
 
 ### Authorization
 
