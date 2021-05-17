@@ -52,12 +52,6 @@ namespace IO.Swagger.Api
         /// <returns>CompanyActiveIntegrationListResponse</returns>
         CompanyActiveIntegrationListResponse GetCompanyActiveIntegrations ();
         /// <summary>
-        /// Internal use only - Fetch the OAuth url to be used for authentication with a partner. 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>GetOAuthUrlForPartnerResponse</returns>
-        GetOAuthUrlForPartnerResponse GetOAuthUrlForPartner (GetOAuthUrlForPartnerRequest body);
-        /// <summary>
         /// Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user&#39;s data. 
         /// </summary>
         /// <param name="partnerType"></param>
@@ -75,12 +69,6 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>PostCompanyActiveIntegrationResponse</returns>
         PostCompanyActiveIntegrationResponse PostCompanyActiveIntegration (PostCompanyActiveIntegrationRequest body);
-        /// <summary>
-        /// Internal use only - Post the OAuth code to the partner to receive an access/auth token. 
-        /// </summary>
-        /// <param name="body"></param>
-        /// <returns>PostPartnerOAuthCallbackReponse</returns>
-        PostPartnerOAuthCallbackReponse PostOAuthCallbackForPartner (PostPartnerOAuthCallbackRequest body);
         /// <summary>
         ///  
         /// </summary>
@@ -386,40 +374,6 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Internal use only - Fetch the OAuth url to be used for authentication with a partner. 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>GetOAuthUrlForPartnerResponse</returns>            
-        public GetOAuthUrlForPartnerResponse GetOAuthUrlForPartner (GetOAuthUrlForPartnerRequest body)
-        {
-            
-    
-            var path = "/api/Partner/oath-url";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetOAuthUrlForPartner: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling GetOAuthUrlForPartner: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (GetOAuthUrlForPartnerResponse) ApiClient.Deserialize(response.Content, typeof(GetOAuthUrlForPartnerResponse), response.Headers);
-        }
-    
-        /// <summary>
         /// Fetch the credentials model for a certain type/affiliation of integration partner.  If the authenticated user has anything setup for that partner then the model will contain the user&#39;s data. 
         /// </summary>
         /// <param name="partnerType"></param> 
@@ -525,40 +479,6 @@ path = path.Replace("{" + "affiliation" + "}", ApiClient.ParameterToString(affil
                 throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyActiveIntegration: " + response.ErrorMessage, response.ErrorMessage);
     
             return (PostCompanyActiveIntegrationResponse) ApiClient.Deserialize(response.Content, typeof(PostCompanyActiveIntegrationResponse), response.Headers);
-        }
-    
-        /// <summary>
-        /// Internal use only - Post the OAuth code to the partner to receive an access/auth token. 
-        /// </summary>
-        /// <param name="body"></param> 
-        /// <returns>PostPartnerOAuthCallbackReponse</returns>            
-        public PostPartnerOAuthCallbackReponse PostOAuthCallbackForPartner (PostPartnerOAuthCallbackRequest body)
-        {
-            
-    
-            var path = "/api/Partner/oath-callback";
-            path = path.Replace("{format}", "json");
-                
-            var queryParams = new Dictionary<String, String>();
-            var headerParams = new Dictionary<String, String>();
-            var formParams = new Dictionary<String, String>();
-            var fileParams = new Dictionary<String, FileParameter>();
-            String postBody = null;
-    
-                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
-    
-            // authentication setting, if any
-            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
-    
-            // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
-    
-            if (((int)response.StatusCode) >= 400)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostOAuthCallbackForPartner: " + response.Content, response.Content);
-            else if (((int)response.StatusCode) == 0)
-                throw new ApiException ((int)response.StatusCode, "Error calling PostOAuthCallbackForPartner: " + response.ErrorMessage, response.ErrorMessage);
-    
-            return (PostPartnerOAuthCallbackReponse) ApiClient.Deserialize(response.Content, typeof(PostPartnerOAuthCallbackReponse), response.Headers);
         }
     
         /// <summary>

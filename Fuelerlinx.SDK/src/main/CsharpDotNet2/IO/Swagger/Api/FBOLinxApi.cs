@@ -44,6 +44,12 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param>
+        /// <returns>FboLinxCustomerTransactionsCountAtAirportResponse</returns>
+        FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerTransactionsCountForMultipleAirports (FBOLinxOrdersForMultipleAirportsRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
         /// <returns>FboLinxFbosTransactionsCountResponse</returns>
         FboLinxFbosTransactionsCountResponse GetFBOsTransactionsCount (FBOLinxOrdersRequest body);
         /// <summary>
@@ -289,6 +295,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCustomerTransactionsCount: " + response.Content, response.Content);
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCustomerTransactionsCount: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FboLinxCustomerTransactionsCountAtAirportResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxCustomerTransactionsCountAtAirportResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>FboLinxCustomerTransactionsCountAtAirportResponse</returns>            
+        public FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerTransactionsCountForMultipleAirports (FBOLinxOrdersForMultipleAirportsRequest body)
+        {
+            
+    
+            var path = "/api/FBOLinx/get-customer-orders-count-at-multiple-airports";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCustomerTransactionsCountForMultipleAirports: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCustomerTransactionsCountForMultipleAirports: " + response.ErrorMessage, response.ErrorMessage);
     
             return (FboLinxCustomerTransactionsCountAtAirportResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxCustomerTransactionsCountAtAirportResponse), response.Headers);
         }

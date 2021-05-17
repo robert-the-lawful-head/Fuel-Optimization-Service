@@ -11,27 +11,27 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class GetOAuthUrlForPartnerResponse {
+  public class FBOLinxOrdersForMultipleAirportsRequest {
     /// <summary>
-    /// Gets or Sets Result
+    /// Gets or Sets StartDateTime
     /// </summary>
-    [DataMember(Name="result", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "result")]
-    public string Result { get; set; }
+    [DataMember(Name="startDateTime", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "startDateTime")]
+    public DateTime? StartDateTime { get; set; }
 
     /// <summary>
-    /// Gets or Sets Success
+    /// Gets or Sets EndDateTime
     /// </summary>
-    [DataMember(Name="success", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "success")]
-    public bool? Success { get; set; }
+    [DataMember(Name="endDateTime", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "endDateTime")]
+    public DateTime? EndDateTime { get; set; }
 
     /// <summary>
-    /// Gets or Sets Message
+    /// Gets or Sets Icaos
     /// </summary>
-    [DataMember(Name="message", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "message")]
-    public string Message { get; set; }
+    [DataMember(Name="icaos", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "icaos")]
+    public List<string> Icaos { get; set; }
 
 
     /// <summary>
@@ -40,10 +40,10 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class GetOAuthUrlForPartnerResponse {\n");
-      sb.Append("  Result: ").Append(Result).Append("\n");
-      sb.Append("  Success: ").Append(Success).Append("\n");
-      sb.Append("  Message: ").Append(Message).Append("\n");
+      sb.Append("class FBOLinxOrdersForMultipleAirportsRequest {\n");
+      sb.Append("  StartDateTime: ").Append(StartDateTime).Append("\n");
+      sb.Append("  EndDateTime: ").Append(EndDateTime).Append("\n");
+      sb.Append("  Icaos: ").Append(Icaos).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
