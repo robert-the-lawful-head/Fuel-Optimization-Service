@@ -31,5 +31,7 @@ namespace FBOLinx.Web.Services.Interfaces
         Task<List<PricingTemplatesGridViewModel>> GetPricingTemplates(int fboId, int groupId);
 
         Task<PriceDistributionService.PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId);
+
+        Task<double> GetCurrentPostedRetail(int fboId);
     }
 }
