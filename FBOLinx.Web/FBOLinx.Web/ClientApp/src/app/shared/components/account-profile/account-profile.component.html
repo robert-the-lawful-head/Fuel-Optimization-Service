@@ -95,6 +95,9 @@
                                    placeholder="FuelDesk Email"
                                    required>
                         </mat-form-field>
+                        <div class="d-inline-block" *ngIf="fuelDeskEmail.errors?.email" style="color: red;">
+                            Please enter a valid email address.
+                        </div>
                         <button [disabled]="!systemContactsForm.valid"
                                 class="ml-3"
                                 color="accent"
@@ -117,18 +120,24 @@
                         <mat-form-field style="max-width: 240px;">
                             <input formControlName="senderAddress"
                                    matInput
-                                   placeholder="Sender Address*"
+                                   placeholder="Sender Address"
                                    matTooltip="Your distribution emails will come from this address"
-                                   matTooltipPosition="after" />
+                                   matTooltipPosition="after" required />
                         </mat-form-field> @FBOLinx.com
+                        <div class="d-inline-block" *ngIf="senderAddress.errors?.pattern" style="color: red;">
+                            Please enter with no spaces.
+                        </div>
                         <div>
                             <mat-form-field style="max-width: 240px;">
                                 <input formControlName="replyTo"
                                        matInput
-                                       placeholder="ReplyTo*"
+                                       placeholder="ReplyTo"
                                        matTooltip="For distribution emails, customer replies will default to this address"
-                                       matTooltipPosition="after" />
+                                       matTooltipPosition="after" required />
                             </mat-form-field>
+                            <div class="d-inline-block" *ngIf="replyTo.errors?.email" style="color: red;">
+                                Please enter a valid email address.
+                            </div>
                         </div>
                         <div>
                             <button [disabled]="!emailDistributionForm.valid"
