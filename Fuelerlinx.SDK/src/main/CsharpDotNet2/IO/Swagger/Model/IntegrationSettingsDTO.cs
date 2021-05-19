@@ -62,39 +62,11 @@ namespace IO.Swagger.Model {
     public string SchedulingLoginPassword { get; set; }
 
     /// <summary>
-    /// Gets or Sets PushSkippedLegsToTripSheet
-    /// </summary>
-    [DataMember(Name="PushSkippedLegsToTripSheet", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "PushSkippedLegsToTripSheet")]
-    public bool? PushSkippedLegsToTripSheet { get; set; }
-
-    /// <summary>
-    /// Gets or Sets UseScheduledETEDomestic
-    /// </summary>
-    [DataMember(Name="UseScheduledETEDomestic", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "UseScheduledETEDomestic")]
-    public bool? UseScheduledETEDomestic { get; set; }
-
-    /// <summary>
-    /// Gets or Sets UseScheduledETEInternational
-    /// </summary>
-    [DataMember(Name="UseScheduledETEInternational", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "UseScheduledETEInternational")]
-    public bool? UseScheduledETEInternational { get; set; }
-
-    /// <summary>
     /// Gets or Sets IsDefaultSchedulingAccount
     /// </summary>
     [DataMember(Name="IsDefaultSchedulingAccount", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "IsDefaultSchedulingAccount")]
     public bool? IsDefaultSchedulingAccount { get; set; }
-
-    /// <summary>
-    /// Gets or Sets UserPreferredFBO
-    /// </summary>
-    [DataMember(Name="UserPreferredFBO", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "UserPreferredFBO")]
-    public bool? UserPreferredFBO { get; set; }
 
 
     /// <summary>
@@ -111,11 +83,7 @@ namespace IO.Swagger.Model {
       sb.Append("  OmitPreferredFBOs: ").Append(OmitPreferredFBOs).Append("\n");
       sb.Append("  SchedulingLoginUserName: ").Append(SchedulingLoginUserName).Append("\n");
       sb.Append("  SchedulingLoginPassword: ").Append(SchedulingLoginPassword).Append("\n");
-      sb.Append("  PushSkippedLegsToTripSheet: ").Append(PushSkippedLegsToTripSheet).Append("\n");
-      sb.Append("  UseScheduledETEDomestic: ").Append(UseScheduledETEDomestic).Append("\n");
-      sb.Append("  UseScheduledETEInternational: ").Append(UseScheduledETEInternational).Append("\n");
       sb.Append("  IsDefaultSchedulingAccount: ").Append(IsDefaultSchedulingAccount).Append("\n");
-      sb.Append("  UserPreferredFBO: ").Append(UserPreferredFBO).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

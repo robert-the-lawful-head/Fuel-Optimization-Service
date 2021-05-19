@@ -118,6 +118,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "settings")]
     public CompanyAccountSettingsDTO Settings { get; set; }
 
+    /// <summary>
+    /// Gets or Sets ScheduledTripSettings
+    /// </summary>
+    [DataMember(Name="scheduledTripSettings", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "scheduledTripSettings")]
+    public ScheduledTripSettingsDTO ScheduledTripSettings { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -141,6 +148,7 @@ namespace IO.Swagger.Model {
       sb.Append("  FaaCertificateNumber: ").Append(FaaCertificateNumber).Append("\n");
       sb.Append("  ImageFileDataId: ").Append(ImageFileDataId).Append("\n");
       sb.Append("  Settings: ").Append(Settings).Append("\n");
+      sb.Append("  ScheduledTripSettings: ").Append(ScheduledTripSettings).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

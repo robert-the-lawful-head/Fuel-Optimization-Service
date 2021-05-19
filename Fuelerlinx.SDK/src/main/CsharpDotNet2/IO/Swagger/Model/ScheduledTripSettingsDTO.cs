@@ -27,13 +27,6 @@ namespace IO.Swagger.Model {
     public int? CompanyId { get; set; }
 
     /// <summary>
-    /// Gets or Sets DisablePushOnDispatch
-    /// </summary>
-    [DataMember(Name="disablePushOnDispatch", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "disablePushOnDispatch")]
-    public bool? DisablePushOnDispatch { get; set; }
-
-    /// <summary>
     /// Gets or Sets DepartureDispatchOnly
     /// </summary>
     [DataMember(Name="departureDispatchOnly", EmitDefaultValue=false)]
@@ -76,11 +69,11 @@ namespace IO.Swagger.Model {
     public bool? CopyScheduledCrewEmails { get; set; }
 
     /// <summary>
-    /// Gets or Sets PreventExpenseCreation
+    /// Gets or Sets CreateExpenseInFos
     /// </summary>
-    [DataMember(Name="preventExpenseCreation", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "preventExpenseCreation")]
-    public bool? PreventExpenseCreation { get; set; }
+    [DataMember(Name="createExpenseInFos", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "createExpenseInFos")]
+    public bool? CreateExpenseInFos { get; set; }
 
     /// <summary>
     /// Gets or Sets AddTimeStampToFuelComment
@@ -146,6 +139,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "nonDispatchTripSheetNotesPreText")]
     public string NonDispatchTripSheetNotesPreText { get; set; }
 
+    /// <summary>
+    /// Gets or Sets WriteToTripSheetOnDispatch
+    /// </summary>
+    [DataMember(Name="writeToTripSheetOnDispatch", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "writeToTripSheetOnDispatch")]
+    public bool? WriteToTripSheetOnDispatch { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -156,14 +156,13 @@ namespace IO.Swagger.Model {
       sb.Append("class ScheduledTripSettingsDTO {\n");
       sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
-      sb.Append("  DisablePushOnDispatch: ").Append(DisablePushOnDispatch).Append("\n");
       sb.Append("  DepartureDispatchOnly: ").Append(DepartureDispatchOnly).Append("\n");
       sb.Append("  ShowArrivalOfFinalLeg: ").Append(ShowArrivalOfFinalLeg).Append("\n");
       sb.Append("  DispatchMessageFormat: ").Append(DispatchMessageFormat).Append("\n");
       sb.Append("  NonDispatchMessageFormat: ").Append(NonDispatchMessageFormat).Append("\n");
       sb.Append("  AllowRampFeeInTripSheet: ").Append(AllowRampFeeInTripSheet).Append("\n");
       sb.Append("  CopyScheduledCrewEmails: ").Append(CopyScheduledCrewEmails).Append("\n");
-      sb.Append("  PreventExpenseCreation: ").Append(PreventExpenseCreation).Append("\n");
+      sb.Append("  CreateExpenseInFos: ").Append(CreateExpenseInFos).Append("\n");
       sb.Append("  AddTimeStampToFuelComment: ").Append(AddTimeStampToFuelComment).Append("\n");
       sb.Append("  AddFillerLegs: ").Append(AddFillerLegs).Append("\n");
       sb.Append("  IncludeTimeStampOfUserNotes: ").Append(IncludeTimeStampOfUserNotes).Append("\n");
@@ -173,6 +172,7 @@ namespace IO.Swagger.Model {
       sb.Append("  UseScheduledEteInternational: ").Append(UseScheduledEteInternational).Append("\n");
       sb.Append("  UserPreferredFbo: ").Append(UserPreferredFbo).Append("\n");
       sb.Append("  NonDispatchTripSheetNotesPreText: ").Append(NonDispatchTripSheetNotesPreText).Append("\n");
+      sb.Append("  WriteToTripSheetOnDispatch: ").Append(WriteToTripSheetOnDispatch).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

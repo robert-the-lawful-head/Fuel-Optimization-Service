@@ -26,6 +26,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "accountingData")]
     public Object AccountingData { get; set; }
 
+    /// <summary>
+    /// Gets or Sets InvoiceDate
+    /// </summary>
+    [DataMember(Name="invoiceDate", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "invoiceDate")]
+    public DateTime? InvoiceDate { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -36,6 +43,7 @@ namespace IO.Swagger.Model {
       sb.Append("class PostTransactionAccountingDataRequest {\n");
       sb.Append("  TransactionId: ").Append(TransactionId).Append("\n");
       sb.Append("  AccountingData: ").Append(AccountingData).Append("\n");
+      sb.Append("  InvoiceDate: ").Append(InvoiceDate).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

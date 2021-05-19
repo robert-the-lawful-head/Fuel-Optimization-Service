@@ -10,7 +10,7 @@ Method | HTTP request | Description
 [**GetCrowdSourcedRampFeeByScenario**](RampFeeApi.md#getcrowdsourcedrampfeebyscenario) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a crowd-sourced ramp fee pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
 [**GetCrowdSourcedRampFeeByScenarioList**](RampFeeApi.md#getcrowdsourcedrampfeebyscenariolist) | **GET** /api/RampFee/crowd-sourced/tail/{tailNumber}/airport/{icao}/fbo/{fboName}/list | Fetch all crowd-sourced ramp fees pulled from various sources for the provided [tailNumber], [airportIdentifier], and [fboName].
 [**GetRampFeeByCompany**](RampFeeApi.md#getrampfeebycompany) | **GET** /api/RampFee/company-specific/{id} | Get a company-specific ramp fee by it&#39;s [id].
-[**GetRampFeeByCompanyByScenario**](RampFeeApi.md#getrampfeebycompanybyscenario) | **GET** /api/RampFee/company-specific/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}.
+[**GetRampFeeByCompanyByScenario**](RampFeeApi.md#getrampfeebycompanybyscenario) | **GET** /api/RampFee/company-specific/tail/{tailNumber}/airport/{icao}/fbo/{fboName} | Fetch a company-specific ramp fee based on the provided {tailNumber}, {icao}, and {fboName}.
 [**GetRampFeeByCompanyNotes**](RampFeeApi.md#getrampfeebycompanynotes) | **GET** /api/RampFee/company-specific/{id}/notes | Fetch all company-specific notes for the specified [rampFeeByCompanyId].
 [**GetRampFeesByCompanyForAirport**](RampFeeApi.md#getrampfeesbycompanyforairport) | **GET** /api/RampFee/company-specific/by-airport/{icao} | Get a list of company-specific ramp fees at the the provided [icao].
 [**GetRampFeesByCompanyForLocation**](RampFeeApi.md#getrampfeesbycompanyforlocation) | **GET** /api/RampFee/company-specific/by-location/{icao}/{fboName} | Get a list of company-specific ramp fees at the the provided [icao] and [fboName].
@@ -451,7 +451,7 @@ Name | Type | Description  | Notes
 # **GetRampFeeByCompanyByScenario**
 > RampFeeByCompanyResponse GetRampFeeByCompanyByScenario (string tailNumber, string icao, string fboName)
 
-Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}.
+Fetch a company-specific ramp fee based on the provided {tailNumber}, {icao}, and {fboName}.
 
 ### Example
 ```csharp
@@ -484,7 +484,7 @@ namespace Example
 
             try
             {
-                // Fetch a company-specific ramp fee based on the provided {tailNumber}, {airportIdentifier}, and {fbo}.
+                // Fetch a company-specific ramp fee based on the provided {tailNumber}, {icao}, and {fboName}.
                 RampFeeByCompanyResponse result = apiInstance.GetRampFeeByCompanyByScenario(tailNumber, icao, fboName);
                 Debug.WriteLine(result);
             }

@@ -41,13 +41,6 @@ namespace IO.Swagger.Model {
     public bool? IsAllInclusivePricingPrioritized { get; set; }
 
     /// <summary>
-    /// Gets or Sets IsPostedRetailSeparated
-    /// </summary>
-    [DataMember(Name="isPostedRetailSeparated", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "isPostedRetailSeparated")]
-    public bool? IsPostedRetailSeparated { get; set; }
-
-    /// <summary>
     /// Gets or Sets OmitFromDispatchConfirmation
     /// </summary>
     [DataMember(Name="omitFromDispatchConfirmation", EmitDefaultValue=false)]
@@ -173,7 +166,6 @@ namespace IO.Swagger.Model {
       sb.Append("  UserId: ").Append(UserId).Append("\n");
       sb.Append("  FuelOptionSorting: ").Append(FuelOptionSorting).Append("\n");
       sb.Append("  IsAllInclusivePricingPrioritized: ").Append(IsAllInclusivePricingPrioritized).Append("\n");
-      sb.Append("  IsPostedRetailSeparated: ").Append(IsPostedRetailSeparated).Append("\n");
       sb.Append("  OmitFromDispatchConfirmation: ").Append(OmitFromDispatchConfirmation).Append("\n");
       sb.Append("  FuelOn: ").Append(FuelOn).Append("\n");
       sb.Append("  ExcludeAllEmailsByDefault: ").Append(ExcludeAllEmailsByDefault).Append("\n");

@@ -34,6 +34,13 @@ namespace IO.Swagger.Model {
     public string Description { get; set; }
 
     /// <summary>
+    /// Gets or Sets Warning
+    /// </summary>
+    [DataMember(Name="warning", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "warning")]
+    public string Warning { get; set; }
+
+    /// <summary>
     /// Gets or Sets IsFavorite
     /// </summary>
     [DataMember(Name="isFavorite", EmitDefaultValue=false)]
@@ -86,6 +93,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  Name: ").Append(Name).Append("\n");
       sb.Append("  Description: ").Append(Description).Append("\n");
+      sb.Append("  Warning: ").Append(Warning).Append("\n");
       sb.Append("  IsFavorite: ").Append(IsFavorite).Append("\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  DataOptions: ").Append(DataOptions).Append("\n");

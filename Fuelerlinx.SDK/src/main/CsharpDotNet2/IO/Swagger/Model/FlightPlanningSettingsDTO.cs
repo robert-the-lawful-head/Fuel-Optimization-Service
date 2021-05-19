@@ -84,9 +84,9 @@ namespace IO.Swagger.Model {
     public string FlightPlanningProviderPassword { get; set; }
 
     /// <summary>
-    /// Routing Types:             0 = Optimal             1 = Direct             2 = Custom    * `Optimal` - Optimal  * `Direct` - Direct  * `Custom` - Customer  
+    /// Routing Types:             0 = Optimal             1 = Direct             2 = Custom    * `Optimal` - Optimal  * `Direct` - Direct  * `Custom` - Customer  * `RecentATC` - Recent ATC  
     /// </summary>
-    /// <value>Routing Types:             0 = Optimal             1 = Direct             2 = Custom    * `Optimal` - Optimal  * `Direct` - Direct  * `Custom` - Customer  </value>
+    /// <value>Routing Types:             0 = Optimal             1 = Direct             2 = Custom    * `Optimal` - Optimal  * `Direct` - Direct  * `Custom` - Customer  * `RecentATC` - Recent ATC  </value>
     [DataMember(Name="defaultRoutingType", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "defaultRoutingType")]
     public int? DefaultRoutingType { get; set; }
