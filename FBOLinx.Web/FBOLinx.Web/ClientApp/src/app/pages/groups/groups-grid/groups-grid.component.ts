@@ -464,7 +464,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         );
         const filteredGroups = this.groupsFbosData.groups.filter(group =>
             this.accountType === 'all' ||
-            (this.accountType === 'active' && !group.fbos.length) ||
+            (this.accountType === 'active' && (!group.expiredFboAccountCount || group.fboCount !== group.expiredFboAccountCount)) ||
             filteredFbos.find(fbo => fbo.groupId === group.oid)
         );
 
