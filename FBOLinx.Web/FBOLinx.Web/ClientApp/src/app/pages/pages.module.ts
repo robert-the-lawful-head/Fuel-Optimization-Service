@@ -133,6 +133,7 @@ import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { SystemcontactsNewContactModalComponent } from './contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 import { GroupAnalyticsHomeComponent } from './group-analytics/group-analytics-home/group-analytics-home.component';
 import { GroupAnalyticsGenerateDialogComponent } from './group-analytics/group-analytics-generate-dialog/group-analytics-generate-dialog.component';
+import { GroupAnalyticsCustomerStatisticsComponent } from './group-analytics/group-analytics-customer-statistics/group-analytics-customer-statistics.component';
 import { FlightWatchComponent } from './flight-watch/flight-watch/flight-watch.component';
 import { FlightWatchMapComponent } from './flight-watch/flight-watch-map/flight-watch-map.component';
 import { FlightWatchAircraftInfoComponent } from './flight-watch/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
@@ -335,6 +336,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         TableGlobalSearchComponent,
         GroupAnalyticsHomeComponent,
         GroupAnalyticsGenerateDialogComponent,
+        GroupAnalyticsCustomerStatisticsComponent,
         FeeAndTaxBreakdownComponent,
         TableSettingsComponent,
         AircraftAssignModalComponent,
