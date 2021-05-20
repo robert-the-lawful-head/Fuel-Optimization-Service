@@ -95,15 +95,16 @@
                                    placeholder="FuelDesk Email"
                                    required>
                         </mat-form-field>
-                        <div class="d-inline-block">
-                            <button [disabled]="!systemContactsForm.valid"
-                                    class="ml-3"
-                                    color="accent"
-                                    mat-raised-button
-                                    type="submit">
-                                Save Email
-                            </button>
+                        <div class="d-inline-block" *ngIf="fuelDeskEmail.errors?.email" style="color: red;">
+                            Please enter a valid email address.
                         </div>
+                        <button [disabled]="!systemContactsForm.valid"
+                                class="ml-3"
+                                color="accent"
+                                mat-raised-button
+                                type="submit">
+                            Save Email
+                        </button>
                         <div class="d-inline-block float-right" style="margin-top:12px;">
                             <button (click)="newRecord($event)"
                                     [view]="'accent'"
@@ -112,7 +113,6 @@
                                 Add New
                             </button>
                         </div>
-                   
                     </div>
                     <!--Contacts Grid-->
                     <div *ngIf="contactsData">
@@ -128,18 +128,24 @@
                         <mat-form-field style="max-width: 240px;">
                             <input formControlName="senderAddress"
                                    matInput
-                                   placeholder="Sender Address*"
+                                   placeholder="Sender Address"
                                    matTooltip="Your distribution emails will come from this address"
-                                   matTooltipPosition="after" />
+                                   matTooltipPosition="after" required />
                         </mat-form-field> @FBOLinx.com
+                        <div class="d-inline-block" *ngIf="senderAddress.errors?.pattern" style="color: red;">
+                            Please enter with no spaces.
+                        </div>
                         <div>
                             <mat-form-field style="max-width: 240px;">
                                 <input formControlName="replyTo"
                                        matInput
-                                       placeholder="ReplyTo*"
+                                       placeholder="ReplyTo"
                                        matTooltip="For distribution emails, customer replies will default to this address"
-                                       matTooltipPosition="after" />
+                                       matTooltipPosition="after" required />
                             </mat-form-field>
+                            <div class="d-inline-block" *ngIf="replyTo.errors?.email" style="color: red;">
+                                Please enter a valid email address.
+                            </div>
                         </div>
                             <div class="mt-4 mb-2 pl-4">
                                 <button [disabled]="!emailDistributionForm.valid"
