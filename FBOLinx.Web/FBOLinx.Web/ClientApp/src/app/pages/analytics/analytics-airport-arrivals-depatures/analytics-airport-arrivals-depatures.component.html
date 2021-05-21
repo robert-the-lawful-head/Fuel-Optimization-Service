@@ -91,6 +91,7 @@
                 </button>
                 <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
                     <button (click)="onExport()" mat-menu-item>Export</button>
+                    <button (click)="openSettings()" mat-menu-item>Settings</button>
                 </mat-menu>
             </div>
         </div>
@@ -261,9 +262,9 @@
                         <td *matCellDef="let info" mat-cell>{{info.pastVisits}}</td>
                     </ng-container>
 
-                    <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+                    <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
                     <tr
-                        *matRowDef="let row; columns: displayedColumns;"
+                        *matRowDef="let row; columns: visibleColumns;"
                         mat-row
                         (click)="onClickAircraft(row)"
                     ></tr>
