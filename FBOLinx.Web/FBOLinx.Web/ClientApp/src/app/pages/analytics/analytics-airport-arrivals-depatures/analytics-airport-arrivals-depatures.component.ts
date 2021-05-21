@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject } from 'rxjs';
@@ -17,6 +17,7 @@ import { CustomersListType } from '../../../models/customer';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
 import { CsvExportModalComponent, ICsvExportModalData } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
 import { isCommercialAircraft } from '../../../../utils/aircraft';
+import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -24,34 +25,38 @@ import { isCommercialAircraft } from '../../../../utils/aircraft';
     styleUrls: ['./analytics-airport-arrivals-depatures.component.scss'],
 })
 export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
     @Input() customers: CustomersListType[] = [];
     @Input() tailNumbers: any[] = [];
     @Output() refreshCustomers = new EventEmitter();
 
-    public chartName = 'airport-arrivals-depatures-table';
-    public displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status', 'pastVisits'];
+    chartName = 'airport-arrivals-depatures-table';
+    displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status', 'pastVisits'];
 
-    public filterStartDate: Date;
-    public filterEndDate: Date;
+    filterStartDate: Date;
+    filterEndDate: Date;
 
-    public isCommercialInvisible = true;
+    isCommercialInvisible = true;
 
-    public data: FlightWatchHistorical[];
-    public dataSource: MatTableDataSource<FlightWatchHistorical>;
+    data: FlightWatchHistorical[];
+    dataSource: MatTableDataSource<FlightWatchHistorical>;
 
-    public selectedCustomers: number[] = [];
-    public selectedTailNumbers: string[] = [];
+    selectedCustomers: number[] = [];
+    selectedTailNumbers: string[] = [];
 
-    public filtersChanged: Subject<any> = new Subject<any>();
+    filtersChanged: Subject<any> = new Subject<any>();
 
-    public aircraftTypes = AIRCRAFT_IMAGES;
+    aircraftTypes = AIRCRAFT_IMAGES;
+
+    tableLocalStorageKey: string;
+    columns: ColumnType[] = [];
 
     constructor(
-        public newCustomerAircraftDialog: MatDialog,
-        public exportDialog: MatDialog,
+        private newCustomerAircraftDialog: MatDialog,
+        private exportDialog: MatDialog,
+        private tableSettingsDialog: MatDialog,
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
@@ -61,9 +66,24 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshDataSource());
+        this.initColumns();
+    }
+
+    get visibleColumns() {
+        return this.columns.filter(column => !column.hidden).map(column => column.id) || [];
     }
 
     ngOnInit() {
+        this.sort.sortChange.subscribe(() => {
+            this.columns = this.columns.map(column =>
+                column.id === this.sort.active
+                    ? { ...column, sort: this.sort.direction }
+                    : { id: column.id, name: column.name, hidden: column.hidden }
+            );
+
+            this.saveSettings();
+        });
+
         this.refreshData();
     }
 
@@ -76,6 +96,53 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
                 endDateTime: endDate,
             }
         );
+    }
+
+    initColumns() {
+        this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+        } else {
+            this.columns = [
+                {
+                    id: 'company',
+                    name: 'Company',
+                },
+                {
+                    id: 'tailNumber',
+                    name: 'Tail #',
+                },
+                {
+                    id: 'flightNumber',
+                    name: 'Flight #',
+                },
+                {
+                    id: 'hexCode',
+                    name: 'Hex #',
+                },
+                {
+                    id: 'aircraftType',
+                    name: `Aircraft`,
+                },
+                {
+                    id: 'aircraftTypeCode',
+                    name: 'Aircraft Type',
+                },
+                {
+                    id: 'dateTime',
+                    name: 'Date and Time',
+                    sort: 'desc',
+                },
+                {
+                    id: 'status',
+                    name: 'Departure / Arrival',
+                },
+                {
+                    id: 'pastVisits',
+                    name: 'Past Visits',
+                },
+            ];
+        }
     }
 
     refreshData() {
@@ -104,6 +171,14 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
     }
+
+    refreshSort() {
+        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
+        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
+    }
+
 
     filterChanged() {
         this.filtersChanged.next();
@@ -200,5 +275,25 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         else {
             return 'Other';
         }
+    }
+
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
+            data: this.columns
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.columns = [ ...result ];
+
+            this.refreshSort();
+            this.saveSettings();
+        });
+    }
+
+    saveSettings() {
+        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
     }
 }

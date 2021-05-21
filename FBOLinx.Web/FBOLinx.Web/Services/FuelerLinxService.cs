@@ -106,6 +106,13 @@ namespace FBOLinx.Web.Services
             return results;
         }
 
+        public FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerTransactionsCountForMultipleAirports(FBOLinxOrdersForMultipleAirportsRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FboLinxCustomerTransactionsCountAtAirportResponse results = api.GetCustomerTransactionsCountForMultipleAirports(request);
+            return results;
+        }
+
         public FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerFBOTransactionsCount(FBOLinxOrdersRequest request)
         {
             var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);

@@ -70,7 +70,7 @@ export class FbosService {
             headers: this.headers,
         });
     }
-    
+
     public uploadLogo(payload) {
         return this.http.post(this.accessPointUrl + '/uploadfbologo', payload, {
             headers: this.headers,

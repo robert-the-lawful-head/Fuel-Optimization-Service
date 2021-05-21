@@ -125,6 +125,13 @@ namespace IO.Swagger.Model {
     public string AirportType { get; set; }
 
     /// <summary>
+    /// Gets or Sets IntlTimeZone
+    /// </summary>
+    [DataMember(Name="intlTimeZone", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "intlTimeZone")]
+    public double? IntlTimeZone { get; set; }
+
+    /// <summary>
     /// Gets or Sets IsUnitedStatesAirport
     /// </summary>
     [DataMember(Name="isUnitedStatesAirport", EmitDefaultValue=false)]
@@ -162,6 +169,7 @@ namespace IO.Swagger.Model {
       sb.Append("  Longitude: ").Append(Longitude).Append("\n");
       sb.Append("  FuelType: ").Append(FuelType).Append("\n");
       sb.Append("  AirportType: ").Append(AirportType).Append("\n");
+      sb.Append("  IntlTimeZone: ").Append(IntlTimeZone).Append("\n");
       sb.Append("  IsUnitedStatesAirport: ").Append(IsUnitedStatesAirport).Append("\n");
       sb.Append("  ProperAirportIdentifier: ").Append(ProperAirportIdentifier).Append("\n");
       sb.Append("}\n");

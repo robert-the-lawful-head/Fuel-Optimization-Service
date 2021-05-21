@@ -207,6 +207,20 @@ export class FuelreqsService {
         );
     }
 
+    public getCompaniesQuotingDealStatisticsForGroupFbos(groupId: number, fboIds: number[], startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId,
+            {
+                fboIds,
+                startDateTime: startDate,
+                endDateTime: endDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public getFuelVendorSources(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
             this.accessPointUrl + '/analysis/fbo-fuel-vendor-sources/fbo/' + fboId,

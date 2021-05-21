@@ -1161,6 +1161,95 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        [HttpPost("analysis/company-quoting-deal-statistics/group/{groupId}")]
+        public async Task<IActionResult> GetCompanyStatisticsForGroup([FromRoute] int groupId, [FromBody] FuelReqsCompanyStatisticsForGroupRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                List<string> icaos = await _context.Fboairports.Where(f => request.FboIds.Contains(f.Fboid)).Select(f => f.Icao).ToListAsync();
+                List<int> airportfbos = await _context.Fboairports.Where(f => icaos.Contains(f.Icao)).Select(f => f.Fboid).ToListAsync();
+                var validTransactions = await _context.FuelReq.Where(fr =>
+                    fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && fr.Fboid > 0 &&
+                    airportfbos.Contains(fr.Fboid ?? 0)).ToListAsync();
+
+                var fuelReqs = (from fr in validTransactions
+                                group fr by fr.CustomerId
+                                into groupedFuelReqs
+                                select new
+                                {
+                                    CustomerId = groupedFuelReqs.Key,
+                                    TotalOrders = groupedFuelReqs.Count(),
+                                    TotalVolume = groupedFuelReqs.Sum(fr => (fr.ActualVolume ?? 0) * (fr.ActualPpg ?? 0) > 0 ?
+                                                 fr.ActualVolume * fr.ActualPpg :
+                                                 (fr.QuotedVolume ?? 0) * (fr.QuotedPpg ?? 0)) ?? 0
+                                }).ToList();
+
+                var pricingLogs = (from icao in icaos
+                                   join cpl in _context.CompanyPricingLog on icao equals cpl.ICAO
+                                   join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
+                                   join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
+                                   where cibg.GroupId == groupId
+                                   select new
+                                   {
+                                       cibg.CustomerId,
+                                       cpl.CreatedDate
+                                   }).ToList();
+
+                var customers = await _context.CustomerInfoByGroup
+                                        .Where(c => c.GroupId.Equals(groupId))
+                                        .Include(x => x.Customer)
+                                        .Where(x => (x.Customer != null && x.Customer.Suspended != true))
+                                        .Select(c => new
+                                        {
+                                            c.CustomerId,
+                                            Company = c.Company.Trim(),
+                                            Customer = c.Customer
+                                        })
+                                        .Distinct().ToListAsync();
+
+                FBOLinxOrdersForMultipleAirportsRequest fbolinxOrdersRequest = new FBOLinxOrdersForMultipleAirportsRequest();
+                fbolinxOrdersRequest.StartDateTime = request.StartDateTime;
+                fbolinxOrdersRequest.EndDateTime = request.EndDateTime;
+                fbolinxOrdersRequest.Icaos = icaos;
+
+                List<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount =
+                    _fuelerLinxService.GetCustomerTransactionsCountForMultipleAirports(fbolinxOrdersRequest).Result;
+
+
+                List<object> tableData = new List<object>();
+                foreach (var customer in customers)
+                {
+                    //var fuelerLinxCustomerID = _context.Customers.Where(c => c.Oid.Equals(customer.CustomerId)).Select(c => c.FuelerlinxId).FirstOrDefault();
+                    var fuelerLinxCustomerID = customer.Customer?.FuelerlinxId;
+                    var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
+                    var companyQuotes = pricingLogs.Where(c => c.CreatedDate >= request.StartDateTime && c.CreatedDate <= request.EndDateTime && c.CustomerId.Equals(customer.CustomerId)).Count();
+                    var companyPricingLog = pricingLogs.Where(c => c.CustomerId.Equals(customer.CustomerId)).OrderByDescending(c => c.CreatedDate).FirstOrDefault();
+                    var totalOrders = fuelerlinxCustomerOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
+
+                    tableData.Add(new
+                    {
+                        customer.Company,
+                        CompanyQuotesTotal = companyQuotes,
+                        DirectOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
+                        ConversionRate = selectedCompanyFuelReqs == null || companyQuotes == 0 ? 0 : Math.Round(decimal.Parse(selectedCompanyFuelReqs.TotalOrders.ToString()) / decimal.Parse(companyQuotes.ToString()) * 100, 2),
+                        TotalOrders = totalOrders == null ? 0 : totalOrders,
+                        LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString(),
+                    });
+                }
+
+                return Ok(tableData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         #endregion
 
         #region Common methods
