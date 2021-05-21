@@ -212,7 +212,8 @@ export class CustomersEditComponent implements OnInit {
             oid: 0,
             contactId: 0,
             groupId: this.sharedService.currentUser.groupId,
-            copyAlerts: true
+            copyAlerts: true,
+            email: ''
         };
 
         const dialogRef = this.newContactDialog.open(
