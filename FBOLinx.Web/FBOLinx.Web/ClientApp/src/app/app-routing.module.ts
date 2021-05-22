@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 // Layout Components
 import { DefaultLayoutComponent } from './layouts/default/default.component';
 import { LandingSiteLayoutComponent } from './layouts/landing-site/landing-site.component';
+import { OutsideTheGateLayoutComponent } from './layouts/outside-the-gate/outside-the-gate.component';
 
 // Page Components
 import { AuthtokenComponent } from './pages/auth/authtoken/authtoken.component';
@@ -173,24 +174,35 @@ const defaultRoutes: Routes = [
     },
 ];
 
-const landingSiteRoutes: Routes = [{
+const outsideTheGateRoutes: Routes = [{
   path: 'authtoken/:token',
   component: AuthtokenComponent,
-  data: {
-    expectedRoles: [],
-  },
-}, ];
+},
+    {
+        path: 'authtoken',
+        component: AuthtokenComponent,
+    },
+];
 
 const routes: Routes = [{
     path: '',
     component: LandingSiteLayoutComponent,
-    children: landingSiteRoutes,
+    //children: landingSiteRoutes,
   },
   {
     path: 'default-layout',
     component: DefaultLayoutComponent,
     children: defaultRoutes,
-  },
+    },
+    {
+        path: 'authtoken/:token/:redirect',
+        component: AuthtokenComponent
+    },
+{
+    path: 'outside-the-gate-layout',
+    component: OutsideTheGateLayoutComponent,
+    children: outsideTheGateRoutes,
+},
   {
     path: 'app-login',
     component: LoginComponent,
@@ -202,7 +214,7 @@ const routes: Routes = [{
   {
     path: '**',
     component: LandingSiteLayoutComponent,
-    children: landingSiteRoutes,
+    //children: landingSiteRoutes,
   },
 ];
 

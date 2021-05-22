@@ -12,7 +12,7 @@
         },
         "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers.",
         "routing": "/default-layout/dashboard-fbo",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "CSR Dashboard",
@@ -96,7 +96,7 @@
         },
         "tooltip": "See your incoming fuel orders.",
         "routing": "/default-layout/fuelreqs",
-        "roles": [ 1, 4, 5 ]
+        "roles": [ 1, 4, 5, 6 ]
     },
     {
         "title": "Ramp Fees",
@@ -107,7 +107,7 @@
         },
         "tooltip": "Enter and manage your fees.",
         "routing": "/default-layout/rampfees",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "Flight Watch",
@@ -129,6 +129,17 @@
         },
         "tooltip": "Analytics features graphs and statistics to help you better target customers and understand your business.",
         "routing": "/default-layout/analytics",
+        "roles": [ 1, 4 ]
+    },
+    {
+        "title": "About",
+        "icon": {
+            "class": "fa fa-tags",
+            "bg": "rgb(178, 223, 219)",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "About Us",
+        "routing": "/",
         "roles": [ 1, 4 ]
     }
 ]

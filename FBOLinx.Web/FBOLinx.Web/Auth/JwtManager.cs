@@ -44,9 +44,9 @@ namespace FBOLinx.Web.Auth
                     new Claim("UserID", id.ToString()),
                     new Claim("Name", name),
                     new Claim("Username", username),
-                    new Claim("Email", username.Contains("@") ? username : username + "@fuelerlinx.com"),
+                    new Claim("Email", username.Contains("@") ? username : username + "@fbolinx.com"),
                     new Claim("FBO", fboid.HasValue ? fboid.ToString() : ""),
-                    new Claim("Provider", "FUELERLINX")
+                    new Claim("Provider", "FBOLINX")
                 }),
                 SigningCredentials = signingCredentials,
                 Expires = DateTime.UtcNow.AddMinutes(expireMinutes)

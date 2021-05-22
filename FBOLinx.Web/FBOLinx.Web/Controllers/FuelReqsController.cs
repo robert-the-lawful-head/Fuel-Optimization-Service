@@ -223,7 +223,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [AllowAnonymous]
-        //[APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
         [HttpPost("fbo/{fboId}/create")]
         public async Task<IActionResult> CreateFuelReqByFbo([FromRoute] int fboId, [FromBody] FuelReqRequest request)
         {
