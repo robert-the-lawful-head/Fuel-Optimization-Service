@@ -34,8 +34,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { MatFileUploadModule } from 'mat-file-upload';
-
 import { NiComponentsModule } from '../ni-components/ni-components.module';
 
 import { HorizontalNavbarComponent } from './components/horizontal-navbar/horizontal-navbar.component';
@@ -98,7 +96,6 @@ import { FooterComponent } from './components/footer/footer.component';
         MatToolbarModule,
         MatTooltipModule,
         NgbPopoverModule,
-        MatFileUploadModule,
     ],
 })
 export class UIModule {

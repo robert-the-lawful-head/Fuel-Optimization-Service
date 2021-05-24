@@ -18,6 +18,7 @@ import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-im
 import { CsvExportModalComponent, ICsvExportModalData } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
 import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -63,9 +64,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     ) {
         this.filterStartDate = new Date(moment().add(-1, 'M').format('MM/DD/YYYY'));
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
-        this.filtersChanged
-            .debounceTime(500)
-            .subscribe(() => this.refreshDataSource());
+        this.filtersChanged.pipe(
+            debounceTime(500)
+        ).subscribe(() => this.refreshDataSource());
         this.initColumns();
     }
 
@@ -181,7 +182,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
 
     filterChanged() {
-        this.filtersChanged.next();
+        this.filtersChanged.next({});
     }
 
     onClickAircraft(row: FlightWatchHistorical) {

@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CsvExportModalComponent, ICsvExportModalData } from 'src/app/shared/components/csv-export-modal/csv-export-modal.component';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
     selector: 'app-group-analytics-customer-statistics',
@@ -49,9 +50,9 @@ export class GroupAnalyticsCustomerStatisticsComponent implements OnInit, AfterV
         this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
         this.filterEndDate = new Date(moment().add(7, 'd').format('MM/DD/YYYY'));
 
-        this.filtersChanged
-            .debounceTime(2000)
-            .subscribe(() => this.refreshData());
+        this.filtersChanged.pipe(
+            debounceTime(2000)
+        ).subscribe(() => this.refreshData());
 
         this.initColumns();
     }
@@ -177,7 +178,7 @@ export class GroupAnalyticsCustomerStatisticsComponent implements OnInit, AfterV
     }
 
     filterChanged() {
-        this.filtersChanged.next();
+        this.filtersChanged.next({});
     }
 
     onExport() {

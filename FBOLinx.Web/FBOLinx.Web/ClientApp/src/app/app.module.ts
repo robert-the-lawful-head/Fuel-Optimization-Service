@@ -38,7 +38,6 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TextMaskModule } from 'angular2-text-mask';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
-import { MatFileUploadModule } from 'mat-file-upload';
 
 import { AppRoutingModule } from './app-routing.module';
 import { UIModule } from './ui/ui.module';
@@ -137,7 +136,6 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     MatTooltipModule,
     NgxUiLoaderModule,
     TextMaskModule,
-    MatFileUploadModule,
     EffectsModule.forRoot([]),
     StoreModule.forRoot(reducers, {
       metaReducers,
