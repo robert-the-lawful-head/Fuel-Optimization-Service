@@ -92,10 +92,24 @@ namespace FBOLinx.Web.Services
             return results;
         }
 
+        public FboLinxContractFuelVendorsCountsByAirportsResponse GetContractFuelVendorsTransactionsCountByAirports(FBOLinxOrdersForMultipleAirportsRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FboLinxContractFuelVendorsCountsByAirportsResponse results = api.GetContractFuelVendorsTransactionsCountByAirports(request);
+            return results;
+        }
+
         public FboLinxFbosTransactionsCountResponse GetFBOsTransactionsCountForAirport(FBOLinxOrdersRequest request)
         {
             var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FboLinxFbosTransactionsCountResponse results = api.GetFBOsTransactionsCount(request);
+            FboLinxFbosTransactionsCountResponse results = api.GetFboTransactionsCount(request);
+            return results;
+        }
+
+        public FboLinxFbosTransactionsCountResponse GetTransactionsCountForFbosAndAirports(FBOLinxGroupOrdersRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            FboLinxFbosTransactionsCountResponse results = api.GetGroupFbosTransactionsCount(request);
             return results;
         }
 

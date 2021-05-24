@@ -10,10 +10,8 @@
             </button>
         </ni-card>
 
-        <app-group-analytics-customer-statistics
-            [fbos]="fbos"
-        >
-        </app-group-analytics-customer-statistics>
+        <app-group-analytics-customer-statistics [fbos]="fbos"></app-group-analytics-customer-statistics>
+        <app-group-analytics-fuel-vendor-sources></app-group-analytics-fuel-vendor-sources>
     </ng-container>
     
     <div *ngIf="!customers">
