@@ -561,7 +561,7 @@ Name | Type | Description  | Notes
 
 <a name="getgroupfbostransactionscount"></a>
 # **GetGroupFbosTransactionsCount**
-> FboLinxFbosTransactionsCountResponse GetGroupFbosTransactionsCount (FBOLinxGroupOrdersRequest body)
+> FBOLinxGroupOrdersResponse GetGroupFbosTransactionsCount (FBOLinxGroupOrdersRequest body)
 
 
 
@@ -594,7 +594,7 @@ namespace Example
 
             try
             {
-                FboLinxFbosTransactionsCountResponse result = apiInstance.GetGroupFbosTransactionsCount(body);
+                FBOLinxGroupOrdersResponse result = apiInstance.GetGroupFbosTransactionsCount(body);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -614,7 +614,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**FboLinxFbosTransactionsCountResponse**](FboLinxFbosTransactionsCountResponse.md)
+[**FBOLinxGroupOrdersResponse**](FBOLinxGroupOrdersResponse.md)
 
 ### Authorization
 
