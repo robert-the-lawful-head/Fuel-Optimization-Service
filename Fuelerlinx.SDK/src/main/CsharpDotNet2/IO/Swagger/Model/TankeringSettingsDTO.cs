@@ -20,9 +20,9 @@ namespace IO.Swagger.Model {
     public bool? OmitAlternateFuel { get; set; }
 
     /// <summary>
-    /// Price Search Preference:             0 = SelectedOptionOnly             1 = SelectedFBOOnly             2 = AllOptions    * `SelectedOptionOnly` - SelectedOptionOnly  * `SelectedFBOOnly` - SelectedFBOOnly  * `AllOptions` - AllOptions  
+    /// Price Search Preference:             0 = SelectedOptionOnly             1 = SelectedFBOOnly             2 = AllOptions    * `SelectedOptionOnly` - Selected fuel option only  * `SelectedFBOOnly` - Selected FBO only  * `AllOptions` - All available fuel options  
     /// </summary>
-    /// <value>Price Search Preference:             0 = SelectedOptionOnly             1 = SelectedFBOOnly             2 = AllOptions    * `SelectedOptionOnly` - SelectedOptionOnly  * `SelectedFBOOnly` - SelectedFBOOnly  * `AllOptions` - AllOptions  </value>
+    /// <value>Price Search Preference:             0 = SelectedOptionOnly             1 = SelectedFBOOnly             2 = AllOptions    * `SelectedOptionOnly` - Selected fuel option only  * `SelectedFBOOnly` - Selected FBO only  * `AllOptions` - All available fuel options  </value>
     [DataMember(Name="PriceSearchPreference", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "PriceSearchPreference")]
     public int? PriceSearchPreference { get; set; }

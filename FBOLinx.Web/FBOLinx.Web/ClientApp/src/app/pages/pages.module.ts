@@ -46,7 +46,6 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { TextMaskModule } from 'angular2-text-mask';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
-import { MatFileUploadModule } from 'mat-file-upload';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import {
     FilterService,
@@ -134,6 +133,8 @@ import { SystemcontactsNewContactModalComponent } from './contacts/systemcontact
 import { GroupAnalyticsHomeComponent } from './group-analytics/group-analytics-home/group-analytics-home.component';
 import { GroupAnalyticsGenerateDialogComponent } from './group-analytics/group-analytics-generate-dialog/group-analytics-generate-dialog.component';
 import { GroupAnalyticsCustomerStatisticsComponent } from './group-analytics/group-analytics-customer-statistics/group-analytics-customer-statistics.component';
+import { GroupAnalyticsFuelVendorSourcesComponent } from './group-analytics/group-analytics-fuel-vendor-sources/group-analytics-fuel-vendor-sources.component';
+import { GroupAnalyticsMarketShareComponent } from './group-analytics/group-analytics-market-share/group-analytics-market-share.component';
 import { FlightWatchComponent } from './flight-watch/flight-watch/flight-watch.component';
 import { FlightWatchMapComponent } from './flight-watch/flight-watch-map/flight-watch-map.component';
 import { FlightWatchAircraftInfoComponent } from './flight-watch/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
@@ -227,7 +228,6 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         MatTooltipModule,
         NgxChartsModule,
         TextMaskModule,
-        MatFileUploadModule,
         RichTextEditorAllModule,
         AppPipesModule,
         NgbPopoverModule,
@@ -337,6 +337,8 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         GroupAnalyticsHomeComponent,
         GroupAnalyticsGenerateDialogComponent,
         GroupAnalyticsCustomerStatisticsComponent,
+        GroupAnalyticsFuelVendorSourcesComponent,
+        GroupAnalyticsMarketShareComponent,
         FeeAndTaxBreakdownComponent,
         TableSettingsComponent,
         AircraftAssignModalComponent,

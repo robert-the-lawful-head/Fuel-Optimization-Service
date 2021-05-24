@@ -1,9 +1,9 @@
-# IO.Swagger.Model.CalculateRouteDetailsResponse
+# IO.Swagger.Model.FboLinxContractFuelVendorsCountsByAirportsResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**RouteDetailsCalculationWithNavLog**](RouteDetailsCalculationWithNavLog.md) |  | [optional] 
+**Result** | [**List&lt;FbolinxContractFuelVendorTransactionsCountByAirport&gt;**](FbolinxContractFuelVendorTransactionsCountByAirport.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

@@ -3,7 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**PriceSearchPreference** | **int?** |  | [optional] 
+**PriceSearchPreference** | **int?** | Price Search Preference:             0 &#x3D; SelectedOptionOnly             1 &#x3D; SelectedFBOOnly             2 &#x3D; AllOptions    * &#x60;SelectedOptionOnly&#x60; - Selected fuel option only  * &#x60;SelectedFBOOnly&#x60; - Selected FBO only  * &#x60;AllOptions&#x60; - All available fuel options   | [optional] 
 **ForceMinimumUpliftBias** | **bool?** |  | [optional] 
 **MinimumUpliftBiasFeeAmount** | **double?** |  | [optional] 
 

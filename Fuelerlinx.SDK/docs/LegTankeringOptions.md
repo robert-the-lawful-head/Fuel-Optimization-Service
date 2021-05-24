@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **LockedFuelAmount** | [**Weight**](Weight.md) |  | [optional] 
 **MinimumRequiredRampFuel** | [**Weight**](Weight.md) |  | [optional] 
 **PriceSearchPreference** | **int?** | Overrides the trip-wide price search preference.  Set to 0 - Selected option only if you want to lock it to the selected option. | [optional] 
+**MinExtraReserve** | [**Weight**](Weight.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

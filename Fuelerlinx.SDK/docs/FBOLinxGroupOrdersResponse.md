@@ -1,9 +1,9 @@
-# IO.Swagger.Model.CalculateRouteDetailsResponse
+# IO.Swagger.Model.FBOLinxGroupOrdersResponse
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**RouteDetailsCalculationWithNavLog**](RouteDetailsCalculationWithNavLog.md) |  | [optional] 
+**Result** | [**List&lt;GroupedTransactionCountByFboAndAirport&gt;**](GroupedTransactionCountByFboAndAirport.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

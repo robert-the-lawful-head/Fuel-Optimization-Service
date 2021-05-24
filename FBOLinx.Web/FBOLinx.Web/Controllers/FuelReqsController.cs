@@ -871,54 +871,6 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        [HttpPost("analysis/market-share-airport/fbo/{fboId}")]
-        public async Task<IActionResult> GetMarketShareAtAirport([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                string icao = _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefault();
-                List<int> otherFbos = _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid).ToList();
-
-                request.Icao = icao;
-
-                int fboOrderCount = await _context.FuelReq
-                    .CountAsync(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd < request.EndDateTime.GetValueOrDefault().AddDays(1));
-
-                int directOrdersCount = _fuelerLinxService.GetTransactionsDirectOrdersCount(request).Result.GetValueOrDefault();
-
-                int fuelerlinxOrdersCount = _fuelerLinxService.GetTransactionsCountForAirport(request).Result.GetValueOrDefault();
-
-                List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>()
-                            {
-                                new NgxChartBarChartItemType
-                                {
-                                    Name = "My Total Orders",
-                                    Value = fboOrderCount
-                                },
-                                new NgxChartBarChartItemType
-                                {
-                                    Name = "Other FBO's Orders",
-                                    Value = (directOrdersCount - fboOrderCount)
-                                },
-                                new NgxChartBarChartItemType
-                                {
-                                    Name = "Contract/Reseller Orders",
-                                    Value = (fuelerlinxOrdersCount - directOrdersCount)
-                                }
-                            };
-                return Ok(chartData);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
-
         [HttpPost("analysis/fbo-fuel-vendor-sources/fbo/{fboId}")]
         public async Task<IActionResult> GetFBOFuelVendorSources([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
         {
@@ -969,7 +921,64 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        [HttpPost("analysis/market-share-fbos-airport/fbo/{fboId}")]
+        [HttpPost("analysis/fbo-fuel-vendor-sources/group/{groupId}")]
+        public async Task<ActionResult<List<FBOLinxOrdersForMultipleAirportsResponse>>> GetFuelVendorSourcesByAirports([FromRoute] int groupId, [FromBody] FBOLinxOrdersForMultipleAirportsRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var icaos = await (from f in _context.Fbos
+                                   join fa in _context.Fboairports on f.Oid equals fa.Fboid
+                                   where f.GroupId == groupId
+                                   select new
+                                   {
+                                       fa.Icao,
+                                       f.Fbo,
+                                       f.Oid,
+                                   }).ToListAsync();
+
+                request.Icaos = icaos.Select(f => f.Icao).ToList();
+
+                var fbosOrders = await (from fr in _context.FuelReq
+                                        join f in _context.Fbos on fr.Fboid equals f.Oid
+                                        where f.GroupId == groupId && fr.Etd >= request.StartDateTime && fr.Etd < request.EndDateTime.GetValueOrDefault().AddDays(1)
+                                        group fr by new
+                                        {
+                                            f.Oid,
+                                            f.Fbo,
+                                        } into groupedResult
+                                        select new
+                                        {
+                                            groupedResult.Key.Oid,
+                                            groupedResult.Key.Fbo,
+                                            DirectOrders = groupedResult.Count()
+                                        }).ToListAsync();
+
+                List<FbolinxContractFuelVendorTransactionsCountByAirport> fuelerlinxContractFuelVendorOrdersCount = _fuelerLinxService.GetContractFuelVendorsTransactionsCountByAirports(request).Result;
+
+                var result = icaos.Select(fbo =>
+                {
+                    return new FBOLinxOrdersForMultipleAirportsResponse
+                    {
+                        DirectOrders = fbosOrders.Where(fr => fr.Oid == fbo.Oid).Count(),
+                        Icao = fbo.Icao,
+                        VendorOrders = fuelerlinxContractFuelVendorOrdersCount.Where(f => f.Icao == fbo.Icao).ToList()
+                    };
+                }).ToList();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost("analysis/market-share-fbo-airport/fbo/{fboId}")]
         public async Task<IActionResult> GetMarketShareFBOsAtAirport([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)
         {
             if (!ModelState.IsValid)
@@ -1017,6 +1026,51 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPost("analysis/market-share-fbos-airports/group/{groupId}")]
+        public async Task<IActionResult> GetMarketShareFBOsByAirports([FromRoute] int groupId, [FromBody] FBOLinxGroupOrdersRequest request = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var icaos = await (from f in _context.Fbos
+                                   join fa in _context.Fboairports on f.Oid equals fa.Fboid
+                                   where f.GroupId == groupId
+                                   select new
+                                   {
+                                       fa.Icao,
+                                       f.Fbo,
+                                   }).ToListAsync();
+
+                request.Icaos = icaos.Select(f => f.Icao).ToList();
+                request.Fbos = icaos.Select(f => f.Fbo).Distinct().ToList();
+
+                FBOLinxGroupOrdersResponse fuelerlinxFBOsOrdersCount = _fuelerLinxService.GetTransactionsCountForFbosAndAirports(request);
+
+                var result = icaos.Select(f =>
+                {
+                    var order = fuelerlinxFBOsOrdersCount.Result.Where(o => o.Icao == f.Icao).FirstOrDefault();
+                    return new
+                    {
+                        f.Icao,
+                        order?.AirportOrders,
+                        order?.FboOrders,
+                        MarketShare = Math.Round(order?.AirportOrders > 0 ? ((order?.FboOrders ?? 0) / (double)order?.AirportOrders * 100) : 0)
+                    };
+                }).ToList();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
 
         [HttpPost("analysis/customers-breakdown/fbo/{fboId}")]
         public async Task<IActionResult> GetCustomersBreakdown([FromRoute] int fboId, [FromBody] FBOLinxOrdersRequest request = null)

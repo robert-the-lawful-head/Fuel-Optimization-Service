@@ -1,7 +1,8 @@
+@use '~@angular/material' as mat;
 // Material palettes:
-// $mat-red, $mat-pink, $mat-purple, $mat-deep-purple, $mat-indigo, $mat-blue, $mat-light-blue, $mat-cyan, $mat-teal,
-// $mat-green, $mat-light-green, $mat-lime, $mat-yellow, $mat-amber, $mat-orange, $mat-deep-orange, $mat-brown,
-// $mat-grey, $mat-blue-grey
+// mat.$red-palette, mat.$pink-palette, mat.$purple-palette, mat.$deep-purple-palette, mat.$indigo-palette, mat.$blue-palette, mat.$light-blue-palette, mat.$cyan-palette, mat.$teal-palette,
+// mat.$green-palette, mat.$light-green-palette, mat.$lime-palette, mat.$yellow-palette, mat.$amber-palette, mat.$orange-palette, mat.$deep-orange-palette, mat.$brown-palette,
+// mat.$grey-palette, mat.$blue-grey-palette
 
 //Main palette
 $palette: (

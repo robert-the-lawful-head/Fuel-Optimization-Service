@@ -76,6 +76,13 @@ namespace IO.Swagger.Model {
     public Weight TotalPassengerWeight { get; set; }
 
     /// <summary>
+    /// Gets or Sets TankerFuel
+    /// </summary>
+    [DataMember(Name="tankerFuel", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "tankerFuel")]
+    public bool? TankerFuel { get; set; }
+
+    /// <summary>
     /// Gets or Sets IFlightPlannerCruiseProfileId
     /// </summary>
     [DataMember(Name="iFlightPlannerCruiseProfileId", EmitDefaultValue=false)]
@@ -163,6 +170,7 @@ namespace IO.Swagger.Model {
       sb.Append("  CargoWeight: ").Append(CargoWeight).Append("\n");
       sb.Append("  NumberOfPassengers: ").Append(NumberOfPassengers).Append("\n");
       sb.Append("  TotalPassengerWeight: ").Append(TotalPassengerWeight).Append("\n");
+      sb.Append("  TankerFuel: ").Append(TankerFuel).Append("\n");
       sb.Append("  IFlightPlannerCruiseProfileId: ").Append(IFlightPlannerCruiseProfileId).Append("\n");
       sb.Append("  RoutingType: ").Append(RoutingType).Append("\n");
       sb.Append("  CustomRoute: ").Append(CustomRoute).Append("\n");

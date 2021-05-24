@@ -58,7 +58,7 @@ export class AirportAutocompleteComponent implements OnInit {
         }
         return this.acukwikAirportsService.search(value).pipe(
             // map the item property of the github results as our return object
-            map((results) => results),
+            map((results: any) => results),
             // catch errors
             catchError((_) => of(null))
         );

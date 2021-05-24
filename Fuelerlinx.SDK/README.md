@@ -209,10 +209,12 @@ Class | Method | HTTP request | Description
 *FBOLinxApi* | [**GetAircraftTailsGroupedByCompany**](docs/FBOLinxApi.md#getaircrafttailsgroupedbycompany) | **GET** /api/FBOLinx/get-aircraft-tails-grouped-by-company | 
 *FBOLinxApi* | [**GetContractFuelOrders**](docs/FBOLinxApi.md#getcontractfuelorders) | **POST** /api/FBOLinx/get-contract-orders | 
 *FBOLinxApi* | [**GetContractFuelVendorsTransactionsCount**](docs/FBOLinxApi.md#getcontractfuelvendorstransactionscount) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-count-at-airport | 
+*FBOLinxApi* | [**GetContractFuelVendorsTransactionsCountByAirports**](docs/FBOLinxApi.md#getcontractfuelvendorstransactionscountbyairports) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-counts-by-airports | 
 *FBOLinxApi* | [**GetCustomerFBOTransactionsCount**](docs/FBOLinxApi.md#getcustomerfbotransactionscount) | **POST** /api/FBOLinx/get-customer-fbo-orders-count-at-airport | 
 *FBOLinxApi* | [**GetCustomerTransactionsCount**](docs/FBOLinxApi.md#getcustomertransactionscount) | **POST** /api/FBOLinx/get-customer-orders-count-at-airport | 
 *FBOLinxApi* | [**GetCustomerTransactionsCountForMultipleAirports**](docs/FBOLinxApi.md#getcustomertransactionscountformultipleairports) | **POST** /api/FBOLinx/get-customer-orders-count-at-multiple-airports | 
-*FBOLinxApi* | [**GetFBOsTransactionsCount**](docs/FBOLinxApi.md#getfbostransactionscount) | **POST** /api/FBOLinx/get-fbos-orders-count-at-airport | 
+*FBOLinxApi* | [**GetFboTransactionsCount**](docs/FBOLinxApi.md#getfbotransactionscount) | **POST** /api/FBOLinx/get-fbo-orders-count-at-airport | 
+*FBOLinxApi* | [**GetGroupFbosTransactionsCount**](docs/FBOLinxApi.md#getgroupfbostransactionscount) | **POST** /api/FBOLinx/get-fbos-and-airports-orders-count | 
 *FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
 *FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 *FBOLinxApi* | [**GetTransactionsDirectOrdersCount**](docs/FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
@@ -768,6 +770,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateRequest](docs/FBOLinxFuelVendorUpdateRequest.md)
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateResponse](docs/FBOLinxFuelVendorUpdateResponse.md)
  - [IO.Swagger.Model.FBOLinxGroup](docs/FBOLinxGroup.md)
+ - [IO.Swagger.Model.FBOLinxGroupOrdersRequest](docs/FBOLinxGroupOrdersRequest.md)
+ - [IO.Swagger.Model.FBOLinxGroupOrdersResponse](docs/FBOLinxGroupOrdersResponse.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsModel](docs/FBOLinxNearbyAirportsModel.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsRequest](docs/FBOLinxNearbyAirportsRequest.md)
  - [IO.Swagger.Model.FBOLinxNearbyAirportsResponse](docs/FBOLinxNearbyAirportsResponse.md)
@@ -783,10 +787,12 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FboDetailsByCompanyResponse](docs/FboDetailsByCompanyResponse.md)
  - [IO.Swagger.Model.FboLinxAircraftsResponse](docs/FboLinxAircraftsResponse.md)
  - [IO.Swagger.Model.FboLinxContractFuelVendorsCountResponse](docs/FboLinxContractFuelVendorsCountResponse.md)
+ - [IO.Swagger.Model.FboLinxContractFuelVendorsCountsByAirportsResponse](docs/FboLinxContractFuelVendorsCountsByAirportsResponse.md)
  - [IO.Swagger.Model.FboLinxCustomerTransactionsCountAtAirportResponse](docs/FboLinxCustomerTransactionsCountAtAirportResponse.md)
  - [IO.Swagger.Model.FboLinxFbosTransactionsCountResponse](docs/FboLinxFbosTransactionsCountResponse.md)
  - [IO.Swagger.Model.FbolinxAircraftDTO](docs/FbolinxAircraftDTO.md)
  - [IO.Swagger.Model.FbolinxContractFuelVendorTransactionsCountAtAirport](docs/FbolinxContractFuelVendorTransactionsCountAtAirport.md)
+ - [IO.Swagger.Model.FbolinxContractFuelVendorTransactionsCountByAirport](docs/FbolinxContractFuelVendorTransactionsCountByAirport.md)
  - [IO.Swagger.Model.FbolinxCustomerTransactionsCountAtAirport](docs/FbolinxCustomerTransactionsCountAtAirport.md)
  - [IO.Swagger.Model.FlightBridgeAuthorizationCheckResponse](docs/FlightBridgeAuthorizationCheckResponse.md)
  - [IO.Swagger.Model.FlightBridgeExternalUserInformation](docs/FlightBridgeExternalUserInformation.md)
@@ -816,6 +822,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FuelerTaxByTierDTO](docs/FuelerTaxByTierDTO.md)
  - [IO.Swagger.Model.GeneralAirportInformation](docs/GeneralAirportInformation.md)
  - [IO.Swagger.Model.GroupedTransactionCountByFBOAtAirport](docs/GroupedTransactionCountByFBOAtAirport.md)
+ - [IO.Swagger.Model.GroupedTransactionCountByFboAndAirport](docs/GroupedTransactionCountByFboAndAirport.md)
  - [IO.Swagger.Model.HeaderMenuFeatureDTO](docs/HeaderMenuFeatureDTO.md)
  - [IO.Swagger.Model.HeaderMenuFeatureSubFeaturesDTO](docs/HeaderMenuFeatureSubFeaturesDTO.md)
  - [IO.Swagger.Model.IFLightPlannerModelResponse](docs/IFLightPlannerModelResponse.md)
@@ -1084,9 +1091,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.ReportScheduledDistributionListResponse](docs/ReportScheduledDistributionListResponse.md)
  - [IO.Swagger.Model.ReportScheduledDistributionResponse](docs/ReportScheduledDistributionResponse.md)
  - [IO.Swagger.Model.ResultItem](docs/ResultItem.md)
- - [IO.Swagger.Model.RouteDetailsCaclulationWithNavLog](docs/RouteDetailsCaclulationWithNavLog.md)
- - [IO.Swagger.Model.RouteDetailsCalculation](docs/RouteDetailsCalculation.md)
  - [IO.Swagger.Model.RouteDetailsCalculationAircraftData](docs/RouteDetailsCalculationAircraftData.md)
+ - [IO.Swagger.Model.RouteDetailsCalculationWithNavLog](docs/RouteDetailsCalculationWithNavLog.md)
  - [IO.Swagger.Model.RoutesBetweenAirportsExStruct](docs/RoutesBetweenAirportsExStruct.md)
  - [IO.Swagger.Model.RunJobQueueResponse](docs/RunJobQueueResponse.md)
  - [IO.Swagger.Model.SageCredentialsRequest](docs/SageCredentialsRequest.md)

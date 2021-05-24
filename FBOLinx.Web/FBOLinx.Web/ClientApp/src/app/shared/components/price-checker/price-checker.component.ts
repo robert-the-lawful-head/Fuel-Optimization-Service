@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import 'rxjs/add/operator/debounceTime';
+import { debounceTime } from 'rxjs/operators';
 
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
@@ -83,7 +83,11 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
                 private fboFeesAndTaxesService: FbofeesandtaxesService,
     ) {
         // Register change subscription for tail number entry
-        this.tailNumberFormControlSubscription = this.tailNumberForLookupControl.valueChanges.debounceTime(1000)
+        this.tailNumberFormControlSubscription = this.tailNumberForLookupControl
+            .valueChanges
+            .pipe(
+                debounceTime(1000)
+            )
             .subscribe(tailValue => {
                 this.NgxUiLoader.startLoader(this.tailLoader);
                 this.customerForTailLookup = null;
