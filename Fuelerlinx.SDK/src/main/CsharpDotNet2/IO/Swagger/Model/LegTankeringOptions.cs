@@ -50,6 +50,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "priceSearchPreference")]
     public int? PriceSearchPreference { get; set; }
 
+    /// <summary>
+    /// Gets or Sets MinExtraReserve
+    /// </summary>
+    [DataMember(Name="minExtraReserve", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "minExtraReserve")]
+    public Weight MinExtraReserve { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -63,6 +70,7 @@ namespace IO.Swagger.Model {
       sb.Append("  LockedFuelAmount: ").Append(LockedFuelAmount).Append("\n");
       sb.Append("  MinimumRequiredRampFuel: ").Append(MinimumRequiredRampFuel).Append("\n");
       sb.Append("  PriceSearchPreference: ").Append(PriceSearchPreference).Append("\n");
+      sb.Append("  MinExtraReserve: ").Append(MinExtraReserve).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
