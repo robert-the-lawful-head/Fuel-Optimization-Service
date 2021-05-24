@@ -11,13 +11,13 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class CalculateRouteDetailsResponse {
+  public class FboLinxContractFuelVendorsCountsByAirportsResponse {
     /// <summary>
     /// Gets or Sets Result
     /// </summary>
     [DataMember(Name="result", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "result")]
-    public RouteDetailsCalculationWithNavLog Result { get; set; }
+    public List<FbolinxContractFuelVendorTransactionsCountByAirport> Result { get; set; }
 
     /// <summary>
     /// Gets or Sets Success
@@ -40,7 +40,7 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class CalculateRouteDetailsResponse {\n");
+      sb.Append("class FboLinxContractFuelVendorsCountsByAirportsResponse {\n");
       sb.Append("  Result: ").Append(Result).Append("\n");
       sb.Append("  Success: ").Append(Success).Append("\n");
       sb.Append("  Message: ").Append(Message).Append("\n");

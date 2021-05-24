@@ -11,7 +11,7 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class RouteDetailsCaclulationWithNavLog {
+  public class RouteDetailsCalculationWithNavLog {
     /// <summary>
     /// Gets or Sets NavigationLog
     /// </summary>
@@ -163,7 +163,7 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class RouteDetailsCaclulationWithNavLog {\n");
+      sb.Append("class RouteDetailsCalculationWithNavLog {\n");
       sb.Append("  NavigationLog: ").Append(NavigationLog).Append("\n");
       sb.Append("  AlternateAirportICAO: ").Append(AlternateAirportICAO).Append("\n");
       sb.Append("  RequiredReserve: ").Append(RequiredReserve).Append("\n");
