@@ -1,6 +1,4 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import * as moment from 'moment';
@@ -10,16 +8,17 @@ import * as XLSX from 'xlsx';
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvent from '../../../models/sharedEvents';
-import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
-import { CsvExportModalComponent, ICsvExportModalData } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
-import { flatMap, isEqual, uniq } from 'lodash';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
+import { MatDialog } from '@angular/material/dialog';
+import { CsvExportModalComponent, ICsvExportModalData } from 'src/app/shared/components/csv-export-modal/csv-export-modal.component';
 
 @Component({
-    selector: 'app-group-analytics-fuel-vendor-sources',
-    templateUrl: './group-analytics-fuel-vendor-sources.component.html',
-    styleUrls: ['./group-analytics-fuel-vendor-sources.component.scss'],
+    selector: 'app-group-analytics-market-share',
+    templateUrl: './group-analytics-market-share.component.html',
+    styleUrls: ['./group-analytics-market-share.component.scss'],
 })
-export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class GroupAnalyticsMarketShareComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     filterStartDate: Date;
@@ -27,9 +26,8 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
     icao: string;
     fbo: string;
     icaoChangedSubscription: any;
-    chartName = 'group-analytics-fuel-vendor-sources';
+    chartName = 'group-analytics-market-share';
     dataSource: MatTableDataSource<any[]>;
-    vendors: string[] = [];
 
     tableLocalStorageKey: string;
     columns: ColumnType[] = [];
@@ -45,7 +43,7 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
         this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
         this.filterEndDate = new Date(moment().add(7, 'd').format('MM/DD/YYYY'));
 
-        this.refreshColumns();
+        this.initColumns();
     }
 
     get visibleColumns() {
@@ -59,6 +57,8 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
                     ? { ...column, sort: this.sort.direction }
                     : { id: column.id, name: column.name, hidden: column.hidden }
             );
+
+            this.saveSettings();
         });
         this.refreshData();
     }
@@ -89,29 +89,37 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
 
     fetchData(startDate: Date, endDate: Date) {
         return this.fuelreqsService
-            .getFuelVendorSourcesByAirports(
+            .getMarketShareFbosAirports(
                 this.sharedService.currentUser.groupId,
                 startDate,
                 endDate
             );
     }
 
-    refreshColumns() {
-        // this.tableLocalStorageKey = `group-analytics-fuel-vendor-sources-${this.sharedService.currentUser.groupId}`;
-        this.columns = [
-            {
-                id: 'icao',
-                name: 'ICAO',
-            },
-            {
-                id: 'directOrders',
-                name: 'Directs',
-            },
-            ...this.vendors.map(vendor => ({
-                id: vendor,
-                name: vendor
-            }))
-        ];
+    initColumns() {
+        this.tableLocalStorageKey = `group-analytics-market-share-${this.sharedService.currentUser.groupId}`;
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+        } else {
+            this.columns = [
+                {
+                    id: 'icao',
+                    name: 'ICAO',
+                },
+                {
+                    id: 'airportOrders',
+                    name: 'Total Orders at Airport',
+                },
+                {
+                    id: 'fboOrders',
+                    name: 'Your Orders at Airport',
+                },
+                {
+                    id: 'marketShare',
+                    name: 'Market Share',
+                },
+            ];
+        }
     }
 
     refreshData() {
@@ -120,23 +128,7 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
             this.filterStartDate,
             this.filterEndDate,
         ).subscribe((data: any) => {
-            const vendors = uniq(flatMap(data, row => row.vendorOrders).map(v => v.contractFuelVendor));
-            if (!isEqual(this.vendors, vendors)) {
-                this.vendors = vendors;
-            }
-
-            const tableData = data.map(row => {
-                const tableRow = {
-                    icao: row.icao,
-                    directOrders: row.directOrders
-                };
-                for (const vendor of row.vendorOrders) {
-                    tableRow[vendor.contractFuelVendor] = vendor.transactionsCount;
-                }
-                return tableRow;
-            });
-
-            this.dataSource = new MatTableDataSource(tableData);
+            this.dataSource = new MatTableDataSource(data);
             this.dataSource.sortingDataAccessor = (item, property) => {
                 switch (property) {
                     case 'lastPullDate':
@@ -153,8 +145,6 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
                 }
             };
             this.dataSource.sort = this.sort;
-
-            this.refreshColumns();
         }, () => {
         }, () => {
             this.ngxLoader.stopLoader(this.chartName);
@@ -184,34 +174,21 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
     exportCsv(startDate: Date, endDate: Date) {
         this.fetchData(startDate, endDate)
             .subscribe((data: any[]) => {
-                const vendors = uniq(flatMap(data, row => row.vendorOrders).map(v => v.contractFuelVendor));
-
-                const tableData = data.map(row => {
-                    const tableRow = {
-                        icao: row.icao,
-                        directOrders: row.directOrders
-                    };
-                    for (const vendor of row.vendorOrders) {
-                        tableRow[vendor.contractFuelVendor] = vendor.transactionsCount;
-                    }
-                    return tableRow;
-                });
-                const exportData = tableData.map((item) => {
+                const exportData = data.map((item) => {
                     const row = {
-                        ICAO: item.icao,
-                        'Direct Orders': item.directOrders,
+                        ICAO: item.company,
+                        'Total Orders at Airport': item.airportOrders,
+                        'Your Orders at Airport': item.fboOrders,
+                        'Market Share': item.marketShare + '%',
                     };
-                    for (const vendor of vendors) {
-                        row[vendor] = item[vendor];
-                    }
                     return row;
                 });
                 const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
                 const wb: XLSX.WorkBook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Fuel Vendor Share by Airport');
+                XLSX.utils.book_append_sheet(wb, ws, 'Market Share by Airport');
 
                 /* save to file */
-                XLSX.writeFile(wb, 'Fuel Vendor Share by Airport.xlsx');
+                XLSX.writeFile(wb, 'Market Share by Airport.xlsx');
             });
     }
 

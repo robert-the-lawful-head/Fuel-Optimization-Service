@@ -1049,31 +1049,21 @@ namespace FBOLinx.Web.Controllers
                 request.Icaos = icaos.Select(f => f.Icao).ToList();
                 request.Fbos = icaos.Select(f => f.Fbo).Distinct().ToList();
 
-                FboLinxFbosTransactionsCountResponse fuelerlinxFBOsOrdersCount = _fuelerLinxService.GetTransactionsCountForFbosAndAirports(request);
+                FBOLinxGroupOrdersResponse fuelerlinxFBOsOrdersCount = _fuelerLinxService.GetTransactionsCountForFbosAndAirports(request);
 
-                List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>();
-
-                int i = 1;
-                foreach (GroupedTransactionCountByFBOAtAirport vendor in fuelerlinxFBOsOrdersCount.Result)
+                var result = icaos.Select(f =>
                 {
-                    if (vendor.Fbo == "Competitor FBO")
+                    var order = fuelerlinxFBOsOrdersCount.Result.Where(o => o.Icao == f.Icao).FirstOrDefault();
+                    return new
                     {
-                        NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
-                        chartItemType.Name = vendor.Fbo + " " + i;
-                        chartItemType.Value = vendor.Count.GetValueOrDefault();
-                        chartData.Add(chartItemType);
-                        i++;
-                    }
-                    else
-                    {
-                        NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
-                        chartItemType.Name = vendor.Fbo;
-                        chartItemType.Value = vendor.Count.GetValueOrDefault();
-                        chartData.Add(chartItemType);
-                    }
-                }
+                        f.Icao,
+                        order?.AirportOrders,
+                        order?.FboOrders,
+                        MarketShare = Math.Round(order?.AirportOrders > 0 ? ((order?.FboOrders ?? 0) / (double)order?.AirportOrders * 100) : 0)
+                    };
+                }).ToList();
 
-                return Ok(chartData);
+                return Ok(result);
             }
             catch (Exception ex)
             {
