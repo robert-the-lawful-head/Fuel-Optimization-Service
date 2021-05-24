@@ -106,10 +106,10 @@ namespace FBOLinx.Web.Services
             return results;
         }
 
-        public FboLinxFbosTransactionsCountResponse GetTransactionsCountForFbosAndAirports(FBOLinxGroupOrdersRequest request)
+        public FBOLinxGroupOrdersResponse GetTransactionsCountForFbosAndAirports(FBOLinxGroupOrdersRequest request)
         {
             var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FboLinxFbosTransactionsCountResponse results = api.GetGroupFbosTransactionsCount(request);
+            FBOLinxGroupOrdersResponse results = api.GetGroupFbosTransactionsCount(request);
             return results;
         }
 
