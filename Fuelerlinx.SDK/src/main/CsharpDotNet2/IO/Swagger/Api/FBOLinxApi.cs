@@ -62,8 +62,8 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param>
-        /// <returns>FboLinxFbosTransactionsCountResponse</returns>
-        FboLinxFbosTransactionsCountResponse GetGroupFbosTransactionsCount (FBOLinxGroupOrdersRequest body);
+        /// <returns>FBOLinxGroupOrdersResponse</returns>
+        FBOLinxGroupOrdersResponse GetGroupFbosTransactionsCount (FBOLinxGroupOrdersRequest body);
         /// <summary>
         ///  
         /// </summary>
@@ -417,8 +417,8 @@ namespace IO.Swagger.Api
         ///  
         /// </summary>
         /// <param name="body"></param> 
-        /// <returns>FboLinxFbosTransactionsCountResponse</returns>            
-        public FboLinxFbosTransactionsCountResponse GetGroupFbosTransactionsCount (FBOLinxGroupOrdersRequest body)
+        /// <returns>FBOLinxGroupOrdersResponse</returns>            
+        public FBOLinxGroupOrdersResponse GetGroupFbosTransactionsCount (FBOLinxGroupOrdersRequest body)
         {
             
     
@@ -444,7 +444,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetGroupFbosTransactionsCount: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (FboLinxFbosTransactionsCountResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxFbosTransactionsCountResponse), response.Headers);
+            return (FBOLinxGroupOrdersResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxGroupOrdersResponse), response.Headers);
         }
     
         /// <summary>
