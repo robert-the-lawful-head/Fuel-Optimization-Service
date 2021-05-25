@@ -71,7 +71,7 @@ export class AccountProfileComponent {
         this.emailDistributionForm = this.formBuilder.group({
             senderAddress: new FormControl('', [
                 Validators.required,
-                Validators.pattern('[a-zA-Z0-9]*')
+                Validators.pattern('[a-zA-Z0-9-]*')
             ]),
             replyTo: new FormControl('', [
                 Validators.required,
