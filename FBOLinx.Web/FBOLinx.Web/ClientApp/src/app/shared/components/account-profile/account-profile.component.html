@@ -95,9 +95,7 @@
                                    placeholder="FuelDesk Email"
                                    required>
                         </mat-form-field>
-                        <div class="d-inline-block" *ngIf="fuelDeskEmail.errors?.email" style="color: red;">
-                            Please enter a valid email address.
-                        </div>
+
                         <button [disabled]="!systemContactsForm.valid"
                                 class="ml-3"
                                 color="accent"
@@ -105,13 +103,8 @@
                                 type="submit">
                             Save Email
                         </button>
-                        <div class="d-inline-block float-right" style="margin-top:12px;">
-                            <button (click)="newRecord($event)"
-                                    [view]="'accent'"
-                                    beforeIcon="fa fa-plus"
-                                    ni-button>
-                                Add New
-                            </button>
+                        <div class="" *ngIf="fuelDeskEmail.errors?.email" style="color: red;">
+                            Please enter a valid email address.
                         </div>
                     </div>
                     <!--Contacts Grid-->
