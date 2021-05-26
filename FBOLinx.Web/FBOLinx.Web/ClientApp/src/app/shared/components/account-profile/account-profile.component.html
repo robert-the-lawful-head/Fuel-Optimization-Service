@@ -125,7 +125,7 @@
                                    matTooltip="Your distribution emails will come from this address"
                                    matTooltipPosition="after" required />
                         </mat-form-field> @FBOLinx.com
-                        <div class="d-inline-block" *ngIf="senderAddress.errors?.pattern" style="color: red;">
+                        <div *ngIf="senderAddress.errors?.pattern" style="color: red;">
                             Please enter with no spaces.
                         </div>
                         <div>
@@ -136,7 +136,7 @@
                                        matTooltip="For distribution emails, customer replies will default to this address"
                                        matTooltipPosition="after" required />
                             </mat-form-field>
-                            <div class="d-inline-block" *ngIf="replyTo.errors?.email" style="color: red;">
+                            <div *ngIf="replyTo.errors?.email" style="color: red;">
                                 Please enter a valid email address.
                             </div>
                         </div>
