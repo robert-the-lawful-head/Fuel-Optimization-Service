@@ -402,7 +402,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (importedFboEmail != null)
                 {
-                    var newFbo = new SingleFboRequest() { Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Fbos.AccountTypes.NonRevFBO, FuelDeskEmail = importedFboEmail.Email };
+                    var newFbo = new SingleFboRequest() { Group = acukwikFbo.HandlerLongName, Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Fbos.AccountTypes.NonRevFBO, FuelDeskEmail = importedFboEmail.Email };
                     fbo = await _groupFboService.CreateNewFbo(newFbo);
 
                     User newUser = new User() { FboId = fbo.Oid, Role = DB.Models.User.UserRoles.NonRev, Username = importedFboEmail.Email, FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };

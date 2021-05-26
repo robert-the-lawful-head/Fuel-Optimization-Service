@@ -130,16 +130,5 @@
         "tooltip": "Analytics features graphs and statistics to help you better target customers and understand your business.",
         "routing": "/default-layout/analytics",
         "roles": [ 1, 4 ]
-    },
-    {
-        "title": "About",
-        "icon": {
-            "class": "fa fa-tags",
-            "bg": "rgb(178, 223, 219)",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "tooltip": "About Us",
-        "routing": "/",
-        "roles": [ 1, 4 ]
     }
 ]
