@@ -48,6 +48,7 @@ import { PagesModule } from './pages/pages.module';
 import { AppComponent } from './app.component';
 import { DefaultLayoutComponent } from './layouts/default/default.component';
 import { LandingSiteLayoutComponent } from './layouts/landing-site/landing-site.component';
+import { OutsideTheGateLayoutComponent } from './layouts/outside-the-gate/outside-the-gate.component';
 
 import { LoginModalComponent } from './shared/components/login-modal/login-modal.component';
 import { RequestDemoModalComponent } from './shared/components/request-demo-modal/request-demo-modal.component';
@@ -101,6 +102,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     AppComponent,
     DefaultLayoutComponent,
     LandingSiteLayoutComponent,
+    OutsideTheGateLayoutComponent,
     LoginModalComponent,
     RequestDemoModalComponent,
     RequestDemoSuccessComponent,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,6 +9,14 @@ namespace FBOLinx.DB.Models
     [Table("FBOs")]
     public partial class Fbos
     {
+        public enum AccountTypes : short
+        {
+            [Description("Rev FBO")]
+            RevFbo = 0,
+            [Description("Non-Rev FBO")]
+            NonRevFBO = 1
+        }
+
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
@@ -94,6 +103,8 @@ namespace FBOLinx.DB.Models
             set { _ReplyTo = value; }
         }
         private string _ReplyTo;
+
+        public AccountTypes AccountType { get; set; } = AccountTypes.RevFbo;
 
         [ForeignKey("GroupId")]
         [InverseProperty("Fbos")]

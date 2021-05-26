@@ -49,10 +49,20 @@ namespace FBOLinx.Web.Controllers
             _fboService = fboService;
         }
 
+        [HttpGet("prepare-token-auth")]
+        public async Task<IActionResult> PrepareTokenAuthentication()
+        {
+            var user = await _context.User.FindAsync(JwtManager.GetClaimedUserId(_httpContextAccessor));
+
+            await HandlePreLoginEvents(user);
+
+            return Ok(user);
+        }
+
         [HttpGet("current")]
         public async Task<ActionResult<User>> GetCurrentUser()
         {
-            var user = await _context.User.FindAsync(UserService.GetClaimedUserId(_httpContextAccessor));
+            var user = await _context.User.FindAsync(JwtManager.GetClaimedUserId(_httpContextAccessor));
 
             return Ok(user);
         }
@@ -70,29 +80,8 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
-            
-            var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
-            if (fbo != null)
-            {
-                fbo.LastLogin = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-            }
 
-            try
-            {
-                var group = await _context.Group.FindAsync(user.GroupId);
-
-                if (group.IsLegacyAccount == true)
-                {
-                    await _fboService.DoLegacyGroupTransition(group.Oid);
-
-                    group.IsLegacyAccount = false;
-                    await _context.SaveChangesAsync();
-                }
-            } catch (DbUpdateConcurrencyException ex)
-            {
-                throw ex;
-            }
+            await HandlePreLoginEvents(user);
 
             return Ok(user);
         }
@@ -113,20 +102,20 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            var currentRole = UserService.GetClaimedRole(_httpContextAccessor);
+            var currentRole = JwtManager.GetClaimedRole(_httpContextAccessor);
 
             if (currentRole == DB.Models.User.UserRoles.Conductor)
                 return Ok(user);
 
-            if (UserService.GetClaimedUserId(_httpContextAccessor) == id)
+            if (JwtManager.GetClaimedUserId(_httpContextAccessor) == id)
                 return Ok(user);
 
             if (currentRole == DB.Models.User.UserRoles.GroupAdmin &&
-                UserService.GetClaimedGroupId(_httpContextAccessor) == user.GroupId)
+                JwtManager.GetClaimedGroupId(_httpContextAccessor) == user.GroupId)
                 return Ok(user);
 
             if (currentRole == DB.Models.User.UserRoles.Primary &&
-                UserService.GetClaimedFboId(_httpContextAccessor) == user.FboId)
+                JwtManager.GetClaimedFboId(_httpContextAccessor) == user.FboId)
                 return Ok(user);
 
             return Unauthorized();
@@ -200,7 +189,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            if (id != UserService.GetClaimedUserId(_httpContextAccessor) && UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (id != JwtManager.GetClaimedUserId(_httpContextAccessor) && JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return BadRequest(ModelState);
             }
@@ -236,7 +225,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }
@@ -326,7 +315,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != request.User.GroupId)
+            if (JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != request.User.GroupId)
             {
                 return Unauthorized();
             }
@@ -364,7 +353,7 @@ namespace FBOLinx.Web.Controllers
             try
             {
 
-                int fboId = UserService.GetClaimedFboId(_httpContextAccessor);
+                int fboId = JwtManager.GetClaimedFboId(_httpContextAccessor);
 
                 PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
 
@@ -393,7 +382,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }
@@ -423,6 +412,32 @@ namespace FBOLinx.Web.Controllers
             return _context.Group.Any(e => e.Oid == id);
         }
 
+        private async Task HandlePreLoginEvents(User user)
+        {
+            var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
+            if (fbo != null)
+            {
+                fbo.LastLogin = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
+            try
+            {
+                var group = await _context.Group.FindAsync(user.GroupId);
+
+                if (group.IsLegacyAccount == true)
+                {
+                    await _fboService.DoLegacyGroupTransition(group.Oid);
+
+                    group.IsLegacyAccount = false;
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw ex;
+            }
+        }
         
     }
 }
