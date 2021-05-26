@@ -511,9 +511,10 @@ namespace FBOLinx.Web.Controllers
                 await _context.SaveChangesAsync();
 
                 var customer =
-                    await _context.Customers.FirstOrDefaultAsync(x =>
+                    await _context.Customers.Where(x =>
                         x.FuelerlinxId == request.FuelerlinxCompanyID
-                        && (!x.GroupId.HasValue || x.GroupId.Value != 1));
+                        ).OrderBy(x => ((!x.GroupId.HasValue) ? 0 : x.GroupId.Value))
+                        .FirstOrDefaultAsync();
                 if (customer == null)
                     return Ok(null);
 
