@@ -392,7 +392,7 @@ namespace FBOLinx.Web.Controllers
 
             if (fbo == null)
             {
-                var acukwikFbo = await _degaContext.AcukwikFbohandlerDetail.Where(x => x.AcukwikId == handlerId).FirstOrDefaultAsync();
+                var acukwikFbo = await _degaContext.AcukwikFbohandlerDetail.Where(x => x.HandlerId == handlerId).FirstOrDefaultAsync();
                 if (acukwikFbo == null)
                     return BadRequest("FBO not found");
 
