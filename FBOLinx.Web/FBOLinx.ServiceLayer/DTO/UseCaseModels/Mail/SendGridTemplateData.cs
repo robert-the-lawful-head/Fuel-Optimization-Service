@@ -38,5 +38,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         public string Subject { get; set; }
         [JsonProperty("expiration")]
         public string expiration { get; set; }
+
+        public string currentPostedRetail { get; set; }
     }
 }

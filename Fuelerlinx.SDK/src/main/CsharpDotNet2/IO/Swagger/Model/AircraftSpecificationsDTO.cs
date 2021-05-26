@@ -13,11 +13,11 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class AircraftSpecificationsDTO {
     /// <summary>
-    /// Gets or Sets Oid
+    /// Gets or Sets Id
     /// </summary>
-    [DataMember(Name="oid", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "oid")]
-    public int? Oid { get; set; }
+    [DataMember(Name="id", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "id")]
+    public int? Id { get; set; }
 
     /// <summary>
     /// Gets or Sets AircraftId
@@ -279,7 +279,7 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class AircraftSpecificationsDTO {\n");
-      sb.Append("  Oid: ").Append(Oid).Append("\n");
+      sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  AircraftId: ").Append(AircraftId).Append("\n");
       sb.Append("  ModelName: ").Append(ModelName).Append("\n");
       sb.Append("  FuselageDimensionsLengthFt: ").Append(FuselageDimensionsLengthFt).Append("\n");

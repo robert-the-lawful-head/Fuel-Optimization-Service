@@ -33,7 +33,8 @@ Name | Type | Description | Notes
 **ArrivalRemarks** | **string** |  | [optional] 
 **FlightPlanId** | **string** |  | [optional] 
 **TripKey** | **string** |  | [optional] 
-**TransactionId** | **int?** |  | [optional] 
+**DepartureTransactionId** | **int?** |  | [optional] 
+**ArrivalTransactionId** | **int?** |  | [optional] 
 **Company** | [**CompanyDTO**](CompanyDTO.md) |  | [optional] 
 **FlightTypeMapping** | [**FlightTypeMappingDTO**](FlightTypeMappingDTO.md) |  | [optional] 
 

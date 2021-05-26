@@ -65,19 +65,36 @@ export class AccountProfileComponent {
         this.systemContactsForm = this.formBuilder.group({
             fuelDeskEmail: new FormControl('', [
                 Validators.required,
+                Validators.email
             ]),
         });
         this.emailDistributionForm = this.formBuilder.group({
             senderAddress: new FormControl('', [
                 Validators.required,
+                Validators.pattern('[a-zA-Z0-9-]*')
             ]),
             replyTo: new FormControl('', [
                 Validators.required,
+                Validators.email
             ]),
         });
         this.loadFboInfo();
         this.loadAvailableRoles();
     }
+
+    
+
+    get fuelDeskEmail() {
+        return this.systemContactsForm.get('fuelDeskEmail');
+    }
+
+    get replyTo() {
+        return this.emailDistributionForm.get('replyTo');
+    } 
+
+    get senderAddress() {
+        return this.emailDistributionForm.get('senderAddress');
+    } 
 
     get isCsr() {
         return this.sharedService.currentUser.role === 5;

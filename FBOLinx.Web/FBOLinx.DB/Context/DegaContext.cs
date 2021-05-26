@@ -20,6 +20,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AcukwikFbohandlerDetail> AcukwikFbohandlerDetail { get; set; }
         public virtual DbSet<AFSAircraft> AFSAircraft { get; set; }
         public virtual DbSet<AircraftSpecifications> AircraftSpecifications { get; set; }
+        public virtual DbSet<ImportedFboEmails> ImportedFboEmails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

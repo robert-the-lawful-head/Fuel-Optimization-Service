@@ -17,7 +17,7 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="result", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "result")]
-    public RouteDetailsCaclulationWithNavLog Result { get; set; }
+    public RouteDetailsCalculationWithNavLog Result { get; set; }
 
     /// <summary>
     /// Gets or Sets Success

@@ -220,6 +220,11 @@ namespace FBOLinx.Web.Services
                     return;
                 }
 
+                //Get current posted retail
+                var postedRetail = await _PriceFetchingService.GetCurrentPostedRetail(_DistributePricingRequest.FboId);
+                var currentPostedRetail = "Current Posted Retail: " + String.Format("{0:C}", postedRetail);
+
+                //Get expiration date
                 string validUntil = "";
 
                 var priceDate = new DateTime();
@@ -238,7 +243,7 @@ namespace FBOLinx.Web.Services
 
                 if (priceDate != null)
                 {
-                    validUntil = "Pricing valid until: " + priceDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
+                    validUntil = "Pricing valid until: " + priceDate.AddMinutes(-1).ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
                 }
 
                 //Add the price breakdown as an image to prevent parsing
@@ -287,7 +292,8 @@ namespace FBOLinx.Web.Services
                     fboState = fbo.State,
                     fboZip = fbo.ZipCode,
                     Subject = HttpUtility.HtmlDecode(_EmailContent.Subject) ?? "Distribution pricing",
-                    expiration = validUntil
+                    expiration = validUntil,
+                    currentPostedRetail = currentPostedRetail
                 };
                 mailMessage.SendGridTemplateData = dynamicTemplateData;
 
@@ -502,7 +508,7 @@ namespace FBOLinx.Web.Services
                 Fboid = _DistributePricingRequest.FboId,
                 GroupId = _DistributePricingRequest.GroupId,
                 PricingTemplateId = _DistributePricingRequest.PricingTemplate?.Oid,
-                UserId = UserService.GetClaimedUserId(_HttpContextAccessor)
+                UserId = JwtManager.GetClaimedUserId(_HttpContextAccessor)
             };
             await _context.DistributionLog.AddAsync(distributionLog);
             await _context.SaveChangesAsync();

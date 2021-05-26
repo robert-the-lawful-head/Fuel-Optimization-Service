@@ -3,7 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**FboLinxFbo**](FboLinxFbo.md) |  | [optional] 
+**Result** | [**FBOLinxFbo**](FBOLinxFbo.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

@@ -39,7 +39,9 @@ Name | Type | Description | Notes
 **Currency** | **string** |  | [optional] 
 **CompanyAdjustedTotal** | **double?** | An adjusted price specified by the flight department for this particular fuel vendor.  The adjusted price is the [EstimatedTotal] +- the adjusted rate setup by the flight department. | [optional] 
 **SpecificTailNumbers** | **List&lt;string&gt;** | If the SpecificTailNumbers list is empty/null then the price applies to all tails. | [optional] 
+**IsForCommercialAircraftOnly** | **bool?** | The \&quot;IsForCommercialAircraftOnly\&quot; flag is a conditional check that attempts to find key words in the FBO and Note showing that this price is only for commercial aircraft. | [optional] 
 **Taxes** | [**List&lt;FuelerTaxByTierDTO&gt;**](FuelerTaxByTierDTO.md) |  | [optional] 
+**DepartureType** | **int?** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

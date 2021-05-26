@@ -16,6 +16,11 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <returns>CurrencyListResponse</returns>
         CurrencyListResponse GetCurrencyList ();
+        /// <summary>
+        /// Internal use only - Sync the latest exchange rates with the European Central Bank 
+        /// </summary>
+        /// <returns>SyncLatestExchangeRatesResponse</returns>
+        SyncLatestExchangeRatesResponse SyncLatestExchangeRates ();
     }
   
     /// <summary>
@@ -101,6 +106,38 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCurrencyList: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CurrencyListResponse) ApiClient.Deserialize(response.Content, typeof(CurrencyListResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Internal use only - Sync the latest exchange rates with the European Central Bank 
+        /// </summary>
+        /// <returns>SyncLatestExchangeRatesResponse</returns>            
+        public SyncLatestExchangeRatesResponse SyncLatestExchangeRates ()
+        {
+            
+    
+            var path = "/api/Currency/exchange-rates/sync-latest";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling SyncLatestExchangeRates: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling SyncLatestExchangeRates: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (SyncLatestExchangeRatesResponse) ApiClient.Deserialize(response.Content, typeof(SyncLatestExchangeRatesResponse), response.Headers);
         }
     
     }

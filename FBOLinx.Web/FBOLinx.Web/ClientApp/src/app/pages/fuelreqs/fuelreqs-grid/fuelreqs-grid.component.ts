@@ -81,13 +81,13 @@ const initialColumns: ColumnType[] = [
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FuelreqsGridComponent implements OnInit, OnChanges {
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Output() exportTriggered = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     tableLocalStorageKey = 'fuel-req-table-settings';
 

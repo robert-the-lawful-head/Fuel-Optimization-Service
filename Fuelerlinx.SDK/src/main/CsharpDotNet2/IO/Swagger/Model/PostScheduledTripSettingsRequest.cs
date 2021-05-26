@@ -13,11 +13,11 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class PostScheduledTripSettingsRequest {
     /// <summary>
-    /// Gets or Sets DisablePushOnDispatch
+    /// Gets or Sets WriteToTripSheetOnDispatch
     /// </summary>
-    [DataMember(Name="disablePushOnDispatch", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "disablePushOnDispatch")]
-    public bool? DisablePushOnDispatch { get; set; }
+    [DataMember(Name="writeToTripSheetOnDispatch", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "writeToTripSheetOnDispatch")]
+    public bool? WriteToTripSheetOnDispatch { get; set; }
 
     /// <summary>
     /// Gets or Sets DepartureDispatchOnly
@@ -62,11 +62,11 @@ namespace IO.Swagger.Model {
     public bool? CopyScheduledCrewEmails { get; set; }
 
     /// <summary>
-    /// Gets or Sets PreventExpenseCreation
+    /// Gets or Sets CreateExpenseInFos
     /// </summary>
-    [DataMember(Name="preventExpenseCreation", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "preventExpenseCreation")]
-    public bool? PreventExpenseCreation { get; set; }
+    [DataMember(Name="createExpenseInFos", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "createExpenseInFos")]
+    public bool? CreateExpenseInFos { get; set; }
 
     /// <summary>
     /// Gets or Sets AddTimeStampToFuelComment
@@ -132,14 +132,14 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class PostScheduledTripSettingsRequest {\n");
-      sb.Append("  DisablePushOnDispatch: ").Append(DisablePushOnDispatch).Append("\n");
+      sb.Append("  WriteToTripSheetOnDispatch: ").Append(WriteToTripSheetOnDispatch).Append("\n");
       sb.Append("  DepartureDispatchOnly: ").Append(DepartureDispatchOnly).Append("\n");
       sb.Append("  ShowArrivalOfFinalLeg: ").Append(ShowArrivalOfFinalLeg).Append("\n");
       sb.Append("  DispatchMessageFormat: ").Append(DispatchMessageFormat).Append("\n");
       sb.Append("  NonDispatchMessageFormat: ").Append(NonDispatchMessageFormat).Append("\n");
       sb.Append("  AllowRampFeeInTripSheet: ").Append(AllowRampFeeInTripSheet).Append("\n");
       sb.Append("  CopyScheduledCrewEmails: ").Append(CopyScheduledCrewEmails).Append("\n");
-      sb.Append("  PreventExpenseCreation: ").Append(PreventExpenseCreation).Append("\n");
+      sb.Append("  CreateExpenseInFos: ").Append(CreateExpenseInFos).Append("\n");
       sb.Append("  AddTimeStampToFuelComment: ").Append(AddTimeStampToFuelComment).Append("\n");
       sb.Append("  AddFillerLegs: ").Append(AddFillerLegs).Append("\n");
       sb.Append("  IncludeTimeStampOfUserNotes: ").Append(IncludeTimeStampOfUserNotes).Append("\n");

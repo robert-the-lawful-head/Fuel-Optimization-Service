@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using FBOLinx.Web.Auth;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -318,7 +319,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
             User testUser = TestDataHelper.CreateTestUser();
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(ClaimTypes.NameIdentifier, testUser.Oid.ToString());
             
-            int result = UserService.GetClaimedUserId(httpContextAccessor);
+            int result = JwtManager.GetClaimedUserId(httpContextAccessor);
 
             Assert.AreEqual(testUser.Oid, result);
         }
@@ -328,7 +329,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(string.Empty, string.Empty);
 
-            int result = UserService.GetClaimedUserId(httpContextAccessor);
+            int result = JwtManager.GetClaimedUserId(httpContextAccessor);
 
             Assert.AreEqual(0, result);
         }
@@ -339,7 +340,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
             User testUser = TestDataHelper.CreateTestUser();
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(ClaimTypes.Sid, testUser.FboId.ToString());
 
-            int result = UserService.GetClaimedFboId(httpContextAccessor);
+            int result = JwtManager.GetClaimedFboId(httpContextAccessor);
 
             Assert.AreEqual(testUser.FboId, result);
         }
@@ -349,7 +350,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(string.Empty, string.Empty);
 
-            int result = UserService.GetClaimedFboId(httpContextAccessor);
+            int result = JwtManager.GetClaimedFboId(httpContextAccessor);
 
             Assert.AreEqual(0, result);
         }
@@ -360,7 +361,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
             User testUser = TestDataHelper.CreateTestUser();
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(ClaimTypes.GroupSid, testUser.GroupId.ToString());
 
-            int result = UserService.GetClaimedGroupId(httpContextAccessor);
+            int result = JwtManager.GetClaimedGroupId(httpContextAccessor);
 
             Assert.AreEqual(testUser.GroupId, result);
         }
@@ -370,7 +371,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(string.Empty, string.Empty);
 
-            int result = UserService.GetClaimedGroupId(httpContextAccessor);
+            int result = JwtManager.GetClaimedGroupId(httpContextAccessor);
 
             Assert.AreEqual(0, result);
         }
@@ -381,7 +382,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
             User testUser = TestDataHelper.CreateTestUser();
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(ClaimTypes.Role, ((short)testUser.Role).ToString());
 
-            var result = UserService.GetClaimedRole(httpContextAccessor);
+            var result = JwtManager.GetClaimedRole(httpContextAccessor);
 
             Assert.AreEqual(testUser.Role, result);
         }
@@ -391,7 +392,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(string.Empty, string.Empty);
 
-            var result = UserService.GetClaimedRole(httpContextAccessor);
+            var result = JwtManager.GetClaimedRole(httpContextAccessor);
 
             Assert.AreEqual(User.UserRoles.NotSet, result);
         }

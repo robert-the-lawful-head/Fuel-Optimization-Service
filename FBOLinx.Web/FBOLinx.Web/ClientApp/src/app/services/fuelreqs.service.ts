@@ -167,19 +167,6 @@ export class FuelreqsService {
         );
     }
 
-    public getMarketShareAirport(fboId: number, startDate: Date, endDate: Date) {
-        return this.http.post(
-            this.accessPointUrl + '/analysis/market-share-airport/fbo/' + fboId,
-            {
-                startDateTime: startDate,
-                endDateTime: endDate,
-            },
-            {
-                headers: this.headers,
-            }
-        );
-    }
-
     public getFBOCustomersBreakdown(fboId: number, startDate: Date, endDate: Date, chartType: string) {
         return this.http.post(
             this.accessPointUrl + '/analysis/customers-breakdown/fbo/' + fboId,
@@ -207,6 +194,20 @@ export class FuelreqsService {
         );
     }
 
+    public getCompaniesQuotingDealStatisticsForGroupFbos(groupId: number, fboIds: number[], startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId,
+            {
+                fboIds,
+                startDateTime: startDate,
+                endDateTime: endDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public getFuelVendorSources(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
             this.accessPointUrl + '/analysis/fbo-fuel-vendor-sources/fbo/' + fboId,
@@ -222,7 +223,33 @@ export class FuelreqsService {
 
     public getMarketShareFboAirport(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/market-share-fbos-airport/fbo/' + fboId,
+            this.accessPointUrl + '/analysis/market-share-fbo-airport/fbo/' + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getMarketShareFbosAirports(groupId: number, startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + '/analysis/market-share-fbos-airports/group/' + groupId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getFuelVendorSourcesByAirports(groupId: number, startDate: Date, endDate: Date) {
+        return this.http.post(
+            this.accessPointUrl + '/analysis/fbo-fuel-vendor-sources/group/' + groupId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,

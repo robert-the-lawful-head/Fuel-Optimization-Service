@@ -20,6 +20,13 @@ namespace IO.Swagger.Model {
     public int? LegNumber { get; set; }
 
     /// <summary>
+    /// Gets or Sets LegId
+    /// </summary>
+    [DataMember(Name="legId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "legId")]
+    public int? LegId { get; set; }
+
+    /// <summary>
     /// Gets or Sets DepartureAirportIdentifier
     /// </summary>
     [DataMember(Name="departureAirportIdentifier", EmitDefaultValue=false)]
@@ -48,6 +55,21 @@ namespace IO.Swagger.Model {
     public string DepartureTime { get; set; }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    [DataMember(Name="departureType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "departureType")]
+    public int? DepartureType { get; set; }
+
+    /// <summary>
+    /// Gets or Sets SchedulingInformation
+    /// </summary>
+    [DataMember(Name="schedulingInformation", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "schedulingInformation")]
+    public ScheduledTripDTO SchedulingInformation { get; set; }
+
+    /// <summary>
     /// Gets or Sets LegPricingData
     /// </summary>
     [DataMember(Name="legPricingData", EmitDefaultValue=false)]
@@ -66,14 +88,14 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="flightDataWithoutTankeredFuel", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "flightDataWithoutTankeredFuel")]
-    public RouteDetailsCalculation FlightDataWithoutTankeredFuel { get; set; }
+    public RouteDetailsCalculationWithNavLog FlightDataWithoutTankeredFuel { get; set; }
 
     /// <summary>
     /// Gets or Sets FlightDataWithTankeredFuel
     /// </summary>
     [DataMember(Name="flightDataWithTankeredFuel", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "flightDataWithTankeredFuel")]
-    public RouteDetailsCalculation FlightDataWithTankeredFuel { get; set; }
+    public RouteDetailsCalculationWithNavLog FlightDataWithTankeredFuel { get; set; }
 
     /// <summary>
     /// Gets or Sets WeightAndBalanceOptions
@@ -114,10 +136,13 @@ namespace IO.Swagger.Model {
       var sb = new StringBuilder();
       sb.Append("class Leg {\n");
       sb.Append("  LegNumber: ").Append(LegNumber).Append("\n");
+      sb.Append("  LegId: ").Append(LegId).Append("\n");
       sb.Append("  DepartureAirportIdentifier: ").Append(DepartureAirportIdentifier).Append("\n");
       sb.Append("  ArrivalAirportIdentifier: ").Append(ArrivalAirportIdentifier).Append("\n");
       sb.Append("  DepartureDate: ").Append(DepartureDate).Append("\n");
       sb.Append("  DepartureTime: ").Append(DepartureTime).Append("\n");
+      sb.Append("  DepartureType: ").Append(DepartureType).Append("\n");
+      sb.Append("  SchedulingInformation: ").Append(SchedulingInformation).Append("\n");
       sb.Append("  LegPricingData: ").Append(LegPricingData).Append("\n");
       sb.Append("  LegTankeringOptions: ").Append(LegTankeringOptions).Append("\n");
       sb.Append("  FlightDataWithoutTankeredFuel: ").Append(FlightDataWithoutTankeredFuel).Append("\n");

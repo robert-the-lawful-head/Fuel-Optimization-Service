@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { FbosService } from '../../../services/fbos.service';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -28,12 +29,19 @@ export class GroupAnalyticsHomeComponent implements OnInit {
     breadcrumb: any[] = BREADCRUMBS;
 
     customers: any[];
+    fbos: any[];
 
     constructor(
         private reportDialog: MatDialog,
         private sharedService: SharedService,
+        private fbosService: FbosService,
         private customerInfoByGroupService: CustomerinfobygroupService
     ) {
+        this.fbosService
+            .getForGroup(this.sharedService.currentUser.groupId)
+            .subscribe((fbos: any[]) => {
+                this.fbos = fbos;
+            });
     }
 
     ngOnInit() {

@@ -55,6 +55,7 @@
     <None Remove="ClientApp\src\app\helpers\error.interceptor.ts" />
     <None Remove="ClientApp\src\app\helpers\index.ts" />
     <None Remove="ClientApp\src\app\helpers\jwt.interceptor.ts" />
+    <None Remove="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <None Remove="ClientApp\src\app\models\enum-options.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
@@ -111,6 +112,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\helpers\error.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\helpers\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\helpers\jwt.interceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\enum-options.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />

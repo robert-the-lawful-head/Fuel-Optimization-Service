@@ -83,9 +83,9 @@ namespace IO.Swagger.Model {
     public string TailNumber { get; set; }
 
     /// <summary>
-    /// 
+    /// Airspeed units:             0 = Unspecified             4 = KMH             8 = Knots             16 = MPH             32 = Mach    * `Unspecified` -   * `KMH` -   * `Knots` -   * `MPH` -   * `Mach` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Airspeed units:             0 = Unspecified             4 = KMH             8 = Knots             16 = MPH             32 = Mach    * `Unspecified` -   * `KMH` -   * `Knots` -   * `MPH` -   * `Mach` -   </value>
     [DataMember(Name="airspeedUnit", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "airspeedUnit")]
     public int? AirspeedUnit { get; set; }
@@ -98,9 +98,9 @@ namespace IO.Swagger.Model {
     public double? EmptyWeight { get; set; }
 
     /// <summary>
-    /// 
+    /// Fuel burn units:             1 = Gallons per hour             2 = Pounds per hour             4 = Liters per hour             8 = Kilograms per hour    * `GallonsPerHour` -   * `PoundsPerHour` -   * `LitersPerHour` -   * `KilogramsPerHour` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Fuel burn units:             1 = Gallons per hour             2 = Pounds per hour             4 = Liters per hour             8 = Kilograms per hour    * `GallonsPerHour` -   * `PoundsPerHour` -   * `LitersPerHour` -   * `KilogramsPerHour` -   </value>
     [DataMember(Name="fuelBurnUnit", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "fuelBurnUnit")]
     public int? FuelBurnUnit { get; set; }
@@ -141,25 +141,25 @@ namespace IO.Swagger.Model {
     public int? MinRunwayLength { get; set; }
 
     /// <summary>
-    /// 
+    /// Aircraft Performance Profile Types:             0 = None             1 = By Segment             2 = By Hour             4 = By Altitude             8 = SkyPlan    * `None` -   * `BySegment` -   * `ByHour` -   * `ByAltitude` -   * `SkyPlan` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Aircraft Performance Profile Types:             0 = None             1 = By Segment             2 = By Hour             4 = By Altitude             8 = SkyPlan    * `None` -   * `BySegment` -   * `ByHour` -   * `ByAltitude` -   * `SkyPlan` -   </value>
     [DataMember(Name="performanceProfileType", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "performanceProfileType")]
     public int? PerformanceProfileType { get; set; }
 
     /// <summary>
-    /// 
+    /// Volume units:             0 = Gallons             1 = Liters    * `Gallons` -   * `Liters` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Volume units:             0 = Gallons             1 = Liters    * `Gallons` -   * `Liters` -   </value>
     [DataMember(Name="volumeUnit", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "volumeUnit")]
     public int? VolumeUnit { get; set; }
 
     /// <summary>
-    /// 
+    /// Weight units:             0 = Pounds             1 = Kilograms    * `Pounds` -   * `Kilograms` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Weight units:             0 = Pounds             1 = Kilograms    * `Pounds` -   * `Kilograms` -   </value>
     [DataMember(Name="weightUnit", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "weightUnit")]
     public int? WeightUnit { get; set; }
