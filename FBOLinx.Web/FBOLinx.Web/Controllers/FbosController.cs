@@ -30,17 +30,17 @@ namespace FBOLinx.Web.Controllers
         private readonly DegaContext _degaContext;
         private GroupFboService _groupFboService;
         private readonly FboService _fboService;
-        private JwtManager _jwtManager;
         private IHttpContextAccessor _httpContextAccessor;
+        private readonly OAuthService _oAuthService;
 
-        public FbosController(FboLinxContext context, DegaContext degaContext, GroupFboService groupFboService, FboService fboService, JwtManager jwtManager, IHttpContextAccessor httpContextAccessor)
+        public FbosController(FboLinxContext context, DegaContext degaContext, GroupFboService groupFboService, FboService fboService, IHttpContextAccessor httpContextAccessor, OAuthService oAuthService)
         {
             _groupFboService = groupFboService;
             _context = context;
             _degaContext = degaContext;
             _fboService = fboService;
-            _jwtManager = jwtManager;
             _httpContextAccessor = httpContextAccessor;
+            _oAuthService = oAuthService;
         }
 
         // GET: api/Fbos/group/5
@@ -379,7 +379,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/Fbos/add-account-handlerid/100
         [AllowAnonymous]
-        //[APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
         [HttpGet("add-account-handlerid/{handlerId}")]
         public async Task<ActionResult<string>> AddNonRevAccountByAcukwikHandlerId([FromRoute] int handlerId)
         {
@@ -389,26 +389,33 @@ namespace FBOLinx.Web.Controllers
             }
 
             var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
-            var email = "chau@fue";
 
             if (fbo == null)
             {
                 var acukwikFbo = await _degaContext.AcukwikFbohandlerDetail.Where(x => x.AcukwikId == handlerId).FirstOrDefaultAsync();
+                if (acukwikFbo == null)
+                    return BadRequest("FBO not found");
+
                 var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.AirportId == acukwikFbo.AirportId).FirstOrDefaultAsync();
 
-                var newFbo = new SingleFboRequest() { Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Fbos.AccountTypes.NonRevFBO, FuelDeskEmail = email };
-                fbo = await _groupFboService.CreateNewFbo(newFbo);
+                var importedFboEmail = await _degaContext.ImportedFboEmails.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
 
-                User newUser = new User() { FboId = fbo.Oid, Role = DB.Models.User.UserRoles.NonRev, Username = email, FirstName = email, GroupId = fbo.GroupId };
-                _context.User.Add(newUser);
-                await _context.SaveChangesAsync();
+                if (importedFboEmail != null)
+                {
+                    var newFbo = new SingleFboRequest() { Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Fbos.AccountTypes.NonRevFBO, FuelDeskEmail = importedFboEmail.Email };
+                    fbo = await _groupFboService.CreateNewFbo(newFbo);
+
+                    User newUser = new User() { FboId = fbo.Oid, Role = DB.Models.User.UserRoles.NonRev, Username = importedFboEmail.Email, FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
+                    _context.User.Add(newUser);
+                    await _context.SaveChangesAsync();
+                }
             }
 
             var user = await _context.User.Where(x => x.FboId == fbo.Oid && x.Role == DB.Models.User.UserRoles.NonRev).FirstOrDefaultAsync();
 
             //Return URL with authentication for 3 days
-            var jwtToken = _jwtManager.GenerateToken(user.Oid, string.Format("{0} {1}", user.FirstName, user.LastName), user.Username, user.FboId, 4320);
-            return Ok("https://" + _httpContextAccessor.HttpContext.Request.Host + "/authtoken/" + HttpUtility.UrlEncode(jwtToken));
+            AccessTokens accessToken = await _oAuthService.GenerateAccessToken(user, 4320);
+            return Ok("https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(accessToken.AccessToken));
         }
 
         private bool FbosExists(int id)

@@ -175,13 +175,9 @@ const defaultRoutes: Routes = [
 ];
 
 const outsideTheGateRoutes: Routes = [{
-  path: 'authtoken/:token',
+  path: 'auth',
   component: AuthtokenComponent,
 },
-    {
-        path: 'authtoken',
-        component: AuthtokenComponent,
-    },
 ];
 
 const routes: Routes = [{
@@ -193,10 +189,6 @@ const routes: Routes = [{
     path: 'default-layout',
     component: DefaultLayoutComponent,
     children: defaultRoutes,
-    },
-    {
-        path: 'authtoken/:token/:redirect',
-        component: AuthtokenComponent
     },
 {
     path: 'outside-the-gate-layout',

@@ -502,7 +502,7 @@ namespace FBOLinx.Web.Services
                 Fboid = _DistributePricingRequest.FboId,
                 GroupId = _DistributePricingRequest.GroupId,
                 PricingTemplateId = _DistributePricingRequest.PricingTemplate?.Oid,
-                UserId = UserService.GetClaimedUserId(_HttpContextAccessor)
+                UserId = JwtManager.GetClaimedUserId(_HttpContextAccessor)
             };
             await _context.DistributionLog.AddAsync(distributionLog);
             await _context.SaveChangesAsync();

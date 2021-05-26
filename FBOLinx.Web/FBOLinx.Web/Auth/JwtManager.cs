@@ -31,32 +31,51 @@ namespace FBOLinx.Web.Auth
             _appSettings = appSettings.Value;
         }
 
-        public string GenerateToken(int id, string name, string username, int? fboid, int expireMinutes = 10080)
+        public string GenerateToken(int id, int? fboid, User.UserRoles role, int? groupId, int expireMinutes = 10080)
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Secret));
-
-            var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature);
-
-            var securityTokenDescriptor = new SecurityTokenDescriptor()
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("UserID", id.ToString()),
-                    new Claim("Name", name),
-                    new Claim("Username", username),
-                    new Claim("Email", username.Contains("@") ? username : username + "@fbolinx.com"),
-                    new Claim("FBO", fboid.HasValue ? fboid.ToString() : ""),
-                    new Claim("Provider", "FBOLINX")
-                }),
-                SigningCredentials = signingCredentials,
-                Expires = DateTime.UtcNow.AddMinutes(expireMinutes)
-            };
-
+            // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
-            var plainToken = tokenHandler.CreateToken(securityTokenDescriptor);
-            var signedAndEncodedToken = tokenHandler.WriteToken(plainToken);
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                    new Claim(ClaimTypes.Role, ((short) role).ToString()),
+                    new Claim(ClaimTypes.GroupSid, groupId.ToString()),
+                    new Claim(ClaimTypes.Sid,  fboid.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(expireMinutes),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var signedEncodedToken = tokenHandler.WriteToken(token);
+            return signedEncodedToken;
 
-            return signedAndEncodedToken;
+            //var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Secret));
+
+            //var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature);
+
+            //var securityTokenDescriptor = new SecurityTokenDescriptor()
+            //{
+            //    Subject = new ClaimsIdentity(new[]
+            //    {
+            //        new Claim("UserID", id.ToString()),
+            //        new Claim("Name", name),
+            //        new Claim("Username", username),
+            //        new Claim("Email", username.Contains("@") ? username : username + "@fbolinx.com"),
+            //        new Claim("FBO", fboid.HasValue ? fboid.ToString() : ""),
+            //        new Claim("Provider", "FBOLINX")
+            //    }),
+            //    SigningCredentials = signingCredentials,
+            //    Expires = DateTime.UtcNow.AddMinutes(expireMinutes)
+            //};
+
+            //var tokenHandler = new JwtSecurityTokenHandler();
+            //var plainToken = tokenHandler.CreateToken(securityTokenDescriptor);
+            //var signedAndEncodedToken = tokenHandler.WriteToken(plainToken);
+
+            //return signedAndEncodedToken;
         }
 
         public string GetCurrentAuthToken()
@@ -141,7 +160,8 @@ namespace FBOLinx.Web.Auth
         {
             try
             {
-                return Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst("UserID").Value);
+                return System.Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)
+                    .Value);
             }
             catch (System.Exception)
             {
@@ -149,11 +169,23 @@ namespace FBOLinx.Web.Auth
             }
         }
 
-        public static int GetClaimedCompanyId(IHttpContextAccessor httpContextAccessor)
+        public static User.UserRoles GetClaimedRole(IHttpContextAccessor httpContextAccessor)
         {
             try
             {
-                return Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst("Company").Value);
+                return (User.UserRoles)System.Convert.ToInt16(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value);
+            }
+            catch (System.Exception)
+            {
+                return User.UserRoles.NotSet;
+            }
+        }
+
+        public static int GetClaimedFboId(IHttpContextAccessor httpContextAccessor)
+        {
+            try
+            {
+                return System.Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid).Value);
             }
             catch (System.Exception)
             {
@@ -161,15 +193,15 @@ namespace FBOLinx.Web.Auth
             }
         }
 
-        public static string GetClaimedName(IHttpContextAccessor httpContextAccessor)
+        public static int GetClaimedGroupId(IHttpContextAccessor httpContextAccessor)
         {
             try
             {
-                return httpContextAccessor.HttpContext.User.FindFirst("Name").Value;
+                return System.Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GroupSid).Value);
             }
             catch (System.Exception)
             {
-                return "";
+                return 0;
             }
         }
     }

@@ -655,7 +655,7 @@ namespace FBOLinx.Web.Controllers
             {
                 if (string.IsNullOrEmpty(request.ICAO))
                 {
-                    User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
+                    User user = _context.User.Find(JwtManager.GetClaimedUserId(_HttpContextAccessor));
                     Fboairports airport =
                         await _context.Fboairports.Where(x => x.Fboid == request.FboId).FirstOrDefaultAsync();
 
@@ -688,7 +688,7 @@ namespace FBOLinx.Web.Controllers
 
             if (string.IsNullOrEmpty(request.ICAO))
             {
-                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
+                User user = _context.User.Find(JwtManager.GetClaimedUserId(_HttpContextAccessor));
                 Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
 
                 if (airport == null)
@@ -802,7 +802,7 @@ namespace FBOLinx.Web.Controllers
 
             if (string.IsNullOrEmpty(request.ICAO))
             {
-                User user = _context.User.Find(UserService.GetClaimedUserId(_HttpContextAccessor));
+                User user = _context.User.Find(JwtManager.GetClaimedUserId(_HttpContextAccessor));
                 Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
 
                 if (airport == null)
