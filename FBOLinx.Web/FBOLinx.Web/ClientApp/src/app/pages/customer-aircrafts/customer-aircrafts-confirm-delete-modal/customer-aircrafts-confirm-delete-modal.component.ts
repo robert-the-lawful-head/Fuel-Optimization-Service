@@ -13,9 +13,6 @@ export class DialogConfirmAircraftDeleteComponent {
         public dialogRef: MatDialogRef<DialogConfirmAircraftDeleteComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        if (data) {
-            console.log(data);
-        }
     }
 
     // Public Methods
