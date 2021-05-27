@@ -650,7 +650,7 @@ namespace FBOLinx.Web.Controllers
                 groupCustomerResponse.AddGroupedFboPrices(FlightTypeClassifications.Private, priceResults[FlightTypeClassifications.Private].Where(x => x.Company == groupCustomerResponse.Company && x.TailNumbers == groupCustomerResponse.TailNumbers).ToList());
             }
             
-            var maxPriceType = result.Select(x => x.GroupCustomerFbos.Max(y => y.Prices.Max(z => z.PriceBreakdownDisplayType))).Max();
+            var maxPriceType = result.Select(x => x.GroupCustomerFbos.Max(y => y.Prices.Max(z => z.PriceBreakdownDisplayType))).DefaultIfEmpty().Max();
             if (maxPriceType == PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
                 maxPriceType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
             result.ForEach(r =>
