@@ -24,16 +24,13 @@
                         <div class="container-fluid mt-4">
                             <div class="row">
                                 <div class="col">
-                                    <mat-form-field>
-                                        <mat-label>Customer</mat-label>
-                                        <mat-select (selectionChange)="customerForLookupChanged()"
-                                                    [(ngModel)]="customerForCustomerLookup"
-                                                    placeholder="Customer">
-                                            <mat-option *ngFor="let customer of allCustomers" [value]="customer">
-                                                {{customer.company}}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
+                                    <app-autocomplete-search
+                                        label="Customer"
+                                        [optionValue]="'company'"
+                                        [options]="allCustomers"
+                                        [displayFn]="displayCustomerName"
+                                        (selectionChanged)="customerForLookupChanged($event)"
+                                    ></app-autocomplete-search>
                                 </div>
                                 <div class="col">
                                     <mat-form-field>
@@ -58,12 +55,11 @@
                         <div class="container-fluid mt-4">
                             <div class="row">
                                 <div class="col">
-                                    <mat-form-field>
-                                        <input [formControl]="tailNumberForLookupControl"
-                                               aria-label="Aircraft Tail Number"
-                                               matInput
-                                               placeholder="Tail Number*"/>
-                                    </mat-form-field>
+                                    <app-autocomplete-search
+                                        label="Tail Number*"
+                                        [options]="allTailNumbers"
+                                        (selectionChanged)="tailNumberLookupChanged($event)"
+                                    ></app-autocomplete-search>
                                 </div>
                                 <div class="col">
                                     <mat-form-field>

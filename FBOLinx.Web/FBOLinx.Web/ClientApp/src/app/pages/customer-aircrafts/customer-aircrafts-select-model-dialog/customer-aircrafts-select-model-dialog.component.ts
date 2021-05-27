@@ -28,7 +28,6 @@ export class CustomerAircraftSelectModelComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log(this.data);
         this.customerAircraftsDataSource = new MatTableDataSource(
             this.data.aircrafts
         );
@@ -41,7 +40,6 @@ export class CustomerAircraftSelectModelComponent implements OnInit {
     }
 
     public onSaveClick(): void {
-        console.log(this.data.aircrafts);
         this.data.aircrafts.forEach((result) => {
             if (result.selectedModel) {
                 result.model = result.selectedModel;

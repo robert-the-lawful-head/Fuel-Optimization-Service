@@ -43,9 +43,14 @@ export class CustomerAircraftsDialogNewAircraftComponent implements OnInit {
     }
 
     // Public Methods
-    public onAircraftTypeChanged() {
+    public onAircraftTypeChanged(selectedAircraft) {
+        this.data.selectedAircraft = selectedAircraft;
         this.data.aircraftId = this.data.selectedAircraft.aircraftId;
         this.data.size = this.data.selectedAircraft.size;
+    }
+
+    public displayAircraft(aircraft) {
+        return aircraft ? `${aircraft.make} ${aircraft.model}` : aircraft;
     }
 
     public onCancelClick(): void {

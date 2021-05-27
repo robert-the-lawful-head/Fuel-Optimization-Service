@@ -186,7 +186,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 results.data.forEach((result) => {
                     result.fboid = this.sharedService.currentUser.fboId;
                 });
-                console.log(results.data);
 
                 this.rampFeesService
                     .importrampfees(results.data)
