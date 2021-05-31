@@ -81,7 +81,7 @@
                 </mat-slide-toggle>
             </div>
             <div class="d-inline-block ml-2">
-                <button (click)="clearAllFilters()" [view]="'error'" ni-button size="small">
+                <button (click)="clearAllFilters()" [view]="'error'" ni-button size="small" [disabled]="!data">
                     Clear All Filters
                 </button>
             </div>
