@@ -262,7 +262,6 @@ namespace FBOLinx.Web.Services
                 {
                     foreach (ContactInfoByGroup contactInfoByGroup in recipients)
                     {
-                        //if (IsValidEmailRecipient(contactInfoByGroup.Email))
                         if (_MailService.IsValidEmailRecipient(contactInfoByGroup.Email))
                             mailMessage.To.Add(contactInfoByGroup.Email);
                     }
@@ -324,22 +323,6 @@ namespace FBOLinx.Web.Services
             }
         }
 
-        //private bool IsValidEmailRecipient(string emailAddress)
-        //{
-        //var emailAddressValidator = new System.ComponentModel.DataAnnotations.EmailAddressAttribute();
-        //    if (string.IsNullOrEmpty(emailAddress))
-        //        return false;
-        //    if (!emailAddressValidator.IsValid(emailAddress))
-        //        return false;
-        //    if (LimitedEmailDomains == null || LimitedEmailDomains.Count == 0)
-        //        return true;
-        //    foreach (string emailDomain in LimitedEmailDomains)
-        //    {
-        //        if (emailAddress.ToLower().Contains(emailDomain))
-        //            return true;
-        //    }
-        //    return false;
-        //}
         private async Task MarkDistributionRecordAsComplete(DistributionQueue distributionQueueRecord)
         {
             if (distributionQueueRecord == null)
