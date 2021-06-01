@@ -54,6 +54,21 @@ namespace IO.Swagger.Api
         /// <returns>AutoReconciledFileResponse</returns>
         AutoReconciledFileResponse GetAutoReconciledFile (int? processId);
         /// <summary>
+        /// Fetch all distinct airports ever used for transactions for the authenticated company. 
+        /// </summary>
+        /// <returns>TransactionDistinctAirportIdentifiersResponse</returns>
+        TransactionDistinctAirportIdentifiersResponse GetDistinctAirportsForAllTransactions ();
+        /// <summary>
+        /// Fetch all distinct fuel vendors ever used for transactions for the authenticated company. 
+        /// </summary>
+        /// <returns>TransactionDistinctFuelVendorsResponse</returns>
+        TransactionDistinctFuelVendorsResponse GetDistinctFuelVendorsForAllTransactions ();
+        /// <summary>
+        /// Fetch all distinct tails ever used for transactions for the authenticated company. 
+        /// </summary>
+        /// <returns>TransactionDistinctTailsResponse</returns>
+        TransactionDistinctTailsResponse GetDistinctTailsForAllTransactions ();
+        /// <summary>
         /// Internal use only - Fetch an invoice import by the process ID. 
         /// </summary>
         /// <param name="processId"></param>
@@ -138,6 +153,12 @@ namespace IO.Swagger.Api
         /// <returns>TransactionsResponse</returns>
         TransactionsResponse GetTransactionsByDateRange (DateTime? startDate, DateTime? endDate);
         /// <summary>
+        /// Fetch a list of transactions by their Ids.  Format of [commaDelimitedIds] parameter should be \&quot;333,444,555\&quot;. 
+        /// </summary>
+        /// <param name="commaDelimitedIds"></param>
+        /// <returns>TransactionsResponse</returns>
+        TransactionsResponse GetTransactionsByIdList (string commaDelimitedIds);
+        /// <summary>
         /// Get all transactions for the specified invoice number.  This can include both fuel orders and service-only transactions. Details about each attachment are included in the transaction, but the actual file data must be pulled via the /attachment/{fileDataId} API (GetTransactionAttachmentFileDataById in the SDK).
         /// </summary>
         /// <param name="invoiceNumber"></param>
@@ -150,6 +171,11 @@ namespace IO.Swagger.Api
         /// <param name="processId"></param>
         /// <returns>TransactionsResponse</returns>
         TransactionsResponse GetTransactionsFromInvoiceImport (int? processId);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>UpcomingTransactionsScheduleChangeReviewResponse</returns>
+        UpcomingTransactionsScheduleChangeReviewResponse GetUpcomingTransactionsScheduleChangeReview ();
         /// <summary>
         /// Internal use only - Add a file captured by an invoice import. 
         /// </summary>
@@ -540,6 +566,102 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetAutoReconciledFile: " + response.ErrorMessage, response.ErrorMessage);
     
             return (AutoReconciledFileResponse) ApiClient.Deserialize(response.Content, typeof(AutoReconciledFileResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch all distinct airports ever used for transactions for the authenticated company. 
+        /// </summary>
+        /// <returns>TransactionDistinctAirportIdentifiersResponse</returns>            
+        public TransactionDistinctAirportIdentifiersResponse GetDistinctAirportsForAllTransactions ()
+        {
+            
+    
+            var path = "/api/Transaction/airport/distinct-identifiers";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetDistinctAirportsForAllTransactions: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetDistinctAirportsForAllTransactions: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (TransactionDistinctAirportIdentifiersResponse) ApiClient.Deserialize(response.Content, typeof(TransactionDistinctAirportIdentifiersResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch all distinct fuel vendors ever used for transactions for the authenticated company. 
+        /// </summary>
+        /// <returns>TransactionDistinctFuelVendorsResponse</returns>            
+        public TransactionDistinctFuelVendorsResponse GetDistinctFuelVendorsForAllTransactions ()
+        {
+            
+    
+            var path = "/api/Transaction/fuelvendor/distinct";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetDistinctFuelVendorsForAllTransactions: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetDistinctFuelVendorsForAllTransactions: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (TransactionDistinctFuelVendorsResponse) ApiClient.Deserialize(response.Content, typeof(TransactionDistinctFuelVendorsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch all distinct tails ever used for transactions for the authenticated company. 
+        /// </summary>
+        /// <returns>TransactionDistinctTailsResponse</returns>            
+        public TransactionDistinctTailsResponse GetDistinctTailsForAllTransactions ()
+        {
+            
+    
+            var path = "/api/Transaction/aircraft/distinct-tails";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetDistinctTailsForAllTransactions: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetDistinctTailsForAllTransactions: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (TransactionDistinctTailsResponse) ApiClient.Deserialize(response.Content, typeof(TransactionDistinctTailsResponse), response.Headers);
         }
     
         /// <summary>
@@ -1027,6 +1149,43 @@ path = path.Replace("{" + "tailNumber" + "}", ApiClient.ParameterToString(tailNu
         }
     
         /// <summary>
+        /// Fetch a list of transactions by their Ids.  Format of [commaDelimitedIds] parameter should be \&quot;333,444,555\&quot;. 
+        /// </summary>
+        /// <param name="commaDelimitedIds"></param> 
+        /// <returns>TransactionsResponse</returns>            
+        public TransactionsResponse GetTransactionsByIdList (string commaDelimitedIds)
+        {
+            
+            // verify the required parameter 'commaDelimitedIds' is set
+            if (commaDelimitedIds == null) throw new ApiException(400, "Missing required parameter 'commaDelimitedIds' when calling GetTransactionsByIdList");
+            
+    
+            var path = "/api/Transaction/by-id-list/{commaDelimitedIds}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "commaDelimitedIds" + "}", ApiClient.ParameterToString(commaDelimitedIds));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsByIdList: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsByIdList: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (TransactionsResponse) ApiClient.Deserialize(response.Content, typeof(TransactionsResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Get all transactions for the specified invoice number.  This can include both fuel orders and service-only transactions. Details about each attachment are included in the transaction, but the actual file data must be pulled via the /attachment/{fileDataId} API (GetTransactionAttachmentFileDataById in the SDK).
         /// </summary>
         /// <param name="invoiceNumber"></param> 
@@ -1103,6 +1262,38 @@ path = path.Replace("{" + "fuelerId" + "}", ApiClient.ParameterToString(fuelerId
                 throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionsFromInvoiceImport: " + response.ErrorMessage, response.ErrorMessage);
     
             return (TransactionsResponse) ApiClient.Deserialize(response.Content, typeof(TransactionsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>UpcomingTransactionsScheduleChangeReviewResponse</returns>            
+        public UpcomingTransactionsScheduleChangeReviewResponse GetUpcomingTransactionsScheduleChangeReview ()
+        {
+            
+    
+            var path = "/api/Transaction/upcoming/schedule-change-review";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetUpcomingTransactionsScheduleChangeReview: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetUpcomingTransactionsScheduleChangeReview: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpcomingTransactionsScheduleChangeReviewResponse) ApiClient.Deserialize(response.Content, typeof(UpcomingTransactionsScheduleChangeReviewResponse), response.Headers);
         }
     
         /// <summary>

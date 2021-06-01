@@ -16,3 +16,10 @@ table {
 .mat-form-field {
     font-size: 14px;
 }
+
+.actions {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}

@@ -4,7 +4,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **OmitAlternateFuel** | **bool?** |  | [optional] 
-**PriceSearchPreference** | **int?** | Price Search Preference:             0 &#x3D; SelectedOptionOnly             1 &#x3D; SelectedFBOOnly             2 &#x3D; AllOptions    * &#x60;SelectedOptionOnly&#x60; - SelectedOptionOnly  * &#x60;SelectedFBOOnly&#x60; - SelectedFBOOnly  * &#x60;AllOptions&#x60; - AllOptions   | [optional] 
+**PriceSearchPreference** | **int?** | Price Search Preference:             0 &#x3D; SelectedOptionOnly             1 &#x3D; SelectedFBOOnly             2 &#x3D; AllOptions    * &#x60;SelectedOptionOnly&#x60; - Selected fuel option only  * &#x60;SelectedFBOOnly&#x60; - Selected FBO only  * &#x60;AllOptions&#x60; - All available fuel options   | [optional] 
 **UserID** | **int?** |  | [optional] 
 **OptimizeTankering** | **bool?** |  | [optional] 
 **UseFlightData** | **int?** | Flight Data Options:             0 &#x3D; False             1 &#x3D; True             2 &#x3D; Company Default    * &#x60;False&#x60; - False  * &#x60;True&#x60; - True  * &#x60;CompanyDefault&#x60; - CompanyDefault   | [optional] 

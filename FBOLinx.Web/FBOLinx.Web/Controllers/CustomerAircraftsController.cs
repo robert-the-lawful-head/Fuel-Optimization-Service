@@ -111,7 +111,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (groupId != UserService.GetClaimedGroupId(_HttpContextAccessor))
+            if (groupId != JwtManager.GetClaimedGroupId(_HttpContextAccessor))
                 return BadRequest(ModelState);
 
             var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId);

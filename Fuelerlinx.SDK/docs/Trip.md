@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **TailNumber** | **string** |  | [optional] 
 **StartingFuel** | [**Weight**](Weight.md) |  | [optional] 
 **MaxFuelCapacity** | [**Weight**](Weight.md) |  | [optional] 
+**RoundTrip** | **bool?** | If true then will treat the trip as returning back to leg 1 | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

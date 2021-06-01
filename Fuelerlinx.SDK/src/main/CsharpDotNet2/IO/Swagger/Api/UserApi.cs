@@ -12,6 +12,12 @@ namespace IO.Swagger.Api
     public interface IUserApi
     {
         /// <summary>
+        /// Internal use only - Change the username/password for an account if it meets security requirements. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostChangeCredentialsResponse</returns>
+        PostChangeCredentialsResponse ChangeCredentials (PostChangeCredentialsRequest body);
+        /// <summary>
         /// Deletes company user profile based on Id 
         /// </summary>
         /// <param name="id"></param>
@@ -54,8 +60,8 @@ namespace IO.Swagger.Api
         /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>UserDTO</returns>
-        UserDTO GetUser (int? id);
+        /// <returns>CustomerDataDTO</returns>
+        CustomerDataDTO GetUser (int? id);
         /// <summary>
         ///  
         /// </summary>
@@ -171,6 +177,40 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        /// Internal use only - Change the username/password for an account if it meets security requirements. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostChangeCredentialsResponse</returns>            
+        public PostChangeCredentialsResponse ChangeCredentials (PostChangeCredentialsRequest body)
+        {
+            
+    
+            var path = "/api/User/change-credentials";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling ChangeCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling ChangeCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostChangeCredentialsResponse) ApiClient.Deserialize(response.Content, typeof(PostChangeCredentialsResponse), response.Headers);
+        }
     
         /// <summary>
         /// Deletes company user profile based on Id 
@@ -417,8 +457,8 @@ namespace IO.Swagger.Api
         /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
         /// </summary>
         /// <param name="id"></param> 
-        /// <returns>UserDTO</returns>            
-        public UserDTO GetUser (int? id)
+        /// <returns>CustomerDataDTO</returns>            
+        public CustomerDataDTO GetUser (int? id)
         {
             
             // verify the required parameter 'id' is set
@@ -447,7 +487,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetUser: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (UserDTO) ApiClient.Deserialize(response.Content, typeof(UserDTO), response.Headers);
+            return (CustomerDataDTO) ApiClient.Deserialize(response.Content, typeof(CustomerDataDTO), response.Headers);
         }
     
         /// <summary>

@@ -40,6 +40,13 @@ namespace IO.Swagger.Api
         /// <returns>ScheduledTripSettingsResponse</returns>
         ScheduledTripSettingsResponse GetScheduledTripSettings ();
         /// <summary>
+        /// Fetch scheduled trip info pulled from the user&#39;s scheduling system by date range. Only records that are scheduled to depart after the startDate and before the endDate will be returned.
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns>CurrentScheduledTripsResponse</returns>
+        CurrentScheduledTripsResponse GetScheduledTripsByDateRange (DateTime? startDate, DateTime? endDate);
+        /// <summary>
         /// Post a leg from the user&#39;s scheduling system as an object [ScheduledLegData] and it&#39;s corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner&#39;s side. It is recommended to include the tail number, departure airport, arrival airport, and date/time of the departure/arrival as a minimum when sending information.  Additional information (i.e. pax count, cargo, altitude, fuel on board, etc.) is recommended to help enhance the integration.
         /// </summary>
         /// <param name="body"></param>
@@ -285,6 +292,42 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetScheduledTripSettings: " + response.ErrorMessage, response.ErrorMessage);
     
             return (ScheduledTripSettingsResponse) ApiClient.Deserialize(response.Content, typeof(ScheduledTripSettingsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch scheduled trip info pulled from the user&#39;s scheduling system by date range. Only records that are scheduled to depart after the startDate and before the endDate will be returned.
+        /// </summary>
+        /// <param name="startDate"></param> 
+        /// <param name="endDate"></param> 
+        /// <returns>CurrentScheduledTripsResponse</returns>            
+        public CurrentScheduledTripsResponse GetScheduledTripsByDateRange (DateTime? startDate, DateTime? endDate)
+        {
+            
+    
+            var path = "/api/ScheduledTrip/by-date-range";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+             if (startDate != null) queryParams.Add("startDate", ApiClient.ParameterToString(startDate)); // query parameter
+ if (endDate != null) queryParams.Add("endDate", ApiClient.ParameterToString(endDate)); // query parameter
+                                        
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetScheduledTripsByDateRange: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetScheduledTripsByDateRange: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CurrentScheduledTripsResponse) ApiClient.Deserialize(response.Content, typeof(CurrentScheduledTripsResponse), response.Headers);
         }
     
         /// <summary>

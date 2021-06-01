@@ -7,7 +7,6 @@ Name | Type | Description | Notes
 **UserId** | **int?** |  | [optional] 
 **FuelOptionSorting** | **int?** |  | [optional] 
 **IsAllInclusivePricingPrioritized** | **bool?** |  | [optional] 
-**IsPostedRetailSeparated** | **bool?** |  | [optional] 
 **OmitFromDispatchConfirmation** | **bool?** |  | [optional] 
 **FuelOn** | **string** |  | [optional] 
 **ExcludeAllEmailsByDefault** | **bool?** |  | [optional] 

@@ -54,6 +54,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "companySpecificFuelVendorDetails")]
     public CompanyFuelerDTO CompanySpecificFuelVendorDetails { get; set; }
 
+    /// <summary>
+    /// Gets or Sets LocationSpecificPaymentMethodCollection
+    /// </summary>
+    [DataMember(Name="locationSpecificPaymentMethodCollection", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "locationSpecificPaymentMethodCollection")]
+    public List<LocationSpecificPaymentMethodDTO> LocationSpecificPaymentMethodCollection { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -68,6 +75,7 @@ namespace IO.Swagger.Model {
       sb.Append("  CompanySpecificFboDetails: ").Append(CompanySpecificFboDetails).Append("\n");
       sb.Append("  CompanySpecificAirportDetails: ").Append(CompanySpecificAirportDetails).Append("\n");
       sb.Append("  CompanySpecificFuelVendorDetails: ").Append(CompanySpecificFuelVendorDetails).Append("\n");
+      sb.Append("  LocationSpecificPaymentMethodCollection: ").Append(LocationSpecificPaymentMethodCollection).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

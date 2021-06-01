@@ -5,6 +5,7 @@ All URIs are relative to *https://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**DeleteCompanyAircraftChangeLog**](ServiceLogsApi.md#deletecompanyaircraftchangelog) | **DELETE** /api/ServiceLogs/companyAircraftChangeLog/{id} | Delete a company aircraft change log record by the record id.
+[**DeleteCompanyFboChangeLog**](ServiceLogsApi.md#deletecompanyfbochangelog) | **DELETE** /api/ServiceLogs/company-fbo-change-log/{id} | Delete a company fbo change log record by the record id.
 [**DeleteCompanyFuelerChangeLog**](ServiceLogsApi.md#deletecompanyfuelerchangelog) | **DELETE** /api/ServiceLogs/companyFuelerChangeLog/{id} | Delete a company fueler change log record by the record id.
 [**DeleteDispatchEmailLog**](ServiceLogsApi.md#deletedispatchemaillog) | **DELETE** /api/ServiceLogs/dispatchEmailLog/{id} | Delete a dispatch email log record by the record id.
 [**DeleteFuelOrderServiceLog**](ServiceLogsApi.md#deletefuelorderservicelog) | **DELETE** /api/ServiceLogs/fuelOrderServiceLog/{id} | Delete a fuel order service log record by the record id.
@@ -15,6 +16,8 @@ Method | HTTP request | Description
 [**DeleteTankeringApiCalculationLog**](ServiceLogsApi.md#deletetankeringapicalculationlog) | **DELETE** /api/ServiceLogs/tankeringApiCalculationLog/{id} | Delete a tankering api calculation log record by the record id.
 [**GetCompanyAircraftChangeLogByTailNumber**](ServiceLogsApi.md#getcompanyaircraftchangelogbytailnumber) | **GET** /api/ServiceLogs/companyAircraftChangeLog/by-tailNumber/{tailNumber} | Fetch company aircraft change log by tailNumber.
 [**GetCompanyAircraftChangeLogByUserId**](ServiceLogsApi.md#getcompanyaircraftchangelogbyuserid) | **GET** /api/ServiceLogs/companyAircraftChangeLog/by-userId/{userId} | Fetch company aircraft change log by userId.
+[**GetCompanyFboChangeLogByCompanyId**](ServiceLogsApi.md#getcompanyfbochangelogbycompanyid) | **GET** /api/ServiceLogs/company-fbo-change-log/by-companyId/{companyId} | Fetch company fueler change log by company Id
+[**GetCompanyFboChangeLogByIcao**](ServiceLogsApi.md#getcompanyfbochangelogbyicao) | **GET** /api/ServiceLogs/company-fbo-change-log/by-icao/{companyId}/{icao} | Fetch company fueler change log by ICAO
 [**GetCompanyFuelerChangeLogByCompanyId**](ServiceLogsApi.md#getcompanyfuelerchangelogbycompanyid) | **GET** /api/ServiceLogs/companyFuelerChangeLog/by-companyId/{companyId} | Fetch company fueler change log by companyId.
 [**GetCompanyFuelerChangeLogByFuelerId**](ServiceLogsApi.md#getcompanyfuelerchangelogbyfuelerid) | **GET** /api/ServiceLogs/companyFuelerChangeLog/by-fuelerId/{companyId}/{fuelerId} | Fetch company fueler change log by fuelerId.
 [**GetDispatchEmailLogByTailNumber**](ServiceLogsApi.md#getdispatchemaillogbytailnumber) | **GET** /api/ServiceLogs/dispatchEmailLog/by-tailNumber/{tailNumber} | Fetch dispatch email log by tailNumber.
@@ -30,6 +33,7 @@ Method | HTTP request | Description
 [**GetSchedulingIntegrationServiceLogByDate**](ServiceLogsApi.md#getschedulingintegrationservicelogbydate) | **GET** /api/ServiceLogs/schedulingIntegrationServiceLog/by-date/{companyId}/{dateTimeRecorded} | Fetch scheduling integration service log by date.
 [**GetTankeringApiCalculationLog**](ServiceLogsApi.md#gettankeringapicalculationlog) | **GET** /api/ServiceLogs/tankeringApiCalculationLog/{companyId}/{startDateTime}/{endDateTime} | Fetch tankering api calculation log.
 [**PostCompanyAircraftChangeLogAsync**](ServiceLogsApi.md#postcompanyaircraftchangelogasync) | **POST** /api/ServiceLogs/companyAircraftChangeLog | Post company aircraft change log.
+[**PostCompanyFboChangeLogAsync**](ServiceLogsApi.md#postcompanyfbochangelogasync) | **POST** /api/ServiceLogs/company-fbo-change-log | Post company fbo change log
 [**PostCompanyFuelerChangeLogAsync**](ServiceLogsApi.md#postcompanyfuelerchangelogasync) | **POST** /api/ServiceLogs/companyFuelerChangeLog | Post company fueler change log.
 [**PostDispatchEmailLogAsync**](ServiceLogsApi.md#postdispatchemaillogasync) | **POST** /api/ServiceLogs/dispatchEmailLog | Post dispatch email log.
 [**PostFuelOrderServiceLogAsync**](ServiceLogsApi.md#postfuelorderservicelogasync) | **POST** /api/ServiceLogs/fuelOrderServiceLog | Post fuel order service log.
@@ -39,6 +43,7 @@ Method | HTTP request | Description
 [**PostSchedulingIntegrationServiceLogAsync**](ServiceLogsApi.md#postschedulingintegrationservicelogasync) | **POST** /api/ServiceLogs/schedulingIntegrationServiceLog | Post scheduling integration service log.
 [**PostTankeringApiCalculationLogAsync**](ServiceLogsApi.md#posttankeringapicalculationlogasync) | **POST** /api/ServiceLogs/tankeringApiCalculationLog | Post tankering api calculation log.
 [**UpdateCompanyAircraftChangeLog**](ServiceLogsApi.md#updatecompanyaircraftchangelog) | **PUT** /api/ServiceLogs/companyAircraftChangeLog | Update the company aircraft change log.
+[**UpdateCompanyFboChangeLog**](ServiceLogsApi.md#updatecompanyfbochangelog) | **PUT** /api/ServiceLogs/company-fbo-change-log | Update the company fbo change log.
 [**UpdateCompanyFuelerChangeLog**](ServiceLogsApi.md#updatecompanyfuelerchangelog) | **PUT** /api/ServiceLogs/companyFuelerChangeLog | Update the company fueler change log.
 [**UpdateDispatchEmailLog**](ServiceLogsApi.md#updatedispatchemaillog) | **PUT** /api/ServiceLogs/dispatchEmailLog | Update the dispatch email log.
 [**UpdateFuelOrderServiceLog**](ServiceLogsApi.md#updatefuelorderservicelog) | **PUT** /api/ServiceLogs/fuelOrderServiceLog | Update the fuel order service log.
@@ -106,6 +111,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteCompanyAircraftChangeLogResponse**](DeleteCompanyAircraftChangeLogResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deletecompanyfbochangelog"></a>
+# **DeleteCompanyFboChangeLog**
+> DeleteCompanyFboChangeLogResponse DeleteCompanyFboChangeLog (int? id)
+
+Delete a company fbo change log record by the record id.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteCompanyFboChangeLogExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ServiceLogsApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Delete a company fbo change log record by the record id.
+                DeleteCompanyFboChangeLogResponse result = apiInstance.DeleteCompanyFboChangeLog(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ServiceLogsApi.DeleteCompanyFboChangeLog: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteCompanyFboChangeLogResponse**](DeleteCompanyFboChangeLogResponse.md)
 
 ### Authorization
 
@@ -796,6 +870,146 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**CompanyAircraftChangeLogResponse**](CompanyAircraftChangeLogResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getcompanyfbochangelogbycompanyid"></a>
+# **GetCompanyFboChangeLogByCompanyId**
+> CompanyFboChangeLogResponse GetCompanyFboChangeLogByCompanyId (int? companyId)
+
+Fetch company fueler change log by company Id
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetCompanyFboChangeLogByCompanyIdExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ServiceLogsApi();
+            var companyId = 56;  // int? | 
+
+            try
+            {
+                // Fetch company fueler change log by company Id
+                CompanyFboChangeLogResponse result = apiInstance.GetCompanyFboChangeLogByCompanyId(companyId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ServiceLogsApi.GetCompanyFboChangeLogByCompanyId: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **companyId** | **int?**|  | 
+
+### Return type
+
+[**CompanyFboChangeLogResponse**](CompanyFboChangeLogResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getcompanyfbochangelogbyicao"></a>
+# **GetCompanyFboChangeLogByIcao**
+> CompanyFboChangeLogResponse GetCompanyFboChangeLogByIcao (int? companyId, string icao)
+
+Fetch company fueler change log by ICAO
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetCompanyFboChangeLogByIcaoExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ServiceLogsApi();
+            var companyId = 56;  // int? | 
+            var icao = icao_example;  // string | 
+
+            try
+            {
+                // Fetch company fueler change log by ICAO
+                CompanyFboChangeLogResponse result = apiInstance.GetCompanyFboChangeLogByIcao(companyId, icao);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ServiceLogsApi.GetCompanyFboChangeLogByIcao: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **companyId** | **int?**|  | 
+ **icao** | **string**|  | 
+
+### Return type
+
+[**CompanyFboChangeLogResponse**](CompanyFboChangeLogResponse.md)
 
 ### Authorization
 
@@ -1867,6 +2081,75 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="postcompanyfbochangelogasync"></a>
+# **PostCompanyFboChangeLogAsync**
+> PostCompanyFboChangeLogResponse PostCompanyFboChangeLogAsync (PostCompanyFboChangeLogRequest body)
+
+Post company fbo change log
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostCompanyFboChangeLogAsyncExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ServiceLogsApi();
+            var body = new PostCompanyFboChangeLogRequest(); // PostCompanyFboChangeLogRequest |  (optional) 
+
+            try
+            {
+                // Post company fbo change log
+                PostCompanyFboChangeLogResponse result = apiInstance.PostCompanyFboChangeLogAsync(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ServiceLogsApi.PostCompanyFboChangeLogAsync: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostCompanyFboChangeLogRequest**](PostCompanyFboChangeLogRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostCompanyFboChangeLogResponse**](PostCompanyFboChangeLogResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="postcompanyfuelerchangelogasync"></a>
 # **PostCompanyFuelerChangeLogAsync**
 > PostCompanyFuelerChangeLogResponse PostCompanyFuelerChangeLogAsync (PostCompanyFuelerChangeLogRequest body)
@@ -2476,6 +2759,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**UpdateCompanyAircraftChangeLogResponse**](UpdateCompanyAircraftChangeLogResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updatecompanyfbochangelog"></a>
+# **UpdateCompanyFboChangeLog**
+> UpdateCompanyFboChangeLogResponse UpdateCompanyFboChangeLog (UpdateCompanyFboChangeLogRequest body)
+
+Update the company fbo change log.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateCompanyFboChangeLogExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ServiceLogsApi();
+            var body = new UpdateCompanyFboChangeLogRequest(); // UpdateCompanyFboChangeLogRequest |  (optional) 
+
+            try
+            {
+                // Update the company fbo change log.
+                UpdateCompanyFboChangeLogResponse result = apiInstance.UpdateCompanyFboChangeLog(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ServiceLogsApi.UpdateCompanyFboChangeLog: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateCompanyFboChangeLogRequest**](UpdateCompanyFboChangeLogRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateCompanyFboChangeLogResponse**](UpdateCompanyFboChangeLogResponse.md)
 
 ### Authorization
 

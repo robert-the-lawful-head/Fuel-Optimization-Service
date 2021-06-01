@@ -40,6 +40,14 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "maxFuelCapacity")]
     public Weight MaxFuelCapacity { get; set; }
 
+    /// <summary>
+    /// If true then will treat the trip as returning back to leg 1
+    /// </summary>
+    /// <value>If true then will treat the trip as returning back to leg 1</value>
+    [DataMember(Name="roundTrip", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "roundTrip")]
+    public bool? RoundTrip { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -52,6 +60,7 @@ namespace IO.Swagger.Model {
       sb.Append("  TailNumber: ").Append(TailNumber).Append("\n");
       sb.Append("  StartingFuel: ").Append(StartingFuel).Append("\n");
       sb.Append("  MaxFuelCapacity: ").Append(MaxFuelCapacity).Append("\n");
+      sb.Append("  RoundTrip: ").Append(RoundTrip).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

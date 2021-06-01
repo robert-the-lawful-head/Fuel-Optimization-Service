@@ -45,8 +45,8 @@ namespace FBOLinx.Web.Controllers
         [HttpGet]
         public async Task<IEnumerable<Group>> GetGroup()
         {
-            int groupId = UserService.GetClaimedGroupId(_HttpContextAccessor);
-            var role = UserService.GetClaimedRole(_HttpContextAccessor);
+            int groupId = JwtManager.GetClaimedGroupId(_HttpContextAccessor);
+            var role = JwtManager.GetClaimedRole(_HttpContextAccessor);
 
             return await _context.Group
                         .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == DB.Models.User.UserRoles.Conductor))
@@ -174,7 +174,7 @@ namespace FBOLinx.Web.Controllers
                     return BadRequest(ModelState);
                 }
 
-                if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+                if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
                 {
                     return BadRequest(ModelState);
                 }
@@ -205,7 +205,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+            if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
             {
                 return BadRequest(ModelState);
             }

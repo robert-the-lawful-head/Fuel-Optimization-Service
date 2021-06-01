@@ -10,13 +10,15 @@ export class AuthenticationService {
 
   private headers: HttpHeaders;
   private accessPointUrl: string;
-  private currentUserSubject: BehaviorSubject<User>;
+    private currentUserSubject: BehaviorSubject<User>;
+    private authenticationAccessPointUrl: string;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.headers = new HttpHeaders({
       'Content-Type': 'application/json; charset=utf-8',
     });
-    this.accessPointUrl = baseUrl + 'api/users';
+      this.accessPointUrl = baseUrl + 'api/users';
+      this.authenticationAccessPointUrl = baseUrl + 'api/oauth';
     const user: User = JSON.parse(localStorage.getItem('currentUser'));
     this.currentUserSubject = new BehaviorSubject<User>(user);
     this.currentUser = this.currentUserSubject.asObservable();
@@ -55,7 +57,18 @@ export class AuthenticationService {
           return user;
         })
       );
-  }
+    }
+
+    getAuthToken(token) {
+        const tempToken = { accessToken: token };
+        return this.http
+            .post<any>(this.authenticationAccessPointUrl + '/authtoken', 
+                tempToken
+            )
+            .pipe(map((authToken) => {
+                return authToken;
+            }));
+    }
 
   preAuth(token) {
     const tempUser = {
@@ -71,9 +84,12 @@ export class AuthenticationService {
       impersonatedRole: null,
       managerGroupId: 0
     };
-    this.currentUserSubject.next(tempUser);
+      this.currentUserSubject.next(tempUser);
+
+      //call prepare session controller method
+
     return this.http
-      .get<any>(this.accessPointUrl + '/current', {
+        .get<any>(this.accessPointUrl + '/prepare-token-auth', {
         headers: this.headers,
       })
       .pipe(

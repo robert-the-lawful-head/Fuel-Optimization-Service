@@ -38,7 +38,7 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="contact", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "contact")]
-    public FboLinxContact Contact { get; set; }
+    public FBOLinxContact Contact { get; set; }
 
 
     /// <summary>

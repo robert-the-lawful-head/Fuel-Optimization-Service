@@ -267,11 +267,27 @@ namespace IO.Swagger.Model {
     public List<string> SpecificTailNumbers { get; set; }
 
     /// <summary>
+    /// The \"IsForCommercialAircraftOnly\" flag is a conditional check that attempts to find key words in the FBO and Note showing that this price is only for commercial aircraft.
+    /// </summary>
+    /// <value>The \"IsForCommercialAircraftOnly\" flag is a conditional check that attempts to find key words in the FBO and Note showing that this price is only for commercial aircraft.</value>
+    [DataMember(Name="isForCommercialAircraftOnly", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "isForCommercialAircraftOnly")]
+    public bool? IsForCommercialAircraftOnly { get; set; }
+
+    /// <summary>
     /// Gets or Sets Taxes
     /// </summary>
     [DataMember(Name="taxes", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "taxes")]
     public List<FuelerTaxByTierDTO> Taxes { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    [DataMember(Name="departureType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "departureType")]
+    public int? DepartureType { get; set; }
 
 
     /// <summary>
@@ -317,7 +333,9 @@ namespace IO.Swagger.Model {
       sb.Append("  Currency: ").Append(Currency).Append("\n");
       sb.Append("  CompanyAdjustedTotal: ").Append(CompanyAdjustedTotal).Append("\n");
       sb.Append("  SpecificTailNumbers: ").Append(SpecificTailNumbers).Append("\n");
+      sb.Append("  IsForCommercialAircraftOnly: ").Append(IsForCommercialAircraftOnly).Append("\n");
       sb.Append("  Taxes: ").Append(Taxes).Append("\n");
+      sb.Append("  DepartureType: ").Append(DepartureType).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

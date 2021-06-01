@@ -15,6 +15,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using FBOLinx.Web.Auth;
 
 namespace FBOLinx.Web.Services
 {
@@ -30,12 +31,14 @@ namespace FBOLinx.Web.Services
         private readonly AppSettings _AppSettings;
         private readonly FboLinxContext _Context;
         private IEncryptionService _EncryptionService;
+        private readonly JwtManager _jwtManager;
 
-        public UserService(FboLinxContext context, IOptions<AppSettings> appSettings, IEncryptionService encryptionService)
+        public UserService(FboLinxContext context, IOptions<AppSettings> appSettings, IEncryptionService encryptionService, JwtManager jwtManager)
         {
             _EncryptionService = encryptionService;
             _Context = context;
             _AppSettings = appSettings.Value;
+            _jwtManager = jwtManager;
         }
         
         public async Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
@@ -145,23 +148,7 @@ namespace FBOLinx.Web.Services
         #region Private Methods
         private void SetAuthToken(User user)
         {
-            // authentication successful so generate jwt token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_AppSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Oid.ToString()),
-                    new Claim(ClaimTypes.Role, ((short) user.Role).ToString()),
-                    new Claim(ClaimTypes.GroupSid, user.GroupId.ToString()),
-                    new Claim(ClaimTypes.Sid, user.FboId.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            user.Token = tokenHandler.WriteToken(token);
+            user.Token = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
         }
 
         private void UpdateLoginCount(User user)
@@ -197,54 +184,7 @@ namespace FBOLinx.Web.Services
         #endregion
 
         #region Static Methods
-        public static int GetClaimedUserId(IHttpContextAccessor httpContextAccessor)
-        {
-            try
-            {
-                return System.Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)
-                    .Value);
-            }
-            catch (System.Exception)
-            {
-                return 0;
-            }
-        }
-
-        public static User.UserRoles GetClaimedRole(IHttpContextAccessor httpContextAccessor)
-        {
-            try
-            {
-                return (User.UserRoles) System.Convert.ToInt16(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value);
-            }
-            catch (System.Exception)
-            {
-                return User.UserRoles.NotSet;
-            }
-        }
-
-        public static int GetClaimedFboId(IHttpContextAccessor httpContextAccessor)
-        {
-            try
-            {
-                return System.Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid).Value);
-            }
-            catch (System.Exception)
-            {
-                return 0;
-            }
-        }
-
-        public static int GetClaimedGroupId(IHttpContextAccessor httpContextAccessor)
-        {
-            try
-            {
-                return System.Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GroupSid).Value);
-            }
-            catch (System.Exception)
-            {
-                return 0;
-            }
-        }
+        
         #endregion
     }
 }

@@ -4,7 +4,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **IFlightPlannerCruiseProfileId** | **int?** |  | [optional] 
-**RoutingType** | **int?** | Routing Types:             0 &#x3D; Optimal             1 &#x3D; Direct             2 &#x3D; Custom    * &#x60;Optimal&#x60; - Optimal  * &#x60;Direct&#x60; - Direct  * &#x60;Custom&#x60; - Customer   | [optional] 
+**RoutingType** | **int?** | Routing Types:             0 &#x3D; Optimal             1 &#x3D; Direct             2 &#x3D; Custom    * &#x60;Optimal&#x60; - Optimal  * &#x60;Direct&#x60; - Direct  * &#x60;Custom&#x60; - Customer  * &#x60;RecentATC&#x60; - Recent ATC   | [optional] 
 **CustomRoute** | **string** |  | [optional] 
 **AlternateAirport** | **string** |  | [optional] 
 **AlternateFuel** | [**Weight**](Weight.md) |  | [optional] 

@@ -1,13 +1,20 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb">
-    <ni-card *ngIf="customers" [headerBgColor]="'gray'" class="report-card" title="Admin Reports">
-        <button (click)="onGenerate()" class="generate-report-button" mat-flat-button>
-            <h5 class="mat-primary">Generate a Customer Price Sheet Download</h5>
-            <p>This report allows you to download current pricing from each of your FBOs for a specific customer. Use to
-                generate a price sheet for a customer at all your locations.</p>
-        </button>
-    </ni-card>
+    <ng-container *ngIf="customers">
+        <ni-card [headerBgColor]="'gray'" class="report-card" title="Admin Reports">
+            <button (click)="onGenerate()" class="generate-report-button" mat-flat-button>
+                <h5 class="mat-primary">Generate a Customer Price Sheet Download</h5>
+                <p>This report allows you to download current pricing from each of your FBOs for a specific customer. Use to
+                    generate a price sheet for a customer at all your locations.</p>
+            </button>
+        </ni-card>
+
+        <app-group-analytics-customer-statistics [fbos]="fbos"></app-group-analytics-customer-statistics>
+        <app-group-analytics-fuel-vendor-sources></app-group-analytics-fuel-vendor-sources>
+        <app-group-analytics-market-share></app-group-analytics-market-share>
+    </ng-container>
+    
     <div *ngIf="!customers">
         <mat-spinner></mat-spinner>
     </div>

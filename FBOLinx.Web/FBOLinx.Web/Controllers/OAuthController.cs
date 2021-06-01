@@ -50,14 +50,14 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Incorrect partner" });
             }
 
-            AccessTokens accessToken = await _oAuthService.GenerateAccessToken(user);
+            AccessTokens accessToken = await _oAuthService.GenerateAccessToken(user, 10080);
 
             return Ok(accessToken);
         }
 
         [HttpPost("authtoken")]
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        //[APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
         public async Task<ActionResult<AuthTokenResponse>> GenerateAuthTokenFromAccessToken([FromBody] UserAuthTokenFromAccessTokenRequest request)
         {
             if (!ModelState.IsValid)

@@ -146,6 +146,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "supplierDetails")]
     public SupplierDetailsDTO SupplierDetails { get; set; }
 
+    /// <summary>
+    /// Gets or Sets PublicKey
+    /// </summary>
+    [DataMember(Name="publicKey", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "publicKey")]
+    public string PublicKey { get; set; }
+
+    /// <summary>
+    /// Gets or Sets SecretKey
+    /// </summary>
+    [DataMember(Name="secretKey", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "secretKey")]
+    public string SecretKey { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -173,6 +187,8 @@ namespace IO.Swagger.Model {
       sb.Append("  TransactionReconciliationComparisonType: ").Append(TransactionReconciliationComparisonType).Append("\n");
       sb.Append("  CredentialsLastVerified: ").Append(CredentialsLastVerified).Append("\n");
       sb.Append("  SupplierDetails: ").Append(SupplierDetails).Append("\n");
+      sb.Append("  PublicKey: ").Append(PublicKey).Append("\n");
+      sb.Append("  SecretKey: ").Append(SecretKey).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
