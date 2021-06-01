@@ -53,6 +53,7 @@ namespace FBOLinx.Web.Services
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
         private EmailContent _EmailContent;
+        public List<string> LimitedEmailDomains { get; set; }
 
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
@@ -463,11 +464,11 @@ namespace FBOLinx.Web.Services
             var result = await (from cc in _context.CustomerContacts
                 join c in _context.Contacts on cc.ContactId equals c.Oid
                 join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
-                where cibg.GroupId == _DistributePricingRequest.GroupId
-                      && cc.CustomerId == customer.CustomerId
-                      && (cibg.CopyAlerts ?? false)
-                      && !string.IsNullOrEmpty(cibg.Email)
-                select cibg).ToListAsync();
+                                where cibg.GroupId == _DistributePricingRequest.GroupId
+                                      && cc.CustomerId == customer.CustomerId
+                                      && (cibg.CopyAlerts ?? false)
+                                      && !string.IsNullOrEmpty(cibg.Email)
+                                select cibg).ToListAsync();
             return result;
         }
 

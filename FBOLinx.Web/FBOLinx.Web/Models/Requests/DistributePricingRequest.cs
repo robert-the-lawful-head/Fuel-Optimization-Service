@@ -11,11 +11,8 @@ namespace FBOLinx.Web.Models.Requests
         public PricingTemplate PricingTemplate { get; set; }
         public CustomerInfoByGroup Customer { get; set; }
         public int CustomerCompanyType { get; set; }
-        public EmailContent EmailContentGreeting { get; set; }
-        public EmailContent EmailContentSignature { get; set; }
         public int FboId { get; set; }
         public int GroupId { get; set; }
-
         public string PreviewEmail { get; set; }
     }
 }
