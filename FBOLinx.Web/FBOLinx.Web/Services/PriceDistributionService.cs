@@ -53,6 +53,7 @@ namespace FBOLinx.Web.Services
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
         private EmailContent _EmailContent;
+        public List<string> LimitedEmailDomains { get; set; }
 
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
@@ -261,6 +262,7 @@ namespace FBOLinx.Web.Services
                 {
                     foreach (ContactInfoByGroup contactInfoByGroup in recipients)
                     {
+                        //if (IsValidEmailRecipient(contactInfoByGroup.Email))
                         if (_MailService.IsValidEmailRecipient(contactInfoByGroup.Email))
                             mailMessage.To.Add(contactInfoByGroup.Email);
                     }
@@ -322,6 +324,22 @@ namespace FBOLinx.Web.Services
             }
         }
 
+        //private bool IsValidEmailRecipient(string emailAddress)
+        //{
+        //var emailAddressValidator = new System.ComponentModel.DataAnnotations.EmailAddressAttribute();
+        //    if (string.IsNullOrEmpty(emailAddress))
+        //        return false;
+        //    if (!emailAddressValidator.IsValid(emailAddress))
+        //        return false;
+        //    if (LimitedEmailDomains == null || LimitedEmailDomains.Count == 0)
+        //        return true;
+        //    foreach (string emailDomain in LimitedEmailDomains)
+        //    {
+        //        if (emailAddress.ToLower().Contains(emailDomain))
+        //            return true;
+        //    }
+        //    return false;
+        //}
         private async Task MarkDistributionRecordAsComplete(DistributionQueue distributionQueueRecord)
         {
             if (distributionQueueRecord == null)
@@ -463,11 +481,11 @@ namespace FBOLinx.Web.Services
             var result = await (from cc in _context.CustomerContacts
                 join c in _context.Contacts on cc.ContactId equals c.Oid
                 join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
-                where cibg.GroupId == _DistributePricingRequest.GroupId
-                      && cc.CustomerId == customer.CustomerId
-                      && (cibg.CopyAlerts ?? false)
-                      && !string.IsNullOrEmpty(cibg.Email)
-                select cibg).ToListAsync();
+                                where cibg.GroupId == _DistributePricingRequest.GroupId
+                                      && cc.CustomerId == customer.CustomerId
+                                      && (cibg.CopyAlerts ?? false)
+                                      && !string.IsNullOrEmpty(cibg.Email)
+                                select cibg).ToListAsync();
             return result;
         }
 
