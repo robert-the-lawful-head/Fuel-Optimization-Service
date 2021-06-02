@@ -53,7 +53,6 @@ namespace FBOLinx.Web.Services
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
         private EmailContent _EmailContent;
-        public List<string> LimitedEmailDomains { get; set; }
 
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
