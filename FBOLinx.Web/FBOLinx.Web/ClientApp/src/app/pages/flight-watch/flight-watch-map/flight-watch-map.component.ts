@@ -63,13 +63,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        const eventHandler = () => this.refreshMap();
-        this.map.off('zoom', eventHandler);
-        this.map.off('dragend', eventHandler);
-        this.map.off('rotate', eventHandler);
-        this.map.off('resize', eventHandler);
-        this.map.off('load', eventHandler);
-        this.map.off('styledata', () => this.mapStyleLoaded());
+        this.map.remove();
     }
 
     refreshMap() {
