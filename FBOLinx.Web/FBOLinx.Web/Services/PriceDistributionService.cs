@@ -488,6 +488,7 @@ namespace FBOLinx.Web.Services
                 newEmailContent.Subject = _DistributePricingRequest.PricingTemplate.Subject;
                 newEmailContent.EmailContentHtml = _DistributePricingRequest.PricingTemplate.Email;
                 newEmailContent.FboId = _DistributePricingRequest.FboId;
+                newEmailContent.Name = _DistributePricingRequest.PricingTemplate.Name;
                 await _context.EmailContent.AddAsync(newEmailContent);
                 await _context.SaveChangesAsync();
                 _DistributePricingRequest.PricingTemplate.EmailContentId = newEmailContent.Oid;
