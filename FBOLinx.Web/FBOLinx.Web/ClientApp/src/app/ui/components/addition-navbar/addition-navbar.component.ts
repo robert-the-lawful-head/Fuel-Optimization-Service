@@ -387,7 +387,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     private checkExpiredPrices(template) {
-        if (template.intoPlanePrice === 0 || template.intoPlanePrice === null) {
+        if (template.intoPlanePrice <= 0 || template.intoPlanePrice === null) {
             const dialogRef = this.expiredPricingDialog.open(
                 PricingExpiredNotificationComponent, {
                     data: {
