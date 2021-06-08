@@ -134,7 +134,6 @@ namespace FBOLinx.Web.Controllers
             var emails = (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
                              join c in _context.Customers on cg.CustomerId equals c.Oid
                              join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
-                             join ca in (from ca2 in (from ca in _context.CustomerAircrafts where ca.GroupId == groupId group ca by new { CustomerId = ca.CustomerId } into c select new { CustomerId = c.Key.CustomerId, cnt = c.Count() }) where ca2.cnt > 0 select ca2) on cg.CustomerId equals ca.CustomerId
                              join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                              join co in _context.Contacts on custc.ContactId equals co.Oid
                              join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
