@@ -81,17 +81,13 @@ namespace FBOLinx.Web.Services
             if (customers == null)
                     return;
 
+            //#tx9ztn - Removed the requirement for aircraft in the account to send a distribution email. A fleet is no longer requireed to receive pricing.
             if (_IsPreview)
             {
                 foreach (var customer in customers)
                 {
-                    var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
-
-                    if (customerAircrafts.Count > 0)
-                    {
-                        await GenerateDistributionMailMessage(customer);
-                        break;
-                    }
+                    await GenerateDistributionMailMessage(customer);
+                    break;
                 }
             }
             else
@@ -100,15 +96,10 @@ namespace FBOLinx.Web.Services
 
                 foreach (var customer in customers)
                 {
-                    var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
+                    if (customerToSend.Oid == 0)
+                        customerToSend = customer;
 
-                    if (customerAircrafts.Count > 0)
-                    {
-                        if (customerToSend.Oid == 0)
-                            customerToSend = customer;
-
-                        await GenerateDistributionMailMessage(customer);
-                    }
+                    await GenerateDistributionMailMessage(customer);
                 }
 
                 var systemContacts = new List<Contacts>();
