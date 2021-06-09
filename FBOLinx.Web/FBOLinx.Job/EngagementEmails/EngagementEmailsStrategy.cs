@@ -5,6 +5,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.ViewModels;
+using IO.Swagger.Model;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -87,52 +88,58 @@ namespace FBOLinx.Job.EngagementEmails
             {
                 //go through each active fbo icao and call fuelerlinx to pull the latest pullhistory for that icao within the past 24 hours
                 var responseActiveFbos = await _apiClient.GetAsync("fbos", conductorUser.Token);
-                var activeFbos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Fbos>>(responseActiveFbos);
+                var activeFbos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FbosGridViewModel>>(responseActiveFbos);
 
                 foreach (var fbo in activeFbos)
                 {
-                    //check if there's ramp fees
-                    var rampFeesResponse = await _apiClient.GetAsync("rampfees/fbo/" + fbo.Oid, conductorUser.Token);
-                    var rampFees = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<RampFees>>(rampFeesResponse);
-                    var noRampFees = true;
-
-                    foreach (RampFees rampFee in rampFees)
+                    if (fbo.GroupId > 1)
                     {
-                        if (rampFee.Price > 0)
+                        //check if there's ramp fees
+                        var rampFeesResponse = await _apiClient.GetAsync("rampfees/fbo/" + fbo.Oid, conductorUser.Token);
+                        var rampFees = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<RampFees>>(rampFeesResponse);
+                        var noRampFees = true;
+
+                        foreach (RampFees rampFee in rampFees)
                         {
-                            noRampFees = false;
-                            break;
-                        }
-                    }
-
-                    //if not, find the latest pull history record from fuelerlinx and send email
-                    if (noRampFees)
-                    {
-                        var fuelerLinxCustomerIdResponse = await _apiClient.GetAsync("fboprices/get-latest-flight-dept-pullhistory-for-icao/", conductorUser.Token);
-                        var fuelerLinxCustomerId = 0;
-                        if (fuelerLinxCustomerIdResponse != "" && int.TryParse(fuelerLinxCustomerIdResponse, out fuelerLinxCustomerId))
-                            fuelerLinxCustomerId = int.Parse(fuelerLinxCustomerIdResponse);
-
-                        var customerResponse = await _apiClient.GetAsync("customers/getbyfuelerlinxid/" + fuelerLinxCustomerId, conductorUser.Token);
-                        var customer = Newtonsoft.Json.JsonConvert.DeserializeObject<Customers>(customerResponse);
-
-                        List<string> toEmails = new List<string>();
-
-                        var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
-                        var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
-
-                        toEmails.Add(fboInfo.FuelDeskEmail);
-
-                        var responseFboContacts = await _apiClient.GetAsync("fbocontacts/fbo/" + fbo.Oid, conductorUser.Token);
-                        var fboContacts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FboContactsViewModel>>(responseFboContacts);
-
-                        foreach (FboContactsViewModel fboContact in fboContacts)
-                        {
-                            if (fboContact.CopyAlerts.GetValueOrDefault())
-                                toEmails.Add(fboContact.Email);
+                            if (rampFee.Price > 0)
+                            {
+                                noRampFees = false;
+                                break;
+                            }
                         }
 
-                        await GenerateNoRampFeesEmail(toEmails, fbo.Fbo, customer.Company, fbo.fboAirport.Icao, conductorUser.Token);
+                        //if not, find the latest pull history record from fuelerlinx and send email
+                        if (noRampFees)
+                        {
+                            var fuelerLinxCustomerIdResponse = await _apiClient.PostAsync("fboprices/get-latest-flight-dept-pullhistory-for-icao/", new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.Icao }, conductorUser.Token);
+                            var fuelerLinxCustomerId = 0;
+                            if (fuelerLinxCustomerIdResponse != "" && int.TryParse(fuelerLinxCustomerIdResponse, out fuelerLinxCustomerId))
+                                fuelerLinxCustomerId = int.Parse(fuelerLinxCustomerIdResponse);
+
+                            if (fuelerLinxCustomerId > 0)
+                            {
+                                var customerResponse = await _apiClient.GetAsync("customers/getbyfuelerlinxid/" + fuelerLinxCustomerId, conductorUser.Token);
+                                var customer = Newtonsoft.Json.JsonConvert.DeserializeObject<Customers>(customerResponse);
+
+                                List<string> toEmails = new List<string>();
+
+                                var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
+                                var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
+
+                                toEmails.Add(fboInfo.FuelDeskEmail);
+
+                                var responseFboContacts = await _apiClient.GetAsync("fbocontacts/fbo/" + fbo.Oid, conductorUser.Token);
+                                var fboContacts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FboContactsViewModel>>(responseFboContacts);
+
+                                foreach (FboContactsViewModel fboContact in fboContacts)
+                                {
+                                    if (fboContact.CopyAlerts.GetValueOrDefault())
+                                        toEmails.Add(fboContact.Email);
+                                }
+
+                                await GenerateNoRampFeesEmail(toEmails, fbo.Fbo, customer.Company, fbo.Icao, conductorUser.Token);
+                            }
+                        }
                     }
                 }
             }

@@ -22,6 +22,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
+using IO.Swagger.Model;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -140,7 +141,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var fboIdsWithExpiredPrice = new List<int>();
-            var fbos = await GetAllActiveFbos().Include(f => f.Users).Include("fboAirport").ToListAsync();
+            var fbos = await GetAllActiveFbos().Include(f => f.Users).Include("fboAirport").Where(x => x.GroupId > 1).ToListAsync();
 
             foreach (var fbo in fbos)
             {
@@ -580,7 +581,7 @@ namespace FBOLinx.Web.Controllers
                     join ct in customerTemplates on new { p.CustomerId, p.FboId } equals new { ct.CustomerId, FboId = ct.Fboid }
                     into leftJoinCustomerTypes
                     from ct in leftJoinCustomerTypes.DefaultIfEmpty()
-                    select new FuelPriceResponse
+                    select new Models.Responses.FuelPriceResponse
                     {
                         CustomerId = p.CustomerId,
                         Icao = p.Icao,
@@ -723,12 +724,12 @@ namespace FBOLinx.Web.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-latest-flight-dept-pullhistory-for-icao")]
-        public async Task<ActionResult<int>> GetLatestFlightDeptPullHistoryForIcao()
+        [HttpPost("get-latest-flight-dept-pullhistory-for-icao")]
+        public ActionResult<int> GetLatestFlightDeptPullHistoryForIcao(FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest request)
         {
-            var fuelerlinxContractFuelOrders = await _fuelerLinxService.GetLat;
+            var fuelerlinxFlightDeptId = _fuelerLinxService.GetLatestFlightDeptPullHistoryForIcao(request);
 
-            return Ok(result);
+            return Ok(fuelerlinxFlightDeptId);
         }
 
         private bool FbopricesExists(int id)
