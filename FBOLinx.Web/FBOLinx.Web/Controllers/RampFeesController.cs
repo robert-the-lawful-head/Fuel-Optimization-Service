@@ -447,7 +447,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        [HttpPost("notifyfbonorampfees")]
+        [HttpPost("notify-fbo-no-rampfees")]
         public ActionResult<bool> NotifyFboNoRampFees([FromBody] NotifyFboNoRampFeesRequest notifyFboNoRampFeesRequest)
         {
             FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
@@ -463,7 +463,7 @@ namespace FBOLinx.Web.Controllers
                 fboName = notifyFboNoRampFeesRequest.FBO,
                 customerName = notifyFboNoRampFeesRequest.CustomerName,
                 ICAO = notifyFboNoRampFeesRequest.ICAO,
-                subject = "Please update your ramp fees"
+                subject = "FBOLinx reminder - incomplete quotes"
             };
 
             mailMessage.SendGridEngagementTemplate = dynamicTemplateData;

@@ -108,7 +108,12 @@ namespace FBOLinx.Job.EngagementEmails
                     //if not, find the latest pull history record from fuelerlinx and send email
                     if (noRampFees)
                     {
-                        var customerResponse = await _apiClient.GetAsync("customers/getbyfuelerlinxid/" + fuelerlinxcustomerid, conductorUser.Token);
+                        var fuelerLinxCustomerIdResponse = await _apiClient.GetAsync("fboprices/get-latest-flight-dept-pullhistory-for-icao/", conductorUser.Token);
+                        var fuelerLinxCustomerId = 0;
+                        if (fuelerLinxCustomerIdResponse != "" && int.TryParse(fuelerLinxCustomerIdResponse, out fuelerLinxCustomerId))
+                            fuelerLinxCustomerId = int.Parse(fuelerLinxCustomerIdResponse);
+
+                        var customerResponse = await _apiClient.GetAsync("customers/getbyfuelerlinxid/" + fuelerLinxCustomerId, conductorUser.Token);
                         var customer = Newtonsoft.Json.JsonConvert.DeserializeObject<Customers>(customerResponse);
 
                         List<string> toEmails = new List<string>();
@@ -138,7 +143,7 @@ namespace FBOLinx.Job.EngagementEmails
             var requestObject = new NotifyFboNoRampFeesRequest();
             requestObject.ToEmails = toEmails;
             requestObject.FBO = fboName;
-            var result = await _apiClient.PostAsync("fboprices/notifyfboexpiredprices", requestObject, token);
+            var result = await _apiClient.PostAsync("fboprices/notify-fbo-expired-prices", requestObject, token);
         }
         private async Task GenerateNoRampFeesEmail(List<string> toEmails, string fboName, string flightDepartment, string icao, string token)
         {
@@ -147,7 +152,7 @@ namespace FBOLinx.Job.EngagementEmails
             requestObject.FBO = fboName;
             requestObject.CustomerName = flightDepartment;
             requestObject.ICAO = icao;
-            var result = await _apiClient.PostAsync("rampfees/notifyfbonorampfees", requestObject, token);
+            var result = await _apiClient.PostAsync("rampfees/notify-fbo-no-rampfees", requestObject, token);
         }
     }
 }

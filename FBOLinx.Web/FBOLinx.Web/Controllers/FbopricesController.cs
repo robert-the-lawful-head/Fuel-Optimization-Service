@@ -37,8 +37,10 @@ namespace FBOLinx.Web.Controllers
         private readonly AircraftService _aircraftService;
         private IPriceFetchingService _PriceFetchingService;
         private IMailService _MailService;
+        private readonly FuelerLinxService _fuelerLinxService;
 
-        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService, IPriceFetchingService priceFetchingService, IMailService mailService)
+        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService, IPriceFetchingService priceFetchingService,
+            IMailService mailService, FuelerLinxService fuelerLinxService)
         {
             _PriceFetchingService = priceFetchingService;
             _context = context;
@@ -47,6 +49,7 @@ namespace FBOLinx.Web.Controllers
             _RampFeesService = rampFeesService;
             _aircraftService = aircraftService;
             _MailService = mailService;
+            _fuelerLinxService = fuelerLinxService;
         }
 
         // GET: api/Fboprices
@@ -695,7 +698,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(fbopricesRange);
         }
 
-        [HttpPost("notifyfboexpiredprices")]
+        [HttpPost("notify-fbo-expired-prices")]
         public ActionResult<bool> NotifyExpiredPrices([FromBody] NotifyFboExpiredPricingRequest notifyFboExpiredPricesRequest)
         {
             FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
@@ -709,13 +712,21 @@ namespace FBOLinx.Web.Controllers
             var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridEngagementTemplateData
             {
                 fboName = notifyFboExpiredPricesRequest.FBO,
-                subject = "Please update your prices"
+                subject = "FBOLinx reminder - expired pricing!"
             };
 
             mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
 
             //Send email
             var result = _MailService.SendAsync(mailMessage).Result;
+
+            return Ok(result);
+        }
+
+        [HttpGet("get-latest-flight-dept-pullhistory-for-icao")]
+        public async Task<ActionResult<int>> GetLatestFlightDeptPullHistoryForIcao()
+        {
+            var fuelerlinxContractFuelOrders = await _fuelerLinxService.GetLat;
 
             return Ok(result);
         }
