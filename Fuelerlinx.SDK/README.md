@@ -216,7 +216,7 @@ Class | Method | HTTP request | Description
 *FBOLinxApi* | [**GetCustomerTransactionsCountForMultipleAirports**](docs/FBOLinxApi.md#getcustomertransactionscountformultipleairports) | **POST** /api/FBOLinx/get-customer-orders-count-at-multiple-airports | 
 *FBOLinxApi* | [**GetFboTransactionsCount**](docs/FBOLinxApi.md#getfbotransactionscount) | **POST** /api/FBOLinx/get-fbo-orders-count-at-airport | 
 *FBOLinxApi* | [**GetGroupFbosTransactionsCount**](docs/FBOLinxApi.md#getgroupfbostransactionscount) | **POST** /api/FBOLinx/get-fbos-and-airports-orders-count | 
-*FBOLinxApi* | [**GetLatestPullHistoryFlightDepartmentForICAO**](docs/FBOLinxApi.md#getlatestpullhistoryflightdepartmentforicao) | **GET** /api/FBOLinx/get-latest-pullhistory-flight-dept-by-icao/{icao} | 
+*FBOLinxApi* | [**GetLatestPullHistoryFlightDepartmentForICAO**](docs/FBOLinxApi.md#getlatestpullhistoryflightdepartmentforicao) | **POST** /api/FBOLinx/get-latest-pullhistory-flight-dept-by-icao | 
 *FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
 *FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 *FBOLinxApi* | [**GetTransactionsDirectOrdersCount**](docs/FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
@@ -778,6 +778,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FBOLinxFbo](docs/FBOLinxFbo.md)
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateRequest](docs/FBOLinxFuelVendorUpdateRequest.md)
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateResponse](docs/FBOLinxFuelVendorUpdateResponse.md)
+ - [IO.Swagger.Model.FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest](docs/FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest.md)
  - [IO.Swagger.Model.FBOLinxGroup](docs/FBOLinxGroup.md)
  - [IO.Swagger.Model.FBOLinxGroupOrdersRequest](docs/FBOLinxGroupOrdersRequest.md)
  - [IO.Swagger.Model.FBOLinxGroupOrdersResponse](docs/FBOLinxGroupOrdersResponse.md)
