@@ -67,9 +67,9 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <param name="icao"></param>
+        /// <param name="body"></param>
         /// <returns>int?</returns>
-        int? GetLatestPullHistoryFlightDepartmentForICAO (string icao);
+        int? GetLatestPullHistoryFlightDepartmentForICAO (FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest body);
         /// <summary>
         ///  
         /// </summary>
@@ -456,31 +456,28 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
-        /// <param name="icao"></param> 
+        /// <param name="body"></param> 
         /// <returns>int?</returns>            
-        public int? GetLatestPullHistoryFlightDepartmentForICAO (string icao)
+        public int? GetLatestPullHistoryFlightDepartmentForICAO (FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest body)
         {
             
-            // verify the required parameter 'icao' is set
-            if (icao == null) throw new ApiException(400, "Missing required parameter 'icao' when calling GetLatestPullHistoryFlightDepartmentForICAO");
-            
     
-            var path = "/api/FBOLinx/get-latest-pullhistory-flight-dept-by-icao/{icao}";
+            var path = "/api/FBOLinx/get-latest-pullhistory-flight-dept-by-icao";
             path = path.Replace("{format}", "json");
-            path = path.Replace("{" + "icao" + "}", ApiClient.ParameterToString(icao));
-    
+                
             var queryParams = new Dictionary<String, String>();
             var headerParams = new Dictionary<String, String>();
             var formParams = new Dictionary<String, String>();
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                                                    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
     
             // make the HTTP request
-            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
     
             if (((int)response.StatusCode) >= 400)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetLatestPullHistoryFlightDepartmentForICAO: " + response.Content, response.Content);

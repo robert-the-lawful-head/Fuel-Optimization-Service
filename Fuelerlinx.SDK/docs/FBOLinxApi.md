@@ -13,7 +13,7 @@ Method | HTTP request | Description
 [**GetCustomerTransactionsCountForMultipleAirports**](FBOLinxApi.md#getcustomertransactionscountformultipleairports) | **POST** /api/FBOLinx/get-customer-orders-count-at-multiple-airports | 
 [**GetFboTransactionsCount**](FBOLinxApi.md#getfbotransactionscount) | **POST** /api/FBOLinx/get-fbo-orders-count-at-airport | 
 [**GetGroupFbosTransactionsCount**](FBOLinxApi.md#getgroupfbostransactionscount) | **POST** /api/FBOLinx/get-fbos-and-airports-orders-count | 
-[**GetLatestPullHistoryFlightDepartmentForICAO**](FBOLinxApi.md#getlatestpullhistoryflightdepartmentforicao) | **GET** /api/FBOLinx/get-latest-pullhistory-flight-dept-by-icao/{icao} | 
+[**GetLatestPullHistoryFlightDepartmentForICAO**](FBOLinxApi.md#getlatestpullhistoryflightdepartmentforicao) | **POST** /api/FBOLinx/get-latest-pullhistory-flight-dept-by-icao | 
 [**GetTransactionsCount**](FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
 [**GetTransactionsCountForNearbyAirports**](FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 [**GetTransactionsDirectOrdersCount**](FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
@@ -698,7 +698,7 @@ Name | Type | Description  | Notes
 
 <a name="getlatestpullhistoryflightdepartmentforicao"></a>
 # **GetLatestPullHistoryFlightDepartmentForICAO**
-> int? GetLatestPullHistoryFlightDepartmentForICAO (string icao)
+> int? GetLatestPullHistoryFlightDepartmentForICAO (FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest body)
 
 
 
@@ -727,11 +727,11 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
 
             var apiInstance = new FBOLinxApi();
-            var icao = icao_example;  // string | 
+            var body = new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest(); // FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest |  (optional) 
 
             try
             {
-                int? result = apiInstance.GetLatestPullHistoryFlightDepartmentForICAO(icao);
+                int? result = apiInstance.GetLatestPullHistoryFlightDepartmentForICAO(body);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -747,7 +747,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **icao** | **string**|  | 
+ **body** | [**FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest**](FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest.md)|  | [optional] 
 
 ### Return type
 
@@ -759,7 +759,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
  - **Accept**: text/plain, application/json, text/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
