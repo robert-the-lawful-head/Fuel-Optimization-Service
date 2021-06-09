@@ -19,15 +19,31 @@ namespace FBOLinx.Job.Base
             _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<string> PostAsync(string endpoint, object request)
+        public async Task<string> PostAsync(string endpoint, object request, string token = "")
         {
+            _httpClient.DefaultRequestHeaders.Remove("Authorization");
+
+            if (token != "")
+                _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
             var json = JsonConvert.SerializeObject(request);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(endpoint, data);
 
-            string result = response.Content.ReadAsStringAsync().Result;
+            var result = response.Content.ReadAsStringAsync().Result;
             return result;
+        }
+
+        public async Task<string> GetAsync(string endpoint, string token = "")
+        {
+            _httpClient.DefaultRequestHeaders.Remove("Authorization");
+
+            if (token != "")
+                _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = await _httpClient.GetAsync(endpoint);
+            return response.Content.ReadAsStringAsync().Result;
         }
     }
 }

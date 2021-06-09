@@ -20,6 +20,8 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.Web.Services.Interfaces;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
+using System.Net.Mail;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -34,8 +36,9 @@ namespace FBOLinx.Web.Controllers
         private readonly RampFeesService _RampFeesService;
         private readonly AircraftService _aircraftService;
         private IPriceFetchingService _PriceFetchingService;
+        private IMailService _MailService;
 
-        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService, IPriceFetchingService priceFetchingService)
+        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService, IPriceFetchingService priceFetchingService, IMailService mailService)
         {
             _PriceFetchingService = priceFetchingService;
             _context = context;
@@ -43,6 +46,7 @@ namespace FBOLinx.Web.Controllers
             _jwtManager = jwtManager;
             _RampFeesService = rampFeesService;
             _aircraftService = aircraftService;
+            _MailService = mailService;
         }
 
         // GET: api/Fboprices
@@ -101,7 +105,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(filteredResult);
         }
 
-        // GET: api/Fboprices/fbo/current/5
+        // GET: api/Fboprices/fbo/5/ispricingexpired
         [HttpGet("fbo/{fboId}/ispricingexpired")]
         public async Task<IActionResult> CheckPricingIsExpired([FromRoute] int fboId)
         {
@@ -121,6 +125,39 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(null);
+        }
+
+        // GET: api/Fboprices/getallfboswithexpiredretailpricing
+        [HttpGet("getallfboswithexpiredretailpricing")]
+        public async Task<IActionResult> GetAllFbosWithExpiredRetailPricing([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fboIdsWithExpiredPrice = new List<int>();
+            var fbos = await GetAllActiveFbos().Include(f => f.Users).Include("fboAirport").ToListAsync();
+
+            foreach (var fbo in fbos)
+            {
+                var retailPricing = await _context.Fboprices.Where(s => s.Product == "JetA Retail" && s.Fboid == fbo.Oid).OrderByDescending(t => t.Oid).FirstOrDefaultAsync();
+
+                if (retailPricing != null && retailPricing.Expired.GetValueOrDefault())
+                    fboIdsWithExpiredPrice.Add(fbo.Oid);
+            }
+
+            var fbosWithExpiredPricing = fbos.Where(t => fboIdsWithExpiredPrice.Contains(t.Oid)).Select(f => new FbosGridViewModel
+            {
+                Active = f.Active,
+                Fbo = f.Fbo,
+                Icao = f.fboAirport?.Icao,
+                Oid = f.Oid,
+                GroupId = f.GroupId ?? 0,
+                Users = f.Users
+            }).ToList();
+
+            return Ok(fbosWithExpiredPricing);
         }
 
         [HttpPost("suspendpricing/{oid}")]
@@ -658,6 +695,31 @@ namespace FBOLinx.Web.Controllers
             return Ok(fbopricesRange);
         }
 
+        [HttpPost("notifyfboexpiredprices")]
+        public ActionResult<bool> NotifyExpiredPrices([FromBody] NotifyFboExpiredPricingRequest notifyFboExpiredPricesRequest)
+        {
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
+            foreach (string email in notifyFboExpiredPricesRequest.ToEmails)
+            {
+                if (_MailService.IsValidEmailRecipient(email))
+                    mailMessage.To.Add(email);
+            }
+
+            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridEngagementTemplateData
+            {
+                fboName = notifyFboExpiredPricesRequest.FBO,
+                subject = "Please update your prices"
+            };
+
+            mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
+
+            //Send email
+            var result = _MailService.SendAsync(mailMessage).Result;
+
+            return Ok(result);
+        }
+
         private bool FbopricesExists(int id)
         {
             return _context.Fboprices.Any(e => e.Oid == id);
@@ -723,6 +785,11 @@ namespace FBOLinx.Web.Controllers
                           //.Select(p => p.OrderByDescending(q => q.Oid).FirstOrDefault());
 
             return result.ToList();
+        }
+
+        private IQueryable<Fbos> GetAllActiveFbos()
+        {
+            return _context.Fbos.Where(f => f.Active == true).AsQueryable();
         }
     }
 

@@ -13,7 +13,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         #region Properties
         public string AttachmentBase64String { get; set; }
         public LogoDetails Logo { get; set; }
-        public SendGridTemplateData SendGridTemplateData { get; set; }
+        public SendGridDistributionTemplateData SendGridDistributionTemplateData { get; set; }
+        public SendGridEngagementTemplateData SendGridEngagementTemplate { get; set; }
 
         #endregion
 

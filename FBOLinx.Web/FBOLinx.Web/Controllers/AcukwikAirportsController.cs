@@ -67,6 +67,21 @@ namespace FBOLinx.Web.Controllers
             return Ok(acukwikAirports);
         }
 
+        // GET: api/AcukwikAirports/icao/5
+        [HttpGet("byicao/{icao}")]
+        public async Task<IActionResult> GetAcukwikAirport([FromRoute] string icao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            icao = icao.ToLower();
+
+            var acukwikAirport = await GetAllAirports().Where(x => (x != null && x.Icao == icao)).FirstOrDefaultAsync();
+            return Ok(acukwikAirport);
+        }
+
         // PUT: api/AcukwikAirports/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAcukwikAirports([FromRoute] int id, [FromBody] AcukwikAirports acukwikAirports)
