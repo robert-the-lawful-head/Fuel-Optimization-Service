@@ -98,6 +98,13 @@ namespace IO.Swagger.Model {
     public int? Role { get; set; }
 
     /// <summary>
+    /// Gets or Sets RoleDescription
+    /// </summary>
+    [DataMember(Name="roleDescription", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "roleDescription")]
+    public string RoleDescription { get; set; }
+
+    /// <summary>
     /// Gets or Sets CompanyUserProfileId
     /// </summary>
     [DataMember(Name="companyUserProfileId", EmitDefaultValue=false)]
@@ -180,6 +187,7 @@ namespace IO.Swagger.Model {
       sb.Append("  PhoneNumber: ").Append(PhoneNumber).Append("\n");
       sb.Append("  FullName: ").Append(FullName).Append("\n");
       sb.Append("  Role: ").Append(Role).Append("\n");
+      sb.Append("  RoleDescription: ").Append(RoleDescription).Append("\n");
       sb.Append("  CompanyUserProfileId: ").Append(CompanyUserProfileId).Append("\n");
       sb.Append("  CredentialsId: ").Append(CredentialsId).Append("\n");
       sb.Append("  AspNetUserId: ").Append(AspNetUserId).Append("\n");

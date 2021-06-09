@@ -173,6 +173,7 @@ Class | Method | HTTP request | Description
 *ApplicationApi* | [**GetBuildVersion**](docs/ApplicationApi.md#getbuildversion) | **GET** /api/Application/build-version | Returns the current build version of the API.
 *ApplicationApi* | [**GetDeploymentNotesAll**](docs/ApplicationApi.md#getdeploymentnotesall) | **GET** /api/Application/deployment-notes/list | Internal use only - Returns a list of deployment notes to be used with a range of build versions on each application.
 *ApplicationApi* | [**GetDeploymentNotesByVersionNumber**](docs/ApplicationApi.md#getdeploymentnotesbyversionnumber) | **GET** /api/Application/deployment-notes/by-version-number/{buildVersionNumber}/application-type/{applicationType} | Internal use only - Fetch deployment notes for a provided {buildVersionNumber}.
+*ApplicationApi* | [**GetEnumOptionsByTypeName**](docs/ApplicationApi.md#getenumoptionsbytypename) | **GET** /api/Application/enum-options/{enumTypeName} | 
 *ApplicationApi* | [**PostDeploymentNotes**](docs/ApplicationApi.md#postdeploymentnotes) | **POST** /api/Application/deployment-notes | Internal use only - Add a new deployment note for the provided build version range.
 *ApplicationApi* | [**UpdateDeploymentNotes**](docs/ApplicationApi.md#updatedeploymentnotes) | **PUT** /api/Application/deployment-notes | Internal use only - Update an existing deployment note for a build version.
 *CompanyApi* | [**DeleteCompany**](docs/CompanyApi.md#deletecompany) | **DELETE** /api/Company/{id} | Internal use only - Delete an existing company.
@@ -215,6 +216,7 @@ Class | Method | HTTP request | Description
 *FBOLinxApi* | [**GetCustomerTransactionsCountForMultipleAirports**](docs/FBOLinxApi.md#getcustomertransactionscountformultipleairports) | **POST** /api/FBOLinx/get-customer-orders-count-at-multiple-airports | 
 *FBOLinxApi* | [**GetFboTransactionsCount**](docs/FBOLinxApi.md#getfbotransactionscount) | **POST** /api/FBOLinx/get-fbo-orders-count-at-airport | 
 *FBOLinxApi* | [**GetGroupFbosTransactionsCount**](docs/FBOLinxApi.md#getgroupfbostransactionscount) | **POST** /api/FBOLinx/get-fbos-and-airports-orders-count | 
+*FBOLinxApi* | [**GetLatestPullHistoryFlightDepartmentForICAO**](docs/FBOLinxApi.md#getlatestpullhistoryflightdepartmentforicao) | **POST** /api/FBOLinx/get-latest-pullhistory-flight-dept-by-icao | 
 *FBOLinxApi* | [**GetTransactionsCount**](docs/FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
 *FBOLinxApi* | [**GetTransactionsCountForNearbyAirports**](docs/FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 *FBOLinxApi* | [**GetTransactionsDirectOrdersCount**](docs/FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
@@ -602,6 +604,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.AviationProfiles](docs/AviationProfiles.md)
  - [IO.Swagger.Model.AviationProfilesResponse](docs/AviationProfilesResponse.md)
  - [IO.Swagger.Model.Background](docs/Background.md)
+ - [IO.Swagger.Model.BlackListedAirport](docs/BlackListedAirport.md)
  - [IO.Swagger.Model.BuildVersionResponse](docs/BuildVersionResponse.md)
  - [IO.Swagger.Model.ButtonOptions](docs/ButtonOptions.md)
  - [IO.Swagger.Model.BytescoutFileDataDTO](docs/BytescoutFileDataDTO.md)
@@ -625,6 +628,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CodeCallbackRequest](docs/CodeCallbackRequest.md)
  - [IO.Swagger.Model.ColorAxis](docs/ColorAxis.md)
  - [IO.Swagger.Model.ColorSet](docs/ColorSet.md)
+ - [IO.Swagger.Model.CompanyAccessibleFeaturesDTO](docs/CompanyAccessibleFeaturesDTO.md)
  - [IO.Swagger.Model.CompanyAccountSettingsDTO](docs/CompanyAccountSettingsDTO.md)
  - [IO.Swagger.Model.CompanyAccountSettingsResponse](docs/CompanyAccountSettingsResponse.md)
  - [IO.Swagger.Model.CompanyActiveIntegrationDTO](docs/CompanyActiveIntegrationDTO.md)
@@ -632,6 +636,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CompanyActiveIntegrationResponse](docs/CompanyActiveIntegrationResponse.md)
  - [IO.Swagger.Model.CompanyAircraftChangeLogDTO](docs/CompanyAircraftChangeLogDTO.md)
  - [IO.Swagger.Model.CompanyAircraftChangeLogResponse](docs/CompanyAircraftChangeLogResponse.md)
+ - [IO.Swagger.Model.CompanyCustomPreferencesDTO](docs/CompanyCustomPreferencesDTO.md)
  - [IO.Swagger.Model.CompanyDTO](docs/CompanyDTO.md)
  - [IO.Swagger.Model.CompanyFboChangeLogDTO](docs/CompanyFboChangeLogDTO.md)
  - [IO.Swagger.Model.CompanyFboChangeLogResponse](docs/CompanyFboChangeLogResponse.md)
@@ -664,6 +669,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.CurrentPlannedFlightsResponse](docs/CurrentPlannedFlightsResponse.md)
  - [IO.Swagger.Model.CurrentPricingResponse](docs/CurrentPricingResponse.md)
  - [IO.Swagger.Model.CurrentScheduledTripsResponse](docs/CurrentScheduledTripsResponse.md)
+ - [IO.Swagger.Model.CustomPreferences](docs/CustomPreferences.md)
  - [IO.Swagger.Model.CustomerDataDTO](docs/CustomerDataDTO.md)
  - [IO.Swagger.Model.DataLabels](docs/DataLabels.md)
  - [IO.Swagger.Model.DateTimeLabelFormats](docs/DateTimeLabelFormats.md)
@@ -749,6 +755,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.DispatchEmailOptions](docs/DispatchEmailOptions.md)
  - [IO.Swagger.Model.DispatchFuelRequest](docs/DispatchFuelRequest.md)
  - [IO.Swagger.Model.DispatchFuelResponse](docs/DispatchFuelResponse.md)
+ - [IO.Swagger.Model.DispatchingPreferences](docs/DispatchingPreferences.md)
  - [IO.Swagger.Model.Distance](docs/Distance.md)
  - [IO.Swagger.Model.DistanceResults](docs/DistanceResults.md)
  - [IO.Swagger.Model.DistinctCountryListResponse](docs/DistinctCountryListResponse.md)
@@ -756,6 +763,8 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.EmailBlastEmailAddressesResponse](docs/EmailBlastEmailAddressesResponse.md)
  - [IO.Swagger.Model.EmailBlastSubscriberDTO](docs/EmailBlastSubscriberDTO.md)
  - [IO.Swagger.Model.EntityDataDTO](docs/EntityDataDTO.md)
+ - [IO.Swagger.Model.EnumDescriptionValue](docs/EnumDescriptionValue.md)
+ - [IO.Swagger.Model.EnumOptionsResponse](docs/EnumOptionsResponse.md)
  - [IO.Swagger.Model.EpicFbo](docs/EpicFbo.md)
  - [IO.Swagger.Model.EpicQuoteResponse](docs/EpicQuoteResponse.md)
  - [IO.Swagger.Model.Error](docs/Error.md)
@@ -769,6 +778,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FBOLinxFbo](docs/FBOLinxFbo.md)
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateRequest](docs/FBOLinxFuelVendorUpdateRequest.md)
  - [IO.Swagger.Model.FBOLinxFuelVendorUpdateResponse](docs/FBOLinxFuelVendorUpdateResponse.md)
+ - [IO.Swagger.Model.FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest](docs/FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest.md)
  - [IO.Swagger.Model.FBOLinxGroup](docs/FBOLinxGroup.md)
  - [IO.Swagger.Model.FBOLinxGroupOrdersRequest](docs/FBOLinxGroupOrdersRequest.md)
  - [IO.Swagger.Model.FBOLinxGroupOrdersResponse](docs/FBOLinxGroupOrdersResponse.md)
@@ -888,16 +898,18 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.MenuFeatureDTO](docs/MenuFeatureDTO.md)
  - [IO.Swagger.Model.MobileAppSettingsDTO](docs/MobileAppSettingsDTO.md)
  - [IO.Swagger.Model.MobileAppSettingsResponse](docs/MobileAppSettingsResponse.md)
+ - [IO.Swagger.Model.MobileMainMenuFeatureDTO](docs/MobileMainMenuFeatureDTO.md)
+ - [IO.Swagger.Model.MobileMainMenuSubFeaturesDTO](docs/MobileMainMenuSubFeaturesDTO.md)
+ - [IO.Swagger.Model.MobileMenuDTO](docs/MobileMenuDTO.md)
  - [IO.Swagger.Model.MostCommonReportedRampFeeResultDTO](docs/MostCommonReportedRampFeeResultDTO.md)
  - [IO.Swagger.Model.MultiLegOption](docs/MultiLegOption.md)
  - [IO.Swagger.Model.NavigationLog](docs/NavigationLog.md)
+ - [IO.Swagger.Model.NavigationPreferences](docs/NavigationPreferences.md)
  - [IO.Swagger.Model.OracleAccountingExportResponse](docs/OracleAccountingExportResponse.md)
  - [IO.Swagger.Model.OracleAccountingExportResultDTO](docs/OracleAccountingExportResultDTO.md)
  - [IO.Swagger.Model.PartnerCredentials](docs/PartnerCredentials.md)
  - [IO.Swagger.Model.PartnerInputFieldDTO](docs/PartnerInputFieldDTO.md)
  - [IO.Swagger.Model.PayeeDetail](docs/PayeeDetail.md)
- - [IO.Swagger.Model.PdfParsingDTO](docs/PdfParsingDTO.md)
- - [IO.Swagger.Model.PdfParsingSubFeaturesDTO](docs/PdfParsingSubFeaturesDTO.md)
  - [IO.Swagger.Model.PermissionsDTO](docs/PermissionsDTO.md)
  - [IO.Swagger.Model.PlotBand](docs/PlotBand.md)
  - [IO.Swagger.Model.PlotEvents](docs/PlotEvents.md)
@@ -1065,6 +1077,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.PricingTier](docs/PricingTier.md)
  - [IO.Swagger.Model.ProcessInvoiceFileRequest](docs/ProcessInvoiceFileRequest.md)
  - [IO.Swagger.Model.ProcessInvoiceFileResponse](docs/ProcessInvoiceFileResponse.md)
+ - [IO.Swagger.Model.QuotingPreferences](docs/QuotingPreferences.md)
  - [IO.Swagger.Model.RampFeeByCompanyDTO](docs/RampFeeByCompanyDTO.md)
  - [IO.Swagger.Model.RampFeeByCompanyListResponse](docs/RampFeeByCompanyListResponse.md)
  - [IO.Swagger.Model.RampFeeByCompanyNoteDTO](docs/RampFeeByCompanyNoteDTO.md)
@@ -1186,9 +1199,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.TransactionResponse](docs/TransactionResponse.md)
  - [IO.Swagger.Model.TransactionServiceFeeDTO](docs/TransactionServiceFeeDTO.md)
  - [IO.Swagger.Model.TransactionSettingsDTO](docs/TransactionSettingsDTO.md)
- - [IO.Swagger.Model.TransactionsDTO](docs/TransactionsDTO.md)
  - [IO.Swagger.Model.TransactionsResponse](docs/TransactionsResponse.md)
- - [IO.Swagger.Model.TransactionsSubFeaturesDTO](docs/TransactionsSubFeaturesDTO.md)
  - [IO.Swagger.Model.Trip](docs/Trip.md)
  - [IO.Swagger.Model.TripCostResults](docs/TripCostResults.md)
  - [IO.Swagger.Model.TripPlanningDTO](docs/TripPlanningDTO.md)
@@ -1342,6 +1353,7 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.UserAuthTokenFromCredentialsRequest](docs/UserAuthTokenFromCredentialsRequest.md)
  - [IO.Swagger.Model.UserAuthTokenResponse](docs/UserAuthTokenResponse.md)
  - [IO.Swagger.Model.UserEmailDTO](docs/UserEmailDTO.md)
+ - [IO.Swagger.Model.UserGeneralInformationDTO](docs/UserGeneralInformationDTO.md)
  - [IO.Swagger.Model.UserProfile](docs/UserProfile.md)
  - [IO.Swagger.Model.UserResponse](docs/UserResponse.md)
  - [IO.Swagger.Model.UserSettingsDTO](docs/UserSettingsDTO.md)

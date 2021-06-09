@@ -11,20 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class PdfParsingSubFeaturesDTO {
+  public class EnumDescriptionValue {
     /// <summary>
-    /// Gets or Sets InvoiceMatching
+    /// Gets or Sets Description
     /// </summary>
-    [DataMember(Name="InvoiceMatching", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "InvoiceMatching")]
-    public MenuFeatureDTO InvoiceMatching { get; set; }
+    [DataMember(Name="description", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "description")]
+    public string Description { get; set; }
 
     /// <summary>
-    /// Gets or Sets InvoiceMatchNotifications
+    /// Gets or Sets Value
     /// </summary>
-    [DataMember(Name="InvoiceMatchNotifications", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "InvoiceMatchNotifications")]
-    public MenuFeatureDTO InvoiceMatchNotifications { get; set; }
+    [DataMember(Name="value", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "value")]
+    public int? Value { get; set; }
 
 
     /// <summary>
@@ -33,9 +33,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class PdfParsingSubFeaturesDTO {\n");
-      sb.Append("  InvoiceMatching: ").Append(InvoiceMatching).Append("\n");
-      sb.Append("  InvoiceMatchNotifications: ").Append(InvoiceMatchNotifications).Append("\n");
+      sb.Append("class EnumDescriptionValue {\n");
+      sb.Append("  Description: ").Append(Description).Append("\n");
+      sb.Append("  Value: ").Append(Value).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

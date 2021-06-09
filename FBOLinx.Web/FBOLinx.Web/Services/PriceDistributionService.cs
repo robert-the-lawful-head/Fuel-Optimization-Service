@@ -271,7 +271,7 @@ namespace FBOLinx.Web.Services
                 }
 
                 _DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
-                var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridTemplateData
+                var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridDistributionTemplateData
                 {
                     recipientCompanyName = _IsPreview ? fbo.Fbo : customer.Company,
                     templateEmailBodyMessage = HttpUtility.HtmlDecode(_EmailContent.EmailContentHtml ?? ""),
@@ -286,7 +286,7 @@ namespace FBOLinx.Web.Services
                     expiration = validUntil,
                     currentPostedRetail = currentPostedRetail
                 };
-                mailMessage.SendGridTemplateData = dynamicTemplateData;
+                mailMessage.SendGridDistributionTemplateData = dynamicTemplateData;
 
                 //Send email
                 var result = _MailService.SendAsync(mailMessage).Result;

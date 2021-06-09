@@ -11,27 +11,27 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class PermissionsDTO {
+  public class MobileMainMenuFeatureDTO {
     /// <summary>
-    /// Gets or Sets TripPlanning
+    /// Gets or Sets SubFeatures
     /// </summary>
-    [DataMember(Name="TripPlanning", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "TripPlanning")]
-    public TripPlanningDTO TripPlanning { get; set; }
+    [DataMember(Name="SubFeatures", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "SubFeatures")]
+    public MobileMainMenuSubFeaturesDTO SubFeatures { get; set; }
 
     /// <summary>
-    /// Gets or Sets Menu
+    /// Gets or Sets IsEnabled
     /// </summary>
-    [DataMember(Name="Menu", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "Menu")]
-    public MenuDTO Menu { get; set; }
+    [DataMember(Name="IsEnabled", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "IsEnabled")]
+    public bool? IsEnabled { get; set; }
 
     /// <summary>
-    /// Gets or Sets MobileMenu
+    /// Gets or Sets Caption
     /// </summary>
-    [DataMember(Name="MobileMenu", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "MobileMenu")]
-    public MobileMenuDTO MobileMenu { get; set; }
+    [DataMember(Name="Caption", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "Caption")]
+    public string Caption { get; set; }
 
 
     /// <summary>
@@ -40,10 +40,10 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class PermissionsDTO {\n");
-      sb.Append("  TripPlanning: ").Append(TripPlanning).Append("\n");
-      sb.Append("  Menu: ").Append(Menu).Append("\n");
-      sb.Append("  MobileMenu: ").Append(MobileMenu).Append("\n");
+      sb.Append("class MobileMainMenuFeatureDTO {\n");
+      sb.Append("  SubFeatures: ").Append(SubFeatures).Append("\n");
+      sb.Append("  IsEnabled: ").Append(IsEnabled).Append("\n");
+      sb.Append("  Caption: ").Append(Caption).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

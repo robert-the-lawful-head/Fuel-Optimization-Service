@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **HomeBase** | **string** |  | [optional] 
 **PriceSync** | **bool?** |  | [optional] 
 **SchedulingIntegrationType** | **int?** |  | [optional] 
+**SchedulingIntegrationTypeDescription** | **string** |  | [optional] 
 **SchedulingUserName** | **string** |  | [optional] 
 **SchedulingPassword** | **string** |  | [optional] 
 **SchedulingDataPath** | **string** |  | [optional] 
@@ -22,6 +23,7 @@ Name | Type | Description | Notes
 **DisableCrowdSourcedRampFees** | **bool?** |  | [optional] 
 **ReconcileMatchingInvoicedTransactions** | **bool?** |  | [optional] 
 **KeepManualPriceVendorWhenInvoiced** | **bool?** |  | [optional] 
+**MatchInvoicedTransactionsToScheduling** | **bool?** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

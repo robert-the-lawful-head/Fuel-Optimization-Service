@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FBOLinx.Job.AirportWatch
 {
@@ -25,7 +26,7 @@ namespace FBOLinx.Job.AirportWatch
             _apiClient = new ApiClient(config["FBOLinxApiUrl"]);
         }
 
-        public void Run()
+        public async Task Run()
         {
             using (FileSystemWatcher watcher = new FileSystemWatcher())
             {

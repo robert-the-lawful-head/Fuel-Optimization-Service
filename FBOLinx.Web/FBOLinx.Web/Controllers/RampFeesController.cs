@@ -15,6 +15,9 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.Web.Services;
+using FBOLinx.Web.Models.Requests;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
+using System.Net.Mail;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -26,12 +29,14 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly RampFeesService _RampFeesService;
         private readonly AircraftService _aircraftService;
+        private IMailService _MailService;
 
-        public RampFeesController(FboLinxContext context, RampFeesService rampFeesService, AircraftService aircraftService)
+        public RampFeesController(FboLinxContext context, RampFeesService rampFeesService, AircraftService aircraftService, IMailService mailService)
         {
             _context = context;
             _RampFeesService = rampFeesService;
             _aircraftService = aircraftService;
+            _MailService = mailService;
         }
 
         // GET: api/RampFees
@@ -440,7 +445,33 @@ namespace FBOLinx.Web.Controllers
             {
                 return Ok(null);
             }
+        }
 
+        [HttpPost("notify-fbo-no-rampfees")]
+        public ActionResult<bool> NotifyFboNoRampFees([FromBody] NotifyFboNoRampFeesRequest notifyFboNoRampFeesRequest)
+        {
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
+            foreach (string email in notifyFboNoRampFeesRequest.ToEmails)
+            {
+                if (_MailService.IsValidEmailRecipient(email))
+                    mailMessage.To.Add(email);
+            }
+
+            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridEngagementTemplateData
+            {
+                fboName = notifyFboNoRampFeesRequest.FBO,
+                customerName = notifyFboNoRampFeesRequest.CustomerName,
+                ICAO = notifyFboNoRampFeesRequest.ICAO,
+                subject = "FBOLinx reminder - incomplete quotes"
+            };
+
+            mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
+
+            //Send email
+            var result = _MailService.SendAsync(mailMessage).Result;
+
+            return Ok(result);
         }
     }
 }
