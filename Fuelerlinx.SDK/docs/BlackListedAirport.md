@@ -1,11 +1,10 @@
-# IO.Swagger.Model.PermissionsDTO
+# IO.Swagger.Model.BlackListedAirport
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**TripPlanning** | [**TripPlanningDTO**](TripPlanningDTO.md) |  | [optional] 
-**Menu** | [**MenuDTO**](MenuDTO.md) |  | [optional] 
-**MobileMenu** | [**MobileMenuDTO**](MobileMenuDTO.md) |  | [optional] 
+**Icao** | **string** |  | [optional] 
+**Message** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -91,6 +91,13 @@ namespace IO.Swagger.Model {
     public int? SubscriptionType { get; set; }
 
     /// <summary>
+    /// Gets or Sets SubscriptionTypeDescription
+    /// </summary>
+    [DataMember(Name="subscriptionTypeDescription", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "subscriptionTypeDescription")]
+    public string SubscriptionTypeDescription { get; set; }
+
+    /// <summary>
     /// Gets or Sets FaaId
     /// </summary>
     [DataMember(Name="faaId", EmitDefaultValue=false)]
@@ -125,6 +132,41 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "scheduledTripSettings")]
     public ScheduledTripSettingsDTO ScheduledTripSettings { get; set; }
 
+    /// <summary>
+    /// Gets or Sets ActiveIntegrations
+    /// </summary>
+    [DataMember(Name="activeIntegrations", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "activeIntegrations")]
+    public List<CompanyActiveIntegrationDTO> ActiveIntegrations { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Users
+    /// </summary>
+    [DataMember(Name="users", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "users")]
+    public List<UserGeneralInformationDTO> Users { get; set; }
+
+    /// <summary>
+    /// Gets or Sets TailNumbers
+    /// </summary>
+    [DataMember(Name="tailNumbers", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "tailNumbers")]
+    public List<string> TailNumbers { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Customizations
+    /// </summary>
+    [DataMember(Name="customizations", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "customizations")]
+    public CompanyCustomPreferencesDTO Customizations { get; set; }
+
+    /// <summary>
+    /// Gets or Sets AccessibleFeatures
+    /// </summary>
+    [DataMember(Name="accessibleFeatures", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "accessibleFeatures")]
+    public CompanyAccessibleFeaturesDTO AccessibleFeatures { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -144,11 +186,17 @@ namespace IO.Swagger.Model {
       sb.Append("  HideInFboLinx: ").Append(HideInFboLinx).Append("\n");
       sb.Append("  Active: ").Append(Active).Append("\n");
       sb.Append("  SubscriptionType: ").Append(SubscriptionType).Append("\n");
+      sb.Append("  SubscriptionTypeDescription: ").Append(SubscriptionTypeDescription).Append("\n");
       sb.Append("  FaaId: ").Append(FaaId).Append("\n");
       sb.Append("  FaaCertificateNumber: ").Append(FaaCertificateNumber).Append("\n");
       sb.Append("  ImageFileDataId: ").Append(ImageFileDataId).Append("\n");
       sb.Append("  Settings: ").Append(Settings).Append("\n");
       sb.Append("  ScheduledTripSettings: ").Append(ScheduledTripSettings).Append("\n");
+      sb.Append("  ActiveIntegrations: ").Append(ActiveIntegrations).Append("\n");
+      sb.Append("  Users: ").Append(Users).Append("\n");
+      sb.Append("  TailNumbers: ").Append(TailNumbers).Append("\n");
+      sb.Append("  Customizations: ").Append(Customizations).Append("\n");
+      sb.Append("  AccessibleFeatures: ").Append(AccessibleFeatures).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

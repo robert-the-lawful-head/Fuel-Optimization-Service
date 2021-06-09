@@ -422,6 +422,13 @@ namespace IO.Swagger.Model {
     public double? NonFuelServicesTotal { get; set; }
 
     /// <summary>
+    /// Gets or Sets InvoicedFuelTotal
+    /// </summary>
+    [DataMember(Name="invoicedFuelTotal", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "invoicedFuelTotal")]
+    public double? InvoicedFuelTotal { get; set; }
+
+    /// <summary>
     /// Gets or Sets NonFuelServiceNames
     /// </summary>
     [DataMember(Name="nonFuelServiceNames", EmitDefaultValue=false)]
@@ -634,6 +641,7 @@ namespace IO.Swagger.Model {
       sb.Append("  ScheduledTripID: ").Append(ScheduledTripID).Append("\n");
       sb.Append("  LegNumber: ").Append(LegNumber).Append("\n");
       sb.Append("  NonFuelServicesTotal: ").Append(NonFuelServicesTotal).Append("\n");
+      sb.Append("  InvoicedFuelTotal: ").Append(InvoicedFuelTotal).Append("\n");
       sb.Append("  NonFuelServiceNames: ").Append(NonFuelServiceNames).Append("\n");
       sb.Append("  FlightTypeMapping: ").Append(FlightTypeMapping).Append("\n");
       sb.Append("  TransactionNotes: ").Append(TransactionNotes).Append("\n");

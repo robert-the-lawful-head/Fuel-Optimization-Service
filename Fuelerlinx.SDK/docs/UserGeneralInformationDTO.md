@@ -1,15 +1,16 @@
-# IO.Swagger.Model.CompanyActiveIntegrationDTO
+# IO.Swagger.Model.UserGeneralInformationDTO
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Id** | **int?** |  | [optional] 
 **CompanyId** | **int?** |  | [optional] 
-**IntegrationType** | **int?** |  | [optional] 
-**IntegrationTypeDescription** | **string** |  | [optional] 
-**Affiliation** | **int?** |  | [optional] 
-**AffiliationDescription** | **string** |  | [optional] 
-**ActivationDateUtc** | **DateTime?** |  | [optional] 
+**FirstName** | **string** |  | [optional] 
+**LastName** | **string** |  | [optional] 
+**Username** | **string** |  | [optional] 
+**FullName** | **string** |  | [optional] 
+**Role** | **int?** |  | [optional] 
+**RoleDescription** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
