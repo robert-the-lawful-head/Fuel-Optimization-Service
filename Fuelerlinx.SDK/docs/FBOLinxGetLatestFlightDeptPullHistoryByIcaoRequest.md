@@ -1,10 +1,9 @@
-# IO.Swagger.Model.TransactionsSubFeaturesDTO
+# IO.Swagger.Model.FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**PDFParsing** | [**PdfParsingDTO**](PdfParsingDTO.md) |  | [optional] 
-**SyncWithDegaFuelOrders** | [**MenuFeatureDTO**](MenuFeatureDTO.md) |  | [optional] 
+**Icao** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

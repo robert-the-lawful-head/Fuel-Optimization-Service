@@ -34,8 +34,6 @@ export class CustomerMatchDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log('in modal');
-        console.log(this.data);
     }
 
     // Public Methods

@@ -161,6 +161,13 @@ namespace FBOLinx.Web.Services
             FBOLinxFuelVendorUpdateResponse result = api.UpdateFuelVendor(request);
             return result.Result;
         }
+
+        public int GetLatestFlightDeptPullHistoryForIcao(FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest request)
+        {
+            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+            int result = api.GetLatestPullHistoryFlightDepartmentForICAO(request).GetValueOrDefault();
+            return result;
+        }
         #endregion
 
         #region Private Methods

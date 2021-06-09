@@ -81,17 +81,13 @@ namespace FBOLinx.Web.Services
             if (customers == null)
                     return;
 
+            //#tx9ztn - Removed the requirement for aircraft in the account to send a distribution email. A fleet is no longer requireed to receive pricing.
             if (_IsPreview)
             {
                 foreach (var customer in customers)
                 {
-                    var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
-
-                    if (customerAircrafts.Count > 0)
-                    {
-                        await GenerateDistributionMailMessage(customer);
-                        break;
-                    }
+                    await GenerateDistributionMailMessage(customer);
+                    break;
                 }
             }
             else
@@ -100,15 +96,10 @@ namespace FBOLinx.Web.Services
 
                 foreach (var customer in customers)
                 {
-                    var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == _DistributePricingRequest.GroupId).ToListAsync();
+                    if (customerToSend.Oid == 0)
+                        customerToSend = customer;
 
-                    if (customerAircrafts.Count > 0)
-                    {
-                        if (customerToSend.Oid == 0)
-                            customerToSend = customer;
-
-                        await GenerateDistributionMailMessage(customer);
-                    }
+                    await GenerateDistributionMailMessage(customer);
                 }
 
                 var systemContacts = new List<Contacts>();
@@ -280,7 +271,7 @@ namespace FBOLinx.Web.Services
                 }
 
                 _DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
-                var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridTemplateData
+                var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridDistributionTemplateData
                 {
                     recipientCompanyName = _IsPreview ? fbo.Fbo : customer.Company,
                     templateEmailBodyMessage = HttpUtility.HtmlDecode(_EmailContent.EmailContentHtml ?? ""),
@@ -295,7 +286,7 @@ namespace FBOLinx.Web.Services
                     expiration = validUntil,
                     currentPostedRetail = currentPostedRetail
                 };
-                mailMessage.SendGridTemplateData = dynamicTemplateData;
+                mailMessage.SendGridDistributionTemplateData = dynamicTemplateData;
 
                 //Send email
                 var result = _MailService.SendAsync(mailMessage).Result;
@@ -463,11 +454,11 @@ namespace FBOLinx.Web.Services
             var result = await (from cc in _context.CustomerContacts
                 join c in _context.Contacts on cc.ContactId equals c.Oid
                 join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
-                where cibg.GroupId == _DistributePricingRequest.GroupId
-                      && cc.CustomerId == customer.CustomerId
-                      && (cibg.CopyAlerts ?? false)
-                      && !string.IsNullOrEmpty(cibg.Email)
-                select cibg).ToListAsync();
+                                where cibg.GroupId == _DistributePricingRequest.GroupId
+                                      && cc.CustomerId == customer.CustomerId
+                                      && (cibg.CopyAlerts ?? false)
+                                      && !string.IsNullOrEmpty(cibg.Email)
+                                select cibg).ToListAsync();
             return result;
         }
 
@@ -488,6 +479,7 @@ namespace FBOLinx.Web.Services
                 newEmailContent.Subject = _DistributePricingRequest.PricingTemplate.Subject;
                 newEmailContent.EmailContentHtml = _DistributePricingRequest.PricingTemplate.Email;
                 newEmailContent.FboId = _DistributePricingRequest.FboId;
+                newEmailContent.Name = _DistributePricingRequest.PricingTemplate.Name;
                 await _context.EmailContent.AddAsync(newEmailContent);
                 await _context.SaveChangesAsync();
                 _DistributePricingRequest.PricingTemplate.EmailContentId = newEmailContent.Oid;

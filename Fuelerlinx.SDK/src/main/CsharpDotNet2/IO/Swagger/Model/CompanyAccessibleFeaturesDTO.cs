@@ -11,20 +11,27 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class TransactionsSubFeaturesDTO {
+  public class CompanyAccessibleFeaturesDTO {
     /// <summary>
-    /// Gets or Sets PDFParsing
+    /// Gets or Sets Id
     /// </summary>
-    [DataMember(Name="PDFParsing", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "PDFParsing")]
-    public PdfParsingDTO PDFParsing { get; set; }
+    [DataMember(Name="id", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "id")]
+    public int? Id { get; set; }
 
     /// <summary>
-    /// Gets or Sets SyncWithDegaFuelOrders
+    /// Gets or Sets CompanyId
     /// </summary>
-    [DataMember(Name="SyncWithDegaFuelOrders", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "SyncWithDegaFuelOrders")]
-    public MenuFeatureDTO SyncWithDegaFuelOrders { get; set; }
+    [DataMember(Name="companyId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyId")]
+    public int? CompanyId { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Permissions
+    /// </summary>
+    [DataMember(Name="permissions", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "permissions")]
+    public PermissionsDTO Permissions { get; set; }
 
 
     /// <summary>
@@ -33,9 +40,10 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class TransactionsSubFeaturesDTO {\n");
-      sb.Append("  PDFParsing: ").Append(PDFParsing).Append("\n");
-      sb.Append("  SyncWithDegaFuelOrders: ").Append(SyncWithDegaFuelOrders).Append("\n");
+      sb.Append("class CompanyAccessibleFeaturesDTO {\n");
+      sb.Append("  Id: ").Append(Id).Append("\n");
+      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
+      sb.Append("  Permissions: ").Append(Permissions).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

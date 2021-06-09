@@ -41,7 +41,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     isCommercialInvisible = true;
 
     data: FlightWatchHistorical[];
-    dataSource: MatTableDataSource<FlightWatchHistorical>;
+    dataSource: any;
 
     selectedCustomers: number[] = [];
     selectedTailNumbers: string[] = [];
@@ -167,7 +167,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
             (!this.selectedTailNumbers.length || this.selectedTailNumbers.includes(x.tailNumber))
         );
 
-        this.dataSource = new MatTableDataSource(data);
+        if (!this.dataSource) {
+            this.dataSource = new MatTableDataSource(data);
+            this.dataSource.filterCollection = [];
+        }
+        this.dataSource.data = data;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
     }
@@ -263,6 +267,24 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         this.selectedCustomers = [];
         this.selectedTailNumbers = [];
         this.isCommercialInvisible = true;
+
+        this.dataSource.filter = '';
+        for (const filter of this.dataSource.filterCollection) {
+            if (filter.isGlobal) {
+                continue;
+            }
+
+            filter.dateFilter = {
+                startDate: null,
+                endDate: null
+            };
+            filter.stringFilter = '';
+            filter.numberRangeFilter = {
+                start: null,
+                end: null
+            };
+            filter.isFiltered = false;
+        }
 
         this.filterChanged();
     }

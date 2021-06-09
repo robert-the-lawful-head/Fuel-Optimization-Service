@@ -8,6 +8,7 @@ Method | HTTP request | Description
 [**GetBuildVersion**](ApplicationApi.md#getbuildversion) | **GET** /api/Application/build-version | Returns the current build version of the API.
 [**GetDeploymentNotesAll**](ApplicationApi.md#getdeploymentnotesall) | **GET** /api/Application/deployment-notes/list | Internal use only - Returns a list of deployment notes to be used with a range of build versions on each application.
 [**GetDeploymentNotesByVersionNumber**](ApplicationApi.md#getdeploymentnotesbyversionnumber) | **GET** /api/Application/deployment-notes/by-version-number/{buildVersionNumber}/application-type/{applicationType} | Internal use only - Fetch deployment notes for a provided {buildVersionNumber}.
+[**GetEnumOptionsByTypeName**](ApplicationApi.md#getenumoptionsbytypename) | **GET** /api/Application/enum-options/{enumTypeName} | 
 [**PostDeploymentNotes**](ApplicationApi.md#postdeploymentnotes) | **POST** /api/Application/deployment-notes | Internal use only - Add a new deployment note for the provided build version range.
 [**UpdateDeploymentNotes**](ApplicationApi.md#updatedeploymentnotes) | **PUT** /api/Application/deployment-notes | Internal use only - Update an existing deployment note for a build version.
 
@@ -270,6 +271,74 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeploymentNotesResponse**](DeploymentNotesResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getenumoptionsbytypename"></a>
+# **GetEnumOptionsByTypeName**
+> EnumOptionsResponse GetEnumOptionsByTypeName (string enumTypeName)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetEnumOptionsByTypeNameExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ApplicationApi();
+            var enumTypeName = enumTypeName_example;  // string | 
+
+            try
+            {
+                EnumOptionsResponse result = apiInstance.GetEnumOptionsByTypeName(enumTypeName);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ApplicationApi.GetEnumOptionsByTypeName: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **enumTypeName** | **string**|  | 
+
+### Return type
+
+[**EnumOptionsResponse**](EnumOptionsResponse.md)
 
 ### Authorization
 

@@ -56,7 +56,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            var emailContent = await _context.EmailContent.Where((x => x.FboId == fboId)).ToListAsync();
+            var emailContent = await _context.EmailContent.Where((x => x.FboId == fboId)).OrderBy(x => x.Name).ToListAsync();
 
             if (emailContent == null)
             {

@@ -31,10 +31,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-
-import { MatFileUploadModule } from 'mat-file-upload';
 
 import { NiComponentsModule } from '../ni-components/ni-components.module';
 
@@ -98,7 +95,6 @@ import { FooterComponent } from './components/footer/footer.component';
         MatToolbarModule,
         MatTooltipModule,
         NgbPopoverModule,
-        MatFileUploadModule,
     ],
 })
 export class UIModule {

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
 {
-    public class SendGridTemplateData
+    public class SendGridDistributionTemplateData
     {
         [JsonProperty("recipientCompanyName")]
         public string recipientCompanyName { get; set; }

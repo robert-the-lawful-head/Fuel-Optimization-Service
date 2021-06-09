@@ -1,10 +1,9 @@
-# IO.Swagger.Model.PdfParsingSubFeaturesDTO
+# IO.Swagger.Model.NavigationPreferences
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**InvoiceMatching** | [**MenuFeatureDTO**](MenuFeatureDTO.md) |  | [optional] 
-**InvoiceMatchNotifications** | [**MenuFeatureDTO**](MenuFeatureDTO.md) |  | [optional] 
+**PreferredHomePage** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

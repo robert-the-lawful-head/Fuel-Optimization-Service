@@ -46,7 +46,6 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { TextMaskModule } from 'angular2-text-mask';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
-import { MatFileUploadModule } from 'mat-file-upload';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import {
     FilterService,
@@ -173,6 +172,7 @@ import { FeeAndTaxBreakdownComponent } from '../shared/components/fee-and-tax-br
 import { TableSettingsComponent } from '../shared/components/table-settings/table-settings.component';
 import { AircraftAssignModalComponent } from '../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
 import { CsvExportModalComponent } from '../shared/components/csv-export-modal/csv-export-modal.component';
+import { AutocompleteSearchComponent } from '../shared/components/autocomplete-search/autocomplete-search.component';
 
 // Pipes
 import { AppPipesModule } from '../app-pipes.module';
@@ -229,7 +229,6 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         MatTooltipModule,
         NgxChartsModule,
         TextMaskModule,
-        MatFileUploadModule,
         RichTextEditorAllModule,
         AppPipesModule,
         NgbPopoverModule,
@@ -350,6 +349,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         FlightWatchSettingsComponent,
         AnalyticsAirportWatchStatusMarkerPipe,
         CsvExportModalComponent,
+        AutocompleteSearchComponent,
     ],
     exports: [
         ClickStopPropagationDirective,

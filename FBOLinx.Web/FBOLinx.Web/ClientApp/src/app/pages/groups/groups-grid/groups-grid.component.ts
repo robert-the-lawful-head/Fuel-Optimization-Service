@@ -122,6 +122,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     selectedRows: any[] = [];
 
     tableLocalStorageKey = 'conductor-group-grid-settings';
+    tableLocalStorageFilterKey = 'conductor-group-grid-filter';
     columns: ColumnType[] = [];
 
     constructor(
@@ -186,6 +187,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         if (this.groupGridState.filter) {
             this.applyFilter(this.groupGridState.filter);
+        } else if (localStorage.getItem(this.tableLocalStorageFilterKey)) {
+            this.applyFilter(localStorage.getItem(this.tableLocalStorageFilterKey));
         } else {
             this.applyFilter('');
         }
@@ -360,6 +363,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     return;
                 }
 
+                localStorage.setItem(this.tableLocalStorageFilterKey, this.searchValue);
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
                 localStorage.setItem('managerGroupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.groupId = group.oid;
@@ -399,6 +403,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     return;
                 }
 
+                localStorage.setItem(this.tableLocalStorageFilterKey, this.searchValue);
                 localStorage.setItem('managerGroupId', this.sharedService.currentUser.groupId.toString());
                 this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
 
@@ -456,6 +461,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
     applyFilter(filterValue: string) {
         this.searchValue = filterValue;
+        localStorage.setItem(this.tableLocalStorageFilterKey, filterValue);
 
         const filteredFbos = this.groupsFbosData.fbos.filter(fbo =>
             this.accountType === 'all' ||

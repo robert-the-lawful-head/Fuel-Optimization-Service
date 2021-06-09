@@ -56,7 +56,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     distributionLog: any[];
     timeLeft = 0;
     interval: any;
-    selectAll: boolean;
+    selectAll = true;
     previewEmail = '';
     labelPosition = 'before';
     buttontext = 'Distribute Pricing';
@@ -175,7 +175,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
             )
         );
 
-        this.selectAll = false;
         this.prepareDataSource();
     }
 
@@ -192,8 +191,12 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                 )
                 .subscribe((data: any) => {
                     if (data) {
-                        this.pricingTemplatesData = data;
+                        this.pricingTemplatesData = data.map(row => ({
+                            ...row,
+                            toSend: true,
+                        }));
                     }
+
                     this.marginTemplateDataSource = new MatTableDataSource(
                         this.pricingTemplatesData
                     );
@@ -265,7 +268,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         if (!item.toSend) {
             this.selectAll = false;
         }
-        //  item.val = item.toSend ? item.val === undefined ? 0 + 33.33 : item.val + 33.33 : item.val - 33.33;
     }
 
     confirmSendEmails() {
@@ -385,7 +387,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     private checkExpiredPrices(template) {
-        if (template.intoPlanePrice === 0 || template.intoPlanePrice === null) {
+        if (template.intoPlanePrice <= 0 || template.intoPlanePrice === null) {
             const dialogRef = this.expiredPricingDialog.open(
                 PricingExpiredNotificationComponent, {
                     data: {

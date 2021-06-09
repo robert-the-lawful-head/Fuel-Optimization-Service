@@ -33,9 +33,14 @@ namespace FBOLinx.Web.Services
         {
             var sendGridMessage = MailMessageExtensions.GetSendGridMessage(msg);
 
-            if (msg.SendGridTemplateData != null)
+            if (msg.SendGridDistributionTemplateData != null)
             {
                 AddDistributionEmailData(msg, ref sendGridMessage);
+            }
+
+            if (msg.SendGridEngagementTemplate != null)
+            {
+                AddEngagementEmailData(msg, ref sendGridMessage);
             }
 
             var apiKey = _MailSettings.SendGridAPIKey;
@@ -90,7 +95,7 @@ namespace FBOLinx.Web.Services
         #region Private Methods
         private void AddDistributionEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
         {
-            sendGridMessageWithTemplate.SetTemplateData(message.SendGridTemplateData);
+            sendGridMessageWithTemplate.SetTemplateData(message.SendGridDistributionTemplateData);
 
             var pricesAttachment = new SendGrid.Helpers.Mail.Attachment();
             pricesAttachment.Disposition = "inline";
@@ -112,6 +117,16 @@ namespace FBOLinx.Web.Services
             }
 
             sendGridMessageWithTemplate.TemplateId = "d-537f958228a6490b977e372ad8389b71";
+        }
+
+        private void AddEngagementEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
+        {
+            sendGridMessageWithTemplate.SetTemplateData(message.SendGridEngagementTemplate);
+
+            if (message.SendGridEngagementTemplate.customerName != null)
+                sendGridMessageWithTemplate.TemplateId = "d-bd3e32cbb21a4c60bf9753bcf70b2527";  //templateid for fuel price expiration
+            else
+                sendGridMessageWithTemplate.TemplateId = "d-038c5d66d8034610af790492a8e184b8";  //templateid for no ramp fees
         }
 
         private SmtpClient GenerateSMTP()
