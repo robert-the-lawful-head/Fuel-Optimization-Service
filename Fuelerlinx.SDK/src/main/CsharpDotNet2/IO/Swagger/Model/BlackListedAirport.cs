@@ -11,27 +11,20 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class PermissionsDTO {
+  public class BlackListedAirport {
     /// <summary>
-    /// Gets or Sets TripPlanning
+    /// Gets or Sets Icao
     /// </summary>
-    [DataMember(Name="TripPlanning", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "TripPlanning")]
-    public TripPlanningDTO TripPlanning { get; set; }
+    [DataMember(Name="icao", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "icao")]
+    public string Icao { get; set; }
 
     /// <summary>
-    /// Gets or Sets Menu
+    /// Gets or Sets Message
     /// </summary>
-    [DataMember(Name="Menu", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "Menu")]
-    public MenuDTO Menu { get; set; }
-
-    /// <summary>
-    /// Gets or Sets MobileMenu
-    /// </summary>
-    [DataMember(Name="MobileMenu", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "MobileMenu")]
-    public MobileMenuDTO MobileMenu { get; set; }
+    [DataMember(Name="message", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "message")]
+    public string Message { get; set; }
 
 
     /// <summary>
@@ -40,10 +33,9 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class PermissionsDTO {\n");
-      sb.Append("  TripPlanning: ").Append(TripPlanning).Append("\n");
-      sb.Append("  Menu: ").Append(Menu).Append("\n");
-      sb.Append("  MobileMenu: ").Append(MobileMenu).Append("\n");
+      sb.Append("class BlackListedAirport {\n");
+      sb.Append("  Icao: ").Append(Icao).Append("\n");
+      sb.Append("  Message: ").Append(Message).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

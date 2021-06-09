@@ -11,27 +11,27 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class PdfParsingDTO {
+  public class EnumOptionsResponse {
     /// <summary>
-    /// Gets or Sets SubFeatures
+    /// Gets or Sets Result
     /// </summary>
-    [DataMember(Name="SubFeatures", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "SubFeatures")]
-    public PdfParsingSubFeaturesDTO SubFeatures { get; set; }
+    [DataMember(Name="result", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "result")]
+    public List<EnumDescriptionValue> Result { get; set; }
 
     /// <summary>
-    /// Gets or Sets IsEnabled
+    /// Gets or Sets Success
     /// </summary>
-    [DataMember(Name="IsEnabled", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "IsEnabled")]
-    public bool? IsEnabled { get; set; }
+    [DataMember(Name="success", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "success")]
+    public bool? Success { get; set; }
 
     /// <summary>
-    /// Gets or Sets Caption
+    /// Gets or Sets Message
     /// </summary>
-    [DataMember(Name="Caption", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "Caption")]
-    public string Caption { get; set; }
+    [DataMember(Name="message", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "message")]
+    public string Message { get; set; }
 
 
     /// <summary>
@@ -40,10 +40,10 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class PdfParsingDTO {\n");
-      sb.Append("  SubFeatures: ").Append(SubFeatures).Append("\n");
-      sb.Append("  IsEnabled: ").Append(IsEnabled).Append("\n");
-      sb.Append("  Caption: ").Append(Caption).Append("\n");
+      sb.Append("class EnumOptionsResponse {\n");
+      sb.Append("  Result: ").Append(Result).Append("\n");
+      sb.Append("  Success: ").Append(Success).Append("\n");
+      sb.Append("  Message: ").Append(Message).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

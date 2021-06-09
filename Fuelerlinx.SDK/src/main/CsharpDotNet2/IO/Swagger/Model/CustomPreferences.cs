@@ -11,27 +11,27 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class TransactionsDTO {
+  public class CustomPreferences {
     /// <summary>
-    /// Gets or Sets SubFeatures
+    /// Gets or Sets Dispatching
     /// </summary>
-    [DataMember(Name="SubFeatures", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "SubFeatures")]
-    public TransactionsSubFeaturesDTO SubFeatures { get; set; }
+    [DataMember(Name="dispatching", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "dispatching")]
+    public DispatchingPreferences Dispatching { get; set; }
 
     /// <summary>
-    /// Gets or Sets IsEnabled
+    /// Gets or Sets Quoting
     /// </summary>
-    [DataMember(Name="IsEnabled", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "IsEnabled")]
-    public bool? IsEnabled { get; set; }
+    [DataMember(Name="quoting", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "quoting")]
+    public QuotingPreferences Quoting { get; set; }
 
     /// <summary>
-    /// Gets or Sets Caption
+    /// Gets or Sets Navigation
     /// </summary>
-    [DataMember(Name="Caption", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "Caption")]
-    public string Caption { get; set; }
+    [DataMember(Name="navigation", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "navigation")]
+    public NavigationPreferences Navigation { get; set; }
 
 
     /// <summary>
@@ -40,10 +40,10 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class TransactionsDTO {\n");
-      sb.Append("  SubFeatures: ").Append(SubFeatures).Append("\n");
-      sb.Append("  IsEnabled: ").Append(IsEnabled).Append("\n");
-      sb.Append("  Caption: ").Append(Caption).Append("\n");
+      sb.Append("class CustomPreferences {\n");
+      sb.Append("  Dispatching: ").Append(Dispatching).Append("\n");
+      sb.Append("  Quoting: ").Append(Quoting).Append("\n");
+      sb.Append("  Navigation: ").Append(Navigation).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

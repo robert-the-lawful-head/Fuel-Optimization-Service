@@ -61,6 +61,7 @@ Name | Type | Description | Notes
 **ScheduledTripID** | **string** |  | [optional] 
 **LegNumber** | **int?** |  | [optional] 
 **NonFuelServicesTotal** | **double?** |  | [optional] 
+**InvoicedFuelTotal** | **double?** |  | [optional] 
 **NonFuelServiceNames** | **string** |  | [optional] 
 **FlightTypeMapping** | [**FlightTypeMappingDTO**](FlightTypeMappingDTO.md) |  | [optional] 
 **TransactionNotes** | [**List&lt;TransactionNoteDTO&gt;**](TransactionNoteDTO.md) |  | [optional] 

@@ -11,27 +11,27 @@ namespace IO.Swagger.Model {
   /// 
   /// </summary>
   [DataContract]
-  public class PermissionsDTO {
+  public class CompanyCustomPreferencesDTO {
     /// <summary>
-    /// Gets or Sets TripPlanning
+    /// Gets or Sets Id
     /// </summary>
-    [DataMember(Name="TripPlanning", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "TripPlanning")]
-    public TripPlanningDTO TripPlanning { get; set; }
+    [DataMember(Name="id", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "id")]
+    public int? Id { get; set; }
 
     /// <summary>
-    /// Gets or Sets Menu
+    /// Gets or Sets CompanyId
     /// </summary>
-    [DataMember(Name="Menu", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "Menu")]
-    public MenuDTO Menu { get; set; }
+    [DataMember(Name="companyId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "companyId")]
+    public int? CompanyId { get; set; }
 
     /// <summary>
-    /// Gets or Sets MobileMenu
+    /// Gets or Sets Preferences
     /// </summary>
-    [DataMember(Name="MobileMenu", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "MobileMenu")]
-    public MobileMenuDTO MobileMenu { get; set; }
+    [DataMember(Name="preferences", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "preferences")]
+    public CustomPreferences Preferences { get; set; }
 
 
     /// <summary>
@@ -40,10 +40,10 @@ namespace IO.Swagger.Model {
     /// <returns>String presentation of the object</returns>
     public override string ToString()  {
       var sb = new StringBuilder();
-      sb.Append("class PermissionsDTO {\n");
-      sb.Append("  TripPlanning: ").Append(TripPlanning).Append("\n");
-      sb.Append("  Menu: ").Append(Menu).Append("\n");
-      sb.Append("  MobileMenu: ").Append(MobileMenu).Append("\n");
+      sb.Append("class CompanyCustomPreferencesDTO {\n");
+      sb.Append("  Id: ").Append(Id).Append("\n");
+      sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
+      sb.Append("  Preferences: ").Append(Preferences).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
