@@ -237,7 +237,8 @@ namespace FBOLinx.Web.Services
                         Notes = (pt == null ? "" : pt.Notes),
                         Fbo = (fbo == null ? "" : fbo.Fbo),
                         Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
-                        PriceBreakdownDisplayType = priceBreakdownDisplayType
+                        PriceBreakdownDisplayType = priceBreakdownDisplayType,
+                        Product = "Jet A"
                     }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToList();
 
                 if (feesAndTaxes.Count == 0)
@@ -251,7 +252,7 @@ namespace FBOLinx.Web.Services
                     domesticOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     domesticOptions.ForEach(x =>
                     {
-                        x.Product = "JetA (Domestic Departure)";
+                        x.Product = "Jet A (Domestic Departure)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.DomesticOnly ||
                             fee.DepartureType == ApplicableTaxFlights.All)                                                                                                            
@@ -268,7 +269,7 @@ namespace FBOLinx.Web.Services
                     internationalOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     internationalOptions.ForEach(x =>
                     {
-                        x.Product = "JetA (International Departure)";
+                        x.Product = "Jet A (International Departure)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
                             fee.DepartureType == ApplicableTaxFlights.All)
@@ -290,7 +291,7 @@ namespace FBOLinx.Web.Services
                     allDepartureOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     allDepartureOptions.ForEach(x =>
                     {
-                        var productName = "JetA";
+                        var productName = "Jet A";
                         if (internationalOptions.Count > 0 && domesticOptions.Count == 0)
                             productName += " (Domestic Departure)";
                         else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
