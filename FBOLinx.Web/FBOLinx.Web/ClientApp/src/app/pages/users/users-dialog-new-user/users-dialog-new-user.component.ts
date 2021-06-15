@@ -44,7 +44,6 @@ export class UsersDialogNewUserComponent {
         this.emailExists = false;
         this.userService.checkemailexists(this.data.username).subscribe(
             (data: any) => {
-                console.log(data);
                 this.dialogRef.close(this.data);
             },
             (err: any) => {

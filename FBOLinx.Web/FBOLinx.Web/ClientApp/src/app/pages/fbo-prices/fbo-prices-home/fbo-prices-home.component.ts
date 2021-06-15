@@ -488,76 +488,80 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
     private loadCurrentFboPrices() {
         return new Observable((observer) => {
-            this.fboPricesService
-                .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
-                .subscribe((data: any) => {
-                    this.currentPrices = data;
-                    this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
-                    this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
-                    this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
-                    this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
+            this.subscriptions.push(
+                this.fboPricesService
+                    .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
+                    .subscribe((data: any) => {
+                        this.currentPrices = data;
+                        this.currentFboPrice100LLCost = this.getCurrentPriceByProduct('100LL Cost');
+                        this.currentFboPrice100LLRetail = this.getCurrentPriceByProduct('100LL Retail');
+                        this.currentFboPriceJetACost = this.getCurrentPriceByProduct('JetA Cost');
+                        this.currentFboPriceJetARetail = this.getCurrentPriceByProduct('JetA Retail');
 
-                    if (this.currentFboPriceJetARetail.effectiveTo) {
-                        const tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo);
-                        this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
+                        if (this.currentFboPriceJetARetail.effectiveTo) {
+                            const tempStagedPricingEffectiveFrom = moment(this.currentFboPriceJetARetail.effectiveTo);
+                            this.stagedPricingEffectiveFrom = new Date(tempStagedPricingEffectiveFrom.format('MM/DD/YYYY'));
 
-                        this.currentFboPriceJetARetail.effectiveTo =
-                            moment(this.currentFboPriceJetARetail.effectiveTo).subtract(1, 'minutes');
-                    }
-
-                    if (this.currentFboPriceJetACost.effectiveTo) {
-                        if (!this.stagedPricingEffectiveFrom) {
-                            this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetACost.effectiveTo);
+                            this.currentFboPriceJetARetail.effectiveTo =
+                                moment(this.currentFboPriceJetARetail.effectiveTo).subtract(1, 'minutes');
                         }
 
-                        this.currentFboPriceJetACost.effectiveTo =
-                            moment(this.currentFboPriceJetACost.effectiveTo).subtract(1, 'minutes');
-                    }
+                        if (this.currentFboPriceJetACost.effectiveTo) {
+                            if (!this.stagedPricingEffectiveFrom) {
+                                this.stagedPricingEffectiveFrom = new Date(this.currentFboPriceJetACost.effectiveTo);
+                            }
 
-                    if (data.length > 0) {
-                        this.TempValueJet = data[0].tempJet;
-                        this.TempValueId = data[0].tempId;
-                        this.TempDateFrom = moment(data[0].tempDateFrom).toDate();
-                        this.TempDateTo = moment(data[0].tempDateTo).toDate();
-                    }
+                            this.currentFboPriceJetACost.effectiveTo =
+                                moment(this.currentFboPriceJetACost.effectiveTo).subtract(1, 'minutes');
+                        }
 
-                    this.sharedService.emitChange('fbo-prices-loaded');
-                    this.sharedService.valueChange({
-                        message: SharedEvents.fboPricesUpdatedEvent,
-                        JetACost: this.currentFboPriceJetACost.price,
-                        JetARetail: this.currentFboPriceJetARetail.price,
-                    });
+                        if (data.length > 0) {
+                            this.TempValueJet = data[0].tempJet;
+                            this.TempValueId = data[0].tempId;
+                            this.TempDateFrom = moment(data[0].tempDateFrom).toDate();
+                            this.TempDateTo = moment(data[0].tempDateTo).toDate();
+                        }
 
-                    this.subscribeToPricingShift();
+                        this.sharedService.emitChange('fbo-prices-loaded');
+                        this.sharedService.valueChange({
+                            message: SharedEvents.fboPricesUpdatedEvent,
+                            JetACost: this.currentFboPriceJetACost.price,
+                            JetARetail: this.currentFboPriceJetARetail.price,
+                        });
 
-                    observer.next();
-                }, (error: any) => {
-                    observer.error(error);
-                });
+                        this.subscribeToPricingShift();
+
+                        observer.next();
+                    }, (error: any) => {
+                        observer.error(error);
+                    })
+            );
         });
     }
 
     private loadStagedFboPrices() {
         return new Observable((observer) => {
-            this.fboPricesService
-                .getFbopricesByFboIdStaged(this.sharedService.currentUser.fboId)
-                .subscribe((data: any) => {
-                    this.stagedPrices = data;
-                    this.stagedFboPriceJetACost = this.getStagedPriceByProduct('JetA Cost');
-                    this.stagedFboPriceJetARetail = this.getStagedPriceByProduct('JetA Retail');
-                    if (this.stagedFboPriceJetACost.effectiveTo) {
-                        this.stagedFboPriceJetACost.effectiveTo =
-                            moment(this.stagedFboPriceJetACost.effectiveTo).subtract(1, 'minutes');
-                    }
-                    if (this.stagedFboPriceJetARetail.effectiveTo) {
-                        this.stagedFboPriceJetARetail.effectiveTo =
-                            moment(this.stagedFboPriceJetARetail.effectiveTo).subtract(1, 'minutes');
-                    }
-                    this.subscribeToPricingShift();
-                    observer.next();
-                }, (error: any) => {
-                    observer.error(error);
-                });
+            this.subscriptions.push(
+                this.fboPricesService
+                    .getFbopricesByFboIdStaged(this.sharedService.currentUser.fboId)
+                    .subscribe((data: any) => {
+                        this.stagedPrices = data;
+                        this.stagedFboPriceJetACost = this.getStagedPriceByProduct('JetA Cost');
+                        this.stagedFboPriceJetARetail = this.getStagedPriceByProduct('JetA Retail');
+                        if (this.stagedFboPriceJetACost.effectiveTo) {
+                            this.stagedFboPriceJetACost.effectiveTo =
+                                moment(this.stagedFboPriceJetACost.effectiveTo).subtract(1, 'minutes');
+                        }
+                        if (this.stagedFboPriceJetARetail.effectiveTo) {
+                            this.stagedFboPriceJetARetail.effectiveTo =
+                                moment(this.stagedFboPriceJetARetail.effectiveTo).subtract(1, 'minutes');
+                        }
+                        this.subscribeToPricingShift();
+                        observer.next();
+                    }, (error: any) => {
+                        observer.error(error);
+                    })
+            );
         });
     }
 
@@ -645,9 +649,11 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
         this.fboPricesService
             .checkifExistStagedFboPrice(this.sharedService.currentUser.fboId, price)
             .subscribe(() => {
-                this.loadStagedFboPrices().subscribe(() => {
-                    this.NgxUiLoader.stopLoader(this.stagedPricingLoader);
-                });
+                this.subscriptions.push(
+                    this.loadStagedFboPrices().subscribe(() => {
+                        this.NgxUiLoader.stopLoader(this.stagedPricingLoader);
+                    })
+                );
             });
     }
 

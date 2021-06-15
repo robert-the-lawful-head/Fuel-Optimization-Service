@@ -7,14 +7,21 @@
         </mat-form-field>
     </div>
     <div>
-        <mat-form-field>
+        <app-autocomplete-search
+            label="Aircraft Make/Model"
+            [optionValue]="['make', 'model']"
+            [options]="aircraftTypes"
+            [displayFn]="displayAircraft"
+            (selectionChanged)="onAircraftTypeChanged($event)"
+        ></app-autocomplete-search>
+        <!-- <mat-form-field>
             <mat-select (selectionChange)="onAircraftTypeChanged()" [(ngModel)]="data.selectedAircraft"
                         placeholder="Aircraft Make/Model">
                 <mat-option *ngFor="let aircraftType of aircraftTypes" [value]="aircraftType">
                     {{aircraftType.make}} {{aircraftType.model}}
                 </mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
     </div>
 </div>
 <div class="mt-2 text-center">

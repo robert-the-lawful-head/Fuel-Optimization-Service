@@ -22,16 +22,32 @@ namespace FBOLinx.ServiceLayer.Test
             return user;
         }
 
-        public static DistributePricingRequest CreateDistributePricingRequest()
+        public static DistributePricingRequest CreateDistributePreviewPricingRequest()
         {
             DistributePricingRequest distributePricingRequest = new DistributePricingRequest();
             distributePricingRequest.GroupId = 1;
+            distributePricingRequest.FboId = 1;
             distributePricingRequest.PricingTemplate = new PricingTemplate();
+            distributePricingRequest.PricingTemplate.EmailContentId = 1;
             distributePricingRequest.PricingTemplate.Notes = string.Empty;
             distributePricingRequest.PricingTemplate.MarginType = PricingTemplate.MarginTypes.CostPlus;
             distributePricingRequest.Customer = CreateCustomerInfoByGroup();
             distributePricingRequest.Customer.CustomerId = 1;
 
+            return distributePricingRequest;
+        }
+
+        public static DistributePricingRequest CreateDistributePricingRequest()
+        {
+            DistributePricingRequest distributePricingRequest = new DistributePricingRequest();
+            distributePricingRequest.GroupId = 1;
+            distributePricingRequest.FboId = 1;
+            distributePricingRequest.PricingTemplate = new PricingTemplate();
+            distributePricingRequest.PricingTemplate.EmailContentId = 1;
+            distributePricingRequest.PricingTemplate.Oid = 1;
+            distributePricingRequest.PricingTemplate.Notes = string.Empty;
+            distributePricingRequest.PricingTemplate.MarginType = PricingTemplate.MarginTypes.CostPlus;
+            
             return distributePricingRequest;
         }
 

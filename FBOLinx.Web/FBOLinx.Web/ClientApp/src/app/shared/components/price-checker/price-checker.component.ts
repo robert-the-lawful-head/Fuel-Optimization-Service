@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 
 // Services
@@ -52,12 +51,12 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     public customerForTailLookup: any;
     public tailNumberForTailLookup = '';
     public customersForTail: Array<any>;
-    public tailNumberForLookupControl: FormControl = new FormControl();
     public tailNumberFormControlSubscription: any;
     public locationChangedSubscription: any;
     public customerForCustomerLookup: any;
     public tailNumberForCustomerLookup = '';
     public allCustomers: Array<any>;
+    public allTailNumbers: Array<string>;
     public aircraftForCustomer: Array<any>;
     public pricingTemplateId = 0;
     public pricingTemplates: Array<any>;
@@ -81,30 +80,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
                 private customerInfoByGroupService: CustomerinfobygroupService,
                 private customerAircraftsService: CustomeraircraftsService,
                 private fboFeesAndTaxesService: FbofeesandtaxesService,
-    ) {
-        // Register change subscription for tail number entry
-        this.tailNumberFormControlSubscription = this.tailNumberForLookupControl.valueChanges.debounceTime(1000)
-            .subscribe(tailValue => {
-                this.NgxUiLoader.startLoader(this.tailLoader);
-                this.customerForTailLookup = null;
-                this.tailNumberForTailLookup = tailValue;
-                this.aircraftsService
-                    .getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumberForTailLookup).subscribe(
-                    (response: any) => {
-                        this.NgxUiLoader.stopLoader(this.tailLoader);
-                        if (!response) {
-                            this.customersForTail = [];
-                            this.customerForTailLookup = null;
-                            return;
-                        }
-                        this.customersForTail = response;
-                        if (this.customersForTail.length > 0) {
-                            this.customerForTailLookup = this.customersForTail[0];
-                            this.lookupPricing();
-                        }
-                    });
-            });
-    }
+    ) {}
 
     ngOnInit(): void {
         this.resetAll();
@@ -133,9 +109,15 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     public resetAll(): void {
         this.loadPricingTemplates();
         this.loadAllCustomers();
+        this.loadAllTailNumbers();
     }
 
-    public customerForLookupChanged() {
+    public displayCustomerName(customer: any) {
+        return customer ? customer.company : customer;
+    }
+
+    public customerForLookupChanged(changedValue: any) {
+        this.customerForCustomerLookup = changedValue;
         this.NgxUiLoader.startLoader(this.tailLoader);
         this.tailNumberForCustomerLookup = '';
         this.customerAircraftsService.getCustomerAircraftsByGroupAndCustomerId(this.sharedService.currentUser.groupId,
@@ -152,6 +134,27 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.lookupPricing();
             }
         });
+    }
+
+    public tailNumberLookupChanged(changedValue: any) {
+        this.NgxUiLoader.startLoader(this.tailLoader);
+        this.customerForTailLookup = null;
+        this.tailNumberForTailLookup = changedValue;
+        this.aircraftsService
+            .getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumberForTailLookup).subscribe(
+            (response: any) => {
+                this.NgxUiLoader.stopLoader(this.tailLoader);
+                if (!response) {
+                    this.customersForTail = [];
+                    this.customerForTailLookup = null;
+                    return;
+                }
+                this.customersForTail = response;
+                if (this.customersForTail.length > 0) {
+                    this.customerForTailLookup = this.customersForTail[0];
+                    this.lookupPricing();
+                }
+            });
     }
 
     public lookupPricing() {
@@ -242,6 +245,14 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
                     alert('There was an error pulling customer information for price checking.');
                 }
                 this.allCustomers = response;
+            });
+    }
+
+    private loadAllTailNumbers(): void {
+        this.customerAircraftsService
+            .getAircraftsListByGroupAndFbo(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
+            .subscribe((data: Array<any>) => {
+                this.allTailNumbers = data.map(t => t.tailNumber);
             });
     }
 
