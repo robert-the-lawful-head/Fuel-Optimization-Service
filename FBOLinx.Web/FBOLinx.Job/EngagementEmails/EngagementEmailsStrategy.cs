@@ -1,4 +1,4 @@
-﻿using FBOLinx.DB.Models;
+using FBOLinx.DB.Models;
 using FBOLinx.Job.Base;
 using FBOLinx.Job.Interfaces;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
@@ -57,7 +57,8 @@ namespace FBOLinx.Job.EngagementEmails
                     var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
                     var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
 
-                    toEmails.Add(fboInfo.FuelDeskEmail);
+                    if (fboInfo.FuelDeskEmail != "")
+                        toEmails.Add(fboInfo.FuelDeskEmail);
 
                     var responseFboContacts = await _apiClient.GetAsync("fbocontacts/fbo/" + fbo.Oid, conductorUser.Token);
                     var fboContacts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FboContactsViewModel>>(responseFboContacts);
@@ -68,7 +69,8 @@ namespace FBOLinx.Job.EngagementEmails
                             toEmails.Add(fboContact.Email);
                     }
 
-                    await GenerateExpiredPricesEmail(toEmails, fbo.Fbo, conductorUser.Token);
+                    if (toEmails.Count > 0)
+                        await GenerateExpiredPricesEmail(toEmails, fbo.Fbo, conductorUser.Token);
                 }
             }
 
@@ -126,7 +128,8 @@ namespace FBOLinx.Job.EngagementEmails
                                 var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
                                 var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
 
-                                toEmails.Add(fboInfo.FuelDeskEmail);
+                                if (fboInfo.FuelDeskEmail != "")
+                                    toEmails.Add(fboInfo.FuelDeskEmail);
 
                                 var responseFboContacts = await _apiClient.GetAsync("fbocontacts/fbo/" + fbo.Oid, conductorUser.Token);
                                 var fboContacts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FboContactsViewModel>>(responseFboContacts);
@@ -137,7 +140,8 @@ namespace FBOLinx.Job.EngagementEmails
                                         toEmails.Add(fboContact.Email);
                                 }
 
-                                await GenerateNoRampFeesEmail(toEmails, fbo.Fbo, customer.Company, fbo.Icao, conductorUser.Token);
+                                if (toEmails.Count > 0)
+                                    await GenerateNoRampFeesEmail(toEmails, fbo.Fbo, customer.Company, fbo.Icao, conductorUser.Token);
                             }
                         }
                     }
