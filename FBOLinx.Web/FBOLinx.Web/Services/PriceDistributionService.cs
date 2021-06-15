@@ -469,12 +469,12 @@ namespace FBOLinx.Web.Services
 
             var emailContent = _context.EmailContent.Where(e => e.GroupId == groupId).FirstOrDefault();
 
-            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridTemplateData
+            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridDistributionTemplateData
             {
                 templateEmailBodyMessage = HttpUtility.HtmlDecode(emailContent.EmailContentHtml ?? ""),
                 Subject = HttpUtility.HtmlDecode(emailContent.Subject) ?? "Customers Pricing",
             };
-            mailMessage.SendGridTemplateData = dynamicTemplateData;
+            mailMessage.SendGridDistributionTemplateData = dynamicTemplateData;
 
             //Send email
             await _MailService.SendAsync(mailMessage);
