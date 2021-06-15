@@ -278,9 +278,9 @@ namespace FBOLinx.Web.Services
             await CommitChanges();
         }
 
-        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithFbo(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
+        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFbo(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
         {
-            var fboIcao = await _fboService.GetFBOIcao(fboId);
+            var fboIcao = fboId.HasValue ? await _fboService.GetFBOIcao(fboId.Value) : null;
 
             var historicalData = await (from awhd in _context.AirportWatchHistoricalData
                                         join awat in _context.AirportWatchAircraftTailNumber on new { awhd.AircraftHexCode, awhd.AtcFlightNumber } equals new { awat.AircraftHexCode, awat.AtcFlightNumber }
@@ -301,7 +301,7 @@ namespace FBOLinx.Web.Services
                                         into leftJoinedCustomers
                                         from ca in leftJoinedCustomers.DefaultIfEmpty()
                                         where
-                                            awhd.AirportICAO == fboIcao &&
+                                            (!fboId.HasValue || awhd.AirportICAO == fboIcao) &&
                                             (request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime()) &&
                                             (request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
                                         group awhd by new
@@ -340,7 +340,7 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<FboHistoricalDataModel>> GetAircraftsHistoricalDataAssociatedWithFbo(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
-            var historicalData = await GetHistoricalDataAssociatedWithFbo(groupId, fboId, request);
+            var historicalData = await GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, request);
             var result = (from h in historicalData
                           join a in _aircraftService.GetAllAircraftsOnlyAsQueryable() on h.AircraftId equals a.AircraftId
                           into leftJoinedAircrafts

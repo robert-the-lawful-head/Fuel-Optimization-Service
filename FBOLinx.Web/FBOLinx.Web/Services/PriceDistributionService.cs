@@ -25,12 +25,14 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using Microsoft.Extensions.Options;
 using System.Net.Mail;
 using FBOLinx.Web.Services.Interfaces;
+using FBOLinx.Web.Models.Responses;
 
 namespace FBOLinx.Web.Services
 {
     public interface IPriceDistributionService
     {
         Task DistributePricing(DistributePricingRequest request, bool isPreview);
+        Task SendCustomerPriceEmail(int groupId, GroupCustomerAnalyticsResponse info, List<string> emails);
     }
 
     public class PriceDistributionService : IPriceDistributionService
@@ -456,6 +458,142 @@ namespace FBOLinx.Web.Services
             else
                 return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownRowFourColumnsAllRules.html");
+        }
+
+        public async Task SendCustomerPriceEmail(int groupId, GroupCustomerAnalyticsResponse info, List<string> emails)
+        {
+            //Add the price breakdown as an image to prevent parsing
+            byte[] priceBreakdownImage = GetCustomerPriceBreakdownImage(info);
+
+            //Add email content to MailMessage
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+            mailMessage.From = new MailAddress(MailService.GetFboLinxAddress("info"));
+
+            foreach (var email in emails)
+            {
+                mailMessage.To.Add(email);
+            }
+
+            mailMessage.AttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
+
+            var emailContent = _context.EmailContent.Where(e => e.GroupId == groupId).FirstOrDefault();
+
+            var dynamicTemplateData = new SendGridTemplateData
+            {
+                templateEmailBodyMessage = HttpUtility.HtmlDecode(emailContent.EmailContentHtml ?? ""),
+                Subject = HttpUtility.HtmlDecode(emailContent.Subject) ?? "Customers Pricing",
+            };
+            mailMessage.SendGridTemplateData = dynamicTemplateData;
+
+            //Send email
+            await _MailService.SendAsync(mailMessage);
+        }
+
+        private byte[] GetCustomerPriceBreakdownImage(GroupCustomerAnalyticsResponse info)
+        {
+            string html = GetCustomerPriceBreakdownHTML(info);
+            return FBOLinx.Core.Utilities.HTML.CreateImageFromHTML(html);
+        }
+
+        private string GetCustomerPriceBreakdownHTML(GroupCustomerAnalyticsResponse info)
+        {
+            var defaultGroupedFboPrices = info.GroupCustomerFbos.FirstOrDefault();
+            var defaultPrice = defaultGroupedFboPrices.Prices.FirstOrDefault();
+
+            string priceBreakdownTemplate, rowHTMLTemplate;
+            StringBuilder rowsHTML = new StringBuilder();
+
+            if (defaultGroupedFboPrices == null || defaultPrice == null)
+            {
+                priceBreakdownTemplate = GetCustomerPriceBreakdownTemplate(PriceBreakdownDisplayTypes.SingleColumnAllFlights);
+                rowsHTML.Append("");
+            }
+            else
+            {
+                priceBreakdownTemplate = GetCustomerPriceBreakdownTemplate(defaultPrice.PriceBreakdownDisplayType);
+                rowHTMLTemplate = GetCustomerPriceBreakdownRowTemplate(defaultPrice.PriceBreakdownDisplayType);
+
+                foreach (var groupCustomerFbos in info.GroupCustomerFbos)
+                {
+                    for (var i = 0; i < groupCustomerFbos.Prices.Count; i++)
+                    {
+                        var model = groupCustomerFbos.Prices[i];
+                        string row = rowHTMLTemplate;
+
+                        if (i == 0)
+                        {
+                            row = row.Replace("%FBO%", groupCustomerFbos.Icao);
+                        }
+                        else {
+                            row = row.Replace("%FBO%", "");
+                        }
+
+
+                        var next = i < groupCustomerFbos.Prices.Count - 1 ? groupCustomerFbos.Prices[i + 1] : null;
+
+                        if (next != null)
+                        {
+                            row = row.Replace("%MIN_GALLON%", model.MinGallons.ToString());
+
+                            var maxValue = Convert.ToDouble(next.MinGallons) - 1;
+
+                            if (maxValue > 999)
+                            {
+                                string output = Convert.ToDouble(next.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+                                row = row.Replace("%MAX_GALLON%", output);
+                            }
+                            else
+                            {
+                                row = row.Replace("%MAX_GALLON%", maxValue.ToString());
+                            }
+                        } else
+                        {
+                            string output = Convert.ToDouble(model.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+
+                            output = output + "+";
+                            row = row.Replace("%MIN_GALLON%", output);
+                            row = row.Replace("%MAX_GALLON%", "");
+                            row = row.Replace("-", "");
+                        }
+
+                        row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", model.DomPrivate.GetValueOrDefault()));
+                        row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", model.IntComm.GetValueOrDefault()));
+                        row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", model.IntPrivate.GetValueOrDefault()));
+                        row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", model.DomComm.GetValueOrDefault()));
+                        row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", model.DomPrivate.GetValueOrDefault()));
+
+                        row = row.Replace("%TAIL_NUMBERS%", info.TailNumbers);
+
+                        rowsHTML.Append(row);
+                    }
+                }
+            }
+
+            return priceBreakdownTemplate.Replace("%PRICE_BREAKDOWN_ROWS%", rowsHTML.ToString());
+        }
+
+        private string GetCustomerPriceBreakdownTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
+        {
+            if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "SingleColumn.html");
+            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsApplicableFlightTypesOnly.html");
+            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsDepartureOnly.html");
+            else
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumns.html");
+        }
+
+        private string GetCustomerPriceBreakdownRowTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
+        {
+            if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "SingleColumnRow.html");
+            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsApplicableFlightTypesOnlyRow.html");
+            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsDepartureOnlyRow.html");
+            else
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumnsRow.html");
         }
 
         private async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroup customer)

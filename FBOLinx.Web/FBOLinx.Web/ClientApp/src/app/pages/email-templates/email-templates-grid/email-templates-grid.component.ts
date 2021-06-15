@@ -7,9 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 
-import { CopyConfirmationComponent } from "../../../shared/components/copy-confirmation/copy-confirmation.component";
-import { EmailTemplatesDialogNewTemplateComponent } from
-    "../email-templates-dialog-new-template/email-templates-dialog-new-template.component";
+import { CopyConfirmationComponent } from '../../../shared/components/copy-confirmation/copy-confirmation.component';
+import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 
 @Component({
     selector: 'app-email-templates-grid',
@@ -95,9 +94,6 @@ export class EmailTemplatesGridComponent implements OnInit {
                 return;
             }
             this.newEmailTemplateAdded.emit(result);
-            //this.sharedService.NotifyPricingTemplateComponent(
-            //    'updateComponent'
-            //);
         });
     }
 
@@ -107,7 +103,7 @@ export class EmailTemplatesGridComponent implements OnInit {
 
     public copyEmailTemplate(emailTemplate) {
         if (emailTemplate) {
-            var clone: any = JSON.parse(JSON.stringify(emailTemplate));
+            const clone: any = JSON.parse(JSON.stringify(emailTemplate));
             clone.oid = 0;
             clone.name = '';
             const dialogRef = this.copyTemplateDialog.open(

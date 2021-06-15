@@ -160,19 +160,20 @@ export class CustomerinfobygroupService {
         );
     }
 
-    getCustomersByGroup(groupId: number) {
-        return this.http.get(
-            `${this.accessPointUrl}/group/${groupId}`,
+    getGroupAnalytics(groupId: number, customerId: number) {
+        return this.http.post(
+            `${this.accessPointUrl}/group-analytics/group/${groupId}`,
+            customerId,
             {
                 headers: this.headers,
             }
         );
     }
 
-    getGroupAnalytics(groupId: number, customerIds: number[]) {
+    getGroupAnalyticsAndEmail(groupId: number, customerId: number) {
         return this.http.post(
-            `${this.accessPointUrl}/group-analytics/group/${groupId}`,
-            customerIds,
+            `${this.accessPointUrl}/group-analytics/email/group/${groupId}`,
+            customerId,
             {
                 headers: this.headers,
             }
