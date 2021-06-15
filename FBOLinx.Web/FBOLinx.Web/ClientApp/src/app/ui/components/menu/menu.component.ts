@@ -19,7 +19,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
     menuItems: IMenuItem[];
     user: any;
     tooltipIndex = 0;
-    public hasShownTutorial: boolean = false;
+    hasShownTutorial = false;
 
     constructor(
         private menuService: MenuService,

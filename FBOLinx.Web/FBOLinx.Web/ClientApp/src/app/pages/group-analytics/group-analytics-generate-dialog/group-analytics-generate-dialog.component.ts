@@ -1,9 +1,16 @@
 import { Component, Inject, ViewChild, OnInit } from '@angular/core';
 import * as XLSX from 'xlsx';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { GridComponent, SelectionService } from '@syncfusion/ej2-angular-grids';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { SharedService } from '../../../layouts/shared-service';
+import { GroupAnalyticsEmailPricingDialogComponent } from '../group-analytics-email-pricing-dialog/group-analytics-email-pricing-dialog.component';
+import { EmailTemplate } from 'src/app/models/email-template';
+
+export type GroupAnalyticsGenerateDialogData = {
+    customers: any[];
+    emailTemplate: EmailTemplate;
+};
 
 @Component({
     selector: 'app-group-analytics-generate-dialog',
@@ -18,22 +25,23 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
     dataSources: any = {};
     filter = '';
     selectedCustomers: any[];
-    loading: boolean;
+    downloading: boolean;
+    emailing: boolean;
     exportedCustomersCount: number;
-    public selectOptions: Object;
-    public editSettings: Object;
+    public selectOptions: any;
+    public editSettings: any;
     public toolbar: string[];
     public filterOptions = {
         mode: 'Immediate', immediateModeDelay: 1000  };
-    public sortSettings: Object;
+    public sortSettings: any;
 
     constructor(
         public dialogRef: MatDialogRef<GroupAnalyticsGenerateDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: GroupAnalyticsGenerateDialogData,
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private emailDialog: MatDialog,
     ) {
-        
     }
 
     public ngOnInit(): void {
@@ -48,27 +56,73 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         this.dialogRef.close();
     }
 
+    onEmail() {
+        const dialogRef = this.emailDialog.open<GroupAnalyticsEmailPricingDialogComponent, GroupAnalyticsGenerateDialogData>(
+            GroupAnalyticsEmailPricingDialogComponent,
+            {
+                data: {
+                    customers: this.selectedCustomers,
+                    emailTemplate: this.data.emailTemplate,
+                },
+                height: '600px',
+                width: '680px',
+            }
+        );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.onSendEmail();
+            }
+        });
+    }
+
     async onGenerate() {
-        this.loading = true;
+        this.downloading = true;
         this.exportedCustomersCount = 0;
 
-        for (var selectedCustomer of this.selectedCustomers) {
-            this.customerInfoByGroupService.getGroupAnalytics(
-                this.sharedService.currentUser.groupId,
-                [selectedCustomer.customerId],
-            ).subscribe(async (data: any[]) => {
-                var exportData: any[] = [];
-                for (const customerFbos of data) {
-                    this.populateExportDataForCustomer(customerFbos.company,
-                        customerFbos.tailNumbers,
-                        customerFbos.groupCustomerFbos,
-                        exportData);
-                }
-                if (data.length > 0)
-                    await this.exportReportForCustomer(exportData, data[0].company);
-                this.loading = false;
-            });
-        }
+        const promises = this.selectedCustomers.map(async (selectedCustomer) => {
+            const data =
+                await this.customerInfoByGroupService.getGroupAnalytics(
+                    this.sharedService.currentUser.groupId,
+                    selectedCustomer.customerId,
+                ).toPromise() as any;
+
+            const exportData: any[] = [];
+
+            this.populateExportDataForCustomer(
+                data.tailNumbers,
+                data.groupCustomerFbos,
+                exportData);
+
+            await this.exportReportForCustomer(exportData, data.company);
+        });
+
+        await Promise.all(promises);
+        this.downloading = false;
+    }
+
+    async onSendEmail() {
+        this.emailing = true;
+        this.exportedCustomersCount = 0;
+
+        const promises = this.selectedCustomers.map(async (selectedCustomer) => {
+            const data =
+                await this.customerInfoByGroupService.getGroupAnalyticsAndEmail(
+                    this.sharedService.currentUser.groupId,
+                    selectedCustomer.customerId,
+                ).toPromise() as any;
+
+            const exportData: any[] = [];
+
+            this.populateExportDataForCustomer(
+                data.tailNumbers,
+                data.groupCustomerFbos,
+                exportData);
+
+            await this.exportReportForCustomer(exportData, data.company);
+        });
+
+        await Promise.all(promises);
+        this.emailing = false;
     }
 
     applyFilter(filter: string) {
@@ -86,19 +140,18 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         this.selectedCustomers = this.grid.getSelectedRecords();
     }
 
-    populateExportDataForCustomer(company: string, tailNumbers: string, data: any, exportData: any[]) {
+    populateExportDataForCustomer(tailNumbers: string, data: any, exportData: any[]) {
         for (const fboPrice of data) {
             for (let i = 0; i < fboPrice.prices.length; i++) {
-                var row: any = {};
-                row = {};
-                row['FBO'] = i === 0 ? fboPrice.icao : '';
+                const row: any = {};
+                row.FBO = i === 0 ? fboPrice.icao : '';
                 row['Volume Tier'] = fboPrice.prices[i].volumeTier;
-                if (fboPrice.prices[i].priceBreakdownDisplayType == 0) {
-                    row['Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
-                } else if (fboPrice.prices[i].priceBreakdownDisplayType == 1) {
+                if (fboPrice.prices[i].priceBreakdownDisplayType === 0) {
+                    row.Price = fboPrice.prices[i].domPrivate?.toFixed(4);
+                } else if (fboPrice.prices[i].priceBreakdownDisplayType === 1) {
                     row['International Price'] = fboPrice.prices[i].intPrivate?.toFixed(4);
                     row['Domestic Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
-                } else if (fboPrice.prices[i].priceBreakdownDisplayType == 2) {
+                } else if (fboPrice.prices[i].priceBreakdownDisplayType === 2) {
                     row['Commercial Price'] = fboPrice.prices[i].domComm?.toFixed(4);
                     row['Private Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
                 } else {

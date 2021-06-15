@@ -302,7 +302,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(new { Message = logoUrl });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(new { Message = "" });
             }
@@ -328,7 +328,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(new { Message = logoUrl });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(new { Message = "" });
             }
