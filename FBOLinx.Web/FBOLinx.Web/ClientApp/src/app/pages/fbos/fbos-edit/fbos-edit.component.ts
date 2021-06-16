@@ -47,6 +47,10 @@ export class FbosEditComponent implements OnInit {
         this.sharedService.titleChange(this.pageTitle);
     }
 
+    get canChangeActive() {
+        return !this.embed && this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole;
+    }
+
     ngOnInit() {
         if (!this.embed) {
             if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {

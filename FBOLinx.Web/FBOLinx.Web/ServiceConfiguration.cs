@@ -111,6 +111,7 @@ namespace FBOLinx.Web
             services.AddTransient<FboService, FboService>();
             services.AddTransient<IPriceFetchingService, PriceFetchingService>();
             services.AddTransient<ResetPasswordService, ResetPasswordService>();
+            services.AddTransient<FbopricesService, FbopricesService>();
 
             //Business Services
             services.AddTransient<AircraftService, AircraftService>();

@@ -18,23 +18,31 @@
         matSortDirection="{{tableSortOrderFbos}}"
     >
         <ng-container matColumnDef="icao">
-            <th (click)="saveHeader('icao')" *matHeaderCellDef mat-header-cell mat-sort-header>ICAO</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>ICAO</th>
             <td *matCellDef="let fbo" mat-cell>{{ fbo.icao }}</td>
         </ng-container>
 
         <ng-container matColumnDef="fbo">
-            <th (click)="saveHeader('fbo')" *matHeaderCellDef mat-header-cell mat-sort-header>FBO</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>FBO</th>
             <td *matCellDef="let fbo" mat-cell>{{ fbo.fbo }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="price">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Retail / Cost</th>
+            <td *matCellDef="let fbo" mat-cell>
+                <span [ngClass]="{ 'price-expired': !fbo.retailPrice, 'font-weight-bold': true }">{{ fbo.retailPrice ? "$" + (fbo.retailPrice | number: "1.4-4") : "Expired" }}</span> / 
+                <span [ngClass]="{ 'price-expired': !fbo.costPrice, 'font-weight-bold': true }">{{ fbo.costPrice ? "$" + (fbo.costPrice | number: "1.4-4") : "Expired" }}</span>
+            </td>
+        </ng-container>
+
         <ng-container matColumnDef="active">
-            <th (click)="saveHeader('active')" *matHeaderCellDef mat-header-cell mat-sort-header>Status</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Status</th>
             <td *matCellDef="let fbo" mat-cell>
                 {{ fbo.active ? "Active" : "Inactive" }}
             </td>
         </ng-container>
 
-        <ng-container matColumnDef="manage">
+        <ng-container matColumnDef="edit">
             <th *matHeaderCellDef mat-header-cell></th>
             <td *matCellDef="let fbo" mat-cell>
                 <div class="pull-right">
@@ -90,7 +98,7 @@
 </div>
 
 <div>
-    <mat-paginator (page)="(pageIndexFbos); onPageChanged($event)"
+    <mat-paginator (page)="(pageIndexFbos);"
                    [length]="resultsLength"
                    [pageSizeOptions]="[10, 25, 50, 100]"
                    [pageSize]="pageSizeFbos"></mat-paginator>

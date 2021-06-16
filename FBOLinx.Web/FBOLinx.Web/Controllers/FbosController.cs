@@ -32,8 +32,9 @@ namespace FBOLinx.Web.Controllers
         private readonly FboService _fboService;
         private IHttpContextAccessor _httpContextAccessor;
         private readonly OAuthService _oAuthService;
+        private readonly FbopricesService _fbopricesService;
 
-        public FbosController(FboLinxContext context, DegaContext degaContext, GroupFboService groupFboService, FboService fboService, IHttpContextAccessor httpContextAccessor, OAuthService oAuthService)
+        public FbosController(FboLinxContext context, DegaContext degaContext, GroupFboService groupFboService, FboService fboService, IHttpContextAccessor httpContextAccessor, OAuthService oAuthService, FbopricesService fbopricesService)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -41,6 +42,7 @@ namespace FBOLinx.Web.Controllers
             _fboService = fboService;
             _httpContextAccessor = httpContextAccessor;
             _oAuthService = oAuthService;
+            _fbopricesService = fbopricesService;
         }
 
         // GET: api/Fbos/group/5
@@ -51,19 +53,29 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var fbos = await GetAllFbos().Include("fboAirport").Where((x => x.GroupId == groupId)).ToListAsync();
 
-            //FbosViewModel used to display FBO info in the grid
-            var fbosVM = fbos.Select(f => new FbosGridViewModel
+            var fbos = await (
+                            from f in _context.Fbos
+                            join fa in _context.Fboairports on f.Oid equals fa.Fboid
+                            where f.GroupId == groupId && f.Active == true
+                            select new FbosGridViewModel
+                            {
+                                Active = f.Active,
+                                Fbo = f.Fbo,
+                                Icao = fa.Icao,
+                                Iata = fa.Iata,
+                                Oid = f.Oid,
+                                GroupId = f.GroupId ?? 0,
+                            }).ToListAsync();
+
+            foreach (var fbo in fbos)
             {
-                Active = f.Active,
-                Fbo = f.Fbo,
-                Icao = f.fboAirport == null ? "" : f.fboAirport.Icao,
-                Iata = f.fboAirport == null ? "" : f.fboAirport.Iata,
-                Oid = f.Oid,
-                GroupId = (f.GroupId ?? 0)
-            }).Distinct().ToList();
-            return Ok(fbosVM);
+                var prices = await _fbopricesService.GetPrices(fbo.Oid);
+                fbo.CostPrice = prices[0].Price;
+                fbo.RetailPrice = prices[1].Price;
+            }
+
+            return Ok(fbos);
         }
 
         // GET: api/Fbos
