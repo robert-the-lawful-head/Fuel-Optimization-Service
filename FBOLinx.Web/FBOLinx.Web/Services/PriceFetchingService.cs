@@ -16,6 +16,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using static FBOLinx.DB.Models.PricingTemplate;
 using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
+using System.Net.Mail;
 
 namespace FBOLinx.Web.Services
 {
@@ -26,12 +28,14 @@ namespace FBOLinx.Web.Services
         private int _GroupId;
         private CustomerService _CustomerService;
         private FboService _FboService;
+        private IMailService _MailService;
 
-        public PriceFetchingService(FboLinxContext context, CustomerService customerService, FboService fboService)
+        public PriceFetchingService(FboLinxContext context, CustomerService customerService, FboService fboService, IMailService mailService, FuelerLinxService fuelerLinxService)
         {
             _FboService = fboService;
             _CustomerService = customerService;
             _context = context;
+            _MailService = mailService;
         }
 
         #region Public Methods
@@ -563,6 +567,54 @@ namespace FBOLinx.Web.Services
             var postedRetail = await _context.Fboprices
                                                 .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true && fp.Product == "JetA Retail").ToListAsync();
             return postedRetail.FirstOrDefault().Price.GetValueOrDefault();
+        }
+
+        public async Task<List<FbosGridViewModel>> GetAllFbosWithExpiredPricing()
+        {
+            var fboIdsWithExpiredPrice = new List<int>();
+            var fbos = await _context.Fbos.Where(f => f.Active == true).Include(f => f.Users).Include("fboAirport").Where(x => x.GroupId > 1).ToListAsync();
+
+            foreach (var fbo in fbos)
+            {
+                var retailPricing = await _context.Fboprices.Where(s => s.Product == "JetA Retail" && s.Fboid == fbo.Oid).OrderByDescending(t => t.Oid).FirstOrDefaultAsync();
+
+                if (retailPricing != null && retailPricing.Expired.GetValueOrDefault())
+                    fboIdsWithExpiredPrice.Add(fbo.Oid);
+            }
+
+            var fbosWithExpiredPricing = fbos.Where(t => fboIdsWithExpiredPrice.Contains(t.Oid)).Select(f => new FbosGridViewModel
+            {
+                Active = f.Active,
+                Fbo = f.Fbo,
+                Icao = f.fboAirport?.Icao,
+                Oid = f.Oid,
+                GroupId = f.GroupId ?? 0,
+                Users = f.Users
+            }).ToList();
+
+            return fbosWithExpiredPricing;
+        }
+
+        public async Task NotifyFboExpiredPrices(List<string> toEmails, string fbo)
+        {
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
+            foreach (string email in toEmails)
+            {
+                if (_MailService.IsValidEmailRecipient(email))
+                    mailMessage.To.Add(email);
+            }
+
+            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridEngagementTemplateData
+            {
+                fboName = fbo,
+                subject = "FBOLinx reminder - expired pricing!"
+            };
+
+            mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
+
+            //Send email
+            var result = await _MailService.SendAsync(mailMessage);
         }
         #endregion
 

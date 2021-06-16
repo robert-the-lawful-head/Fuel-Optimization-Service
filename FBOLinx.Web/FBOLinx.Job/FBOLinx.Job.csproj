@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FBOLinx.DB\FBOLinx.DB.csproj" />
-    <ProjectReference Include="..\FBOLinx.Web\FBOLinx.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

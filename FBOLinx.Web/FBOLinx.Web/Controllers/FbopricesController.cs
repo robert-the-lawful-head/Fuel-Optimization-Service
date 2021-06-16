@@ -20,9 +20,6 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.Web.Services.Interfaces;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
-using System.Net.Mail;
-using IO.Swagger.Model;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -37,11 +34,8 @@ namespace FBOLinx.Web.Controllers
         private readonly RampFeesService _RampFeesService;
         private readonly AircraftService _aircraftService;
         private IPriceFetchingService _PriceFetchingService;
-        private IMailService _MailService;
-        private readonly FuelerLinxService _fuelerLinxService;
 
-        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService, IPriceFetchingService priceFetchingService,
-            IMailService mailService, FuelerLinxService fuelerLinxService)
+        public FbopricesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, RampFeesService rampFeesService, AircraftService aircraftService, IPriceFetchingService priceFetchingService)
         {
             _PriceFetchingService = priceFetchingService;
             _context = context;
@@ -49,8 +43,6 @@ namespace FBOLinx.Web.Controllers
             _jwtManager = jwtManager;
             _RampFeesService = rampFeesService;
             _aircraftService = aircraftService;
-            _MailService = mailService;
-            _fuelerLinxService = fuelerLinxService;
         }
 
         // GET: api/Fboprices
@@ -697,39 +689,6 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(fbopricesRange);
-        }
-
-        [HttpPost("notify-fbo-expired-prices")]
-        public ActionResult<bool> NotifyExpiredPrices([FromBody] NotifyFboExpiredPricingRequest notifyFboExpiredPricesRequest)
-        {
-            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
-            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
-            foreach (string email in notifyFboExpiredPricesRequest.ToEmails)
-            {
-                if (_MailService.IsValidEmailRecipient(email))
-                    mailMessage.To.Add(email);
-            }
-
-            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridEngagementTemplateData
-            {
-                fboName = notifyFboExpiredPricesRequest.FBO,
-                subject = "FBOLinx reminder - expired pricing!"
-            };
-
-            mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
-
-            //Send email
-            var result = _MailService.SendAsync(mailMessage).Result;
-
-            return Ok(result);
-        }
-
-        [HttpPost("get-latest-flight-dept-pullhistory-for-icao")]
-        public ActionResult<int> GetLatestFlightDeptPullHistoryForIcao(FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest request)
-        {
-            var fuelerlinxFlightDeptId = _fuelerLinxService.GetLatestFlightDeptPullHistoryForIcao(request);
-
-            return Ok(fuelerlinxFlightDeptId);
         }
 
         private bool FbopricesExists(int id)

@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.Web.ViewModels;
+using static FBOLinx.DB.Models.RampFees;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
+using System.Net.Mail;
 
 namespace FBOLinx.Web.Services
 {
@@ -17,12 +21,14 @@ namespace FBOLinx.Web.Services
         private readonly FboLinxContext _context;
         private readonly DegaContext _DegaContext;
         private readonly AircraftService _aircraftService;
+        private IMailService _MailService;
 
-        public RampFeesService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService)
+        public RampFeesService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, IMailService mailService)
         {
             _context = context;
             _DegaContext = degaContext;
             _aircraftService = aircraftService;
+            _MailService = mailService;
         }
 
         public async Task<RampFees> GetRampFeeForAircraft(int fboId, string tailNumber)
@@ -73,6 +79,96 @@ namespace FBOLinx.Web.Services
             return rampFees;
         }
 
+        public async Task<IEnumerable<RampFeesGridViewModel>> GetRampFeesByFbo(int fboId)
+        {
+            //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
+            IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> sizes =
+                FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+            var rampFees = await _context.RampFees.Where(x => x.Fboid == fboId).ToListAsync();
+            var allAircraft = await _aircraftService.GetAllAircrafts();
+
+            List<RampFeesGridViewModel> result = (
+                from s in sizes
+                join r in rampFees on new
+                {
+                    size = (int?)((short?)((AirCrafts.AircraftSizes)s.Value)),
+                    fboId = (int?)fboId
+                }
+                    equals new
+                    {
+                        size = r.CategoryMinValue,
+                        fboId = r.Fboid
+                    }
+                    into leftJoinRampFees
+                from r in leftJoinRampFees.DefaultIfEmpty()
+                select new RampFeesGridViewModel()
+                {
+                    Oid = r?.Oid ?? 0,
+                    Price = r?.Price,
+                    Waived = r?.Waived,
+                    Fboid = r?.Fboid,
+                    CategoryType = r?.CategoryType,
+                    CategoryMinValue = r?.CategoryMinValue,
+                    CategoryMaxValue = r?.CategoryMaxValue,
+                    ExpirationDate = r?.ExpirationDate,
+                    Size = (AirCrafts.AircraftSizes)s.Value,
+                    AppliesTo = (from a in _aircraftService.GetAllAircraftsAsQueryable()
+                                 where a.Size.HasValue && a.Size == (AirCrafts.AircraftSizes)s.Value
+                                 select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList(),
+                    LastUpdated = r?.LastUpdated
+
+                }).ToList();
+
+            // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
+            List<RampFeesGridViewModel> customRampFees = (from r in rampFees
+                                                          join a in allAircraft on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
+                                                          from a in leftJoinAircrafts.DefaultIfEmpty()
+                                                          where r.Fboid == fboId && r.CategoryType.HasValue &&
+                                                                r.CategoryType.Value != RampFeeCategories.AircraftSize
+                                                          select new RampFeesGridViewModel()
+                                                          {
+                                                              Oid = r.Oid,
+                                                              Price = r.Price,
+                                                              Waived = r.Waived,
+                                                              Fboid = r.Fboid,
+                                                              CategoryType = r.CategoryType,
+                                                              CategoryMinValue = r.CategoryMinValue,
+                                                              CategoryMaxValue = r.CategoryMaxValue,
+                                                              ExpirationDate = r.ExpirationDate,
+                                                              AircraftMake = a == null ? "" : a.Make,
+                                                              AircraftModel = a == null ? "" : a.Model,
+                                                              CategoryStringValue = r.CategoryStringValue,
+                                                              LastUpdated = r.LastUpdated
+                                                          }).ToList();
+
+            result.AddRange(customRampFees);
+
+            return result;
+        }
+
+        public async Task NotifyFboNoRampFees(List<string> toEmails, string fbo, string customerName, string icao)
+        {
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
+            foreach (string email in toEmails)
+            {
+                if (_MailService.IsValidEmailRecipient(email))
+                    mailMessage.To.Add(email);
+            }
+
+            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridEngagementTemplateData
+            {
+                fboName = fbo,
+                customerName = customerName,
+                ICAO = icao,
+                subject = "FBOLinx reminder - incomplete quotes"
+            };
+
+            mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
+
+            //Send email
+            var result = await _MailService.SendAsync(mailMessage);
+        }
         private List<RampFees> GetRampFeesThatApplyToCustomerAircraft(CustomerAircrafts customerAircraft, List<RampFees> validRampFees, AircraftSpecifications specifications)
         {
             if (validRampFees == null)
