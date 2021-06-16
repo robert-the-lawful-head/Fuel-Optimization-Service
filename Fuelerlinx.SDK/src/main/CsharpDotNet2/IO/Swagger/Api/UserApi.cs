@@ -41,6 +41,11 @@ namespace IO.Swagger.Api
         /// <returns>ExchangeRefreshTokenResponse</returns>
         ExchangeRefreshTokenResponse ExchangeRefreshToken (ExchangeRefreshTokenRequest body);
         /// <summary>
+        /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
+        /// </summary>
+        /// <returns>CustomerDataDTO</returns>
+        CustomerDataDTO GetAuthenticatedUser ();
+        /// <summary>
         /// Fetches all user profiles by companyId 
         /// </summary>
         /// <returns>CompanyUserProfileListResponse</returns>
@@ -350,6 +355,38 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling ExchangeRefreshToken: " + response.ErrorMessage, response.ErrorMessage);
     
             return (ExchangeRefreshTokenResponse) ApiClient.Deserialize(response.Content, typeof(ExchangeRefreshTokenResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
+        /// </summary>
+        /// <returns>CustomerDataDTO</returns>            
+        public CustomerDataDTO GetAuthenticatedUser ()
+        {
+            
+    
+            var path = "/api/User";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAuthenticatedUser: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAuthenticatedUser: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CustomerDataDTO) ApiClient.Deserialize(response.Content, typeof(CustomerDataDTO), response.Headers);
         }
     
         /// <summary>
