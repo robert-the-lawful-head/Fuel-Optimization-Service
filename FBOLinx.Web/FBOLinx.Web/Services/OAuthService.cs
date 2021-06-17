@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using System.Security.Claims;
 
 namespace FBOLinx.Web.Services
 {
@@ -68,7 +69,7 @@ namespace FBOLinx.Web.Services
                 return new ExchangeRefreshTokenResponse(false, "Invalid refresh token.  Please re-authenticate the user.");
             }
 
-            var claimedId = Convert.ToInt32(claimsPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+            var claimedId = Convert.ToInt32(claimsPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
             var user = await _context.User.FindAsync(claimedId);
             var oldRefreshToken = await _context.RefreshTokens
                                                         .Where(r => r.UserId.Equals(user.Oid) && r.Token.Equals(request.RefreshToken))

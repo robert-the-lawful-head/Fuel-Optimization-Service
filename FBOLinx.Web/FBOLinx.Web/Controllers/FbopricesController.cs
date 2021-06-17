@@ -266,7 +266,7 @@ namespace FBOLinx.Web.Controllers
             {
                 var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
                 var claimPrincipal = _jwtManager.GetPrincipal(token);
-                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
 
                 var user = await _context.User.FindAsync(claimedId);
 
@@ -343,7 +343,7 @@ namespace FBOLinx.Web.Controllers
             {
                 var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
                 var claimPrincipal = _jwtManager.GetPrincipal(token);
-                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
 
                 var user = await _context.User.FindAsync(claimedId);
 
