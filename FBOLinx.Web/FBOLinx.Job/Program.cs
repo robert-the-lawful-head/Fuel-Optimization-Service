@@ -23,9 +23,11 @@ namespace FBOLinx.Job
                 Console.WriteLine("  -a\tRun Airport Watch");
                 Console.WriteLine("  -e\tRun Engagement Emails");
             }
-
-            JobHandler jobHandler = new JobHandler(config);
-            await jobHandler.RunJob(args[0]);
+            else
+            {
+                JobHandler jobHandler = new JobHandler(config);
+                await jobHandler.RunJob(args[0]);
+            }
         }
     }
 }

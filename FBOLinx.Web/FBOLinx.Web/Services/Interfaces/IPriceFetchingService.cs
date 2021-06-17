@@ -33,5 +33,9 @@ namespace FBOLinx.Web.Services.Interfaces
         Task<PriceDistributionService.PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId);
 
         Task<double> GetCurrentPostedRetail(int fboId);
+
+        Task<List<FbosGridViewModel>> GetAllFbosWithExpiredPricing();
+
+        Task NotifyFboExpiredPrices(List<string> toEmails, string fbo);
     }
 }
