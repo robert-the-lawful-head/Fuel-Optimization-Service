@@ -54,4 +54,22 @@ export class GroupsService {
       headers: this.headers,
     });
   }
+
+  getLogo(id: number) {
+    return this.http.get(this.accessPointUrl + `/group/${id}/logo`, {
+      headers: this.headers,
+    });
+  }
+
+  uploadLogo(payload) {
+    return this.http.post(this.accessPointUrl + '/upload-logo', payload, {
+      headers: this.headers,
+    });
+  }
+
+  deleteLogo(id: number) {
+    return this.http.delete(this.accessPointUrl + `/group/${id}/logo`, {
+      headers: this.headers,
+    });
+  }
 }

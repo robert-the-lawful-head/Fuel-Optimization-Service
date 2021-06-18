@@ -29,9 +29,10 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _HttpContextAccessor;
         public IServiceScopeFactory _serviceScopeFactory;
         private readonly GroupFboService _groupFboService;
+        private readonly GroupService _groupService;
         private readonly CustomerService _customerService;
 
-        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, CustomerService customerService)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, CustomerService customerService, GroupService groupService)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -39,6 +40,7 @@ namespace FBOLinx.Web.Controllers
             _HttpContextAccessor = httpContextAccessor;
             _serviceScopeFactory = serviceScopeFactory;
             _customerService = customerService;
+            _groupService = groupService;
         }
 
         // GET: api/Groups
@@ -464,7 +466,53 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(@group);
         }
-    
+
+
+        [HttpGet("group/{groupId}/logo")]
+        public async Task<IActionResult> GetFboLogo([FromRoute] int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var logoUrl = await _groupService.GetLogo(groupId);
+
+                return Ok(new { Message = logoUrl });
+            }
+            catch (Exception)
+            {
+                return Ok(new { Message = "" });
+            }
+        }
+
+        [HttpPost("upload-logo")]
+        public async Task<IActionResult> PostFboLogo([FromBody] GroupLogoRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                if (request.FileData.Contains(","))
+                {
+                    request.FileData = request.FileData.Substring(request.FileData.IndexOf(",") + 1);
+                }
+
+                var logoUrl = await _groupService.UploadLogo(request);
+
+                return Ok(new { Message = logoUrl });
+            }
+            catch (Exception)
+            {
+                return Ok(new { Message = "" });
+            }
+        }
+
         private async Task DisableExpiredAccounts()
         {
             var expiredFbos = await _context.Fbos
@@ -477,6 +525,19 @@ namespace FBOLinx.Web.Controllers
             });
 
             await _context.SaveChangesAsync();
+        }
+
+        [HttpDelete("group/{groupId}/logo")]
+        public async Task<IActionResult> DeleteLogo([FromRoute] int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _groupService.DeleteLogo(groupId);
+
+            return Ok();
         }
     }
 }

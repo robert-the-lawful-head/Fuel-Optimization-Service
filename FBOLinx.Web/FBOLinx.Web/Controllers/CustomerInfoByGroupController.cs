@@ -677,19 +677,19 @@ namespace FBOLinx.Web.Controllers
                 await pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
                 
                 var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.Fboid == fboId || x.Fboid == 0).ToListAsync();
-                
-                var customerAircraft = 
+
+                var customerAircraft =
                     (from aircraftByCustomer in (await _context.CustomerAircrafts.Where(x => x.GroupId == groupId).ToListAsync())
-                    where aircraftByCustomer.GroupId == groupId
-                    group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
-                    into results
+                     where aircraftByCustomer.GroupId == groupId
+                     group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
+                     into results
                      select new
-                    {
-                        results.Key.CustomerId,
-                        Tails = string.Join(",", results.Select(x => x.TailNumber)),
-                        Count = results.Count()
-                                                    }
-                    ).ToList();
+                     {
+                         results.Key.CustomerId,
+                         Tails = string.Join(",", results.Select(x => x.TailNumber)),
+                         Count = results.Count()
+                     }
+                     ).ToList();
 
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
@@ -697,7 +697,7 @@ namespace FBOLinx.Web.Controllers
                 var contactInfoByGroupForAlerts =
                     await _context.ContactInfoByGroup.Where(x => x.GroupId == groupId && x.CopyAlerts == true).Include(x => x.Contact).ToListAsync();
 
-                var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, null, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
+                var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
 
                 List<CustomersGridViewModel> customerGridVM = (
                         from cg in customerInfoByGroup
@@ -778,8 +778,10 @@ namespace FBOLinx.Web.Controllers
 
         private async Task<GroupCustomerAnalyticsResponse> GetCustomerPricingAnalytics(int groupId, int customerId)
         {
-
-            var airports = await _context.Fbos.Where(x => x.GroupId == groupId).Include(x => x.fboAirport).ToListAsync();
+            var airports = await _context.Fbos
+                .Where(x => x.GroupId == groupId && x.Active == true)
+                .Include(x => x.fboAirport)
+                .ToListAsync();
 
             List<string> icaos = new List<string>();
             icaos.AddRange(airports.Select(x => x.fboAirport?.Icao).Where(x => !string.IsNullOrEmpty(x)));
@@ -807,8 +809,9 @@ namespace FBOLinx.Web.Controllers
             }
 
             var result = priceResults[FlightTypeClassifications.Commercial]
-                .GroupBy(x => new { x.Company, x.TailNumbers })
+                .GroupBy(x => new { x.Company, x.TailNumbers, x.CustomerId })
                 .Select(x => new GroupCustomerAnalyticsResponse {
+                    CustomerId = x.Key.CustomerId,
                     Company = x.Key.Company,
                     TailNumbers = x.Key.TailNumbers,
                     GroupCustomerFbos = new List<GroupedFboPrices>()

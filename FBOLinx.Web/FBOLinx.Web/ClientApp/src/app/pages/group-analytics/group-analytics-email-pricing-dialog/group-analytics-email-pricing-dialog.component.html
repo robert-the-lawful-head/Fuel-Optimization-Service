@@ -2,14 +2,19 @@
 <div mat-dialog-content>
     <mat-tab-group>
         <mat-tab label="Email Template">
-            <div>
-                <mat-form-field style="max-width: 600px;">
-                    <input aria-label="Subject"
-                        [(ngModel)]="data.emailTemplate.subject"
-                        matInput
-                        placeholder="Subject" />
-                </mat-form-field>
-            </div>
+            <mat-form-field style="max-width: 600px;">
+                <input aria-label="Subject"
+                    [(ngModel)]="data.emailTemplate.subject"
+                    matInput
+                    placeholder="Subject" />
+            </mat-form-field>
+
+            <mat-form-field style="max-width: 600px;">
+                <input aria-label="From email"
+                    [(ngModel)]="data.emailTemplate.fromAddress"
+                    matInput
+                    placeholder="From email" />
+            </mat-form-field>
     
             <ejs-richtexteditor
                 [(ngModel)]="data.emailTemplate.emailContentHtml"
@@ -34,7 +39,7 @@
 </div>
 <div mat-dialog-actions>
     <button
-        (click)="onSend()"
+        [mat-dialog-close]="data"
         color="accent"
         mat-raised-button
     >

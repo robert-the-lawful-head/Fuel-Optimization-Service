@@ -17,5 +17,6 @@ namespace FBOLinx.DB.Models
         [StringLength(100)]
         public string ContentType { get; set; }
         public int FboId { get; set; }
+        public int GroupId { get; set; }
     }
 }
