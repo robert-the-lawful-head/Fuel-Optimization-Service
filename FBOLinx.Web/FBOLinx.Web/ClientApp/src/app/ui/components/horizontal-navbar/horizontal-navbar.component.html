@@ -113,9 +113,9 @@
             <a (click)="toggleProfileMenu()" class="nav-link">
                 <div *ngIf="userFullName" class="name">{{ userFullName }}</div>
             </a>
-            <mat-spinner *ngIf="!isLocationsLoaded" diameter="30"></mat-spinner>
+            <mat-spinner *ngIf="isLocationsLoading" diameter="30"></mat-spinner>
 
-            <div *ngIf="isLocationsLoaded" class="dropdown-menu mini-menu">
+            <div *ngIf="!isLocationsLoading" class="dropdown-menu mini-menu">
                 <ul>
                     <li>
                         <a (click)="accountProfileClicked()"

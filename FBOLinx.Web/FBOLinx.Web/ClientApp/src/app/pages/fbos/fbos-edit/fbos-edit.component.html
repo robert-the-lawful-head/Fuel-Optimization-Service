@@ -123,7 +123,7 @@
                             </div>
                         </div>
 
-                        <div class="row">
+                        <div class="row" *ngIf="canChangeActive">
                             <div class="col-3">
                                 <mat-slide-toggle [(ngModel)]="fboInfo.active" color="accent" (change)="onActiveToggle($event)">
                                     Active

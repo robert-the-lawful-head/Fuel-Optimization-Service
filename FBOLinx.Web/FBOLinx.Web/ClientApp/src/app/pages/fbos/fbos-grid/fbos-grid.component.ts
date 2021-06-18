@@ -20,7 +20,6 @@ import { ManageConfirmationComponent } from '../../../shared/components/manage-c
 import { PricingExpiredNotificationGroupComponent } from '../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component';
 
 import { fboChangedEvent } from '../../../models/sharedEvents';
-import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 
 @Component({
     selector: 'app-fbos-grid',
@@ -61,7 +60,6 @@ export class FbosGridComponent implements OnInit {
         private snackBar: MatSnackBar,
         private router: Router,
         private checkPricingDialog: MatDialog,
-        private notification: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.canManageFbo = this.sharedService.currentUser.role === 3 || this.sharedService.currentUser.role === 2;
@@ -70,8 +68,9 @@ export class FbosGridComponent implements OnInit {
             this.displayedColumns = [
                 'icao',
                 'fbo',
+                'price',
                 'active',
-                'manage',
+                'edit',
                 'delete',
             ];
         } else {
@@ -79,7 +78,7 @@ export class FbosGridComponent implements OnInit {
                 'icao',
                 'fbo',
                 'active',
-                'manage',
+                'edit',
             ];
         }
     }
@@ -110,32 +109,7 @@ export class FbosGridComponent implements OnInit {
             this.checkExistingPrices();
         }
 
-        if (localStorage.getItem('pageIndexFbos')) {
-            this.paginator.pageIndex = localStorage.getItem('pageIndexFbos') as any;
-        } else {
-            this.paginator.pageIndex = 0;
-        }
-
-        if (sessionStorage.getItem('pageSizeFbos')) {
-            this.pageSizeFbos = sessionStorage.getItem('pageSizeFbos') as any;
-        } else {
-            this.pageSizeFbos = 25;
-        }
-
-        if (sessionStorage.getItem('tableSortValueFbos')) {
-            this.tableSortFbos = sessionStorage.getItem('tableSortValueFbos') as any;
-        }
-
-        if (sessionStorage.getItem('tableSortValueDirectionFbos')) {
-            this.tableSortOrderFbos = sessionStorage.getItem(
-                'tableSortValueDirectionFbos'
-            ) as any;
-        }
-
-        if (sessionStorage.getItem('searchValueFbos')) {
-            this.searchValue = sessionStorage.getItem('searchValueFbos').trim().toLowerCase();
-            this.fbosDataSource.filter = sessionStorage.getItem('searchValueFbos').trim().toLowerCase();
-        }
+        this.paginator.pageIndex = 0;
     }
 
     public deleteRecord(record) {
@@ -226,10 +200,6 @@ export class FbosGridComponent implements OnInit {
 
     public applyFilter(filterValue: string) {
         this.fbosDataSource.filter = filterValue.trim().toLowerCase();
-        sessionStorage.setItem('searchValueFbos', filterValue);
-        if (!filterValue) {
-            sessionStorage.removeItem('searchValueFbos');
-        }
     }
 
     public manageFBO(fbo, $event) {
@@ -245,50 +215,38 @@ export class FbosGridComponent implements OnInit {
             return;
         }
 
-        if (!fbo.active) {
-            this.notification.open(
-                NotificationComponent,
-                {
-                    data: {
-                        title: 'Inactive fbo',
-                        text: 'You can\'t manage an inactive fbo!',
-                    },
-                }
-            );
-        } else {
-            const dialogRef = this.manageFboDialog.open(
-                ManageConfirmationComponent,
-                {
-                    width: '450px',
-                    data: {
-                        title: 'Manage FBO?',
-                        description: 'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?',
-                        fboId: fbo.oid,
-                    },
-                    autoFocus: false,
-                }
-            );
+        const dialogRef = this.manageFboDialog.open(
+            ManageConfirmationComponent,
+            {
+                width: '450px',
+                data: {
+                    title: 'Manage FBO?',
+                    description: 'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?',
+                    fboId: fbo.oid,
+                },
+                autoFocus: false,
+            }
+        );
 
-            dialogRef.afterClosed().subscribe((result) => {
-                if (!result) {
-                    return;
-                }
-                localStorage.setItem('managerGroupId', this.sharedService.currentUser.groupId.toString());
-                this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+            localStorage.setItem('managerGroupId', this.sharedService.currentUser.groupId.toString());
+            this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
 
-                localStorage.setItem('groupId', fbo.groupId.toString());
-                this.sharedService.currentUser.groupId = fbo.groupId;
+            localStorage.setItem('groupId', fbo.groupId.toString());
+            this.sharedService.currentUser.groupId = fbo.groupId;
 
-                localStorage.setItem('impersonatedrole', '1');
-                this.sharedService.currentUser.impersonatedRole = 1;
+            localStorage.setItem('impersonatedrole', '1');
+            this.sharedService.currentUser.impersonatedRole = 1;
 
-                localStorage.setItem('fboId', fbo.oid.toString());
-                this.sharedService.currentUser.fboId = fbo.oid;
+            localStorage.setItem('fboId', fbo.oid.toString());
+            this.sharedService.currentUser.fboId = fbo.oid;
 
-                this.sharedService.emitChange(fboChangedEvent);
-                this.router.navigate([ '/default-layout/dashboard-fbo/' ]);
-            });
-        }
+            this.sharedService.emitChange(fboChangedEvent);
+            this.router.navigate([ '/default-layout/dashboard-fbo/' ]);
+        });
     }
 
     public checkExistingPrices() {
@@ -314,26 +272,5 @@ export class FbosGridComponent implements OnInit {
                     });
                 }
             });
-    }
-
-    onPageChanged(event: any) {
-        localStorage.setItem('pageIndexFbos', event.pageIndex);
-        sessionStorage.setItem(
-            'pageSizeFbosValue',
-            this.paginator.pageSize.toString()
-        );
-    }
-
-    public saveHeader(value) {
-        if (value) {
-            sessionStorage.setItem('tableSortValueFbos', value);
-        }
-
-        if (this.sort.direction) {
-            sessionStorage.setItem(
-                'tableSortValueDirectionFbos',
-                this.sort.direction
-            );
-        }
     }
 }

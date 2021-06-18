@@ -72,23 +72,25 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.loadFboPrices();
-        this.checkCurrentPrices();
-        this.layoutClasses = this.getClasses();
+        if ([1, 4].includes(this.sharedService.currentUser.role) || [1, 4].includes(this.sharedService.currentUser.impersonatedRole)) {
+            this.loadFboPrices();
+            this.checkCurrentPrices();
 
-        this.sharedService.changeEmitted$.subscribe((message) => {
-            if ((message === fboChangedEvent || message === locationChangedEvent) && this.sharedService.currentUser.fboId) {
-                this.pricingTemplatesService
-                    .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
-                    .subscribe((data: any) => (this.pricingTemplatesData = data));
-            }
-        });
-        this.sharedService.valueChanged$.subscribe((value: any) => {
-            if (value.message === fboPricesUpdatedEvent) {
-                this.cost = value.JetACost;
-                this.retail = value.JetARetail;
-            }
-        });
+            this.sharedService.changeEmitted$.subscribe((message) => {
+                if ((message === fboChangedEvent || message === locationChangedEvent) && this.sharedService.currentUser.fboId) {
+                    this.pricingTemplatesService
+                        .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+                        .subscribe((data: any) => (this.pricingTemplatesData = data));
+                }
+            });
+            this.sharedService.valueChanged$.subscribe((value: any) => {
+                if (value.message === fboPricesUpdatedEvent) {
+                    this.cost = value.JetACost;
+                    this.retail = value.JetARetail;
+                }
+            });
+        }
+        this.layoutClasses = this.getClasses();
     }
 
     isPricePanelVisible() {
