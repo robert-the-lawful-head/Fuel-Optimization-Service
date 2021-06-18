@@ -6,6 +6,7 @@ import { CustomerinfobygroupService } from '../../../services/customerinfobygrou
 import { SharedService } from '../../../layouts/shared-service';
 import { GroupAnalyticsEmailPricingDialogComponent } from '../group-analytics-email-pricing-dialog/group-analytics-email-pricing-dialog.component';
 import { EmailTemplate } from 'src/app/models/email-template';
+import { EmailcontentService } from 'src/app/services/emailcontent.service';
 
 export type GroupAnalyticsGenerateDialogData = {
     customers: any[];
@@ -41,6 +42,7 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService,
         private emailDialog: MatDialog,
+        private emailContentService: EmailcontentService,
     ) {
     }
 
@@ -70,7 +72,25 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         );
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.onSendEmail();
+                const emailTemplate: EmailTemplate = {
+                    oid: result.emailTemplate?.oid,
+                    groupId: this.sharedService.currentUser.groupId,
+                    subject: result.emailTemplate.subject,
+                    emailContentHtml: result.emailTemplate.emailContentHtml,
+                    fromAddress: result.emailTemplate.fromAddress,
+                };
+
+                if (!emailTemplate.oid) {
+                    this.emailContentService.add(emailTemplate).subscribe((data: EmailTemplate) => {
+                        this.data.emailTemplate = data;
+                        this.onSendEmail();
+                    });
+                } else {
+                    this.emailContentService.update(emailTemplate).subscribe((data: EmailTemplate) => {
+                        this.data.emailTemplate = emailTemplate;
+                        this.onSendEmail();
+                    });
+                }
             }
         });
     }
@@ -104,22 +124,12 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         this.emailing = true;
         this.exportedCustomersCount = 0;
 
-        const promises = this.selectedCustomers.map(async (selectedCustomer) => {
-            const data =
-                await this.customerInfoByGroupService.getGroupAnalyticsAndEmail(
-                    this.sharedService.currentUser.groupId,
-                    selectedCustomer.customerId,
-                ).toPromise() as any;
-
-            const exportData: any[] = [];
-
-            this.populateExportDataForCustomer(
-                data.tailNumbers,
-                data.groupCustomerFbos,
-                exportData);
-
-            await this.exportReportForCustomer(exportData, data.company);
-        });
+        const promises = this.selectedCustomers.map((selectedCustomer) =>
+            this.customerInfoByGroupService.getGroupAnalyticsAndEmail(
+                this.sharedService.currentUser.groupId,
+                selectedCustomer.customerId,
+            ).toPromise()
+        );
 
         await Promise.all(promises);
         this.emailing = false;

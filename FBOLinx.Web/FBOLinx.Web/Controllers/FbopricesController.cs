@@ -20,9 +20,6 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.Web.Services.Interfaces;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
-using System.Net.Mail;
-using IO.Swagger.Model;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -37,8 +34,6 @@ namespace FBOLinx.Web.Controllers
         private readonly RampFeesService _RampFeesService;
         private readonly AircraftService _aircraftService;
         private IPriceFetchingService _PriceFetchingService;
-        private IMailService _MailService;
-        private readonly FuelerLinxService _fuelerLinxService;
         private readonly FbopricesService _fbopricesService;
 
         public FbopricesController(
@@ -48,7 +43,6 @@ namespace FBOLinx.Web.Controllers
             RampFeesService rampFeesService, 
             AircraftService aircraftService, 
             IPriceFetchingService priceFetchingService,
-            IMailService mailService, FuelerLinxService fuelerLinxService,
             FbopricesService fbopricesService)
         {
             _PriceFetchingService = priceFetchingService;
@@ -57,8 +51,6 @@ namespace FBOLinx.Web.Controllers
             _jwtManager = jwtManager;
             _RampFeesService = rampFeesService;
             _aircraftService = aircraftService;
-            _MailService = mailService;
-            _fuelerLinxService = fuelerLinxService;
             _fbopricesService = fbopricesService;
         }
 
@@ -275,7 +267,7 @@ namespace FBOLinx.Web.Controllers
             {
                 var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
                 var claimPrincipal = _jwtManager.GetPrincipal(token);
-                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
 
                 var user = await _context.User.FindAsync(claimedId);
 
@@ -352,7 +344,7 @@ namespace FBOLinx.Web.Controllers
             {
                 var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
                 var claimPrincipal = _jwtManager.GetPrincipal(token);
-                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
 
                 var user = await _context.User.FindAsync(claimedId);
 
@@ -706,39 +698,6 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(fbopricesRange);
-        }
-
-        [HttpPost("notify-fbo-expired-prices")]
-        public ActionResult<bool> NotifyExpiredPrices([FromBody] NotifyFboExpiredPricingRequest notifyFboExpiredPricesRequest)
-        {
-            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
-            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
-            foreach (string email in notifyFboExpiredPricesRequest.ToEmails)
-            {
-                if (_MailService.IsValidEmailRecipient(email))
-                    mailMessage.To.Add(email);
-            }
-
-            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridEngagementTemplateData
-            {
-                fboName = notifyFboExpiredPricesRequest.FBO,
-                subject = "FBOLinx reminder - expired pricing!"
-            };
-
-            mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
-
-            //Send email
-            var result = _MailService.SendAsync(mailMessage).Result;
-
-            return Ok(result);
-        }
-
-        [HttpPost("get-latest-flight-dept-pullhistory-for-icao")]
-        public ActionResult<int> GetLatestFlightDeptPullHistoryForIcao(FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest request)
-        {
-            var fuelerlinxFlightDeptId = _fuelerLinxService.GetLatestFlightDeptPullHistoryForIcao(request);
-
-            return Ok(fuelerlinxFlightDeptId);
         }
 
         private bool FbopricesExists(int id)

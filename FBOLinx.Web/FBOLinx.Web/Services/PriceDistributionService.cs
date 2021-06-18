@@ -453,12 +453,17 @@ namespace FBOLinx.Web.Services
 
         public async Task SendCustomerPriceEmail(int groupId, GroupCustomerAnalyticsResponse info, List<string> emails)
         {
+            var emailContent = _context.EmailContent.Where(e => e.GroupId == groupId).FirstOrDefault();
+
             //Add the price breakdown as an image to prevent parsing
             byte[] priceBreakdownImage = GetCustomerPriceBreakdownImage(info);
 
             //Add email content to MailMessage
             FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
-            mailMessage.From = new MailAddress(MailService.GetFboLinxAddress("info"));
+            mailMessage.From = new MailAddress(
+                emailContent == null || string.IsNullOrEmpty(emailContent.FromAddress)
+                ? MailService.GetFboLinxAddress("donotreply")
+                : emailContent.FromAddress);
 
             foreach (var email in emails)
             {
@@ -467,14 +472,21 @@ namespace FBOLinx.Web.Services
 
             mailMessage.AttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
 
-            var emailContent = _context.EmailContent.Where(e => e.GroupId == groupId).FirstOrDefault();
+            var logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.GroupId == groupId).ToListAsync();
+            if (logo.Count > 0)
+            {
+                mailMessage.Logo = new LogoDetails();
+                mailMessage.Logo.Filename = "logo." + logo[0].ContentType.Split('/')[1];
+                mailMessage.Logo.ContentType = logo[0].ContentType;
+                mailMessage.Logo.Base64String = Convert.ToBase64String(logo[0].FileData);
+            }
 
-            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridDistributionTemplateData
+            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridGroupCustomerPricingTemplateData
             {
                 templateEmailBodyMessage = HttpUtility.HtmlDecode(emailContent.EmailContentHtml ?? ""),
                 Subject = HttpUtility.HtmlDecode(emailContent.Subject) ?? "Customers Pricing",
             };
-            mailMessage.SendGridDistributionTemplateData = dynamicTemplateData;
+            mailMessage.SendGridGroupCustomerPricingTemplateData = dynamicTemplateData;
 
             //Send email
             await _MailService.SendAsync(mailMessage);

@@ -15,11 +15,12 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         public LogoDetails Logo { get; set; }
         public SendGridDistributionTemplateData SendGridDistributionTemplateData { get; set; }
         public SendGridEngagementTemplateData SendGridEngagementTemplate { get; set; }
+        public SendGridGroupCustomerPricingTemplateData SendGridGroupCustomerPricingTemplateData { get; set; }
 
         #endregion
 
         #region Public Methods
-        
+
         #endregion
 
         #region Private Methods

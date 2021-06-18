@@ -52,8 +52,4 @@ export class GroupAnalyticsEmailPricingDialogComponent implements OnInit {
     onCancelClick(): void {
         this.dialogRef.close();
     }
-
-    onSend() {
-        this.dialogRef.close(true);
-    }
 }
