@@ -127,9 +127,7 @@ export class AccountProfileComponent {
             this.fbosService.update(this.fboInfo).subscribe(() => {
                 this.fboContactsService.updateFuelvendor({
                     fboId: this.fboInfo.oid
-                }).subscribe(() => {
-                    this.dialogRef.close();
-                });
+                }).subscribe(() => {});
             });
         }
     }

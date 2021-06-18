@@ -103,16 +103,27 @@
                                 type="submit">
                             Save Email
                         </button>
-                        <div class="" *ngIf="fuelDeskEmail.errors?.email" style="color: red;">
+
+                        <div class="d-inline-block float-right" style="margin-top:12px;">
+                            <button (click)="newRecord($event)"
+                                    [view]="'accent'"
+                                    beforeIcon="fa fa-plus"
+                                    ni-button>
+                                Add New
+                            </button>
+                        </div>
+
+                        <div *ngIf="fuelDeskEmail.errors?.email" style="color: red;">
                             Please enter a valid email address.
                         </div>
                     </div>
-                    <!--Contacts Grid-->
-                    <div *ngIf="contactsData">
-                        <app-systemcontacts-grid (contactDeleted)="contactDeleted($event)"
-                                                    [contactsData]="contactsData"></app-systemcontacts-grid>
-                    </div>
                 </form>
+
+                <!--Contacts Grid-->
+                <div *ngIf="contactsData">
+                    <app-systemcontacts-grid (contactDeleted)="contactDeleted($event)"
+                                                [contactsData]="contactsData"></app-systemcontacts-grid>
+                </div>                
             </mat-tab>
 
             <mat-tab label="Email Distribution">
