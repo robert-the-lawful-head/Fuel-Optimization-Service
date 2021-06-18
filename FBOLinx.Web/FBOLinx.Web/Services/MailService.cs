@@ -43,6 +43,11 @@ namespace FBOLinx.Web.Services
                 AddEngagementEmailData(msg, ref sendGridMessage);
             }
 
+            if (msg.SendGridGroupCustomerPricingTemplateData != null)
+            {
+                AddGroupCustomerPricingEmailData(msg, ref sendGridMessage);
+            }
+
             var apiKey = _MailSettings.SendGridAPIKey;
             var client = new SendGridClient(apiKey);
             var response = await client.SendEmailAsync(sendGridMessage);
@@ -117,6 +122,32 @@ namespace FBOLinx.Web.Services
             }
 
             sendGridMessageWithTemplate.TemplateId = "d-537f958228a6490b977e372ad8389b71";
+        }
+
+        private void AddGroupCustomerPricingEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
+        {
+            sendGridMessageWithTemplate.SetTemplateData(message.SendGridGroupCustomerPricingTemplateData);
+
+            var pricesAttachment = new SendGrid.Helpers.Mail.Attachment();
+            pricesAttachment.Disposition = "inline";
+            pricesAttachment.Content = message.AttachmentBase64String;
+            pricesAttachment.Filename = "prices.png";
+            pricesAttachment.Type = "image/png";
+            pricesAttachment.ContentId = "Prices";
+            sendGridMessageWithTemplate.AddAttachment(pricesAttachment);
+
+            if (message.Logo != null)
+            {
+                var logoAttachment = new SendGrid.Helpers.Mail.Attachment();
+                logoAttachment.Disposition = "inline";
+                logoAttachment.Content = message.Logo.Base64String;
+                logoAttachment.Filename = message.Logo.Filename;
+                logoAttachment.Type = message.Logo.ContentType;
+                logoAttachment.ContentId = "Logo";
+                sendGridMessageWithTemplate.AddAttachment(logoAttachment);
+            }
+
+            sendGridMessageWithTemplate.TemplateId = "d-ed86e8cb93a143a8861cd11bbcca2525";
         }
 
         private void AddEngagementEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)

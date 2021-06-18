@@ -1,0 +1,66 @@
+<h1 mat-dialog-title>Email Template</h1>
+<div mat-dialog-content>
+    <mat-tab-group>
+        <mat-tab label="Email Template">
+            <div class="pt-3">
+                <mat-form-field style="max-width: 600px;">
+                    <input aria-label="Subject"
+                            [(ngModel)]="data.subject"
+                            matInput
+                            placeholder="Subject" />
+                </mat-form-field>
+
+                <mat-form-field style="max-width: 600px;">
+                    <input aria-label="From Email"
+                            [(ngModel)]="data.fromAddress"
+                            matInput
+                            placeholder="From email" />
+                </mat-form-field>
+            
+                <ejs-richtexteditor #typeEmail
+                                    id="rteEmail"
+                                    [(ngModel)]="data.emailContentHtml"
+                                    placeholder="Enter email body here..."
+                ></ejs-richtexteditor>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Logo">
+            <div class="pt-3">
+                <label>Upload your logo</label><br />
+                <input type="file" (change)="onFileChange($event)" accept=".jpg,.jpeg,.png" />
+                <button *ngIf="!isLogoUploading" (click)="uploadFile()"
+                        class="ml-3"
+                        color="accent"
+                        mat-raised-button>
+                    Upload File
+                </button>
+                <div *ngIf="isLogoUploading">
+                    <mat-spinner></mat-spinner>
+                </div>
+                <div *ngIf="logoUrl">
+                    <img src="{{'data:'+logoUrl}}" />
+
+                    <div class="mt-4 mb-2 pl-4">
+                        <button (click)="deleteFile()"
+                               class="mr-1"
+                                color="warn"
+                                mat-raised-button>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>
+<div mat-dialog-actions>
+    <button [disabled]="isSubmitDisabled"
+            [mat-dialog-close]="data"
+            class="mr-1"
+            color="accent"
+            mat-flat-button>
+        Update Email Template
+    </button>
+    <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>Cancel</button>
+</div>

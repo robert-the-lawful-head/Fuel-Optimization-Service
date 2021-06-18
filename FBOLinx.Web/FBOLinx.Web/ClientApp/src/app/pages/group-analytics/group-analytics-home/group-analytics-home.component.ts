@@ -7,9 +7,10 @@ import { SharedService } from '../../../layouts/shared-service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 
 import { GroupAnalyticsGenerateDialogComponent, GroupAnalyticsGenerateDialogData } from '../group-analytics-generate-dialog/group-analytics-generate-dialog.component';
-import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 import { EmailcontentService } from '../../../services/emailcontent.service';
 import { EmailTemplate } from 'src/app/models/email-template';
+import { GroupAnalyticsEmailTemplateDialogComponent } from '../group-analytics-email-template-dialog/group-analytics-email-template-dialog.component';
+import { GroupsService } from 'src/app/services/groups.service';
 
 const BREADCRUMBS: any[] = [
     {
@@ -35,11 +36,14 @@ export class GroupAnalyticsHomeComponent implements OnInit {
     fbos: any[];
     emailTemplate: EmailTemplate = null;
 
+    logoUrl = '';
+
     constructor(
         private reportDialog: MatDialog,
         private editEmailDialog: MatDialog,
         private sharedService: SharedService,
         private fbosService: FbosService,
+        private groupsService: GroupsService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private emailContentService: EmailcontentService,
     ) {
@@ -49,6 +53,63 @@ export class GroupAnalyticsHomeComponent implements OnInit {
         this.loadCustomers();
         this.loadFbos();
         this.loadEmailTemplate();
+        this.loadLogo();
+    }
+
+    onGenerate() {
+        const dialogRef = this.reportDialog.open<GroupAnalyticsGenerateDialogComponent, GroupAnalyticsGenerateDialogData>(
+            GroupAnalyticsGenerateDialogComponent,
+            {
+                data: {
+                    customers: this.customers,
+                    emailTemplate: this.emailTemplate,
+                },
+                width: '500px',
+                autoFocus: false,
+                panelClass: 'group-analytics-dialog'
+            },
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            this.loadEmailTemplate();
+        });
+    }
+
+    onEditEmail() {
+        const dialogRef = this.editEmailDialog.open(GroupAnalyticsEmailTemplateDialogComponent, {
+            data: {
+                subject: this.emailTemplate?.subject,
+                emailContentHtml: this.emailTemplate?.emailContentHtml,
+                fromAddress: this.emailTemplate?.fromAddress,
+                logoUrl: this.logoUrl,
+            },
+            height: '600px',
+            width: '500px'
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            const emailTemplate: EmailTemplate = {
+                oid: this.emailTemplate?.oid,
+                groupId: this.sharedService.currentUser.groupId,
+                subject: result.subject,
+                emailContentHtml: result.emailContentHtml,
+                fromAddress: result.fromAddress,
+            };
+
+            if (!this.emailTemplate || !this.emailTemplate.oid) {
+                this.emailContentService.add(emailTemplate).subscribe((data: EmailTemplate) => {
+                    this.emailTemplate = data;
+                });
+            } else {
+                this.emailContentService.update(emailTemplate).subscribe((data: EmailTemplate) => {
+                    this.emailTemplate = emailTemplate;
+                });
+            }
+        });
     }
 
     private loadCustomers() {
@@ -73,52 +134,10 @@ export class GroupAnalyticsHomeComponent implements OnInit {
             });
     }
 
-    onGenerate() {
-        this.reportDialog.open<GroupAnalyticsGenerateDialogComponent, GroupAnalyticsGenerateDialogData>(
-            GroupAnalyticsGenerateDialogComponent,
-            {
-                data: {
-                    customers: this.customers,
-                    emailTemplate: this.emailTemplate,
-                },
-                width: '500px',
-                autoFocus: false,
-                panelClass: 'group-analytics-dialog'
-            },
-        );
-    }
-
-    onEditEmail() {
-        const dialogRef = this.editEmailDialog.open(EmailTemplatesDialogNewTemplateComponent, {
-            data: {
-                hideName: true,
-                subject: this.emailTemplate?.subject,
-                emailContentHtml: this.emailTemplate?.emailContentHtml,
-                isUpdate: true,
-            },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-
-            const emailTemplate: EmailTemplate = {
-                oid: this.emailTemplate?.oid,
-                groupId: this.sharedService.currentUser.groupId,
-                subject: result.subject,
-                emailContentHtml: result.emailContentHtml,
-            };
-
-            if (!this.emailTemplate || !this.emailTemplate.oid) {
-                this.emailContentService.add(emailTemplate).subscribe((data: EmailTemplate) => {
-                    this.emailTemplate = data;
-                });
-            } else {
-                this.emailContentService.update(emailTemplate).subscribe((data: EmailTemplate) => {
-                    this.emailTemplate = emailTemplate;
-                });
-            }
-        });
+    private loadLogo() {
+        this.groupsService.getLogo(this.sharedService.currentUser.groupId)
+            .subscribe((logoData: any) => {
+                this.logoUrl = logoData.message;
+            });
     }
 }

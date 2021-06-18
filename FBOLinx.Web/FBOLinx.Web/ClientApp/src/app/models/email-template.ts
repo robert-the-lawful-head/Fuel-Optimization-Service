@@ -5,4 +5,5 @@ export type EmailTemplate = {
     emailContentHtml: string;
     fboId?: number;
     groupId?: number;
+    fromAddress?: string;
 };

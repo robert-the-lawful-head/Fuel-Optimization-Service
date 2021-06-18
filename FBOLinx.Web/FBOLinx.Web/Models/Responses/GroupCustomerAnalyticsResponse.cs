@@ -11,6 +11,7 @@ namespace FBOLinx.Web.Models.Responses
 {
     public class GroupCustomerAnalyticsResponse
     {
+        public int CustomerId { get; set; }
         public string Company { get; set; }
         public string TailNumbers { get; set; }
 
@@ -25,7 +26,11 @@ namespace FBOLinx.Web.Models.Responses
                     this.GroupCustomerFbos.FirstOrDefault(r => r.Icao == x.Icao);
                 if (groupCustomerFbo == null)
                 {
-                    groupCustomerFbo = new GroupedFboPrices() {Icao = x.Icao, Prices = new List<Prices>()};
+                    groupCustomerFbo = new GroupedFboPrices() {
+                        FboId = x.FboId,
+                        Icao = x.Icao, 
+                        Prices = new List<Prices>()
+                    };
                     this.GroupCustomerFbos.Add(groupCustomerFbo);
                 }
 
@@ -57,6 +62,7 @@ namespace FBOLinx.Web.Models.Responses
 
     public class GroupedFboPrices
     {
+        public int FboId { get; set; }
         public string Icao { get; set; }
         public List<Prices> Prices { get; set; }
     }
