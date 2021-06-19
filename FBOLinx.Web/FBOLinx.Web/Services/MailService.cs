@@ -154,7 +154,7 @@ namespace FBOLinx.Web.Services
         {
             sendGridMessageWithTemplate.SetTemplateData(message.SendGridEngagementTemplate);
 
-            if (message.SendGridEngagementTemplate.customerName != null)
+            if (!string.IsNullOrEmpty(message.SendGridEngagementTemplate.customerName))
                 sendGridMessageWithTemplate.TemplateId = "d-bd3e32cbb21a4c60bf9753bcf70b2527";  //templateid for fuel price expiration
             else
                 sendGridMessageWithTemplate.TemplateId = "d-038c5d66d8034610af790492a8e184b8";  //templateid for no ramp fees
