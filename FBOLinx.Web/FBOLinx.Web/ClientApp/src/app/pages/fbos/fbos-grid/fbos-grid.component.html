@@ -30,15 +30,17 @@
         <ng-container matColumnDef="price">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>Retail / Cost</th>
             <td *matCellDef="let fbo" mat-cell>
-                <span [ngClass]="{ 'price-expired': !fbo.retailPrice, 'font-weight-bold': true }">{{ fbo.retailPrice ? "$" + (fbo.retailPrice | number: "1.4-4") : "Expired" }}</span> / 
-                <span [ngClass]="{ 'price-expired': !fbo.costPrice, 'font-weight-bold': true }">{{ fbo.costPrice ? "$" + (fbo.costPrice | number: "1.4-4") : "Expired" }}</span>
+                <span [ngClass]="{ 'price-expired': !fbo.retailPrice, 'price-live': fbo.retailPrice, 'font-weight-bold': true }">{{ fbo.retailPrice ? "$" + (fbo.retailPrice | number: "1.4-4") : "Expired" }}</span> / 
+                <span [ngClass]="{ 'price-expired': !fbo.costPrice, 'price-live': fbo.costPrice, 'font-weight-bold': true }">{{ fbo.costPrice ? "$" + (fbo.costPrice | number: "1.4-4") : "Expired" }}</span>
             </td>
         </ng-container>
 
         <ng-container matColumnDef="active">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>Status</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Pricing Status</th>
             <td *matCellDef="let fbo" mat-cell>
-                {{ fbo.active ? "Active" : "Inactive" }}
+                <span [ngClass]="{ 'price-expired': !fbo.retailPrice && !fbo.costPrice, 'price-live': fbo.retailPrice || fbo.costPrice, 'font-weight-bold': true }">
+                    {{ !fbo.retailPrice && !fbo.costPrice ? "Expired" : "Pricing Live" }}
+                </span>
             </td>
         </ng-container>
 

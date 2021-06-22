@@ -17,7 +17,7 @@ export class AuthtokenComponent {
         private router: Router,
         private authenticationService: AuthenticationService
     ) {
-        
+
         // Check for passed in id
         //const token = this.route.snapshot.paramMap.get('token');
         this.route.queryParamMap
@@ -28,7 +28,7 @@ export class AuthtokenComponent {
         if (!this.tokenParam || this.tokenParam === '') {
             this.router.navigate([ '/' ]);
         } else {
-            var decodedToken = decodeURIComponent(this.tokenParam);
+            const decodedToken = decodeURIComponent(this.tokenParam);
 
             this.authenticationService
                 .getAuthToken(decodedToken)
@@ -44,10 +44,10 @@ export class AuthtokenComponent {
                                         '/default-layout/dashboard-fbo/',
                                     ]);
                                 }
-                            })
+                            });
                         }
                         else
-                            this.router.navigate(['/landing-site']);
+                            {this.router.navigate(['/landing-site']);}
                     },
                     () => {
                         this.router.navigate([ '/landing-site' ]);
