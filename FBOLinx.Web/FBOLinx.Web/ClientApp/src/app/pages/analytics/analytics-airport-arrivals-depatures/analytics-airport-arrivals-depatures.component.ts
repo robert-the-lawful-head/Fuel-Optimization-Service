@@ -165,7 +165,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
             ) &&
             (!this.selectedCustomers.length || this.selectedCustomers.includes(x.customerInfoByGroupID)) &&
             (!this.selectedTailNumbers.length || this.selectedTailNumbers.includes(x.tailNumber))
-        );
+        ).map(x => ({
+            ...x,
+            aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode)
+        }));
 
         if (!this.dataSource) {
             this.dataSource = new MatTableDataSource(data);
