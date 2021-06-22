@@ -183,7 +183,6 @@ import { AutocompleteSearchComponent } from '../shared/components/autocomplete-s
 import { AppPipesModule } from '../app-pipes.module';
 
 import { ClickStopPropagationDirective } from '../shared/directives/click-stop-propagation.directive';
-import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-airport-arrivals-depatures/analytics-airport-watch-status-marker.pipe';
 import { GroupAnalyticsEmailTemplateDialogComponent } from './group-analytics/group-analytics-email-template-dialog/group-analytics-email-template-dialog.component';
 
 @NgModule({
@@ -357,7 +356,6 @@ import { GroupAnalyticsEmailTemplateDialogComponent } from './group-analytics/gr
         FlightWatchMapComponent,
         FlightWatchAircraftInfoComponent,
         FlightWatchSettingsComponent,
-        AnalyticsAirportWatchStatusMarkerPipe,
         CsvExportModalComponent,
         AutocompleteSearchComponent,
     ],
