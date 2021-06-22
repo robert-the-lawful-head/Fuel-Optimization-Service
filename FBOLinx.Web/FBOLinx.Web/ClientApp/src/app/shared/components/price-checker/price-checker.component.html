@@ -3,22 +3,6 @@
         <div class="row">
             <div class="col">
                 <mat-tab-group (selectedTabChange)="onTabChanged($event);">
-                    <!--Price template searching tab-->
-                    <mat-tab label="Template">
-                        <div class="mt-4">
-                            <mat-form-field>
-                                <mat-label>ITP Template</mat-label>
-                                <mat-select (selectionChange)="priceTemplateChanged()" [(ngModel)]="pricingTemplateId"
-                                            class="font-weight-bold" placeholder="ITP Template">
-                                    <mat-option *ngFor="let pricingTemplate of pricingTemplates"
-                                                [value]="pricingTemplate.oid">
-                                        {{pricingTemplate.name}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                    </mat-tab>
-
                     <!--Customer searching tab-->
                     <mat-tab label="Customer">
                         <div class="container-fluid mt-4">
@@ -75,6 +59,22 @@
                                     </mat-form-field>
                                 </div>
                             </div>
+                        </div>
+                    </mat-tab>
+
+                     <!--Price template searching tab-->
+                     <mat-tab label="Template">
+                        <div class="mt-4">
+                            <mat-form-field>
+                                <mat-label>ITP Template</mat-label>
+                                <mat-select (selectionChange)="priceTemplateChanged()" [(ngModel)]="pricingTemplateId"
+                                            class="font-weight-bold" placeholder="ITP Template">
+                                    <mat-option *ngFor="let pricingTemplate of pricingTemplates"
+                                                [value]="pricingTemplate.oid">
+                                        {{pricingTemplate.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                     </mat-tab>
 

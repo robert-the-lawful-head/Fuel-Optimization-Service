@@ -32,9 +32,9 @@ interface PriceLookupRequest {
 }
 
 enum PriceCheckerLookupTypes {
-    ByPricingTemplate = 0,
-    ByCustomer = 1,
-    ByTail = 2,
+    ByCustomer = 0,
+    ByTail = 1,
+    ByPricingTemplate = 2,
 }
 
 @Component({
@@ -60,7 +60,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     public aircraftForCustomer: Array<any>;
     public pricingTemplateId = 0;
     public pricingTemplates: Array<any>;
-    public priceCheckerLookupType: PriceCheckerLookupTypes = PriceCheckerLookupTypes.ByPricingTemplate;
+    public priceCheckerLookupType: PriceCheckerLookupTypes = PriceCheckerLookupTypes.ByCustomer;
     public priceLookupInfo: TailLookupResponse;
     public tailLookupError: boolean;
     public strictApplicableTaxFlightOptions: Array<EnumOptions.EnumOption> =
