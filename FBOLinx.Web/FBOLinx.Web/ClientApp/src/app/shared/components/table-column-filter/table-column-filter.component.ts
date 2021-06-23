@@ -32,12 +32,15 @@ import * as moment from 'moment';
 export class TableColumnFilterComponent implements OnInit {
     @Input() columnId: string;
     @Input() column: any;
-    @Input() columnFormat = 0; // Text = 0,Number = 1,Date = 2,Time = 3,DateTime = 4,Currency = 5,Weight = 6,TimeStandard = 7, YesNo = 8, EmptyNotEmpty = 9
+    @Input() columnFormat = 0; // Text = 0,Number = 1,Date = 2,Time = 3,DateTime = 4,Currency = 5,Weight = 6,TimeStandard = 7, YesNo = 8, EmptyNotEmpty = 9, Multiselect = 10
     @Input() propertyName: string;
     @Input() matDataSource: any = null;
     @Input() matSort: MatSort;
     @Input() tableFilter: any;
     @Input() allowEditHeading = false;
+    @Input() options: any[] = [];
+    @Input() optionLabel: string;
+    @Input() optionValue: string;
     @Output() columnChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
 
@@ -51,6 +54,7 @@ export class TableColumnFilterComponent implements OnInit {
             start: null,
             end: null
         },
+        optionsFilter: [],
         isFiltered: false
     };
     public isHeadingOpen = false;
@@ -142,6 +146,7 @@ export class TableColumnFilterComponent implements OnInit {
             start: null,
             end: null
         };
+        this.filter.optionsFilter = [];
 
         this.applyFilter(null, null);
     }
@@ -207,6 +212,10 @@ export class TableColumnFilterComponent implements OnInit {
                     if ([9].indexOf(element.columnFormat) > -1) {
                         return (element.filter.stringFilter === 'true' && !columnValue) ||
                             (element.filter.stringFilter === 'false' && !!columnValue);
+                    }
+
+                    if ([10].indexOf(element.columnFormat) > -1) {
+                        return !element.filter.optionsFilter.length || element.filter.optionsFilter.includes(columnValue);
                     }
 
                     if (columnValue === null || columnValue === '') {
