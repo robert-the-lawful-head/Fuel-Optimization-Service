@@ -90,19 +90,6 @@ namespace FBOLinx.Web.Auth
             }
         }
 
-        public int? GetUserID(string token)
-        {
-            var claims = GetPrincipal(token);
-            if (claims == null)
-                return null;
-
-            var userId = claims.FindFirst(x => x.Type == "UserID");
-            if (userId == null)
-                return null;
-
-            return int.Parse(userId.Value);
-        }
-
         public ClaimsPrincipal GetPrincipal(string token)
         {
             try

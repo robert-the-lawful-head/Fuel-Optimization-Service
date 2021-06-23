@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { EmailcontentService } from "../../../services/emailcontent.service";
+import { EmailcontentService } from '../../../services/emailcontent.service';
 
 const BREADCRUMBS: any[] = [
     {
@@ -32,9 +32,9 @@ export class EmailTemplatesEditComponent implements OnInit {
     public emailTemplateForm: FormGroup;
     public emailTemplate: any;
     public canSave: boolean;
-    public isSaving: boolean = false;
-    public hasSaved: boolean = false;
-    public isSaveQueued: boolean = false;
+    public isSaving = false;
+    public hasSaved = false;
+    public isSaveQueued = false;
 
     constructor(private route: ActivatedRoute,
         private router: Router,

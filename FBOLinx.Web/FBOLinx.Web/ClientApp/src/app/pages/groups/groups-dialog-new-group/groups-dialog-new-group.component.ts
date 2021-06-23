@@ -13,7 +13,7 @@ export class GroupsDialogNewGroupComponent {
     step = 1;
     type: string;
     dataSources: any = {};
-    public fboAlreadyExists: boolean = false;
+    public fboAlreadyExists = false;
 
     constructor(
         public dialogRef: MatDialogRef<GroupsDialogNewGroupComponent>,
@@ -47,7 +47,7 @@ export class GroupsDialogNewGroupComponent {
         this.data.group = `${this.data.fbo} - ${this.data.icao}`;
 
         this.fboService.getByAcukwikHandlerId(this.data.acukwikFboHandlerId).subscribe((response: any) => {
-            if (!response || response.oid == 0) {
+            if (!response) {
                 this.fboAlreadyExists = false;
             } else {
                 this.fboAlreadyExists = true;

@@ -208,11 +208,17 @@
                 >
                     ITP Margin Template
                     <span *ngIf="customersDataSource">
-                  <app-table-column-filter [matDataSource]="customersDataSource"
-                                           [matSort]="sort"
-                                           columnId="pricingTemplateName"
-                                           propertyName="pricingTemplateName"></app-table-column-filter>
-                </span>
+                        <app-table-column-filter
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="pricingTemplateId"
+                            propertyName="pricingTemplateId"
+                            [columnFormat]="10"
+                            optionLabel="name"
+                            optionValue="oid"
+                            [options]="pricingTemplatesData"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <select (ngModelChange)="onMarginChange($event, customer)"

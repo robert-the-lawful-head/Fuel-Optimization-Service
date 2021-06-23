@@ -62,12 +62,10 @@ export class AuthenticationService {
     getAuthToken(token) {
         const tempToken = { accessToken: token };
         return this.http
-            .post<any>(this.authenticationAccessPointUrl + '/authtoken', 
+            .post<any>(this.authenticationAccessPointUrl + '/authtoken',
                 tempToken
             )
-            .pipe(map((authToken) => {
-                return authToken;
-            }));
+            .pipe(map((authToken) => authToken));
     }
 
   preAuth(token) {

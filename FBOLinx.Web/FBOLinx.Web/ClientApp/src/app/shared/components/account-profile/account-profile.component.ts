@@ -82,19 +82,17 @@ export class AccountProfileComponent {
         this.loadAvailableRoles();
     }
 
-    
-
     get fuelDeskEmail() {
         return this.systemContactsForm.get('fuelDeskEmail');
     }
 
     get replyTo() {
         return this.emailDistributionForm.get('replyTo');
-    } 
+    }
 
     get senderAddress() {
         return this.emailDistributionForm.get('senderAddress');
-    } 
+    }
 
     get isCsr() {
         return this.sharedService.currentUser.role === 5;
@@ -129,9 +127,7 @@ export class AccountProfileComponent {
             this.fbosService.update(this.fboInfo).subscribe(() => {
                 this.fboContactsService.updateFuelvendor({
                     fboId: this.fboInfo.oid
-                }).subscribe(() => {
-                    this.dialogRef.close();
-                });
+                }).subscribe(() => {});
             });
         }
     }
@@ -164,7 +160,7 @@ export class AccountProfileComponent {
     deleteFile(): void {
         this.fbosService.deleteLogo(this.fboInfo.oid)
             .subscribe((logoData: any) => {
-                this.logoUrl = "";
+                this.logoUrl = '';
             });
     }
 
@@ -197,16 +193,16 @@ export class AccountProfileComponent {
 
     // Private Methods
     private readAndUploadFile(theFile: any) {
-        let file = { // Set File Information
+        const file = { // Set File Information
             FileName: theFile.name,
             ContentType: theFile.type,
             FileData: null,
             FboId: this.fboInfo.oid
-        }
+        };
 
         // Use FileReader() object to get file to upload
         // NOTE: FileReader only works with newer browsers
-        let reader = new FileReader();
+        const reader = new FileReader();
 
         // Setup onload event for reader
         reader.onload = () => {
@@ -218,7 +214,7 @@ export class AccountProfileComponent {
                 this.isUploadingLogo = false;
                 this.logoUrl = resp.message;
             });
-        }
+        };
 
         // Read the file
         reader.readAsDataURL(theFile);
@@ -247,10 +243,10 @@ export class AccountProfileComponent {
                 this.fboContactsService
                     .getForFbo(this.fboInfo)
                     .subscribe((data: any) => {
-                        this.contactsData = data
+                        this.contactsData = data;
                         this.fbosService.getLogo(this.fboInfo.oid)
                             .subscribe((logoData: any) => {
-                                this.logoUrl = logoData.message
+                                this.logoUrl = logoData.message;
                             });
                     });
             });

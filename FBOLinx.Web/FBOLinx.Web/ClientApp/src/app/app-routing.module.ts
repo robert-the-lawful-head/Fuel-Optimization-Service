@@ -28,13 +28,14 @@ import { UsersEditComponent } from './pages/users/users-edit/users-edit.componen
 import { UsersHomeComponent } from './pages/users/users-home/users-home.component';
 import { GroupAnalyticsHomeComponent } from './pages/group-analytics/group-analytics-home/group-analytics-home.component';
 import { FlightWatchComponent } from './pages/flight-watch/flight-watch/flight-watch.component';
+import { GroupCustomersHomeComponent } from './pages/group-customers/group-customers-home/group-customers-home.component';
 
 // Guards
 import { AuthGuard } from './guards';
 import { EmailTemplatesEditComponent } from
-    "./pages/email-templates/email-templates-edit/email-templates-edit.component";
+    './pages/email-templates/email-templates-edit/email-templates-edit.component';
 import { EmailTemplatesHomeComponent } from
-    "./pages/email-templates/email-templates-home/email-templates-home.component";
+    './pages/email-templates/email-templates-home/email-templates-home.component';
 const defaultRoutes: Routes = [
     {
         path: 'customers',
@@ -101,6 +102,14 @@ const defaultRoutes: Routes = [
     {
         path: 'group-analytics',
         component: GroupAnalyticsHomeComponent,
+        canActivate: [AuthGuard],
+        data: {
+            expectedRoles: [2, 3],
+        },
+    },
+    {
+        path: 'group-customers',
+        component: GroupCustomersHomeComponent,
         canActivate: [AuthGuard],
         data: {
             expectedRoles: [2, 3],

@@ -25,6 +25,8 @@ namespace FBOLinx.DB.Models
         public string EmailContentHtml { get; set; }
         [Column("FBOID")]
         public int? FboId { get; set; }
+        public int? GroupId { get; set; }
+        public string FromAddress { get; set; }
         public EmailContentTypes EmailContentType { get; set; }
 
         [NotMapped]

@@ -66,6 +66,23 @@ namespace FBOLinx.Web.Controllers
             return emailContent;
         }
 
+        // GET: api/EmailContents/5
+        [HttpGet("group/{groupId}")]
+        public async Task<ActionResult<EmailContent>> GetEmailContentForGroup([FromRoute] int groupId)
+        {
+            if (JwtManager.GetClaimedGroupId(_HttpContextAccessor) != groupId &&
+                (JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor
+                    && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin)
+            )
+            {
+                return BadRequest();
+            }
+
+            var emailContent = await _context.EmailContent.Where((x => x.GroupId == groupId)).FirstOrDefaultAsync();
+
+            return emailContent;
+        }
+
         // PUT: api/EmailContents/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEmailContent(int id, EmailContent emailContent)

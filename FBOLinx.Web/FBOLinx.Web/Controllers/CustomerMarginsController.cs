@@ -186,7 +186,7 @@ namespace FBOLinx.Web.Controllers
 
                 await _context.SaveChangesAsync();
             }
-            catch (System.Exception exception)
+            catch (System.Exception)
             {
                 //Do nothing - concurrency error due to fast-removal of margins that already occurred
                 //TODO: find a better way of handling this.  Looks to occur during the auto-save in the UI.  Not causing any actual issues.

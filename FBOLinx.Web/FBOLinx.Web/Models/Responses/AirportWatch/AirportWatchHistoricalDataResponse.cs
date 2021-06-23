@@ -14,7 +14,7 @@ namespace FBOLinx.Web.Models.Responses.AirportWatch
         public string HexCode { get; set; }
         public string AircraftType { get; set; }
         public string AircraftTypeCode { get; set; }
-        public AircraftStatusType Status { get; set; }
+        public string Status { get; set; }
         public int? PastVisits { get; set; }
         public string Originated { get; set; }
         public string AirportIcao { get; set; }

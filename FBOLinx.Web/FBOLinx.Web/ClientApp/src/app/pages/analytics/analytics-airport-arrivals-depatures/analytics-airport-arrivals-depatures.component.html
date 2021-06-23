@@ -207,7 +207,7 @@
                                 ></app-table-column-filter>
                             </span>
                         </th>
-                        <td *matCellDef="let info" mat-cell>{{ getAircraftLabel(info.aircraftTypeCode) }}</td>
+                        <td *matCellDef="let info" mat-cell>{{ info.aircraftTypeCode }}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="dateTime">
@@ -242,7 +242,7 @@
                                 ></app-table-column-filter>
                             </span>
                         </th>
-                        <td *matCellDef="let info" mat-cell>{{info.flightNumber ? (info.status | airportWatchStatus) : ""}}</td>
+                        <td *matCellDef="let info" mat-cell>{{info.status}}</td>
                     </ng-container>
 
                     <ng-container matColumnDef="pastVisits">

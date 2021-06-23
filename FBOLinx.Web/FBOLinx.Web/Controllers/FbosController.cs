@@ -17,7 +17,8 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using FBOLinx.Web.Models.Requests;
 using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.Web.Services;
-
+using FBOLinx.Web.Services.Interfaces;
+using IO.Swagger.Model;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -32,8 +33,22 @@ namespace FBOLinx.Web.Controllers
         private readonly FboService _fboService;
         private IHttpContextAccessor _httpContextAccessor;
         private readonly OAuthService _oAuthService;
+        private readonly IPriceFetchingService _priceFetchingService;
+        private readonly RampFeesService _rampFeeService;
+        private readonly FuelerLinxService _fuelerLinxService;
+        private readonly FbopricesService _fbopricesService;
 
-        public FbosController(FboLinxContext context, DegaContext degaContext, GroupFboService groupFboService, FboService fboService, IHttpContextAccessor httpContextAccessor, OAuthService oAuthService)
+        public FbosController(
+            FboLinxContext context,
+            DegaContext degaContext, 
+            GroupFboService groupFboService, 
+            FboService fboService, 
+            IHttpContextAccessor httpContextAccessor, 
+            OAuthService oAuthService, 
+            IPriceFetchingService priceFetchingService, 
+            RampFeesService rampFeeService, 
+            FuelerLinxService fuelerLinxService,
+            FbopricesService fbopricesService)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -41,6 +56,10 @@ namespace FBOLinx.Web.Controllers
             _fboService = fboService;
             _httpContextAccessor = httpContextAccessor;
             _oAuthService = oAuthService;
+            _priceFetchingService = priceFetchingService;
+            _rampFeeService = rampFeeService;
+            _fuelerLinxService = fuelerLinxService;
+            _fbopricesService = fbopricesService;
         }
 
         // GET: api/Fbos/group/5
@@ -51,19 +70,29 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var fbos = await GetAllFbos().Include("fboAirport").Where((x => x.GroupId == groupId)).ToListAsync();
 
-            //FbosViewModel used to display FBO info in the grid
-            var fbosVM = fbos.Select(f => new FbosGridViewModel
+            var fbos = await (
+                            from f in _context.Fbos
+                            join fa in _context.Fboairports on f.Oid equals fa.Fboid
+                            where f.GroupId == groupId && f.Active == true
+                            select new FbosGridViewModel
+                            {
+                                Active = f.Active,
+                                Fbo = f.Fbo,
+                                Icao = fa.Icao,
+                                Iata = fa.Iata,
+                                Oid = f.Oid,
+                                GroupId = f.GroupId ?? 0,
+                            }).ToListAsync();
+
+            foreach (var fbo in fbos)
             {
-                Active = f.Active,
-                Fbo = f.Fbo,
-                Icao = f.fboAirport == null ? "" : f.fboAirport.Icao,
-                Iata = f.fboAirport == null ? "" : f.fboAirport.Iata,
-                Oid = f.Oid,
-                GroupId = (f.GroupId ?? 0)
-            }).Distinct().ToList();
-            return Ok(fbosVM);
+                var prices = await _fbopricesService.GetPrices(fbo.Oid);
+                fbo.CostPrice = prices[0].Price;
+                fbo.RetailPrice = prices[1].Price;
+            }
+
+            return Ok(fbos);
         }
 
         // GET: api/Fbos
@@ -302,7 +331,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(new { Message = logoUrl });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(new { Message = "" });
             }
@@ -328,7 +357,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(new { Message = logoUrl });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Ok(new { Message = "" });
             }
@@ -416,6 +445,160 @@ namespace FBOLinx.Web.Controllers
             //Return URL with authentication for 3 days
             AccessTokens accessToken = await _oAuthService.GenerateAccessToken(user, 4320);
             return Ok("https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(accessToken.AccessToken));
+        }
+
+        [HttpGet("sendengagementemails")]
+        public async Task EngagementEmails()
+        {
+            //get all active fbos with expiredpricing
+            var fbosWithExpiredPricing = await _priceFetchingService.GetAllFbosWithExpiredPricing();
+            //var responseFbos = await _apiClient.GetAsync("fboprices/getallfboswithexpiredretailpricing", conductorUser.Token);
+            //var fbos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FbosGridViewModel>>(responseFbos);
+
+            foreach (var fbo in fbosWithExpiredPricing)
+            {
+                var icao = fbo.Icao.ToLower();
+
+                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => (x != null && x.Icao == icao)).FirstOrDefaultAsync();
+                //var responseAcukwikAirport = await _apiClient.GetAsync("acukwikairports/byicao/" + fbo.Icao, conductorUser.Token);
+                //var acukwikAirport = Newtonsoft.Json.JsonConvert.DeserializeObject<AcukwikAirports>(responseAcukwikAirport);
+
+                //send email if it's 9am local airport time
+                var airportDateTime = DateTime.UtcNow.AddHours(acukwikAirport.IntlTimeZone.GetValueOrDefault());
+                if (acukwikAirport.DaylightSavingsYn == "Y")
+                    airportDateTime = airportDateTime.AddHours(1);
+
+                if (airportDateTime.Hour == 9)
+                {
+                    var toEmails = await GetToEmailsForEngagementEmails(fbo.Oid);
+
+                    if (toEmails.Count > 0)
+                        await GenerateExpiredPricesEmail(toEmails, fbo.Fbo);
+                }
+            }
+
+            //Ramp fee emails, only goes out at 9am Pacific
+            await CheckRampFees();
+        }
+
+        private async Task CheckRampFees()
+        {
+            var KVNYAirport = await _degaContext.AcukwikAirports.Where(x => x.Icao == "kvny").FirstOrDefaultAsync();
+            //var responseKVNYAirport = await _apiClient.GetAsync("acukwikairports/byicao/KVNY", conductorUser.Token);
+            //var KVNYAirport = Newtonsoft.Json.JsonConvert.DeserializeObject<AcukwikAirports>(responseKVNYAirport);
+            var KVNYDateTime = DateTime.UtcNow.AddHours(KVNYAirport.IntlTimeZone.GetValueOrDefault());
+            if (KVNYAirport.DaylightSavingsYn == "Y")
+                KVNYDateTime = KVNYDateTime.AddHours(1);
+
+            if (KVNYDateTime.Hour == 9)
+            {
+                //go through each active fbo icao and call fuelerlinx to pull the latest pullhistory for that icao within the past 24 hours
+                var activeFbos= await GetAllFbos().Where(x => x.Active == true).Include(f => f.Users).Include("fboAirport").ToListAsync();
+                //var responseActiveFbos = await _apiClient.GetAsync("fbos", conductorUser.Token);
+                //var activeFbos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FbosGridViewModel>>(responseActiveFbos);
+
+                foreach (var fbo in activeFbos)
+                {
+                    if (fbo.GroupId > 1)
+                    {
+                        //check if there's ramp fees
+                        var rampFees = await _rampFeeService.GetRampFeesByFbo(fbo.Oid);
+                        //var rampFeesResponse = await _apiClient.GetAsync("rampfees/fbo/" + fbo.Oid, conductorUser.Token);
+                        //var rampFees = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<RampFees>>(rampFeesResponse);
+                        var noRampFees = true;
+
+                        foreach (RampFeesGridViewModel rampFee in rampFees)
+                        {
+                            if (rampFee.Price > 0)
+                            {
+                                noRampFees = false;
+                                break;
+                            }
+                        }
+
+                        //if not, find the latest pull history record from fuelerlinx and send email
+                        if (noRampFees)
+                        {
+                            var fuelerLinxCustomerId = _fuelerLinxService.GetLatestFlightDeptPullHistoryForIcao(new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.fboAirport.Icao });
+                            //var fuelerLinxCustomerId = 0;
+                            //var fuelerLinxCustomerIdResponse = await _apiClient.PostAsync("fboprices/get-latest-flight-dept-pullhistory-for-icao/", new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.Icao }, conductorUser.Token);
+                            //if (fuelerLinxCustomerIdResponse != "" && int.TryParse(fuelerLinxCustomerIdResponse, out fuelerLinxCustomerId))
+                            //    fuelerLinxCustomerId = int.Parse(fuelerLinxCustomerIdResponse);
+
+                            if (fuelerLinxCustomerId > 0)
+                            {
+                                var customer = await _context.Customers.Where(x => x.FuelerlinxId == fuelerLinxCustomerId).FirstOrDefaultAsync();
+                                //var customerResponse = await _apiClient.GetAsync("customers/getbyfuelerlinxid/" + fuelerLinxCustomerId, conductorUser.Token);
+                                //var customer = Newtonsoft.Json.JsonConvert.DeserializeObject<Customers>(customerResponse);
+
+                                var toEmails = await GetToEmailsForEngagementEmails(fbo.Oid);
+
+                                if (toEmails.Count > 0)
+                                    await GenerateNoRampFeesEmail(toEmails, fbo.Fbo, customer.Company, fbo.fboAirport.Icao);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
+        {
+            List<string> toEmails = new List<string>();
+
+            var fboInfo = await _context.Fbos.FindAsync(fboId);
+            //var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
+            //var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
+
+            if (fboInfo.FuelDeskEmail != "")
+                toEmails.Add(fboInfo.FuelDeskEmail);
+
+            var fboContacts = await _context.Fbocontacts
+                                .Include("Contact")
+                                .Where(x => x.Fboid == fboId && !string.IsNullOrEmpty(x.Contact.Email))
+                                .Select(f => new FboContactsViewModel
+                                {
+                                    ContactId = f.ContactId,
+                                    FirstName = f.Contact.FirstName,
+                                    LastName = f.Contact.LastName,
+                                    Title = f.Contact.Title,
+                                    Oid = f.Oid,
+                                    Email = f.Contact.Email,
+                                    Primary = f.Contact.Primary,
+                                    CopyAlerts = f.Contact.CopyAlerts,
+                                    CopyOrders = f.Contact.CopyOrders
+                                })
+                                .ToListAsync();
+            //var responseFboContacts = await _apiClient.GetAsync("fbocontacts/fbo/" + fbo.Oid, conductorUser.Token);
+            //var fboContacts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FboContactsViewModel>>(responseFboContacts);
+
+            foreach (FboContactsViewModel fboContact in fboContacts)
+            {
+                if (fboContact.CopyAlerts.GetValueOrDefault())
+                    toEmails.Add(fboContact.Email);
+            }
+
+            return toEmails;
+        }
+
+        private async Task GenerateExpiredPricesEmail(List<string> toEmails, string fboName)
+        {
+            await _priceFetchingService.NotifyFboExpiredPrices(toEmails, fboName);
+            //var requestObject = new NotifyFboNoRampFeesRequest();
+            //requestObject.ToEmails = toEmails;
+            //requestObject.FBO = fboName;
+            //var result = await _apiClient.PostAsync("fboprices/notify-fbo-expired-prices", requestObject, token);
+        }
+
+        private async Task GenerateNoRampFeesEmail(List<string> toEmails, string fboName, string flightDepartment, string icao)
+        {
+            await _rampFeeService.NotifyFboNoRampFees(toEmails, fboName, flightDepartment, icao);
+            //var requestObject = new NotifyFboNoRampFeesRequest();
+            //requestObject.ToEmails = toEmails;
+            //requestObject.FBO = fboName;
+            //requestObject.CustomerName = flightDepartment;
+            //requestObject.ICAO = icao;
+            //var result = await _apiClient.PostAsync("rampfees/notify-fbo-no-rampfees", requestObject, token);
         }
 
         private bool FbosExists(int id)

@@ -48,6 +48,8 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import {
+    ColumnMenuService,
+    DetailRowService,
     FilterService,
     GridModule,
     GroupService,
@@ -55,6 +57,7 @@ import {
     SortService,
     ToolbarService,
 } from '@syncfusion/ej2-angular-grids';
+import { MultiSelectModule as Ej2MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
 import { ResizableModule } from 'angular-resizable-element';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
@@ -86,7 +89,7 @@ import { CustomersGridComponent } from './customers/customers-grid/customers-gri
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
 import { DashboardHomeComponent } from './dashboards/dashboard-home/dashboard-home.component';
-import { EmailTemplatesDialogNewTemplateComponent } from './email-templates/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
+import { EmailTemplatesDialogNewTemplateComponent } from '../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 import { EmailTemplatesEditComponent } from './email-templates/email-templates-edit/email-templates-edit.component';
 import { EmailTemplatesGridComponent } from './email-templates/email-templates-grid/email-templates-grid.component';
 import { EmailTemplatesHomeComponent } from './email-templates/email-templates-home/email-templates-home.component';
@@ -132,9 +135,12 @@ import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { SystemcontactsNewContactModalComponent } from './contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 import { GroupAnalyticsHomeComponent } from './group-analytics/group-analytics-home/group-analytics-home.component';
 import { GroupAnalyticsGenerateDialogComponent } from './group-analytics/group-analytics-generate-dialog/group-analytics-generate-dialog.component';
+import { GroupAnalyticsEmailPricingDialogComponent } from './group-analytics/group-analytics-email-pricing-dialog/group-analytics-email-pricing-dialog.component';
 import { GroupAnalyticsCustomerStatisticsComponent } from './group-analytics/group-analytics-customer-statistics/group-analytics-customer-statistics.component';
 import { GroupAnalyticsFuelVendorSourcesComponent } from './group-analytics/group-analytics-fuel-vendor-sources/group-analytics-fuel-vendor-sources.component';
 import { GroupAnalyticsMarketShareComponent } from './group-analytics/group-analytics-market-share/group-analytics-market-share.component';
+import { GroupCustomersHomeComponent } from './group-customers/group-customers-home/group-customers-home.component';
+import { GroupCustomersGridComponent } from './group-customers/group-customers-grid/group-customers-grid.component';
 import { FlightWatchComponent } from './flight-watch/flight-watch/flight-watch.component';
 import { FlightWatchMapComponent } from './flight-watch/flight-watch-map/flight-watch-map.component';
 import { FlightWatchAircraftInfoComponent } from './flight-watch/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
@@ -178,7 +184,7 @@ import { AutocompleteSearchComponent } from '../shared/components/autocomplete-s
 import { AppPipesModule } from '../app-pipes.module';
 
 import { ClickStopPropagationDirective } from '../shared/directives/click-stop-propagation.directive';
-import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-airport-arrivals-depatures/analytics-airport-watch-status-marker.pipe';
+import { GroupAnalyticsEmailTemplateDialogComponent } from './group-analytics/group-analytics-email-template-dialog/group-analytics-email-template-dialog.component';
 
 @NgModule({
     imports: [
@@ -239,6 +245,7 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         ResizableModule,
         MultiSelectModule,
         DropdownModule,
+        Ej2MultiSelectModule,
     ],
     declarations: [
         AuthtokenComponent,
@@ -337,9 +344,13 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         TableGlobalSearchComponent,
         GroupAnalyticsHomeComponent,
         GroupAnalyticsGenerateDialogComponent,
+        GroupAnalyticsEmailPricingDialogComponent,
         GroupAnalyticsCustomerStatisticsComponent,
         GroupAnalyticsFuelVendorSourcesComponent,
         GroupAnalyticsMarketShareComponent,
+        GroupAnalyticsEmailTemplateDialogComponent,
+        GroupCustomersHomeComponent,
+        GroupCustomersGridComponent,
         FeeAndTaxBreakdownComponent,
         TableSettingsComponent,
         AircraftAssignModalComponent,
@@ -347,7 +358,6 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         FlightWatchMapComponent,
         FlightWatchAircraftInfoComponent,
         FlightWatchSettingsComponent,
-        AnalyticsAirportWatchStatusMarkerPipe,
         CsvExportModalComponent,
         AutocompleteSearchComponent,
     ],
@@ -356,11 +366,13 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         FboPricesPanelComponent,
     ],
     providers: [
+        ColumnMenuService,
         PageService,
         SortService,
         FilterService,
         GroupService,
         ToolbarService,
+        DetailRowService,
     ],
 })
 export class PagesModule {

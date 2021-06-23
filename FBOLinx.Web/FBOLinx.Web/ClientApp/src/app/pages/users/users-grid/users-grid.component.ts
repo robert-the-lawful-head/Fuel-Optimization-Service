@@ -86,9 +86,9 @@ export class UsersGridComponent implements OnInit {
         }
 
         if (this.fboInfo == null)
-            value.GroupId = this.groupInfo.oid;
+            {value.GroupId = this.groupInfo.oid;}
         else
-            value.GroupId = this.fboInfo.groupId;
+            {value.GroupId = this.fboInfo.groupId;}
         this.userService.update(value).subscribe((data: any) => {
         });
     }
@@ -101,9 +101,9 @@ export class UsersGridComponent implements OnInit {
         }
 
         if (this.fboInfo == null)
-            value.GroupId = this.groupInfo.oid;
+            {value.GroupId = this.groupInfo.oid;}
         else
-            value.GroupId = this.fboInfo.groupId;
+            {value.GroupId = this.fboInfo.groupId;}
         this.userService.update(value).subscribe((data: any) => {
         });
     }

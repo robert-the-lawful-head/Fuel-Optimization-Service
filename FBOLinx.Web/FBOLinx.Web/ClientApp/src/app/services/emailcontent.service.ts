@@ -25,6 +25,12 @@ export class EmailcontentService {
         });
     }
 
+    public getForGroup(groupId: number) {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId, {
+            headers: this.headers,
+        });
+    }
+
     public add(payload) {
         return this.http.post(this.accessPointUrl, payload, {
             headers: this.headers,

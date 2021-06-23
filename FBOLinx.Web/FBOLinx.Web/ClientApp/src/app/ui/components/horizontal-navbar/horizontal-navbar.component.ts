@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -30,13 +30,13 @@ import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
     },
     providers: [ WindowRef ],
 })
-export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     @Input() title: string;
     @Input() openedSidebar: boolean;
     @Output() sidebarState = new EventEmitter();
     showOverlay: boolean;
     isOpened: boolean;
-    isLocationsLoaded: boolean;
+    isLocationsLoading: boolean;
 
     window: any;
 
@@ -95,23 +95,23 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     ngOnInit() {
-        this.loadCurrentPrices();
-        this.loadLocations();
-        this.loadFboInfo();
-        this.loadNeedsAttentionCustomers();
-    }
+        if ([1, 4].includes(this.sharedService.currentUser.role) || [1, 4].includes(this.sharedService.currentUser.impersonatedRole)) {
+            this.loadCurrentPrices();
+            this.loadLocations();
+            this.loadFboInfo();
+            this.loadNeedsAttentionCustomers();
 
-    ngAfterViewInit() {
-        this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === fboChangedEvent) {
-                this.loadLocations();
-                this.loadFboInfo();
-                this.loadNeedsAttentionCustomers();
-            }
-            if (message === customerUpdatedEvent) {
-                this.loadNeedsAttentionCustomers();
-            }
-        });
+            this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
+                if (message === fboChangedEvent) {
+                    this.loadLocations();
+                    this.loadFboInfo();
+                    this.loadNeedsAttentionCustomers();
+                }
+                if (message === customerUpdatedEvent) {
+                    this.loadNeedsAttentionCustomers();
+                }
+            });
+        }
     }
 
     ngOnDestroy() {
@@ -290,15 +290,16 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         if (!this.currentUser.groupId) {
             return;
         }
+        this.isLocationsLoading = true;
         this.fbosService.getForGroup(this.currentUser.groupId).subscribe(
             (data: any) => {
-                this.isLocationsLoaded = true;
                 if (data && data.length) {
                     this.locations = _.cloneDeep(data);
                 }
+                this.isLocationsLoading = false;
             },
             (error: any) => {
-                this.isLocationsLoaded = true;
+                this.isLocationsLoading = false;
                 console.log(error);
             }
         );
@@ -357,7 +358,7 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     toggleProfileMenu() {
-        if (!this.isLocationsLoaded) {
+        if (this.isLocationsLoading) {
             return;
         }
         this.accountProfileMenu.isOpened = !this.accountProfileMenu.isOpened;

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 // Services
-import { EmailcontentService } from "../../../services/emailcontent.service";
+import { EmailcontentService } from '../../../services/emailcontent.service';
 import { SharedService } from '../../../layouts/shared-service';
 
 import * as SharedEvents from '../../../models/sharedEvents';
@@ -61,12 +61,6 @@ export class EmailTemplatesHomeComponent implements AfterViewInit, OnDestroy, On
     }
 
     public editEmailTemplateClicked($event) {
-        //this.store.dispatch(pricingTemplateGridSet({
-        //    filter: $event.filter,
-        //    page: $event.page,
-        //    order: $event.order,
-        //    orderBy: $event.orderBy,
-        //}));
         this.router.navigate([
             '/default-layout/email-templates/' + $event.emailTemplateId,
         ]).then(() => {
@@ -95,8 +89,6 @@ export class EmailTemplatesHomeComponent implements AfterViewInit, OnDestroy, On
                 .subscribe(() => {
                     this.loadEmailTemplatesData();
                 });
-
-            
         });
     }
 

@@ -27,7 +27,7 @@ export class SystemcontactsNewContactModalComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        if (this.data.email == undefined) {
+        if (!this.data.email) {
             this.data.copyAlerts = true;
             this.data.copyOrders = true;
         }

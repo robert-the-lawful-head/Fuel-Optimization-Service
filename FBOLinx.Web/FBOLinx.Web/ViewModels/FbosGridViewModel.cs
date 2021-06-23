@@ -22,5 +22,7 @@ namespace FBOLinx.Web.ViewModels
         public ICollection<User> Users { get; set; }
         public int Quotes30Days { get; set; }
         public int Orders30Days { get; set; }
+        public double? CostPrice { get; set; }
+        public double? RetailPrice { get; set; }
     }
 }

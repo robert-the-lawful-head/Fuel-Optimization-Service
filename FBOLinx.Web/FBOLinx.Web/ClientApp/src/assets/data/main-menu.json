@@ -45,6 +45,16 @@
         "roles": [ 2 ]
     },
     {
+        "title": "Group Customers",
+        "icon": {
+            "class": "fa fa-group",
+            "bg": "#FFCCBC",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/group-customers",
+        "roles": [ 2 ]
+    },
+    {
         "title": "Groups",
         "icon": {
             "class": "fa fa-group",
