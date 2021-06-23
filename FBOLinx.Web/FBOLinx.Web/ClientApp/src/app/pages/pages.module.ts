@@ -57,6 +57,7 @@ import {
     SortService,
     ToolbarService,
 } from '@syncfusion/ej2-angular-grids';
+import { MultiSelectModule as Ej2MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
 import { ResizableModule } from 'angular-resizable-element';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
@@ -244,6 +245,7 @@ import { GroupAnalyticsEmailTemplateDialogComponent } from './group-analytics/gr
         ResizableModule,
         MultiSelectModule,
         DropdownModule,
+        Ej2MultiSelectModule,
     ],
     declarations: [
         AuthtokenComponent,

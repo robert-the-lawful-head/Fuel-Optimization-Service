@@ -135,6 +135,17 @@
                         </div>
                     </div>
                 </div>
+                <div *ngIf="[10].indexOf(column.columnFormat) > -1" class="col-12">
+                    <div (click)="$event.stopPropagation()" class="mb-2 mt-2">
+                        <ejs-multiselect
+                            [dataSource]="options"
+                            [fields]="{ text: optionLabel, value: optionValue }"
+                            placeholder="Select filters"
+                            [showSelectAll]="true"
+                            [(ngModel)]="filter.optionsFilter"
+                        ></ejs-multiselect>
+                    </div>
+                </div>
                 <div *ngIf="isFilterOpen" class="col-12">
                     <div class="container-fluid">
                         <div class="row pb-3">
