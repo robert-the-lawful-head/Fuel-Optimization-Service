@@ -6,13 +6,17 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**DeleteScheduledLegData**](ScheduledTripApi.md#deletescheduledlegdata) | **DELETE** /api/ScheduledTrip/integration/leg/{legIdentifier} | Delete a previously POSTed leg with a matching [legIdentifier].
 [**DeleteScheduledTripSettings**](ScheduledTripApi.md#deletescheduledtripsettings) | **DELETE** /api/ScheduledTrip/settings/{id} | 
+[**DeleteSchedulingNoteFailures**](ScheduledTripApi.md#deleteschedulingnotefailures) | **DELETE** /api/ScheduledTrip/scheduling-note-failures/{id} | Delete scheduling note failures
 [**GetCurrentScheduledTrips**](ScheduledTripApi.md#getcurrentscheduledtrips) | **GET** /api/ScheduledTrip/current | Fetch upcoming scheduled trip info pulled from the user&#39;s scheduling system.
 [**GetFuelOrderDetailsForScheduledLeg**](ScheduledTripApi.md#getfuelorderdetailsforscheduledleg) | **GET** /api/ScheduledTrip/integration/fuelorderdetails/{legIdentifier} | Fetch the [transaction] and [generatedFuelComment] associated with the fuel order that was placed for the specified leg tied to the [legIdentifier].
 [**GetScheduledTripSettings**](ScheduledTripApi.md#getscheduledtripsettings) | **GET** /api/ScheduledTrip/settings | 
 [**GetScheduledTripsByDateRange**](ScheduledTripApi.md#getscheduledtripsbydaterange) | **GET** /api/ScheduledTrip/by-date-range | Fetch scheduled trip info pulled from the user&#39;s scheduling system by date range.
+[**GetSchedulingNoteFailures**](ScheduledTripApi.md#getschedulingnotefailures) | **GET** /api/ScheduledTrip/scheduling-note-failures/{transactionId}/{userId} | Get scheduling note failures by transactionId and userId
 [**PostScheduledLegData**](ScheduledTripApi.md#postscheduledlegdata) | **POST** /api/ScheduledTrip/integration/leg | Post a leg from the user&#39;s scheduling system as an object [ScheduledLegData] and it&#39;s corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner&#39;s side.
 [**PostScheduledTripSettings**](ScheduledTripApi.md#postscheduledtripsettings) | **POST** /api/ScheduledTrip/settings | 
+[**PostSchedulingNoteFailures**](ScheduledTripApi.md#postschedulingnotefailures) | **POST** /api/ScheduledTrip/scheduling-note-failures | Post scheduling note failures
 [**UpdateScheduledTripSettings**](ScheduledTripApi.md#updatescheduledtripsettings) | **PUT** /api/ScheduledTrip/settings | 
+[**UpdateSchedulingNoteFailures**](ScheduledTripApi.md#updateschedulingnotefailures) | **PUT** /api/ScheduledTrip/scheduling-note-failures | Update scheduling note failures
 
 
 <a name="deletescheduledlegdata"></a>
@@ -140,6 +144,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteScheduledTripSettingsResponse**](DeleteScheduledTripSettingsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="deleteschedulingnotefailures"></a>
+# **DeleteSchedulingNoteFailures**
+> DeleteSchedulingNoteFailuresResponse DeleteSchedulingNoteFailures (int? id)
+
+Delete scheduling note failures
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class DeleteSchedulingNoteFailuresExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ScheduledTripApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Delete scheduling note failures
+                DeleteSchedulingNoteFailuresResponse result = apiInstance.DeleteSchedulingNoteFailures(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ScheduledTripApi.DeleteSchedulingNoteFailures: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**DeleteSchedulingNoteFailuresResponse**](DeleteSchedulingNoteFailuresResponse.md)
 
 ### Authorization
 
@@ -427,6 +500,77 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="getschedulingnotefailures"></a>
+# **GetSchedulingNoteFailures**
+> SchedulingNoteFailuresResponse GetSchedulingNoteFailures (int? transactionId, int? userId)
+
+Get scheduling note failures by transactionId and userId
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetSchedulingNoteFailuresExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ScheduledTripApi();
+            var transactionId = 56;  // int? | 
+            var userId = 56;  // int? | 
+
+            try
+            {
+                // Get scheduling note failures by transactionId and userId
+                SchedulingNoteFailuresResponse result = apiInstance.GetSchedulingNoteFailures(transactionId, userId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ScheduledTripApi.GetSchedulingNoteFailures: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **transactionId** | **int?**|  | 
+ **userId** | **int?**|  | 
+
+### Return type
+
+[**SchedulingNoteFailuresResponse**](SchedulingNoteFailuresResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="postscheduledlegdata"></a>
 # **PostScheduledLegData**
 > PostScheduledLegFromIntegrationResponse PostScheduledLegData (PostScheduledLegFromIntegrationRequest body)
@@ -566,6 +710,75 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="postschedulingnotefailures"></a>
+# **PostSchedulingNoteFailures**
+> PostSchedulingNoteFailuresResponse PostSchedulingNoteFailures (PostSchedulingNoteFailuresRequest body)
+
+Post scheduling note failures
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class PostSchedulingNoteFailuresExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ScheduledTripApi();
+            var body = new PostSchedulingNoteFailuresRequest(); // PostSchedulingNoteFailuresRequest |  (optional) 
+
+            try
+            {
+                // Post scheduling note failures
+                PostSchedulingNoteFailuresResponse result = apiInstance.PostSchedulingNoteFailures(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ScheduledTripApi.PostSchedulingNoteFailures: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostSchedulingNoteFailuresRequest**](PostSchedulingNoteFailuresRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostSchedulingNoteFailuresResponse**](PostSchedulingNoteFailuresResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="updatescheduledtripsettings"></a>
 # **UpdateScheduledTripSettings**
 > UpdateScheduledTripSettingsResponse UpdateScheduledTripSettings (UpdateScheduledTripSettingsRequest body)
@@ -622,6 +835,75 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**UpdateScheduledTripSettingsResponse**](UpdateScheduledTripSettingsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="updateschedulingnotefailures"></a>
+# **UpdateSchedulingNoteFailures**
+> UpdateSchedulingNoteFailuresResponse UpdateSchedulingNoteFailures (UpdateSchedulingNoteFailuresRequest body)
+
+Update scheduling note failures
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class UpdateSchedulingNoteFailuresExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ScheduledTripApi();
+            var body = new UpdateSchedulingNoteFailuresRequest(); // UpdateSchedulingNoteFailuresRequest |  (optional) 
+
+            try
+            {
+                // Update scheduling note failures
+                UpdateSchedulingNoteFailuresResponse result = apiInstance.UpdateSchedulingNoteFailures(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ScheduledTripApi.UpdateSchedulingNoteFailures: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**UpdateSchedulingNoteFailuresRequest**](UpdateSchedulingNoteFailuresRequest.md)|  | [optional] 
+
+### Return type
+
+[**UpdateSchedulingNoteFailuresResponse**](UpdateSchedulingNoteFailuresResponse.md)
 
 ### Authorization
 

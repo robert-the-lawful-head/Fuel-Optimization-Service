@@ -9,7 +9,7 @@ Method | HTTP request | Description
 [**DeleteCredentials**](UserApi.md#deletecredentials) | **DELETE** /api/User/credentials/{id} | Deletes user credentials based on Id
 [**DeleteUserFromIFlightPlanner**](UserApi.md#deleteuserfromiflightplanner) | **DELETE** /api/User/iflightplanner/user | Internal use only - Delete a user from iFlightPlanner to stop the flight planning integration.
 [**ExchangeRefreshToken**](UserApi.md#exchangerefreshtoken) | **POST** /api/User/refreshtoken | Exchanges a valid [RefreshToken] and expired [AccessToken] for a new [RefreshToken] and [AccessToken].
-[**GetAuthenticatedUser**](UserApi.md#getauthenticateduser) | **GET** /api/User | Fetch a user by their [id].
+[**GetAuthenticatedUser**](UserApi.md#getauthenticateduser) | **GET** /api/User | Fetch the currently authenticated user.
 [**GetCompanyUserProfiles**](UserApi.md#getcompanyuserprofiles) | **GET** /api/User/company-user-profiles/by-company/list | Fetches all user profiles by companyId
 [**GetCredentials**](UserApi.md#getcredentials) | **GET** /api/User/credentials/{id} | Fetches user credentials by Id
 [**GetCredentialsList**](UserApi.md#getcredentialslist) | **GET** /api/User/credentials/list | Fetches all user credentials
@@ -373,9 +373,9 @@ Name | Type | Description  | Notes
 # **GetAuthenticatedUser**
 > CustomerDataDTO GetAuthenticatedUser ()
 
-Fetch a user by their [id].
+Fetch the currently authenticated user.
 
-The authenticated user must have access to view this user's record.
+
 
 ### Example
 ```csharp
@@ -405,7 +405,7 @@ namespace Example
 
             try
             {
-                // Fetch a user by their [id].
+                // Fetch the currently authenticated user.
                 CustomerDataDTO result = apiInstance.GetAuthenticatedUser();
                 Debug.WriteLine(result);
             }

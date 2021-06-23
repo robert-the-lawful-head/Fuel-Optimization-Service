@@ -41,7 +41,7 @@ namespace IO.Swagger.Api
         /// <returns>ExchangeRefreshTokenResponse</returns>
         ExchangeRefreshTokenResponse ExchangeRefreshToken (ExchangeRefreshTokenRequest body);
         /// <summary>
-        /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
+        /// Fetch the currently authenticated user. 
         /// </summary>
         /// <returns>CustomerDataDTO</returns>
         CustomerDataDTO GetAuthenticatedUser ();
@@ -358,7 +358,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
+        /// Fetch the currently authenticated user. 
         /// </summary>
         /// <returns>CustomerDataDTO</returns>            
         public CustomerDataDTO GetAuthenticatedUser ()
