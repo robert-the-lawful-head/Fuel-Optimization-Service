@@ -34,6 +34,13 @@ namespace IO.Swagger.Model {
     public MostCommonReportedRampFeeResultDTO CrowdSourcedRampFee { get; set; }
 
     /// <summary>
+    /// Gets or Sets AllReportedRampFees
+    /// </summary>
+    [DataMember(Name="allReportedRampFees", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "allReportedRampFees")]
+    public List<MostCommonReportedRampFeeResultDTO> AllReportedRampFees { get; set; }
+
+    /// <summary>
     /// Gets or Sets CompanySpecificFboDetails
     /// </summary>
     [DataMember(Name="companySpecificFboDetails", EmitDefaultValue=false)]
@@ -61,6 +68,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "locationSpecificPaymentMethodCollection")]
     public List<LocationSpecificPaymentMethodDTO> LocationSpecificPaymentMethodCollection { get; set; }
 
+    /// <summary>
+    /// Gets or Sets ServicesAndFees
+    /// </summary>
+    [DataMember(Name="servicesAndFees", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "servicesAndFees")]
+    public List<ServicesAndFeesByCompanyDTO> ServicesAndFees { get; set; }
+
+    /// <summary>
+    /// Gets or Sets AcukwikFboHandlerDetail
+    /// </summary>
+    [DataMember(Name="acukwikFboHandlerDetail", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "acukwikFboHandlerDetail")]
+    public AcukwikFboHandlerDetailDTO AcukwikFboHandlerDetail { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -72,10 +93,13 @@ namespace IO.Swagger.Model {
       sb.Append("  AcukwikAirport: ").Append(AcukwikAirport).Append("\n");
       sb.Append("  CompanySpecificRampFee: ").Append(CompanySpecificRampFee).Append("\n");
       sb.Append("  CrowdSourcedRampFee: ").Append(CrowdSourcedRampFee).Append("\n");
+      sb.Append("  AllReportedRampFees: ").Append(AllReportedRampFees).Append("\n");
       sb.Append("  CompanySpecificFboDetails: ").Append(CompanySpecificFboDetails).Append("\n");
       sb.Append("  CompanySpecificAirportDetails: ").Append(CompanySpecificAirportDetails).Append("\n");
       sb.Append("  CompanySpecificFuelVendorDetails: ").Append(CompanySpecificFuelVendorDetails).Append("\n");
       sb.Append("  LocationSpecificPaymentMethodCollection: ").Append(LocationSpecificPaymentMethodCollection).Append("\n");
+      sb.Append("  ServicesAndFees: ").Append(ServicesAndFees).Append("\n");
+      sb.Append("  AcukwikFboHandlerDetail: ").Append(AcukwikFboHandlerDetail).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

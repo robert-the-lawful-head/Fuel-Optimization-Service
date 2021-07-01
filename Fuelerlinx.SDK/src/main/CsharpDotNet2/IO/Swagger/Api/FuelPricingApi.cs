@@ -41,13 +41,13 @@ namespace IO.Swagger.Api
         /// <returns>AssociatedDetailsResponse</returns>
         AssociatedDetailsResponse GetAssociatedDetailsForFuelOption (AssociatedDetailsRequest body);
         /// <summary>
-        /// Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user. 
+        /// Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user. 
         /// </summary>
         /// <param name="commaDelimitedIcaos"></param>
         /// <returns>CurrentPricingResponse</returns>
         CurrentPricingResponse GetCurrentPricingForLocation (string commaDelimitedIcaos);
         /// <summary>
-        /// Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user. 
+        /// Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user. 
         /// </summary>
         /// <param name="commaDelimitedIcaos"></param>
         /// <param name="flightType"></param>
@@ -380,7 +380,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user. 
+        /// Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user. 
         /// </summary>
         /// <param name="commaDelimitedIcaos"></param> 
         /// <returns>CurrentPricingResponse</returns>            
@@ -417,7 +417,7 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
-        /// Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user. 
+        /// Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user. 
         /// </summary>
         /// <param name="commaDelimitedIcaos"></param> 
         /// <param name="flightType"></param> 
