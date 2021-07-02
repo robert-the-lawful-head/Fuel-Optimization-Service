@@ -30,6 +30,12 @@ namespace IO.Swagger.Api
         /// <returns>DeleteSchedulingNoteFailuresResponse</returns>
         DeleteSchedulingNoteFailuresResponse DeleteSchedulingNoteFailures (int? id);
         /// <summary>
+        /// Delete the record containing the scheduling trip/leg where the notes were inserted at the time of order for a transaction. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteTransactionSchedulingNotePlacementResponse</returns>
+        DeleteTransactionSchedulingNotePlacementResponse DeleteTransactionSchedulingNotePlacement (int? id);
+        /// <summary>
         /// Fetch upcoming scheduled trip info pulled from the user&#39;s scheduling system. Only records that are scheduled to depart after the current time will be returned.
         /// </summary>
         /// <returns>CurrentScheduledTripsResponse</returns>
@@ -60,6 +66,12 @@ namespace IO.Swagger.Api
         /// <returns>SchedulingNoteFailuresResponse</returns>
         SchedulingNoteFailuresResponse GetSchedulingNoteFailures (int? transactionId, int? userId);
         /// <summary>
+        /// Fetch the scheduling trip/leg where notes were inserted at the time of order for a transaction. 
+        /// </summary>
+        /// <param name="transactionId"></param>
+        /// <returns>TransactionSchedulingNotePlacementListResponse</returns>
+        TransactionSchedulingNotePlacementListResponse GetTransactionSchedulingNotePlacement (int? transactionId);
+        /// <summary>
         /// Post a leg from the user&#39;s scheduling system as an object [ScheduledLegData] and it&#39;s corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner&#39;s side. It is recommended to include the tail number, departure airport, arrival airport, and date/time of the departure/arrival as a minimum when sending information.  Additional information (i.e. pax count, cargo, altitude, fuel on board, etc.) is recommended to help enhance the integration.
         /// </summary>
         /// <param name="body"></param>
@@ -78,6 +90,12 @@ namespace IO.Swagger.Api
         /// <returns>PostSchedulingNoteFailuresResponse</returns>
         PostSchedulingNoteFailuresResponse PostSchedulingNoteFailures (PostSchedulingNoteFailuresRequest body);
         /// <summary>
+        /// Add the scheduling trip/leg where the notes were inserted at the time of order for a transaction. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostTransactionSchedulingNotePlacementResponse</returns>
+        PostTransactionSchedulingNotePlacementResponse PostTransactionSchedulingNotePlacement (PostTransactionSchedulingNotePlacementRequest body);
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="body"></param>
@@ -89,6 +107,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateSchedulingNoteFailuresResponse</returns>
         UpdateSchedulingNoteFailuresResponse UpdateSchedulingNoteFailures (UpdateSchedulingNoteFailuresRequest body);
+        /// <summary>
+        /// Update the scheduling trip/leg where the notes were inserted at the time of order for a transaction. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateTransactionSchedulingNotePlacementResponse</returns>
+        UpdateTransactionSchedulingNotePlacementResponse UpdateTransactionSchedulingNotePlacement (UpdateTransactionSchedulingNotePlacementRequest body);
     }
   
     /// <summary>
@@ -253,6 +277,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteSchedulingNoteFailures: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteSchedulingNoteFailuresResponse) ApiClient.Deserialize(response.Content, typeof(DeleteSchedulingNoteFailuresResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Delete the record containing the scheduling trip/leg where the notes were inserted at the time of order for a transaction. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteTransactionSchedulingNotePlacementResponse</returns>            
+        public DeleteTransactionSchedulingNotePlacementResponse DeleteTransactionSchedulingNotePlacement (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteTransactionSchedulingNotePlacement");
+            
+    
+            var path = "/api/ScheduledTrip/scheduling-note-placement/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteTransactionSchedulingNotePlacement: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteTransactionSchedulingNotePlacement: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteTransactionSchedulingNotePlacementResponse) ApiClient.Deserialize(response.Content, typeof(DeleteTransactionSchedulingNotePlacementResponse), response.Headers);
         }
     
         /// <summary>
@@ -435,6 +496,43 @@ path = path.Replace("{" + "userId" + "}", ApiClient.ParameterToString(userId));
         }
     
         /// <summary>
+        /// Fetch the scheduling trip/leg where notes were inserted at the time of order for a transaction. 
+        /// </summary>
+        /// <param name="transactionId"></param> 
+        /// <returns>TransactionSchedulingNotePlacementListResponse</returns>            
+        public TransactionSchedulingNotePlacementListResponse GetTransactionSchedulingNotePlacement (int? transactionId)
+        {
+            
+            // verify the required parameter 'transactionId' is set
+            if (transactionId == null) throw new ApiException(400, "Missing required parameter 'transactionId' when calling GetTransactionSchedulingNotePlacement");
+            
+    
+            var path = "/api/ScheduledTrip/scheduling-note-placement/{transactionId}/list";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "transactionId" + "}", ApiClient.ParameterToString(transactionId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionSchedulingNotePlacement: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetTransactionSchedulingNotePlacement: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (TransactionSchedulingNotePlacementListResponse) ApiClient.Deserialize(response.Content, typeof(TransactionSchedulingNotePlacementListResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Post a leg from the user&#39;s scheduling system as an object [ScheduledLegData] and it&#39;s corresponding [LegIdentifier].  The scheduling integration partner controls the format of the [ScheduledLegData] and the [LegIdentifier] should be a unique identifier used on the partner&#39;s side. It is recommended to include the tail number, departure airport, arrival airport, and date/time of the departure/arrival as a minimum when sending information.  Additional information (i.e. pax count, cargo, altitude, fuel on board, etc.) is recommended to help enhance the integration.
         /// </summary>
         /// <param name="body"></param> 
@@ -537,6 +635,40 @@ path = path.Replace("{" + "userId" + "}", ApiClient.ParameterToString(userId));
         }
     
         /// <summary>
+        /// Add the scheduling trip/leg where the notes were inserted at the time of order for a transaction. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostTransactionSchedulingNotePlacementResponse</returns>            
+        public PostTransactionSchedulingNotePlacementResponse PostTransactionSchedulingNotePlacement (PostTransactionSchedulingNotePlacementRequest body)
+        {
+            
+    
+            var path = "/api/ScheduledTrip/scheduling-note-placement";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostTransactionSchedulingNotePlacement: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostTransactionSchedulingNotePlacement: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostTransactionSchedulingNotePlacementResponse) ApiClient.Deserialize(response.Content, typeof(PostTransactionSchedulingNotePlacementResponse), response.Headers);
+        }
+    
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="body"></param> 
@@ -602,6 +734,40 @@ path = path.Replace("{" + "userId" + "}", ApiClient.ParameterToString(userId));
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateSchedulingNoteFailures: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateSchedulingNoteFailuresResponse) ApiClient.Deserialize(response.Content, typeof(UpdateSchedulingNoteFailuresResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Update the scheduling trip/leg where the notes were inserted at the time of order for a transaction. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateTransactionSchedulingNotePlacementResponse</returns>            
+        public UpdateTransactionSchedulingNotePlacementResponse UpdateTransactionSchedulingNotePlacement (UpdateTransactionSchedulingNotePlacementRequest body)
+        {
+            
+    
+            var path = "/api/ScheduledTrip/scheduling-note-placement";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateTransactionSchedulingNotePlacement: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateTransactionSchedulingNotePlacement: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateTransactionSchedulingNotePlacementResponse) ApiClient.Deserialize(response.Content, typeof(UpdateTransactionSchedulingNotePlacementResponse), response.Headers);
         }
     
     }
