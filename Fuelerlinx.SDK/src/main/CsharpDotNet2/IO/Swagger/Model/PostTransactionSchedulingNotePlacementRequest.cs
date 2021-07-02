@@ -47,6 +47,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "note")]
     public string Note { get; set; }
 
+    /// <summary>
+    /// Gets or Sets Location
+    /// </summary>
+    [DataMember(Name="location", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "location")]
+    public string Location { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -60,6 +67,7 @@ namespace IO.Swagger.Model {
       sb.Append("  LegNumber: ").Append(LegNumber).Append("\n");
       sb.Append("  SchedulingLegIdentifier: ").Append(SchedulingLegIdentifier).Append("\n");
       sb.Append("  Note: ").Append(Note).Append("\n");
+      sb.Append("  Location: ").Append(Location).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }
