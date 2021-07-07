@@ -419,6 +419,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 localStorage.setItem('fboId', fbo.oid.toString());
                 this.sharedService.currentUser.fboId = fbo.oid;
 
+                this.sharedService.currentUser.icao = fbo.icao;
+
                 this.sharedService.emitChange(fboChangedEvent);
                 this.router.navigate([ '/default-layout/dashboard-fbo/' ]);
             });
