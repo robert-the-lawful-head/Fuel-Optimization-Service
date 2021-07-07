@@ -1132,10 +1132,8 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
-                List<int> airportfbos = await _context.Fboairports.Where(f => f.Icao.Equals(icao)).Select(f => f.Fboid).ToListAsync();
                 var validTransactions = await _context.FuelReq.Where(fr =>
-                    fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && fr.Fboid > 0 &&
-                    airportfbos.Contains(fr.Fboid ?? 0)).ToListAsync();
+                    fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && fr.Fboid.HasValue && fr.Fboid.Value == fboId).ToListAsync();
 
                 var fuelReqs = (from fr in validTransactions
                                       group fr by fr.CustomerId
