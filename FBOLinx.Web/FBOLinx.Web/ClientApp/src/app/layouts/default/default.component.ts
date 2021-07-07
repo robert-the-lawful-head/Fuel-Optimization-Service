@@ -72,24 +72,29 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     ngOnInit() {
-        if ([1, 4].includes(this.sharedService.currentUser.role) || [1, 4].includes(this.sharedService.currentUser.impersonatedRole)) {
+        if (this.canUserSeePricing()) {
             this.loadFboPrices();
             this.checkCurrentPrices();
-
-            this.sharedService.changeEmitted$.subscribe((message) => {
-                if ((message === fboChangedEvent || message === locationChangedEvent) && this.sharedService.currentUser.fboId) {
-                    this.pricingTemplatesService
-                        .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
-                        .subscribe((data: any) => (this.pricingTemplatesData = data));
-                }
-            });
-            this.sharedService.valueChanged$.subscribe((value: any) => {
-                if (value.message === fboPricesUpdatedEvent) {
-                    this.cost = value.JetACost;
-                    this.retail = value.JetARetail;
-                }
-            });
         }
+
+        this.sharedService.changeEmitted$.subscribe((message) => {
+            if (!this.canUserSeePricing())
+                return;
+            if ((message === fboChangedEvent || message === locationChangedEvent) && this.sharedService.currentUser.fboId) {
+                this.pricingTemplatesService
+                    .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+                    .subscribe((data: any) => (this.pricingTemplatesData = data));
+            }
+        });
+        this.sharedService.valueChanged$.subscribe((value: any) => {
+            if (!this.canUserSeePricing())
+                return;
+            if (value.message === fboPricesUpdatedEvent) {
+                this.cost = value.JetACost;
+                this.retail = value.JetARetail;
+            }
+        });
+
         this.layoutClasses = this.getClasses();
     }
 
@@ -173,5 +178,10 @@ export class DefaultLayoutComponent implements OnInit {
                     }
                 }
             });
+    }
+
+    private canUserSeePricing(): boolean {
+        return ([1, 4].includes(this.sharedService.currentUser.role) ||
+            [1, 4].includes(this.sharedService.currentUser.impersonatedRole));
     }
 }

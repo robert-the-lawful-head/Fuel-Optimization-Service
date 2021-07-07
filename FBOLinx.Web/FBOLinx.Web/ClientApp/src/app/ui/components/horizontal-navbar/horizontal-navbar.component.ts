@@ -95,23 +95,25 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        if ([1, 4].includes(this.sharedService.currentUser.role) || [1, 4].includes(this.sharedService.currentUser.impersonatedRole)) {
+        if (this.canUserSeePricing()) {
             this.loadCurrentPrices();
             this.loadLocations();
             this.loadFboInfo();
             this.loadNeedsAttentionCustomers();
-
-            this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
-                if (message === fboChangedEvent) {
-                    this.loadLocations();
-                    this.loadFboInfo();
-                    this.loadNeedsAttentionCustomers();
-                }
-                if (message === customerUpdatedEvent) {
-                    this.loadNeedsAttentionCustomers();
-                }
-            });
         }
+
+        this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
+            if (!this.canUserSeePricing())
+                return;
+            if (message === fboChangedEvent) {
+                this.loadLocations();
+                this.loadFboInfo();
+                this.loadNeedsAttentionCustomers();
+            }
+            if (message === customerUpdatedEvent) {
+                this.loadNeedsAttentionCustomers();
+            }
+        });
     }
 
     ngOnDestroy() {
@@ -400,5 +402,10 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             return false;
         }
         return true;
+    }
+
+    private canUserSeePricing(): boolean {
+        return ([1, 4].includes(this.sharedService.currentUser.role) ||
+            [1, 4].includes(this.sharedService.currentUser.impersonatedRole));
     }
 }
