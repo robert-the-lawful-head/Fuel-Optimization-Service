@@ -478,7 +478,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             //Ramp fee emails, only goes out at 9am Pacific
-            await CheckRampFees();
+            //await CheckRampFees();
         }
 
         private async Task CheckRampFees()

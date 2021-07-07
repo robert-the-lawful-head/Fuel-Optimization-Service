@@ -40,14 +40,9 @@ namespace FBOLinx.ServiceLayer.Test
         public static DistributePricingRequest CreateDistributePricingRequest()
         {
             DistributePricingRequest distributePricingRequest = new DistributePricingRequest();
-            distributePricingRequest.GroupId = 1;
-            distributePricingRequest.FboId = 1;
-            distributePricingRequest.PricingTemplate = new PricingTemplate();
-            distributePricingRequest.PricingTemplate.EmailContentId = 1;
+            distributePricingRequest = CreateDistributePreviewPricingRequest();
             distributePricingRequest.PricingTemplate.Oid = 1;
-            distributePricingRequest.PricingTemplate.Notes = string.Empty;
-            distributePricingRequest.PricingTemplate.MarginType = PricingTemplate.MarginTypes.CostPlus;
-            
+
             return distributePricingRequest;
         }
 
@@ -55,6 +50,7 @@ namespace FBOLinx.ServiceLayer.Test
         {
             CustomerInfoByGroup customerInfoByGroup = new CustomerInfoByGroup();
             customerInfoByGroup.Oid = 1;
+            customerInfoByGroup.CustomerId = 1;
 
             return customerInfoByGroup;
         }
