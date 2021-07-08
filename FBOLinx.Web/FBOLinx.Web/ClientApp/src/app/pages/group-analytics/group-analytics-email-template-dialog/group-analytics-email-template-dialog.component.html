@@ -10,11 +10,18 @@
                             placeholder="Subject" />
                 </mat-form-field>
 
-                <mat-form-field style="max-width: 600px;">
+                <mat-form-field style="max-width: 200px;">
                     <input aria-label="From Email"
                             [(ngModel)]="data.fromAddress"
                             matInput
                             placeholder="From email" />
+                </mat-form-field> @FBOLinx.com
+
+                <mat-form-field style="max-width: 600px;">
+                    <input aria-label="Reply To"
+                            [(ngModel)]="data.replyTo"
+                            matInput
+                            placeholder="Reply To" />
                 </mat-form-field>
             
                 <ejs-richtexteditor #typeEmail
@@ -35,20 +42,18 @@
                         mat-raised-button>
                     Upload File
                 </button>
+                <button *ngIf="logoUrl"
+                        (click)="deleteFile()"
+                        class="ml-1"
+                        color="warn"
+                        mat-raised-button>
+                    Delete
+                </button>
                 <div *ngIf="isLogoUploading">
                     <mat-spinner></mat-spinner>
                 </div>
                 <div *ngIf="logoUrl">
-                    <img src="{{'data:'+logoUrl}}" />
-
-                    <div class="mt-4 mb-2 pl-4">
-                        <button (click)="deleteFile()"
-                               class="mr-1"
-                                color="warn"
-                                mat-raised-button>
-                            Delete
-                        </button>
-                    </div>
+                    <img width="300" height="auto" src="{{'data:'+logoUrl}}" />
                 </div>
             </div>
         </mat-tab>

@@ -28,6 +28,12 @@ export class CustomerinfobygroupService {
         );
     }
 
+    public getCustomersWithContactsByGroup(groupId) {
+        return this.http.get(`${this.accessPointUrl}/group/${groupId}/customers-with-contacts`, {
+            headers: this.headers,
+        });
+    }
+
     public getNeedsAttentionByGroupAndFbo(groupId: number, fboId: number) {
         return this.http.get(
             `${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/needs-attention`,

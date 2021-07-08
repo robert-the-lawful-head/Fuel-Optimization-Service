@@ -129,10 +129,10 @@ namespace FBOLinx.Web.Services
             sendGridMessageWithTemplate.SetTemplateData(message.SendGridGroupCustomerPricingTemplateData);
 
             var pricesAttachment = new SendGrid.Helpers.Mail.Attachment();
-            pricesAttachment.Disposition = "inline";
+            pricesAttachment.Disposition = "attachment";
             pricesAttachment.Content = message.AttachmentBase64String;
-            pricesAttachment.Filename = "prices.png";
-            pricesAttachment.Type = "image/png";
+            pricesAttachment.Filename = "Prices.csv";
+            pricesAttachment.Type = "text/csv";
             pricesAttachment.ContentId = "Prices";
             sendGridMessageWithTemplate.AddAttachment(pricesAttachment);
 
