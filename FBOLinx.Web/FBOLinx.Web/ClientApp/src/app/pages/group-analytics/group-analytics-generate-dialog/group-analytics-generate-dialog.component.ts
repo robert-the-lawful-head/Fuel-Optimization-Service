@@ -78,6 +78,7 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
                     subject: result.emailTemplate.subject,
                     emailContentHtml: result.emailTemplate.emailContentHtml,
                     fromAddress: result.emailTemplate.fromAddress,
+                    replyTo: result.emailTemplate.replyTo,
                 };
 
                 if (!emailTemplate.oid) {

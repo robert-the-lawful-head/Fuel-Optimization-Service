@@ -74,8 +74,8 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerInfoByGroup);
         }
 
-        [HttpGet("group/{groupId}")]
-        public async Task<IActionResult> GetCustomersByGroup([FromRoute] int groupId)
+        [HttpGet("group/{groupId}/customers-with-contacts")]
+        public async Task<IActionResult> GetCustomersWithContactsByGroup([FromRoute] int groupId)
         {
             var contacts = await (
                             from c in _context.Customers
@@ -116,6 +116,38 @@ namespace FBOLinx.Web.Controllers
             });
 
             return Ok(result);
+        }
+
+
+        [HttpGet("group/{groupId}")]
+        public async Task<IActionResult> GetCustomersByGroup([FromRoute] int groupId)
+        {
+            List < CustomersGridViewModel > customerGridVM = await (
+                    from cg in _context.CustomerInfoByGroup
+                    join c in _context.Customers on cg.CustomerId equals c.Oid
+                    join cct in _context.CustomCustomerTypes on c.Oid equals cct.CustomerId
+                    where cg.GroupId == groupId && c.Suspended != true
+                    group cg by new
+                    {
+                        cg.CustomerId,
+                        CustomerInfoByGroupId = cg.Oid,
+                        cg.Company,
+                        FuelerLinxId = c.FuelerlinxId,
+                        CertificateType = cg.CertificateType,
+                        Active = cg.Active,
+                    }
+                    into resultsGroup
+                    select new CustomersGridViewModel()
+                    {
+                        CustomerInfoByGroupId = resultsGroup.Key.CustomerInfoByGroupId,
+                        Active = resultsGroup.Key.Active,
+                        CertificateType = resultsGroup.Key.CertificateType,
+                        CustomerId = resultsGroup.Key.CustomerId,
+                        Company = resultsGroup.Key.Company,
+                        IsFuelerLinxCustomer = resultsGroup.Key.FuelerLinxId > 0,
+                    }).ToListAsync();
+
+            return Ok(customerGridVM);
         }
 
         // GET: api/CustomerInfoByGroup/group/5/fbo/6
@@ -653,7 +685,7 @@ namespace FBOLinx.Web.Controllers
                 await _priceDistributionService.SendCustomerPriceEmail(groupId, result, contacts);
             }
 
-            return Ok(result);
+            return Ok(true);
         }
 
         private bool CustomerInfoByGroupExists(int id)

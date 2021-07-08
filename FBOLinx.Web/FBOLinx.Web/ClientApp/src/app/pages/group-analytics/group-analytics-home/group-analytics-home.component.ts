@@ -98,6 +98,7 @@ export class GroupAnalyticsHomeComponent implements OnInit {
                 subject: result.subject,
                 emailContentHtml: result.emailContentHtml,
                 fromAddress: result.fromAddress,
+                replyTo: result.replyTo,
             };
 
             if (!this.emailTemplate || !this.emailTemplate.oid) {
@@ -113,7 +114,7 @@ export class GroupAnalyticsHomeComponent implements OnInit {
     }
 
     private loadCustomers() {
-        this.customerInfoByGroupService.getByGroup(this.sharedService.currentUser.groupId)
+        this.customerInfoByGroupService.getCustomersWithContactsByGroup(this.sharedService.currentUser.groupId)
             .subscribe((customers: any[]) => {
                 this.customers = customers;
             });
@@ -131,6 +132,18 @@ export class GroupAnalyticsHomeComponent implements OnInit {
         this.emailContentService.getForGroup(this.sharedService.currentUser.groupId)
             .subscribe((data: EmailTemplate) => {
                 this.emailTemplate = data;
+
+                if (!this.emailTemplate) {
+                    this.emailTemplate = {
+                        subject: '',
+                        emailContentHtml: '',
+                        fromAddress: 'donotreply',
+                        groupId: this.sharedService.currentUser.groupId
+                    };
+                }
+                if (!this.emailTemplate.fromAddress) {
+                    this.emailTemplate.fromAddress = 'donotreply';
+                }
             });
     }
 

@@ -9,11 +9,18 @@
                     placeholder="Subject" />
             </mat-form-field>
 
-            <mat-form-field style="max-width: 600px;">
+            <mat-form-field style="max-width: 200px;">
                 <input aria-label="From email"
                     [(ngModel)]="data.emailTemplate.fromAddress"
                     matInput
                     placeholder="From email" />
+            </mat-form-field> @FBOLinx.com
+
+            <mat-form-field style="max-width: 600px;">
+                <input aria-label="Reply To"
+                    [(ngModel)]="data.emailTemplate.replyTo"
+                    matInput
+                    placeholder="Reply To" />
             </mat-form-field>
     
             <ejs-richtexteditor

@@ -331,7 +331,10 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.editFboClicked.emit(result);
+                this.editFboClicked.emit({
+                    fbo: result,
+                    searchValue: this.searchValue
+                });
             }
         });
     }
