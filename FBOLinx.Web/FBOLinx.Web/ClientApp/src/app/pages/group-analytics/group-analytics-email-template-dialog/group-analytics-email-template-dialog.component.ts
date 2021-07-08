@@ -23,15 +23,6 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        if (!this.data.subject) {
-            this.data.subject = '';
-        }
-        if (!this.data.emailContentHtml) {
-            this.data.emailContentHtml = '';
-        }
-        if (!this.data.fromAddress) {
-            this.data.fromAddress = '';
-        }
         this.logoUrl = this.data.logoUrl;
     }
 

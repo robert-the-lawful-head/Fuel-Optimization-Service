@@ -455,21 +455,31 @@ namespace FBOLinx.Web.Services
             var emailContent = _context.EmailContent.Where(e => e.GroupId == groupId).FirstOrDefault();
 
             //Add the price breakdown as an image to prevent parsing
-            byte[] priceBreakdownImage = GetCustomerPriceBreakdownImage(info);
+            string priceBreakdownCsvContent = GetCustomerPriceBreakdownCSV(info);
 
             //Add email content to MailMessage
-            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
-            mailMessage.From = new MailAddress(
-                emailContent == null || string.IsNullOrEmpty(emailContent.FromAddress)
-                ? MailService.GetFboLinxAddress("donotreply")
-                : emailContent.FromAddress);
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage
+            {
+                From = new MailAddress(
+                    MailService.GetFboLinxAddress(
+                        emailContent == null || string.IsNullOrEmpty(emailContent.FromAddress)
+                        ? "donotreply"
+                        : emailContent.FromAddress
+                    )
+                )
+            };
+
+            if (emailContent != null && !string.IsNullOrEmpty(emailContent.ReplyTo))
+            {
+                mailMessage.ReplyToList.Add(emailContent.ReplyTo);
+            }
 
             foreach (var email in emails)
             {
                 mailMessage.To.Add(email);
             }
 
-            mailMessage.AttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
+            mailMessage.AttachmentBase64String = Convert.ToBase64String(Encoding.UTF8.GetBytes(priceBreakdownCsvContent));
 
             var logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.GroupId == groupId).ToListAsync();
             if (logo.Count > 0)
@@ -491,13 +501,7 @@ namespace FBOLinx.Web.Services
             await _MailService.SendAsync(mailMessage);
         }
 
-        private byte[] GetCustomerPriceBreakdownImage(GroupCustomerAnalyticsResponse info)
-        {
-            string html = GetCustomerPriceBreakdownHTML(info);
-            return FBOLinx.Core.Utilities.HTML.CreateImageFromHTML(html);
-        }
-
-        private string GetCustomerPriceBreakdownHTML(GroupCustomerAnalyticsResponse info)
+        private string GetCustomerPriceBreakdownCSV(GroupCustomerAnalyticsResponse info)
         {
             var defaultGroupedFboPrices = info.GroupCustomerFbos.FirstOrDefault();
             var defaultPrice = defaultGroupedFboPrices.Prices.FirstOrDefault();
@@ -577,25 +581,25 @@ namespace FBOLinx.Web.Services
         private string GetCustomerPriceBreakdownTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
         {
             if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
-                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "SingleColumn.html");
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "SingleColumn.csv");
             else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
-                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsApplicableFlightTypesOnly.html");
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsApplicableFlightTypesOnly.csv");
             else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
-                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsDepartureOnly.html");
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsDepartureOnly.csv");
             else
-                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumns.html");
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumns.csv");
         }
 
         private string GetCustomerPriceBreakdownRowTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
         {
             if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
-                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "SingleColumnRow.html");
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "SingleColumnRow.csv");
             else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
-                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsApplicableFlightTypesOnlyRow.html");
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsApplicableFlightTypesOnlyRow.csv");
             else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
-                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsDepartureOnlyRow.html");
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsDepartureOnlyRow.csv");
             else
-                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumnsRow.html");
+                return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumnsRow.csv");
         }
 
         private async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroup customer)

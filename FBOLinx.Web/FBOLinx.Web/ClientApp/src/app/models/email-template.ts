@@ -6,4 +6,5 @@ export type EmailTemplate = {
     fboId?: number;
     groupId?: number;
     fromAddress?: string;
+    replyTo?: string;
 };
