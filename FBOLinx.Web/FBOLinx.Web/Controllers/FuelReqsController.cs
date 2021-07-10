@@ -1160,7 +1160,7 @@ namespace FBOLinx.Web.Controllers
                 var customers = await _context.CustomerInfoByGroup
                                         .Where(c => c.GroupId.Equals(groupId))
                                         .Include(x => x.Customer)
-                                        .Where(x => (x.Customer != null && x.Customer.Suspended != true))
+                                        .Where(x => (x.Customer != null))
                                         .Select(c => new
                                         {
                                             c.CustomerId,
@@ -1179,13 +1179,23 @@ namespace FBOLinx.Web.Controllers
                 string fbo = await _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefaultAsync();
                 fbolinxOrdersRequest.Fbo = fbo;
                 List<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerFBOOrdersCount = _fuelerLinxService.GetCustomerFBOTransactionsCount(fbolinxOrdersRequest).Result;
-
+                
+                //Fill-in customers that don't exist in the group anymore
+                List<int> customerFuelerlinxIds = customers.Where(x => (x.Customer?.FuelerlinxId).GetValueOrDefault() != 0)
+                    .Select(x => Math.Abs((x.Customer?.FuelerlinxId).GetValueOrDefault())).ToList();
+                var fuelerlinxCompanyIdsNotInGroup = fuelerlinxCustomerFBOOrdersCount.Where(x =>
+                    !customerFuelerlinxIds.Contains(x.FuelerLinxCustomerId.GetValueOrDefault())).Select(x => x.FuelerLinxCustomerId.GetValueOrDefault()).Where(x => x > 0).Distinct();
+                foreach (var fuelerlinxCompanyId in fuelerlinxCompanyIdsNotInGroup)
+                {
+                    var existingCustomerRecord = await _context.Customers.FirstOrDefaultAsync(x =>
+                        Math.Abs(x.FuelerlinxId.GetValueOrDefault()) == fuelerlinxCompanyId);
+                    customers.Add(new { CustomerId = (existingCustomerRecord?.Oid).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
+                }
 
                 List<object> tableData = new List<object>();
                 foreach (var customer in customers)
                 {
-                    //var fuelerLinxCustomerID = _context.Customers.Where(c => c.Oid.Equals(customer.CustomerId)).Select(c => c.FuelerlinxId).FirstOrDefault();
-                    var fuelerLinxCustomerID = customer.Customer?.FuelerlinxId;
+                    var fuelerLinxCustomerID = Math.Abs((customer.Customer?.FuelerlinxId).GetValueOrDefault());
                     var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
                     var companyQuotes = pricingLogs.Where(c => c.CreatedDate >= request.StartDateTime && c.CreatedDate <= request.EndDateTime && c.CustomerId.Equals(customer.CustomerId)).Count();
                     var companyPricingLog = pricingLogs.Where(c => c.CustomerId.Equals(customer.CustomerId)).OrderByDescending(c => c.CreatedDate).FirstOrDefault();
