@@ -27,6 +27,8 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     keys: string[] = [];
     styleLoaded = false;
     isCommercialInvisible = true;
+    previousMarker: FlightWatch;
+    focusedMarker: FlightWatch;
 
     constructor() {
     }
@@ -48,9 +50,29 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         this.map.on('styledata', () => this.mapStyleLoaded());
 
         AIRCRAFT_IMAGES.forEach(image => {
-            this.map.loadImage(image.url, (err, imageData) => {
-                this.map.addImage(`aircraft_image_${image.id}`, imageData);
-            });
+            const img = new Image(image.size, image.size);
+            img.onload = ()=> {
+                this.map.addImage(`aircraft_image_${image.id}`, img);
+            };
+            img.src = image.url;
+
+            const reversedImg = new Image(image.size, image.size);
+            reversedImg.onload = ()=> {
+                this.map.addImage(`aircraft_image_${image.id}_reversed`, reversedImg);
+            };
+            reversedImg.src = image.reverseUrl;
+
+            const blueImg = new Image(image.size, image.size);
+            blueImg.onload = ()=> {
+                this.map.addImage(`aircraft_image_${image.id}_blue`, blueImg);
+            };
+            blueImg.src = image.blueUrl;
+
+            const blueReversedImg = new Image(image.size, image.size);
+            blueReversedImg.onload = ()=> {
+                this.map.addImage(`aircraft_image_${image.id}_reversed_blue`, blueReversedImg);
+            };
+            blueReversedImg.src = image.blueReverseUrl;
         });
     }
 
@@ -141,7 +163,11 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                         id,
                         type: 'symbol',
                         layout: {
-                            'icon-image': `aircraft_image_${atype}`,
+                            'icon-image': `aircraft_image_${atype}${
+                                id === this.focusedMarker?.oid.toString() ? '_reversed' : ''
+                            }${
+                                row.hasFuelOrders ? '_blue' : ''
+                            }`,
                             'icon-size': 0.5,
                             'icon-rotate': row.trackingDegree ?? 0,
                             'icon-allow-overlap': true
@@ -153,11 +179,48 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
+    getAircraftTypeCode(row: FlightWatch)  {
+        let atype = row.aircraftTypeCode;
+        if (!AIRCRAFT_IMAGES.find(ai => ai.id === atype)) {
+            atype = 'default';
+        }
+        return atype;
+    }
+
     clickHandler(e: mapboxgl.MapMouseEvent & {
         features?: mapboxgl.MapboxGeoJSONFeature[];
-    } & mapboxgl.EventData, self: any) {
+    } & mapboxgl.EventData, self: FlightWatchMapComponent) {
+        if (self.previousMarker) {
+            this.map.setLayoutProperty(
+                `aircraft_${self.previousMarker.oid}`,
+                'icon-image',
+                `aircraft_image_${self.getAircraftTypeCode(self.previousMarker)}${
+                    self.previousMarker.hasFuelOrders ? '_blue' : ''
+                }`
+            );
+        }
+
         const id = e.features[0].properties.id;
-        self.markerClicked.emit(this.data[id]);
+        if (self.focusedMarker?.oid === Number(id)) {
+            self.focusedMarker = undefined;
+        } else {
+            self.focusedMarker = self.data[id];
+        }
+        self.markerClicked.emit(self.data[id]);
+
+        if (self.focusedMarker) {
+            self.previousMarker = Object.assign({}, self.focusedMarker);
+        } else {
+            self.previousMarker = undefined;
+        }
+
+        this.map.setLayoutProperty(
+            `aircraft_${id}`,
+            'icon-image',
+            `aircraft_image_${self.getAircraftTypeCode(self.data[id])}${self.focusedMarker ? '_reversed' : ''}${
+                self.focusedMarker?.hasFuelOrders ? '_blue' : ''
+            }`
+        );
     }
 
     cursorPointer(cursor: string, self: any) {

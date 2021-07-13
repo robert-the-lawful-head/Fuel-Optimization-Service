@@ -57,7 +57,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.mapLoadSubscription = timer(0, 3000).subscribe(() => this.loadAirportWatchData());
+        this.mapLoadSubscription = timer(0, 5000).subscribe(() => this.loadAirportWatchData());
     }
 
     ngOnDestroy() {
@@ -74,7 +74,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         if (!this.loading) {
             this.loading = true;
             this.airportWatchFetchSubscription =
-                this.airportWatchService.getAll(this.sharedService.currentUser.fboId)
+                this.airportWatchService.getAll(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
                     .subscribe((data: any) => {
                         if (!this.center) {
                             this.center = { lat: data.fboLocation.latitude, lng: data.fboLocation.longitude };
