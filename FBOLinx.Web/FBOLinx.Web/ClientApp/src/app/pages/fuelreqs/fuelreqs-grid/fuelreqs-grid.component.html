@@ -95,7 +95,9 @@
             <ng-container matColumnDef="quotedPpg">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>PPG</th>
                 <td *matCellDef="let fuelreq"
-                    mat-cell>{{ fuelreq.oid == 0 ? "CONFIDENTIAL" : fuelreq.quotedPpg | currency:'USD':'symbol':'1.4-4' }}</td>
+                    mat-cell>
+                    {{ fuelreq.oid == 0 ? "CONFIDENTIAL" : fuelreq.quotedPpg | currency:'USD':'symbol':'1.4-4' }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="tailNumber">
@@ -125,7 +127,12 @@
 
             <ng-container matColumnDef="sourceId">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>FuelerLinx ID</th>
-                <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.sourceId }}</td>
+                <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.sourceId }}</td> 
+            </ng-container>
+
+            <ng-container matColumnDef="cancelled">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Transaction Status</th>
+                <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.cancelled ? "Cancelled" : "Live" }}</td>
             </ng-container>
 
             <ng-container matColumnDef="delete">

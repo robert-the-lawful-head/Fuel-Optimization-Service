@@ -102,6 +102,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
                     Email: item.email,
                     ID: item.oid,
                     'Fuelerlinx ID': item.sourceId,
+                    'Transaction Status': item.cancelled ? 'Cancelled' : 'Live'
                 }));
                 const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
                 const wb: XLSX.WorkBook = XLSX.utils.book_new();
