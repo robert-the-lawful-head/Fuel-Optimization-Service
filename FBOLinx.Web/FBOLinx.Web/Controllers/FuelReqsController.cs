@@ -223,6 +223,29 @@ namespace FBOLinx.Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPut("cancel/id/{id}")]
+        public async Task<IActionResult> CancelFuelRequest([FromRoute] int id)
+        {
+            var fuelReq = await _context.FuelReq.Where(f => f.Oid == id).FirstOrDefaultAsync();
+            fuelReq.Cancelled = true;
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPut("updatedatetimes/id/{id}")]
+        public async Task<IActionResult> UpdateDateTimes([FromRoute] int id, [FromBody] FuelReqUpdateDateTimesRequest request)
+        {
+            var fuelReq = await _context.FuelReq.Where(f => f.Oid == id).FirstOrDefaultAsync();
+            fuelReq.Eta = request.Eta;
+            fuelReq.Etd = request.Etd;
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
         [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
         [HttpPost("fbo/{fboId}/create")]
         public async Task<IActionResult> CreateFuelReqByFbo([FromRoute] int fboId, [FromBody] FuelReqRequest request)
