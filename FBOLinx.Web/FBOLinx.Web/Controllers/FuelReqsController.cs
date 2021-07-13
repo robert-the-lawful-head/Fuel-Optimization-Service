@@ -223,11 +223,11 @@ namespace FBOLinx.Web.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut("cancel/id/{id}")]
-        public async Task<IActionResult> CancelFuelRequest([FromRoute] int id)
+        [HttpPut("canceluncancel/id/{id}")]
+        public async Task<IActionResult> CancelUnCancelFuelRequest([FromRoute] int id)
         {
             var fuelReq = await _context.FuelReq.Where(f => f.Oid == id).FirstOrDefaultAsync();
-            fuelReq.Cancelled = true;
+            fuelReq.Cancelled = !fuelReq.Cancelled;
             await _context.SaveChangesAsync();
 
             return Ok();
