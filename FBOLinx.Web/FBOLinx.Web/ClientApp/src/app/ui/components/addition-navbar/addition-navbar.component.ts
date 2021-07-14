@@ -21,6 +21,7 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { SharedService } from '../../../layouts/shared-service';
 import { DistributionService } from '../../../services/distribution.service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
+import { EmailcontentService } from '../../../services/emailcontent.service';
 
 // Components
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
@@ -63,6 +64,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
 
     message: string;
     private priceTemplatesForSending: any[];
+    private priceTemplatesEmailContent: any[];
     private pricesExpired: boolean;
 
     constructor(
@@ -72,6 +74,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         private templateDialog: MatDialog,
         private distributionService: DistributionService,
         private customerContactsService: CustomercontactsService,
+        private emailContentService: EmailcontentService,
         private expiredPricingDialog: MatDialog
     ) {
         this.title = 'Distribute Prices';
@@ -216,12 +219,50 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         this.checkExpiredPrices(this.filteredTemplate);
 
         if (!this.pricesExpired) {
-            this.customerContactsService
-                .getCustomerEmailCountByGroupAndFBOAndPricing(
-                    this.sharedService.currentUser.groupId,
-                    this.sharedService.currentUser.fboId,
-                    templateId
-                ).subscribe((data: number) => {
+            if (this.filteredTemplate.emailContentId > 0) {
+                this.emailContentService.get({ oid: this.filteredTemplate.emailContentId }).
+                    subscribe((data: any) => {
+                        if (data != null && data.oid > 0) {
+                            this.checkCustomerContacts(templateId);
+                        }
+                        else {
+                            const dialogRef = this.templateDialog.open(
+                                NotificationComponent,
+                                {
+                                    data: { text: 'Please assign an Email Template to this ITP Template before proceeding.' }
+                                }
+                            );
+
+                            dialogRef.afterClosed().subscribe();
+                        }
+                    });
+            }
+            else {
+                this.checkCustomerContacts(templateId);
+            }
+        }
+    }
+
+    async delay(ms: number) {
+        await new Promise<void>((resolve) =>
+            setTimeout(() => resolve(), ms)
+        ).then(() => console.log('fired'));
+    }
+
+    changeSentOption(item) {
+        item.toSend = !item.toSend;
+        if (!item.toSend) {
+            this.selectAll = false;
+        }
+    }
+
+    checkCustomerContacts(templateId) {
+        this.customerContactsService
+            .getCustomerEmailCountByGroupAndFBOAndPricing(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId,
+                templateId
+            ).subscribe((data: number) => {
                 if (data > 0) {
                     const dialogRef = this.templateDialog.open(
                         DistributionWizardReviewComponent,
@@ -254,20 +295,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                     dialogRef.afterClosed().subscribe();
                 }
             });
-        }
-    }
-
-    async delay(ms: number) {
-        await new Promise<void>((resolve) =>
-            setTimeout(() => resolve(), ms)
-        ).then(() => console.log('fired'));
-    }
-
-    changeSentOption(item) {
-        item.toSend = !item.toSend;
-        if (!item.toSend) {
-            this.selectAll = false;
-        }
     }
 
     confirmSendEmails() {
@@ -282,38 +309,79 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         }
 
         if (!this.pricesExpired) {
-            const templatesWithCustomerCount: any[] = [];
-            this.getTemplatesWithCustomerCount().subscribe((responseList: any[]) => {
-                if (!responseList) {
-                    alert('No customers found for the selected distributions.');
-                }
+            const templatesWithEmailContent: any[] = [];
+            this.getTemplateEmailContent().subscribe((responseList: any[]) => {
                 for (const responseIndex in responseList) {
-                    templatesWithCustomerCount.push(
-                        this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex] +
-                        (responseList[responseIndex] === 1 ? ' email' : ' emails')
-                    );
+                    if (responseList[responseIndex] == null && this.priceTemplatesEmailContent[responseIndex].emailContentId > 0) {
+                        templatesWithEmailContent.push(
+                            this.priceTemplatesEmailContent[responseIndex].name
+                        );
+                    }
                 }
 
-                const dialogRef = this.proceedConfirmationDialog.open(
-                    ProceedConfirmationComponent,
-                    {
-                        data: {
-                            description:
-                                'You are about to distribute the following templates to the customers assigned to them. Are you sure?',
-                            itemsList: templatesWithCustomerCount
-                        },
-                        autoFocus: false
-                    }
-                );
+                if (templatesWithEmailContent.length == 0)
+                    this.sendEmails();
+                else {
+                    var templatesList = templatesWithEmailContent.join(', ');
+                    const dialogRef = this.templateDialog.open(
+                        NotificationComponent,
+                        {
+                            data: { text: 'Please assign an Email Template to these ITP Template(s) before proceeding: ' + templatesList }
+                        }
+                    );
 
-                dialogRef.afterClosed().subscribe((result) => {
-                    if (!result) {
-                        return;
-                    }
-                    this.sendMails();
-                });
+                    dialogRef.afterClosed().subscribe();
+                }
             });
         }
+    }
+
+    sendEmails() {
+        const templatesWithCustomerCount: any[] = [];
+        this.getTemplatesWithCustomerCount().subscribe((responseList: any[]) => {
+            if (!responseList) {
+                alert('No customers found for the selected distributions.');
+            }
+            for (const responseIndex in responseList) {
+                templatesWithCustomerCount.push(
+                    this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex] +
+                    (responseList[responseIndex] === 1 ? ' email' : ' emails')
+                );
+            }
+
+            const dialogRef = this.proceedConfirmationDialog.open(
+                ProceedConfirmationComponent,
+                {
+                    data: {
+                        description:
+                            'You are about to distribute the following templates to the customers assigned to them. Are you sure?',
+                        itemsList: templatesWithCustomerCount
+                    },
+                    autoFocus: false
+                }
+            );
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    return;
+                }
+                this.sendMails();
+            });
+        });
+    }
+
+    getTemplateEmailContent(): Observable<any[]> {
+        const result: any[] = [];
+        this.priceTemplatesEmailContent = [];
+
+        this.pricingTemplatesData.forEach((x) => {
+            if (x.toSend) {
+                this.priceTemplatesEmailContent.push(x);
+                result.push(this.emailContentService.get({ oid: x.emailContentId }
+                ));
+            }
+        });
+        return forkJoin(result);
     }
 
     getTemplatesWithCustomerCount(): Observable<any[]> {
