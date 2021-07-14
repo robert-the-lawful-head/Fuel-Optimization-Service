@@ -36,7 +36,7 @@ namespace FBOLinx.Web.Controllers
 
             if (emailContent == null)
             {
-                return NotFound();
+                return null;
             }
 
             if (JwtManager.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
