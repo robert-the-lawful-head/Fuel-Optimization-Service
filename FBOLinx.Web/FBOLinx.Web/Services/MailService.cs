@@ -119,9 +119,10 @@ namespace FBOLinx.Web.Services
                 logoAttachment.Type = message.Logo.ContentType;
                 logoAttachment.ContentId = "Logo";
                 sendGridMessageWithTemplate.AddAttachment(logoAttachment);
+                sendGridMessageWithTemplate.TemplateId = "d-537f958228a6490b977e372ad8389b71";
             }
-
-            sendGridMessageWithTemplate.TemplateId = "d-537f958228a6490b977e372ad8389b71";
+            else
+                sendGridMessageWithTemplate.TemplateId = "d-0b5b34a824a34418b95931a39b21d385";
         }
 
         private void AddGroupCustomerPricingEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
