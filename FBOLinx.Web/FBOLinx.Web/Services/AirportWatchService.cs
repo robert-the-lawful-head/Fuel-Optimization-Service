@@ -54,42 +54,45 @@ namespace FBOLinx.Web.Services
                 new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted },
                 TransactionScopeAsyncFlowOption.Enabled))
             {
-                filteredResult = await (from aw in _context.AirportWatchLiveData
-                                        join ca in _context.CustomerAircrafts on aw.AtcFlightNumber equals ca.TailNumber
-                                        into groupedCA
-                                        from ca in groupedCA.DefaultIfEmpty()
-                                        join fr in _context.FuelReq.Where(fr => fr.Fboid == fboId && fr.Eta > DateTime.UtcNow) on ca.Oid equals fr.CustomerAircraftId
-                                        into groupedFR
-                                        from fr in groupedFR.DefaultIfEmpty()
-                                        where
-                                        aw.Latitude >= minLatitude && aw.Latitude <= maxLatitude &&
-                                        aw.Longitude >= minLongitude && aw.Longitude <= maxLongitude &&
-                                        aw.AircraftPositionDateTimeUtc >= timelimit
-                                        orderby aw.AircraftPositionDateTimeUtc, aw.AircraftHexCode, aw.AtcFlightNumber, aw.GpsAltitude
-                                        select new AirportWatchLiveData
-                                        {
-                                            Oid = aw.Oid,
-                                            Longitude = aw.Longitude,
-                                            Latitude = aw.Latitude,
-                                            GpsAltitude = aw.GpsAltitude,
-                                            GroundSpeedKts = aw.GroundSpeedKts,
-                                            IsAircraftOnGround = aw.IsAircraftOnGround,
-                                            TrackingDegree = aw.TrackingDegree,
-                                            VerticalSpeedKts = aw.VerticalSpeedKts,
-                                            TransponderCode = aw.TransponderCode,
-                                            AtcFlightNumber = aw.AtcFlightNumber,
-                                            AircraftHexCode = aw.AircraftHexCode,
-                                            BoxName = aw.BoxName,
-                                            BoxTransmissionDateTimeUtc = aw.BoxTransmissionDateTimeUtc,
-                                            AircraftPositionDateTimeUtc = aw.AircraftPositionDateTimeUtc,
-                                            AircraftTypeCode = aw.AircraftTypeCode,
-                                            AltitudeInStandardPressure = aw.AltitudeInStandardPressure,
-                                            HasFuelOrders = fr != null
-                                        }).ToListAsync();
+                var fuelOrders = await (from fr in _context.FuelReq
+                                       join ca in _context.CustomerAircrafts on fr.CustomerAircraftId equals ca.Oid
+                                       where fr.Fboid == fboId && fr.Eta > DateTime.UtcNow
+                                       select new { TailNumber = ca.TailNumber }).ToListAsync();
 
-                filteredResult = filteredResult
-                    .Where(x => GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, x.Latitude, x.Longitude, 1, DistanceUnit.Miles) <= distance)
-                    .ToList();
+                filteredResult = await _context.AirportWatchLiveData
+                       .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
+                       .Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
+                       .Where(x => x.AircraftPositionDateTimeUtc >= timelimit)
+                       .OrderBy(x => x.AircraftPositionDateTimeUtc)
+                       .ThenBy(x => x.AircraftHexCode)
+                       .ThenBy(x => x.AtcFlightNumber)
+                       .ThenBy(x => x.GpsAltitude)
+                       .ToListAsync();
+
+                filteredResult = (from fr in filteredResult
+                                 join fo in fuelOrders on fr.AtcFlightNumber equals fo.TailNumber into fos
+                                 from fo in fos.DefaultIfEmpty()
+                                 where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.Latitude, fr.Longitude, 1, DistanceUnit.Miles) <= distance
+                                 select new AirportWatchLiveData {
+                                     Oid = fr.Oid,
+                                     Longitude = fr.Longitude,
+                                     Latitude = fr.Latitude,
+                                     GpsAltitude = fr.GpsAltitude,
+                                     GroundSpeedKts = fr.GroundSpeedKts,
+                                     IsAircraftOnGround = fr.IsAircraftOnGround,
+                                     TrackingDegree = fr.TrackingDegree,
+                                     VerticalSpeedKts = fr.VerticalSpeedKts,
+                                     TransponderCode = fr.TransponderCode,
+                                     AtcFlightNumber = fr.AtcFlightNumber,
+                                     AircraftHexCode = fr.AircraftHexCode,
+                                     BoxName = fr.BoxName,
+                                     BoxTransmissionDateTimeUtc = fr.BoxTransmissionDateTimeUtc,
+                                     AircraftPositionDateTimeUtc = fr.AircraftPositionDateTimeUtc,
+                                     AircraftTypeCode = fr.AircraftTypeCode,
+                                     AltitudeInStandardPressure = fr.AltitudeInStandardPressure,
+                                     HasFuelOrders = fo != null
+                                 })
+                            .ToList();
 
                 scope.Complete();
             }
