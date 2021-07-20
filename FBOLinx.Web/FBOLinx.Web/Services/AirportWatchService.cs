@@ -56,7 +56,7 @@ namespace FBOLinx.Web.Services
             {
                 var fuelOrders = await (from fr in _context.FuelReq
                                        join ca in _context.CustomerAircrafts on fr.CustomerAircraftId equals ca.Oid
-                                       where fr.Fboid == fboId && fr.Eta > DateTime.UtcNow
+                                       where fr.Fboid == fboId && fr.Eta > DateTime.UtcNow && fr.Cancelled == false
                                        select new { TailNumber = ca.TailNumber }).ToListAsync();
 
                 filteredResult = await _context.AirportWatchLiveData
