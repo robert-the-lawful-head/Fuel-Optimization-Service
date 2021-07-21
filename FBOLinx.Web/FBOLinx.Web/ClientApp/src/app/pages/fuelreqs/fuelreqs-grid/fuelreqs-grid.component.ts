@@ -72,6 +72,10 @@ const initialColumns: ColumnType[] = [
         id: 'sourceId',
         name: 'Fuelerlinx ID',
     },
+    {
+        id: 'cancelled',
+        name: 'Transaction Status',
+    },
 ];
 
 @Component({
@@ -141,6 +145,11 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
 
         if (localStorage.getItem(this.tableLocalStorageKey)) {
             this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+
+            if (this.columns.length == 12) {
+                var cancelledColumn = { id: 'cancelled', name: 'Transction Status' };
+                this.columns.push(cancelledColumn);
+            }
         } else {
             this.columns = initialColumns;
         }
