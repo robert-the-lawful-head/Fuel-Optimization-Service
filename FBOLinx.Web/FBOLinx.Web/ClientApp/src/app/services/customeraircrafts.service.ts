@@ -71,6 +71,12 @@ export class CustomeraircraftsService {
         });
     }
 
+    public addMultipleWithTemplate(groupId, fboId, customerId, payload) {
+        return this.http.post(`${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/customer/${customerId}/multiple`, payload, {
+            headers: this.headers,
+        });
+    }
+
     public import(payload) {
         return this.http.post(this.accessPointUrl + '/import', payload, {
             headers: this.headers,

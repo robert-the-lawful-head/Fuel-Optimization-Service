@@ -1,1 +1,33 @@
-﻿
+﻿:host {
+    display: flex;
+    height: 100%;
+
+    form {
+        flex: 1 1 auto;
+    }
+
+    .mat-dialog-content {
+        flex: 1 1 auto;
+
+        mat-tab-group {
+            height: 100%;
+
+            ::ng-deep {
+                .mat-tab-body-wrapper {
+                    flex: 1 1 auto;
+                }
+            }
+        }
+    }
+
+    ::ng-deep {
+        .mat-tab-body-content {
+            overflow: visible;
+            height: auto;
+        }
+
+        .mat-progress-spinner circle, .mat-spinner circle {
+            stroke: white;
+        }
+    }
+}

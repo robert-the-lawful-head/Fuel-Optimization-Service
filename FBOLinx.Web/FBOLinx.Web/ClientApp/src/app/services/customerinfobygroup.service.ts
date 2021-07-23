@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { CertificateType } from '../models';
 
 @Injectable()
 export class CustomerinfobygroupService {
@@ -92,7 +93,7 @@ export class CustomerinfobygroupService {
     }
 
     public getCertificateTypes() {
-        return this.http.get(this.accessPointUrl + '/CertificateTypes', {
+        return this.http.get<CertificateType[]>(this.accessPointUrl + '/CertificateTypes', {
             headers: this.headers,
         });
     }

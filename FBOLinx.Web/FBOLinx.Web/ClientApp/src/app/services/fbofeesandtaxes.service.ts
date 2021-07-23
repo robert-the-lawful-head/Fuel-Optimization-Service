@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FeesAndTaxes } from '../models';
 
 @Injectable()
 export class FbofeesandtaxesService {
@@ -35,7 +36,7 @@ export class FbofeesandtaxesService {
     }
 
     public getByFboAndPricingTemplate(fboId, pricingTemplateId) {
-        return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/pricing-template/' + pricingTemplateId,
+        return this.http.get<FeesAndTaxes[]>(this.accessPointUrl + '/fbo/' + fboId + '/pricing-template/' + pricingTemplateId,
             {
                 headers: this.headers,
             });

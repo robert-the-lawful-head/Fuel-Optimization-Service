@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { PricingTemplate } from '../models';
 
 @Injectable()
 export class PricingtemplatesService {
@@ -14,7 +15,7 @@ export class PricingtemplatesService {
     }
 
     public getByFbo(fboId, groupId?) {
-        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId, { headers: this.headers });
+        return this.http.get<PricingTemplate[]>(this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId, { headers: this.headers });
     }
 
     public getByFboDefaultTemplate(groupId, fboId) {

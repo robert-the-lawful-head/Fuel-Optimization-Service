@@ -19,7 +19,6 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
 
 import { CustomermarginsService } from '../../../services/customermargins.service';
-import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
 import { CustomerGridState } from '../../../store/reducers/customer';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 
@@ -113,7 +112,6 @@ export class CustomersGridComponent implements OnInit {
         private customersService: CustomersService,
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private customersViewedByFboService: CustomersviewedbyfboService,
         private customerMarginsService: CustomermarginsService,
         private airportWatchService: AirportWatchService,
     ) {
@@ -213,39 +211,20 @@ export class CustomersGridComponent implements OnInit {
     }
 
     newCustomer() {
-        const customerInfo = { oid: 0 };
         const dialogRef = this.newCustomerDialog.open(
             CustomersDialogNewCustomerComponent,
             {
-                data: customerInfo,
+                height: '500px',
+                width: '1140px',
             }
         );
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
+        dialogRef.afterClosed().subscribe((customerInfoByGroupId) => {
+            if (!customerInfoByGroupId) {
                 return;
             }
-            this.customersService.add(result).subscribe((data: any) => {
-                result.customerId = data.oid;
-
-                result.GroupId = this.sharedService.currentUser.groupId;
-
-                this.customersViewedByFboService
-                    .add({
-                        fboId: this.sharedService.currentUser.fboId,
-                        groupId: this.sharedService.currentUser.groupId,
-                        customerId: result.customerId,
-                    })
-                    .subscribe(() => {
-                    });
-
-                this.customerInfoByGroupService
-                    .add(result)
-                    .subscribe((customerInfoByGroupData: any) => {
-                        result.customerInfoByGroupId =
-                            customerInfoByGroupData.oid;
-                        this.editCustomer(result);
-                    });
+            this.editCustomer({
+                customerInfoByGroupId,
             });
         });
     }

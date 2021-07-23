@@ -152,6 +152,8 @@ export class CustomersEditComponent implements OnInit {
                 };
                 this.customCustomerType.customerType = this.customerForm.value.customerMarginTemplate;
 
+                console.log(this.customCustomerType);
+
                 await this.customerInfoByGroupService.update(customerInfoByGroup).toPromise();
                 if (!this.customCustomerType.oid || this.customCustomerType.oid === 0) {
                     await this.customCustomerTypesService.add(this.customCustomerType).toPromise();
