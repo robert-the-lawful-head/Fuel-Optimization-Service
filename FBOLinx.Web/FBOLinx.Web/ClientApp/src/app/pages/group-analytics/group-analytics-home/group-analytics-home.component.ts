@@ -6,7 +6,10 @@ import { FbosService } from '../../../services/fbos.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 
-import { GroupAnalyticsGenerateDialogComponent, GroupAnalyticsGenerateDialogData } from '../group-analytics-generate-dialog/group-analytics-generate-dialog.component';
+import {
+    GroupAnalyticsGenerateDialogComponent,
+    GroupAnalyticsGenerateDialogData,
+} from '../group-analytics-generate-dialog/group-analytics-generate-dialog.component';
 import { EmailcontentService } from '../../../services/emailcontent.service';
 import { EmailTemplate } from 'src/app/models/email-template';
 import { GroupAnalyticsEmailTemplateDialogComponent } from '../group-analytics-email-template-dialog/group-analytics-email-template-dialog.component';
@@ -26,7 +29,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-group-analytics-home',
     templateUrl: './group-analytics-home.component.html',
-    styleUrls: [ './group-analytics-home.component.scss' ],
+    styleUrls: ['./group-analytics-home.component.scss'],
 })
 export class GroupAnalyticsHomeComponent implements OnInit {
     pageTitle = 'Group Analytics';
@@ -45,9 +48,8 @@ export class GroupAnalyticsHomeComponent implements OnInit {
         private fbosService: FbosService,
         private groupsService: GroupsService,
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private emailContentService: EmailcontentService,
-    ) {
-    }
+        private emailContentService: EmailcontentService
+    ) {}
 
     ngOnInit() {
         this.loadCustomers();
@@ -57,18 +59,18 @@ export class GroupAnalyticsHomeComponent implements OnInit {
     }
 
     onGenerate() {
-        const dialogRef = this.reportDialog.open<GroupAnalyticsGenerateDialogComponent, GroupAnalyticsGenerateDialogData>(
+        const dialogRef = this.reportDialog.open<
             GroupAnalyticsGenerateDialogComponent,
-            {
-                data: {
-                    customers: this.customers,
-                    emailTemplate: this.emailTemplate,
-                },
-                width: '500px',
-                autoFocus: false,
-                panelClass: 'group-analytics-dialog'
+            GroupAnalyticsGenerateDialogData
+        >(GroupAnalyticsGenerateDialogComponent, {
+            data: {
+                customers: this.customers,
+                emailTemplate: this.emailTemplate,
             },
-        );
+            width: '500px',
+            autoFocus: false,
+            panelClass: 'group-analytics-dialog',
+        });
 
         dialogRef.afterClosed().subscribe((result) => {
             this.loadEmailTemplate();
@@ -76,16 +78,20 @@ export class GroupAnalyticsHomeComponent implements OnInit {
     }
 
     onEditEmail() {
-        const dialogRef = this.editEmailDialog.open(GroupAnalyticsEmailTemplateDialogComponent, {
-            data: {
-                subject: this.emailTemplate?.subject,
-                emailContentHtml: this.emailTemplate?.emailContentHtml,
-                fromAddress: this.emailTemplate?.fromAddress,
-                logoUrl: this.logoUrl,
-            },
-            height: '600px',
-            width: '500px'
-        });
+        const dialogRef = this.editEmailDialog.open(
+            GroupAnalyticsEmailTemplateDialogComponent,
+            {
+                data: {
+                    subject: this.emailTemplate?.subject,
+                    emailContentHtml: this.emailTemplate?.emailContentHtml,
+                    fromAddress: this.emailTemplate?.fromAddress,
+                    replyTo: this.emailTemplate?.replyTo,
+                    logoUrl: this.logoUrl,
+                },
+                height: '600px',
+                width: '500px',
+            }
+        );
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
@@ -102,19 +108,26 @@ export class GroupAnalyticsHomeComponent implements OnInit {
             };
 
             if (!this.emailTemplate || !this.emailTemplate.oid) {
-                this.emailContentService.add(emailTemplate).subscribe((data: EmailTemplate) => {
-                    this.emailTemplate = data;
-                });
+                this.emailContentService
+                    .add(emailTemplate)
+                    .subscribe((data: EmailTemplate) => {
+                        this.emailTemplate = data;
+                    });
             } else {
-                this.emailContentService.update(emailTemplate).subscribe((data: EmailTemplate) => {
-                    this.emailTemplate = emailTemplate;
-                });
+                this.emailContentService
+                    .update(emailTemplate)
+                    .subscribe((data: EmailTemplate) => {
+                        this.emailTemplate = emailTemplate;
+                    });
             }
         });
     }
 
     private loadCustomers() {
-        this.customerInfoByGroupService.getCustomersWithContactsByGroup(this.sharedService.currentUser.groupId)
+        this.customerInfoByGroupService
+            .getCustomersWithContactsByGroup(
+                this.sharedService.currentUser.groupId
+            )
             .subscribe((customers: any[]) => {
                 this.customers = customers;
             });
@@ -129,7 +142,8 @@ export class GroupAnalyticsHomeComponent implements OnInit {
     }
 
     private loadEmailTemplate() {
-        this.emailContentService.getForGroup(this.sharedService.currentUser.groupId)
+        this.emailContentService
+            .getForGroup(this.sharedService.currentUser.groupId)
             .subscribe((data: EmailTemplate) => {
                 this.emailTemplate = data;
 
@@ -138,7 +152,7 @@ export class GroupAnalyticsHomeComponent implements OnInit {
                         subject: '',
                         emailContentHtml: '',
                         fromAddress: 'donotreply',
-                        groupId: this.sharedService.currentUser.groupId
+                        groupId: this.sharedService.currentUser.groupId,
                     };
                 }
                 if (!this.emailTemplate.fromAddress) {
@@ -148,7 +162,8 @@ export class GroupAnalyticsHomeComponent implements OnInit {
     }
 
     private loadLogo() {
-        this.groupsService.getLogo(this.sharedService.currentUser.groupId)
+        this.groupsService
+            .getLogo(this.sharedService.currentUser.groupId)
             .subscribe((logoData: any) => {
                 this.logoUrl = logoData.message;
             });
