@@ -654,7 +654,7 @@ Name | Type | Description  | Notes
 
 <a name="getlivequoteforlocationsandflighttypeandvendor"></a>
 # **GetLiveQuoteForLocationsAndFlightTypeAndVendor**
-> CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId)
+> CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId, bool? isQuotingProximityAirports)
 
 Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
 
@@ -688,11 +688,12 @@ namespace Example
             var commaDelimitedIcaos = commaDelimitedIcaos_example;  // string | 
             var flightType = flightType_example;  // string | 
             var fuelVendorId = 56;  // int? | 
+            var isQuotingProximityAirports = true;  // bool? |  (optional) 
 
             try
             {
                 // Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
-                CurrentPricingResponse result = apiInstance.GetLiveQuoteForLocationsAndFlightTypeAndVendor(commaDelimitedIcaos, flightType, fuelVendorId);
+                CurrentPricingResponse result = apiInstance.GetLiveQuoteForLocationsAndFlightTypeAndVendor(commaDelimitedIcaos, flightType, fuelVendorId, isQuotingProximityAirports);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -711,6 +712,7 @@ Name | Type | Description  | Notes
  **commaDelimitedIcaos** | **string**|  | 
  **flightType** | **string**|  | 
  **fuelVendorId** | **int?**|  | 
+ **isQuotingProximityAirports** | **bool?**|  | [optional] 
 
 ### Return type
 

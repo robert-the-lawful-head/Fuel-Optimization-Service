@@ -72,8 +72,9 @@ namespace IO.Swagger.Api
         /// <param name="commaDelimitedIcaos"></param>
         /// <param name="flightType"></param>
         /// <param name="fuelVendorId"></param>
+        /// <param name="isQuotingProximityAirports"></param>
         /// <returns>CurrentPricingResponse</returns>
-        CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId);
+        CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId, bool? isQuotingProximityAirports);
         /// <summary>
         /// Internal use only - Fetch a quote response from the EPIC Aviation web service. 
         /// </summary>
@@ -543,8 +544,9 @@ path = path.Replace("{" + "flightType" + "}", ApiClient.ParameterToString(flight
         /// <param name="commaDelimitedIcaos"></param> 
         /// <param name="flightType"></param> 
         /// <param name="fuelVendorId"></param> 
+        /// <param name="isQuotingProximityAirports"></param> 
         /// <returns>CurrentPricingResponse</returns>            
-        public CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId)
+        public CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId, bool? isQuotingProximityAirports)
         {
             
             // verify the required parameter 'commaDelimitedIcaos' is set
@@ -569,7 +571,8 @@ path = path.Replace("{" + "fuelVendorId" + "}", ApiClient.ParameterToString(fuel
             var fileParams = new Dictionary<String, FileParameter>();
             String postBody = null;
     
-                                                    
+             if (isQuotingProximityAirports != null) queryParams.Add("isQuotingProximityAirports", ApiClient.ParameterToString(isQuotingProximityAirports)); // query parameter
+                                        
             // authentication setting, if any
             String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
     

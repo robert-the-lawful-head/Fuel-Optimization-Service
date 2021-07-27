@@ -13,6 +13,7 @@ Method | HTTP request | Description
 [**GetCompanyUserProfiles**](UserApi.md#getcompanyuserprofiles) | **GET** /api/User/company-user-profiles/by-company/list | Fetches all user profiles by companyId
 [**GetCredentials**](UserApi.md#getcredentials) | **GET** /api/User/credentials/{id} | Fetches user credentials by Id
 [**GetCredentialsList**](UserApi.md#getcredentialslist) | **GET** /api/User/credentials/list | Fetches all user credentials
+[**GetImpersonatedAuthTokenForUser**](UserApi.md#getimpersonatedauthtokenforuser) | **GET** /api/User/impersonation/token-for-user/{id} | Internal/Conductor use only - Fetch an auth token to impersonate a user for conductor user management.
 [**GetUser**](UserApi.md#getuser) | **GET** /api/User/{id} | Fetch a user by their [id].
 [**GetUserByCredentials**](UserApi.md#getuserbycredentials) | **GET** /api/User/by-credentials/{username}/{password} | 
 [**PostCompanyUserProfiles**](UserApi.md#postcompanyuserprofiles) | **POST** /api/User/company-user-profiles | 
@@ -623,6 +624,75 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**CredentialsListResponse**](CredentialsListResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getimpersonatedauthtokenforuser"></a>
+# **GetImpersonatedAuthTokenForUser**
+> UserAuthTokenResponse GetImpersonatedAuthTokenForUser (int? id)
+
+Internal/Conductor use only - Fetch an auth token to impersonate a user for conductor user management.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetImpersonatedAuthTokenForUserExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Internal/Conductor use only - Fetch an auth token to impersonate a user for conductor user management.
+                UserAuthTokenResponse result = apiInstance.GetImpersonatedAuthTokenForUser(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.GetImpersonatedAuthTokenForUser: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**UserAuthTokenResponse**](UserAuthTokenResponse.md)
 
 ### Authorization
 

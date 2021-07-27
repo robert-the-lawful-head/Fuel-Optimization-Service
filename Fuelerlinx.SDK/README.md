@@ -212,6 +212,7 @@ Class | Method | HTTP request | Description
 *FBOLinxApi* | [**GetContractFuelVendorsTransactionsCount**](docs/FBOLinxApi.md#getcontractfuelvendorstransactionscount) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-count-at-airport | 
 *FBOLinxApi* | [**GetContractFuelVendorsTransactionsCountByAirports**](docs/FBOLinxApi.md#getcontractfuelvendorstransactionscountbyairports) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-counts-by-airports | 
 *FBOLinxApi* | [**GetCustomerFBOTransactionsCount**](docs/FBOLinxApi.md#getcustomerfbotransactionscount) | **POST** /api/FBOLinx/get-customer-fbo-orders-count-at-airport | 
+*FBOLinxApi* | [**GetCustomerFuelVendors**](docs/FBOLinxApi.md#getcustomerfuelvendors) | **GET** /api/FBOLinx/get-customer-fuel-vendors | 
 *FBOLinxApi* | [**GetCustomerTransactionsCount**](docs/FBOLinxApi.md#getcustomertransactionscount) | **POST** /api/FBOLinx/get-customer-orders-count-at-airport | 
 *FBOLinxApi* | [**GetCustomerTransactionsCountForMultipleAirports**](docs/FBOLinxApi.md#getcustomertransactionscountformultipleairports) | **POST** /api/FBOLinx/get-customer-orders-count-at-multiple-airports | 
 *FBOLinxApi* | [**GetFboTransactionsCount**](docs/FBOLinxApi.md#getfbotransactionscount) | **POST** /api/FBOLinx/get-fbo-orders-count-at-airport | 
@@ -534,6 +535,7 @@ Class | Method | HTTP request | Description
 *UserApi* | [**GetCompanyUserProfiles**](docs/UserApi.md#getcompanyuserprofiles) | **GET** /api/User/company-user-profiles/by-company/list | Fetches all user profiles by companyId
 *UserApi* | [**GetCredentials**](docs/UserApi.md#getcredentials) | **GET** /api/User/credentials/{id} | Fetches user credentials by Id
 *UserApi* | [**GetCredentialsList**](docs/UserApi.md#getcredentialslist) | **GET** /api/User/credentials/list | Fetches all user credentials
+*UserApi* | [**GetImpersonatedAuthTokenForUser**](docs/UserApi.md#getimpersonatedauthtokenforuser) | **GET** /api/User/impersonation/token-for-user/{id} | Internal/Conductor use only - Fetch an auth token to impersonate a user for conductor user management.
 *UserApi* | [**GetUser**](docs/UserApi.md#getuser) | **GET** /api/User/{id} | Fetch a user by their [id].
 *UserApi* | [**GetUserByCredentials**](docs/UserApi.md#getuserbycredentials) | **GET** /api/User/by-credentials/{username}/{password} | 
 *UserApi* | [**PostCompanyUserProfiles**](docs/UserApi.md#postcompanyuserprofiles) | **POST** /api/User/company-user-profiles | 
@@ -809,11 +811,13 @@ Class | Method | HTTP request | Description
  - [IO.Swagger.Model.FboLinxAircraftsResponse](docs/FboLinxAircraftsResponse.md)
  - [IO.Swagger.Model.FboLinxContractFuelVendorsCountResponse](docs/FboLinxContractFuelVendorsCountResponse.md)
  - [IO.Swagger.Model.FboLinxContractFuelVendorsCountsByAirportsResponse](docs/FboLinxContractFuelVendorsCountsByAirportsResponse.md)
+ - [IO.Swagger.Model.FboLinxCustomerFuelVendorsResponse](docs/FboLinxCustomerFuelVendorsResponse.md)
  - [IO.Swagger.Model.FboLinxCustomerTransactionsCountAtAirportResponse](docs/FboLinxCustomerTransactionsCountAtAirportResponse.md)
  - [IO.Swagger.Model.FboLinxFbosTransactionsCountResponse](docs/FboLinxFbosTransactionsCountResponse.md)
  - [IO.Swagger.Model.FbolinxAircraftDTO](docs/FbolinxAircraftDTO.md)
  - [IO.Swagger.Model.FbolinxContractFuelVendorTransactionsCountAtAirport](docs/FbolinxContractFuelVendorTransactionsCountAtAirport.md)
  - [IO.Swagger.Model.FbolinxContractFuelVendorTransactionsCountByAirport](docs/FbolinxContractFuelVendorTransactionsCountByAirport.md)
+ - [IO.Swagger.Model.FbolinxCustomerFuelVendors](docs/FbolinxCustomerFuelVendors.md)
  - [IO.Swagger.Model.FbolinxCustomerTransactionsCountAtAirport](docs/FbolinxCustomerTransactionsCountAtAirport.md)
  - [IO.Swagger.Model.FlightBridgeAuthorizationCheckResponse](docs/FlightBridgeAuthorizationCheckResponse.md)
  - [IO.Swagger.Model.FlightBridgeExternalUserInformation](docs/FlightBridgeExternalUserInformation.md)

@@ -43,6 +43,11 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
+        /// <returns>FboLinxCustomerFuelVendorsResponse</returns>
+        FboLinxCustomerFuelVendorsResponse GetCustomerFuelVendors ();
+        /// <summary>
+        ///  
+        /// </summary>
         /// <param name="body"></param>
         /// <returns>FboLinxCustomerTransactionsCountAtAirportResponse</returns>
         FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerTransactionsCount (FBOLinxOrdersRequest body);
@@ -315,6 +320,38 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCustomerFBOTransactionsCount: " + response.ErrorMessage, response.ErrorMessage);
     
             return (FboLinxCustomerTransactionsCountAtAirportResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxCustomerTransactionsCountAtAirportResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <returns>FboLinxCustomerFuelVendorsResponse</returns>            
+        public FboLinxCustomerFuelVendorsResponse GetCustomerFuelVendors ()
+        {
+            
+    
+            var path = "/api/FBOLinx/get-customer-fuel-vendors";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCustomerFuelVendors: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCustomerFuelVendors: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FboLinxCustomerFuelVendorsResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxCustomerFuelVendorsResponse), response.Headers);
         }
     
         /// <summary>
