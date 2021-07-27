@@ -29,7 +29,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-pricing-templates-home',
     templateUrl: './pricing-templates-home.component.html',
-    styleUrls: [ './pricing-templates-home.component.scss' ],
+    styleUrls: ['./pricing-templates-home.component.scss'],
 })
 export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     // Public Members
@@ -50,13 +50,12 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.loadPricingTemplateData();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {
@@ -76,16 +75,19 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     public editPricingTemplateClicked($event) {
-        this.store.dispatch(pricingTemplateGridSet({
-            filter: $event.filter,
-            page: $event.page,
-            order: $event.order,
-            orderBy: $event.orderBy,
-        }));
-        this.router.navigate([
-            '/default-layout/pricing-templates/' + $event.pricingTemplateId,
-        ]).then(() => {
-        });
+        this.store.dispatch(
+            pricingTemplateGridSet({
+                filter: $event.filter,
+                page: $event.page,
+                order: $event.order,
+                orderBy: $event.orderBy,
+            })
+        );
+        this.router
+            .navigate([
+                '/default-layout/pricing-templates/' + $event.pricingTemplateId,
+            ])
+            .then(() => {});
     }
 
     public deletePricingTemplateClicked(pricingTemplate) {

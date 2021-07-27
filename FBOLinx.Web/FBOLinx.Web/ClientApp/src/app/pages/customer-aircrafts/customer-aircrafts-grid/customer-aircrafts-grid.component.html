@@ -15,24 +15,37 @@
             mat-table
             matSort
             matSortActive="tailNumber"
-            matSortDirection="asc">
+            matSortDirection="asc"
+        >
             <ng-container matColumnDef="tailNumber">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Tail</th>
-                <td (click)="editCustomerAircraft(customerAircraft)" *matCellDef="let customerAircraft" mat-cell>
+                <td
+                    (click)="editCustomerAircraft(customerAircraft)"
+                    *matCellDef="let customerAircraft"
+                    mat-cell
+                >
                     {{ customerAircraft.tailNumber }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="aircraftType">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Type</th>
-                <td (click)="editCustomerAircraft(customerAircraft)" *matCellDef="let customerAircraft" mat-cell>
+                <td
+                    (click)="editCustomerAircraft(customerAircraft)"
+                    *matCellDef="let customerAircraft"
+                    mat-cell
+                >
                     {{ customerAircraft.make }} {{ customerAircraft.model }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="aircraftSize">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Size</th>
-                <td (click)="editCustomerAircraft(customerAircraft)" *matCellDef="let customerAircraft" mat-cell>
+                <td
+                    (click)="editCustomerAircraft(customerAircraft)"
+                    *matCellDef="let customerAircraft"
+                    mat-cell
+                >
                     {{ customerAircraft.aircraftSizeDescription }}
                 </td>
             </ng-container>
@@ -56,7 +69,7 @@
                                     let pricingTemplate of pricingTemplatesData
                                 "
                                 [value]="pricingTemplate.oid"
-                            >{{ pricingTemplate.name }}</mat-option
+                                >{{ pricingTemplate.name }}</mat-option
                             >
                         </mat-select>
                     </mat-form-field>
@@ -66,23 +79,42 @@
             <ng-container matColumnDef="delete">
                 <th *matHeaderCellDef mat-header-cell>
                     <div class="pull-right">
-                        <button (click)="newCustomerAircraft()" [view]="'accent'" beforeIcon="fa fa-plus" class="mr-3"
-                                ni-button>
+                        <button
+                            (click)="newCustomerAircraft()"
+                            [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            class="mr-3"
+                            ni-button
+                        >
                             Add New
                         </button>
-                        <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                            <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+                        <button
+                            [matMenuTriggerFor]="gridActions"
+                            mat-icon-button
+                        >
+                            <mat-icon
+                                aria-hidden="true"
+                                class="mat-icon material-icons"
+                                role="img"
+                                >more_vert</mat-icon
+                            >
                         </button>
-                        <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
-                            <button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>
+                        <mat-menu
+                            #gridActions="matMenu"
+                            class="switch-nested-menu-left-arrows"
+                            xPosition="before"
+                        >
+                            <button
+                                (click)="launchImporter()"
+                                [ngClass]="{ disabled: !LICENSE_KEY }"
+                                mat-menu-item
+                            >
                                 Import
                             </button>
                         </mat-menu>
                     </div>
                 </th>
-                <td *matCellDef="let customerAircraft" mat-cell>
-                    &nbsp;
-                </td>
+                <td *matCellDef="let customerAircraft" mat-cell>&nbsp;</td>
             </ng-container>
 
             <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
