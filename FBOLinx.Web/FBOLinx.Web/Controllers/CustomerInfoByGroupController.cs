@@ -38,8 +38,9 @@ namespace FBOLinx.Web.Controllers
         private readonly FboService _fboService;
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
+        private readonly FuelerLinxService _fuelerLinxService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
@@ -48,6 +49,7 @@ namespace FBOLinx.Web.Controllers
             _fboService = fboService;
             _airportWatchService = airportWatchService;
             _priceDistributionService = priceDistributionService;
+            _fuelerLinxService = fuelerLinxService;
         }
 
         // GET: api/CustomerInfoByGroup
@@ -731,6 +733,8 @@ namespace FBOLinx.Web.Controllers
 
                 var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
 
+                //var customerFuelVendors = await _fuelerLinxService.GetCustomerFuelVendors();
+
                 List<CustomersGridViewModel> customerGridVM = (
                         from cg in customerInfoByGroup
                         join ccot in companyTypes on cg.CustomerCompanyType equals ccot.Oid into leftJoinCCOT
@@ -745,6 +749,8 @@ namespace FBOLinx.Web.Controllers
                         from ai in leftJoinAi.DefaultIfEmpty()
                         join hd in historicalData on cg.CustomerId equals hd.CustomerId into leftJoinHd
                         from hd in leftJoinHd.DefaultIfEmpty()
+                        //join cv in customerFuelVendors on cg.Customer.FuelerlinxId equals cv.FuelerLinxId into leftJoinCv
+                        //from cv in leftJoinCv.DefaultIfEmpty()
                         where cg.GroupId == groupId && !(cg.Suspended ?? false)
 
                         group new { cg, hd } by new

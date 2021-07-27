@@ -168,6 +168,13 @@ namespace FBOLinx.Web.Services
             int result = api.GetLatestPullHistoryFlightDepartmentForICAO(request).GetValueOrDefault();
             return result;
         }
+
+        //public FboLinxCustomerFuelVendorsResponse GetCustomerFuelVendors()
+        //{
+        //    var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
+        //    FboLinxCustomerFuelVendorsResponse result = api.GetCustomerFuelVendors();
+        //    return result.result;
+        //}
         #endregion
 
         #region Private Methods
