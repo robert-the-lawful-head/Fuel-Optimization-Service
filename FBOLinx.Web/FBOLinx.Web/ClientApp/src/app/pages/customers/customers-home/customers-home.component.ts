@@ -29,7 +29,7 @@ const BREADCRUMBS: any[] = [
 @Component({
     selector: 'app-customers-home',
     templateUrl: './customers-home.component.html',
-    styleUrls: [ './customers-home.component.scss' ],
+    styleUrls: ['./customers-home.component.scss'],
 })
 export class CustomersHomeComponent implements OnInit, OnDestroy {
     // Public Members
@@ -56,17 +56,16 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.store.select(getCustomerGridState).subscribe(state => {
+        this.store.select(getCustomerGridState).subscribe((state) => {
             this.customerGridState = state;
         });
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === locationChangedEvent) {
                     this.loadCustomers();
                     this.loadPricingTemplates();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {
@@ -76,17 +75,21 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     }
 
     editCustomerClicked(event) {
-        this.store.dispatch(customerGridSet({
-            filter: event.filter,
-            page: event.page,
-            order: event.order,
-            orderBy: event.orderBy,
-            filterType: event.filterType,
-        }));
+        this.store.dispatch(
+            customerGridSet({
+                filter: event.filter,
+                page: event.page,
+                order: event.order,
+                orderBy: event.orderBy,
+                filterType: event.filterType,
+            })
+        );
 
-        this.router.navigate([
-            '/default-layout/customers/' + event.customerInfoByGroupId,
-        ]).then();
+        this.router
+            .navigate([
+                '/default-layout/customers/' + event.customerInfoByGroupId,
+            ])
+            .then();
     }
 
     customerDeleted() {
@@ -109,7 +112,10 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     private loadPricingTemplates() {
         this.pricingTemplatesData = null;
         this.pricingTemplatesService
-            .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+            .getByFbo(
+                this.sharedService.currentUser.fboId,
+                this.sharedService.currentUser.groupId
+            )
             .subscribe((data: any) => {
                 this.pricingTemplatesData = data;
             });
@@ -118,7 +124,10 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     private loadCustomerAircraft() {
         this.aircraftData = null;
         this.customerAircraftService
-            .getCustomerAircraftsByGroupAndFbo(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
+            .getCustomerAircraftsByGroupAndFbo(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
             .subscribe((data: any) => {
                 this.aircraftData = data;
             });

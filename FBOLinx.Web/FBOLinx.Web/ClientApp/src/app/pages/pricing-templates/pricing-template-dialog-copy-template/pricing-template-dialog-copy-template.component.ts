@@ -1,5 +1,9 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
 
 // Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
@@ -14,7 +18,7 @@ export interface CopyPricingTemplateDialogData {
 @Component({
     selector: 'copy-pricing-templates-dialog-new-template',
     templateUrl: './pricing-template-dialog-copy-template.component.html',
-    styleUrls: [ './pricing-template-dialog-copy-template.component.scss' ],
+    styleUrls: ['./pricing-template-dialog-copy-template.component.scss'],
 })
 export class PricingTemplatesDialogCopyTemplateComponent {
     constructor(
