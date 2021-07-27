@@ -38,6 +38,12 @@ export class ContactinfobygroupsService {
         });
     }
 
+    public addMultiple(groupId, customerId, payload) {
+        return this.http.post(`${this.accessPointUrl}/group/${groupId}/customer/${customerId}/multiple`, payload, {
+            headers: this.headers,
+        });
+    }
+
     public remove(payload) {
         return this.http.delete(this.accessPointUrl + '/' + payload, {
             headers: this.headers,

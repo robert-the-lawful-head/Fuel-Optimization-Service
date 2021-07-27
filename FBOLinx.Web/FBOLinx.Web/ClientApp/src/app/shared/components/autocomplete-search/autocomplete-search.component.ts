@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { isEqual } from 'lodash';
 
 export interface CloseConfirmationData {
@@ -13,19 +14,44 @@ export interface CloseConfirmationData {
     selector: 'app-autocomplete-search',
     templateUrl: './autocomplete-search.component.html',
     styleUrls: [ './autocomplete-search.component.scss' ],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            multi:true,
+            useExisting: AutocompleteSearchComponent
+        },
+    ]
 })
-export class AutocompleteSearchComponent implements OnChanges {
+export class AutocompleteSearchComponent implements OnChanges, ControlValueAccessor  {
     @Input() label: string;
     @Input() optionValue: string | Array<string>;
     @Input() options: Array<any>;
     @Input() displayFn: (value: any) => any;
     @Input() disabled = false;
+    @Input() required = false;
     @Output() selectionChanged = new EventEmitter();
 
     filter = '';
     filteredOptions: Array<any> = [];
+    option: any;
+
+    onChange = (val: any) => {};
+    onTouched = () => {};
 
     constructor() {
+    }
+
+    writeValue(obj: any): void {
+        this.option = obj;
+    }
+    registerOnChange(fn: any): void {
+        this.onChange = fn;
+    }
+    registerOnTouched(fn: any): void {
+        this.onTouched = fn;
+    }
+    setDisabledState?(isDisabled: boolean): void {
+        this.disabled = isDisabled;
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -53,6 +79,8 @@ export class AutocompleteSearchComponent implements OnChanges {
     }
 
     optionSelected(event) {
+        this.option = event.option.value;
+        this.onChange(event.option.value);
         this.selectionChanged.emit(event.option.value);
     }
 
