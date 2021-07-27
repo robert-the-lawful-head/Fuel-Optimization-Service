@@ -1,71 +1,111 @@
 <h1 mat-dialog-title>Email Template</h1>
 <div mat-dialog-content>
     <mat-tab-group>
-        <mat-tab label="Email Template">
+        <mat-tab label="Email Template" [formGroup]="form">
             <div class="pt-3">
-                <mat-form-field style="max-width: 600px;">
-                    <input aria-label="Subject"
-                            [(ngModel)]="data.subject"
-                            matInput
-                            placeholder="Subject" />
+                <mat-form-field style="max-width: 600px">
+                    <input
+                        aria-label="Subject"
+                        matInput
+                        placeholder="Subject"
+                        formControlName="subject"
+                    />
+                    <mat-error *ngIf="form.controls.subject.invalid"
+                        >Subject is required.</mat-error
+                    >
                 </mat-form-field>
 
-                <mat-form-field style="max-width: 200px;">
-                    <input aria-label="From Email"
-                            [(ngModel)]="data.fromAddress"
+                <div>
+                    <mat-form-field style="max-width: 200px">
+                        <input
+                            aria-label="From Email"
+                            formControlName="fromAddress"
                             matInput
-                            placeholder="From email" />
-                </mat-form-field> @FBOLinx.com
+                            placeholder="From email"
+                        />
+                        <mat-error *ngIf="form.controls.fromAddress.invalid"
+                            >Invalid email address.</mat-error
+                        >
+                    </mat-form-field>
+                    @FBOLinx.com
+                </div>
 
-                <mat-form-field style="max-width: 600px;">
-                    <input aria-label="Reply To"
-                            [(ngModel)]="data.replyTo"
+                <div>
+                    <mat-form-field style="max-width: 600px">
+                        <input
+                            aria-label="Reply To"
+                            formControlName="replyTo"
                             matInput
-                            placeholder="Reply To" />
-                </mat-form-field>
-            
-                <ejs-richtexteditor #typeEmail
-                                    id="rteEmail"
-                                    [(ngModel)]="data.emailContentHtml"
-                                    placeholder="Enter email body here..."
+                            placeholder="Reply To"
+                        />
+                        <mat-error *ngIf="form.controls.replyTo.invalid"
+                            >Invalid email address.</mat-error
+                        >
+                    </mat-form-field>
+                </div>
+
+                <ejs-richtexteditor
+                    #typeEmail
+                    formControlName="emailContentHtml"
+                    placeholder="Enter email body here..."
                 ></ejs-richtexteditor>
+                <mat-error *ngIf="form.controls.emailContentHtml.invalid"
+                    >Email content is required.</mat-error
+                >
             </div>
         </mat-tab>
 
         <mat-tab label="Logo">
             <div class="pt-3">
                 <label>Upload your logo</label><br />
-                <input type="file" (change)="onFileChange($event)" accept=".jpg,.jpeg,.png" />
-                <button *ngIf="!isLogoUploading" (click)="uploadFile()"
-                        class="ml-3"
-                        color="accent"
-                        mat-raised-button>
+                <input
+                    type="file"
+                    (change)="onFileChange($event)"
+                    accept=".jpg,.jpeg,.png"
+                />
+                <button
+                    *ngIf="!isLogoUploading"
+                    (click)="uploadFile()"
+                    class="ml-3"
+                    color="accent"
+                    mat-raised-button
+                >
                     Upload File
                 </button>
-                <button *ngIf="logoUrl"
-                        (click)="deleteFile()"
-                        class="ml-1"
-                        color="warn"
-                        mat-raised-button>
+                <button
+                    *ngIf="logoUrl"
+                    (click)="deleteFile()"
+                    class="ml-1"
+                    color="warn"
+                    mat-raised-button
+                >
                     Delete
                 </button>
                 <div *ngIf="isLogoUploading">
                     <mat-spinner></mat-spinner>
                 </div>
                 <div *ngIf="logoUrl">
-                    <img width="300" height="auto" src="{{'data:'+logoUrl}}" />
+                    <img
+                        width="300"
+                        height="auto"
+                        src="{{ 'data:' + logoUrl }}"
+                    />
                 </div>
             </div>
         </mat-tab>
     </mat-tab-group>
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="isSubmitDisabled"
-            [mat-dialog-close]="data"
-            class="mr-1"
-            color="accent"
-            mat-flat-button>
+    <button
+        [disabled]="form.invalid"
+        (click)="update()"
+        class="mr-1"
+        color="accent"
+        mat-flat-button
+    >
         Update Email Template
     </button>
-    <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>Cancel</button>
+    <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>
+        Cancel
+    </button>
 </div>
