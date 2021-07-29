@@ -9,8 +9,8 @@ using FBOLinx.Core.Utilities.Http;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses;
-using IO.Swagger.Model;
 using Microsoft.Extensions.Options;
+using Fuelerlinx.SDK;
 
 namespace FBOLinx.Web.Services
 {
@@ -22,6 +22,7 @@ namespace FBOLinx.Web.Services
         private string _APIKey = "";
         private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
         private IOptions<AppSettings> _appSettings;
+        private HttpClient _httpClient;
 
         #endregion
 
@@ -30,7 +31,6 @@ namespace FBOLinx.Web.Services
             _appSettings = appSettings;
             _fuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
             _APIKey = _fuelerlinxSdkSettings.APIKey;
-            PrepareAPIClientConfiguration();
         }
         
         #region Public Methods
@@ -71,110 +71,125 @@ namespace FBOLinx.Web.Services
 
         }
 
-        public FBOLinxNearbyAirportsResponse GetTransactionsForNearbyAirports(FBOLinxNearbyAirportsRequest request)
+        public async Task<FBOLinxNearbyAirportsResponse> GetTransactionsForNearbyAirports(FBOLinxNearbyAirportsRequest request)
         {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FBOLinxNearbyAirportsResponse results = api.GetTransactionsCountForNearbyAirports(request);
-            return results;
-        }
-
-        public FBOLinxOrdersResponse GetTransactionsCountForAirport(FBOLinxOrdersRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FBOLinxOrdersResponse results = api.GetTransactionsCount(request);
-            return results;
-        }
-
-        public FboLinxContractFuelVendorsCountResponse GetContractFuelVendorsTransactionsCountForAirport(FBOLinxOrdersRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FboLinxContractFuelVendorsCountResponse results = api.GetContractFuelVendorsTransactionsCount(request);
-            return results;
-        }
-
-        public FboLinxContractFuelVendorsCountsByAirportsResponse GetContractFuelVendorsTransactionsCountByAirports(FBOLinxOrdersForMultipleAirportsRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FboLinxContractFuelVendorsCountsByAirportsResponse results = api.GetContractFuelVendorsTransactionsCountByAirports(request);
-            return results;
-        }
-
-        public FboLinxFbosTransactionsCountResponse GetFBOsTransactionsCountForAirport(FBOLinxOrdersRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FboLinxFbosTransactionsCountResponse results = api.GetFboTransactionsCount(request);
-            return results;
-        }
-
-        public FBOLinxGroupOrdersResponse GetTransactionsCountForFbosAndAirports(FBOLinxGroupOrdersRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FBOLinxGroupOrdersResponse results = api.GetGroupFbosTransactionsCount(request);
-            return results;
-        }
-
-        public FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerTransactionsCountForAirport(FBOLinxOrdersRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FboLinxCustomerTransactionsCountAtAirportResponse results = api.GetCustomerTransactionsCount(request);
-            return results;
-        }
-
-        public FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerTransactionsCountForMultipleAirports(FBOLinxOrdersForMultipleAirportsRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FboLinxCustomerTransactionsCountAtAirportResponse results = api.GetCustomerTransactionsCountForMultipleAirports(request);
-            return results;
-        }
-
-        public FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerFBOTransactionsCount(FBOLinxOrdersRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FboLinxCustomerTransactionsCountAtAirportResponse results = api.GetCustomerFBOTransactionsCount(request);
-            return results;
-        }
-
-        public FBOLinxOrdersResponse GetTransactionsDirectOrdersCount(FBOLinxOrdersRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FBOLinxOrdersResponse results = api.GetTransactionsDirectOrdersCount(request);
-            return results;
-        }
-
-        public FBOLinxContractFuelOrdersResponse GetContractFuelRequests(FBOLinxOrdersRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FBOLinxContractFuelOrdersResponse results = api.GetContractFuelOrders(request);
-            return results;
-        }
-
-        public FboLinxAircraftsResponse GetAircraftsFromFuelerinx()
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FboLinxAircraftsResponse results = api.GetAircraftTailsGroupedByCompany();
-            return results;
-        }
-
-        public FuelVendorDTO UpdateFuelVendorEmails(FBOLinxFuelVendorUpdateRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            FBOLinxFuelVendorUpdateResponse result = api.UpdateFuelVendor(request);
-            return result.Result;
-        }
-
-        public int GetLatestFlightDeptPullHistoryForIcao(FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest request)
-        {
-            var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-            int result = api.GetLatestPullHistoryFlightDepartmentForICAO(request).GetValueOrDefault();
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FBOLinxNearbyAirportsResponse result = await apiClient.GetTransactionsCountForNearbyAirportsAsync(request);
             return result;
         }
 
-        //public FboLinxCustomerFuelVendorsResponse GetCustomerFuelVendors()
-        //{
-        //    var api = new IO.Swagger.Api.FBOLinxApi(_fuelerlinxSdkSettings.APIEndpoint);
-        //    FboLinxCustomerFuelVendorsResponse result = api.GetCustomerFuelVendors();
-        //    return result.result;
-        //}
+        public async Task<FBOLinxOrdersResponse> GetTransactionsCountForAirport(FBOLinxOrdersRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FBOLinxOrdersResponse result = await apiClient.GetTransactionsCountAsync(request);
+            return result;
+        }
+
+        public async Task<FboLinxContractFuelVendorsCountResponse> GetContractFuelVendorsTransactionsCountForAirport(FBOLinxOrdersRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FboLinxContractFuelVendorsCountResponse result = await apiClient.GetContractFuelVendorsTransactionsCountAsync(request);
+            return result;
+        }
+
+        public async Task<FboLinxContractFuelVendorsCountsByAirportsResponse> GetContractFuelVendorsTransactionsCountByAirports(FBOLinxOrdersForMultipleAirportsRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FboLinxContractFuelVendorsCountsByAirportsResponse result = await apiClient.GetContractFuelVendorsTransactionsCountByAirportsAsync(request);
+            return result;
+        }
+
+        public async Task<FboLinxFbosTransactionsCountResponse> GetFBOsTransactionsCountForAirport(FBOLinxOrdersRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FboLinxFbosTransactionsCountResponse result = await apiClient.GetFboTransactionsCountAsync(request);
+            return result;
+        }
+
+        public async Task<FBOLinxGroupOrdersResponse> GetTransactionsCountForFbosAndAirports(FBOLinxGroupOrdersRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FBOLinxGroupOrdersResponse result = await apiClient.GetGroupFbosTransactionsCountAsync(request);
+            return result;
+        }
+
+        public async Task<FboLinxCustomerTransactionsCountAtAirportResponse> GetCustomerTransactionsCountForAirport(FBOLinxOrdersRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FboLinxCustomerTransactionsCountAtAirportResponse result = await apiClient.GetCustomerTransactionsCountAsync(request);
+            return result;
+        }
+
+        public async Task<FboLinxCustomerTransactionsCountAtAirportResponse> GetCustomerTransactionsCountForMultipleAirports(FBOLinxOrdersForMultipleAirportsRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FboLinxCustomerTransactionsCountAtAirportResponse result = await apiClient.GetCustomerTransactionsCountForMultipleAirportsAsync(request);
+            return result;
+        }
+
+        public async Task<FboLinxCustomerTransactionsCountAtAirportResponse> GetCustomerFBOTransactionsCount(FBOLinxOrdersRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FboLinxCustomerTransactionsCountAtAirportResponse result = await apiClient.GetCustomerFBOTransactionsCountAsync(request);
+            return result;
+        }
+
+        public async Task<FBOLinxOrdersResponse> GetTransactionsDirectOrdersCount(FBOLinxOrdersRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FBOLinxOrdersResponse result = await apiClient.GetTransactionsDirectOrdersCountAsync(request);
+            return result;
+        }
+
+        public async Task<FBOLinxContractFuelOrdersResponse> GetContractFuelRequests(FBOLinxOrdersRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FBOLinxContractFuelOrdersResponse result = await apiClient.GetContractFuelOrdersAsync(request);
+            return result;
+        }
+
+        public async Task<FboLinxAircraftsResponse> GetAircraftsFromFuelerinx()
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FboLinxAircraftsResponse result = await apiClient.GetAircraftTailsGroupedByCompanyAsync();
+            return result;
+        }
+
+        public async Task<FuelVendorDTO> UpdateFuelVendorEmails(FBOLinxFuelVendorUpdateRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FBOLinxFuelVendorUpdateResponse result = await apiClient.UpdateFuelVendorAsync(request);
+            return result.Result;
+        }
+
+        public async Task<int> GetLatestFlightDeptPullHistoryForIcao(FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest request)
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            int result = await apiClient.GetLatestPullHistoryFlightDepartmentForICAOAsync(request);
+            return result;
+        }
+
+        public async Task<ICollection<FbolinxCustomerFuelVendors>> GetCustomerFuelVendors()
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            var apiClient = GetApiClient(authToken);
+            FboLinxCustomerFuelVendorsResponse result = await apiClient.GetCustomerFuelVendorsAsync();
+            return result.Result;
+        }
         #endregion
 
         #region Private Methods
@@ -211,13 +226,26 @@ namespace FBOLinx.Web.Services
             }
         }
 
-        private void PrepareAPIClientConfiguration()
+        public IClient GetApiClient(string authToken)
         {
-            if (!IO.Swagger.Client.Configuration.ApiKey.ContainsKey("x-api-key"))
-                IO.Swagger.Client.Configuration.ApiKey.Add("x-api-key", _APIKey);
+            _httpClient = new HttpClient();
 
-            if (!IO.Swagger.Client.Configuration.ApiKey.ContainsKey("Authorization"))
-                IO.Swagger.Client.Configuration.ApiKey.Add("Authorization", "");
+            AdjustHeader("x-api-key", _APIKey);
+
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                AdjustHeader("Authorization", "Bearer " + authToken.Replace("JWT ", ""));
+            }
+
+            Client client = new Client(_fuelerlinxSdkSettings.APIEndpoint, _httpClient);
+            return client;
+        }
+
+        private void AdjustHeader(string headerName, string headerValue)
+        {
+            if (_httpClient.DefaultRequestHeaders.Contains(headerName))
+                _httpClient.DefaultRequestHeaders.Remove(headerName);
+            _httpClient.DefaultRequestHeaders.Add(headerName, headerValue);
         }
         #endregion
     }

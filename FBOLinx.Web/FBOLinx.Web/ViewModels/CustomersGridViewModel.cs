@@ -52,5 +52,7 @@ namespace FBOLinx.Web.ViewModels
                 return FBOLinx.Core.Utilities.Enum.GetDescription(CertificateType ?? CustomerInfoByGroup.CertificateTypes.NotSet);
             }
         }
+
+        public string? FuelVendors { get; set; }
     }
 }

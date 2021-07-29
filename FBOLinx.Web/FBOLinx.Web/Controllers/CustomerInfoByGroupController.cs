@@ -733,7 +733,7 @@ namespace FBOLinx.Web.Controllers
 
                 var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
 
-                //var customerFuelVendors = await _fuelerLinxService.GetCustomerFuelVendors();
+                var customerFuelVendors = await _fuelerLinxService.GetCustomerFuelVendors();
 
                 List<CustomersGridViewModel> customerGridVM = (
                         from cg in customerInfoByGroup
@@ -749,8 +749,8 @@ namespace FBOLinx.Web.Controllers
                         from ai in leftJoinAi.DefaultIfEmpty()
                         join hd in historicalData on cg.CustomerId equals hd.CustomerId into leftJoinHd
                         from hd in leftJoinHd.DefaultIfEmpty()
-                        //join cv in customerFuelVendors on cg.Customer.FuelerlinxId equals cv.FuelerLinxId into leftJoinCv
-                        //from cv in leftJoinCv.DefaultIfEmpty()
+                        join cv in customerFuelVendors on cg.Customer.FuelerlinxId equals cv.FuelerLinxId into leftJoinCv
+                        from cv in leftJoinCv.DefaultIfEmpty()
                         where cg.GroupId == groupId && !(cg.Suspended ?? false)
 
                         group new { cg, hd } by new
@@ -770,6 +770,7 @@ namespace FBOLinx.Web.Controllers
                             FleetSize = customerAircraft.FirstOrDefault(x => x.CustomerId == cg.CustomerId)?.Count,
                             AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
                             PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid,
+                            FuelVendors = cv == null ? "" : cv.FuelVendors,
                         }
                         into resultsGroup
                         select new CustomersGridViewModel()
@@ -789,7 +790,8 @@ namespace FBOLinx.Web.Controllers
                             PricingTemplateName = resultsGroup.Key.PricingTemplateName,
                             SelectAll = false,
                             TailNumbers = resultsGroup.Key.Tails,
-                            AircraftsVisits = resultsGroup.Count(a => a.hd != null && a.hd.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing)
+                            AircraftsVisits = resultsGroup.Count(a => a.hd != null && a.hd.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing),
+                            FuelVendors = resultsGroup.Key.FuelVendors
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())
