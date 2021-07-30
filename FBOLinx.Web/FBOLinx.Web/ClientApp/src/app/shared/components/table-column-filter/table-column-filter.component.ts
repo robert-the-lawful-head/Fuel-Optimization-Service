@@ -1,12 +1,9 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import * as moment from 'moment';
 
 @Component({
-    selector: 'app-table-column-filter',
-    templateUrl: 'table-column-filter.component.html',
-    styleUrls: [ 'table-column-filter.component.scss' ],
     animations: [
         trigger('openClose', [
             // ...
@@ -27,7 +24,10 @@ import * as moment from 'moment';
             transition('open => closed', [ animate('.3s') ]),
             transition('closed => open', [ animate('0.3s') ])
         ])
-    ]
+    ],
+    selector: 'app-table-column-filter',
+    styleUrls: [ 'table-column-filter.component.scss' ],
+    templateUrl: 'table-column-filter.component.html'
 })
 export class TableColumnFilterComponent implements OnInit {
     @Input() columnId: string;
@@ -46,16 +46,16 @@ export class TableColumnFilterComponent implements OnInit {
 
     public filter: any = {
         dateFilter: {
-            startDate: null,
-            endDate: null
+            endDate: null,
+            startDate: null
         },
-        stringFilter: '',
+        isFiltered: false,
         numberRangeFilter: {
-            start: null,
-            end: null
+            end: null,
+            start: null
         },
         optionsFilter: [],
-        isFiltered: false
+        stringFilter: ''
     };
     public isHeadingOpen = false;
     public isFilterOpen = false;
@@ -94,8 +94,8 @@ export class TableColumnFilterComponent implements OnInit {
         const matSort = this.matDataSource.sort;
         const disableClear = false;
 
-        matSort.sort({ id: null, start, disableClear });
-        matSort.sort({ id, start, disableClear });
+        matSort.sort({ disableClear, id: null, start });
+        matSort.sort({ disableClear, id, start });
 
         this.matDataSource.sort = this.matSort;
     }
@@ -138,13 +138,13 @@ export class TableColumnFilterComponent implements OnInit {
     public clearFilter(): void {
 
         this.filter.dateFilter = {
-            startDate: null,
-            endDate: null
+            endDate: null,
+            startDate: null
         };
         this.filter.stringFilter = '';
         this.filter.numberRangeFilter = {
-            start: null,
-            end: null
+            end: null,
+            start: null
         };
         this.filter.optionsFilter = [];
 

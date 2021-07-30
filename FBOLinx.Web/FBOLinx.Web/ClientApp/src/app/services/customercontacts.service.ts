@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject,Injectable } from '@angular/core';
 
 @Injectable()
 export class CustomercontactsService {
@@ -31,28 +31,28 @@ export class CustomercontactsService {
         });
     }
 
-  public update(payload) {
-    return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
-      headers: this.headers,
-    });
-  }
+    public update(payload) {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
+            headers: this.headers,
+        });
+    }
 
-  public getCustomerEmailCountByGroupAndFBOAndPricing(
-    groupId,
-    fboId,
-    pricingTemplateId
-  ) {
-    return this.http.get(
-      this.accessPointUrl +
-      '/group/' +
-      groupId +
-      '/fbo/' +
-      fboId +
-      '/pricingtemplate/' +
-      pricingTemplateId,
-      {
-        headers: this.headers,
-      }
-    );
-  }
+    public getCustomerEmailsByGroupAndFBOAndPricing(
+        groupId: number,
+        fboId: number,
+        pricingTemplateId: number
+    ) {
+        return this.http.get(
+            this.accessPointUrl +
+                '/group/' +
+                groupId +
+                '/fbo/' +
+                fboId +
+                '/pricingtemplate/' +
+                pricingTemplateId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

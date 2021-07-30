@@ -1,29 +1,30 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
+import { isEmpty, keyBy } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
-import { isEmpty, keyBy } from 'lodash';
-import { AirportWatchService } from '../../../services/airportwatch.service';
+
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
+import { AirportWatchService } from '../../../services/airportwatch.service';
 import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Flight Watch',
         link: '/default-layout/flight-watch',
+        title: 'Flight Watch',
     },
 ];
 
 @Component({
     selector: 'app-flight-watch',
-    templateUrl: './flight-watch.component.html',
     styleUrls: [ './flight-watch.component.scss' ],
+    templateUrl: './flight-watch.component.html',
 })
 export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild('map') map: FlightWatchMapComponent;

@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { FormControl } from '@angular/forms';
-import { catchError, debounceTime, map, startWith, switchMap, } from 'rxjs/operators';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable, of } from 'rxjs';
+import { catchError, debounceTime, map, startWith, switchMap, } from 'rxjs/operators';
 
 // Services
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
@@ -17,8 +17,8 @@ export declare type AirportAutoCompleteDataSource = AirportAutoCompleteData[];
 
 @Component({
     selector: 'app-airport-autocomplete',
-    templateUrl: './airport-autocomplete.component.html',
     styleUrls: [ './airport-autocomplete.component.scss' ],
+    templateUrl: './airport-autocomplete.component.html',
 })
 export class AirportAutocompleteComponent implements OnInit {
     @Input() airportContainerModel: any;

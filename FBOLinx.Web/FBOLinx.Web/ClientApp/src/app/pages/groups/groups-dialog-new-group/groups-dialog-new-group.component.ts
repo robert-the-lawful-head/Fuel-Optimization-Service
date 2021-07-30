@@ -1,13 +1,14 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
-import { GroupsService } from '../../../services/groups.service';
+
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
 import { FbosService } from '../../../services/fbos.service';
+import { GroupsService } from '../../../services/groups.service';
 
 @Component({
     selector: 'app-groups-dialog-new-group',
-    templateUrl: './groups-dialog-new-group.component.html',
     styleUrls: [ './groups-dialog-new-group.component.scss' ],
+    templateUrl: './groups-dialog-new-group.component.html',
 })
 export class GroupsDialogNewGroupComponent {
     step = 1;
@@ -66,16 +67,16 @@ export class GroupsDialogNewGroupComponent {
             this.data.active = true;
             this.groupsService.add(this.data).subscribe((data: any) => {
                 this.dialogRef.close({
-                    type: this.type,
-                    data
+                    data,
+                    type: this.type
                 });
             });
         }
         if (this.type === 'fbo') {
             this.fboService.addSingleFbo(this.data).subscribe((data: any) => {
                 this.dialogRef.close({
-                    type: this.type,
-                    data
+                    data,
+                    type: this.type
                 });
             });
         }

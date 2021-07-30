@@ -1,19 +1,18 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-
 import { CopyConfirmationComponent } from '../../../shared/components/copy-confirmation/copy-confirmation.component';
 import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 
 @Component({
     selector: 'app-email-templates-grid',
-    templateUrl: './email-templates-grid.component.html',
     styleUrls: ['./email-templates-grid.component.scss'],
+    templateUrl: './email-templates-grid.component.html',
 })
 export class EmailTemplatesGridComponent implements OnInit {
     @Output() editEmailTemplateClicked = new EventEmitter<any>();
@@ -76,9 +75,9 @@ export class EmailTemplatesGridComponent implements OnInit {
         this.editEmailTemplateClicked.emit({
             emailTemplateId: emailTemplate.oid,
             filter: this.emailTemplatesDataSource.filter,
-            page: this.emailTemplatesDataSource.paginator.pageIndex,
             order: this.emailTemplatesDataSource.sort.active,
             orderBy: this.emailTemplatesDataSource.sort.direction,
+            page: this.emailTemplatesDataSource.paginator.pageIndex,
         });
     }
 

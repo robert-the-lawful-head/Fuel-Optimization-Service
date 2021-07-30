@@ -1,13 +1,14 @@
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NavigationEnd, Router } from '@angular/router';
+
 import { SharedService } from '../../../../layouts/shared-service';
 
 @Component({
-    selector: 'app-distribution-wizard-review',
-    templateUrl: './distribution-wizard-review.component.html',
-    styleUrls: [ './distribution-wizard-review.component.scss' ],
     providers: [ SharedService ],
+    selector: 'app-distribution-wizard-review',
+    styleUrls: [ './distribution-wizard-review.component.scss' ],
+    templateUrl: './distribution-wizard-review.component.html',
 })
 export class DistributionWizardReviewComponent {
     @Output() idChanged1: EventEmitter<any> = new EventEmitter();

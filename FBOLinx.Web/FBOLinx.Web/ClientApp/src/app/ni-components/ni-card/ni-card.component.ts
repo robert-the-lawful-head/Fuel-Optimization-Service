@@ -1,18 +1,15 @@
+import { animate,state, style, transition, trigger } from '@angular/animations';
 import {
+    AfterContentChecked,
     Component,
+    ElementRef,
+    HostListener,
     Input,
     ViewChild,
-    HostListener,
-    ElementRef,
-    AfterContentChecked,
 } from '@angular/core';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 
 
 @Component({
-    selector: 'ni-card',
-    templateUrl: './ni-card.component.html',
-    styleUrls: ['./ni-card.component.scss'],
     animations: [
         trigger('openClose', [
             state('true', style({
@@ -31,6 +28,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
     host: {
         '[class.ni-card]': 'true',
     },
+    selector: 'ni-card',
+    styleUrls: ['./ni-card.component.scss'],
+    templateUrl: './ni-card.component.html',
 })
 export class NiCardComponent implements AfterContentChecked {
     @ViewChild('cardTitle') cardTitle: ElementRef;

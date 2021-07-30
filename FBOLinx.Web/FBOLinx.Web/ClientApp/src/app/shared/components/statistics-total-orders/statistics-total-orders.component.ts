@@ -1,16 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
-
-// Services
-import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-
 // Components
 import * as moment from 'moment';
 
+import { SharedService } from '../../../layouts/shared-service';
+// Services
+import { FuelreqsService } from '../../../services/fuelreqs.service';
+
 @Component({
     selector: 'app-statistics-total-orders',
-    templateUrl: './statistics-total-orders.component.html',
     styleUrls: ['./statistics-total-orders.component.scss'],
+    templateUrl: './statistics-total-orders.component.html',
 })
 // statistics-total-orders component
 export class StatisticsTotalOrdersComponent implements OnInit {

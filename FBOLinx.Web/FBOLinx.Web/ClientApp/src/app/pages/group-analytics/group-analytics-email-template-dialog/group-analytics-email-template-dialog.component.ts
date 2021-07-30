@@ -6,16 +6,16 @@ import {
     ValidationErrors,
     Validators,
 } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { GroupsService } from 'src/app/services/groups.service';
 import { validateEmail } from 'src/utils/email';
 
 @Component({
-    selector: 'app-group-analytics-email-template-dialog',
-    templateUrl: './group-analytics-email-template-dialog.component.html',
-    styleUrls: ['./group-analytics-email-template-dialog.component.scss'],
     providers: [SharedService],
+    selector: 'app-group-analytics-email-template-dialog',
+    styleUrls: ['./group-analytics-email-template-dialog.component.scss'],
+    templateUrl: './group-analytics-email-template-dialog.component.html',
 })
 export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
     logo: File = null;
@@ -31,16 +31,16 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
         private readonly groupsService: GroupsService
     ) {
         this.form = new FormGroup({
-            subject: new FormControl(this.data.subject, Validators.required),
+            emailContentHtml: new FormControl(
+                this.data.emailContentHtml,
+                Validators.required
+            ),
             fromAddress: new FormControl(this.data.fromAddress, [
                 Validators.required,
                 this.fromAddressValidator,
             ]),
             replyTo: new FormControl(this.data.replyTo, Validators.email),
-            emailContentHtml: new FormControl(
-                this.data.emailContentHtml,
-                Validators.required
-            ),
+            subject: new FormControl(this.data.subject, Validators.required),
         });
     }
 
@@ -61,10 +61,12 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
             this.isLogoUploading = true;
 
             const file = {
-                // Set File Information
-                fileName: this.logo.name,
+
                 contentType: this.logo.type,
-                fileData: null,
+
+fileData: null,
+                // Set File Information
+fileName: this.logo.name,
                 groupId: this.sharedService.currentUser.groupId,
             };
 

@@ -1,29 +1,29 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { EmailcontentService } from '../../../services/emailcontent.service';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Email Templates',
         link: '/default-layout/email-templates',
+        title: 'Email Templates',
     },
     {
-        title: 'Edit Email Template',
         link: '',
+        title: 'Edit Email Template',
     },
 ];
 
 @Component({
     selector: 'app-email-templates-edit',
-    templateUrl: './email-templates-edit.component.html',
     styleUrls: ['./email-templates-edit.component.scss'],
+    templateUrl: './email-templates-edit.component.html',
 })
 export class EmailTemplatesEditComponent implements OnInit {
 

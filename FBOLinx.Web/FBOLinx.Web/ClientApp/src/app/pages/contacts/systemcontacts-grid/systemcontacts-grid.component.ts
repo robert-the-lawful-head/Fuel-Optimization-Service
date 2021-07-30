@@ -1,22 +1,22 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import * as _ from 'lodash';
+import { ActivatedRoute } from '@angular/router';
 import FlatfileImporter from 'flatfile-csv-importer';
+import * as _ from 'lodash';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
-import { FbocontactsService } from '../../../services/fbocontacts.service';
 import { ContactsService } from '../../../services/contacts.service';
-import { SharedService } from '../../../layouts/shared-service';
+import { FbocontactsService } from '../../../services/fbocontacts.service';
 import { SystemcontactsNewContactModalComponent } from '../systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 
 @Component({
     selector: 'app-systemcontacts-grid',
-    templateUrl: './systemcontacts-grid.component.html',
     styleUrls: [ './systemcontacts-grid.component.scss' ],
+    templateUrl: './systemcontacts-grid.component.html',
 })
 export class SystemcontactsGridComponent implements OnInit {
     @Output() contactDeleted = new EventEmitter<any>();
@@ -65,8 +65,8 @@ export class SystemcontactsGridComponent implements OnInit {
         FlatfileImporter.setVersion(2);
         this.initializeImporter();
         this.importer.setCustomer({
-            userId: '1',
             name: 'WebsiteImport',
+            userId: '1',
         });
     }
 
@@ -86,9 +86,9 @@ export class SystemcontactsGridComponent implements OnInit {
         const dialogRef = this.newContactDialog.open(
             SystemcontactsNewContactModalComponent,
             {
+                data: Object.assign({}, record),
                 height: '350px',
                 width: '1100px',
-                data: Object.assign({}, record),
             }
         );
 
@@ -236,109 +236,109 @@ export class SystemcontactsGridComponent implements OnInit {
 
     initializeImporter() {
         this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+            allowCustom: true,
+            allowInvalidSubmit: true,
+            disableManualInput: false,
             fields: [
                 {
-                    label: 'First Name',
                     alternates: [ 'first name' ],
-                    key: 'FirstName',
                     description: 'Contact First Name',
+                    key: 'FirstName',
+                    label: 'First Name',
                     validators: [
                         {
-                            validate: 'required',
                             error: 'this field is required',
+                            validate: 'required',
                         },
                     ],
                 },
                 {
-                    label: 'Last Name',
                     alternates: [ 'last name' ],
-                    key: 'LastName',
                     description: 'Contact Last Name',
+                    key: 'LastName',
+                    label: 'Last Name',
                     validators: [
                         {
-                            validate: 'required',
                             error: 'this field is required',
+                            validate: 'required',
                         },
                     ],
                 },
                 {
-                    label: 'Title',
                     alternates: [ 'title' ],
-                    key: 'Title',
                     description: 'Contact Title',
+                    key: 'Title',
+                    label: 'Title',
                 },
                 {
-                    label: 'Email',
                     alternates: [ 'email', 'email address' ],
-                    key: 'Email',
                     description: 'Email Address',
+                    key: 'Email',
+                    label: 'Email',
                 },
                 {
-                    label: 'Phone Number',
                     alternates: [ 'phone', 'phone number' ],
-                    key: 'PhoneNumber',
                     description: 'Phone Number',
+                    key: 'PhoneNumber',
+                    label: 'Phone Number',
                 },
                 {
-                    label: 'Extension',
                     alternates: [ 'extension' ],
-                    key: 'Extension',
                     description: 'Phone Extension',
+                    key: 'Extension',
+                    label: 'Extension',
                 },
                 {
-                    label: 'Mobile',
                     alternates: [ 'mobile', 'cell', 'mobile phone', 'cell phone' ],
-                    key: 'MobilePhone',
                     description: 'Mobile Phone',
+                    key: 'MobilePhone',
+                    label: 'Mobile',
                 },
                 {
-                    label: 'Fax',
                     alternates: [ 'fax' ],
-                    key: 'Fax',
                     description: 'Fax',
+                    key: 'Fax',
+                    label: 'Fax',
                 },
                 {
-                    label: 'Address',
                     alternates: [ 'address', 'street address' ],
-                    key: 'Address',
                     description: 'Street Address',
+                    key: 'Address',
+                    label: 'Address',
                 },
                 {
-                    label: 'City',
                     alternates: [ 'city', 'town' ],
-                    key: 'City',
                     description: 'City',
+                    key: 'City',
+                    label: 'City',
                 },
                 {
-                    label: 'State',
                     alternates: [ 'state' ],
-                    key: 'State',
                     description: 'State',
+                    key: 'State',
+                    label: 'State',
                 },
                 {
-                    label: 'Country',
                     alternates: [ 'country' ],
-                    key: 'Country',
                     description: 'Country',
+                    key: 'Country',
+                    label: 'Country',
                 },
                 {
-                    label: 'Primary',
                     alternates: [ 'primary' ],
-                    key: 'PrimaryContact',
                     description: 'Primary',
+                    key: 'PrimaryContact',
+                    label: 'Primary',
                 },
                 {
-                    label: 'Copy on Distribution',
                     alternates: [ 'copy on distribution' ],
-                    key: 'CopyAlertsContact',
                     description: 'Copy Contact on Distribution',
+                    key: 'CopyAlertsContact',
+                    label: 'Copy on Distribution',
                 },
             ],
-            type: 'Contacts',
-            allowInvalidSubmit: true,
             managed: true,
-            allowCustom: true,
-            disableManualInput: false,
+            type: 'Contacts',
         });
     }
 }

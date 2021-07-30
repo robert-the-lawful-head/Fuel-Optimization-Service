@@ -3,25 +3,25 @@ import * as moment from 'moment';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomersListType } from '../../../models/customer';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Analytics',
         link: '/default-layout/analytics',
+        title: 'Analytics',
     },
 ];
 
 @Component({
     selector: 'app-analytics-home',
-    templateUrl: './analytics-home.component.html',
     styleUrls: [ './analytics-home.component.scss' ],
+    templateUrl: './analytics-home.component.html',
 })
 export class AnalyticsHomeComponent implements OnInit {
     public pageTitle = 'Analytics';

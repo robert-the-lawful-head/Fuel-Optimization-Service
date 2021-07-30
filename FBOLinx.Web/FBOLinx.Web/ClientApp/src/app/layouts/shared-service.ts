@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
 import * as moment from 'moment';
+import { BehaviorSubject, Subject } from 'rxjs';
 
-import { AuthenticationService } from '../services/authentication.service';
 import { User } from '../models/User';
+import { AuthenticationService } from '../services/authentication.service';
 
 export interface ActiveUser {
     fboId: number;

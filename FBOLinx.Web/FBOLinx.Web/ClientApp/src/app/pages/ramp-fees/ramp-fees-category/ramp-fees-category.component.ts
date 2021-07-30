@@ -4,14 +4,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
 import { RampfeesService } from '../../../services/rampfees.service';
-
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 @Component({
     selector: 'app-ramp-fees-category',
-    templateUrl: './ramp-fees-category.component.html',
     styleUrls: [ './ramp-fees-category.component.scss' ],
+    templateUrl: './ramp-fees-category.component.html',
 })
 export class RampFeesCategoryComponent implements OnInit {
     @Output() rampFeeFieldChanged = new EventEmitter<any>();
@@ -76,8 +75,8 @@ export class RampFeesCategoryComponent implements OnInit {
         const dialogRef = this.deleteRampFeeDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: fee, description: 'ramp fee' },
                 autoFocus: false,
+                data: { description: 'ramp fee', item: fee },
             }
         );
 

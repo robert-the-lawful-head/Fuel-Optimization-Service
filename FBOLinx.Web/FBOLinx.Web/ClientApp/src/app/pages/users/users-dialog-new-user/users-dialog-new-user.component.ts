@@ -19,8 +19,8 @@ export interface NewUserDialogData {
 
 @Component({
     selector: 'app-users-dialog-new-user',
-    templateUrl: './users-dialog-new-user.component.html',
     styleUrls: [ './users-dialog-new-user.component.scss' ],
+    templateUrl: './users-dialog-new-user.component.html',
 })
 export class UsersDialogNewUserComponent {
     // Public Members

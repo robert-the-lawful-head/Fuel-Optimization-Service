@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { Parametri } from '../../../services/paremeters.service';
-import { Subscription } from 'rxjs';
 
 export interface NewRampFeeDialogData {
     oid: number;
@@ -20,8 +20,8 @@ export interface NewRampFeeDialogData {
 
 @Component({
     selector: 'app-ramp-fees-dialog-new-fee',
-    templateUrl: './ramp-fees-dialog-new-fee.component.html',
     styleUrls: [ './ramp-fees-dialog-new-fee.component.scss' ],
+    templateUrl: './ramp-fees-dialog-new-fee.component.html',
 })
 export class RampFeesDialogNewFeeComponent {
     public categoryTypes: any[] = [

@@ -3,8 +3,8 @@ import { MatDialogRef, } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-ramp-fees-import-informatino-dialog',
-    templateUrl: './ramp-fees-import-information-dialog.component.html',
     styleUrls: [ './ramp-fees-import-information-dialog.component.scss' ],
+    templateUrl: './ramp-fees-import-information-dialog.component.html',
 })
 export class RampFeesImportInformationComponent {
 

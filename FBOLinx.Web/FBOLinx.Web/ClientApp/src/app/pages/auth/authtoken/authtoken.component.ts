@@ -6,8 +6,8 @@ import { AuthenticationService } from '../../../services/authentication.service'
 
 @Component({
     selector: 'app-authtoken',
-    templateUrl: './authtoken.component.html',
     styleUrls: [ './authtoken.component.scss' ],
+    templateUrl: './authtoken.component.html',
 })
 export class AuthtokenComponent {
     tokenParam: string;

@@ -1,17 +1,18 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { difference, isEqual, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
+
+import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from './aircraft-images';
-import { isCommercialAircraft } from '../../../../utils/aircraft';
 
 type LayerType = 'airway' | 'streetview' | 'icao';
 
 @Component({
-    selector: 'app-flight-watch-map',
-    templateUrl: './flight-watch-map.component.html',
-    styleUrls: [ './flight-watch-map.component.scss' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-flight-watch-map',
+    styleUrls: [ './flight-watch-map.component.scss' ],
+    templateUrl: './flight-watch-map.component.html',
 })
 export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     @Input() center: mapboxgl.LngLatLike;
@@ -36,9 +37,9 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     ngOnInit(): void {
         this.map = new mapboxgl.Map({
             accessToken: 'pk.eyJ1IjoidGJyZWVzZSIsImEiOiJja280a3M3dDEwMzAyMnFwbjMwZ2VleWdxIn0.CyG67L4gTlEHV9oJiH7FFw',
+            center: this.center,
             container: 'flight-watch-map',
             style: 'mapbox://styles/tbreese/ckoj6y81613y818qfsngeei08',
-            center: this.center,
             zoom: this.zoom,
         });
         const eventHandler = () => this.refreshMap();
@@ -126,28 +127,28 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
 
                 if (previousSource) {
                     previousSource.setData({
-                        type: 'Feature',
                         geometry: {
-                            type: 'Point',
                             coordinates: [row.longitude, row.latitude],
+                            type: 'Point',
                         },
                         properties: {
                             id: row.oid,
-                        }
+                        },
+                        type: 'Feature'
                     });
                 } else {
                     this.map.addSource(id, {
-                        type: 'geojson',
                         data: {
-                            type: 'Feature',
                             geometry: {
-                                type: 'Point',
                                 coordinates: [row.longitude, row.latitude],
+                                type: 'Point',
                             },
                             properties: {
                                 id: row.oid,
-                            }
-                        }
+                            },
+                            type: 'Feature'
+                        },
+                        type: 'geojson'
                     });
 
                     this.map.on('click', id, (e) => this.clickHandler(e, this));
@@ -161,18 +162,18 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                 if (!previousSource) {
                     this.map.addLayer({
                         id,
-                        type: 'symbol',
                         layout: {
+                            'icon-allow-overlap': true,
                             'icon-image': `aircraft_image_${atype}${
                                 id === this.focusedMarker?.oid.toString() ? '_reversed' : ''
                             }${
                                 row.hasFuelOrders ? '_blue' : ''
                             }`,
-                            'icon-size': 0.5,
                             'icon-rotate': row.trackingDegree ?? 0,
-                            'icon-allow-overlap': true
+                            'icon-size': 0.5
                         },
                         source: id,
+                        type: 'symbol',
                     });
                 }
             });

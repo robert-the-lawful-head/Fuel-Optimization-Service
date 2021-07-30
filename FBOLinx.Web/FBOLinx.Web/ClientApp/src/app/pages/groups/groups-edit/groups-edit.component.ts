@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
 import { GroupsService } from '../../../services/groups.service';
@@ -8,23 +8,23 @@ import { GroupsService } from '../../../services/groups.service';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Groups',
         link: '/default-layout/groups',
+        title: 'Groups',
     },
     {
-        title: 'Edit Group',
         link: '',
+        title: 'Edit Group',
     },
 ];
 
 @Component({
     selector: 'app-groups-edit',
-    templateUrl: './groups-edit.component.html',
     styleUrls: [ './groups-edit.component.scss' ],
+    templateUrl: './groups-edit.component.html',
 })
 export class GroupsEditComponent implements OnInit {
     @Output() cancelClicked = new EventEmitter<any>();

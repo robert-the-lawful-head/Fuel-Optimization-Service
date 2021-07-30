@@ -1,12 +1,7 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-
-// Angular Material Modules
-import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -17,6 +12,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
+// Angular Material Modules
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -30,39 +27,37 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
-import { PopoverModule } from 'ngx-smart-popover';
-
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TextMaskModule } from 'angular2-text-mask';
+import { PopoverModule } from 'ngx-smart-popover';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
 
-import { AppRoutingModule } from './app-routing.module';
-import { UIModule } from './ui/ui.module';
-import { NiComponentsModule } from './ni-components/ni-components.module';
-import { PagesModule } from './pages/pages.module';
-
+import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+import { ErrorInterceptor,JwtInterceptor } from './helpers';
 import { DefaultLayoutComponent } from './layouts/default/default.component';
 import { LandingSiteLayoutComponent } from './layouts/landing-site/landing-site.component';
 import { OutsideTheGateLayoutComponent } from './layouts/outside-the-gate/outside-the-gate.component';
-
-import { LoginModalComponent } from './shared/components/login-modal/login-modal.component';
-import { RequestDemoModalComponent } from './shared/components/request-demo-modal/request-demo-modal.component';
-import { RequestDemoSuccessComponent } from './shared/components/request-demo-success/request-demo-success.component';
-
+import { SharedService } from './layouts/shared-service';
+import { NiComponentsModule } from './ni-components/ni-components.module';
+import { PagesModule } from './pages/pages.module';
 // Services
 import { AcukwikairportsService } from './services/acukwikairports.service';
-import { AircraftsService } from './services/aircrafts.service';
 import { AircraftpricesService } from './services/aircraftprices.service';
+import { AircraftsService } from './services/aircrafts.service';
+import { AirportWatchService } from './services/airportwatch.service';
+import { AppService } from './services/app.service';
 import { AuthenticationService } from './services/authentication.service';
 import { ContactinfobygroupsService } from './services/contactinfobygroups.service';
 import { ContactsService } from './services/contacts.service';
 import { CustomcustomertypesService } from './services/customcustomertypes.service';
-import { CustomeraircraftsService } from './services/customeraircrafts.service';
 import { CustomerCompanyTypesService } from './services/customer-company-types.service';
+import { CustomeraircraftsService } from './services/customeraircrafts.service';
 import { CustomercontactsService } from './services/customercontacts.service';
 import { CustomerinfobygroupService } from './services/customerinfobygroup.service';
 import { CustomermarginsService } from './services/customermargins.service';
@@ -72,31 +67,30 @@ import { DistributionService } from './services/distribution.service';
 import { EmailcontentService } from './services/emailcontent.service';
 import { FboairportsService } from './services/fboairports.service';
 import { FbocontactsService } from './services/fbocontacts.service';
-import { FbofeesandtaxesService } from './services/fbofeesandtaxes.service';
 import { FbofeeandtaxomitsbycustomerService } from './services/fbofeeandtaxomitsbycustomer.service';
 import { FbofeeandtaxomitsbypricingtemplateService } from './services/fbofeeandtaxomitsbypricingtemplate.service';
+import { FbofeesandtaxesService } from './services/fbofeesandtaxes.service';
 import { FbopreferencesService } from './services/fbopreferences.service';
 import { FbopricesService } from './services/fboprices.service';
 import { FbosService } from './services/fbos.service';
 import { FuelreqsService } from './services/fuelreqs.service';
 import { GroupsService } from './services/groups.service';
-import { Parametri } from './services/paremeters.service';
 import { LandingsiteService } from './services/landingsite.service';
+import { Parametri } from './services/paremeters.service';
 import { PricetiersService } from './services/pricetiers.service';
 import { PricingtemplatesService } from './services/pricingtemplates.service';
 import { RampfeesService } from './services/rampfees.service';
 import { RampfeesettingsService } from './services/rampfeesettings.service';
-import { SharedService } from './layouts/shared-service';
 import { TemporaryAddOnMarginService } from './services/temporaryaddonmargin.service';
 import { UserService } from './services/user.service';
-import { AppService } from './services/app.service';
-import { AirportWatchService } from './services/airportwatch.service';
-
-import { environment } from '../environments/environment';
+import { LoginModalComponent } from './shared/components/login-modal/login-modal.component';
+import { RequestDemoModalComponent } from './shared/components/request-demo-modal/request-demo-modal.component';
+import { RequestDemoSuccessComponent } from './shared/components/request-demo-success/request-demo-success.component';
 import { metaReducers, reducers } from './store/reducers';
-import { JwtInterceptor, ErrorInterceptor } from './helpers';
+import { UIModule } from './ui/ui.module';
 
 @NgModule({
+  bootstrap: [AppComponent],
   declarations: [
     AppComponent,
     DefaultLayoutComponent,
@@ -142,7 +136,7 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     StoreModule.forRoot(reducers, {
       metaReducers,
     }),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreDevtoolsModule.instrument({ logOnly: environment.production, maxAge: 25 }),
     AppRoutingModule,
     UIModule,
     NiComponentsModule,
@@ -151,14 +145,14 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
   ],
   providers: [
     {
+      multi: true,
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
-      multi: true,
     },
     {
+      multi: true,
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
-      multi: true,
     },
     AcukwikairportsService,
     AircraftsService,
@@ -197,7 +191,6 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
     UserService,
     AppService,
     AirportWatchService,
-  ],
-  bootstrap: [AppComponent]
+  ]
 })
 export class AppModule { }

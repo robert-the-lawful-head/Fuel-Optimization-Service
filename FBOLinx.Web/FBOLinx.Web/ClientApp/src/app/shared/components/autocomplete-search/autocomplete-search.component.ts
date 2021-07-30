@@ -11,16 +11,16 @@ export interface CloseConfirmationData {
 }
 
 @Component({
-    selector: 'app-autocomplete-search',
-    templateUrl: './autocomplete-search.component.html',
-    styleUrls: [ './autocomplete-search.component.scss' ],
     providers: [
         {
-            provide: NG_VALUE_ACCESSOR,
             multi:true,
+            provide: NG_VALUE_ACCESSOR,
             useExisting: AutocompleteSearchComponent
         },
-    ]
+    ],
+    selector: 'app-autocomplete-search',
+    styleUrls: [ './autocomplete-search.component.scss' ],
+    templateUrl: './autocomplete-search.component.html'
 })
 export class AutocompleteSearchComponent implements OnChanges, ControlValueAccessor  {
     @Input() label: string;

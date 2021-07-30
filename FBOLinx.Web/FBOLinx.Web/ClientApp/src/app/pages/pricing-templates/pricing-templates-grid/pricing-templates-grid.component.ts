@@ -1,21 +1,19 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
-
-// Components
-import { PricingTemplatesDialogNewTemplateComponent } from '../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
+import { State } from '../../../store/reducers';
+import { getPricingTemplateState } from '../../../store/selectors/pricing-template';
 import { PricingTemplatesDialogCopyTemplateComponent } from '../pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component';
 import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
-
-import { getPricingTemplateState } from '../../../store/selectors/pricing-template';
-import { State } from '../../../store/reducers';
+// Components
+import { PricingTemplatesDialogNewTemplateComponent } from '../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
 
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
@@ -25,8 +23,8 @@ export interface DefaultTemplateUpdate {
 
 @Component({
     selector: 'app-pricing-templates-grid',
-    templateUrl: './pricing-templates-grid.component.html',
     styleUrls: [ './pricing-templates-grid.component.scss' ],
+    templateUrl: './pricing-templates-grid.component.html',
 })
 export class PricingTemplatesGridComponent implements OnInit {
     // Input/Output Bindings
@@ -100,11 +98,11 @@ export class PricingTemplatesGridComponent implements OnInit {
 
     public editPricingTemplate(pricingTemplate) {
         this.editPricingTemplateClicked.emit({
-            pricingTemplateId: pricingTemplate.oid,
             filter: this.pricingTemplatesDataSource.filter,
-            page: this.pricingTemplatesDataSource.paginator.pageIndex,
             order: this.pricingTemplatesDataSource.sort.active,
             orderBy: this.pricingTemplatesDataSource.sort.direction,
+            page: this.pricingTemplatesDataSource.paginator.pageIndex,
+            pricingTemplateId: pricingTemplate.oid,
         });
     }
 
@@ -131,8 +129,8 @@ export class PricingTemplatesGridComponent implements OnInit {
             const dialogRef = this.deleteTemplateWarningDialog.open(
                 PricingTemplatesDialogDeleteWarningComponent,
                 {
-                    data: this.pricingTemplatesData,
                     autoFocus: false,
+                    data: this.pricingTemplatesData,
                     width: '600px',
                 }
             );

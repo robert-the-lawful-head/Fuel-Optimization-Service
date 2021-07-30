@@ -1,8 +1,8 @@
 import {
     Directive,
-    OnInit,
-    Input,
     HostBinding,
+    Input,
+    OnInit,
 } from '@angular/core';
 
 @Directive({

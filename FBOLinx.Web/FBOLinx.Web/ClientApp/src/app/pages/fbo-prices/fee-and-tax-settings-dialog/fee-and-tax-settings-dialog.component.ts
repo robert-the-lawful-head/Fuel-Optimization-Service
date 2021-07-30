@@ -1,17 +1,17 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, } from '@angular/material/dialog';
-
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
-import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
-import { FeeCalculationTypes } from '../../../enums/fee-calculation-types';
-import { FeeCalculationApplyingTypes } from '../../../enums/fee-calculation-applying-types';
+import { MAT_DIALOG_DATA, MatDialog,MatDialogRef,  } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
+import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
+import { FeeCalculationApplyingTypes } from '../../../enums/fee-calculation-applying-types';
+import { FeeCalculationTypes } from '../../../enums/fee-calculation-types';
+import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
+import { SharedService } from '../../../layouts/shared-service';
 import { EnumOptions } from '../../../models/enum-options';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { FbopricesService } from '../../../services/fboprices.service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 import { SaveConfirmationComponent, SaveConfirmationData } from '../../../shared/components/save-confirmation/save-confirmation.component';
 
@@ -38,10 +38,10 @@ export interface SampleCalculation {
 }
 
 @Component({
+    providers: [ SharedService, PricingtemplatesService, FbopricesService, NgxUiLoaderService ],
     selector: 'app-fee-and-tax-settings-dialog',
-    templateUrl: './fee-and-tax-settings-dialog.component.html',
     styleUrls: [ './fee-and-tax-settings-dialog.component.scss' ],
-    providers: [ SharedService, PricingtemplatesService, FbopricesService, NgxUiLoaderService ]
+    templateUrl: './fee-and-tax-settings-dialog.component.html'
 })
 export class FeeAndTaxSettingsDialogComponent implements OnInit {
     @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
@@ -58,12 +58,12 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     public deletedFeesAndTaxes: Array<FeeAndTaxDialogData> = [];
     public pricingTemplates: Array<any>;
     public sampleCalculation: SampleCalculation = {
-        pricingTemplateId: 0,
-        flightTypeClassification: FlightTypeClassifications.Private,
         departureType: ApplicableTaxFlights.DomesticOnly,
-        isCalculating: false,
         exclusivePrice: 0,
-        inclusivePrice: 0
+        flightTypeClassification: FlightTypeClassifications.Private,
+        inclusivePrice: 0,
+        isCalculating: false,
+        pricingTemplateId: 0
     };
     public requiresSaving = false;
 
@@ -121,14 +121,14 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
 
     public feeAndTaxAdded(): void {
         this.data.push({
-            oid: 0,
-            fboid: this.sharedService.currentUser.fboId,
-            name: '',
-            requiresUpdate: false,
             calculationType: 0,
-            value: 0,
-            flightTypeClassification: 3,
             departureType: 3,
+            fboid: this.sharedService.currentUser.fboId,
+            flightTypeClassification: 3,
+            name: '',
+            oid: 0,
+            requiresUpdate: false,
+            value: 0,
             whenToApply: 0
         });
         this.prepareDataSource();
@@ -158,13 +158,13 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     public onCancelClick(): void {
         if (this.requiresSaving) {
             const dialogRef = this.saveConfirmationDialog.open(SaveConfirmationComponent, {
-                data: {
-                    customText: 'You have unsaved changes. Are you sure to close?',
-                    save: 'Save & Close',
-                    discard: 'Discard Changes',
-                    cancel: 'Cancel',
-                } as SaveConfirmationData,
                 autoFocus: false,
+                data: {
+                    cancel: 'Cancel',
+                    customText: 'You have unsaved changes. Are you sure to close?',
+                    discard: 'Discard Changes',
+                    save: 'Save & Close',
+                } as SaveConfirmationData,
             });
 
             dialogRef.afterClosed().subscribe((confirmed) => {

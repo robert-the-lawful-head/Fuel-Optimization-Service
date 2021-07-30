@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider';
 import * as moment from 'moment';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-analytics-volumes-nearby-airport',
-    templateUrl: './analytics-volumes-nearby-airport-chart.component.html',
     styleUrls: ['./analytics-volumes-nearby-airport-chart.component.scss'],
+    templateUrl: './analytics-volumes-nearby-airport-chart.component.html',
 })
 export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
     public filterStartDate: Date;

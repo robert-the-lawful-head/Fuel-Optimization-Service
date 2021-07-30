@@ -8,9 +8,9 @@ import {
     ViewChild,
     ViewContainerRef
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import {
     Column,
     ColumnMenuService,
@@ -22,23 +22,22 @@ import {
     SelectionSettingsModel,
     SortEventArgs,
 } from '@syncfusion/ej2-angular-grids';
+import { first, last } from 'lodash';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { fboChangedEvent } from '../../../models/sharedEvents';
+import { FbosService } from '../../../services/fbos.service';
 // Services
 import { GroupsService } from '../../../services/groups.service';
-import { FbosService } from '../../../services/fbos.service';
-import { SharedService } from '../../../layouts/shared-service';
-
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
+import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
+import { GroupGridState } from '../../../store/reducers/group';
+import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 // Components
 import { GroupsDialogNewGroupComponent } from '../groups-dialog-new-group/groups-dialog-new-group.component';
-import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
-import { NotificationComponent } from '../../../shared/components/notification/notification.component';
-import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
-import { fboChangedEvent } from '../../../models/sharedEvents';
-import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
-import { GroupGridState } from '../../../store/reducers/group';
-import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
-import { first, last } from 'lodash';
 
 const initialColumns: ColumnType[] = [
     {
@@ -81,10 +80,10 @@ const initialColumns: ColumnType[] = [
 ];
 
 @Component({
-    selector: 'app-groups-grid',
-    templateUrl: './groups-grid.component.html',
-    styleUrls: [ './groups-grid.component.scss' ],
     providers: [ DetailRowService, ColumnMenuService ],
+    selector: 'app-groups-grid',
+    styleUrls: [ './groups-grid.component.scss' ],
+    templateUrl: './groups-grid.component.html',
 })
 export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('grid') public grid: GridComponent;
@@ -111,8 +110,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     searchValue = '';
     accountType: 'all' | 'active' | 'inactive' = 'active';
     pageSettings: any = {
-        pageSizes: [ 25, 50, 100, 'All' ],
         pageSize: 25,
+        pageSizes: [ 25, 50, 100, 'All' ],
     };
     public filterSettings: FilterSettingsModel = { type: 'Menu' };
 
@@ -150,25 +149,25 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.sharedService.titleChange(this.pageTitle);
         const self = this;
         this.childGrid = {
-            dataSource: this.fboDataSource,
-            queryString: 'groupId',
             columns: [
                 { field: 'icao', headerText: 'ICAO' },
                 { field: 'fbo', headerText: 'FBO' },
-                { template: this.pricingExpiredTemplate, headerText: 'Pricing Expired' },
-                { template: this.needAttentionTemplate, headerText: 'Need Attentions' },
-                { template: this.lastLoginTemplate, headerText: 'Last Login Date' },
-                { template: this.usersTemplate, headerText: 'Users' },
+                { headerText: 'Pricing Expired', template: this.pricingExpiredTemplate },
+                { headerText: 'Need Attentions', template: this.needAttentionTemplate },
+                { headerText: 'Last Login Date', template: this.lastLoginTemplate },
+                { headerText: 'Users', template: this.usersTemplate },
                 { field: 'quotes30Days', headerText: 'Quotes (last 30 days)' },
                 { field: 'orders30Days', headerText: 'Fuel Orders (last 30 days)' },
-                { template: this.accountExpiredTemplate, headerText: 'Account Expired' },
+                { headerText: 'Account Expired', template: this.accountExpiredTemplate },
                 { template: this.fboManageTemplate, width: 150 },
             ],
+            dataSource: this.fboDataSource,
             load() {
                 this.registeredTemplate = {};   // set registertemplate value as empty in load event
                 (this as GridComponent).parentDetails.parentKeyFieldValue
                     = ((this as GridComponent).parentDetails.parentRowData as { oid?: string }).oid;
             },
+            queryString: 'groupId',
             recordClick: (args: RecordClickEventArgs) => {
                 self.manageFBO(args.rowData);
             },
@@ -225,11 +224,11 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     deleteGroup(record) {
         const dialogRef = this.deleteGroupDialog.open(
             DeleteConfirmationComponent, {
-                data: {
-                    item: record,
-                    fullDescription: 'You are about to remove this group. This will remove the fbos and all the other data related to the group. Are you sure?'
-                },
                 autoFocus: false,
+                data: {
+                    fullDescription: 'You are about to remove this group. This will remove the fbos and all the other data related to the group. Are you sure?',
+                    item: record
+                },
             }
         );
 
@@ -252,11 +251,11 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     deleteFbo(record) {
         const dialogRef = this.deleteFboDialog.open(
             DeleteConfirmationComponent, {
-                data: {
-                    item: record,
-                    description: 'FBO'
-                },
                 autoFocus: false,
+                data: {
+                    description: 'FBO',
+                    item: record
+                },
             }
         );
 
@@ -292,11 +291,11 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     addNewGroupOrFbo() {
         const dialogRef = this.newGroupDialog.open(
             GroupsDialogNewGroupComponent, {
-                width: '450px',
                 data: {
-                    oid: 0,
-                    initialSetupPhase: true
+                    initialSetupPhase: true,
+                    oid: 0
                 },
+                width: '450px',
             }
         );
 
@@ -321,12 +320,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
     addNewFbo(group: any) {
         const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
-            width: '450px',
             data: {
-                oid: 0,
+                groupId: group.oid,
                 initialSetupPhase: true,
-                groupId: group.oid
+                oid: 0
             },
+            width: '450px',
         });
 
         dialogRef.afterClosed().subscribe((result) => {
@@ -344,21 +343,21 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             this.notification.open(
                 NotificationComponent, {
                     data: {
-                        title: 'Inactive group',
                         text: 'You can\'t manage an inactive group!',
+                        title: 'Inactive group',
                     },
                 }
             );
         } else {
             const dialogRef = this.manageDialog.open(
                 ManageConfirmationComponent, {
-                    width: '450px',
-                    data: {
-                        title: 'Manage Group?',
-                        description: 'This will temporarily switch your account to a group admin for this group.  Would you like to continue?',
-                        group: true
-                    },
                     autoFocus: false,
+                    data: {
+                        description: 'This will temporarily switch your account to a group admin for this group.  Would you like to continue?',
+                        group: true,
+                        title: 'Manage Group?'
+                    },
+                    width: '450px',
                 }
             );
             dialogRef.afterClosed().subscribe((result) => {
@@ -383,21 +382,21 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             this.notification.open(
                 NotificationComponent, {
                     data: {
-                        title: 'Inactive fbo',
                         text: 'You can\'t manage an inactive fbo!',
+                        title: 'Inactive fbo',
                     },
                 }
             );
         } else {
             const dialogRef = this.manageDialog.open(
                 ManageConfirmationComponent, {
-                    width: '450px',
+                    autoFocus: false,
                     data: {
-                        title: 'Manage FBO?',
                         description: 'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?',
                         fboId: fbo.oid,
+                        title: 'Manage FBO?',
                     },
-                    autoFocus: false,
+                    width: '450px',
                 }
             );
 
@@ -433,10 +432,10 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     mergeGroups() {
         const dialogRef = this.mergeGroupsDialog.open(
             GroupsMergeDialogComponent, {
-                width: '450px',
                 data: {
                     groups: this.selectedRows
                 },
+                width: '450px',
             }
         );
         dialogRef.afterClosed().subscribe((result) => {
@@ -583,9 +582,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 ...column,
                 sort: args.direction === 'Ascending' ? 'asc' : 'desc'
             }) : ({
+                hidden: column.hidden,
                 id: column.id,
                 name: column.name,
-                hidden: column.hidden,
             }));
 
             this.saveSettings();

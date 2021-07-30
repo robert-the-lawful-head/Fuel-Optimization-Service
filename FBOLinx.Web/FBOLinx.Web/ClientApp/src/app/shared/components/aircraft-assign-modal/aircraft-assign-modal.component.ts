@@ -1,13 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FlightWatchHistorical } from 'src/app/models/flight-watch-historical';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { CustomersListType } from '../../../models/customer';
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
-import { SharedService } from '../../../layouts/shared-service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
-
-import { CustomersListType } from '../../../models/customer';
-import { FlightWatchHistorical } from 'src/app/models/flight-watch-historical';
 
 export interface NewCustomerAircraftDialogData {
     tailNumber: string;
@@ -15,10 +14,10 @@ export interface NewCustomerAircraftDialogData {
 }
 
 @Component({
-    selector: 'app-aircraft-assign-modal',
-    templateUrl: './aircraft-assign-modal.component.html',
-    styleUrls: [ './aircraft-assign-modal.component.scss' ],
     providers: [ SharedService ],
+    selector: 'app-aircraft-assign-modal',
+    styleUrls: [ './aircraft-assign-modal.component.scss' ],
+    templateUrl: './aircraft-assign-modal.component.html',
 })
 export class AircraftAssignModalComponent implements OnInit {
     // Public Members
@@ -53,21 +52,21 @@ export class AircraftAssignModalComponent implements OnInit {
     public onSubmit() {
         this.loading = true;
         const payload: any = {
+            aircraftId: this.selectedAircraft.aircraftId,
             fboId: this.sharedService.currentUser.fboId,
             groupId: this.sharedService.currentUser.groupId,
-            aircraftId: this.selectedAircraft.aircraftId,
-            tailNumber: this.data.tailNumber,
             size: this.selectedAircraft.size,
+            tailNumber: this.data.tailNumber,
         };
         if (typeof this.selectedCompany === 'string') {
             payload.customer = this.selectedCompany;
             this.customerAircraftsService.createAircraftWithCustomer(payload)
                 .subscribe((customerInfoByGroup: any) => {
                     this.dialogRef.close({
-                        customerInfoByGroupID: customerInfoByGroup.oid,
-                        companyId: customerInfoByGroup.customerId,
-                        company: customerInfoByGroup.company,
                         aircraftType: this.selectedAircraft.make + ' / ' + this.selectedAircraft.model,
+                        company: customerInfoByGroup.company,
+                        companyId: customerInfoByGroup.customerId,
+                        customerInfoByGroupID: customerInfoByGroup.oid,
                     } as Partial<FlightWatchHistorical>);
                 });
         } else {
@@ -76,10 +75,10 @@ export class AircraftAssignModalComponent implements OnInit {
                 .subscribe(() => {
                     const selectedCompany = this.data.customers.find(customer => customer.companyId === this.selectedCompany);
                     this.dialogRef.close({
-                        customerInfoByGroupID: selectedCompany.customerInfoByGroupID,
-                        companyId: selectedCompany.companyId,
-                        company: selectedCompany.company,
                         aircraftType: this.selectedAircraft.make + ' / ' + this.selectedAircraft.model,
+                        company: selectedCompany.company,
+                        companyId: selectedCompany.companyId,
+                        customerInfoByGroupID: selectedCompany.customerInfoByGroupID,
                     } as Partial<FlightWatchHistorical>);
                 });
         }

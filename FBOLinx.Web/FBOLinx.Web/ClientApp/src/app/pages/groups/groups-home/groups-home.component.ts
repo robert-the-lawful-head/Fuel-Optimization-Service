@@ -1,30 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { groupGridSet } from 'src/app/store/actions';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { GroupsService } from '../../../services/groups.service';
-import { SharedService } from '../../../layouts/shared-service';
 import { State } from '../../../store/reducers';
 import { GroupGridState } from '../../../store/reducers/group';
 import { getGroupGridState } from '../../../store/selectors';
-import { groupGridSet } from 'src/app/store/actions';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Groups',
         link: '',
+        title: 'Groups',
     },
 ];
 
 @Component({
     selector: 'app-groups-home',
-    templateUrl: './groups-home.component.html',
     styleUrls: [ './groups-home.component.scss' ],
+    templateUrl: './groups-home.component.html',
 })
 export class GroupsHomeComponent implements OnInit {
     // Members

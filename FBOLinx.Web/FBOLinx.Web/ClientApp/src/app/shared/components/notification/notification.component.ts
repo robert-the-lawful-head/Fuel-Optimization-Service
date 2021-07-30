@@ -3,8 +3,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: '[notification]',
-    templateUrl: './notification.component.html',
     styleUrls: [ './notification.component.scss' ],
+    templateUrl: './notification.component.html',
 })
 export class NotificationComponent {
     @Input() block = false;

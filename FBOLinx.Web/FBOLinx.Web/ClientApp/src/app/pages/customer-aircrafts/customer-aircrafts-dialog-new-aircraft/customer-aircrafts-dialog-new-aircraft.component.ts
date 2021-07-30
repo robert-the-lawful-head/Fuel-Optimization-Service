@@ -18,8 +18,8 @@ export interface NewCustomerAircraftDialogData {
 
 @Component({
     selector: 'app-customer-aircrafts-dialog-new-aircraft',
-    templateUrl: './customer-aircrafts-dialog-new-aircraft.component.html',
     styleUrls: [ './customer-aircrafts-dialog-new-aircraft.component.scss' ],
+    templateUrl: './customer-aircrafts-dialog-new-aircraft.component.html',
 })
 export class CustomerAircraftsDialogNewAircraftComponent implements OnInit {
     // Public Members

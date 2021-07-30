@@ -1,34 +1,31 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-// Services
-import { UserService } from '../../../services/user.service';
-import { AuthenticationService } from '../../../services/authentication.service';
 import { SharedService } from '../../../layouts/shared-service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { FbopricesService } from '../../../services/fboprices.service';
-import { FboairportsService } from '../../../services/fboairports.service';
-import { FbosService } from '../../../services/fbos.service';
-
 import * as SharedEvents from '../../../models/sharedEvents';
 import { customerUpdatedEvent, fboChangedEvent } from '../../../models/sharedEvents';
-
+import { AuthenticationService } from '../../../services/authentication.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { FboairportsService } from '../../../services/fboairports.service';
+import { FbopricesService } from '../../../services/fboprices.service';
+import { FbosService } from '../../../services/fbos.service';
+// Services
+import { UserService } from '../../../services/user.service';
 // Components
 import { AccountProfileComponent } from '../../../shared/components/account-profile/account-profile.component';
 import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 
 @Component({
-    selector: 'app-horizontal-navbar',
-    templateUrl: 'horizontal-navbar.component.html',
-    styleUrls: [ 'horizontal-navbar.component.scss' ],
     host: {
         '[class.app-navbar]': 'true',
         '[class.show-overlay]': 'showOverlay',
     },
     providers: [ WindowRef ],
+    selector: 'app-horizontal-navbar',
+    styleUrls: [ 'horizontal-navbar.component.scss' ],
+    templateUrl: 'horizontal-navbar.component.html',
 })
 export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     @Input() title: string;
@@ -104,7 +101,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
         this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
             if (!this.canUserSeePricing())
-                return;
+                {return;}
             if (message === fboChangedEvent) {
                 this.loadLocations();
                 this.loadFboInfo();
@@ -173,9 +170,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.userService.getCurrentUser().subscribe((response: any) => {
             const dialogRef = this.accountProfileDialog.open(
                 AccountProfileComponent, {
+                    data: response,
                     height: '550px',
                     width: '1000px',
-                    data: response,
                 }
             );
             dialogRef.afterClosed().subscribe((result) => {
@@ -185,8 +182,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                 this.userService.update(result).subscribe(() => {
                     this.userService
                         .updatePassword({
-                            user: result,
                             newPassword: result.newPassword,
+                            user: result,
                         })
                         .subscribe((newPass: any) => {
                             result.password = newPass;

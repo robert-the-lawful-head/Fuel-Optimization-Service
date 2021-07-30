@@ -12,8 +12,8 @@ export interface SaveConfirmationData {
 
 @Component({
     selector: 'app-save-confirmation',
-    templateUrl: './save-confirmation.component.html',
     styleUrls: [ './save-confirmation.component.scss' ],
+    templateUrl: './save-confirmation.component.html',
 })
 export class SaveConfirmationComponent {
     constructor(

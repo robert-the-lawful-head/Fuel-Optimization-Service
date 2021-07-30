@@ -4,11 +4,11 @@ import {
     MatDialog,
     MatDialogRef,
 } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
+import { PricetiersService } from '../../../services/pricetiers.service';
 // Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { PricetiersService } from '../../../services/pricetiers.service';
-import { Router } from '@angular/router';
 
 export interface CopyPricingTemplateDialogData {
     currentPricingTemplateId: number;
@@ -17,8 +17,8 @@ export interface CopyPricingTemplateDialogData {
 
 @Component({
     selector: 'copy-pricing-templates-dialog-new-template',
-    templateUrl: './pricing-template-dialog-copy-template.component.html',
     styleUrls: ['./pricing-template-dialog-copy-template.component.scss'],
+    templateUrl: './pricing-template-dialog-copy-template.component.html',
 })
 export class PricingTemplatesDialogCopyTemplateComponent {
     constructor(

@@ -1,14 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-
 // Components
 import * as moment from 'moment';
 
 @Component({
     selector: 'app-pricing-expired-notification-group',
-    templateUrl: './pricing-expired-notification-group.component.html',
     styleUrls: ['./pricing-expired-notification-group.component.scss'],
+    templateUrl: './pricing-expired-notification-group.component.html',
 })
 export class PricingExpiredNotificationGroupComponent {
     constructor(

@@ -3,15 +3,15 @@ import * as moment from 'moment';
 
 @Component({
     selector: 'app-table-global-search',
-    templateUrl: 'table-global-search.component.html',
-    styleUrls: [ 'table-global-search.component.scss' ]
+    styleUrls: [ 'table-global-search.component.scss' ],
+    templateUrl: 'table-global-search.component.html'
 })
 export class TableGlobalSearchComponent implements OnInit {
     @Input() placeholder: string;
     @Input() matDataSource: any = null;
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
 
-    public globalFilter: any = { isGlobal: true, filterValue: '' };
+    public globalFilter: any = { filterValue: '', isGlobal: true };
 
     constructor() {
     }
@@ -82,13 +82,13 @@ export class TableGlobalSearchComponent implements OnInit {
             }
 
             filter.dateFilter = {
-                startDate: null,
-                endDate: null
+                endDate: null,
+                startDate: null
             };
             filter.stringFilter = '';
             filter.numberRangeFilter = {
-                start: null,
-                end: null
+                end: null,
+                start: null
             };
             filter.isFiltered = false;
         }

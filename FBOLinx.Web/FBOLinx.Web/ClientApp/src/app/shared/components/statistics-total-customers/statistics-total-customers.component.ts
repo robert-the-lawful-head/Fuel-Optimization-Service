@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
     selector: 'app-statistics-total-customers',
-    templateUrl: './statistics-total-customers.component.html',
     styleUrls: ['./statistics-total-customers.component.scss'],
+    templateUrl: './statistics-total-customers.component.html',
 })
 // statisticsTotalCustomers component
 export class StatisticsTotalCustomersComponent implements OnInit {
