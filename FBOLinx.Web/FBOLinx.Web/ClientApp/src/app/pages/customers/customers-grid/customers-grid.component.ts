@@ -1,28 +1,25 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSelectChange } from '@angular/material/select';
 import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
-import { find, forEach, map, sortBy } from 'lodash';
 import FlatFileImporter from 'flatfile-csv-importer';
+import { find, forEach, map, sortBy } from 'lodash';
 import * as XLSX from 'xlsx';
 
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvents from '../../../models/sharedEvents';
+import { AirportWatchService } from '../../../services/airportwatch.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { CustomermarginsService } from '../../../services/customermargins.service';
 // Services
 import { CustomersService } from '../../../services/customers.service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { SharedService } from '../../../layouts/shared-service';
-
-// Components
-import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
-
-import { CustomermarginsService } from '../../../services/customermargins.service';
 import { CustomerGridState } from '../../../store/reducers/customer';
-import { AirportWatchService } from '../../../services/airportwatch.service';
-
-import * as SharedEvents from '../../../models/sharedEvents';
+// Components
+import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -70,8 +67,8 @@ const initialColumns: ColumnType[] = [
 
 @Component({
     selector: 'app-customers-grid',
-    templateUrl: './customers-grid.component.html',
     styleUrls: [ './customers-grid.component.scss' ],
+    templateUrl: './customers-grid.component.html',
 })
 export class CustomersGridComponent implements OnInit {
     // Input/Output Bindings
@@ -167,8 +164,8 @@ export class CustomersGridComponent implements OnInit {
         const dialogRef = this.deleteCustomerDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: customer, description: 'customer' },
                 autoFocus: false,
+                data: { description: 'customer', item: customer },
             }
         );
 
@@ -188,10 +185,10 @@ export class CustomersGridComponent implements OnInit {
         this.editCustomerClicked.emit({
             customerInfoByGroupId: customer.customerInfoByGroupId,
             filter: this.customersDataSource.filter,
-            page: this.customersDataSource.paginator.pageIndex,
+            filterType: this.customerFilterType,
             order: this.customersDataSource.sort.active,
             orderBy: this.customersDataSource.sort.direction,
-            filterType: this.customerFilterType,
+            page: this.customersDataSource.paginator.pageIndex,
         });
     }
 
@@ -239,13 +236,13 @@ export class CustomersGridComponent implements OnInit {
             exportData = this.customersDataSource.filteredData;
         }
         exportData = map(exportData, (item) => ({
-            Company: item.company,
-            'Needs Attention': item.needsAttention ? 'Needs Attention' : '',
-            'Customer Type': item.customerCompanyTypeName,
-            'FuelerLinx Network': item.isFuelerLinxCustomer ? 'YES' : 'NO',
             'Certificate Type': item.certificateTypeDescription,
-            'ITP Margin Template': item.pricingTemplateName,
+            Company: item.company,
+            'Customer Type': item.customerCompanyTypeName,
             'Fleet Size': item.fleetSize,
+            'FuelerLinx Network': item.isFuelerLinxCustomer ? 'YES' : 'NO',
+            'ITP Margin Template': item.pricingTemplateName,
+            'Needs Attention': item.needsAttention ? 'Needs Attention' : '',
             'Previous Visits': item.aircraftsVisits,
         }));
         exportData = sortBy(exportData, [
@@ -262,11 +259,11 @@ export class CustomersGridComponent implements OnInit {
     exportCustomerAircraftToExcel() {
         // Export the filtered results to an excel spreadsheet
         let exportData = map(this.aircraftData, (item) => ({
-                Tail: item.tailNumber,
-                Type: item.make + ' ' + item.model,
-                Size: item.aircraftSizeDescription,
                 Company: item.company,
                 'Company Pricing': item.pricingTemplateName,
+                Size: item.aircraftSizeDescription,
+                Tail: item.tailNumber,
+                Type: item.make + ' ' + item.model,
             }));
         exportData = sortBy(exportData, [
             (item) => item.Company.toLowerCase(),
@@ -295,9 +292,9 @@ export class CustomersGridComponent implements OnInit {
         }
 
         const vm = {
+            fboid: this.sharedService.currentUser.fboId,
             id: customer.customerId,
             pricingTemplateId: changedPricingTemplate.oid,
-            fboid: this.sharedService.currentUser.fboId,
         };
         this.customerMarginsService
             .updatecustomermargin(vm)
@@ -319,9 +316,9 @@ export class CustomersGridComponent implements OnInit {
                     customer.needsAttentionReason = 'Customer was assigned to the default template and has not been changed yet.';
                 }
                 listCustomers.push({
+                    fboid: this.sharedService.currentUser.fboId,
                     id: customer.customerId,
                     pricingTemplateId: event.value.oid,
-                    fboid: this.sharedService.currentUser.fboId,
                 });
             }
         });
@@ -371,39 +368,41 @@ export class CustomersGridComponent implements OnInit {
     initializeImporter() {
         FlatFileImporter.setVersion(2);
         this.importer = new FlatFileImporter(this.LICENSE_KEY, {
+            allowCustom: true,
+            allowInvalidSubmit: true,
+            disableManualInput: false,
             fields: [
                 {
-                    label: 'Company Id',
                     alternates: [ 'Id', 'CompanyId' ],
-                    key: 'CompanyId',
                     description: 'Company Id Value',
+                    key: 'CompanyId',
+                    label: 'Company Id',
                 },
                 {
-                    label: 'CompanyName',
                     alternates: [ 'Company Name', 'Name' ],
-                    key: 'CompanyName',
                     description: 'Company Name Value',
+                    key: 'CompanyName',
+                    label: 'CompanyName',
                     validators: [
                         {
-                            validate: 'required',
                             error: 'this field is required',
+                            validate: 'required',
                         },
                     ],
                 },
                 {
-                    label: 'Activate',
                     alternates: [ 'activate' ],
-                    key: 'Activate',
                     description: 'Activate Flag',
+                    key: 'Activate',
+                    label: 'Activate',
                 },
                 {
-                    label: 'Tail',
                     alternates: [ 'tail', 'plane tail', 'N-number', 'Nnumber' ],
-                    key: 'Tail',
                     description: 'Tail',
+                    key: 'Tail',
+                    label: 'Tail',
                 },
                 {
-                    label: 'Aircraft Make',
                     alternates: [
                         'Make',
                         'make',
@@ -412,11 +411,11 @@ export class CustomersGridComponent implements OnInit {
                         'Manufacturer',
                         'Aircraft Manufacturer',
                     ],
-                    key: 'AircraftMake',
                     description: 'Aircraft Make',
+                    key: 'AircraftMake',
+                    label: 'Aircraft Make',
                 },
                 {
-                    label: 'Model',
                     alternates: [
                         'Aircraft Model',
                         'aircraft model',
@@ -424,61 +423,59 @@ export class CustomersGridComponent implements OnInit {
                         'aircraft type',
                         'type',
                     ],
-                    key: 'AircraftModel',
                     description: 'Aircraft Model',
+                    key: 'AircraftModel',
+                    label: 'Model',
                 },
                 {
-                    label: 'Size',
                     alternates: [ 'Aircraft Size', 'Plane Size' ],
-                    key: 'AircraftSize',
                     description: 'Aircraft Size',
+                    key: 'AircraftSize',
+                    label: 'Size',
                 },
                 {
-                    label: 'First Name',
                     alternates: [ 'first name', 'name' ],
-                    key: 'FirstName',
                     description: 'First Name',
+                    key: 'FirstName',
+                    label: 'First Name',
                 },
                 {
-                    label: 'Last Name',
                     alternates: [ 'last name', 'lname' ],
-                    key: 'LastName',
                     description: 'Last Name',
+                    key: 'LastName',
+                    label: 'Last Name',
                 },
                 {
-                    label: 'Title',
                     alternates: [ 'title' ],
-                    key: 'Title',
                     description: 'Title',
+                    key: 'Title',
+                    label: 'Title',
                 },
                 {
-                    label: 'Email',
                     alternates: [ 'email address', 'email' ],
-                    key: 'Email',
                     description: 'Email',
+                    key: 'Email',
+                    label: 'Email',
                 },
                 {
-                    label: 'Mobile',
                     alternates: [ 'mobile', 'cell', 'cell phone' ],
-                    key: 'Mobile',
                     description: 'Mobile',
+                    key: 'Mobile',
+                    label: 'Mobile',
                 },
                 {
-                    label: 'Phone',
                     alternates: [ 'phone' ],
-                    key: 'Phone',
                     description: 'Phone',
+                    key: 'Phone',
+                    label: 'Phone',
                 },
             ],
-            type: 'Customers',
-            allowInvalidSubmit: true,
             managed: true,
-            allowCustom: true,
-            disableManualInput: false,
+            type: 'Customers',
         });
         this.importer.setCustomer({
-            userId: '1',
             name: 'WebsiteImport',
+            userId: '1',
         });
     }
 
@@ -508,7 +505,7 @@ export class CustomersGridComponent implements OnInit {
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    : { hidden: column.hidden, id: column.id, name: column.name }
             );
             this.paginator.pageIndex = 0;
             this.saveSettings();
@@ -530,8 +527,8 @@ export class CustomersGridComponent implements OnInit {
 
     private refreshSort() {
         const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ disableClear: false, id: null, start: sortedColumn?.sort || 'asc' });
+        this.sort.sort({ disableClear: false, id: sortedColumn?.id, start: sortedColumn?.sort || 'asc' });
         (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
     }
 }

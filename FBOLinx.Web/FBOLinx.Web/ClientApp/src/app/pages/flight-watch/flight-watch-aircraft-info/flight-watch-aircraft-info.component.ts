@@ -1,11 +1,9 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+
 import { FlightWatch } from '../../../models/flight-watch';
 
 @Component({
-    selector: 'app-flight-watch-aircraft-info',
-    templateUrl: './flight-watch-aircraft-info.component.html',
-    styleUrls: [ './flight-watch-aircraft-info.component.scss'],
     animations: [
         trigger('openClose', [
             state('closed', style({
@@ -23,6 +21,9 @@ import { FlightWatch } from '../../../models/flight-watch';
         ]),
       ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-flight-watch-aircraft-info',
+    styleUrls: [ './flight-watch-aircraft-info.component.scss'],
+    templateUrl: './flight-watch-aircraft-info.component.html',
 })
 export class FlightWatchAircraftInfoComponent {
     @Input() flightWatch: FlightWatch;

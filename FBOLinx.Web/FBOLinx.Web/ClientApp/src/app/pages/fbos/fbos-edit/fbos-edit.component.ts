@@ -2,19 +2,19 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
-// Services
-import { FbosService } from '../../../services/fbos.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { ContactsService } from '../../../services/contacts.service';
 import { FboairportsService } from '../../../services/fboairports.service';
 import { FbocontactsService } from '../../../services/fbocontacts.service';
-import { ContactsService } from '../../../services/contacts.service';
+// Services
+import { FbosService } from '../../../services/fbos.service';
 import { GroupsService } from '../../../services/groups.service';
-import { SharedService } from '../../../layouts/shared-service';
 import { CloseConfirmationComponent, CloseConfirmationData } from '../../../shared/components/close-confirmation/close-confirmation.component';
 
 @Component({
     selector: 'app-fbos-edit',
-    templateUrl: './fbos-edit.component.html',
     styleUrls: [ './fbos-edit.component.scss' ],
+    templateUrl: './fbos-edit.component.html',
 })
 export class FbosEditComponent implements OnInit {
     @Input() fboInfo: any;
@@ -55,30 +55,30 @@ export class FbosEditComponent implements OnInit {
         if (!this.embed) {
             if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
                 this.breadcrumb = [ {
-                    title: 'Main',
                     link: '/default-layout',
+                    title: 'Main',
                 },
                     {
-                        title: 'Groups',
                         link: '/default-layout/groups',
+                        title: 'Groups',
                     },
                     {
-                        title: 'Edit FBO',
                         link: '',
+                        title: 'Edit FBO',
                     },
                 ];
             } else {
                 this.breadcrumb = [ {
-                    title: 'Main',
                     link: '/default-layout',
+                    title: 'Main',
                 },
                     {
-                        title: 'FBOs',
                         link: '/default-layout/fbos',
+                        title: 'FBOs',
                     },
                     {
-                        title: 'Edit FBO',
                         link: '',
+                        title: 'Edit FBO',
                     },
                 ];
             }
@@ -178,10 +178,10 @@ export class FbosEditComponent implements OnInit {
             this.confirmDialog
                 .open(CloseConfirmationComponent, {
                     data: {
-                        customTitle: 'Account Expired!',
-                        customText: 'Account Expiry date is set. If you activate this account, it will be removed.',
-                        ok: 'Set Active',
                         cancel: 'Cancel',
+                        customText: 'Account Expiry date is set. If you activate this account, it will be removed.',
+                        customTitle: 'Account Expired!',
+                        ok: 'Set Active',
                     } as CloseConfirmationData
                 })
                 .afterClosed()

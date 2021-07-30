@@ -1,23 +1,23 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import * as moment from 'moment';
-import * as XLSX from 'xlsx';
-
-// Services
-import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { FbosService } from '../../../services/fbos.service';
-import * as SharedEvent from '../../../models/sharedEvents';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { CsvExportModalComponent, ICsvExportModalData } from 'src/app/shared/components/csv-export-modal/csv-export-modal.component';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
+import * as XLSX from 'xlsx';
+
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvent from '../../../models/sharedEvents';
+import { FbosService } from '../../../services/fbos.service';
+// Services
+import { FuelreqsService } from '../../../services/fuelreqs.service';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
-    templateUrl: './analytics-companies-quotes-deal-table.component.html',
     styleUrls: ['./analytics-companies-quotes-deal-table.component.scss'],
+    templateUrl: './analytics-companies-quotes-deal-table.component.html',
 })
 export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -60,7 +60,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    : { hidden: column.hidden, id: column.id, name: column.name }
             );
 
             this.saveSettings();
@@ -140,8 +140,8 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
 
     refreshSort() {
         const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ disableClear: false, id: null, start: sortedColumn?.sort || 'asc' });
+        this.sort.sort({ disableClear: false, id: sortedColumn?.id, start: sortedColumn?.sort || 'asc' });
         (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
     }
 
@@ -184,9 +184,9 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
             CsvExportModalComponent,
             {
                 data: {
-                    title: 'Export Customer Statistics',
-                    filterStartDate: this.filterStartDate,
                     filterEndDate: this.filterEndDate,
+                    filterStartDate: this.filterStartDate,
+                    title: 'Export Customer Statistics',
                 },
             }
         );
@@ -205,9 +205,9 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
                 const exportData = data.map((item) => {
                     const row = {
                         Company: item.company,
+                        'Conversion Rate': item.conversionRate + '%',
                         'Direct Orders': item.directOrders,
                         'Number of Quotes': item.companyQuotesTotal,
-                        'Conversion Rate': item.conversionRate + '%',
                     };
                     row[`Total Orders at ${this.fbo}`] = item.totalOrders;
                     row[`Total Orders at ${this.icao}`] = item.airportOrders;

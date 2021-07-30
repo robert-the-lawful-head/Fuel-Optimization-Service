@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+
 import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
     selector: 'app-vertical-navbar',
-    templateUrl: 'vertical-navbar.component.html',
-    styleUrls: [ 'vertical-navbar.component.scss' ]
+    styleUrls: [ 'vertical-navbar.component.scss' ],
+    templateUrl: 'vertical-navbar.component.html'
 })
 export class VerticalNavbarComponent implements OnInit {
     constructor(

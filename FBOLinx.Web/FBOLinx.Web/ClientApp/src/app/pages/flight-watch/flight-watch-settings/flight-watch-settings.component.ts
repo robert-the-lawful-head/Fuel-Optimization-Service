@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
+
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
 
 @Component({
-    selector: 'app-flight-watch-settings',
-    templateUrl: './flight-watch-settings.component.html',
-    styleUrls: [ './flight-watch-settings.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-flight-watch-settings',
+    styleUrls: [ './flight-watch-settings.component.scss'],
+    templateUrl: './flight-watch-settings.component.html',
 })
 export class FlightWatchSettingsComponent {
     @Input() tableData: Observable<FlightWatch[]>;
@@ -36,14 +37,14 @@ export class FlightWatchSettingsComponent {
             .map(type => ({
                 aircraftType: type.id,
                 color: type.fillColor,
-                label: type.label,
                 description: type.description,
+                label: type.label,
             }))
             .concat({
                 aircraftType: 'default',
                 color: '#5fb4e6',
-                label: 'Other',
                 description: '',
+                label: 'Other',
             });
     }
 

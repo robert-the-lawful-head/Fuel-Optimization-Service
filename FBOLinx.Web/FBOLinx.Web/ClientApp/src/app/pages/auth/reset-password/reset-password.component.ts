@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
+import { User } from '../../../models/user';
 // Services
 import { UserService } from '../../../services/user.service';
-import { User } from '../../../models/user';
 
 @Component({
     selector: 'app-reset-password',
-    templateUrl: './reset-password.component.html',
     styleUrls: [ './reset-password.component.scss' ],
+    templateUrl: './reset-password.component.html',
 })
 export class ResetPasswordComponent implements OnInit {
     token: string;
@@ -41,9 +41,9 @@ export class ResetPasswordComponent implements OnInit {
 
             this.userService.validateResetPasswordToken(this.token).subscribe((user: User) => {
                 this.form = this.formBuilder.group({
+                    confirmPassword: new FormControl(''),
                     email: new FormControl(user.username),
                     newPassword: new FormControl(''),
-                    confirmPassword: new FormControl(''),
                 }, {
                     validators: this.passwordConfirming
                 });
@@ -73,9 +73,9 @@ export class ResetPasswordComponent implements OnInit {
         if (this.form.valid) {
             this.submit = true;
             this.userService.resetPassword({
-                username: this.user.username,
                 password: this.form.value.newPassword,
-                resetPasswordToken: this.token
+                resetPasswordToken: this.token,
+                username: this.user.username
             }).subscribe(() => {
                 this.reset = true;
                 setTimeout(() => {

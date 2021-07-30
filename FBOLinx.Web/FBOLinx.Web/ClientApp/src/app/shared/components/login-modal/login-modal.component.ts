@@ -1,13 +1,14 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { AuthenticationService } from '../../../services/authentication.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+
+import { AuthenticationService } from '../../../services/authentication.service';
 
 @Component({
     selector: 'app-login-modal',
-    templateUrl: './login-modal.component.html',
     styleUrls: [ './login-modal.component.scss' ],
+    templateUrl: './login-modal.component.html',
 })
 export class LoginModalComponent {
     loginForm: FormGroup;
@@ -21,9 +22,9 @@ export class LoginModalComponent {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.loginForm = this.formBuilder.group({
-            username: new FormControl(''),
             password: new FormControl(''),
             remember: new FormControl(false),
+            username: new FormControl(''),
         });
     }
 

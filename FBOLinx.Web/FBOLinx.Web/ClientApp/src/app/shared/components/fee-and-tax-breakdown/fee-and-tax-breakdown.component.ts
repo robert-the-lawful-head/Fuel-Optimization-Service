@@ -9,8 +9,8 @@ export enum FeeAndTaxBreakdownDisplayModes {
 
 @Component({
     selector: 'fee-and-tax-breakdown',
-    templateUrl: './fee-and-tax-breakdown.component.html',
-    styleUrls: [ './fee-and-tax-breakdown.component.scss' ]
+    styleUrls: [ './fee-and-tax-breakdown.component.scss' ],
+    templateUrl: './fee-and-tax-breakdown.component.html'
 })
 export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()

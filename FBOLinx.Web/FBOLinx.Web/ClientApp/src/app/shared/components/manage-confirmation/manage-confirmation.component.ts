@@ -4,8 +4,8 @@ import { FbosService } from 'src/app/services/fbos.service';
 
 @Component({
     selector: 'app-manage-confirmation',
-    templateUrl: './manage-confirmation.component.html',
     styleUrls: [ './manage-confirmation.component.scss' ],
+    templateUrl: './manage-confirmation.component.html',
 })
 export class ManageConfirmationComponent {
     loading = false;

@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 import { SortDirection } from '@angular/material/sort';
 
@@ -12,8 +12,8 @@ export type ColumnType = {
 
 @Component({
     selector: 'app-table-settings',
-    templateUrl: './table-settings.component.html',
     styleUrls: [ './table-settings.component.scss' ],
+    templateUrl: './table-settings.component.html',
 })
 export class TableSettingsComponent {
     columns: ColumnType[] = [];
@@ -43,9 +43,9 @@ export class TableSettingsComponent {
             column.sort = 'asc';
             this.columns = this.columns.map(vc =>
                 vc.id === column.id ? column : {
+                    hidden: vc.hidden,
                     id: vc.id,
                     name: vc.name,
-                    hidden: vc.hidden,
                 }
             );
         } else if (column.sort === 'asc') {

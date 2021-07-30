@@ -1,30 +1,28 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { fboChangedEvent } from '../../../models/sharedEvents';
+import { FbopricesService } from '../../../services/fboprices.service';
 // Services
 import { FbosService } from '../../../services/fbos.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { FbopricesService } from '../../../services/fboprices.service';
-
-// Components
-import { FbosDialogNewFboComponent } from '../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
-import { FbosGridNewFboDialogComponent } from '../fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
 import { PricingExpiredNotificationGroupComponent } from '../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component';
-
-import { fboChangedEvent } from '../../../models/sharedEvents';
+// Components
+import { FbosDialogNewFboComponent } from '../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
+import { FbosGridNewFboDialogComponent } from '../fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
 
 @Component({
     selector: 'app-fbos-grid',
-    templateUrl: './fbos-grid.component.html',
     styleUrls: [ './fbos-grid.component.scss' ],
+    templateUrl: './fbos-grid.component.html',
 })
 export class FbosGridComponent implements OnInit {
     // Input/Output Bindings
@@ -116,8 +114,8 @@ export class FbosGridComponent implements OnInit {
         const dialogRef = this.deleteFboDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: record, description: 'FBO' },
                 autoFocus: false,
+                data: { description: 'FBO', item: record },
             }
         );
 
@@ -150,11 +148,11 @@ export class FbosGridComponent implements OnInit {
     public newRecord() {
         if (this.groupInfo) {
             const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
-                width: '450px',
                 data: {
                     groupId: this.groupInfo.oid,
                     initialSetupPhase: true
                 },
+                width: '450px',
             });
 
             dialogRef.afterClosed().subscribe((result) => {
@@ -172,8 +170,8 @@ export class FbosGridComponent implements OnInit {
             });
         } else {
             const dialogRef = this.newFboDialog.open(FbosGridNewFboDialogComponent, {
-                width: '450px',
                 data: {},
+                width: '450px',
             });
 
             dialogRef.afterClosed().subscribe((result) => {
@@ -218,13 +216,13 @@ export class FbosGridComponent implements OnInit {
         const dialogRef = this.manageFboDialog.open(
             ManageConfirmationComponent,
             {
-                width: '450px',
+                autoFocus: false,
                 data: {
-                    title: 'Manage FBO?',
                     description: 'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?',
                     fboId: fbo.oid,
+                    title: 'Manage FBO?',
                 },
-                autoFocus: false,
+                width: '450px',
             }
         );
 

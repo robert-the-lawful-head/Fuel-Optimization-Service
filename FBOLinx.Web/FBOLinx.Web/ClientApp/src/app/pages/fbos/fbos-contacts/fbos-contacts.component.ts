@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, Output, } from '@angular/core';
 
 @Component({
     selector: 'app-fbos-contacts',
-    templateUrl: './fbos-contacts.component.html',
     styleUrls: [ './fbos-contacts.component.scss' ],
+    templateUrl: './fbos-contacts.component.html',
 })
 export class FbosContactsComponent {
     @Output() recordDeleted = new EventEmitter<any>();

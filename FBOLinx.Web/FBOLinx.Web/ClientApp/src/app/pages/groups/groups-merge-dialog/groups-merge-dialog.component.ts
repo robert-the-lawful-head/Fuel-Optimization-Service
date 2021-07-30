@@ -1,11 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+
 import { GroupsService } from '../../../services/groups.service';
 
 @Component({
     selector: 'app-groups-merge-dialog',
-    templateUrl: './groups-merge-dialog.component.html',
     styleUrls: [ './groups-merge-dialog.component.scss' ],
+    templateUrl: './groups-merge-dialog.component.html',
 })
 export class GroupsMergeDialogComponent {
     baseGroup: number;

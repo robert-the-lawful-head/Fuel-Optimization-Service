@@ -1,15 +1,16 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import * as moment from 'moment';
-// Services
-import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvent from '../../../models/sharedEvents';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+// Services
+import { FuelreqsService } from '../../../services/fuelreqs.service';
 
 @Component({
     selector: 'app-analytics-market-share-fbo-airport',
-    templateUrl: './analytics-market-share-fbo-airport-chart.component.html',
     styleUrls: ['./analytics-market-share-fbo-airport-chart.component.scss'],
+    templateUrl: './analytics-market-share-fbo-airport-chart.component.html',
 })
 export class AnalyticsMarketShareFboAirportChartComponent implements OnInit, AfterViewInit, OnDestroy {
     public filterStartDate: Date;

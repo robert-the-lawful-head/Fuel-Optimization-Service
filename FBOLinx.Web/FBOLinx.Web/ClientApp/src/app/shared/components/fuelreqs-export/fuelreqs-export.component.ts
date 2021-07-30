@@ -3,8 +3,8 @@ import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-fuelreqs-export-modal-component',
-    templateUrl: './fuelreqs-export.component.html',
     styleUrls: [ './fuelreqs-export.component.scss' ],
+    templateUrl: './fuelreqs-export.component.html',
 })
 export class FuelReqsExportModalComponent {
     constructor(

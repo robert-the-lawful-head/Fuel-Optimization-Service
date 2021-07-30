@@ -3,8 +3,8 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dia
 
 @Component({
     selector: 'app-pricing-templates-delete-warning-template',
-    templateUrl: './pricing-template-dialog-delete-warning.component.html',
     styleUrls: [ './pricing-template-dialog-delete-warning.component.scss' ],
+    templateUrl: './pricing-template-dialog-delete-warning.component.html',
 })
 export class PricingTemplatesDialogDeleteWarningComponent implements OnInit {
     public selectedTemplate: any;

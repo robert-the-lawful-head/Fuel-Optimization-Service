@@ -1,9 +1,9 @@
 import {
     Directive,
-    OnInit,
-    Input,
     HostBinding,
     HostListener,
+    Input,
+    OnInit,
 } from '@angular/core';
 
 @Directive({

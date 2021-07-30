@@ -1,15 +1,14 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 import { forEach, map, sortBy } from 'lodash';
 import * as XLSX from 'xlsx';
 
+import { AirportWatchService } from '../../../services/airportwatch.service';
 // Components
 import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
-
-import { AirportWatchService } from '../../../services/airportwatch.service';
 
 
 const initialColumns: ColumnType[] = [
@@ -34,8 +33,8 @@ const initialColumns: ColumnType[] = [
 
 @Component({
     selector: 'app-group-customers-grid',
-    templateUrl: './group-customers-grid.component.html',
     styleUrls: [ './group-customers-grid.component.scss' ],
+    templateUrl: './group-customers-grid.component.html',
 })
 export class GroupCustomersGridComponent implements OnInit {
     // Input/Output Bindings
@@ -122,9 +121,9 @@ export class GroupCustomersGridComponent implements OnInit {
             exportData = this.customersDataSource.filteredData;
         }
         exportData = map(exportData, (item) => ({
+            'Certificate Type': item.certificateTypeDescription,
             Company: item.company,
             'FuelerLinx Network': item.isFuelerLinxCustomer ? 'YES' : 'NO',
-            'Certificate Type': item.certificateTypeDescription,
         }));
         exportData = sortBy(exportData, [
             (item) => item.Company.toLowerCase(),
@@ -168,7 +167,7 @@ export class GroupCustomersGridComponent implements OnInit {
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    : { hidden: column.hidden, id: column.id, name: column.name }
             );
             this.paginator.pageIndex = 0;
             this.saveSettings();
@@ -184,8 +183,8 @@ export class GroupCustomersGridComponent implements OnInit {
 
     private refreshSort() {
         const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ disableClear: false, id: null, start: sortedColumn?.sort || 'asc' });
+        this.sort.sort({ disableClear: false, id: sortedColumn?.id, start: sortedColumn?.sort || 'asc' });
         (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
     }
 }

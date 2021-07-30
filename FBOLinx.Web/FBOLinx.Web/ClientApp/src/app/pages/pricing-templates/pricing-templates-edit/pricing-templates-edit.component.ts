@@ -1,44 +1,41 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild, } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-
-import { combineLatest } from 'rxjs';
-import { differenceBy, forOwn } from 'lodash';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { differenceBy, forOwn } from 'lodash';
+import { combineLatest } from 'rxjs';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { CustomermarginsService } from '../../../services/customermargins.service';
+import { EmailcontentService } from '../../../services/emailcontent.service';
+import { FbofeeandtaxomitsbypricingtemplateService } from '../../../services/fbofeeandtaxomitsbypricingtemplate.service';
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
-import { FbofeeandtaxomitsbypricingtemplateService } from '../../../services/fbofeeandtaxomitsbypricingtemplate.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { EmailcontentService } from '../../../services/emailcontent.service';
-
 // Components
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'ITP Margin Templates',
         link: '/default-layout/pricing-templates',
+        title: 'ITP Margin Templates',
     },
     {
-        title: 'Edit Margin Template',
         link: '',
+        title: 'Edit Margin Template',
     },
 ];
 
 @Component({
     selector: 'app-pricing-templates-edit',
-    templateUrl: './pricing-templates-edit.component.html',
     styleUrls: [ './pricing-templates-edit.component.scss' ],
+    templateUrl: './pricing-templates-edit.component.html',
 })
 export class PricingTemplatesEditComponent implements OnInit {
     @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
@@ -125,12 +122,12 @@ export class PricingTemplatesEditComponent implements OnInit {
             }
 
             this.pricingTemplateForm = this.formBuilder.group({
-                name: [ this.pricingTemplate.name ],
-                default: [ this.pricingTemplate.default ],
-                marginType: [ this.pricingTemplate.marginType ],
                 customerMargins,
-                notes: [ this.pricingTemplate.notes ],
+                default: [ this.pricingTemplate.default ],
                 emailContentId: [ this.pricingTemplate.emailContentId ],
+                marginType: [ this.pricingTemplate.marginType ],
+                name: [ this.pricingTemplate.name ],
+                notes: [ this.pricingTemplate.notes ],
             });
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
@@ -220,14 +217,14 @@ export class PricingTemplatesEditComponent implements OnInit {
 
     addCustomerMargin() {
         const customerMargin = {
-            oid: 0,
-            templateId: this.pricingTemplate.oid,
-            priceTierId: 0,
-            min: 1,
-            max: 99999,
+            allin: 0,
             amount: Number(0).toFixed(4),
             itp: 0,
-            allin: 0,
+            max: 99999,
+            min: 1,
+            oid: 0,
+            priceTierId: 0,
+            templateId: this.pricingTemplate.oid,
         };
         if (this.customerMarginsFormArray.length > 0) {
             const lastIndex = this.customerMarginsFormArray.length - 1;
@@ -252,8 +249,8 @@ export class PricingTemplatesEditComponent implements OnInit {
             feeAndTax.omitsByPricingTemplate = [];
         }
         let omitRecord: any = {
-            oid: 0,
             fboFeeAndTaxId: feeAndTax.oid,
+            oid: 0,
             pricingTemplateId: this.pricingTemplate.oid
         };
         if (feeAndTax.omitsByPricingTemplate.length > 0) {

@@ -1,17 +1,16 @@
 import { Component, HostListener } from '@angular/core';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-// Services
-import { SharedService } from '../shared-service';
 import { UserService } from '../../services/user.service';
-
 // Components
 import { ForgotPasswordDialogComponent } from '../../shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { LoginModalComponent } from '../../shared/components/login-modal/login-modal.component';
 import { RequestDemoModalComponent } from '../../shared/components/request-demo-modal/request-demo-modal.component';
 import { RequestDemoSuccessComponent } from '../../shared/components/request-demo-success/request-demo-success.component';
+// Services
+import { SharedService } from '../shared-service';
 
 export interface ContactUsMessage {
     name: string;
@@ -26,10 +25,10 @@ export interface LoginRequest {
 }
 
 @Component({
-    selector: 'landing-site-layout',
-    templateUrl: './landing-site.component.html',
-    styleUrls: ['./landing-site.component.scss'],
     providers: [SharedService],
+    selector: 'landing-site-layout',
+    styleUrls: ['./landing-site.component.scss'],
+    templateUrl: './landing-site.component.html',
 })
 export class LandingSiteLayoutComponent {
     rememberMeUsernameKey = 'rememberMeUsername';
@@ -131,10 +130,10 @@ export class LandingSiteLayoutComponent {
         };
         const dialogRef = this.requestDemoDialog.open(
             RequestDemoModalComponent, {
-                width: '600px',
+                data,
                 height: '650px',
                 panelClass: 'request-demo-container',
-                data,
+                width: '600px',
             }
         );
 
@@ -153,8 +152,8 @@ export class LandingSiteLayoutComponent {
         };
         const dialogRef = this.forgotPasswordDialog.open(
             ForgotPasswordDialogComponent, {
-                width: '450px',
                 data,
+                width: '450px',
             }
         );
 

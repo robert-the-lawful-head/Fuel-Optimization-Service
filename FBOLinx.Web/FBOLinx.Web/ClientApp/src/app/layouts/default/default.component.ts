@@ -1,26 +1,25 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { RouterEvent, NavigationStart, Router  } from '@angular/router';
+import { NavigationStart, Router,RouterEvent  } from '@angular/router';
+import { Store } from '@ngrx/store';
 import * as moment from 'moment';
 import { filter } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
 
+import { fboChangedEvent, fboPricesUpdatedEvent, locationChangedEvent } from '../../models/sharedEvents';
 // Services
 import { FbopricesService } from '../../services/fboprices.service';
 import { PricingtemplatesService } from '../../services/pricingtemplates.service';
-import { SharedService } from '../shared-service';
-
 // Components
 import { PricingExpiredNotificationComponent } from '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
-import { fboChangedEvent, fboPricesUpdatedEvent, locationChangedEvent } from '../../models/sharedEvents';
-import { State } from '../../store/reducers';
 import { customerGridClear } from '../../store/actions';
+import { State } from '../../store/reducers';
+import { SharedService } from '../shared-service';
 
 @Component({
-    selector: 'default-layout',
-    templateUrl: 'default.component.html',
-    styleUrls: ['../layouts.scss'],
     providers: [SharedService],
+    selector: 'default-layout',
+    styleUrls: ['../layouts.scss'],
+    templateUrl: 'default.component.html',
 })
 export class DefaultLayoutComponent implements OnInit {
     @Input() openedSidebar: boolean;
@@ -79,7 +78,7 @@ export class DefaultLayoutComponent implements OnInit {
 
         this.sharedService.changeEmitted$.subscribe((message) => {
             if (!this.canUserSeePricing())
-                return;
+                {return;}
             if ((message === fboChangedEvent || message === locationChangedEvent) && this.sharedService.currentUser.fboId) {
                 this.pricingTemplatesService
                     .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
@@ -88,7 +87,7 @@ export class DefaultLayoutComponent implements OnInit {
         });
         this.sharedService.valueChanged$.subscribe((value: any) => {
             if (!this.canUserSeePricing())
-                return;
+                {return;}
             if (value.message === fboPricesUpdatedEvent) {
                 this.cost = value.JetACost;
                 this.retail = value.JetARetail;
@@ -152,8 +151,8 @@ export class DefaultLayoutComponent implements OnInit {
                 if (!data) {
                     const dialogRef = this.expiredPricingDialog.open(
                         PricingExpiredNotificationComponent, {
-                            data: {},
                             autoFocus: false,
+                            data: {},
                         }
                     );
                     dialogRef.afterClosed().subscribe();

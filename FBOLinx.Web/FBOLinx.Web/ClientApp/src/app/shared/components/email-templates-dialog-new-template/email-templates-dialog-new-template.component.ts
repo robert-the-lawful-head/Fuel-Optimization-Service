@@ -4,8 +4,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-email-templates-dialog-new-template',
-    templateUrl: './email-templates-dialog-new-template.component.html',
     styleUrls: ['./email-templates-dialog-new-template.component.scss'],
+    templateUrl: './email-templates-dialog-new-template.component.html',
 })
 export class EmailTemplatesDialogNewTemplateComponent implements OnInit {
     constructor(@Inject(MAT_DIALOG_DATA) public data: any) {

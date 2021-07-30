@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject,Injectable } from '@angular/core';
 
 @Injectable()
 export class FuelreqsService {
@@ -23,8 +23,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/fbo/' + fboId + '/daterange',
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -36,8 +36,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId + '/daterange',
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -129,9 +129,9 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/quotes-orders-over-time/fbo/' + fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
                 fboId,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -143,9 +143,9 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/orders-won-over-time/fbo/' + fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
                 fboId,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -157,9 +157,9 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/volumes-nearby-airport/fbo/' + fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
                 distanceMile: mile,
+                endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -171,9 +171,9 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/customers-breakdown/fbo/' + fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
                 chartType,
+                endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -185,8 +185,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -198,9 +198,9 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId,
             {
+                endDateTime: endDate,
                 fboIds,
                 startDateTime: startDate,
-                endDateTime: endDate,
             },
             {
                 headers: this.headers,
@@ -212,8 +212,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/fbo-fuel-vendor-sources/fbo/' + fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -225,8 +225,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/market-share-fbo-airport/fbo/' + fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -238,8 +238,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/market-share-fbos-airports/group/' + groupId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -251,8 +251,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/fbo-fuel-vendor-sources/group/' + groupId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,

@@ -1,21 +1,20 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import 'rxjs/add/operator/debounceTime';
 
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
+import { SharedService } from '../../../layouts/shared-service';
+// Enums
+import { EnumOptions } from '../../../models/enum-options';
+// Model
+import * as SharedEvents from '../../../models/sharedEvents';
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
-
-// Enums
-import { EnumOptions } from '../../../models/enum-options';
-
-// Model
-import * as SharedEvents from '../../../models/sharedEvents';
 
 interface TailLookupResponse {
     template?: string;
@@ -39,8 +38,8 @@ enum PriceCheckerLookupTypes {
 
 @Component({
     selector: 'price-checker',
-    templateUrl: './price-checker.component.html',
-    styleUrls: [ './price-checker.component.scss' ]
+    styleUrls: [ './price-checker.component.scss' ],
+    templateUrl: './price-checker.component.html'
 })
 export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
@@ -164,9 +163,9 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
 
         if (pricingTemplateId > 0 || (tailNumber !== '' && customerInfoByGroupId > 0)) {
             this.sampleCalculation = {
+                customerInfoByGroupId,
                 pricingTemplateId,
-                tailNumber,
-                customerInfoByGroupId
+                tailNumber
             };
         }
 

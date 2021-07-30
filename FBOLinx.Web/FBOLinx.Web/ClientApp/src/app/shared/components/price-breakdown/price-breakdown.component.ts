@@ -1,17 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { FbopricesService } from '../../../services/fboprices.service';
-import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
-import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { forkJoin, Observable } from 'rxjs';
+
+import { ApplicableTaxFlights } from '../../../enums/applicable-tax-flights';
+import { FlightTypeClassifications } from '../../../enums/flight-type-classifications';
+import { SharedService } from '../../../layouts/shared-service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
+import { FbopricesService } from '../../../services/fboprices.service';
 import {
     FeeAndTaxBreakdownComponent,
     FeeAndTaxBreakdownDisplayModes
 } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
-
-import { forkJoin, Observable } from 'rxjs';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 
 
 export enum PriceBreakdownDisplayTypes {
@@ -23,8 +23,8 @@ export enum PriceBreakdownDisplayTypes {
 
 @Component({
     selector: 'price-breakdown',
-    templateUrl: './price-breakdown.component.html',
-    styleUrls: [ './price-breakdown.component.scss' ]
+    styleUrls: [ './price-breakdown.component.scss' ],
+    templateUrl: './price-breakdown.component.html'
 })
 export class PriceBreakdownComponent implements OnInit {
     @ViewChild('feeAndTaxBreakdown') private feeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
@@ -221,56 +221,56 @@ export class PriceBreakdownComponent implements OnInit {
 
     private loadInternationalCommercialPricing(): Observable<any> {
         return this.fboPricesService.getFuelPricesForCompany({
-            flightTypeClassification: FlightTypeClassifications.Commercial,
-            departureType: ApplicableTaxFlights.InternationalOnly,
-            icao: this.sharedService.currentUser.icao,
-            fboid: this.sharedService.currentUser.fboId,
-            groupId: this.sharedService.currentUser.groupId,
-            replacementFeesAndTaxes: this.feesAndTaxes,
-            pricingTemplateId: this.priceTemplateId,
             customerInfoByGroupId: this.customerInfoByGroupId,
+            departureType: ApplicableTaxFlights.InternationalOnly,
+            fboid: this.sharedService.currentUser.fboId,
+            flightTypeClassification: FlightTypeClassifications.Commercial,
+            groupId: this.sharedService.currentUser.groupId,
+            icao: this.sharedService.currentUser.icao,
+            pricingTemplateId: this.priceTemplateId,
+            replacementFeesAndTaxes: this.feesAndTaxes,
             tailNumber: this.tailNumber
         });
     }
 
     private loadInternationalPrivatePricing(): Observable<any> {
         return this.fboPricesService.getFuelPricesForCompany({
-            flightTypeClassification: FlightTypeClassifications.Private,
-            departureType: ApplicableTaxFlights.InternationalOnly,
-            icao: this.sharedService.currentUser.icao,
-            fboid: this.sharedService.currentUser.fboId,
-            groupId: this.sharedService.currentUser.groupId,
-            replacementFeesAndTaxes: this.feesAndTaxes,
-            pricingTemplateId: this.priceTemplateId,
             customerInfoByGroupId: this.customerInfoByGroupId,
+            departureType: ApplicableTaxFlights.InternationalOnly,
+            fboid: this.sharedService.currentUser.fboId,
+            flightTypeClassification: FlightTypeClassifications.Private,
+            groupId: this.sharedService.currentUser.groupId,
+            icao: this.sharedService.currentUser.icao,
+            pricingTemplateId: this.priceTemplateId,
+            replacementFeesAndTaxes: this.feesAndTaxes,
             tailNumber: this.tailNumber
         });
     }
 
     private loadDomesticCommercialPricing(): Observable<any> {
         return this.fboPricesService.getFuelPricesForCompany({
-            flightTypeClassification: FlightTypeClassifications.Commercial,
-            departureType: ApplicableTaxFlights.DomesticOnly,
-            icao: this.sharedService.currentUser.icao,
-            fboid: this.sharedService.currentUser.fboId,
-            groupId: this.sharedService.currentUser.groupId,
-            replacementFeesAndTaxes: this.feesAndTaxes,
-            pricingTemplateId: this.priceTemplateId,
             customerInfoByGroupId: this.customerInfoByGroupId,
+            departureType: ApplicableTaxFlights.DomesticOnly,
+            fboid: this.sharedService.currentUser.fboId,
+            flightTypeClassification: FlightTypeClassifications.Commercial,
+            groupId: this.sharedService.currentUser.groupId,
+            icao: this.sharedService.currentUser.icao,
+            pricingTemplateId: this.priceTemplateId,
+            replacementFeesAndTaxes: this.feesAndTaxes,
             tailNumber: this.tailNumber
         });
     }
 
     private loadDomesticPrivatePricing(): Observable<any> {
         return this.fboPricesService.getFuelPricesForCompany({
-            flightTypeClassification: FlightTypeClassifications.Private,
-            departureType: ApplicableTaxFlights.DomesticOnly,
-            icao: this.sharedService.currentUser.icao,
-            fboid: this.sharedService.currentUser.fboId,
-            groupId: this.sharedService.currentUser.groupId,
-            replacementFeesAndTaxes: this.feesAndTaxes,
-            pricingTemplateId: this.priceTemplateId,
             customerInfoByGroupId: this.customerInfoByGroupId,
+            departureType: ApplicableTaxFlights.DomesticOnly,
+            fboid: this.sharedService.currentUser.fboId,
+            flightTypeClassification: FlightTypeClassifications.Private,
+            groupId: this.sharedService.currentUser.groupId,
+            icao: this.sharedService.currentUser.icao,
+            pricingTemplateId: this.priceTemplateId,
+            replacementFeesAndTaxes: this.feesAndTaxes,
             tailNumber: this.tailNumber
         });
     }

@@ -2,22 +2,22 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { flatMap, isEqual, uniq } from 'lodash';
 import * as moment from 'moment';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import * as XLSX from 'xlsx';
 
-// Services
-import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvent from '../../../models/sharedEvents';
-import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
+// Services
+import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { CsvExportModalComponent, ICsvExportModalData } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
-import { flatMap, isEqual, uniq } from 'lodash';
+import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
 
 @Component({
     selector: 'app-group-analytics-fuel-vendor-sources',
-    templateUrl: './group-analytics-fuel-vendor-sources.component.html',
     styleUrls: ['./group-analytics-fuel-vendor-sources.component.scss'],
+    templateUrl: './group-analytics-fuel-vendor-sources.component.html',
 })
 export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -57,7 +57,7 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    : { hidden: column.hidden, id: column.id, name: column.name }
             );
         });
         this.refreshData();
@@ -81,8 +81,8 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
 
     refreshSort() {
         const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ disableClear: false, id: null, start: sortedColumn?.sort || 'asc' });
+        this.sort.sort({ disableClear: false, id: sortedColumn?.id, start: sortedColumn?.sort || 'asc' });
         (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
     }
 
@@ -127,8 +127,8 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
 
             const tableData = data.map(row => {
                 const tableRow = {
-                    icao: row.icao,
-                    directOrders: row.directOrders
+                    directOrders: row.directOrders,
+                    icao: row.icao
                 };
                 for (const vendor of row.vendorOrders) {
                     tableRow[vendor.contractFuelVendor] = vendor.transactionsCount;
@@ -166,9 +166,9 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
             CsvExportModalComponent,
             {
                 data: {
-                    title: 'Export Customer Statistics',
-                    filterStartDate: this.filterStartDate,
                     filterEndDate: this.filterEndDate,
+                    filterStartDate: this.filterStartDate,
+                    title: 'Export Customer Statistics',
                 },
             }
         );
@@ -188,8 +188,8 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
 
                 const tableData = data.map(row => {
                     const tableRow = {
-                        icao: row.icao,
-                        directOrders: row.directOrders
+                        directOrders: row.directOrders,
+                        icao: row.icao
                     };
                     for (const vendor of row.vendorOrders) {
                         tableRow[vendor.contractFuelVendor] = vendor.transactionsCount;
@@ -198,8 +198,8 @@ export class GroupAnalyticsFuelVendorSourcesComponent implements OnInit, AfterVi
                 });
                 const exportData = tableData.map((item) => {
                     const row = {
-                        ICAO: item.icao,
                         'Direct Orders': item.directOrders,
+                        ICAO: item.icao,
                     };
                     for (const vendor of vendors) {
                         row[vendor] = item[vendor];

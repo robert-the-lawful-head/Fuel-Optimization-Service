@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
 import { OAuthService } from '../../../services/oauth.service';
 
 @Component({
     selector: 'app-login',
-    templateUrl: './login.component.html',
     styleUrls: [ './login.component.scss' ],
+    templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {
     partner: string;
@@ -24,8 +24,8 @@ export class LoginComponent implements OnInit {
         private formBuilder: FormBuilder
     ) {
         this.loginForm = this.formBuilder.group({
-            username: new FormControl(''),
             password: new FormControl(''),
+            username: new FormControl(''),
         });
     }
 

@@ -14,8 +14,8 @@ export interface EmailContentDialogData {
 
 @Component({
     selector: 'app-email-content-edit',
-    templateUrl: './email-content-edit.component.html',
     styleUrls: [ './email-content-edit.component.scss' ],
+    templateUrl: './email-content-edit.component.html',
 })
 export class EmailContentEditComponent {
     public emailContentTypes: any[] = [];

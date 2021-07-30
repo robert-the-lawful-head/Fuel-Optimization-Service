@@ -1,22 +1,19 @@
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
-
 import * as moment from 'moment';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-
 import * as SharedEvents from '../../../models/sharedEvents';
-
+import { StatisticsOrdersByLocationComponent } from '../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
+import { StatisticsTotalAircraftComponent } from '../../../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
+import { StatisticsTotalCustomersComponent } from '../../../shared/components/statistics-total-customers/statistics-total-customers.component';
 // Components
 import { StatisticsTotalOrdersComponent } from '../../../shared/components/statistics-total-orders/statistics-total-orders.component';
-import { StatisticsTotalCustomersComponent } from '../../../shared/components/statistics-total-customers/statistics-total-customers.component';
-import { StatisticsTotalAircraftComponent } from '../../../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
-import { StatisticsOrdersByLocationComponent } from '../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 
 @Component({
     selector: 'app-dashboard-fbo',
-    templateUrl: './dashboard-fbo.component.html',
     styleUrls: [ './dashboard-fbo.component.scss' ],
+    templateUrl: './dashboard-fbo.component.html',
 })
 export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     public breadcrumb: any[];
@@ -46,19 +43,19 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
         this.sharedService.titleChange(this.pageTitle);
 
         this.breadcrumb = [ {
-            title: 'Main',
             link: '/default-layout',
+            title: 'Main',
         },
         ];
         if (!this.isCsr) {
             this.breadcrumb.push({
-                title: 'Dashboard',
                 link: '/default-layout/dashboard-fbo',
+                title: 'Dashboard',
             });
         } else {
             this.breadcrumb.push({
-                title: 'CSR Dashboard',
                 link: '/default-layout/dashboard-csr',
+                title: 'CSR Dashboard',
             });
         }
     }

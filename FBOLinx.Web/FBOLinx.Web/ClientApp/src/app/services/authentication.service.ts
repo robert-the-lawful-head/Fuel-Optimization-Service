@@ -1,7 +1,8 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject,Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { User } from '../models/user';
 
 @Injectable({ providedIn: 'root' })
@@ -32,8 +33,8 @@ export class AuthenticationService {
     return this.http
       .post<any>(
         this.accessPointUrl + '/authenticate', {
-          username,
-          password
+          password,
+          username
         }, {
           headers: this.headers
         }
@@ -70,17 +71,17 @@ export class AuthenticationService {
 
   preAuth(token) {
     const tempUser = {
-      oid: 0,
-      username: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-      token,
-      role: 0,
       fboId: 0,
+      firstName: '',
       groupId: 0,
       impersonatedRole: null,
-      managerGroupId: 0
+      lastName: '',
+      managerGroupId: 0,
+      oid: 0,
+      password: '',
+      role: 0,
+      token,
+      username: ''
     };
       this.currentUserSubject.next(tempUser);
 

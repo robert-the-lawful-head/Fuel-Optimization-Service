@@ -1,35 +1,34 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FbosService } from '../../../services/fbos.service';
+import { EmailTemplate } from 'src/app/models/email-template';
+import { GroupsService } from 'src/app/services/groups.service';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-
+import { EmailcontentService } from '../../../services/emailcontent.service';
+import { FbosService } from '../../../services/fbos.service';
+import { GroupAnalyticsEmailTemplateDialogComponent } from '../group-analytics-email-template-dialog/group-analytics-email-template-dialog.component';
 import {
     GroupAnalyticsGenerateDialogComponent,
     GroupAnalyticsGenerateDialogData,
 } from '../group-analytics-generate-dialog/group-analytics-generate-dialog.component';
-import { EmailcontentService } from '../../../services/emailcontent.service';
-import { EmailTemplate } from 'src/app/models/email-template';
-import { GroupAnalyticsEmailTemplateDialogComponent } from '../group-analytics-email-template-dialog/group-analytics-email-template-dialog.component';
-import { GroupsService } from 'src/app/services/groups.service';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Group Analytics',
         link: '',
+        title: 'Group Analytics',
     },
 ];
 
 @Component({
     selector: 'app-group-analytics-home',
-    templateUrl: './group-analytics-home.component.html',
     styleUrls: ['./group-analytics-home.component.scss'],
+    templateUrl: './group-analytics-home.component.html',
 })
 export class GroupAnalyticsHomeComponent implements OnInit {
     pageTitle = 'Group Analytics';
@@ -63,13 +62,13 @@ export class GroupAnalyticsHomeComponent implements OnInit {
             GroupAnalyticsGenerateDialogComponent,
             GroupAnalyticsGenerateDialogData
         >(GroupAnalyticsGenerateDialogComponent, {
+            autoFocus: false,
             data: {
                 customers: this.customers,
                 emailTemplate: this.emailTemplate,
             },
-            width: '500px',
-            autoFocus: false,
             panelClass: 'group-analytics-dialog',
+            width: '500px',
         });
 
         dialogRef.afterClosed().subscribe((result) => {
@@ -82,11 +81,11 @@ export class GroupAnalyticsHomeComponent implements OnInit {
             GroupAnalyticsEmailTemplateDialogComponent,
             {
                 data: {
-                    subject: this.emailTemplate?.subject,
                     emailContentHtml: this.emailTemplate?.emailContentHtml,
                     fromAddress: this.emailTemplate?.fromAddress,
-                    replyTo: this.emailTemplate?.replyTo,
                     logoUrl: this.logoUrl,
+                    replyTo: this.emailTemplate?.replyTo,
+                    subject: this.emailTemplate?.subject,
                 },
                 height: '600px',
                 width: '500px',
@@ -99,12 +98,12 @@ export class GroupAnalyticsHomeComponent implements OnInit {
             }
 
             const emailTemplate: EmailTemplate = {
-                oid: this.emailTemplate?.oid,
-                groupId: this.sharedService.currentUser.groupId,
-                subject: result.subject,
                 emailContentHtml: result.emailContentHtml,
                 fromAddress: result.fromAddress,
+                groupId: this.sharedService.currentUser.groupId,
+                oid: this.emailTemplate?.oid,
                 replyTo: result.replyTo,
+                subject: result.subject,
             };
 
             if (!this.emailTemplate || !this.emailTemplate.oid) {
@@ -149,10 +148,10 @@ export class GroupAnalyticsHomeComponent implements OnInit {
 
                 if (!this.emailTemplate) {
                     this.emailTemplate = {
-                        subject: '',
                         emailContentHtml: '',
                         fromAddress: 'donotreply',
                         groupId: this.sharedService.currentUser.groupId,
+                        subject: '',
                     };
                 }
                 if (!this.emailTemplate.fromAddress) {

@@ -10,8 +10,8 @@ export interface ProceedConfirmationData {
 
 @Component({
     selector: 'app-proceed-confirmation',
-    templateUrl: './proceed-confirmation.component.html',
     styleUrls: [ './proceed-confirmation.component.scss' ],
+    templateUrl: './proceed-confirmation.component.html',
 })
 export class ProceedConfirmationComponent {
     @Input() buttonText = 'Confirm';

@@ -6,8 +6,8 @@ import { UserService } from '../../../services/user.service';
 
 @Component({
     selector: 'app-users-edit',
-    templateUrl: './users-edit.component.html',
     styleUrls: [ './users-edit.component.scss' ],
+    templateUrl: './users-edit.component.html',
 })
 export class UsersEditComponent implements OnInit {
     @Output() saveClicked = new EventEmitter<any>();
@@ -47,8 +47,8 @@ export class UsersEditComponent implements OnInit {
             if (this.userInfo.newPassword && this.userInfo.newPassword !== '') {
                 this.userService
                     .updatePassword({
-                        user: this.userInfo,
                         newPassword: this.userInfo.newPassword,
+                        user: this.userInfo,
                     })
                     .subscribe((newPass: any) => {
                         this.userInfo.password = newPass;

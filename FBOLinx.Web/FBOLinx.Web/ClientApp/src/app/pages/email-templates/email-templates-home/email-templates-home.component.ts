@@ -2,30 +2,28 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvents from '../../../models/sharedEvents';
 // Services
 import { EmailcontentService } from '../../../services/emailcontent.service';
-import { SharedService } from '../../../layouts/shared-service';
-
-import * as SharedEvents from '../../../models/sharedEvents';
-
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Email Templates',
         link: '/default-layout/email-templates',
+        title: 'Email Templates',
     },
 ];
 
 @Component({
     selector: 'app-email-templates-home',
-    templateUrl: './email-templates-home.component.html',
     styleUrls: ['./email-templates-home.component.scss'],
+    templateUrl: './email-templates-home.component.html',
 })
 export class EmailTemplatesHomeComponent implements AfterViewInit, OnDestroy, OnInit {
     public pageTitle = 'Email Templates';
@@ -71,8 +69,8 @@ export class EmailTemplatesHomeComponent implements AfterViewInit, OnDestroy, On
         const dialogRef = this.deleteEmailContentDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: emailTemplate, description: 'email template' },
                 autoFocus: false,
+                data: { description: 'email template', item: emailTemplate },
             }
         );
 

@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
-import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
     selector: 'app-statistics-total-aircraft',
-    templateUrl: './statistics-total-aircraft.component.html',
     styleUrls: ['./statistics-total-aircraft.component.scss'],
+    templateUrl: './statistics-total-aircraft.component.html',
 })
 
 // statistics-total-aircraft component

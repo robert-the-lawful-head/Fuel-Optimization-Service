@@ -1,14 +1,15 @@
-import { Component, Inject, ViewChild, OnInit } from '@angular/core';
+import { Component, Inject, OnInit,ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DetailRowService, FilterSettingsModel, GridComponent, GridModel, SelectionSettingsModel } from '@syncfusion/ej2-angular-grids';
+
 import { SharedService } from '../../../layouts/shared-service';
 import { GroupAnalyticsGenerateDialogData } from '../group-analytics-generate-dialog/group-analytics-generate-dialog.component';
 
 @Component({
+    providers: [ SharedService, DetailRowService ],
     selector: 'app-group-analytics-email-pricing-dialog',
-    templateUrl: './group-analytics-email-pricing-dialog.component.html',
     styleUrls: [ './group-analytics-email-pricing-dialog.component.scss' ],
-    providers: [ SharedService, DetailRowService ]
+    templateUrl: './group-analytics-email-pricing-dialog.component.html'
 })
 export class GroupAnalyticsEmailPricingDialogComponent implements OnInit {
     @ViewChild('grid') public grid: GridComponent;
@@ -18,8 +19,8 @@ export class GroupAnalyticsEmailPricingDialogComponent implements OnInit {
         checkboxMode: 'ResetOnRowClick'
     };
     pageSettings: any = {
-        pageSizes: [ 25, 50, 100, 'All' ],
         pageSize: 25,
+        pageSizes: [ 25, 50, 100, 'All' ],
     };
     filterSettings: FilterSettingsModel = { type: 'Menu' };
 

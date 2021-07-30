@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 
 import { ApplicableTaxFlights } from '../enums/applicable-tax-flights';
-import { FlightTypeClassifications } from '../enums/flight-type-classifications';
-import { FeeCalculationTypes } from '../enums/fee-calculation-types';
 import { FeeCalculationApplyingTypes } from '../enums/fee-calculation-applying-types';
+import { FeeCalculationTypes } from '../enums/fee-calculation-types';
+import { FlightTypeClassifications } from '../enums/flight-type-classifications';
 
 export namespace EnumOptions {
 

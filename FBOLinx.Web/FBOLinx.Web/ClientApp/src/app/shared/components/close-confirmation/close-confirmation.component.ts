@@ -11,8 +11,8 @@ export interface CloseConfirmationData {
 
 @Component({
     selector: 'app-close-confirmation',
-    templateUrl: './close-confirmation.component.html',
     styleUrls: [ './close-confirmation.component.scss' ],
+    templateUrl: './close-confirmation.component.html',
 })
 export class CloseConfirmationComponent {
     constructor(

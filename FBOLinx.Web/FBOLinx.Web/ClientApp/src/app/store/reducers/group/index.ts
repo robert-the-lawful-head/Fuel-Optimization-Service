@@ -1,4 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
+
 import { groupGridClear, groupGridSet } from '../../actions';
 
 export const groupFeatureKey = 'group';

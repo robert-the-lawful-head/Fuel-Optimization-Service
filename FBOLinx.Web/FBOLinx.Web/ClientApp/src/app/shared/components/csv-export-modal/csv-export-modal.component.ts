@@ -9,8 +9,8 @@ export interface ICsvExportModalData {
 
 @Component({
     selector: 'app-csv-export-modal-component',
-    templateUrl: './csv-export-modal.component.html',
     styleUrls: [ './csv-export-modal.component.scss' ],
+    templateUrl: './csv-export-modal.component.html',
 })
 export class CsvExportModalComponent {
     constructor(

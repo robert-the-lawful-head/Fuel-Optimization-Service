@@ -2,34 +2,32 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { locationChangedEvent } from '../../../models/sharedEvents';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 // Services
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { SharedService } from '../../../layouts/shared-service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
-
-import { locationChangedEvent } from '../../../models/sharedEvents';
-
-import { getCustomerGridState } from '../../../store/selectors';
-import { State } from '../../../store/reducers';
 import { customerGridSet } from '../../../store/actions';
+import { State } from '../../../store/reducers';
 import { CustomerGridState } from '../../../store/reducers/customer';
+import { getCustomerGridState } from '../../../store/selectors';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Customers',
         link: '/default-layout/customers',
+        title: 'Customers',
     },
 ];
 
 @Component({
     selector: 'app-customers-home',
-    templateUrl: './customers-home.component.html',
     styleUrls: ['./customers-home.component.scss'],
+    templateUrl: './customers-home.component.html',
 })
 export class CustomersHomeComponent implements OnInit, OnDestroy {
     // Public Members
@@ -78,10 +76,10 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         this.store.dispatch(
             customerGridSet({
                 filter: event.filter,
-                page: event.page,
+                filterType: event.filterType,
                 order: event.order,
                 orderBy: event.orderBy,
-                filterType: event.filterType,
+                page: event.page,
             })
         );
 

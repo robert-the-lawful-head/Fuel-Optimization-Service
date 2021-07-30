@@ -4,13 +4,12 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dia
 import { MatStepper } from '@angular/material/stepper';
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { EmailcontentService } from '../../../services/emailcontent.service';
 // Services
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { EmailcontentService } from '../../../services/emailcontent.service';
-
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 
 export interface NewPricingTemplateMargin {
@@ -24,8 +23,8 @@ export interface NewPricingTemplateMargin {
 
 @Component({
     selector: 'app-pricing-templates-dialog-new-template',
-    templateUrl: './pricing-templates-dialog-new-template.component.html',
     styleUrls: [ './pricing-templates-dialog-new-template.component.scss' ],
+    templateUrl: './pricing-templates-dialog-new-template.component.html',
 })
 export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
@@ -74,13 +73,13 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             } else {
                 const closeDialogRef = this.closeConfirmationDialog.open(
                     CloseConfirmationComponent, {
-                        data: {
-                            customTitle: 'Discard Changes?',
-                            customText: 'You have unsaved changes. Are you sure?',
-                            ok: 'Discard',
-                            cancel: 'Cancel',
-                        },
                         autoFocus: false,
+                        data: {
+                            cancel: 'Cancel',
+                            customText: 'You have unsaved changes. Are you sure?',
+                            customTitle: 'Discard Changes?',
+                            ok: 'Discard',
+                        },
                     }
                 );
                 closeDialogRef.afterClosed().subscribe((result) => {
@@ -109,22 +108,22 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     initForm() {
         this.form = this.formBuilder.group({
             firstStep: this.formBuilder.group({
-                templateName: [ '', Validators.required ],
                 templateDefault: [ false ],
+                templateName: [ '', Validators.required ],
             }),
             secondStep: this.formBuilder.group({
-                marginType: [ 1, Validators.required ],
                 customerMargins: this.formBuilder.array([
                     this.formBuilder.group({
-                        min: [ 1 ],
-                        max: [ 99999 ],
+                        allin: [ 0 ],
                         amount: [ Number(0).toFixed(4) ],
                         itp: [ 0 ],
-                        allin: [ 0 ],
+                        max: [ 99999 ],
+                        min: [ 1 ],
                     }, {
                         updateOn: 'blur'
                     }),
                 ]),
+                marginType: [ 1, Validators.required ],
             }),
             thirdStep: this.formBuilder.group({
                 emailContentId: [''],
@@ -145,11 +144,11 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         const secondStep = this.form.controls.secondStep as FormGroup;
         secondStep.setControl('customerMargins', this.formBuilder.array([
             this.formBuilder.group({
-                min: [ 1 ],
-                max: [ 99999 ],
+                allin: [ 0 ],
                 amount: [ Number(0).toFixed(4) ],
                 itp: [ 0 ],
-                allin: [ 0 ],
+                max: [ 99999 ],
+                min: [ 1 ],
             }, {
                 updateOn: 'blur'
             }),
@@ -158,11 +157,11 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     addCustomerMargin() {
         const customerMargin = {
-            min: 1,
-            max: 99999,
+            allin: 0,
             amount: Number(0).toFixed(4),
             itp: 0,
-            allin: 0,
+            max: 99999,
+            min: 1,
         };
         if (this.customerMarginsFormArray.length > 0) {
             const lastIndex = this.customerMarginsFormArray.length - 1;
@@ -183,11 +182,11 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.isSaving = true;
 
         const templatePayload = {
-            fboId: this.data.fboId,
-            name: this.form.value.firstStep.templateName,
             default: this.form.value.firstStep.templateDefault,
-            marginType: this.form.value.secondStep.marginType,
             emailContentId: this.form.value.thirdStep.emailContentId,
+            fboId: this.data.fboId,
+            marginType: this.form.value.secondStep.marginType,
+            name: this.form.value.firstStep.templateName,
             notes: this.form.value.thirdStep.notes,
         };
 

@@ -1,12 +1,13 @@
-import { Component, Inject, ViewChild, OnInit } from '@angular/core';
-import * as XLSX from 'xlsx';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { Component, Inject, OnInit,ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog,MatDialogRef } from '@angular/material/dialog';
 import { GridComponent, SelectionService } from '@syncfusion/ej2-angular-grids';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { GroupAnalyticsEmailPricingDialogComponent } from '../group-analytics-email-pricing-dialog/group-analytics-email-pricing-dialog.component';
 import { EmailTemplate } from 'src/app/models/email-template';
 import { EmailcontentService } from 'src/app/services/emailcontent.service';
+import * as XLSX from 'xlsx';
+
+import { SharedService } from '../../../layouts/shared-service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { GroupAnalyticsEmailPricingDialogComponent } from '../group-analytics-email-pricing-dialog/group-analytics-email-pricing-dialog.component';
 
 export type GroupAnalyticsGenerateDialogData = {
     customers: any[];
@@ -14,10 +15,10 @@ export type GroupAnalyticsGenerateDialogData = {
 };
 
 @Component({
+    providers: [ SharedService, SelectionService ],
     selector: 'app-group-analytics-generate-dialog',
-    templateUrl: './group-analytics-generate-dialog.component.html',
     styleUrls: [ './group-analytics-generate-dialog.component.scss' ],
-    providers: [ SharedService, SelectionService ]
+    templateUrl: './group-analytics-generate-dialog.component.html'
 })
 export class GroupAnalyticsGenerateDialogComponent implements OnInit {
     @ViewChild('grid') public grid: GridComponent;
@@ -33,7 +34,7 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
     public editSettings: any;
     public toolbar: string[];
     public filterOptions = {
-        mode: 'Immediate', immediateModeDelay: 1000  };
+        immediateModeDelay: 1000, mode: 'Immediate'  };
     public sortSettings: any;
 
     constructor(
@@ -73,12 +74,12 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 const emailTemplate: EmailTemplate = {
-                    oid: result.emailTemplate?.oid,
-                    groupId: this.sharedService.currentUser.groupId,
-                    subject: result.emailTemplate.subject,
                     emailContentHtml: result.emailTemplate.emailContentHtml,
                     fromAddress: result.emailTemplate.fromAddress,
+                    groupId: this.sharedService.currentUser.groupId,
+                    oid: result.emailTemplate?.oid,
                     replyTo: result.emailTemplate.replyTo,
+                    subject: result.emailTemplate.subject,
                 };
 
                 if (!emailTemplate.oid) {
@@ -176,13 +177,13 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
             }
             if (!fboPrice.prices.length) {
                 exportData.push({
-                    FBO: fboPrice.icao,
-                    'Volume Tier': '',
-                    'Int/Comm': '',
-                    'Int/Private': '',
                     'Dom/Comm': '',
                     'Dom/Private': '',
-                    'Tail Numbers': ''
+                    FBO: fboPrice.icao,
+                    'Int/Comm': '',
+                    'Int/Private': '',
+                    'Tail Numbers': '',
+                    'Volume Tier': ''
                 });
             }
         }

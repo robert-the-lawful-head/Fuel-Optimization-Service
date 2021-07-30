@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-analytics-customer-breakdown',
-    templateUrl: './analytics-customer-breakdown-chart.component.html',
     styleUrls: ['./analytics-customer-breakdown-chart.component.scss'],
+    templateUrl: './analytics-customer-breakdown-chart.component.html',
 })
 export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
     public filterStartDate: Date;

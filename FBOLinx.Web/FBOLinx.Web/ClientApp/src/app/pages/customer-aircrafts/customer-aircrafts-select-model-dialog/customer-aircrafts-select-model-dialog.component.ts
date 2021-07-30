@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 
 // Services
@@ -8,8 +9,8 @@ import { CustomeraircraftsService } from '../../../services/customeraircrafts.se
 
 @Component({
     selector: 'app-customer-aircraft-select-model-dialog',
-    templateUrl: './customer-aircrafts-select-model-dialog.component.html',
     styleUrls: [ './customer-aircrafts-select-model-dialog.component.scss' ],
+    templateUrl: './customer-aircrafts-select-model-dialog.component.html',
 })
 export class CustomerAircraftSelectModelComponent implements OnInit {
     // Public Members

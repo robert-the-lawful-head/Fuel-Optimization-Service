@@ -13,32 +13,32 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import * as moment from 'moment';
 import { isEqual } from 'lodash';
+import * as moment from 'moment';
 import { forkJoin, Observable } from 'rxjs';
+import { DistributeEmailsConfirmationComponent } from 'src/app/shared/components/distribute-emails-confirmation/distribute-emails-confirmation.component';
 
-import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { SharedService } from '../../../layouts/shared-service';
-import { DistributionService } from '../../../services/distribution.service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
+import { DistributionService } from '../../../services/distribution.service';
 import { EmailcontentService } from '../../../services/emailcontent.service';
-
-// Components
-import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
-import { PricingExpiredNotificationComponent } from '../../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import { PricingExpiredNotificationComponent } from '../../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 
 @Component({
-    selector: 'app-addition-navbar',
-    templateUrl: './addition-navbar.component.html',
-    styleUrls: [ './addition-navbar.component.scss' ],
     host: {
         '[class.addition-navbar]': 'true',
         '[class.open]': 'open',
     },
+    selector: 'app-addition-navbar',
+    styleUrls: ['./addition-navbar.component.scss'],
+    templateUrl: './addition-navbar.component.html',
 })
-export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges {
+export class AdditionNavbarComponent
+    implements OnInit, AfterViewInit, OnChanges
+{
     @Input() templatelst: any[];
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -49,7 +49,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     title: string;
     open: boolean;
     // Public Members
-    displayedColumns: string[] = [ 'template', 'toggle' ];
+    displayedColumns: string[] = ['template', 'toggle'];
     resultsLength: any;
     marginTemplateDataSource: MatTableDataSource<any> = null;
     pricingTemplatesData: any[];
@@ -70,7 +70,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     constructor(
         private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
-        private proceedConfirmationDialog: MatDialog,
+        private distributeConfirmationDialog: MatDialog,
         private templateDialog: MatDialog,
         private distributionService: DistributionService,
         private customerContactsService: CustomercontactsService,
@@ -81,9 +81,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         this.open = false;
     }
 
-    ngOnInit() {
-
-    }
+    ngOnInit() {}
 
     ngAfterViewInit() {
         this.sharedService.currentMessage.subscribe((message) => {
@@ -92,48 +90,55 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.templatelst && !isEqual(changes.templatelst.currentValue, changes.templatelst.previousValue)) {
+        if (
+            changes.templatelst &&
+            !isEqual(
+                changes.templatelst.currentValue,
+                changes.templatelst.previousValue
+            )
+        ) {
             this.refresh();
         }
     }
 
-    @HostListener('document:click', [ '$event' ])
+    @HostListener('document:click', ['$event'])
     onClick(targetElement) {
         if (
-            this.open && ((targetElement.target.innerText === 'Clear') ||
-            (targetElement.target.nodeName !== 'svg' &&
-                !(
-                    targetElement.target.className === 'ng-star-inserted' ||
-                    targetElement.target.offsetParent.className.lastIndexOf(
-                        'addition-navbar'
-                    ) > -1 ||
-                    targetElement.target.textContent === '$Cost' ||
-                    targetElement.target.offsetParent.className.lastIndexOf(
-                        'addition-navbar'
-                    ) > -1 ||
-                    targetElement.target.offsetParent.className.lastIndexOf(
-                        'open-navbar'
-                    ) > -1 ||
-                    targetElement.target.offsetParent.className.lastIndexOf(
-                        'mat-slide-toggle-thumb-container'
-                    ) > -1 ||
-                    targetElement.target.offsetParent.tagName ===
-                    'MAT-PROGRESS-BAR' ||
-                    targetElement.target.nodeName === 'MAT-PROGRESS-BAR' ||
-                    targetElement.target.offsetParent.className.lastIndexOf(
-                        'btn-text'
-                    ) > -1 ||
-                    targetElement.target.offsetParent.className.lastIndexOf(
-                        'ng-star-inserted'
-                    ) > -1 ||
-                    targetElement.target.offsetParent.className.lastIndexOf(
-                        'mat-progress-bar-element'
-                    ) > -1 ||
-                    targetElement.target.offsetParent.innerText ===
-                    'Distribute Pricing' ||
-                    targetElement.target.offsetParent.offsetParent.className ===
-                    'addition-navbar'
-                )))
+            this.open &&
+            (targetElement.target.innerText === 'Clear' ||
+                (targetElement.target.nodeName !== 'svg' &&
+                    !(
+                        targetElement.target.className === 'ng-star-inserted' ||
+                        targetElement.target.offsetParent.className.lastIndexOf(
+                            'addition-navbar'
+                        ) > -1 ||
+                        targetElement.target.textContent === '$Cost' ||
+                        targetElement.target.offsetParent.className.lastIndexOf(
+                            'addition-navbar'
+                        ) > -1 ||
+                        targetElement.target.offsetParent.className.lastIndexOf(
+                            'open-navbar'
+                        ) > -1 ||
+                        targetElement.target.offsetParent.className.lastIndexOf(
+                            'mat-slide-toggle-thumb-container'
+                        ) > -1 ||
+                        targetElement.target.offsetParent.tagName ===
+                            'MAT-PROGRESS-BAR' ||
+                        targetElement.target.nodeName === 'MAT-PROGRESS-BAR' ||
+                        targetElement.target.offsetParent.className.lastIndexOf(
+                            'btn-text'
+                        ) > -1 ||
+                        targetElement.target.offsetParent.className.lastIndexOf(
+                            'ng-star-inserted'
+                        ) > -1 ||
+                        targetElement.target.offsetParent.className.lastIndexOf(
+                            'mat-progress-bar-element'
+                        ) > -1 ||
+                        targetElement.target.offsetParent.innerText ===
+                            'Distribute Pricing' ||
+                        targetElement.target.offsetParent.offsetParent
+                            .className === 'addition-navbar'
+                    )))
         ) {
             if (targetElement.target.innerText !== 'Sent!') {
                 this.open = !this.open;
@@ -166,7 +171,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
             });
 
         this.pricingTemplatesData = this.templatelst.filter(
-            (element: any, index: number, array: any[]) => (
+            (element: any, index: number, array: any[]) =>
                 array.indexOf(
                     array.find(
                         (t) =>
@@ -175,7 +180,6 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                             t.name === element.name
                     )
                 ) === index
-            )
         );
 
         this.prepareDataSource();
@@ -194,7 +198,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                 )
                 .subscribe((data: any) => {
                     if (data) {
-                        this.pricingTemplatesData = data.map(row => ({
+                        this.pricingTemplatesData = data.map((row) => ({
                             ...row,
                             toSend: true,
                         }));
@@ -220,24 +224,25 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
 
         if (!this.pricesExpired) {
             if (this.filteredTemplate.emailContentId > 0) {
-                this.emailContentService.get({ oid: this.filteredTemplate.emailContentId }).
-                    subscribe((data: any) => {
+                this.emailContentService
+                    .get({ oid: this.filteredTemplate.emailContentId })
+                    .subscribe((data: any) => {
                         if (data != null && data.oid > 0) {
                             this.checkCustomerContacts(templateId);
-                        }
-                        else {
+                        } else {
                             const dialogRef = this.templateDialog.open(
                                 NotificationComponent,
                                 {
-                                    data: { text: 'Please assign an Email Template to this ITP Template before proceeding.' }
+                                    data: {
+                                        text: 'Please assign an Email Template to this ITP Template before proceeding.',
+                                    },
                                 }
                             );
 
                             dialogRef.afterClosed().subscribe();
                         }
                     });
-            }
-            else {
+            } else {
                 this.checkCustomerContacts(templateId);
             }
         }
@@ -258,12 +263,13 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
 
     checkCustomerContacts(templateId) {
         this.customerContactsService
-            .getCustomerEmailCountByGroupAndFBOAndPricing(
+            .getCustomerEmailsByGroupAndFBOAndPricing(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
                 templateId
-            ).subscribe((data: number) => {
-                if (data > 0) {
+            )
+            .subscribe((data: any[]) => {
+                if (data.length > 0) {
                     const dialogRef = this.templateDialog.open(
                         DistributionWizardReviewComponent,
                         {
@@ -278,17 +284,20 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                         }
 
                         this.previewEmail = result;
-                        const request = this.GetSendDistributionRequest(this.filteredTemplate);
+                        const request = this.GetSendDistributionRequest(
+                            this.filteredTemplate
+                        );
                         this.distributionService
                             .previewDistribution(request)
-                            .subscribe(() => {
-                            });
+                            .subscribe(() => {});
                     });
                 } else {
                     const dialogRef = this.templateDialog.open(
                         NotificationComponent,
                         {
-                            data: { text: 'Please add a contact with an email to a customer assigned to this template before proceeding.' }
+                            data: {
+                                text: 'Please add a contact with an email to a customer assigned to this template before proceeding.',
+                            },
                         }
                     );
 
@@ -312,21 +321,29 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
             const templatesWithEmailContent: any[] = [];
             this.getTemplateEmailContent().subscribe((responseList: any[]) => {
                 for (const responseIndex in responseList) {
-                    if (responseList[responseIndex] == null && this.priceTemplatesEmailContent[responseIndex].emailContentId > 0) {
+                    if (
+                        responseList[responseIndex] == null &&
+                        this.priceTemplatesEmailContent[responseIndex]
+                            .emailContentId > 0
+                    ) {
                         templatesWithEmailContent.push(
                             this.priceTemplatesEmailContent[responseIndex].name
                         );
                     }
                 }
 
-                if (templatesWithEmailContent.length == 0)
+                if (templatesWithEmailContent.length === 0) {
                     this.sendEmails();
-                else {
-                    var templatesList = templatesWithEmailContent.join(', ');
+                } else {
+                    const templatesList = templatesWithEmailContent.join(', ');
                     const dialogRef = this.templateDialog.open(
                         NotificationComponent,
                         {
-                            data: { text: 'Please assign an Email Template to these ITP Template(s) before proceeding: ' + templatesList }
+                            data: {
+                                text:
+                                    'Please assign an Email Template to these ITP Template(s) before proceeding: ' +
+                                    templatesList,
+                            },
                         }
                     );
 
@@ -337,37 +354,36 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     sendEmails() {
-        const templatesWithCustomerCount: any[] = [];
-        this.getTemplatesWithCustomerCount().subscribe((responseList: any[]) => {
-            if (!responseList) {
-                alert('No customers found for the selected distributions.');
-            }
-            for (const responseIndex in responseList) {
-                templatesWithCustomerCount.push(
-                    this.priceTemplatesForSending[responseIndex].name + ': ' + responseList[responseIndex] +
-                    (responseList[responseIndex] === 1 ? ' email' : ' emails')
+        this.getTemplatesWithCustomerCount().subscribe(
+            (responseList: any[]) => {
+                if (!responseList) {
+                    alert('No customers found for the selected distributions.');
+                }
+
+                const templateEmails = [];
+                for (let i = 0; i < responseList.length; i++) {
+                    templateEmails.push({
+                        emails: responseList[i],
+                        name: this.priceTemplatesForSending[i].name,
+                    });
+                }
+
+                const dialogRef = this.distributeConfirmationDialog.open(
+                    DistributeEmailsConfirmationComponent,
+                    {
+                        autoFocus: false,
+                        data: templateEmails,
+                    }
                 );
+
+                dialogRef.afterClosed().subscribe((result) => {
+                    if (!result) {
+                        return;
+                    }
+                    this.sendMails();
+                });
             }
-
-            const dialogRef = this.proceedConfirmationDialog.open(
-                ProceedConfirmationComponent,
-                {
-                    data: {
-                        description:
-                            'You are about to distribute the following templates to the customers assigned to them. Are you sure?',
-                        itemsList: templatesWithCustomerCount
-                    },
-                    autoFocus: false
-                }
-            );
-
-            dialogRef.afterClosed().subscribe((result) => {
-                if (!result) {
-                    return;
-                }
-                this.sendMails();
-            });
-        });
+        );
     }
 
     getTemplateEmailContent(): Observable<any[]> {
@@ -377,8 +393,9 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         this.pricingTemplatesData.forEach((x) => {
             if (x.toSend) {
                 this.priceTemplatesEmailContent.push(x);
-                result.push(this.emailContentService.get({ oid: x.emailContentId }
-                ));
+                result.push(
+                    this.emailContentService.get({ oid: x.emailContentId })
+                );
             }
         });
         return forkJoin(result);
@@ -391,12 +408,13 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         this.pricingTemplatesData.forEach((x) => {
             if (x.toSend) {
                 this.priceTemplatesForSending.push(x);
-                result.push(this.customerContactsService
-                    .getCustomerEmailCountByGroupAndFBOAndPricing(
+                result.push(
+                    this.customerContactsService.getCustomerEmailsByGroupAndFBOAndPricing(
                         this.sharedService.currentUser.groupId,
                         this.sharedService.currentUser.fboId,
                         x.oid
-                    ));
+                    )
+                );
             }
         });
         return forkJoin(result);
@@ -408,8 +426,7 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
                 const request = this.GetSendDistributionRequest(x);
                 this.distributionService
                     .distributePricing(request)
-                    .subscribe((data: any) => {
-                    });
+                    .subscribe((data: any) => {});
                 this.interval = setInterval(() => {
                     if (this.timeLeft <= 3) {
                         this.timeLeft++;
@@ -449,19 +466,20 @@ export class AdditionNavbarComponent implements OnInit, AfterViewInit, OnChanges
         return {
             fboId: this.sharedService.currentUser.fboId,
             groupId: this.sharedService.currentUser.groupId,
+            previewEmail: this.previewEmail,
             pricingTemplate: template,
-            previewEmail: this.previewEmail
         };
     }
 
     private checkExpiredPrices(template) {
         if (template.intoPlanePrice <= 0 || template.intoPlanePrice === null) {
             const dialogRef = this.expiredPricingDialog.open(
-                PricingExpiredNotificationComponent, {
+                PricingExpiredNotificationComponent,
+                {
+                    autoFocus: false,
                     data: {
-                        hideRemindMeButton: true
+                        hideRemindMeButton: true,
                     },
-                    autoFocus: false
                 }
             );
             dialogRef.afterClosed().subscribe();

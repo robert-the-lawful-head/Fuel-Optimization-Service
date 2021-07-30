@@ -1,17 +1,17 @@
-import { Component, EventEmitter, Output, Inject, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import * as _ from 'lodash';
 
-import { ContactsService } from '../../../services/contacts.service';
-import { FbosService } from '../../../services/fbos.service';
-import { FbocontactsService } from '../../../services/fbocontacts.service';
 import { SharedService } from '../../../layouts/shared-service';
-import { UserService } from '../../../services/user.service';
 import { SystemcontactsNewContactModalComponent } from '../../../pages/contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
+import { ContactsService } from '../../../services/contacts.service';
+import { FbocontactsService } from '../../../services/fbocontacts.service';
+import { FbosService } from '../../../services/fbos.service';
+import { UserService } from '../../../services/user.service';
 
 export interface AccountProfileDialogData {
     oid: number;
@@ -27,10 +27,10 @@ export interface AccountProfileDialogData {
 }
 
 @Component({
-    selector: 'app-account-profile',
-    templateUrl: './account-profile.component.html',
-    styleUrls: [ './account-profile.component.scss' ],
     providers: [ SharedService ],
+    selector: 'app-account-profile',
+    styleUrls: [ './account-profile.component.scss' ],
+    templateUrl: './account-profile.component.html',
 })
 export class AccountProfileComponent {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -69,13 +69,13 @@ export class AccountProfileComponent {
             ]),
         });
         this.emailDistributionForm = this.formBuilder.group({
-            senderAddress: new FormControl('', [
-                Validators.required,
-                Validators.pattern('[a-zA-Z0-9-]*')
-            ]),
             replyTo: new FormControl('', [
                 Validators.required,
                 Validators.email
+            ]),
+            senderAddress: new FormControl('', [
+                Validators.required,
+                Validators.pattern('[a-zA-Z0-9-]*')
             ]),
         });
         this.loadFboInfo();
@@ -193,11 +193,14 @@ export class AccountProfileComponent {
 
     // Private Methods
     private readAndUploadFile(theFile: any) {
-        const file = { // Set File Information
-            FileName: theFile.name,
+        const file = {
             ContentType: theFile.type,
-            FileData: null,
-            FboId: this.fboInfo.oid
+
+FboId: this.fboInfo.oid,
+
+FileData: null,
+            // Set File Information
+FileName: theFile.name
         };
 
         // Use FileReader() object to get file to upload
@@ -236,8 +239,8 @@ export class AccountProfileComponent {
                     fuelDeskEmail: fboData.fuelDeskEmail,
                 });
                 this.emailDistributionForm.setValue({
-                    senderAddress: fboData.senderAddress,
                     replyTo: fboData.replyTo,
+                    senderAddress: fboData.senderAddress,
                 });
                 this.fboInfo = fboData;
                 this.fboContactsService

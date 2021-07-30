@@ -11,8 +11,8 @@ export interface NewCustomerCompanyTypeDialogData {
 
 @Component({
     selector: 'app-customer-company-type-dialog',
-    templateUrl: './customer-company-type-dialog.component.html',
     styleUrls: [ './customer-company-type-dialog.component.scss' ],
+    templateUrl: './customer-company-type-dialog.component.html',
 })
 export class CustomerCompanyTypeDialogComponent {
     constructor(

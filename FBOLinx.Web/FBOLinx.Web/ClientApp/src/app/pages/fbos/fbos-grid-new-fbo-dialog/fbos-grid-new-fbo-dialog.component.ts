@@ -18,8 +18,8 @@ export interface NewFboModel {
 
 @Component({
     selector: 'app-fbos-grid-new-fbo-dialog',
-    templateUrl: './fbos-grid-new-fbo-dialog.component.html',
     styleUrls: [ './fbos-grid-new-fbo-dialog.component.scss' ],
+    templateUrl: './fbos-grid-new-fbo-dialog.component.html',
 })
 export class FbosGridNewFboDialogComponent {
     @Output() contactAdded = new EventEmitter<any>();

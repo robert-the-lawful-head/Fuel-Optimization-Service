@@ -1,26 +1,23 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { interval, Observable, Subscription } from 'rxjs';
-import * as moment from 'moment';
 
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvents from '../../../models/sharedEvents';
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 // Services
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
-import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
-import { SharedService } from '../../../layouts/shared-service';
-
-
-// Components
-import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
-import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
 import { FeeAndTaxBreakdownComponent } from '../../../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
-
-import * as SharedEvents from '../../../models/sharedEvents';
+// Components
+import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
+import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
 
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
@@ -38,8 +35,8 @@ export interface TemporaryAddOnMargin {
 
 @Component({
     selector: 'app-fbo-prices-home',
-    templateUrl: './fbo-prices-home.component.html',
-    styleUrls: [ './fbo-prices-home.component.scss' ]
+    styleUrls: [ './fbo-prices-home.component.scss' ],
+    templateUrl: './fbo-prices-home.component.html'
 })
 export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() isCsr?: boolean;
@@ -268,24 +265,24 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
         if (!isRetailExist) {
             const price = {
-                oid: 0,
-                price: this.jtRetail,
-                product: 'JetA Retail',
                 effectiveFrom,
                 effectiveTo,
-                fboid: this.sharedService.currentUser.fboId
+                fboid: this.sharedService.currentUser.fboId,
+                oid: 0,
+                price: this.jtRetail,
+                product: 'JetA Retail'
             };
             newPrices.push(price);
         }
 
         if (!isCostExist) {
             const price = {
-                oid: 0,
-                price: this.jtCost,
-                product: 'JetA Cost',
                 effectiveFrom,
                 effectiveTo,
-                fboid: this.sharedService.currentUser.fboId
+                fboid: this.sharedService.currentUser.fboId,
+                oid: 0,
+                price: this.jtCost,
+                product: 'JetA Cost'
             };
             newPrices.push(price);
         }
@@ -308,12 +305,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 const dialogRef = this.proceedConfirmationDialog.open(
                     ProceedConfirmationComponent,
                     {
+                        autoFocus: false,
                         data: {
-                            description: 'This effective date is after your current prices\' expiration date.',
                             buttonText: 'Proceed',
+                            description: 'This effective date is after your current prices\' expiration date.',
                             title: ' '
-                        },
-                        autoFocus: false
+                        }
                     }
                 );
 
@@ -327,12 +324,12 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
                 const dialogRef = this.proceedConfirmationDialog.open(
                     ProceedConfirmationComponent,
                     {
+                        autoFocus: false,
                         data: {
-                            description: 'Your staged price will take effect before your current price expires.',
                             buttonText: 'Make effective date match current expiration date',
+                            description: 'Your staged price will take effect before your current price expires.',
                             title: ' '
-                        },
-                        autoFocus: false
+                        }
                     }
                 );
 
@@ -524,9 +521,9 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
                         this.sharedService.emitChange('fbo-prices-loaded');
                         this.sharedService.valueChange({
-                            message: SharedEvents.fboPricesUpdatedEvent,
                             JetACost: this.currentFboPriceJetACost.price,
                             JetARetail: this.currentFboPriceJetARetail.price,
+                            message: SharedEvents.fboPricesUpdatedEvent,
                         });
 
                         this.subscribeToPricingShift();
@@ -590,24 +587,24 @@ export class FboPricesHomeComponent implements OnInit, OnDestroy, AfterViewInit 
 
         if (addRetail) {
             const price = {
-                oid: 0,
-                price: this.stagedJetRetail,
-                product: 'JetA Retail',
                 effectiveFrom,
                 effectiveTo,
-                fboid: this.sharedService.currentUser.fboId
+                fboid: this.sharedService.currentUser.fboId,
+                oid: 0,
+                price: this.stagedJetRetail,
+                product: 'JetA Retail'
             };
             newPrices.push(price);
         }
 
         if (addCost) {
             const price = {
-                oid: 0,
-                price: this.stagedJetCost,
-                product: 'JetA Cost',
                 effectiveFrom,
                 effectiveTo,
-                fboid: this.sharedService.currentUser.fboId
+                fboid: this.sharedService.currentUser.fboId,
+                oid: 0,
+                price: this.stagedJetCost,
+                product: 'JetA Cost'
             };
             newPrices.push(price);
         }

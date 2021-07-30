@@ -1,23 +1,23 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import * as moment from 'moment';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subject } from 'rxjs';
+import { CsvExportModalComponent, ICsvExportModalData } from 'src/app/shared/components/csv-export-modal/csv-export-modal.component';
+import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import * as XLSX from 'xlsx';
 
-// Services
-import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvent from '../../../models/sharedEvents';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { Subject } from 'rxjs';
-import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
-import { MatDialog } from '@angular/material/dialog';
-import { CsvExportModalComponent, ICsvExportModalData } from 'src/app/shared/components/csv-export-modal/csv-export-modal.component';
+// Services
+import { FuelreqsService } from '../../../services/fuelreqs.service';
 
 @Component({
     selector: 'app-group-analytics-customer-statistics',
-    templateUrl: './group-analytics-customer-statistics.component.html',
     styleUrls: ['./group-analytics-customer-statistics.component.scss'],
+    templateUrl: './group-analytics-customer-statistics.component.html',
 })
 export class GroupAnalyticsCustomerStatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -64,7 +64,7 @@ export class GroupAnalyticsCustomerStatisticsComponent implements OnInit, AfterV
             this.columns = this.columns.map(column =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    : { hidden: column.hidden, id: column.id, name: column.name }
             );
 
             this.saveSettings();
@@ -89,8 +89,8 @@ export class GroupAnalyticsCustomerStatisticsComponent implements OnInit, AfterV
 
     refreshSort() {
         const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
+        this.sort.sort({ disableClear: false, id: null, start: sortedColumn?.sort || 'asc' });
+        this.sort.sort({ disableClear: false, id: sortedColumn?.id, start: sortedColumn?.sort || 'asc' });
         (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
     }
 
@@ -184,9 +184,9 @@ export class GroupAnalyticsCustomerStatisticsComponent implements OnInit, AfterV
             CsvExportModalComponent,
             {
                 data: {
-                    title: 'Export Customer Statistics',
-                    filterStartDate: this.filterStartDate,
                     filterEndDate: this.filterEndDate,
+                    filterStartDate: this.filterStartDate,
+                    title: 'Export Customer Statistics',
                 },
             }
         );
@@ -205,11 +205,11 @@ export class GroupAnalyticsCustomerStatisticsComponent implements OnInit, AfterV
                 const exportData = data.map((item) => {
                     const row = {
                         Company: item.company,
-                        'Direct Orders': item.directOrders,
-                        'Number of Quotes': item.companyQuotesTotal,
                         'Conversion Rate': item.conversionRate + '%',
-                        'Total Orders': item.totalOrders,
+                        'Direct Orders': item.directOrders,
                         'Last Quoted': item.lastPullDate,
+                        'Number of Quotes': item.companyQuotesTotal,
+                        'Total Orders': item.totalOrders,
                     };
                     return row;
                 });

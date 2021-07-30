@@ -1,50 +1,48 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, EMPTY, of } from 'rxjs';
+import { catchError, debounceTime, map, switchMap } from 'rxjs/operators';
 
-// Services
-import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
-import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
+import { SharedService } from '../../../layouts/shared-service';
 import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
 import { ContactsService } from '../../../services/contacts.service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+// Services
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 import { CustomerCompanyTypesService } from '../../../services/customer-company-types.service';
+import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { CustomersviewedbyfboService } from '../../../services/customersviewedbyfbo.service';
-import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbofeeandtaxomitsbycustomerService } from '../../../services/fbofeeandtaxomitsbycustomer.service';
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { SharedService } from '../../../layouts/shared-service';
-
+import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
+import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
 // Components
 import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
-import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
-import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
-import { catchError, debounceTime, map, switchMap } from 'rxjs/operators';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Customers',
         link: '/default-layout/customers',
+        title: 'Customers',
     },
     {
-        title: 'Edit Customer',
         link: '',
+        title: 'Edit Customer',
     },
 ];
 
 @Component({
     selector: 'app-customers-edit',
-    templateUrl: './customers-edit.component.html',
     styleUrls: [ './customers-edit.component.scss' ],
+    templateUrl: './customers-edit.component.html',
 })
 export class CustomersEditComponent implements OnInit {
     // Members
@@ -110,9 +108,9 @@ export class CustomersEditComponent implements OnInit {
             ),
             this.customerCompanyTypesService.getNonFuelerLinxForFbo(this.sharedService.currentUser.fboId),
             this.customersViewedByFboService.add({
+                customerId: this.customerInfoByGroup.customerId,
                 fboId: this.sharedService.currentUser.fboId,
                 groupId: this.sharedService.currentUser.groupId,
-                customerId: this.customerInfoByGroup.customerId,
             }),
         ]).toPromise();
 
@@ -125,20 +123,20 @@ export class CustomersEditComponent implements OnInit {
 
         this.customerForm = this.formBuilder.group({
             active: [ this.customerInfoByGroup.active ],
-            company: [ this.customerInfoByGroup.company ],
-            customerCompanyType: [ this.customerInfoByGroup.customerCompanyType ],
-            certificateType: [ this.customerInfoByGroup.certificateType ],
-            mainPhone: [ this.customerInfoByGroup.mainPhone ],
             address: [ this.customerInfoByGroup.address ],
+            certificateType: [ this.customerInfoByGroup.certificateType ],
             city: [ this.customerInfoByGroup.city ],
-            state: [ this.customerInfoByGroup.state ],
-            zipCode: [ this.customerInfoByGroup.zipCode ],
+            company: [ this.customerInfoByGroup.company ],
             country: [ this.customerInfoByGroup.country ],
-            website: [ this.customerInfoByGroup.website ],
-            distribute: [ this.customerInfoByGroup.distribute ],
-            showJetA: [ this.customerInfoByGroup.showJetA ],
-            show100Ll: [ this.customerInfoByGroup.show100Ll ],
+            customerCompanyType: [ this.customerInfoByGroup.customerCompanyType ],
             customerMarginTemplate: [ this.customCustomerType.customerType ],
+            distribute: [ this.customerInfoByGroup.distribute ],
+            mainPhone: [ this.customerInfoByGroup.mainPhone ],
+            show100Ll: [ this.customerInfoByGroup.show100Ll ],
+            showJetA: [ this.customerInfoByGroup.showJetA ],
+            state: [ this.customerInfoByGroup.state ],
+            website: [ this.customerInfoByGroup.website ],
+            zipCode: [ this.customerInfoByGroup.zipCode ],
         });
         this.customerForm.valueChanges.pipe(
             map(() => {
@@ -211,11 +209,11 @@ export class CustomersEditComponent implements OnInit {
     newContactClicked() {
         this.selectedContactRecord = null;
         this.currentContactInfoByGroup = {
-            oid: 0,
             contactId: 0,
-            groupId: this.sharedService.currentUser.groupId,
             copyAlerts: true,
-            email: ''
+            email: '',
+            groupId: this.sharedService.currentUser.groupId,
+            oid: 0
         };
 
         const dialogRef = this.newContactDialog.open(
@@ -290,9 +288,9 @@ export class CustomersEditComponent implements OnInit {
             feeAndTax.omitsByCustomer = [];
         }
         let omitRecord: any = {
-            oid: 0,
+            customerId: this.customerInfoByGroup.customerId,
             fboFeeAndTaxId: feeAndTax.oid,
-            customerId: this.customerInfoByGroup.customerId
+            oid: 0
         };
         if (feeAndTax.omitsByCustomer.length > 0) {
             omitRecord = feeAndTax.omitsByCustomer[0];
@@ -358,8 +356,8 @@ export class CustomersEditComponent implements OnInit {
         if (!this.selectedContactRecord) {
             this.customerContactsService
                 .add({
-                    customerId: this.customerInfoByGroup.customerId,
                     contactId: this.currentContactInfoByGroup.contactId,
+                    customerId: this.customerInfoByGroup.customerId,
                 })
                 .subscribe(() => {
                     this.loadCustomerContacts();

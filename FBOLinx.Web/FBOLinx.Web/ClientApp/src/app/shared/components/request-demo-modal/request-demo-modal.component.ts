@@ -4,8 +4,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-request-demo-modal',
-    templateUrl: './request-demo-modal.component.html',
     styleUrls: [ './request-demo-modal.component.scss' ],
+    templateUrl: './request-demo-modal.component.html',
 })
 export class RequestDemoModalComponent {
     public zohoLoader = 'Zoho loader';
