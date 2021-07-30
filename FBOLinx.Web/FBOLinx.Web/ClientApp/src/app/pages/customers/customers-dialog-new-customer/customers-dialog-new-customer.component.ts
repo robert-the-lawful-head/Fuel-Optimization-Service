@@ -334,7 +334,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
         );
     }
 
-    public displayAircraft(aircraft: AircraftType) {
+    displayAircraft(aircraft: AircraftType) {
         return aircraft ? `${aircraft.make} ${aircraft.model}` : null;
     }
 
