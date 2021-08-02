@@ -271,7 +271,8 @@ namespace FBOLinx.Web.Controllers
                         Notes = existingTemplate.Notes,
                         MarginType = existingTemplate.MarginType,
                         Email = existingTemplate.Email,
-                        Subject = existingTemplate.Subject
+                        Subject = existingTemplate.Subject,
+                        EmailContentId = existingTemplate.EmailContentId
                     };
 
                     _context.PricingTemplate.Add(pt);
