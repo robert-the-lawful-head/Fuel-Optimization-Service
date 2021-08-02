@@ -415,6 +415,8 @@ namespace FBOLinx.Web.Controllers
         private async Task HandlePreLoginEvents(User user)
         {
             var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
+            fbo.fboAirport = await _context.Fboairports.FirstOrDefaultAsync(fa => fa.Fboid == fbo.Oid);
+
             if (fbo != null)
             {
                 fbo.LastLogin = DateTime.UtcNow;
