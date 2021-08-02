@@ -4,6 +4,9 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { Router } from '@angular/router';
 
+//Services
+import { SharedService } from '../../../layouts/shared-service';
+
 @Component({
     selector: 'app-login-modal',
     templateUrl: './login-modal.component.html',
@@ -18,6 +21,7 @@ export class LoginModalComponent {
         private formBuilder: FormBuilder,
         private router: Router,
         private authenticationService: AuthenticationService,
+        private sharedService: SharedService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.loginForm = this.formBuilder.group({
@@ -50,6 +54,7 @@ export class LoginModalComponent {
                         } else if (data.role === 2) {
                             this.router.navigate([ '/default-layout/fbos/' ]);
                         } else if (data.role === 5) {
+                            this.sharedService.currentUser.icao = data.fbo.fboAirport.icao;
                             this.router.navigate([
                                 '/default-layout/dashboard-csr/',
                             ]);
