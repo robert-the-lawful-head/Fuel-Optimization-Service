@@ -6,7 +6,7 @@ import {
     ValidationErrors,
     Validators,
 } from '@angular/forms';
-import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { GroupsService } from 'src/app/services/groups.service';
 import { validateEmail } from 'src/utils/email';
@@ -39,7 +39,12 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
                 Validators.required,
                 this.fromAddressValidator,
             ]),
-            replyTo: new FormControl(this.data.replyTo, Validators.email),
+            replyTo: new FormControl(
+                this.data.replyTo,
+                Validators.pattern(
+                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                )
+            ),
             subject: new FormControl(this.data.subject, Validators.required),
         });
     }
@@ -61,12 +66,10 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
             this.isLogoUploading = true;
 
             const file = {
-
                 contentType: this.logo.type,
-
-fileData: null,
+                fileData: null,
                 // Set File Information
-fileName: this.logo.name,
+                fileName: this.logo.name,
                 groupId: this.sharedService.currentUser.groupId,
             };
 
