@@ -130,8 +130,10 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
             this.aircraftForCustomer = response;
             if (this.aircraftForCustomer.length > 0) {
                 this.tailNumberForCustomerLookup = this.aircraftForCustomer[0].tailNumber;
-                this.lookupPricing();
+            } else {
+                this.tailNumberForCustomerLookup = '';
             }
+            this.lookupPricing();
         });
     }
 
@@ -161,7 +163,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         const tailNumber = this.getTailNumber();
         const customerInfoByGroupId = this.getCustomerInfoByGroupId();
 
-        if (pricingTemplateId > 0 || (tailNumber !== '' && customerInfoByGroupId > 0)) {
+        if (pricingTemplateId > 0 || (customerInfoByGroupId > 0)) {
             this.sampleCalculation = {
                 customerInfoByGroupId,
                 pricingTemplateId,
