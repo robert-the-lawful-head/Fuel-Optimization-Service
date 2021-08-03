@@ -88,6 +88,10 @@
 
         .p-component {
             font-size: 13px;
+
+            &.p-checkbox {
+                display: none;
+            }
         }
     }
 }
