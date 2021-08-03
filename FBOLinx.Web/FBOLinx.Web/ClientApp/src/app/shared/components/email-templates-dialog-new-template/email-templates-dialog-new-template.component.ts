@@ -1,15 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-
 @Component({
     selector: 'app-email-templates-dialog-new-template',
     styleUrls: ['./email-templates-dialog-new-template.component.scss'],
     templateUrl: './email-templates-dialog-new-template.component.html',
 })
 export class EmailTemplatesDialogNewTemplateComponent implements OnInit {
-    constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
-    }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
     ngOnInit(): void {
         if (!this.data.hideName && !this.data.name) {
@@ -24,10 +22,16 @@ export class EmailTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     get isSubmitDisabled() {
-        return (!this.data.hideName && !this.data.name) || !this.data.emailContentHtml || !this.data.subject;
+        return (
+            (!this.data.hideName && !this.data.name) ||
+            !this.data.emailContentHtml ||
+            !this.data.subject
+        );
     }
 
     get submitButtonTitle() {
-        return this.data.isUpdate ? 'Update Email Template' : 'Add Email Template';
+        return this.data.isUpdate
+            ? 'Update Email Template'
+            : 'Add Email Template';
     }
 }

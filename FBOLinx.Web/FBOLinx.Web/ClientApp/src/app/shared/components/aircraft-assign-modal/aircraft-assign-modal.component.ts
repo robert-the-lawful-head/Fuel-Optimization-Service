@@ -14,9 +14,9 @@ export interface NewCustomerAircraftDialogData {
 }
 
 @Component({
-    providers: [ SharedService ],
+    providers: [SharedService],
     selector: 'app-aircraft-assign-modal',
-    styleUrls: [ './aircraft-assign-modal.component.scss' ],
+    styleUrls: ['./aircraft-assign-modal.component.scss'],
     templateUrl: './aircraft-assign-modal.component.html',
 })
 export class AircraftAssignModalComponent implements OnInit {
@@ -32,9 +32,8 @@ export class AircraftAssignModalComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: NewCustomerAircraftDialogData,
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
-        private sharedService: SharedService,
-    ) {
-    }
+        private sharedService: SharedService
+    ) {}
 
     ngOnInit() {
         this.aircraftsService
@@ -60,10 +59,14 @@ export class AircraftAssignModalComponent implements OnInit {
         };
         if (typeof this.selectedCompany === 'string') {
             payload.customer = this.selectedCompany;
-            this.customerAircraftsService.createAircraftWithCustomer(payload)
+            this.customerAircraftsService
+                .createAircraftWithCustomer(payload)
                 .subscribe((customerInfoByGroup: any) => {
                     this.dialogRef.close({
-                        aircraftType: this.selectedAircraft.make + ' / ' + this.selectedAircraft.model,
+                        aircraftType:
+                            this.selectedAircraft.make +
+                            ' / ' +
+                            this.selectedAircraft.model,
                         company: customerInfoByGroup.company,
                         companyId: customerInfoByGroup.customerId,
                         customerInfoByGroupID: customerInfoByGroup.oid,
@@ -71,16 +74,21 @@ export class AircraftAssignModalComponent implements OnInit {
                 });
         } else {
             payload.customerId = this.selectedCompany;
-            this.customerAircraftsService.add(payload)
-                .subscribe(() => {
-                    const selectedCompany = this.data.customers.find(customer => customer.companyId === this.selectedCompany);
-                    this.dialogRef.close({
-                        aircraftType: this.selectedAircraft.make + ' / ' + this.selectedAircraft.model,
-                        company: selectedCompany.company,
-                        companyId: selectedCompany.companyId,
-                        customerInfoByGroupID: selectedCompany.customerInfoByGroupID,
-                    } as Partial<FlightWatchHistorical>);
-                });
+            this.customerAircraftsService.add(payload).subscribe(() => {
+                const selectedCompany = this.data.customers.find(
+                    (customer) => customer.companyId === this.selectedCompany
+                );
+                this.dialogRef.close({
+                    aircraftType:
+                        this.selectedAircraft.make +
+                        ' / ' +
+                        this.selectedAircraft.model,
+                    company: selectedCompany.company,
+                    companyId: selectedCompany.companyId,
+                    customerInfoByGroupID:
+                        selectedCompany.customerInfoByGroupID,
+                } as Partial<FlightWatchHistorical>);
+            });
         }
     }
 }

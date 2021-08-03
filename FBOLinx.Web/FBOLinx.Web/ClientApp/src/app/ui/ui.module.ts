@@ -96,5 +96,4 @@ import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-n
         NgbPopoverModule,
     ],
 })
-export class UIModule {
-}
+export class UIModule {}

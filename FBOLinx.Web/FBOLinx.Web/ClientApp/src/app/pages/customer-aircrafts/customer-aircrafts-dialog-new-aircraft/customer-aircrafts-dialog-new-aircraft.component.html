@@ -2,8 +2,13 @@
 <div mat-dialog-content>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.tailNumber" aria-label="Tail Number" cdkFocusInitial matInput
-                   placeholder="Tail Number">
+            <input
+                [(ngModel)]="data.tailNumber"
+                aria-label="Tail Number"
+                cdkFocusInitial
+                matInput
+                placeholder="Tail Number"
+            />
         </mat-form-field>
     </div>
     <div>
@@ -31,7 +36,8 @@
         class="mr-1"
         color="accent"
         mat-flat-button
-    >Add Aircraft
+    >
+        Add Aircraft
     </button>
     <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

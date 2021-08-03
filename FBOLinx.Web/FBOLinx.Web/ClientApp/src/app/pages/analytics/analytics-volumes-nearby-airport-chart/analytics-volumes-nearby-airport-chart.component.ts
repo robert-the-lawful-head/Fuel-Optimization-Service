@@ -40,7 +40,9 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
     }
 
@@ -51,13 +53,21 @@ export class AnalyticsVolumesNearbyAirportChartComponent implements OnInit {
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getVolumesNearbyAirport(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate, this.mile)
-            .subscribe((data: any) => {
-                this.totalOrdersData = data;
-            }, () => {
-            }, () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+            .getVolumesNearbyAirport(
+                this.sharedService.currentUser.fboId,
+                this.filterStartDate,
+                this.filterEndDate,
+                this.mile
+            )
+            .subscribe(
+                (data: any) => {
+                    this.totalOrdersData = data;
+                },
+                () => {},
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
     }
 
     public formatLabel(value: number) {

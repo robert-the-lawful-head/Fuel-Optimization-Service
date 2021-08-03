@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnInit, QueryList, ViewChildren, } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    OnInit,
+    QueryList,
+    ViewChildren,
+} from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -9,9 +15,9 @@ import { IMenuItem } from './menu-item';
 
 @Component({
     host: { class: 'app-menu' },
-    providers: [ MenuService ],
+    providers: [MenuService],
     selector: 'app-menu',
-    styleUrls: [ './menu.component.scss' ],
+    styleUrls: ['./menu.component.scss'],
     templateUrl: './menu.component.html',
 })
 export class MenuComponent implements OnInit, AfterViewInit {
@@ -26,8 +32,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
         private menuService: MenuService,
         private sharedService: SharedService,
         private userService: UserService
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.getMenuItems();
@@ -125,8 +130,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
         const tooltipsArr = this.priceTooltips.toArray();
         if (this.tooltipIndex === 1) {
             this.user.goOverTutorial = true;
-            this.userService.update(this.user).subscribe(() => {
-            });
+            this.userService.update(this.user).subscribe(() => {});
         }
         if (tooltipsArr.length > this.tooltipIndex) {
             setTimeout(() => {

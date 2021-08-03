@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 // Services
 import { GroupsService } from '../../../services/groups.service';
 
-
 const BREADCRUMBS: any[] = [
     {
         link: '/default-layout',
@@ -23,7 +22,7 @@ const BREADCRUMBS: any[] = [
 
 @Component({
     selector: 'app-groups-edit',
-    styleUrls: [ './groups-edit.component.scss' ],
+    styleUrls: ['./groups-edit.component.scss'],
     templateUrl: './groups-edit.component.html',
 })
 export class GroupsEditComponent implements OnInit {
@@ -41,8 +40,7 @@ export class GroupsEditComponent implements OnInit {
         private router: Router,
         private groupsService: GroupsService,
         private snackBar: MatSnackBar
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
@@ -61,13 +59,13 @@ export class GroupsEditComponent implements OnInit {
         this.groupsService.update(this.groupInfo).subscribe(() => {
             this.snackBar.open('Successfully updated!', '', {
                 duration: 2000,
-                panelClass: [ 'blue-snackbar' ],
+                panelClass: ['blue-snackbar'],
             });
-            this.router.navigate([ '/default-layout/groups/' ]);
+            this.router.navigate(['/default-layout/groups/']);
         });
     }
 
     public cancelEdit() {
-        this.router.navigate([ '/default-layout/groups/' ]);
+        this.router.navigate(['/default-layout/groups/']);
     }
 }

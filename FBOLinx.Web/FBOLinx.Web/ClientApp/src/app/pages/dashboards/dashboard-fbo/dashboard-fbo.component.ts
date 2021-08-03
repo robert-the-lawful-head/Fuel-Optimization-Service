@@ -12,7 +12,7 @@ import { StatisticsTotalOrdersComponent } from '../../../shared/components/stati
 
 @Component({
     selector: 'app-dashboard-fbo',
-    styleUrls: [ './dashboard-fbo.component.scss' ],
+    styleUrls: ['./dashboard-fbo.component.scss'],
     templateUrl: './dashboard-fbo.component.html',
 })
 export class DashboardFboComponent implements AfterViewInit, OnDestroy {
@@ -35,17 +35,22 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
 
     constructor(private sharedService: SharedService) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
-        this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
+        this.pastThirtyDaysStartDate = new Date(
+            moment().add(-30, 'days').format('MM/DD/YYYY')
+        );
         this.fboid = this.sharedService.currentUser.fboId;
         this.groupid = this.sharedService.currentUser.groupId;
         this.sharedService.titleChange(this.pageTitle);
 
-        this.breadcrumb = [ {
-            link: '/default-layout',
-            title: 'Main',
-        },
+        this.breadcrumb = [
+            {
+                link: '/default-layout',
+                title: 'Main',
+            },
         ];
         if (!this.isCsr) {
             this.breadcrumb.push({
@@ -65,13 +70,12 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.applyDateFilterChange();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {

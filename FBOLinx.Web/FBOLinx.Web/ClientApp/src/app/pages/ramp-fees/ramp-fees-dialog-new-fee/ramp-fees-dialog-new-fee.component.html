@@ -2,74 +2,126 @@
 <div class="mt-1" mat-dialog-content>
     <mat-form-field>
         <mat-select [(ngModel)]="data.categoryType" placeholder="Category">
-            <mat-option *ngFor="let categoryType of categoryTypes" [value]="categoryType.value">
-                {{categoryType.text}}
+            <mat-option
+                *ngFor="let categoryType of categoryTypes"
+                [value]="categoryType.value"
+            >
+                {{ categoryType.text }}
             </mat-option>
         </mat-select>
     </mat-form-field>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.price" aria-label="Ramp/Facil. Fee" matInput placeholder="Ramp/Facil. Fee"
-                   type="number">
+            <input
+                [(ngModel)]="data.price"
+                aria-label="Ramp/Facil. Fee"
+                matInput
+                placeholder="Ramp/Facil. Fee"
+                type="number"
+            />
             <span matPrefix>$</span>
         </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.waived" aria-label="Ramp/Facil. Fee" matInput placeholder="Avoidance"
-                   type="number">
+            <input
+                [(ngModel)]="data.waived"
+                aria-label="Ramp/Facil. Fee"
+                matInput
+                placeholder="Avoidance"
+                type="number"
+            />
             <span matSuffix>Gal.</span>
         </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.expirationDate" [matDatepicker]="categoryDatePicker" disabled
-                   matInput placeholder="Expiration Date">
-            <mat-datepicker-toggle [for]="categoryDatePicker" matSuffix></mat-datepicker-toggle>
-            <mat-datepicker #categoryDatePicker disabled="false"></mat-datepicker>
+            <input
+                [(ngModel)]="data.expirationDate"
+                [matDatepicker]="categoryDatePicker"
+                disabled
+                matInput
+                placeholder="Expiration Date"
+            />
+            <mat-datepicker-toggle
+                [for]="categoryDatePicker"
+                matSuffix
+            ></mat-datepicker-toggle>
+            <mat-datepicker
+                #categoryDatePicker
+                disabled="false"
+            ></mat-datepicker>
         </mat-form-field>
     </div>
     <div *ngIf="data.categoryType == 2">
         <mat-form-field>
             <mat-select [(ngModel)]="data.categoryMinValue" placeholder="Type">
-                <mat-option *ngFor="let aircraftType of aircraftTypes" [value]="aircraftType.aircraftId">
-                    {{aircraftType.make}} {{aircraftType.model}}
+                <mat-option
+                    *ngFor="let aircraftType of aircraftTypes"
+                    [value]="aircraftType.aircraftId"
+                >
+                    {{ aircraftType.make }} {{ aircraftType.model }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
     </div>
     <div *ngIf="data.categoryType == 3">
         <mat-form-field>
-            <input [(ngModel)]="data.categoryMinValue" aria-label="Min. Weight" matInput placeholder="Min. Weight"
-                   type="number">
+            <input
+                [(ngModel)]="data.categoryMinValue"
+                aria-label="Min. Weight"
+                matInput
+                placeholder="Min. Weight"
+                type="number"
+            />
             <span matSuffix>Lbs.</span>
         </mat-form-field>
     </div>
     <div *ngIf="data.categoryType == 3">
         <mat-form-field>
-            <input [(ngModel)]="data.categoryMaxValue" aria-label="Max. Weight" matInput placeholder="Max. Weight"
-                   type="number">
+            <input
+                [(ngModel)]="data.categoryMaxValue"
+                aria-label="Max. Weight"
+                matInput
+                placeholder="Max. Weight"
+                type="number"
+            />
             <span matSuffix>Lbs.</span>
         </mat-form-field>
     </div>
     <div *ngIf="data.categoryType == 4">
         <mat-form-field>
-            <input [(ngModel)]="data.categoryMinValue" aria-label="Min. Wingspan" matInput placeholder="Min. Wingspan"
-                   type="number">
+            <input
+                [(ngModel)]="data.categoryMinValue"
+                aria-label="Min. Wingspan"
+                matInput
+                placeholder="Min. Wingspan"
+                type="number"
+            />
             <span matSuffix>Feet</span>
         </mat-form-field>
     </div>
     <div *ngIf="data.categoryType == 4">
         <mat-form-field>
-            <input [(ngModel)]="data.categoryMaxValue" aria-label="Max. Wingspan" matInput placeholder="Max. Wingspan"
-                   type="number">
+            <input
+                [(ngModel)]="data.categoryMaxValue"
+                aria-label="Max. Wingspan"
+                matInput
+                placeholder="Max. Wingspan"
+                type="number"
+            />
             <span matSuffix>Feet</span>
         </mat-form-field>
     </div>
     <div *ngIf="data.categoryType == 5">
         <mat-form-field>
-            <input [(ngModel)]="data.categoryStringValue" aria-label="Tail Number" matInput placeholder="Tail Number"
-                   type="text">
+            <input
+                [(ngModel)]="data.categoryStringValue"
+                aria-label="Tail Number"
+                matInput
+                placeholder="Tail Number"
+                type="text"
+            />
         </mat-form-field>
     </div>
 </div>

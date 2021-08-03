@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface ICsvExportModalData {
     title: string;
@@ -9,15 +9,14 @@ export interface ICsvExportModalData {
 
 @Component({
     selector: 'app-csv-export-modal-component',
-    styleUrls: [ './csv-export-modal.component.scss' ],
+    styleUrls: ['./csv-export-modal.component.scss'],
     templateUrl: './csv-export-modal.component.html',
 })
 export class CsvExportModalComponent {
     constructor(
         public dialogRef: MatDialogRef<CsvExportModalComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ICsvExportModalData
-    ) {
-    }
+    ) {}
 
     onCancelClick(): void {
         this.dialogRef.close();

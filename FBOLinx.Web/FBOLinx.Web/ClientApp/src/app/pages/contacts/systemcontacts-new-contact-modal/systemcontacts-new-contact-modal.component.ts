@@ -1,6 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
 
 import { ContactsDialogConfirmContactDeleteComponent } from '../contact-confirm-delete-modal/contact-confirm-delete-modal.component';
 
@@ -14,7 +18,7 @@ export interface NewContactDialogData {
 
 @Component({
     selector: 'app-systemcontacts-new-contact-modal',
-    styleUrls: [ './systemcontacts-new-contact-modal.component.scss' ],
+    styleUrls: ['./systemcontacts-new-contact-modal.component.scss'],
     templateUrl: './systemcontacts-new-contact-modal.component.html',
 })
 export class SystemcontactsNewContactModalComponent implements OnInit {
@@ -24,8 +28,7 @@ export class SystemcontactsNewContactModalComponent implements OnInit {
         public dialogRef: MatDialogRef<SystemcontactsNewContactModalComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewContactDialogData,
         public dialogContactDeleteRef: MatDialog
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         if (!this.data.email) {

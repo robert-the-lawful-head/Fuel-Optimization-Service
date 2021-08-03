@@ -322,7 +322,7 @@
                                 display: flex;
                                 padding: $module-rem;
                                 transition: background 0.2s $animation,
-                                color 0.2s $animation;
+                                    color 0.2s $animation;
 
                                 &:hover {
                                     @media only screen and (max-width: 992px) {
@@ -332,8 +332,8 @@
                                         .icon,
                                         .mat-icon {
                                             background: rgba(
-                                                    accent-contrast(500),
-                                                    0.1
+                                                accent-contrast(500),
+                                                0.1
                                             );
                                         }
                                     }
@@ -449,12 +449,14 @@
                                         min-width: 120px;
                                         padding: 0;
                                         background: #ffffff;
-                                        box-shadow: 0 5px 10px 2px rgba(#000, 0.25);
+                                        box-shadow: 0 5px 10px 2px
+                                            rgba(#000, 0.25);
                                         transition: 0.2s opacity 0s $animation,
-                                        0s visibility 0.2s $animation;
+                                            0s visibility 0.2s $animation;
 
                                         > .mat-list-item {
-                                            border-bottom: 1px solid rgba(main-color(500), 0.05);
+                                            border-bottom: 1px solid
+                                                rgba(main-color(500), 0.05);
                                             cursor: pointer;
                                             padding-left: 28px;
                                             height: 38px;
@@ -503,7 +505,7 @@
                     ~ .items-overlay {
                         opacity: 1;
                         transition: 0.2s opacity 0s $animation,
-                        0s visibility 0s $animation;
+                            0s visibility 0s $animation;
                         visibility: visible;
                     }
                 }
@@ -517,7 +519,7 @@
                 position: fixed;
                 top: 0;
                 transition: 0.2s opacity 0s $animation,
-                0s visibility 0.2s $animation;
+                    0s visibility 0.2s $animation;
                 visibility: hidden;
                 width: 100%;
                 z-index: 99998;
@@ -601,5 +603,3 @@
         }
     }
 }
-
-

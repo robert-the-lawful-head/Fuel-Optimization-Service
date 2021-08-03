@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import FlatfileImporter from 'flatfile-csv-importer';
 
@@ -26,7 +32,7 @@ const BREADCRUMBS: any[] = [
 
 @Component({
     selector: 'app-ramp-fees-home',
-    styleUrls: [ './ramp-fees-home.component.scss' ],
+    styleUrls: ['./ramp-fees-home.component.scss'],
     templateUrl: './ramp-fees-home.component.html',
 })
 export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -66,14 +72,13 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.rampFees = null;
                     this.initRampfees();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {
@@ -98,8 +103,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     .subscribe(
                         (mymessage: any) => (this.expirationDate = mymessage)
                     );
-
-
             });
 
         FlatfileImporter.setVersion(2);
@@ -167,7 +170,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 this.launchImporter();
             }
-
         });
     }
 
@@ -197,8 +199,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     });
             }
-        } catch (e) {
-        }
+        } catch (e) {}
     }
 
     initializeImporter() {
@@ -208,67 +209,67 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             disableManualInput: false,
             fields: [
                 {
-                    alternates: [ 'Icao' ],
+                    alternates: ['Icao'],
                     description: 'Icao',
                     key: 'icao',
                     label: 'ICAO',
                 },
                 {
-                    alternates: [ 'fbo' ],
+                    alternates: ['fbo'],
                     description: 'FBO',
                     key: 'fbo',
                     label: 'FBO',
                 },
                 {
-                    alternates: [ 'make' ],
+                    alternates: ['make'],
                     description: 'Aircraft Make',
                     key: 'Make',
                     label: 'Make',
                 },
                 {
-                    alternates: [ 'model' ],
+                    alternates: ['model'],
                     description: 'Tail',
                     key: 'Model',
                     label: 'Model',
                 },
                 {
-                    alternates: [ 'Ramp Fee', 'ramp fee' ],
+                    alternates: ['Ramp Fee', 'ramp fee'],
                     description: 'Ramp Fee',
                     key: 'RampFee',
                     label: 'Ramp Fee ($)',
                 },
                 {
-                    alternates: [ 'Waived At', 'waived at' ],
+                    alternates: ['Waived At', 'waived at'],
                     description: 'Waived Fees',
                     key: 'WaivedAt',
                     label: 'Waived At (gal)',
                 },
                 {
-                    alternates: [ 'landing' ],
+                    alternates: ['landing'],
                     description: 'Landing Fees',
                     key: 'Landing',
                     label: 'Landing',
                 },
                 {
-                    alternates: [ 'overnight', 'overnight fees' ],
+                    alternates: ['overnight', 'overnight fees'],
                     description: 'Overnight Fees',
                     key: 'Overnight',
                     label: 'Overnight',
                 },
                 {
-                    alternates: [ 'tail number', 'tail-number' ],
+                    alternates: ['tail number', 'tail-number'],
                     description: 'Tail Number',
                     key: 'TailNumber',
                     label: 'Tail Number',
                 },
                 {
-                    alternates: [ 'aircreft size' ],
+                    alternates: ['aircreft size'],
                     description: 'Aircraft Size',
                     key: 'aircraftsize',
                     label: 'Aircraft Size',
                 },
                 {
-                    alternates: [ 'avoidance' ],
+                    alternates: ['avoidance'],
                     description: 'Avoidance',
                     key: 'avoidance',
                     label: 'Avoidance',
@@ -285,8 +286,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             fee.fboid = this.sharedService.currentUser.fboId;
         }
         if (fee.oid && fee.oid > 0) {
-            this.rampFeesService.update(fee).subscribe((data: any) => {
-            });
+            this.rampFeesService.update(fee).subscribe((data: any) => {});
         } else {
             this.rampFeesService.add(fee).subscribe((data: any) => {
                 fee.oid = data.oid;

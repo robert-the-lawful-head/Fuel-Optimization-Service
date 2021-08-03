@@ -2,7 +2,13 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable, of } from 'rxjs';
-import { catchError, debounceTime, map, startWith, switchMap, } from 'rxjs/operators';
+import {
+    catchError,
+    debounceTime,
+    map,
+    startWith,
+    switchMap,
+} from 'rxjs/operators';
 
 // Services
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
@@ -17,7 +23,7 @@ export declare type AirportAutoCompleteDataSource = AirportAutoCompleteData[];
 
 @Component({
     selector: 'app-airport-autocomplete',
-    styleUrls: [ './airport-autocomplete.component.scss' ],
+    styleUrls: ['./airport-autocomplete.component.scss'],
     templateUrl: './airport-autocomplete.component.html',
 })
 export class AirportAutocompleteComponent implements OnInit {
@@ -30,8 +36,7 @@ export class AirportAutocompleteComponent implements OnInit {
     isLoading = false;
     airportModel = null;
 
-    constructor(private acukwikAirportsService: AcukwikairportsService) {
-    }
+    constructor(private acukwikAirportsService: AcukwikairportsService) {}
 
     ngOnInit() {
         this.searchControl.setValue(this.airportModel ? this.airportModel : '');

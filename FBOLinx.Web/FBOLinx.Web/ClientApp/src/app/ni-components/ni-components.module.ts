@@ -31,11 +31,6 @@ import { NiCardComponent } from './ni-card/ni-card.component';
         BgDirective,
         GradientDirective,
     ],
-    imports: [
-        CommonModule,
-        FormsModule,
-        NgbPopoverModule,
-        RouterModule,
-    ],
+    imports: [CommonModule, FormsModule, NgbPopoverModule, RouterModule],
 })
 export class NiComponentsModule {}

@@ -6,7 +6,7 @@ import { AppService } from '../../../services/app.service';
 @Component({
     host: { class: 'app-footer' },
     selector: 'app-footer',
-    styleUrls: [ './footer.component.scss' ],
+    styleUrls: ['./footer.component.scss'],
     templateUrl: './footer.component.html',
 })
 export class FooterComponent implements OnInit {

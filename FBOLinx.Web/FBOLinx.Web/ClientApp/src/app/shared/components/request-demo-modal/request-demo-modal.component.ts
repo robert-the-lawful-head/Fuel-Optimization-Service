@@ -4,7 +4,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-request-demo-modal',
-    styleUrls: [ './request-demo-modal.component.scss' ],
+    styleUrls: ['./request-demo-modal.component.scss'],
     templateUrl: './request-demo-modal.component.html',
 })
 export class RequestDemoModalComponent {
@@ -18,7 +18,7 @@ export class RequestDemoModalComponent {
         this.ngxLoader.startLoader(this.zohoLoader);
     }
 
-    @HostListener('window:message', [ '$event' ])
+    @HostListener('window:message', ['$event'])
     messageUpdated(event: MessageEvent) {
         if (event.isTrusted && event.returnValue) {
             this.data.succeed = true;

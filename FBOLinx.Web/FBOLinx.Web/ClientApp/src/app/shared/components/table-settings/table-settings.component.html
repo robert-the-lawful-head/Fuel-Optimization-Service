@@ -12,14 +12,28 @@
         >
             <div *ngFor="let column of columns" cdkDrag class="columns-box">
                 <mat-icon>drag_indicator</mat-icon>
-                <mat-checkbox (change)="toggleColumnVisible(column)" [checked]="!column.hidden"></mat-checkbox>
-                <span class="column-name">{{column.name}}</span>
-                <mat-button-toggle-group appearance="legacy" aria-label="Sort Order">
-                    <mat-button-toggle (change)="onSortChange(column)"
-                                       [checked]="column.sort === 'asc' || column.sort === 'desc'">
+                <mat-checkbox
+                    (change)="toggleColumnVisible(column)"
+                    [checked]="!column.hidden"
+                ></mat-checkbox>
+                <span class="column-name">{{ column.name }}</span>
+                <mat-button-toggle-group
+                    appearance="legacy"
+                    aria-label="Sort Order"
+                >
+                    <mat-button-toggle
+                        (change)="onSortChange(column)"
+                        [checked]="
+                            column.sort === 'asc' || column.sort === 'desc'
+                        "
+                    >
                         <mat-icon *ngIf="!column.sort">swap_vert</mat-icon>
-                        <mat-icon *ngIf="column.sort === 'asc'">arrow_upward</mat-icon>
-                        <mat-icon *ngIf="column.sort === 'desc'">arrow_downward</mat-icon>
+                        <mat-icon *ngIf="column.sort === 'asc'"
+                            >arrow_upward</mat-icon
+                        >
+                        <mat-icon *ngIf="column.sort === 'desc'"
+                            >arrow_downward</mat-icon
+                        >
                     </mat-button-toggle>
                 </mat-button-toggle-group>
             </div>
@@ -28,7 +42,14 @@
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button (click)="onSave()" class="mr-1" color="accent" mat-raised-button>Save</button>
+        <button
+            (click)="onSave()"
+            class="mr-1"
+            color="accent"
+            mat-raised-button
+        >
+            Save
+        </button>
         <button (click)="onCancel()" mat-stroked-button>Dismiss</button>
     </div>
 </div>

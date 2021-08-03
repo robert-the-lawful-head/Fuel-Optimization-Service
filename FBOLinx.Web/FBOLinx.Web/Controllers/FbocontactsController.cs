@@ -12,7 +12,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
-using IO.Swagger.Model;
+using Fuelerlinx.SDK;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -162,7 +162,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("fbo/{fboId}/update-fuel-vendor")]
-        public IActionResult UpdateFuelVendor([FromRoute] int fboId)
+        public async Task<IActionResult> UpdateFuelVendor([FromRoute] int fboId)
         {
             if (!ModelState.IsValid)
             {
@@ -180,11 +180,11 @@ namespace FBOLinx.Web.Controllers
             FBOLinxFuelVendorUpdateRequest request = new FBOLinxFuelVendorUpdateRequest
             {
                 EmailToCC = ccemail,
-                GroupId = fbo.GroupId,
+                GroupId = fbo.GroupId.GetValueOrDefault(),
                 Email = fbo.FuelDeskEmail
             };
 
-            var response = _fuelerLinxService.UpdateFuelVendorEmails(request);
+            var response = await _fuelerLinxService.UpdateFuelVendorEmails(request);
 
             return Ok(response);
         }

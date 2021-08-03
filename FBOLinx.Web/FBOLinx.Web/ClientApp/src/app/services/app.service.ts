@@ -14,6 +14,8 @@ export class AppService {
     }
 
     public getVersion() {
-        return this.http.get(this.accessPointUrl + '/version', {headers: this.headers});
+        return this.http.get(this.accessPointUrl + '/version', {
+            headers: this.headers,
+        });
     }
 }

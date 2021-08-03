@@ -7,31 +7,57 @@
                         <div class="mat-form-field">
                             <div
                                 (click)="
-                                    fee.subDetailsExpanded = !fee.subDetailsExpanded
+                                    fee.subDetailsExpanded =
+                                        !fee.subDetailsExpanded
                                 "
-                                class="mat-form-field-wrapper ramp-fee-details-expansion"
+                                class="
+                                    mat-form-field-wrapper
+                                    ramp-fee-details-expansion
+                                "
                             >
                                 <div class="mat-form-field-flex">
                                     <div class="mat-form-field-infix">
-                                        <div class="ramp-fee-details-expansion-icon">
-                                            <mat-icon *ngIf="!fee.subDetailsExpanded">expand_more</mat-icon>
-                                            <mat-icon *ngIf="fee.subDetailsExpanded">expand_less</mat-icon>
+                                        <div
+                                            class="
+                                                ramp-fee-details-expansion-icon
+                                            "
+                                        >
+                                            <mat-icon
+                                                *ngIf="!fee.subDetailsExpanded"
+                                                >expand_more</mat-icon
+                                            >
+                                            <mat-icon
+                                                *ngIf="fee.subDetailsExpanded"
+                                                >expand_less</mat-icon
+                                            >
                                         </div>
-                                        <div *ngIf="fee.categoryType != 2"
-                                             class="ramp-fee-details-expansion-label">
+                                        <div
+                                            *ngIf="fee.categoryType != 2"
+                                            class="
+                                                ramp-fee-details-expansion-label
+                                            "
+                                        >
                                             {{
-                                            categoryTypes.indexOf(1) > -1
-                                                ? fee.sizeDescription
-                                                : fee.categoryTypeDescription
+                                                categoryTypes.indexOf(1) > -1
+                                                    ? fee.sizeDescription
+                                                    : fee.categoryTypeDescription
                                             }}
                                         </div>
-                                        <div *ngIf="fee.categoryType == 2"
-                                             class="ramp-fee-details-expansion-label">
+                                        <div
+                                            *ngIf="fee.categoryType == 2"
+                                            class="
+                                                ramp-fee-details-expansion-label
+                                            "
+                                        >
                                             {{ fee.aircraftMake }}
                                             {{ fee.aircraftModel }}
                                         </div>
-                                        <div *ngIf="fee.categoryType == 5"
-                                             class="ramp-fee-details-expansion-label">
+                                        <div
+                                            *ngIf="fee.categoryType == 5"
+                                            class="
+                                                ramp-fee-details-expansion-label
+                                            "
+                                        >
                                             {{ fee.categoryStringValue }}
                                         </div>
                                     </div>
@@ -91,25 +117,31 @@
                     >
                         <div class="container-fluid applies-to-container">
                             <div *ngIf="fee.categoryType == 1" class="row">
-                                <div *ngFor="let aircraft of fee.appliesTo"
-                                     class="col-12">
+                                <div
+                                    *ngFor="let aircraft of fee.appliesTo"
+                                    class="col-12"
+                                >
                                     {{ aircraft.make }} {{ aircraft.model }}
                                 </div>
                             </div>
                             <div *ngIf="fee.categoryType == 2" class="row">
                                 <div>
                                     <mat-form-field>
-                                        <mat-select (change)="
+                                        <mat-select
+                                            (change)="
                                                 rampFeeRequiresUpdate(fee)
                                             "
-                                                    [(ngModel)]="fee.categoryMinValue"
-                                                    placeholder="Type">
-                                            <mat-option *ngFor="
+                                            [(ngModel)]="fee.categoryMinValue"
+                                            placeholder="Type"
+                                        >
+                                            <mat-option
+                                                *ngFor="
                                                     let aircraftType of aircraftTypes
                                                 "
-                                                        [value]="
+                                                [value]="
                                                     aircraftType.aircraftId
-                                                ">
+                                                "
+                                            >
                                                 {{ aircraftType.make }}
                                                 {{ aircraftType.model }}
                                             </mat-option>
@@ -118,73 +150,76 @@
                                 </div>
                             </div>
                             <div *ngIf="fee.categoryType == 3" class="row">
-                                <div class="col-3">
-                                    Weight Range
-                                </div>
+                                <div class="col-3">Weight Range</div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input (change)="
+                                        <input
+                                            (change)="
                                                 rampFeeRequiresUpdate(fee)
                                             "
-                                               [(ngModel)]="fee.categoryMinValue"
-                                               matInput
-                                               placeholder="Min. Weight"
-                                               type="number"/>
+                                            [(ngModel)]="fee.categoryMinValue"
+                                            matInput
+                                            placeholder="Min. Weight"
+                                            type="number"
+                                        />
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
                                 </div>
-                                <div class="col-3">
-                                    to
-                                </div>
+                                <div class="col-3">to</div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input (change)="
+                                        <input
+                                            (change)="
                                                 rampFeeRequiresUpdate(fee)
                                             "
-                                               [(ngModel)]="fee.categoryMaxValue"
-                                               matInput
-                                               placeholder="Max. Weight"
-                                               type="number"/>
+                                            [(ngModel)]="fee.categoryMaxValue"
+                                            matInput
+                                            placeholder="Max. Weight"
+                                            type="number"
+                                        />
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
                                 </div>
                             </div>
                             <div *ngIf="fee.categoryType == 4" class="row">
-                                <div class="col-3">
-                                    Wingspan
-                                </div>
+                                <div class="col-3">Wingspan</div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input (change)="
+                                        <input
+                                            (change)="
                                                 rampFeeRequiresUpdate(fee)
                                             "
-                                               [(ngModel)]="fee.categoryMinValue"
-                                               matInput
-                                               placeholder="Min. Wingspan"
-                                               type="number"/>
+                                            [(ngModel)]="fee.categoryMinValue"
+                                            matInput
+                                            placeholder="Min. Wingspan"
+                                            type="number"
+                                        />
                                         <span matSuffix>Feet</span>
                                     </mat-form-field>
                                 </div>
-                                <div class="col-3">
-                                    to
-                                </div>
+                                <div class="col-3">to</div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input (change)="
+                                        <input
+                                            (change)="
                                                 rampFeeRequiresUpdate(fee)
                                             "
-                                               [(ngModel)]="fee.categoryMaxValue"
-                                               matInput
-                                               placeholder="Max. Wingspan"
-                                               type="number"/>
+                                            [(ngModel)]="fee.categoryMaxValue"
+                                            matInput
+                                            placeholder="Max. Wingspan"
+                                            type="number"
+                                        />
                                         <span matSuffix>Feet</span>
                                     </mat-form-field>
                                 </div>
                             </div>
                             <div *ngIf="fee.categoryType == 5" class="row">
                                 <div class="col-3">
-                                    Tail Number:&nbsp;<input [(ngModel)]="fee.categoryStringValue" disabled="disabled"
-                                                             matInput/>
+                                    Tail Number:&nbsp;<input
+                                        [(ngModel)]="fee.categoryStringValue"
+                                        disabled="disabled"
+                                        matInput
+                                    />
                                 </div>
                             </div>
                         </div>

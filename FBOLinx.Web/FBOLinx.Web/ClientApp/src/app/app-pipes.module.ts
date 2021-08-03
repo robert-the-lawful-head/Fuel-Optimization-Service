@@ -8,5 +8,4 @@ import { SafeHtmlPipe } from './shared/pipes/safe-html-pipe.pipe';
     exports: [SafeHtmlPipe],
     imports: [CommonModule],
 })
-export class AppPipesModule {
-}
+export class AppPipesModule {}

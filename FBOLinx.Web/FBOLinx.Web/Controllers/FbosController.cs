@@ -18,7 +18,7 @@ using FBOLinx.Web.Models.Requests;
 using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Services.Interfaces;
-using IO.Swagger.Model;
+using Fuelerlinx.SDK;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -519,7 +519,7 @@ namespace FBOLinx.Web.Controllers
                         //if not, find the latest pull history record from fuelerlinx and send email
                         if (noRampFees)
                         {
-                            var fuelerLinxCustomerId = _fuelerLinxService.GetLatestFlightDeptPullHistoryForIcao(new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.fboAirport.Icao });
+                            var fuelerLinxCustomerId = await _fuelerLinxService.GetLatestFlightDeptPullHistoryForIcao(new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.fboAirport.Icao });
                             //var fuelerLinxCustomerId = 0;
                             //var fuelerLinxCustomerIdResponse = await _apiClient.PostAsync("fboprices/get-latest-flight-dept-pullhistory-for-icao/", new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.Icao }, conductorUser.Token);
                             //if (fuelerLinxCustomerIdResponse != "" && int.TryParse(fuelerLinxCustomerIdResponse, out fuelerLinxCustomerId))

@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -6,17 +13,29 @@ import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject } from 'rxjs';
-import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
+import {
+    ColumnType,
+    TableSettingsComponent,
+} from 'src/app/shared/components/table-settings/table-settings.component';
 import * as XLSX from 'xlsx';
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomersListType } from '../../../models/customer';
-import { FlightWatchHistorical, FlightWatchStatus } from '../../../models/flight-watch-historical';
+import {
+    FlightWatchHistorical,
+    FlightWatchStatus,
+} from '../../../models/flight-watch-historical';
 import { AirportWatchService } from '../../../services/airportwatch.service';
-import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
-import { CsvExportModalComponent, ICsvExportModalData } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
+import {
+    AircraftAssignModalComponent,
+    NewCustomerAircraftDialogData,
+} from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
+import {
+    CsvExportModalComponent,
+    ICsvExportModalData,
+} from '../../../shared/components/csv-export-modal/csv-export-modal.component';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
 
 @Component({
@@ -33,7 +52,17 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     @Output() refreshCustomers = new EventEmitter();
 
     chartName = 'airport-arrivals-depatures-table';
-    displayedColumns: string[] = ['company', 'tailNumber', 'flightNumber', 'hexCode', 'aircraftType', 'aircraftTypeCode', 'dateTime', 'status', 'pastVisits'];
+    displayedColumns: string[] = [
+        'company',
+        'tailNumber',
+        'flightNumber',
+        'hexCode',
+        'aircraftType',
+        'aircraftTypeCode',
+        'dateTime',
+        'status',
+        'pastVisits',
+    ];
 
     filterStartDate: Date;
     filterEndDate: Date;
@@ -59,9 +88,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         private tableSettingsDialog: MatDialog,
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
-        private ngxLoader: NgxUiLoaderService,
+        private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-1, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-1, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
         this.filtersChanged
             .debounceTime(500)
@@ -70,15 +101,23 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     }
 
     get visibleColumns() {
-        return this.columns.filter(column => !column.hidden).map(column => column.id) || [];
+        return (
+            this.columns
+                .filter((column) => !column.hidden)
+                .map((column) => column.id) || []
+        );
     }
 
     ngOnInit() {
         this.sort.sortChange.subscribe(() => {
-            this.columns = this.columns.map(column =>
+            this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
-                    : { hidden: column.hidden, id: column.id, name: column.name }
+                    : {
+                          hidden: column.hidden,
+                          id: column.id,
+                          name: column.name,
+                      }
             );
 
             this.saveSettings();
@@ -101,7 +140,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     initColumns() {
         this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
         if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+            this.columns = JSON.parse(
+                localStorage.getItem(this.tableLocalStorageKey)
+            );
         } else {
             this.columns = [
                 {
@@ -147,28 +188,39 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     refreshData() {
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(this.filterStartDate, this.filterEndDate)
-            .subscribe((data) => {
+        this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
+            (data) => {
                 this.data = data;
 
                 this.refreshDataSource();
-            }, () => {
-            }, () => {
+            },
+            () => {},
+            () => {
                 this.ngxLoader.stopLoader(this.chartName);
-            });
+            }
+        );
     }
 
     refreshDataSource() {
-        const data = this.data.filter(x =>
-            (!this.isCommercialInvisible ||
-                !isCommercialAircraft(x.aircraftTypeCode, x.flightNumber)
-            ) &&
-            (!this.selectedCustomers.length || this.selectedCustomers.includes(x.customerInfoByGroupID)) &&
-            (!this.selectedTailNumbers.length || this.selectedTailNumbers.includes(x.tailNumber))
-        ).map(x => ({
-            ...x,
-            aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode)
-        }));
+        const data = this.data
+            .filter(
+                (x) =>
+                    (!this.isCommercialInvisible ||
+                        !isCommercialAircraft(
+                            x.aircraftTypeCode,
+                            x.flightNumber
+                        )) &&
+                    (!this.selectedCustomers.length ||
+                        this.selectedCustomers.includes(
+                            x.customerInfoByGroupID
+                        )) &&
+                    (!this.selectedTailNumbers.length ||
+                        this.selectedTailNumbers.includes(x.tailNumber))
+            )
+            .map((x) => ({
+                ...x,
+                aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
+            }));
 
         if (!this.dataSource) {
             this.dataSource = new MatTableDataSource(data);
@@ -180,12 +232,23 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     }
 
     refreshSort() {
-        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ disableClear: false, id: null, start: sortedColumn?.sort || 'asc' });
-        this.sort.sort({ disableClear: false, id: sortedColumn?.id, start: sortedColumn?.sort || 'asc' });
-        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
+        const sortedColumn = this.columns.find(
+            (column) => !column.hidden && column.sort
+        );
+        this.sort.sort({
+            disableClear: false,
+            id: null,
+            start: sortedColumn?.sort || 'asc',
+        });
+        this.sort.sort({
+            disableClear: false,
+            id: sortedColumn?.id,
+            start: sortedColumn?.sort || 'asc',
+        });
+        (
+            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
+        )?._setAnimationTransitionState({ toState: 'active' });
     }
-
 
     filterChanged() {
         this.filtersChanged.next();
@@ -193,48 +256,53 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     onClickAircraft(row: FlightWatchHistorical) {
         if (!row.company) {
-            const dialogRef = this.newCustomerAircraftDialog.open<AircraftAssignModalComponent, Partial<NewCustomerAircraftDialogData>>(
+            const dialogRef = this.newCustomerAircraftDialog.open<
                 AircraftAssignModalComponent,
-                {
-                    data: {
-                        customers: this.customers,
-                        tailNumber: row.flightNumber,
-                    },
-                    panelClass: 'aircraft-assign-modal',
-                    width: '450px'
-                }
-            );
-
-            dialogRef.afterClosed().subscribe((result: Partial<FlightWatchHistorical>) => {
-                if (result) {
-                    // const aircrafts = this.data.filter(record => record.flightNumber === row.flightNumber);
-                    for (let i = 0; i < this.data.length; i++){
-                        if (this.data[i].flightNumber === row.flightNumber) {
-                            this.data[i] = {
-                                ...this.data[i],
-                                ...result,
-                                tailNumber: row.flightNumber,
-                            };
-                        }
-                    }
-                    this.refreshDataSource();
-                    this.refreshCustomers.emit();
-                }
+                Partial<NewCustomerAircraftDialogData>
+            >(AircraftAssignModalComponent, {
+                data: {
+                    customers: this.customers,
+                    tailNumber: row.flightNumber,
+                },
+                panelClass: 'aircraft-assign-modal',
+                width: '450px',
             });
+
+            dialogRef
+                .afterClosed()
+                .subscribe((result: Partial<FlightWatchHistorical>) => {
+                    if (result) {
+                        // const aircrafts = this.data.filter(record => record.flightNumber === row.flightNumber);
+                        for (let i = 0; i < this.data.length; i++) {
+                            if (
+                                this.data[i].flightNumber === row.flightNumber
+                            ) {
+                                this.data[i] = {
+                                    ...this.data[i],
+                                    ...result,
+                                    tailNumber: row.flightNumber,
+                                };
+                            }
+                        }
+                        this.refreshDataSource();
+                        this.refreshCustomers.emit();
+                    }
+                });
         }
     }
 
     onExport() {
-        const dialogRef = this.exportDialog.open<CsvExportModalComponent, ICsvExportModalData, ICsvExportModalData>(
+        const dialogRef = this.exportDialog.open<
             CsvExportModalComponent,
-            {
-                data: {
-                    filterEndDate: this.filterEndDate,
-                    filterStartDate: this.filterStartDate,
-                    title: 'Export Airport Departures and Arrivals',
-                },
-            }
-        );
+            ICsvExportModalData,
+            ICsvExportModalData
+        >(CsvExportModalComponent, {
+            data: {
+                filterEndDate: this.filterEndDate,
+                filterStartDate: this.filterStartDate,
+                title: 'Export Airport Departures and Arrivals',
+            },
+        });
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
                 return;
@@ -245,25 +313,31 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     }
 
     exportCsv(startDate: Date, endDate: Date) {
-        this.fetchData(startDate, endDate)
-            .subscribe((data) => {
-                const exportData = data.map((item) => ({
-                    Aircraft: item.aircraftType,
-                    'Aircraft Type': this.getAircraftLabel(item.aircraftTypeCode),
-                    Company: item.company,
-                    'Date and Time': item.dateTime,
-                    'Departure / Arrival': item.status === FlightWatchStatus.Landing ? 'Arrival' : 'Departure',
-                    'Flight #': item.flightNumber,
-                    'Hex #': item.hexCode,
-                    'Tail #': item.tailNumber,
-                }));
-                const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-                const wb: XLSX.WorkBook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Airport Departures and Arrivals');
+        this.fetchData(startDate, endDate).subscribe((data) => {
+            const exportData = data.map((item) => ({
+                Aircraft: item.aircraftType,
+                'Aircraft Type': this.getAircraftLabel(item.aircraftTypeCode),
+                Company: item.company,
+                'Date and Time': item.dateTime,
+                'Departure / Arrival':
+                    item.status === FlightWatchStatus.Landing
+                        ? 'Arrival'
+                        : 'Departure',
+                'Flight #': item.flightNumber,
+                'Hex #': item.hexCode,
+                'Tail #': item.tailNumber,
+            }));
+            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
+            const wb: XLSX.WorkBook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(
+                wb,
+                ws,
+                'Airport Departures and Arrivals'
+            );
 
-                /* save to file */
-                XLSX.writeFile(wb, 'Airport Departures and Arrivals.xlsx');
-            });
+            /* save to file */
+            XLSX.writeFile(wb, 'Airport Departures and Arrivals.xlsx');
+        });
     }
 
     clearAllFilters() {
@@ -279,12 +353,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
             filter.dateFilter = {
                 endDate: null,
-                startDate: null
+                startDate: null,
             };
             filter.stringFilter = '';
             filter.numberRangeFilter = {
                 end: null,
-                start: null
+                start: null,
             };
             filter.isFiltered = false;
         }
@@ -293,25 +367,27 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     }
 
     getAircraftLabel(type: string) {
-        const found = this.aircraftTypes.find(a => a.id === type);
+        const found = this.aircraftTypes.find((a) => a.id === type);
         if (found) {
             return found.label;
-        }
-        else {
+        } else {
             return 'Other';
         }
     }
 
     openSettings() {
-        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
-            data: this.columns
-        });
+        const dialogRef = this.tableSettingsDialog.open(
+            TableSettingsComponent,
+            {
+                data: this.columns,
+            }
+        );
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
                 return;
             }
 
-            this.columns = [ ...result ];
+            this.columns = [...result];
 
             this.refreshSort();
             this.saveSettings();
@@ -319,6 +395,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     }
 
     saveSettings() {
-        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+        localStorage.setItem(
+            this.tableLocalStorageKey,
+            JSON.stringify(this.columns)
+        );
     }
 }

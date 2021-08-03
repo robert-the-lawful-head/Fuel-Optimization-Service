@@ -1,9 +1,17 @@
 <div [ngClass]="layoutClasses" class="site-container">
-    <app-horizontal-navbar (sidebarState)="sidebarState()" [title]="pageTitle"></app-horizontal-navbar>
+    <app-horizontal-navbar
+        (sidebarState)="sidebarState()"
+        [title]="pageTitle"
+    ></app-horizontal-navbar>
 
-    <app-vertical-navbar [ngClass]="{ 'hideSidebar': isSidebarInvisible() }"></app-vertical-navbar>
+    <app-vertical-navbar
+        [ngClass]="{ hideSidebar: isSidebarInvisible() }"
+    ></app-vertical-navbar>
     <div *ngIf="pricingTemplatesData">
-        <app-addition-navbar #insideElement [templatelst]="pricingTemplatesData"></app-addition-navbar>
+        <app-addition-navbar
+            #insideElement
+            [templatelst]="pricingTemplatesData"
+        ></app-addition-navbar>
     </div>
 
     <app-fbo-prices-panel
@@ -13,7 +21,10 @@
         class="sticky-panel"
     ></app-fbo-prices-panel>
 
-    <main [ngClass]="{ 'full-width': isSidebarInvisible() }" class="main-content">
+    <main
+        [ngClass]="{ 'full-width': isSidebarInvisible() }"
+        class="main-content"
+    >
         <div class="main-content-wrap">
             <router-outlet></router-outlet>
         </div>

@@ -1,13 +1,13 @@
-@import './variable';
+@import "./variable";
 
-@import './fonts';
+@import "./fonts";
 
-@import './structure';
-@import './typography';
-@import './helpers';
-@import './popover';
-@import './components/material-components';
-@import './components/bootstrap';
+@import "./structure";
+@import "./typography";
+@import "./helpers";
+@import "./popover";
+@import "./components/material-components";
+@import "./components/bootstrap";
 
 .actions-menu {
     position: absolute;
@@ -26,7 +26,7 @@
 }
 
 .divider {
-    border-left: 1px solid rgba(#000,.2);
+    border-left: 1px solid rgba(#000, 0.2);
     display: inline-block;
     height: 18px;
     margin: 0 10px;
@@ -34,7 +34,7 @@
 }
 
 .mat-green {
-    background-color: #81C784;
+    background-color: #81c784;
     color: #000000 !important;
 
     &:disabled {
@@ -43,7 +43,7 @@
 }
 
 .mat-orange {
-    background-color: #FFB74D;
+    background-color: #ffb74d;
     color: #000000 !important;
 
     &:disabled {
@@ -75,7 +75,7 @@ button.mat-icon-button {
     background-size: cover;
     border: 1px solid $card-header-bg;
     border-radius: 3px;
-    box-shadow: 1px 1px 5px 0px rgba(main-color(500),.25);
+    box-shadow: 1px 1px 5px 0px rgba(main-color(500), 0.25);
     position: relative;
 
     &:not(.outline-card) {
@@ -159,7 +159,6 @@ button.mat-icon-button {
             line-height: normal;
         }
     }
-
 
     .card-content {
         border-radius: 3px;
@@ -265,7 +264,7 @@ button.mat-icon-button {
         &:before {
             background-color: inherit;
             border-radius: 3px;
-            content: '';
+            content: "";
             display: block;
             height: 100%;
             left: 0;
@@ -286,30 +285,27 @@ button.mat-icon-button {
     }
 }
 
-
-
 .mat-sort-header-container {
-  padding-right: 25px;
-  position: relative;
+    padding-right: 25px;
+    position: relative;
 }
 
 .mat-sort-header-content {
-  text-align: left !important;
-  display: flex ;
-  align-items: inherit !important;
+    text-align: left !important;
+    display: flex;
+    align-items: inherit !important;
 }
 
-
 .overflow-label .table-column-filter {
-  top: 0px !important;
+    top: 0px !important;
 }
 
 .customers-grid .mat-icon-button .mat-button-wrapper > * {
-  vertical-align: sub !important;
+    vertical-align: sub !important;
 }
 
 .export-import-menu .mat-button-wrapper .mat-icon {
-  font-size: 25px !important;
+    font-size: 25px !important;
 }
 
 .after-breadcrumb {
@@ -327,7 +323,7 @@ button.mat-icon-button {
 
 /*Tax and Fee Breakdown*/
 
-   /*Price Lookup*/
+/*Price Lookup*/
 .price-lookup-breakdown .d-inline-block.text-nowrap {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -349,7 +345,6 @@ button.mat-icon-button {
     vertical-align: middle;
 }
 
-
 .price-lookup-breakdown .col > div.d-inline-block.text-nowrap {
     width: 150px !important;
     text-overflow: ellipsis;
@@ -361,13 +356,11 @@ button.mat-icon-button {
     padding-right: 0px;
 }
 
-
 .price-lookup-breakdown hr {
-   width: 270px;
+    width: 270px;
 }
 
 /*END Price Lookup*/
-
 
 /*Live Pricing*/
 
@@ -385,7 +378,6 @@ button.mat-icon-button {
     overflow: hidden;
 }
 
-
 .live-pricing-container .col > div.d-inline-block.text-nowrap {
     width: 100px !important;
     text-overflow: ellipsis;
@@ -396,7 +388,6 @@ button.mat-icon-button {
     padding-right: 0px;
 }
 
-
 .live-pricing-container hr {
     border: 1px solid;
     margin: -1px -8px -1px -1px;
@@ -405,7 +396,6 @@ button.mat-icon-button {
 /*END Live Pricing*/
 
 /*END Tax and Fee Breakdown*/
-
 
 /*Customers Grid Bulk Update*/
 .bulk-update .mat-form-field-hide-placeholder .mat-select-placeholder {
@@ -431,7 +421,6 @@ button.mat-icon-button {
     color: #0c7cd5;
 }
 
-
 .bulk-update .mat-form-field.mat-focused .mat-form-field-ripple {
     background-color: #0a6ebd;
 }
@@ -441,7 +430,6 @@ button.mat-icon-button {
 }
 
 /*End Customers Grid Bulk Update*/
-
 
 /*Dashboard Price Lookup*/
 

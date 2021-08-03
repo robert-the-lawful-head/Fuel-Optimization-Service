@@ -1,12 +1,20 @@
 <nav id="menu" *ngIf="styleLoaded">
-    <a href="#" class="active" (click)="toggleLayer('streetview', $event)">Street View</a>
-    <a href="#" class="active" (click)="toggleLayer('airway', $event)">Airway</a>
+    <a href="#" class="active" (click)="toggleLayer('streetview', $event)"
+        >Street View</a
+    >
+    <a href="#" class="active" (click)="toggleLayer('airway', $event)"
+        >Airway</a
+    >
     <a href="#" class="active" (click)="toggleLayer('icao', $event)">ICAO</a>
-    <a href="#" class="" (click)="toggleCommercial($event)">Commercial Flights</a>
+    <a href="#" class="" (click)="toggleCommercial($event)"
+        >Commercial Flights</a
+    >
 </nav>
 <div id="flight-watch-map"></div>
 
 <div *ngIf="!isStable" class="map-error-msg">
-    <mat-icon aria-hidden="false" aria-label="Server Error">wifi_tethering_off</mat-icon>
+    <mat-icon aria-hidden="false" aria-label="Server Error"
+        >wifi_tethering_off</mat-icon
+    >
     <span>Server Error!!!</span>
 </div>

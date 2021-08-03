@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Inject,Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class CustomeraircraftsService {
@@ -39,15 +39,26 @@ export class CustomeraircraftsService {
     }
 
     public getCustomerAircraftsByGroupAndFbo(groupId, fboId) {
-        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId, {
-            headers: this.headers,
-        });
+        return this.http.get(
+            this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public getAircraftsListByGroupAndFbo(groupId, fboId) {
-        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId + '/list', {
-            headers: this.headers,
-        });
+        return this.http.get(
+            this.accessPointUrl +
+                '/group/' +
+                groupId +
+                '/fbo/' +
+                fboId +
+                '/list',
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public getCustomerAircraftsCountByGroupId(groupId) {
@@ -72,9 +83,13 @@ export class CustomeraircraftsService {
     }
 
     public addMultipleWithTemplate(groupId, fboId, customerId, payload) {
-        return this.http.post(`${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/customer/${customerId}/multiple`, payload, {
-            headers: this.headers,
-        });
+        return this.http.post(
+            `${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/customer/${customerId}/multiple`,
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public import(payload) {
@@ -102,8 +117,12 @@ export class CustomeraircraftsService {
     }
 
     public createAircraftWithCustomer(payload) {
-        return this.http.post(this.accessPointUrl + '/create-with-customer', payload, {
-            headers: this.headers,
-        });
+        return this.http.post(
+            this.accessPointUrl + '/create-with-customer',
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
     }
 }

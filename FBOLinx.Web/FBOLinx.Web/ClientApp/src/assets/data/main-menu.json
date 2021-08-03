@@ -12,7 +12,7 @@
         },
         "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers.",
         "routing": "/default-layout/dashboard-fbo",
-        "roles": [ 1, 4, 6 ]
+        "roles": [1, 4, 6]
     },
     {
         "title": "CSR Dashboard",
@@ -22,7 +22,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/dashboard-csr",
-        "roles": [ 5 ]
+        "roles": [5]
     },
     {
         "title": "FBO Group",
@@ -32,7 +32,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/fbos",
-        "roles": [ 2 ]
+        "roles": [2]
     },
     {
         "title": "Group Analytics",
@@ -42,7 +42,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/group-analytics",
-        "roles": [ 2 ]
+        "roles": [2]
     },
     {
         "title": "Group Customers",
@@ -52,7 +52,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/group-customers",
-        "roles": [ 2 ]
+        "roles": [2]
     },
     {
         "title": "Groups",
@@ -62,7 +62,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/groups",
-        "roles": [ 3 ]
+        "roles": [3]
     },
     {
         "title": "ITP Margin Templates",
@@ -73,7 +73,7 @@
         },
         "tooltip": "Create and manage margin templates for your customer.",
         "routing": "/default-layout/pricing-templates",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
     },
     {
         "title": "Email Templates",
@@ -84,7 +84,7 @@
         },
         "tooltip": "Create and manage emails for distribution.",
         "routing": "/default-layout/email-templates",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
     },
     {
         "title": "Customer Manager",
@@ -95,7 +95,7 @@
         },
         "tooltip": "Create, manage, and assign each customer or aircraft to a Margin template.",
         "routing": "/default-layout/customers",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
     },
     {
         "title": "Fuel Orders",
@@ -106,7 +106,7 @@
         },
         "tooltip": "See your incoming fuel orders.",
         "routing": "/default-layout/fuelreqs",
-        "roles": [ 1, 4, 5, 6 ]
+        "roles": [1, 4, 5, 6]
     },
     {
         "title": "Ramp Fees",
@@ -117,7 +117,7 @@
         },
         "tooltip": "Enter and manage your fees.",
         "routing": "/default-layout/rampfees",
-        "roles": [ 1, 4, 6 ]
+        "roles": [1, 4, 6]
     },
     {
         "title": "Flight Watch",
@@ -128,7 +128,7 @@
         },
         "tooltip": "Flight Watch",
         "routing": "/default-layout/flight-watch",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
     },
     {
         "title": "Analytics",
@@ -139,6 +139,6 @@
         },
         "tooltip": "Analytics features graphs and statistics to help you better target customers and understand your business.",
         "routing": "/default-layout/analytics",
-        "roles": [ 1, 4 ]
+        "roles": [1, 4]
     }
 ]

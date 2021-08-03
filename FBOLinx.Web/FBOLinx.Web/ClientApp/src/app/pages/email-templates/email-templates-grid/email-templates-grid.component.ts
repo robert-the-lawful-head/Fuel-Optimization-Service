@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -24,22 +31,17 @@ export class EmailTemplatesGridComponent implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     public emailTemplatesDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = [
-        'name',
-        'subject',
-        'copy',
-        'delete'
-    ];
+    public displayedColumns: string[] = ['name', 'subject', 'copy', 'delete'];
 
     public pageIndexTemplate = 0;
     public pageSizeTemplate = 50;
 
-    constructor(public newTemplateDialog: MatDialog,
+    constructor(
+        public newTemplateDialog: MatDialog,
         public copyTemplateDialog: MatDialog,
         public deleteTemplateWarningDialog: MatDialog,
-        private sharedService: SharedService) {
-
-    }
+        private sharedService: SharedService
+    ) {}
 
     ngOnInit(): void {
         if (!this.emailTemplatesData) {
@@ -82,11 +84,14 @@ export class EmailTemplatesGridComponent implements OnInit {
     }
 
     public addNewEmailTemplate() {
-        const dialogRef = this.newTemplateDialog.open(EmailTemplatesDialogNewTemplateComponent, {
-            data: {
-                fboId: this.sharedService.currentUser.fboId,
-            },
-        });
+        const dialogRef = this.newTemplateDialog.open(
+            EmailTemplatesDialogNewTemplateComponent,
+            {
+                data: {
+                    fboId: this.sharedService.currentUser.fboId,
+                },
+            }
+        );
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
@@ -117,15 +122,13 @@ export class EmailTemplatesGridComponent implements OnInit {
                     return;
                 }
 
-                this.copyEmailTemplateClicked.emit(result);;
+                this.copyEmailTemplateClicked.emit(result);
             });
         }
     }
 
     public applyFilter(filterValue: string) {
-        this.emailTemplatesDataSource.filter = filterValue
-            .trim()
-            .toLowerCase();
+        this.emailTemplatesDataSource.filter = filterValue.trim().toLowerCase();
     }
 
     onPageChanged(event: any) {

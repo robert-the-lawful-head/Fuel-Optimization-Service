@@ -23,8 +23,7 @@ export class StatisticsTotalCustomersComponent implements OnInit {
     constructor(
         private customerinfobygroupService: CustomerinfobygroupService,
         private sharedService: SharedService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.refreshData();
@@ -36,9 +35,11 @@ export class StatisticsTotalCustomersComponent implements OnInit {
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId
             )
-            .subscribe((data: any) => {
-                this.totalCustomers = data;
-            }, () => {
-            });
+            .subscribe(
+                (data: any) => {
+                    this.totalCustomers = data;
+                },
+                () => {}
+            );
     }
 }

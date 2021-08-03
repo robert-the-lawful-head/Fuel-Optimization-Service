@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule,Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 // Guards
 import { AuthGuard } from './guards';
@@ -16,10 +16,8 @@ import { CustomersEditComponent } from './pages/customers/customers-edit/custome
 import { CustomersHomeComponent } from './pages/customers/customers-home/customers-home.component';
 import { DashboardFboComponent } from './pages/dashboards/dashboard-fbo/dashboard-fbo.component';
 import { DashboardHomeComponent } from './pages/dashboards/dashboard-home/dashboard-home.component';
-import { EmailTemplatesEditComponent } from
-    './pages/email-templates/email-templates-edit/email-templates-edit.component';
-import { EmailTemplatesHomeComponent } from
-    './pages/email-templates/email-templates-home/email-templates-home.component';
+import { EmailTemplatesEditComponent } from './pages/email-templates/email-templates-edit/email-templates-edit.component';
+import { EmailTemplatesHomeComponent } from './pages/email-templates/email-templates-home/email-templates-home.component';
 import { FboPricesHomeComponent } from './pages/fbo-prices/fbo-prices-home/fbo-prices-home.component';
 import { FbosEditComponent } from './pages/fbos/fbos-edit/fbos-edit.component';
 import { FbosHomeComponent } from './pages/fbos/fbos-home/fbos-home.component';
@@ -177,48 +175,52 @@ const defaultRoutes: Routes = [
     {
         canActivate: [AuthGuard],
         component: DashboardHomeComponent,
-        path: '**'
+        path: '**',
     },
 ];
 
-const outsideTheGateRoutes: Routes = [{
-  component: AuthtokenComponent,
-  path: 'auth',
-},
+const outsideTheGateRoutes: Routes = [
+    {
+        component: AuthtokenComponent,
+        path: 'auth',
+    },
 ];
 
-const routes: Routes = [{
-    component: LandingSiteLayoutComponent,
-    path: '',
-    //children: landingSiteRoutes,
-  },
-  {
-    children: defaultRoutes,
-    component: DefaultLayoutComponent,
-    path: 'default-layout',
+const routes: Routes = [
+    {
+        component: LandingSiteLayoutComponent,
+        path: '',
+        //children: landingSiteRoutes,
     },
-{
-    children: outsideTheGateRoutes,
-    component: OutsideTheGateLayoutComponent,
-    path: 'outside-the-gate-layout',
-},
-  {
-    component: LoginComponent,
-    path: 'app-login',
-  },
-  {
-    component: ResetPasswordComponent,
-    path: 'reset-password'
-  },
-  {
-    component: LandingSiteLayoutComponent,
-    path: '**',
-    //children: landingSiteRoutes,
-  },
+    {
+        children: defaultRoutes,
+        component: DefaultLayoutComponent,
+        path: 'default-layout',
+    },
+    {
+        children: outsideTheGateRoutes,
+        component: OutsideTheGateLayoutComponent,
+        path: 'outside-the-gate-layout',
+    },
+    {
+        component: LoginComponent,
+        path: 'app-login',
+    },
+    {
+        component: ResetPasswordComponent,
+        path: 'reset-password',
+    },
+    {
+        component: LandingSiteLayoutComponent,
+        path: '**',
+        //children: landingSiteRoutes,
+    },
 ];
 
 @NgModule({
-  exports: [RouterModule],
-  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })]
+    exports: [RouterModule],
+    imports: [
+        RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
+    ],
 })
 export class AppRoutingModule {}

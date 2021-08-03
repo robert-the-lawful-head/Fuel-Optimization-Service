@@ -23,7 +23,7 @@ const BREADCRUMBS: any[] = [
 
 @Component({
     selector: 'app-flight-watch',
-    styleUrls: [ './flight-watch.component.scss' ],
+    styleUrls: ['./flight-watch.component.scss'],
     templateUrl: './flight-watch.component.html',
 })
 export class FlightWatchComponent implements OnInit, OnDestroy {
@@ -58,7 +58,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.mapLoadSubscription = timer(0, 5000).subscribe(() => this.loadAirportWatchData());
+        this.mapLoadSubscription = timer(0, 5000).subscribe(() =>
+            this.loadAirportWatchData()
+        );
     }
 
     ngOnDestroy() {
@@ -74,16 +76,22 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     loadAirportWatchData() {
         if (!this.loading) {
             this.loading = true;
-            this.airportWatchFetchSubscription =
-                this.airportWatchService.getAll(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
-                    .subscribe((data: any) => {
-                        if (!this.center) {
-                            this.center = { lat: data.fboLocation.latitude, lng: data.fboLocation.longitude };
-                        }
-                        this.flightWatchData = data.flightWatchData;
-                        this.setFilteredFlightWatchData();
-                        this.loading = false;
-                    });
+            this.airportWatchFetchSubscription = this.airportWatchService
+                .getAll(
+                    this.sharedService.currentUser.groupId,
+                    this.sharedService.currentUser.fboId
+                )
+                .subscribe((data: any) => {
+                    if (!this.center) {
+                        this.center = {
+                            lat: data.fboLocation.latitude,
+                            lng: data.fboLocation.longitude,
+                        };
+                    }
+                    this.flightWatchData = data.flightWatchData;
+                    this.setFilteredFlightWatchData();
+                    this.loading = false;
+                });
         }
     }
 
@@ -110,23 +118,27 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             originalData = this.flightWatchData;
         } else {
             const loweredFilter = this.filter.toLowerCase();
-            originalData = this.flightWatchData.filter(fw =>
-                fw.aircraftHexCode.toLowerCase().includes(loweredFilter) ||
-                fw.atcFlightNumber.toLowerCase().includes(loweredFilter)
+            originalData = this.flightWatchData.filter(
+                (fw) =>
+                    fw.aircraftHexCode.toLowerCase().includes(loweredFilter) ||
+                    fw.atcFlightNumber.toLowerCase().includes(loweredFilter)
             );
         }
 
         if (this.filteredTypes.length) {
-            originalData = originalData.filter(fw => this.filteredTypes.includes(fw.aircraftTypeCode));
+            originalData = originalData.filter((fw) =>
+                this.filteredTypes.includes(fw.aircraftTypeCode)
+            );
         }
 
-        this.filteredFlightWatchData = keyBy(originalData, fw => fw.oid);
+        this.filteredFlightWatchData = keyBy(originalData, (fw) => fw.oid);
 
         this.flightWatchDataSubject.next(originalData);
         this.flightWatchDataSubject.asObservable();
 
         if (this.selectedFlightWatch) {
-            this.selectedFlightWatch = this.filteredFlightWatchData[this.selectedFlightWatch.oid];
+            this.selectedFlightWatch =
+                this.filteredFlightWatchData[this.selectedFlightWatch.oid];
         }
     }
 
@@ -134,11 +146,11 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         const MAX_DIMENSIONS_PX = 800;
         const MIN_DIMENSIONS_PX = 0;
         if (
-          event.rectangle.width &&
-          (event.rectangle.width > MAX_DIMENSIONS_PX ||
-            event.rectangle.width < MIN_DIMENSIONS_PX)
+            event.rectangle.width &&
+            (event.rectangle.width > MAX_DIMENSIONS_PX ||
+                event.rectangle.width < MIN_DIMENSIONS_PX)
         ) {
-          return false;
+            return false;
         }
         return true;
     }

@@ -41,7 +41,9 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
     }
 
@@ -53,13 +55,21 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getFBOCustomersBreakdown(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate, this.chartType)
-            .subscribe((data: any) => {
-                this.totalOrdersData = this.switchDataType(data);
-            }, () => {
-            }, () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+            .getFBOCustomersBreakdown(
+                this.sharedService.currentUser.fboId,
+                this.filterStartDate,
+                this.filterEndDate,
+                this.chartType
+            )
+            .subscribe(
+                (data: any) => {
+                    this.totalOrdersData = this.switchDataType(data);
+                },
+                () => {},
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
     }
 
     public changeType(event: MatButtonToggleChange) {
@@ -71,9 +81,9 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
         return _.map(data, (item: any) => {
             let newItem: any;
             if (this.chartType === 'order') {
-                newItem = _.assign({}, item, {value: item.orders});
+                newItem = _.assign({}, item, { value: item.orders });
             } else {
-                newItem = _.assign({}, item, {value: item.volume});
+                newItem = _.assign({}, item, { value: item.volume });
             }
             return newItem;
         });

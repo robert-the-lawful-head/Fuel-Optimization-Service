@@ -23,8 +23,7 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
     constructor(
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.refreshData();
@@ -38,17 +37,19 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
                 icao: '',
                 startDateTime: this.startDate,
             })
-            .subscribe((data: any) => {
-                this.totalOrders = 0;
-                if (data) {
-                    if (data.totalOrders) {
-                        this.totalOrders = data.totalOrders;
+            .subscribe(
+                (data: any) => {
+                    this.totalOrders = 0;
+                    if (data) {
+                        if (data.totalOrders) {
+                            this.totalOrders = data.totalOrders;
+                        }
+                        if (data.icao) {
+                            this.icao = data.icao;
+                        }
                     }
-                    if (data.icao) {
-                        this.icao = data.icao;
-                    }
-                }
-            }, (error: any) => {
-            });
+                },
+                (error: any) => {}
+            );
     }
 }

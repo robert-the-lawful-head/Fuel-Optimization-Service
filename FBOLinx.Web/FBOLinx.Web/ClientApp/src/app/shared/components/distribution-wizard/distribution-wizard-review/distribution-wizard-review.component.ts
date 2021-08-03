@@ -5,9 +5,9 @@ import { NavigationEnd, Router } from '@angular/router';
 import { SharedService } from '../../../../layouts/shared-service';
 
 @Component({
-    providers: [ SharedService ],
+    providers: [SharedService],
     selector: 'app-distribution-wizard-review',
-    styleUrls: [ './distribution-wizard-review.component.scss' ],
+    styleUrls: ['./distribution-wizard-review.component.scss'],
     templateUrl: './distribution-wizard-review.component.html',
 })
 export class DistributionWizardReviewComponent {

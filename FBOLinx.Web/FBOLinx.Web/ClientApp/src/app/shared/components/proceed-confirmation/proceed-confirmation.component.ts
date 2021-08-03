@@ -1,5 +1,5 @@
 import { Component, Inject, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface ProceedConfirmationData {
     description: string;
@@ -10,7 +10,7 @@ export interface ProceedConfirmationData {
 
 @Component({
     selector: 'app-proceed-confirmation',
-    styleUrls: [ './proceed-confirmation.component.scss' ],
+    styleUrls: ['./proceed-confirmation.component.scss'],
     templateUrl: './proceed-confirmation.component.html',
 })
 export class ProceedConfirmationComponent {

@@ -11,7 +11,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'Unspecified',
         reverseUrl: '/assets/img/map-markers/default-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/default.svg'
+        url: '/assets/img/map-markers/default.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/A1-blue-reverse.svg',
@@ -22,7 +22,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'Light Jet',
         reverseUrl: '/assets/img/map-markers/A1-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/A1.svg'
+        url: '/assets/img/map-markers/A1.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/A2-blue-reverse.svg',
@@ -33,7 +33,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'Small Jet',
         reverseUrl: '/assets/img/map-markers/A2-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/A2.svg'
+        url: '/assets/img/map-markers/A2.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/A3-blue-reverse.svg',
@@ -44,7 +44,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'Large Jet',
         reverseUrl: '/assets/img/map-markers/A3-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/A3.svg'
+        url: '/assets/img/map-markers/A3.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/A4-blue-reverse.svg',
@@ -55,7 +55,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'HVL Jet',
         reverseUrl: '/assets/img/map-markers/A4-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/A4.svg'
+        url: '/assets/img/map-markers/A4.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/A5-blue-reverse.svg',
@@ -66,7 +66,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'Heavy Jet',
         reverseUrl: '/assets/img/map-markers/A5-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/A5.svg'
+        url: '/assets/img/map-markers/A5.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/default-blue-reverse.svg',
@@ -77,7 +77,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'High Performance/Military',
         reverseUrl: '/assets/img/map-markers/default-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/default.svg'
+        url: '/assets/img/map-markers/default.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/A7-blue-reverse.svg',
@@ -88,7 +88,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'Helicopter',
         reverseUrl: '/assets/img/map-markers/A7-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/A7.svg'
+        url: '/assets/img/map-markers/A7.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/B0-blue-reverse.svg',
@@ -99,7 +99,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'Other',
         reverseUrl: '/assets/img/map-markers/B0-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/B0.svg'
+        url: '/assets/img/map-markers/B0.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/B3-blue-reverse.svg',
@@ -110,7 +110,7 @@ export const AIRCRAFT_IMAGES = [
         label: 'Other',
         reverseUrl: '/assets/img/map-markers/B3-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/B3.svg'
+        url: '/assets/img/map-markers/B3.svg',
     },
     {
         blueReverseUrl: '/assets/img/map-markers/default-blue-reverse.svg',
@@ -121,6 +121,6 @@ export const AIRCRAFT_IMAGES = [
         label: 'Other',
         reverseUrl: '/assets/img/map-markers/default-reverse.svg',
         size: 65,
-        url: '/assets/img/map-markers/default.svg'
+        url: '/assets/img/map-markers/default.svg',
     },
 ];

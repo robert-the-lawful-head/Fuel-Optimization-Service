@@ -1,6 +1,7 @@
 ﻿::ng-deep {
     .e-grid {
-        .e-headercell, .e-detailheadercell {
+        .e-headercell,
+        .e-detailheadercell {
             height: 60px;
         }
 
@@ -28,7 +29,7 @@
         font-weight: bold;
 
         &.good {
-            color: #81C784;
+            color: #81c784;
         }
     }
 }

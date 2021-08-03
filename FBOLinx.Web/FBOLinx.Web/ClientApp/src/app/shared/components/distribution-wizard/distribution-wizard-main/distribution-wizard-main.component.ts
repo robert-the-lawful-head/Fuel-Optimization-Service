@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { SharedService } from '../../../../layouts/shared-service';
 import { CustomerCompanyTypesService } from '../../../../services/customer-company-types.service';
@@ -22,7 +22,7 @@ export interface DistributionDialogData {
 
 @Component({
     selector: 'app-distribution-wizard-main',
-    styleUrls: [ './distribution-wizard-main.component.scss' ],
+    styleUrls: ['./distribution-wizard-main.component.scss'],
     templateUrl: './distribution-wizard-main.component.html',
 })
 export class DistributionWizardMainComponent implements OnInit {
@@ -74,18 +74,18 @@ export class DistributionWizardMainComponent implements OnInit {
         this.loadValidityMessage();
 
         this.firstFormGroup = this.formBuilder.group({
-            customer: [ '' ],
-            customerCompanyType: [ '' ],
-            pricingTemplate: [ '' ],
+            customer: [''],
+            customerCompanyType: [''],
+            pricingTemplate: [''],
         });
         this.secondFormGroup = this.formBuilder.group({
-            emailContentGreeting: [ '', Validators.required ],
-            emailContentGreetingName: [ '', Validators.required ],
-            emailContentSubject: [ '', Validators.required ],
+            emailContentGreeting: ['', Validators.required],
+            emailContentGreetingName: ['', Validators.required],
+            emailContentSubject: ['', Validators.required],
         });
         this.thirdFormGroup = this.formBuilder.group({
-            emailContentSignature: [ '', Validators.required ],
-            emailContentSignatureName: [ '', Validators.required ],
+            emailContentSignature: ['', Validators.required],
+            emailContentSignatureName: ['', Validators.required],
         });
 
         this.fourthFormGroup = this.formBuilder.group({});
@@ -96,15 +96,15 @@ export class DistributionWizardMainComponent implements OnInit {
         this.firstFormGroup
             .get('pricingTemplate')
             .valueChanges.subscribe((val) => {
-            this.data.pricingTemplate = val;
-            // Only reload customers if they've already been loaded
-            if (
-                this.availableCustomers &&
-                this.availableCustomers.length > 0
-            ) {
-                this.loadAvailableCustomers();
-            }
-        });
+                this.data.pricingTemplate = val;
+                // Only reload customers if they've already been loaded
+                if (
+                    this.availableCustomers &&
+                    this.availableCustomers.length > 0
+                ) {
+                    this.loadAvailableCustomers();
+                }
+            });
         // ***Removing customer type selection for now***
         // this.firstFormGroup.get('customerCompanyType').valueChanges.subscribe(val => {
         //    this.data.customerCompanyType = val;
@@ -115,9 +115,8 @@ export class DistributionWizardMainComponent implements OnInit {
     }
 
     public pricingTemplateChanged() {
-        this.data.pricingTemplate = this.firstFormGroup.get(
-            'pricingTemplate'
-        ).value;
+        this.data.pricingTemplate =
+            this.firstFormGroup.get('pricingTemplate').value;
         this.loadAvailableCustomers();
     }
 
@@ -184,8 +183,7 @@ export class DistributionWizardMainComponent implements OnInit {
 
         this.distributionService
             .distributePricing(this.data)
-            .subscribe((data: any) => {
-            });
+            .subscribe((data: any) => {});
         this.isDistributionComplete = true;
     }
 
@@ -203,7 +201,8 @@ export class DistributionWizardMainComponent implements OnInit {
                     !this.data.pricingTemplate ||
                     this.data.pricingTemplate.oid === 0
                 ) {
-                    this.data.pricingTemplate = this.availablePricingTemplates[0];
+                    this.data.pricingTemplate =
+                        this.availablePricingTemplates[0];
                 } else {
                     for (const pricingTemplate of this
                         .availablePricingTemplates) {
@@ -239,7 +238,7 @@ export class DistributionWizardMainComponent implements OnInit {
                         (!this.data.customerCompanyType ||
                             this.data.customerCompanyType === 0 ||
                             this.data.customerCompanyType ===
-                            customer.customerCompanyType)
+                                customer.customerCompanyType)
                     ) {
                         this.availableCustomers.push(customer);
                     }
@@ -307,11 +306,13 @@ export class DistributionWizardMainComponent implements OnInit {
                     name: 'New Signature',
                     oid: 0,
                 });
-                this.data.emailContentGreeting = this.emailContentGreetings[
-                this.emailContentGreetings.length - 1
+                this.data.emailContentGreeting =
+                    this.emailContentGreetings[
+                        this.emailContentGreetings.length - 1
                     ];
-                this.data.emailContentSignature = this.emailContentSignatures[
-                this.emailContentSignatures.length - 1
+                this.data.emailContentSignature =
+                    this.emailContentSignatures[
+                        this.emailContentSignatures.length - 1
                     ];
                 this.isLoadingEmailContent = false;
             });

@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Inject,Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class FbofeeandtaxomitsbypricingtemplateService {
@@ -10,7 +10,8 @@ export class FbofeeandtaxomitsbypricingtemplateService {
         this.headers = new HttpHeaders({
             'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + 'api/FboFeeAndTaxOmitsByPricingTemplate';
+        this.accessPointUrl =
+            baseUrl + 'api/FboFeeAndTaxOmitsByPricingTemplate';
     }
 
     public getById(id) {

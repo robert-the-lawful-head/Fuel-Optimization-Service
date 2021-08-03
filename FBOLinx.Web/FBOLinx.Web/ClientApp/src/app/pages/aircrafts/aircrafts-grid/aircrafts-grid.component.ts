@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
@@ -13,7 +20,7 @@ import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/custome
 
 @Component({
     selector: 'app-aircrafts-grid',
-    styleUrls: [ './aircrafts-grid.component.scss' ],
+    styleUrls: ['./aircrafts-grid.component.scss'],
     templateUrl: './aircrafts-grid.component.html',
 })
 export class AircraftsGridComponent implements OnInit {
@@ -129,7 +136,9 @@ export class AircraftsGridComponent implements OnInit {
                 CustomerAircraftsEditComponent,
                 {
                     data: {
-                        disableDelete: customerAircraft.isFuelerlinxNetwork && customerAircraft.addedFrom,
+                        disableDelete:
+                            customerAircraft.isFuelerlinxNetwork &&
+                            customerAircraft.addedFrom,
                         oid: customerAircraft.oid,
                     },
                     width: '450px',
@@ -151,11 +160,13 @@ export class AircraftsGridComponent implements OnInit {
                                 )
                                 .subscribe((data: any) => {
                                     this.aircraftsData = data;
-                                    this.aircraftsDataSource = new MatTableDataSource(
-                                        this.aircraftsData
-                                    );
+                                    this.aircraftsDataSource =
+                                        new MatTableDataSource(
+                                            this.aircraftsData
+                                        );
                                     this.aircraftsDataSource.sort = this.sort;
-                                    this.aircraftsDataSource.paginator = this.paginator;
+                                    this.aircraftsDataSource.paginator =
+                                        this.paginator;
                                 });
                         });
                 }

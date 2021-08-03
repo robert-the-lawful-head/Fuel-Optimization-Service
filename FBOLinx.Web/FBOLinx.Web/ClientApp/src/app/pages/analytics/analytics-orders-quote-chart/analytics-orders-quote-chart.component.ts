@@ -38,7 +38,9 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
     }
 
@@ -54,12 +56,15 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
                 this.filterStartDate,
                 this.filterEndDate
             )
-            .subscribe((data: any) => {
-                this.ordersQuoteData = data[0];
-                this.dollarSumData = data[1];
-            }, () => {
-            }, () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+            .subscribe(
+                (data: any) => {
+                    this.ordersQuoteData = data[0];
+                    this.dollarSumData = data[1];
+                },
+                () => {},
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
     }
 }
