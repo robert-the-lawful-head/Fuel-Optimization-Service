@@ -388,7 +388,7 @@ namespace FBOLinx.Web.Services
 
                     if (maxValue > 999)
                     {
-                        string output = Convert.ToDouble(next.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+                        string output = maxValue.ToString("#,##", CultureInfo.InvariantCulture);
                         row = row.Replace("%MAX_GALLON%", output);
                     }
                     else
