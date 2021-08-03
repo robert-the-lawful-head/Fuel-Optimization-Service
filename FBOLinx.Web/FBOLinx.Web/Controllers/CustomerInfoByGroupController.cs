@@ -541,7 +541,7 @@ namespace FBOLinx.Web.Controllers
         {
             var customerFuelVendors = await _fuelerLinxService.GetCustomerFuelVendors();
             var fuelVendors = customerFuelVendors
-                .Select(cf => cf.FuelVendors.Split(","))
+                .Select(cf => cf.FuelVendors.Split(";"))
                 .SelectMany(i => i)
                 .Distinct()
                 .Select(i => i.Trim())
@@ -806,7 +806,7 @@ namespace FBOLinx.Web.Controllers
                             TailNumbers = resultsGroup.Key.Tails,
                             AircraftsVisits = resultsGroup.Count(a => a.hd != null && a.hd.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing),
                             FuelVendors = resultsGroup.Key.FuelVendors
-                                .Split(",")
+                                .Split(";")
                                 .Where(a => !string.IsNullOrEmpty(a))
                                 .OrderBy(a => a)
                                 .ToList()
