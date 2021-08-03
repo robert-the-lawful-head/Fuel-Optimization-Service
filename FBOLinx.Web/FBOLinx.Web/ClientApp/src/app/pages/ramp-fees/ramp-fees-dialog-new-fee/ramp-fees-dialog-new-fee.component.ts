@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 // Services
@@ -20,7 +20,7 @@ export interface NewRampFeeDialogData {
 
 @Component({
     selector: 'app-ramp-fees-dialog-new-fee',
-    styleUrls: [ './ramp-fees-dialog-new-fee.component.scss' ],
+    styleUrls: ['./ramp-fees-dialog-new-fee.component.scss'],
     templateUrl: './ramp-fees-dialog-new-fee.component.html',
 })
 export class RampFeesDialogNewFeeComponent {

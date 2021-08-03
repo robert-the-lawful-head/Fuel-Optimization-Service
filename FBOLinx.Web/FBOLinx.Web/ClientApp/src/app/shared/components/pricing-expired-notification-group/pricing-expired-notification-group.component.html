@@ -1,12 +1,14 @@
 <h1 mat-dialog-title>Pricing Expired</h1>
 <div class="mt-1 mb-2" mat-dialog-content>
     <div class="text-center">
-        Pricing for some of your FBOs has expired. Please click below to navigate to their FBO page and update the
-        pricing.
+        Pricing for some of your FBOs has expired. Please click below to
+        navigate to their FBO page and update the pricing.
     </div>
     <div class="text-center marginTop20">
         <div *ngFor="let fbo of data" class="marginTop20">
-            <button (click)="onManageClick(fbo)" [view]="'accent'" ni-button> Manage {{fbo.fboName}} </button>
+            <button (click)="onManageClick(fbo)" [view]="'accent'" ni-button>
+                Manage {{ fbo.fboName }}
+            </button>
         </div>
     </div>
 </div>
@@ -17,9 +19,16 @@
             class="float-right"
             color="orange"
             mat-flat-button
-            style="margin-left:5px;"
-        >Remind Me Later
-        </button>&nbsp;
-        <button (click)="onCancelClick()" class="float-right" mat-stroked-button>Dismiss</button>&nbsp;
+            style="margin-left: 5px"
+        >
+            Remind Me Later</button
+        >&nbsp;
+        <button
+            (click)="onCancelClick()"
+            class="float-right"
+            mat-stroked-button
+        >
+            Dismiss</button
+        >&nbsp;
     </div>
 </div>

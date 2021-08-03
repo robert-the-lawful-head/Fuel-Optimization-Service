@@ -1,16 +1,16 @@
-@import '../../../../assets/sass/variable';
+@import "../../../../assets/sass/variable";
 
 :host {
     align-items: center;
     background: $footer-bg;
     color: $footer-color;
     display: flex;
-    font-size: .8rem;
+    font-size: 0.8rem;
     height: $module-rem * 4;
     justify-content: space-between;
     width: 100%;
     @media only screen and (max-width: 543px) {
-        font-size: .7rem;
+        font-size: 0.7rem;
     }
 
     .copyright,

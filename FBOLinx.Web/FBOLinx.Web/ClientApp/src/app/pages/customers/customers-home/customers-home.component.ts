@@ -38,6 +38,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     pricingTemplatesData: any[];
     locationChangedSubscription: any;
     customerGridState: CustomerGridState;
+    fuelVendors: any[];
 
     constructor(
         private store: Store<State>,
@@ -51,6 +52,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         this.loadCustomers();
         this.loadPricingTemplates();
         this.loadCustomerAircraft();
+        this.loadFuelVendors();
     }
 
     ngOnInit(): void {
@@ -103,7 +105,13 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                 this.sharedService.currentUser.fboId
             )
             .subscribe((data: any) => {
-                this.customersData = data;
+                this.customersData = data.map((c) => ({
+                    ...c,
+                    fuelVendors: c.fuelVendors.map((fv) => ({
+                        label: fv,
+                        value: fv,
+                    })),
+                }));
             });
     }
 
@@ -128,6 +136,17 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
             )
             .subscribe((data: any) => {
                 this.aircraftData = data;
+            });
+    }
+
+    private loadFuelVendors() {
+        this.customerInfoByGroupService
+            .getFuelVendors()
+            .subscribe((data: any) => {
+                this.fuelVendors = data.map((fv) => ({
+                    label: fv,
+                    value: fv,
+                }));
             });
     }
 }

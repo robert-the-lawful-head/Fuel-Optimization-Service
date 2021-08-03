@@ -6,7 +6,7 @@ import { AuthenticationService } from '../../../services/authentication.service'
 
 @Component({
     selector: 'app-authtoken',
-    styleUrls: [ './authtoken.component.scss' ],
+    styleUrls: ['./authtoken.component.scss'],
     templateUrl: './authtoken.component.html',
 })
 export class AuthtokenComponent {
@@ -17,16 +17,14 @@ export class AuthtokenComponent {
         private router: Router,
         private authenticationService: AuthenticationService
     ) {
-
         // Check for passed in id
         //const token = this.route.snapshot.paramMap.get('token');
-        this.route.queryParamMap
-            .subscribe((params) => {
-                this.tokenParam = params.get('token');
-            });
+        this.route.queryParamMap.subscribe((params) => {
+            this.tokenParam = params.get('token');
+        });
 
         if (!this.tokenParam || this.tokenParam === '') {
-            this.router.navigate([ '/' ]);
+            this.router.navigate(['/']);
         } else {
             const decodedToken = decodeURIComponent(this.tokenParam);
 
@@ -36,21 +34,25 @@ export class AuthtokenComponent {
                 .subscribe(
                     (authTokenData) => {
                         if (authTokenData.success) {
-                            this.authenticationService.preAuth(authTokenData.authToken).subscribe((data) => {
-                                if (data.role === 3 || data.role === 2) {
-                                    this.router.navigate(['/default-layout/fbos/']);
-                                } else {
-                                    this.router.navigate([
-                                        '/default-layout/dashboard-fbo/',
-                                    ]);
-                                }
-                            });
+                            this.authenticationService
+                                .preAuth(authTokenData.authToken)
+                                .subscribe((data) => {
+                                    if (data.role === 3 || data.role === 2) {
+                                        this.router.navigate([
+                                            '/default-layout/fbos/',
+                                        ]);
+                                    } else {
+                                        this.router.navigate([
+                                            '/default-layout/dashboard-fbo/',
+                                        ]);
+                                    }
+                                });
+                        } else {
+                            this.router.navigate(['/landing-site']);
                         }
-                        else
-                            {this.router.navigate(['/landing-site']);}
                     },
                     () => {
-                        this.router.navigate([ '/landing-site' ]);
+                        this.router.navigate(['/landing-site']);
                     }
                 );
         }

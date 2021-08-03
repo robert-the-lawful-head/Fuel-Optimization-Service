@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
@@ -19,7 +26,7 @@ import { CustomerAircraftSelectModelComponent } from '../customer-aircrafts-sele
 
 @Component({
     selector: 'app-customer-aircrafts-grid',
-    styleUrls: [ './customer-aircrafts-grid.component.scss' ],
+    styleUrls: ['./customer-aircrafts-grid.component.scss'],
     templateUrl: './customer-aircrafts-grid.component.html',
 })
 export class CustomerAircraftsGridComponent implements OnInit {
@@ -174,13 +181,12 @@ export class CustomerAircraftsGridComponent implements OnInit {
                     )
                     .subscribe((data: any) => {
                         this.customerAircraftsData = data;
-                        this.customerAircraftsDataSource = new MatTableDataSource(
-                            this.customerAircraftsData
-                        );
+                        this.customerAircraftsDataSource =
+                            new MatTableDataSource(this.customerAircraftsData);
                         this.customerAircraftsDataSource.sort = this.sort;
-                        this.customerAircraftsDataSource.paginator = this.paginator;
+                        this.customerAircraftsDataSource.paginator =
+                            this.paginator;
                     });
-
             });
         });
     }
@@ -191,7 +197,9 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 CustomerAircraftsEditComponent,
                 {
                     data: {
-                        disableDelete: customerAircraft.isFuelerlinxNetwork && customerAircraft.addedFrom === 1,
+                        disableDelete:
+                            customerAircraft.isFuelerlinxNetwork &&
+                            customerAircraft.addedFrom === 1,
                         oid: customerAircraft.oid,
                     },
                     width: '450px',
@@ -215,11 +223,14 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                 )
                                 .subscribe((data: any) => {
                                     this.customerAircraftsData = data;
-                                    this.customerAircraftsDataSource = new MatTableDataSource(
-                                        this.customerAircraftsData
-                                    );
-                                    this.customerAircraftsDataSource.sort = this.sort;
-                                    this.customerAircraftsDataSource.paginator = this.paginator;
+                                    this.customerAircraftsDataSource =
+                                        new MatTableDataSource(
+                                            this.customerAircraftsData
+                                        );
+                                    this.customerAircraftsDataSource.sort =
+                                        this.sort;
+                                    this.customerAircraftsDataSource.paginator =
+                                        this.paginator;
                                 });
                         });
                 }
@@ -236,11 +247,14 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                 )
                                 .subscribe((dataOutput: any) => {
                                     this.customerAircraftsData = dataOutput;
-                                    this.customerAircraftsDataSource = new MatTableDataSource(
-                                        this.customerAircraftsData
-                                    );
-                                    this.customerAircraftsDataSource.sort = this.sort;
-                                    this.customerAircraftsDataSource.paginator = this.paginator;
+                                    this.customerAircraftsDataSource =
+                                        new MatTableDataSource(
+                                            this.customerAircraftsData
+                                        );
+                                    this.customerAircraftsDataSource.sort =
+                                        this.sort;
+                                    this.customerAircraftsDataSource.paginator =
+                                        this.paginator;
                                 });
                         }
                     });
@@ -285,8 +299,11 @@ export class CustomerAircraftsGridComponent implements OnInit {
             })
             .subscribe(() => {
                 customerAircraft.pricingTemplateId = event.value;
-                const pricingTemplateIds = this.customerAircraftsDataSource.data.map(d => d.pricingTemplateId);
-                if (pricingTemplateIds.every(v => v === pricingTemplateId)) {
+                const pricingTemplateIds =
+                    this.customerAircraftsDataSource.data.map(
+                        (d) => d.pricingTemplateId
+                    );
+                if (pricingTemplateIds.every((v) => v === pricingTemplateId)) {
                     this.customCustomerTypeService
                         .updateForFboAndCustomer({
                             customerId,
@@ -294,16 +311,20 @@ export class CustomerAircraftsGridComponent implements OnInit {
                             pricingTemplateId,
                         })
                         .subscribe(() => {
-                            this.updateCustomerPricingTemplate.emit(pricingTemplateId);
+                            this.updateCustomerPricingTemplate.emit(
+                                pricingTemplateId
+                            );
                         });
 
                     this.aircraftPricesService
                         .removeMultiple(this.customerAircraftsData)
                         .subscribe(() => {
-                            this.customerAircraftsDataSource.data.forEach(element => {
-                                element.pricingTemplateId = null;
-                                element.pricingTemplateName = '';
-                            });
+                            this.customerAircraftsDataSource.data.forEach(
+                                (element) => {
+                                    element.pricingTemplateId = null;
+                                    element.pricingTemplateName = '';
+                                }
+                            );
                         });
                 }
             });
@@ -325,7 +346,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
                         if (asizes) {
                             aircraftSizes = asizes;
                             results.data.forEach((result) => {
-                                result.groupid = this.sharedService.currentUser.groupId;
+                                result.groupid =
+                                    this.sharedService.currentUser.groupId;
                                 result.customerId = this.customer.customerId;
 
                                 if (result.Size) {
@@ -334,78 +356,94 @@ export class CustomerAircraftsGridComponent implements OnInit {
                                     );
 
                                     if (sizeText) {
-                                        result.Size =
-                                            sizeText.value;
+                                        result.Size = sizeText.value;
                                     }
                                 }
                             });
 
-                            this.customerAircraftsService.import(results.data).subscribe((cadata: any) => {
-                                let allGood = true;
-                                cadata.forEach((result) => {
-                                    if (!result.isImported) {
-                                        allGood = false;
-                                    }
-                                });
-                                if (allGood) {
-                                    this.importer.displaySuccess(
-                                        'Data successfully imported!'
-                                    );
-                                    setTimeout(() => {
-                                        this.customerAircraftsService
-                                            .getCustomerAircraftsByGroupAndCustomerId(
-                                                this.sharedService.currentUser.groupId,
-                                                this.sharedService.currentUser.fboId,
-                                                cadata[0].customerId
-                                            )
-                                            .subscribe((data: any) => {
-                                                this.customerAircraftsData = data;
-                                                this.customerAircraftsDataSource = new MatTableDataSource(
-                                                    this.customerAircraftsData
-                                                );
-                                                this.customerAircraftsDataSource.sort = this.sort;
-                                                this.customerAircraftsDataSource.paginator = this.paginator;
-                                            });
-                                    }, 1500);
-                                } else {
-                                    this.importer.displaySuccess(
-                                        'Import is finished, please click ok to see the results.'
-                                    );
-                                    const dialogRef = this.selectModalAircraftDialog.open(
-                                        CustomerAircraftSelectModelComponent,
-                                        {
-                                            data: { aircrafts: cadata },
+                            this.customerAircraftsService
+                                .import(results.data)
+                                .subscribe((cadata: any) => {
+                                    let allGood = true;
+                                    cadata.forEach((result) => {
+                                        if (!result.isImported) {
+                                            allGood = false;
                                         }
-                                    );
-
-                                    dialogRef.afterClosed().subscribe((result) => {
-                                        if (!result) {
+                                    });
+                                    if (allGood) {
+                                        this.importer.displaySuccess(
+                                            'Data successfully imported!'
+                                        );
+                                        setTimeout(() => {
                                             this.customerAircraftsService
                                                 .getCustomerAircraftsByGroupAndCustomerId(
-                                                    this.sharedService.currentUser.groupId,
-                                                    this.sharedService.currentUser.fboId,
+                                                    this.sharedService
+                                                        .currentUser.groupId,
+                                                    this.sharedService
+                                                        .currentUser.fboId,
                                                     cadata[0].customerId
                                                 )
                                                 .subscribe((data: any) => {
-                                                    this.customerAircraftsData = data;
-                                                    this.customerAircraftsDataSource = new MatTableDataSource(
-                                                        this.customerAircraftsData
-                                                    );
-                                                    this.customerAircraftsDataSource.sort = this.sort;
-                                                    this.customerAircraftsDataSource.paginator = this.paginator;
+                                                    this.customerAircraftsData =
+                                                        data;
+                                                    this.customerAircraftsDataSource =
+                                                        new MatTableDataSource(
+                                                            this.customerAircraftsData
+                                                        );
+                                                    this.customerAircraftsDataSource.sort =
+                                                        this.sort;
+                                                    this.customerAircraftsDataSource.paginator =
+                                                        this.paginator;
                                                 });
-                                        }
+                                        }, 1500);
+                                    } else {
+                                        this.importer.displaySuccess(
+                                            'Import is finished, please click ok to see the results.'
+                                        );
+                                        const dialogRef =
+                                            this.selectModalAircraftDialog.open(
+                                                CustomerAircraftSelectModelComponent,
+                                                {
+                                                    data: { aircrafts: cadata },
+                                                }
+                                            );
 
-                                    });
-                                }
-
-                            });
+                                        dialogRef
+                                            .afterClosed()
+                                            .subscribe((result) => {
+                                                if (!result) {
+                                                    this.customerAircraftsService
+                                                        .getCustomerAircraftsByGroupAndCustomerId(
+                                                            this.sharedService
+                                                                .currentUser
+                                                                .groupId,
+                                                            this.sharedService
+                                                                .currentUser
+                                                                .fboId,
+                                                            cadata[0].customerId
+                                                        )
+                                                        .subscribe(
+                                                            (data: any) => {
+                                                                this.customerAircraftsData =
+                                                                    data;
+                                                                this.customerAircraftsDataSource =
+                                                                    new MatTableDataSource(
+                                                                        this.customerAircraftsData
+                                                                    );
+                                                                this.customerAircraftsDataSource.sort =
+                                                                    this.sort;
+                                                                this.customerAircraftsDataSource.paginator =
+                                                                    this.paginator;
+                                                            }
+                                                        );
+                                                }
+                                            });
+                                    }
+                                });
                         }
                     });
-
             }
-        } catch (e) {
-        }
+        } catch (e) {}
     }
 
     initializeImporter() {
@@ -415,7 +453,13 @@ export class CustomerAircraftsGridComponent implements OnInit {
             disableManualInput: false,
             fields: [
                 {
-                    alternates: [ 'tail', 'plane tail', 'N-number', 'Nnumber', 'Tail Number' ],
+                    alternates: [
+                        'tail',
+                        'plane tail',
+                        'N-number',
+                        'Nnumber',
+                        'Tail Number',
+                    ],
                     description: 'Tail',
                     key: 'TailNumber',
                     label: 'Tail',
@@ -427,7 +471,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                     ],
                 },
                 {
-                    alternates: [ 'make', 'manufacturer' ],
+                    alternates: ['make', 'manufacturer'],
                     description: 'Aircraft Make',
                     key: 'AircraftMake',
                     label: 'Make',
@@ -439,7 +483,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                     ],
                 },
                 {
-                    alternates: [ 'model', 'plane model' ],
+                    alternates: ['model', 'plane model'],
                     description: 'Aircraft Model',
                     key: 'Model',
                     label: 'Model',
@@ -451,7 +495,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                     ],
                 },
                 {
-                    alternates: [ 'size', 'plane size' ],
+                    alternates: ['size', 'plane size'],
                     description: 'Plane Size',
                     key: 'Size',
                     label: 'Size',

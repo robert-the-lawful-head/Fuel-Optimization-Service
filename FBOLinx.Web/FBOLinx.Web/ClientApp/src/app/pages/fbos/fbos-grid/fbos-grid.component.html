@@ -4,7 +4,7 @@
             (keyup)="applyFilter($event.target.value)"
             matInput
             placeholder="Search by ICAO or FBO Name"
-            value="{{searchValue}}"
+            value="{{ searchValue }}"
         />
         <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
@@ -14,8 +14,8 @@
         class="col-md-12"
         mat-table
         matSort
-        matSortActive="{{tableSortFbos}}"
-        matSortDirection="{{tableSortOrderFbos}}"
+        matSortActive="{{ tableSortFbos }}"
+        matSortDirection="{{ tableSortOrderFbos }}"
     >
         <ng-container matColumnDef="icao">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>ICAO</th>
@@ -28,18 +28,55 @@
         </ng-container>
 
         <ng-container matColumnDef="price">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>Retail / Cost</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                Retail / Cost
+            </th>
             <td *matCellDef="let fbo" mat-cell>
-                <span [ngClass]="{ 'price-expired': !fbo.retailPrice, 'price-live': fbo.retailPrice, 'font-weight-bold': true }">{{ fbo.retailPrice ? "$" + (fbo.retailPrice | number: "1.4-4") : "Expired" }}</span> / 
-                <span [ngClass]="{ 'price-expired': !fbo.costPrice, 'price-live': fbo.costPrice, 'font-weight-bold': true }">{{ fbo.costPrice ? "$" + (fbo.costPrice | number: "1.4-4") : "Expired" }}</span>
+                <span
+                    [ngClass]="{
+                        'price-expired': !fbo.retailPrice,
+                        'price-live': fbo.retailPrice,
+                        'font-weight-bold': true
+                    }"
+                    >{{
+                        fbo.retailPrice
+                            ? "$" + (fbo.retailPrice | number: "1.4-4")
+                            : "Expired"
+                    }}</span
+                >
+                /
+                <span
+                    [ngClass]="{
+                        'price-expired': !fbo.costPrice,
+                        'price-live': fbo.costPrice,
+                        'font-weight-bold': true
+                    }"
+                    >{{
+                        fbo.costPrice
+                            ? "$" + (fbo.costPrice | number: "1.4-4")
+                            : "Expired"
+                    }}</span
+                >
             </td>
         </ng-container>
 
         <ng-container matColumnDef="active">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>Pricing Status</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                Pricing Status
+            </th>
             <td *matCellDef="let fbo" mat-cell>
-                <span [ngClass]="{ 'price-expired': !fbo.retailPrice && !fbo.costPrice, 'price-live': fbo.retailPrice || fbo.costPrice, 'font-weight-bold': true }">
-                    {{ !fbo.retailPrice && !fbo.costPrice ? "Expired" : "Pricing Live" }}
+                <span
+                    [ngClass]="{
+                        'price-expired': !fbo.retailPrice && !fbo.costPrice,
+                        'price-live': fbo.retailPrice || fbo.costPrice,
+                        'font-weight-bold': true
+                    }"
+                >
+                    {{
+                        !fbo.retailPrice && !fbo.costPrice
+                            ? "Expired"
+                            : "Pricing Live"
+                    }}
                 </span>
             </td>
         </ng-container>
@@ -100,8 +137,10 @@
 </div>
 
 <div>
-    <mat-paginator (page)="(pageIndexFbos);"
-                   [length]="resultsLength"
-                   [pageSizeOptions]="[10, 25, 50, 100]"
-                   [pageSize]="pageSizeFbos"></mat-paginator>
+    <mat-paginator
+        (page)="(pageIndexFbos)"
+        [length]="resultsLength"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        [pageSize]="pageSizeFbos"
+    ></mat-paginator>
 </div>

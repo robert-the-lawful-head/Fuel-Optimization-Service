@@ -30,7 +30,7 @@ export const customerReducer = createReducer(
         orderBy: action.orderBy,
         page: action.page,
     })),
-    on(customerGridClear, state => ({
+    on(customerGridClear, (state) => ({
         ...state,
         ...initialState,
     }))

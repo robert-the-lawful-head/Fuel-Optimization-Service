@@ -6,7 +6,7 @@ import { UserService } from '../../../services/user.service';
 
 @Component({
     selector: 'app-users-edit',
-    styleUrls: [ './users-edit.component.scss' ],
+    styleUrls: ['./users-edit.component.scss'],
     templateUrl: './users-edit.component.html',
 })
 export class UsersEditComponent implements OnInit {
@@ -26,8 +26,7 @@ export class UsersEditComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private userService: UserService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         if (this.userInfo) {
@@ -60,7 +59,7 @@ export class UsersEditComponent implements OnInit {
 
     public cancelEdit() {
         if (this.requiresRouting) {
-            this.router.navigate([ '/default-layout/fbos/' ]);
+            this.router.navigate(['/default-layout/fbos/']);
         } else {
             this.cancelClicked.emit();
         }
@@ -69,12 +68,12 @@ export class UsersEditComponent implements OnInit {
     // Private Methods
     private loadAvailableRoles() {
         this.userService.getRoles().subscribe((data: any) => {
-            let supportedRoleValues = [ 4 ];
+            let supportedRoleValues = [4];
             this.availableroles = [];
             if (this.userInfo.fboId > 0) {
-                supportedRoleValues = [ 1, 4, 5 ];
+                supportedRoleValues = [1, 4, 5];
             } else if (this.userInfo.groupId > 0) {
-                supportedRoleValues = [ 2 ];
+                supportedRoleValues = [2];
             }
             for (const role of data) {
                 if (supportedRoleValues.indexOf(role.value) > -1) {

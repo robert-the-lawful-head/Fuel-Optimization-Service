@@ -1,4 +1,10 @@
-import { animate,state, style, transition, trigger } from '@angular/animations';
+import {
+    animate,
+    state,
+    style,
+    transition,
+    trigger,
+} from '@angular/animations';
 import {
     AfterContentChecked,
     Component,
@@ -8,21 +14,26 @@ import {
     ViewChild,
 } from '@angular/core';
 
-
 @Component({
     animations: [
         trigger('openClose', [
-            state('true', style({
-                height: '*',
-                paddingBottom: '15px',
-                paddingTop: '15px',
-            })),
-            state('false', style({
-                height: '0',
-                paddingBottom: '0',
-                paddingTop: '0',
-            })),
-            transition('false <=> true', [ animate(300) ]),
+            state(
+                'true',
+                style({
+                    height: '*',
+                    paddingBottom: '15px',
+                    paddingTop: '15px',
+                })
+            ),
+            state(
+                'false',
+                style({
+                    height: '0',
+                    paddingBottom: '0',
+                    paddingTop: '0',
+                })
+            ),
+            transition('false <=> true', [animate(300)]),
         ]),
     ],
     host: {
@@ -76,7 +87,10 @@ export class NiCardComponent implements AfterContentChecked {
 
     private checkSubtitleVisible() {
         if (this.subtitle && this.cardTitle && this.cardSubTitle) {
-            const limit = this.cardTitle.nativeElement.offsetLeft + this.cardTitle.nativeElement.offsetWidth + 10;
+            const limit =
+                this.cardTitle.nativeElement.offsetLeft +
+                this.cardTitle.nativeElement.offsetWidth +
+                10;
             const subtitleStart = this.cardSubTitle.nativeElement.offsetLeft;
             if (subtitleStart < limit && this.subTitleVisible) {
                 this.subTitleVisible = false;

@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, SortDirection } from '@angular/material/sort';
@@ -23,7 +30,7 @@ export interface DefaultTemplateUpdate {
 
 @Component({
     selector: 'app-pricing-templates-grid',
-    styleUrls: [ './pricing-templates-grid.component.scss' ],
+    styleUrls: ['./pricing-templates-grid.component.scss'],
     templateUrl: './pricing-templates-grid.component.html',
 })
 export class PricingTemplatesGridComponent implements OnInit {
@@ -63,8 +70,7 @@ export class PricingTemplatesGridComponent implements OnInit {
         public deleteTemplateWarningDialog: MatDialog,
         private sharedService: SharedService,
         public customCustomerService: CustomcustomertypesService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         if (!this.pricingTemplatesData) {
@@ -80,7 +86,7 @@ export class PricingTemplatesGridComponent implements OnInit {
 
         this.updateModel.currenttemplate = 0;
 
-        this.store.select(getPricingTemplateState).subscribe(state => {
+        this.store.select(getPricingTemplateState).subscribe((state) => {
             if (state.filter) {
                 this.pricingTemplatesDataSource.filter = state.filter;
             }
@@ -107,11 +113,14 @@ export class PricingTemplatesGridComponent implements OnInit {
     }
 
     public addNewPricingTemplate() {
-        const dialogRef = this.newTemplateDialog.open(PricingTemplatesDialogNewTemplateComponent, {
-            data: {
-                fboId: this.sharedService.currentUser.fboId,
-            },
-        });
+        const dialogRef = this.newTemplateDialog.open(
+            PricingTemplatesDialogNewTemplateComponent,
+            {
+                data: {
+                    fboId: this.sharedService.currentUser.fboId,
+                },
+            }
+        );
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
@@ -164,8 +173,7 @@ export class PricingTemplatesGridComponent implements OnInit {
                 }
             );
 
-            dialogRef.afterClosed().subscribe((result) => {
-            });
+            dialogRef.afterClosed().subscribe((result) => {});
         }
     }
 

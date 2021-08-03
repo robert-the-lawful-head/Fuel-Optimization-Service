@@ -1,9 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
 
 @Component({
     selector: 'fbo-prices-select-default-template',
-    styleUrls: [ './fbo-prices-select-default-template.component.scss' ],
+    styleUrls: ['./fbo-prices-select-default-template.component.scss'],
     templateUrl: './fbo-prices-select-default-template.component.html',
 })
 export class FboPricesSelectDefaultTemplateComponent implements OnInit {
@@ -13,11 +17,9 @@ export class FboPricesSelectDefaultTemplateComponent implements OnInit {
         public dialogRef: MatDialogRef<FboPricesSelectDefaultTemplateComponent>,
         @Inject(MAT_DIALOG_DATA) public data,
         public closeConfirmationDialog: MatDialog
-    ) {
-    }
+    ) {}
 
-    ngOnInit() {
-    }
+    ngOnInit() {}
 
     onSelect() {
         if (this.selectedTemplate) {

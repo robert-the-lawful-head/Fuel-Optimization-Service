@@ -21,7 +21,7 @@ const BREADCRUMBS: any[] = [
 
 @Component({
     selector: 'app-fuelreqs-home',
-    styleUrls: [ './fuelreqs-home.component.scss' ],
+    styleUrls: ['./fuelreqs-home.component.scss'],
     templateUrl: './fuelreqs-home.component.html',
 })
 export class FuelreqsHomeComponent implements OnDestroy, OnInit {
@@ -101,7 +101,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
                     Source: item.source,
                     'Tail #': item.tailNumber,
                     'Transaction Status': item.cancelled ? 'Cancelled' : 'Live',
-                    'Volume (gal.)': item.quotedVolume
+                    'Volume (gal.)': item.quotedVolume,
                 }));
                 const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
                 const wb: XLSX.WorkBook = XLSX.utils.book_new();

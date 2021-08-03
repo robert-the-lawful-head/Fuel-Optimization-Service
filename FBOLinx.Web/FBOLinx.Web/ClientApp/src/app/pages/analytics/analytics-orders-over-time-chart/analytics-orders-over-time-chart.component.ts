@@ -37,7 +37,9 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
     }
 
@@ -48,12 +50,19 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getOrders(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate)
-            .subscribe((data: any) => {
-                this.totalOrdersData = data;
-            }, () => {
-            }, () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+            .getOrders(
+                this.sharedService.currentUser.fboId,
+                this.filterStartDate,
+                this.filterEndDate
+            )
+            .subscribe(
+                (data: any) => {
+                    this.totalOrdersData = data;
+                },
+                () => {},
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
     }
 }

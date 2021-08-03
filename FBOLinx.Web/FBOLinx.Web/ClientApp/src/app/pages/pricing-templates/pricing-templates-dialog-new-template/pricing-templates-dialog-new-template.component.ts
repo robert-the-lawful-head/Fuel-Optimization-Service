@@ -1,6 +1,10 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
@@ -23,7 +27,7 @@ export interface NewPricingTemplateMargin {
 
 @Component({
     selector: 'app-pricing-templates-dialog-new-template',
-    styleUrls: [ './pricing-templates-dialog-new-template.component.scss' ],
+    styleUrls: ['./pricing-templates-dialog-new-template.component.scss'],
     templateUrl: './pricing-templates-dialog-new-template.component.html',
 })
 export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
@@ -41,11 +45,11 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     marginTypeDataSource: Array<any> = [
         {
             text: 'Cost +',
-            value: 0
+            value: 0,
         },
         {
             text: 'Retail -',
-            value: 1
+            value: 1,
         },
     ];
     emailTemplatesDataSource: Array<any>;
@@ -72,11 +76,13 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 this.dialogRef.close();
             } else {
                 const closeDialogRef = this.closeConfirmationDialog.open(
-                    CloseConfirmationComponent, {
+                    CloseConfirmationComponent,
+                    {
                         autoFocus: false,
                         data: {
                             cancel: 'Cancel',
-                            customText: 'You have unsaved changes. Are you sure?',
+                            customText:
+                                'You have unsaved changes. Are you sure?',
                             customTitle: 'Discard Changes?',
                             ok: 'Discard',
                         },
@@ -108,32 +114,38 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     initForm() {
         this.form = this.formBuilder.group({
             firstStep: this.formBuilder.group({
-                templateDefault: [ false ],
-                templateName: [ '', Validators.required ],
+                templateDefault: [false],
+                templateName: ['', Validators.required],
             }),
             secondStep: this.formBuilder.group({
                 customerMargins: this.formBuilder.array([
-                    this.formBuilder.group({
-                        allin: [ 0 ],
-                        amount: [ Number(0).toFixed(4) ],
-                        itp: [ 0 ],
-                        max: [ 99999 ],
-                        min: [ 1 ],
-                    }, {
-                        updateOn: 'blur'
-                    }),
+                    this.formBuilder.group(
+                        {
+                            allin: [0],
+                            amount: [Number(0).toFixed(4)],
+                            itp: [0],
+                            max: [99999],
+                            min: [1],
+                        },
+                        {
+                            updateOn: 'blur',
+                        }
+                    ),
                 ]),
-                marginType: [ 1, Validators.required ],
+                marginType: [1, Validators.required],
             }),
             thirdStep: this.formBuilder.group({
                 emailContentId: [''],
                 notes: [''],
-            })
+            }),
         });
 
         const secondStep = this.form.controls.secondStep as FormGroup;
         secondStep.valueChanges.subscribe(() => {
-            const updatedMargins = this.updateMargins(this.customerMarginsFormArray.value, this.marginType);
+            const updatedMargins = this.updateMargins(
+                this.customerMarginsFormArray.value,
+                this.marginType
+            );
             this.customerMarginsFormArray.setValue(updatedMargins, {
                 emitEvent: false,
             });
@@ -142,17 +154,23 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     marginTypeChange() {
         const secondStep = this.form.controls.secondStep as FormGroup;
-        secondStep.setControl('customerMargins', this.formBuilder.array([
-            this.formBuilder.group({
-                allin: [ 0 ],
-                amount: [ Number(0).toFixed(4) ],
-                itp: [ 0 ],
-                max: [ 99999 ],
-                min: [ 1 ],
-            }, {
-                updateOn: 'blur'
-            }),
-        ]));
+        secondStep.setControl(
+            'customerMargins',
+            this.formBuilder.array([
+                this.formBuilder.group(
+                    {
+                        allin: [0],
+                        amount: [Number(0).toFixed(4)],
+                        itp: [0],
+                        max: [99999],
+                        min: [1],
+                    },
+                    {
+                        updateOn: 'blur',
+                    }
+                ),
+            ])
+        );
     }
 
     addCustomerMargin() {
@@ -165,13 +183,18 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         };
         if (this.customerMarginsFormArray.length > 0) {
             const lastIndex = this.customerMarginsFormArray.length - 1;
-            customerMargin.min = Math.abs(this.customerMarginsFormArray.at(lastIndex).value.min) + 250;
+            customerMargin.min =
+                Math.abs(
+                    this.customerMarginsFormArray.at(lastIndex).value.min
+                ) + 250;
             this.customerMarginsFormArray.at(lastIndex).patchValue({
                 max: Math.abs(customerMargin.min) - 1,
             });
         }
 
-        this.customerMarginsFormArray.push(this.formBuilder.group(customerMargin, { updateOn: 'blur' }));
+        this.customerMarginsFormArray.push(
+            this.formBuilder.group(customerMargin, { updateOn: 'blur' })
+        );
     }
 
     deleteCustomerMargin(index) {
@@ -194,17 +217,17 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             .add(templatePayload)
             .subscribe((savedTemplate: any) => {
                 const customerMargins = [];
-                this.customerMarginsFormArray.value.forEach((customerMargin: any) => {
-                    customerMargins.push({
-                        ...customerMargin,
-                        templateId: savedTemplate.oid,
-                    });
-                });
+                this.customerMarginsFormArray.value.forEach(
+                    (customerMargin: any) => {
+                        customerMargins.push({
+                            ...customerMargin,
+                            templateId: savedTemplate.oid,
+                        });
+                    }
+                );
 
                 this.priceTiersService
-                    .updateFromCustomerMarginsViewModel(
-                        customerMargins
-                    )
+                    .updateFromCustomerMarginsViewModel(customerMargins)
                     .subscribe(() => {
                         this.isSaving = false;
                         this.dialogRef.close(savedTemplate);
@@ -216,8 +239,12 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.fboPricesService
             .getFbopricesByFboIdCurrent(this.data.fboId)
             .subscribe((data: any) => {
-                this.jetACost = data.find(item => item.product === 'JetA Cost').price;
-                this.jetARetail = data.find(item => item.product === 'JetA Retail').price;
+                this.jetACost = data.find(
+                    (item) => item.product === 'JetA Cost'
+                ).price;
+                this.jetARetail = data.find(
+                    (item) => item.product === 'JetA Retail'
+                ).price;
             });
     }
 
@@ -227,25 +254,28 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     private loadEmailContentTemplate(): void {
-        this.emailContentService.getForFbo(this.sharedService.currentUser.fboId).subscribe(
-            (response: any) => {
+        this.emailContentService
+            .getForFbo(this.sharedService.currentUser.fboId)
+            .subscribe((response: any) => {
                 this.emailTemplatesDataSource = response;
             });
     }
 
     private updateMargins(oldMargins, marginType) {
-        const margins = [ ...oldMargins ];
+        const margins = [...oldMargins];
         for (let i = 0; i < margins?.length; i++) {
             if (i > 0) {
                 margins[i - 1].max = Math.abs(margins[i].min - 1);
             }
             if (marginType !== 1) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
-                    margins[i].allin = this.jetACost + Number(margins[i].amount);
+                    margins[i].allin =
+                        this.jetACost + Number(margins[i].amount);
                 }
             } else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
-                    margins[i].allin = this.jetARetail - Number(margins[i].amount);
+                    margins[i].allin =
+                        this.jetARetail - Number(margins[i].amount);
                     margins[i].itp = this.jetARetail;
                     if (margins[i].allin) {
                         margins[i].itp = margins[i].allin - this.jetACost;

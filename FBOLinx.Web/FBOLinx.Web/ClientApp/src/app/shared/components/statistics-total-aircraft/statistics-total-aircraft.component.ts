@@ -24,8 +24,7 @@ export class StatisticsTotalAircraftComponent implements OnInit {
     constructor(
         private customeraircraftService: CustomeraircraftsService,
         private sharedService: SharedService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.refreshData();
@@ -36,9 +35,11 @@ export class StatisticsTotalAircraftComponent implements OnInit {
             .getCustomerAircraftsCountByGroupId(
                 this.sharedService.currentUser.groupId
             )
-            .subscribe((data: any) => {
-                this.totalAircraft = data;
-            }, () => {
-            });
+            .subscribe(
+                (data: any) => {
+                    this.totalAircraft = data;
+                },
+                () => {}
+            );
     }
 }

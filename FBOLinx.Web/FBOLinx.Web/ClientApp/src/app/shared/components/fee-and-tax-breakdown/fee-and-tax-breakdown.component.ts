@@ -1,16 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-
 export enum FeeAndTaxBreakdownDisplayModes {
     PriceTaxBreakdown = 0,
     CustomerOmitting = 1,
-    PricingPanel = 2
+    PricingPanel = 2,
 }
 
 @Component({
     selector: 'fee-and-tax-breakdown',
-    styleUrls: [ './fee-and-tax-breakdown.component.scss' ],
-    templateUrl: './fee-and-tax-breakdown.component.html'
+    styleUrls: ['./fee-and-tax-breakdown.component.scss'],
+    templateUrl: './fee-and-tax-breakdown.component.html',
 })
 export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
@@ -22,13 +21,14 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
     showLineSeparator = false;
     @Input()
-    displayMode: FeeAndTaxBreakdownDisplayModes = FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
+    displayMode: FeeAndTaxBreakdownDisplayModes =
+        FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
     @Input()
     fboPrice: number;
     @Input()
-    validDepartureTypes: Array<number> = [ 0, 1, 2, 3 ];
+    validDepartureTypes: Array<number> = [0, 1, 2, 3];
     @Input()
-    validFlightTypes: Array<number> = [ 0, 1, 2, 3 ];
+    validFlightTypes: Array<number> = [0, 1, 2, 3];
     @Output()
     omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
 
@@ -38,8 +38,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     public subTotalWithMargin = 0;
     public total = 0;
 
-    constructor() {
-    }
+    constructor() {}
 
     ngOnInit(): void {
         this.performRecalculation();
@@ -59,8 +58,12 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         if (!this.feesAndTaxes) {
             return;
         }
-        this.aboveTheLineTaxes = this.feesAndTaxes.filter((tax) => tax.whenToApply === 0);
-        this.belowTheLineTaxes = this.feesAndTaxes.filter((tax) => tax.whenToApply === 1);
+        this.aboveTheLineTaxes = this.feesAndTaxes.filter(
+            (tax) => tax.whenToApply === 0
+        );
+        this.belowTheLineTaxes = this.feesAndTaxes.filter(
+            (tax) => tax.whenToApply === 1
+        );
     }
 
     private calculatePrices(): void {
@@ -98,9 +101,11 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
 
         this.subTotalWithMargin = 0;
         if (this.marginType === 0) {
-            this.subTotalWithMargin = this.preMarginSubTotal + this.customerMargin;
+            this.subTotalWithMargin =
+                this.preMarginSubTotal + this.customerMargin;
         } else if (this.marginType === 1) {
-            this.subTotalWithMargin = this.preMarginSubTotal - this.customerMargin;
+            this.subTotalWithMargin =
+                this.preMarginSubTotal - this.customerMargin;
         }
     }
 
@@ -128,7 +133,9 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         if (this.validDepartureTypes.indexOf(fee.departureType) === -1) {
             return false;
         }
-        if (this.validFlightTypes.indexOf(fee.flightTypeClassification) === -1) {
+        if (
+            this.validFlightTypes.indexOf(fee.flightTypeClassification) === -1
+        ) {
             return false;
         }
         return true;

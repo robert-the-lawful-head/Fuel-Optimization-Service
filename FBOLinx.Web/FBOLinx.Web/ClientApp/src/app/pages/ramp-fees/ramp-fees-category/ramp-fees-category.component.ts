@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -9,7 +9,7 @@ import { DeleteConfirmationComponent } from '../../../shared/components/delete-c
 
 @Component({
     selector: 'app-ramp-fees-category',
-    styleUrls: [ './ramp-fees-category.component.scss' ],
+    styleUrls: ['./ramp-fees-category.component.scss'],
     templateUrl: './ramp-fees-category.component.html',
 })
 export class RampFeesCategoryComponent implements OnInit {
@@ -31,8 +31,7 @@ export class RampFeesCategoryComponent implements OnInit {
         private rampFeesService: RampfeesService,
         private deleteRampFeeDialog: MatDialog,
         private snackBar: MatSnackBar
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.refreshData();
@@ -86,10 +85,14 @@ export class RampFeesCategoryComponent implements OnInit {
             }
             this.rampFeesService.remove(result.item).subscribe(() => {
                 this.rampFeeDeleted.emit();
-                this.snackBar.open(`${ result.item.aircraftMake } ${ result.item.aircraftModel } is deleted`, '', {
-                    duration: 2000,
-                    panelClass: [ 'blue-snackbar' ],
-                });
+                this.snackBar.open(
+                    `${result.item.aircraftMake} ${result.item.aircraftModel} is deleted`,
+                    '',
+                    {
+                        duration: 2000,
+                        panelClass: ['blue-snackbar'],
+                    }
+                );
             });
         });
     }

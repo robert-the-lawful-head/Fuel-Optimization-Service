@@ -5,6 +5,4 @@ export const groupGridSet = createAction(
     props<{ filter: string }>()
 );
 
-export const groupGridClear = createAction(
-    '[Group] Grid Clear'
-);
+export const groupGridClear = createAction('[Group] Grid Clear');

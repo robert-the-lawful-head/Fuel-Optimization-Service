@@ -1,15 +1,17 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb">
-
     <div *ngIf="!groupInfo">
         <mat-spinner></mat-spinner>
     </div>
 
-    <ni-card *ngIf="groupInfo" class="mb-0" title="Group: {{groupInfo.groupName}}">
+    <ni-card
+        *ngIf="groupInfo"
+        class="mb-0"
+        title="Group: {{ groupInfo.groupName }}"
+    >
         <div>
             <mat-tab-group>
-
                 <!--FBOs Tab-->
                 <mat-tab label="FBOs">
                     <div class="mt-2">
@@ -18,13 +20,14 @@
                             [groupInfo]="groupInfo"
                         ></app-fbos-home>
                     </div>
-
                 </mat-tab>
 
                 <!--User Tab-->
                 <mat-tab label="Users">
                     <div class="mt-2">
-                        <app-users-home [groupInfo]="groupInfo"></app-users-home>
+                        <app-users-home
+                            [groupInfo]="groupInfo"
+                        ></app-users-home>
                     </div>
                 </mat-tab>
 
@@ -37,12 +40,18 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <mat-form-field>
-                                    <input [(ngModel)]="groupInfo.groupName" matInput placeholder="Group Name"/>
+                                    <input
+                                        [(ngModel)]="groupInfo.groupName"
+                                        matInput
+                                        placeholder="Group Name"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-4 text-center">
-                                <mat-slide-toggle [(ngModel)]="groupInfo.active"
-                                                  color="accent">Active
+                                <mat-slide-toggle
+                                    [(ngModel)]="groupInfo.active"
+                                    color="accent"
+                                    >Active
                                 </mat-slide-toggle>
                             </div>
                         </div>
@@ -62,7 +71,6 @@
                         </div>
                     </div>
                 </mat-tab>
-
             </mat-tab-group>
         </div>
     </ni-card>

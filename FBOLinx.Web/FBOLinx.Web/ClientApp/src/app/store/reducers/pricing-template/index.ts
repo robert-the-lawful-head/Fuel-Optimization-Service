@@ -1,6 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
 
-import { pricingTemplateGridClear, pricingTemplateGridSet } from '../../actions';
+import {
+    pricingTemplateGridClear,
+    pricingTemplateGridSet,
+} from '../../actions';
 
 export const pricingTemplateFeatureKey = 'pricing-template';
 
@@ -27,7 +30,7 @@ export const pricingTemplateReducer = createReducer(
         orderBy: action.orderBy,
         page: action.page,
     })),
-    on(pricingTemplateGridClear, state => ({
+    on(pricingTemplateGridClear, (state) => ({
         ...state,
         ...initialState,
     }))

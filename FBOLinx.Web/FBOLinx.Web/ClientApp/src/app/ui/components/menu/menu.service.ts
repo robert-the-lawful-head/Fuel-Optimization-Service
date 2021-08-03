@@ -6,8 +6,7 @@ import { throwError as observableThrowError } from 'rxjs';
     providedIn: 'root',
 })
 export class MenuService {
-    constructor(private http: HttpClient) {
-    }
+    constructor(private http: HttpClient) {}
 
     public getData() {
         const URL = '../../../../assets/data/main-menu.json';

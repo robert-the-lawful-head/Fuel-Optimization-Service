@@ -18,7 +18,7 @@ export const groupReducer = createReducer(
         ...state,
         filter: action.filter,
     })),
-    on(groupGridClear, state => ({
+    on(groupGridClear, (state) => ({
         ...state,
         ...initialState,
     }))

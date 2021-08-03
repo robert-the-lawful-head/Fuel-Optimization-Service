@@ -12,7 +12,7 @@
                 max-width: 100%;
             }
         }
-    
+
         .p-component {
             font-size: 13px;
         }
@@ -28,7 +28,8 @@
         align-items: center;
 
         ::ng-deep {
-            .mat-progress-spinner circle, .mat-spinner circle {
+            .mat-progress-spinner circle,
+            .mat-spinner circle {
                 stroke: white;
             }
         }

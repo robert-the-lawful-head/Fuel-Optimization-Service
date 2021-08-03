@@ -20,7 +20,7 @@ const BREADCRUMBS: any[] = [
 
 @Component({
     selector: 'app-analytics-home',
-    styleUrls: [ './analytics-home.component.scss' ],
+    styleUrls: ['./analytics-home.component.scss'],
     templateUrl: './analytics-home.component.html',
 })
 export class AnalyticsHomeComponent implements OnInit {
@@ -37,9 +37,13 @@ export class AnalyticsHomeComponent implements OnInit {
         private customerAircraftsService: CustomeraircraftsService,
         private sharedService: SharedService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
-        this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
+        this.pastThirtyDaysStartDate = new Date(
+            moment().add(-30, 'days').format('MM/DD/YYYY')
+        );
         this.sharedService.titleChange(this.pageTitle);
     }
 
@@ -49,20 +53,24 @@ export class AnalyticsHomeComponent implements OnInit {
     }
 
     getCustomersList() {
-        this.customerInfoByGroupService.getCustomersListByGroupAndFbo(
-            this.sharedService.currentUser.groupId,
-            this.sharedService.currentUser.fboId,
-        ).subscribe((customers: any[]) => {
-            this.customers = customers;
-        });
+        this.customerInfoByGroupService
+            .getCustomersListByGroupAndFbo(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
+            .subscribe((customers: any[]) => {
+                this.customers = customers;
+            });
     }
 
     getAircrafts() {
-        this.customerAircraftsService.getAircraftsListByGroupAndFbo(
-            this.sharedService.currentUser.groupId,
-            this.sharedService.currentUser.fboId,
-        ).subscribe((tailNumbers: any[]) => {
-            this.tailNumbers = tailNumbers;
-        });
+        this.customerAircraftsService
+            .getAircraftsListByGroupAndFbo(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
+            .subscribe((tailNumbers: any[]) => {
+                this.tailNumbers = tailNumbers;
+            });
     }
 }

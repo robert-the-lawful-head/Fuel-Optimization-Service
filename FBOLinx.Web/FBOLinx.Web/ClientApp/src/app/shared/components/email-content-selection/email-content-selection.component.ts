@@ -6,6 +6,5 @@ import { Component } from '@angular/core';
     templateUrl: './email-content-selection.component.html',
 })
 export class EmailContentSelectionComponent {
-    constructor() {
-    }
+    constructor() {}
 }

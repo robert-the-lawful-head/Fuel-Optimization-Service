@@ -41,13 +41,15 @@ export class AnalyticsFuelVendorSourceChartComponent implements OnInit {
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
-        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
-        this.fbosService.get({oid: this.sharedService.currentUser.fboId}).subscribe(
-            (data: any) => {
-                this.fbo = data.fbo;
-            }
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
         );
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+        this.fbosService
+            .get({ oid: this.sharedService.currentUser.fboId })
+            .subscribe((data: any) => {
+                this.fbo = data.fbo;
+            });
     }
 
     ngOnInit() {
@@ -57,12 +59,19 @@ export class AnalyticsFuelVendorSourceChartComponent implements OnInit {
     refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getFuelVendorSources(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate)
-            .subscribe((data: any) => {
-                this.totalOrdersData = data;
-            }, () => {
-            }, () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+            .getFuelVendorSources(
+                this.sharedService.currentUser.fboId,
+                this.filterStartDate,
+                this.filterEndDate
+            )
+            .subscribe(
+                (data: any) => {
+                    this.totalOrdersData = data;
+                },
+                () => {},
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
     }
 }

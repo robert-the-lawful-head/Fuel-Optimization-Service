@@ -17,7 +17,7 @@ const BREADCRUMBS: any[] = [
 
 @Component({
     selector: 'app-group-customers-home',
-    styleUrls: [ './group-customers-home.component.scss' ],
+    styleUrls: ['./group-customers-home.component.scss'],
     templateUrl: './group-customers-home.component.html',
 })
 export class GroupCustomersHomeComponent implements OnInit {
@@ -28,14 +28,13 @@ export class GroupCustomersHomeComponent implements OnInit {
 
     constructor(
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private sharedService: SharedService,
+        private sharedService: SharedService
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.loadCustomers();
     }
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     // Private Methods
     private loadCustomers() {

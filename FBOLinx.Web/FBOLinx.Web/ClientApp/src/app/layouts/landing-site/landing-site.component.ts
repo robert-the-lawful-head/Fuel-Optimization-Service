@@ -63,21 +63,9 @@ export class LandingSiteLayoutComponent {
     ];
 
     integrationPartners: Array<any> = [
-        [
-            this.fuelerlinxLogo,
-            this.x1fboLogo,
-            this.millionAirLogo,
-        ],
-        [
-            this.flightAwareLogo,
-            this.titanLogo,
-            this.jetAviation,
-        ],
-        [
-            this.amstatLogo,
-            this.fbodirectorLogo,
-            this.fbopartnersLogo,
-        ],
+        [this.fuelerlinxLogo, this.x1fboLogo, this.millionAirLogo],
+        [this.flightAwareLogo, this.titanLogo, this.jetAviation],
+        [this.amstatLogo, this.fbodirectorLogo, this.fbopartnersLogo],
     ];
 
     integrationPartnerView = 0;
@@ -95,8 +83,7 @@ export class LandingSiteLayoutComponent {
         private loginDialog: MatDialog,
         private requestDemoDialog: MatDialog,
         private requestDemoSuccessDialog: MatDialog
-    ) {
-    }
+    ) {}
 
     @HostListener('window:scroll', ['$event'])
     checkScroll(): void {
@@ -105,11 +92,9 @@ export class LandingSiteLayoutComponent {
 
     onLogin() {
         const data = {};
-        const dialogRef = this.loginDialog.open(
-            LoginModalComponent, {
-                data,
-            }
-        );
+        const dialogRef = this.loginDialog.open(LoginModalComponent, {
+            data,
+        });
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
@@ -129,7 +114,8 @@ export class LandingSiteLayoutComponent {
             succeed: false,
         };
         const dialogRef = this.requestDemoDialog.open(
-            RequestDemoModalComponent, {
+            RequestDemoModalComponent,
+            {
                 data,
                 height: '650px',
                 panelClass: 'request-demo-container',
@@ -148,10 +134,11 @@ export class LandingSiteLayoutComponent {
 
     forgotPassword() {
         const data = {
-            email: ''
+            email: '',
         };
         const dialogRef = this.forgotPasswordDialog.open(
-            ForgotPasswordDialogComponent, {
+            ForgotPasswordDialogComponent,
+            {
                 data,
                 width: '450px',
             }
@@ -166,7 +153,8 @@ export class LandingSiteLayoutComponent {
                 () => {
                     this.snackBar.open(
                         'An email has been sent with access instructions',
-                        '', {
+                        '',
+                        {
                             duration: 5000,
                         }
                     );
@@ -205,16 +193,8 @@ export class LandingSiteLayoutComponent {
         switch (Number(event.value)) {
             case 0:
                 this.integrationPartners = [
-                    [
-                        this.fuelerlinxLogo,
-                        this.x1fboLogo,
-                        this.millionAirLogo,
-                    ],
-                    [
-                        this.flightAwareLogo,
-                        this.titanLogo,
-                        this.jetAviation,
-                    ],
+                    [this.fuelerlinxLogo, this.x1fboLogo, this.millionAirLogo],
+                    [this.flightAwareLogo, this.titanLogo, this.jetAviation],
                     [
                         this.amstatLogo,
                         this.fbodirectorLogo,
@@ -229,9 +209,7 @@ export class LandingSiteLayoutComponent {
                         this.flightAwareLogo,
                         this.amstatLogo,
                     ],
-                    [
-                        this.fbopartnersLogo,
-                    ],
+                    [this.fbopartnersLogo],
                 ];
                 break;
             case 2:
@@ -245,11 +223,7 @@ export class LandingSiteLayoutComponent {
                 break;
             case 3:
                 this.integrationPartners = [
-                    [
-                        this.titanLogo,
-                        this.millionAirLogo,
-                        this.jetAviation,
-                    ],
+                    [this.titanLogo, this.millionAirLogo, this.jetAviation],
                 ];
                 break;
             default:

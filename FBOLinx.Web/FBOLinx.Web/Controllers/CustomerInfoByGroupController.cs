@@ -536,6 +536,20 @@ namespace FBOLinx.Web.Controllers
             return null;
         }
 
+        [HttpGet("fuelvendors")]
+        public async Task<IActionResult> GetFuelVendors()
+        {
+            var customerFuelVendors = await _fuelerLinxService.GetCustomerFuelVendors();
+            var fuelVendors = customerFuelVendors
+                .Select(cf => cf.FuelVendors.Split(","))
+                .SelectMany(i => i)
+                .Distinct()
+                .Select(i => i.Trim())
+                .OrderBy(i => i)
+                .ToList();
+            return Ok(fuelVendors);
+        }
+
         [HttpPost("rejectmergeforcustomer/customerId/{customerId}/groupId/{groupId}")]
         public async Task<IActionResult> RejectMergeForCustomer(int customerId, int groupId)
         {
@@ -792,6 +806,10 @@ namespace FBOLinx.Web.Controllers
                             TailNumbers = resultsGroup.Key.Tails,
                             AircraftsVisits = resultsGroup.Count(a => a.hd != null && a.hd.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing),
                             FuelVendors = resultsGroup.Key.FuelVendors
+                                .Split(",")
+                                .Where(a => !string.IsNullOrEmpty(a))
+                                .OrderBy(a => a)
+                                .ToList()
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())

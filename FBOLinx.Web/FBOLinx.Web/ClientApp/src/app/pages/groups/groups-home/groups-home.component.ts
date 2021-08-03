@@ -23,7 +23,7 @@ const BREADCRUMBS: any[] = [
 
 @Component({
     selector: 'app-groups-home',
-    styleUrls: [ './groups-home.component.scss' ],
+    styleUrls: ['./groups-home.component.scss'],
     templateUrl: './groups-home.component.html',
 })
 export class GroupsHomeComponent implements OnInit {
@@ -37,39 +37,41 @@ export class GroupsHomeComponent implements OnInit {
         private router: Router,
         private groupsService: GroupsService,
         private sharedService: SharedService,
-        private store: Store<State>,
-    ) {
-    }
+        private store: Store<State>
+    ) {}
 
     ngOnInit(): void {
         this.loadGroupsFbos();
-        this.store.select(getGroupGridState).subscribe(state => {
+        this.store.select(getGroupGridState).subscribe((state) => {
             this.groupGridState = state;
         });
     }
 
     editGroupClicked(event) {
         const { group, searchValue } = event;
-        this.store.dispatch(groupGridSet({
-            filter: searchValue,
-        }));
+        this.store.dispatch(
+            groupGridSet({
+                filter: searchValue,
+            })
+        );
 
         if (this.sharedService.currentUser.role === 3) {
             this.sharedService.currentUser.groupId = group.oid;
         }
-        this.router.navigate([ '/default-layout/groups/' + group.oid ]);
+        this.router.navigate(['/default-layout/groups/' + group.oid]);
     }
 
     editFboClicked(event) {
         const { fbo, searchValue } = event;
-        this.store.dispatch(groupGridSet({
-            filter: searchValue,
-        }));
-        this.router.navigate([ '/default-layout/fbos/' + fbo.oid ]);
+        this.store.dispatch(
+            groupGridSet({
+                filter: searchValue,
+            })
+        );
+        this.router.navigate(['/default-layout/fbos/' + fbo.oid]);
     }
 
-    deleteFboClicked() {
-    }
+    deleteFboClicked() {}
 
     saveGroupEditClicked() {
         if (this.sharedService.currentUser.role === 3) {

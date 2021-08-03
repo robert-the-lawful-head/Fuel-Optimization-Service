@@ -1,5 +1,5 @@
 import { Component, Inject, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 // Components
 import * as moment from 'moment';
@@ -28,7 +28,10 @@ export class PricingExpiredNotificationComponent {
     }
 
     public onRemindMeLaterClick() {
-        localStorage.setItem('pricingExpiredNotification', moment().add(1, 'days').format('L'));
+        localStorage.setItem(
+            'pricingExpiredNotification',
+            moment().add(1, 'days').format('L')
+        );
         this.dialogRef.close();
     }
 

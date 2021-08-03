@@ -9,8 +9,9 @@ export const getBaseUrl = () => document.getElementsByTagName('base')[0].href;
 const providers = [{ deps: [], provide: 'BASE_URL', useFactory: getBaseUrl }];
 
 if (environment.production) {
-  enableProdMode();
+    enableProdMode();
 }
 
-platformBrowserDynamic(providers).bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+platformBrowserDynamic(providers)
+    .bootstrapModule(AppModule)
+    .catch((err) => console.error(err));

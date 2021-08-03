@@ -6,4 +6,4 @@ export enum UserRole {
     Member = 4,
     CSR = 5,
     NonRev = 6,
-};
+}

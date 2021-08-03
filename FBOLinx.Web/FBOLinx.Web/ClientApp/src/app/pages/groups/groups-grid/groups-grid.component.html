@@ -5,13 +5,17 @@
                 (keyup)="applyFilter($event.target.value)"
                 [value]="searchValue"
                 matInput
-                placeholder="Search by Group, FBO, User, ...">
+                placeholder="Search by Group, FBO, User, ..."
+            />
             <span matPrefix><i class="fa fa-search"></i></span>
         </mat-form-field>
 
         <mat-form-field class="account-filter">
             <mat-label>Account</mat-label>
-            <mat-select [(ngModel)]="accountType" (selectionChange)="filterChanged()">
+            <mat-select
+                [(ngModel)]="accountType"
+                (selectionChange)="filterChanged()"
+            >
                 <mat-option value="all">All</mat-option>
                 <mat-option value="active">Active</mat-option>
                 <mat-option value="inactive">Inactive</mat-option>
@@ -31,9 +35,18 @@
 
     <div class="actions col-6 col-md-2">
         <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-            <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+            <mat-icon
+                aria-hidden="true"
+                class="mat-icon material-icons"
+                role="img"
+                >more_vert</mat-icon
+            >
         </button>
-        <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
+        <mat-menu
+            #gridActions="matMenu"
+            class="switch-nested-menu-left-arrows"
+            xPosition="before"
+        >
             <button (click)="openSettings()" mat-menu-item>Settings</button>
         </mat-menu>
     </div>
@@ -43,91 +56,150 @@
     #grid
     (rowDeselected)="rowDeselected()"
     (rowSelected)="rowSelected($event)"
-    (actionComplete)='actionHandler($event)'
-    [allowPaging]='true'
-    [allowSorting]='true'
-    [allowFiltering]='true'
-    [childGrid]='childGrid'
-    [dataSource]='groupDataSource'
-    [filterSettings]='filterSettings'
-    [pageSettings]='pageSettings'
-    [selectionSettings]='selectionOptions'
-    [showColumnMenu]='true'
+    (actionComplete)="actionHandler($event)"
+    [allowPaging]="true"
+    [allowSorting]="true"
+    [allowFiltering]="true"
+    [childGrid]="childGrid"
+    [dataSource]="groupDataSource"
+    [filterSettings]="filterSettings"
+    [pageSettings]="pageSettings"
+    [selectionSettings]="selectionOptions"
+    [showColumnMenu]="true"
 >
     <e-columns>
-        <e-column type='checkbox' width='50'></e-column>
-        <e-column field='groupName' headerText='Group'></e-column>
-        <e-column field='expiredFboPricingCount' headerText='Pricing Expired'>
+        <e-column type="checkbox" width="50"></e-column>
+        <e-column field="groupName" headerText="Group"></e-column>
+        <e-column field="expiredFboPricingCount" headerText="Pricing Expired">
             <ng-template #template let-data>
-                <span [ngClass]="{'good': data.expiredFboPricingCount === 0}" class="status">
-                    {{data.expiredFboPricingCount === 0
-                        ? 'All Pricing Live'
-                        : data.expiredFboPricingCount + ' of ' + data.fboCount + ' Expired'}}
+                <span
+                    [ngClass]="{ good: data.expiredFboPricingCount === 0 }"
+                    class="status"
+                >
+                    {{
+                        data.expiredFboPricingCount === 0
+                            ? "All Pricing Live"
+                            : data.expiredFboPricingCount +
+                              " of " +
+                              data.fboCount +
+                              " Expired"
+                    }}
                 </span>
             </ng-template>
         </e-column>
-        <e-column field='needAttentionCustomers' headerText='Need Attentions'>
+        <e-column field="needAttentionCustomers" headerText="Need Attentions">
             <ng-template #template let-data>
-                <span [ngClass]="{'good': data.needAttentionCustomers == 0 }" class="status">
-                    {{data.needAttentionCustomers}} Need Attentions
+                <span
+                    [ngClass]="{ good: data.needAttentionCustomers == 0 }"
+                    class="status"
+                >
+                    {{ data.needAttentionCustomers }} Need Attentions
                 </span>
             </ng-template>
         </e-column>
-        <e-column field='lastLogin' headerText='Last Login Date' [sortComparer]='dateSortComparer'>
+        <e-column
+            field="lastLogin"
+            headerText="Last Login Date"
+            [sortComparer]="dateSortComparer"
+        >
             <ng-template #template let-data>
-                {{data.lastLogin | date:'medium'}}
+                {{ data.lastLogin | date: "medium" }}
             </ng-template>
         </e-column>
-        <e-column field='active' headerText='Active'></e-column>
-        <e-column field='users' headerText='Users'>
+        <e-column field="active" headerText="Active"></e-column>
+        <e-column field="users" headerText="Users">
             <ng-template #template let-data>
-                {{data.users.length}}
+                {{ data.users.length }}
             </ng-template>
         </e-column>
-        <e-column field='quotes30Days' headerText='Quotes (last 30 days)'></e-column>
-        <e-column field='orders30Days' headerText='Fuel Orders (last 30 days)'></e-column>
-        <e-column field='expiredFboAccountCount' headerText='Accounts Expired'>
+        <e-column
+            field="quotes30Days"
+            headerText="Quotes (last 30 days)"
+        ></e-column>
+        <e-column
+            field="orders30Days"
+            headerText="Fuel Orders (last 30 days)"
+        ></e-column>
+        <e-column field="expiredFboAccountCount" headerText="Accounts Expired">
             <ng-template #template let-data>
-                <span [ngClass]="{'good': data.expiredFboAccountCount === 0}" class="status">
-                    {{data.expiredFboAccountCount === 0
-                        ? 'All Active'
-                        : data.expiredFboAccountCount + ' of ' + data.fboCount + ' Inactive'}}
+                <span
+                    [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
+                    class="status"
+                >
+                    {{
+                        data.expiredFboAccountCount === 0
+                            ? "All Active"
+                            : data.expiredFboAccountCount +
+                              " of " +
+                              data.fboCount +
+                              " Inactive"
+                    }}
                 </span>
             </ng-template>
         </e-column>
-        <e-column width=200>
+        <e-column width="200">
             <ng-template #headerTemplate let-data>
-                <button (click)="addNewGroupOrFbo()" [view]="'accent'" beforeIcon="fa fa-plus" ni-button>Add New
+                <button
+                    (click)="addNewGroupOrFbo()"
+                    [view]="'accent'"
+                    beforeIcon="fa fa-plus"
+                    ni-button
+                >
+                    Add New
                 </button>
             </ng-template>
             <ng-template #template let-data>
-                <button [matMenuTriggerFor]="menu" aria-label="Group Actions" clickStopPropagation mat-icon-button>
+                <button
+                    [matMenuTriggerFor]="menu"
+                    aria-label="Group Actions"
+                    clickStopPropagation
+                    mat-icon-button
+                >
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                    <button (click)="editGroup(data)" clickStopPropagation mat-menu-item>
+                    <button
+                        (click)="editGroup(data)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>edit</mat-icon>
                         <span>Edit Group</span>
                     </button>
-                    <button (click)="addNewFbo(data)" clickStopPropagation mat-menu-item>
+                    <button
+                        (click)="addNewFbo(data)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>add</mat-icon>
                         <span>Add FBO</span>
                     </button>
-                    <button (click)="deleteGroup(data)" clickStopPropagation mat-menu-item>
+                    <button
+                        (click)="deleteGroup(data)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>delete_forever</mat-icon>
                         <span>Delete Group</span>
                     </button>
-                    <button [disabled]="!groupFbos(data.index).length" [matMenuTriggerFor]="fbosMenu"
-                            clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        [disabled]="!groupFbos(data.index).length"
+                        [matMenuTriggerFor]="fbosMenu"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <span>Delete FBO</span>
                     </button>
                 </mat-menu>
                 <mat-menu #fbosMenu="matMenu">
-                    <button (click)="deleteFbo(fbo)" *ngFor="let fbo of groupFbos(data.index)" clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        (click)="deleteFbo(fbo)"
+                        *ngFor="let fbo of groupFbos(data.index)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>delete_forever</mat-icon>
-                        <span>{{fbo.fbo}}</span>
+                        <span>{{ fbo.fbo }}</span>
                     </button>
                 </mat-menu>
             </ng-template>
@@ -136,34 +208,40 @@
 </ejs-grid>
 
 <ng-template #pricingExpiredTemplate let-data>
-    <span [ngClass]="{'good': !data.pricingExpired }" class="status">
-        {{data.pricingExpired ? 'Expired' : 'Pricing Live'}}
+    <span [ngClass]="{ good: !data.pricingExpired }" class="status">
+        {{ data.pricingExpired ? "Expired" : "Pricing Live" }}
     </span>
 </ng-template>
 
 <ng-template #fboManageTemplate let-data>
-    <button (click)="editFBO(data)" [view]="'warning'" beforeIcon="fa fa-pencil" clickStopPropagation ni-button
-            size="small">Edit FBO
+    <button
+        (click)="editFBO(data)"
+        [view]="'warning'"
+        beforeIcon="fa fa-pencil"
+        clickStopPropagation
+        ni-button
+        size="small"
+    >
+        Edit FBO
     </button>
 </ng-template>
 
 <ng-template #needAttentionTemplate let-data>
-    <span [ngClass]="{'good': data.needAttentionCustomers == 0 }" class="status">
-        {{data.needAttentionCustomers}} Need Attentions
+    <span [ngClass]="{ good: data.needAttentionCustomers == 0 }" class="status">
+        {{ data.needAttentionCustomers }} Need Attentions
     </span>
 </ng-template>
 
 <ng-template #usersTemplate let-data>
-    <span>{{data.users.length}}</span>
+    <span>{{ data.users.length }}</span>
 </ng-template>
 
 <ng-template #lastLoginTemplate let-data>
-    {{data.lastLogin | date:'medium'}}
+    {{ data.lastLogin | date: "medium" }}
 </ng-template>
 
 <ng-template #accountExpiredTemplate let-data>
-    <span [ngClass]="{'good': !data.accountExpired }" class="status">
-        {{data.accountExpired ? 'Inactive' : 'Active'}}
+    <span [ngClass]="{ good: !data.accountExpired }" class="status">
+        {{ data.accountExpired ? "Inactive" : "Active" }}
     </span>
 </ng-template>
-

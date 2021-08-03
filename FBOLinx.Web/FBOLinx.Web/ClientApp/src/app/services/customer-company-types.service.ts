@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Inject,Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 import { CustomerCompanyType } from '../models';
 
@@ -22,9 +22,12 @@ export class CustomerCompanyTypesService {
     }
 
     public getNonFuelerLinxForFbo(fboId) {
-        return this.http.get<CustomerCompanyType[]>(this.accessPointUrl + '/fbo/' + fboId + '/nofuelerlinx', {
-            headers: this.headers,
-        });
+        return this.http.get<CustomerCompanyType[]>(
+            this.accessPointUrl + '/fbo/' + fboId + '/nofuelerlinx',
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public get(payload) {

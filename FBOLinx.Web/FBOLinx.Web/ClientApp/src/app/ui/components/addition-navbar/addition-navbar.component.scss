@@ -1,15 +1,15 @@
-@import '../../../../assets/sass/variable';
+@import "../../../../assets/sass/variable";
 
 :host {
     background: main-color(50);
     bottom: 0;
-    box-shadow: -5px 0 5px -4px rgba(#000, .25);
+    box-shadow: -5px 0 5px -4px rgba(#000, 0.25);
     color: main-contrast(50);
     position: fixed;
     right: 0;
     top: $navbar-height;
     transform: translate(450px, 0);
-    transition: .2s transform 0s $animation, 0s z-index .2s $animation;
+    transition: 0.2s transform 0s $animation, 0s z-index 0.2s $animation;
     width: 450px;
     z-index: 99999;
 
@@ -47,7 +47,7 @@
 
     &.open {
         transform: translate(0, 0);
-        transition: .2s transform 0s $animation, .2s z-index 0s $animation;
+        transition: 0.2s transform 0s $animation, 0.2s z-index 0s $animation;
         z-index: 99999;
     }
 
@@ -55,7 +55,7 @@
         align-items: center;
         background: main-color(50);
         /*border: 1px solid main-color(50);*/
-        border: 1px solid #E5E6E9;
+        border: 1px solid #e5e6e9;
         border-right: 0;
         border-radius: $shape 0 0 $shape;
         color: main-contrast(50);
@@ -67,7 +67,7 @@
         position: absolute;
         right: 100%;
         top: 92px;
-        transition: color .2s $animation;
+        transition: color 0.2s $animation;
         width: 50px;
 
         .rtl & {
@@ -109,4 +109,3 @@
         width: 15px;
     }
 }
-

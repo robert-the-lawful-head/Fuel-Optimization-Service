@@ -47,7 +47,7 @@
                     position: relative;
                     text-decoration: none;
                     transition: background 0.2s $animation,
-                    color 0.2s $animation;
+                        color 0.2s $animation;
 
                     .text {
                         flex-grow: 2;
@@ -119,7 +119,8 @@
                         font-size: 0.8rem;
                         font-weight: 600;
                         line-height: ($main-lh / 0.8);
-                        padding: ($module-rem * 1.5) ($module-rem * 2) ($module-rem / 2);
+                        padding: ($module-rem * 1.5) ($module-rem * 2)
+                            ($module-rem / 2);
                         text-transform: uppercase;
                     }
                 }
@@ -211,7 +212,7 @@
                                         > .item-link {
                                             &:before {
                                                 border-top-color: menu(
-                                                        separator
+                                                    separator
                                                 );
                                             }
                                         }

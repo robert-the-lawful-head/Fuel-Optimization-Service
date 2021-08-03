@@ -40,6 +40,4 @@ export class ColorDirective implements OnInit {
     @HostBinding('class.custom-color') get getClass() {
         return true;
     }
-
-
 }

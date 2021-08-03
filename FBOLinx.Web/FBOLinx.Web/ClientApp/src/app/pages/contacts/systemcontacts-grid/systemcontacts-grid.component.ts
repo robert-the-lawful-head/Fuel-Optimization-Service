@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -15,7 +22,7 @@ import { SystemcontactsNewContactModalComponent } from '../systemcontacts-new-co
 
 @Component({
     selector: 'app-systemcontacts-grid',
-    styleUrls: [ './systemcontacts-grid.component.scss' ],
+    styleUrls: ['./systemcontacts-grid.component.scss'],
     templateUrl: './systemcontacts-grid.component.html',
 })
 export class SystemcontactsGridComponent implements OnInit {
@@ -52,8 +59,7 @@ export class SystemcontactsGridComponent implements OnInit {
         private contactInfoByGroupsService: ContactinfobygroupsService,
         private sharedService: SharedService,
         public newContactDialog: MatDialog
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         if (!this.contactsData) {
@@ -72,14 +78,25 @@ export class SystemcontactsGridComponent implements OnInit {
 
     // Public Methods
     public refreshTable() {
-        this.sort.sortChange.subscribe(() => {
-        });
+        this.sort.sortChange.subscribe(() => {});
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
-        const unselectedIndexAlerts = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
-        this.copyAllAlerts = this.contactsData.length && unselectedIndexAlerts === -1 ? true : false;
-        const unselectedIndexOrders = _.findIndex(this.contactsData, (contact) => !contact.copyOrders);
-        this.copyAllOrders = this.contactsData.length && unselectedIndexOrders === -1 ? true : false;
+        const unselectedIndexAlerts = _.findIndex(
+            this.contactsData,
+            (contact) => !contact.copyAlerts
+        );
+        this.copyAllAlerts =
+            this.contactsData.length && unselectedIndexAlerts === -1
+                ? true
+                : false;
+        const unselectedIndexOrders = _.findIndex(
+            this.contactsData,
+            (contact) => !contact.copyOrders
+        );
+        this.copyAllOrders =
+            this.contactsData.length && unselectedIndexOrders === -1
+                ? true
+                : false;
     }
 
     public editRecord(record: any) {
@@ -98,13 +115,17 @@ export class SystemcontactsGridComponent implements OnInit {
             }
 
             if (result === 'delete') {
-                this.fbocontactsService
-                    .remove(record)
-                    .subscribe(() => {
-                        this.contactsData = this.contactsData.filter(c => c.oid !== record.oid);
-                        this.refreshTable();
-                        this.fbocontactsService.updateFuelvendor({ fboId: this.sharedService.currentUser.fboId }).subscribe();
-                    });
+                this.fbocontactsService.remove(record).subscribe(() => {
+                    this.contactsData = this.contactsData.filter(
+                        (c) => c.oid !== record.oid
+                    );
+                    this.refreshTable();
+                    this.fbocontactsService
+                        .updateFuelvendor({
+                            fboId: this.sharedService.currentUser.fboId,
+                        })
+                        .subscribe();
+                });
             } else {
                 const updatedContact = {
                     ...record,
@@ -119,7 +140,11 @@ export class SystemcontactsGridComponent implements OnInit {
                         }
                     }
                     this.refreshTable();
-                    this.fbocontactsService.updateFuelvendor({ fboId: this.sharedService.currentUser.fboId }).subscribe();
+                    this.fbocontactsService
+                        .updateFuelvendor({
+                            fboId: this.sharedService.currentUser.fboId,
+                        })
+                        .subscribe();
                 });
             }
         });
@@ -135,7 +160,7 @@ export class SystemcontactsGridComponent implements OnInit {
                 height: '300px',
             }
         );
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
                 return;
             }
@@ -144,16 +169,23 @@ export class SystemcontactsGridComponent implements OnInit {
                 ...result,
                 fboId: this.sharedService.currentUser.fboId,
             };
-            this.fbocontactsService.addnewcontact(payload).subscribe(newFbocontact => {
-                this.contactsData.push(newFbocontact);
-                this.refreshTable();
-                this.fbocontactsService.updateFuelvendor(payload).subscribe();
-            });
+            this.fbocontactsService
+                .addnewcontact(payload)
+                .subscribe((newFbocontact) => {
+                    this.contactsData.push(newFbocontact);
+                    this.refreshTable();
+                    this.fbocontactsService
+                        .updateFuelvendor(payload)
+                        .subscribe();
+                });
         });
     }
 
     public updateCopyAlertsValue(value: any) {
-        const unselectedIndexAlerts = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
+        const unselectedIndexAlerts = _.findIndex(
+            this.contactsData,
+            (contact) => !contact.copyAlerts
+        );
         this.copyAllAlerts = unselectedIndexAlerts >= 0 ? false : true;
 
         value.groupId = this.sharedService.currentUser.groupId;
@@ -176,7 +208,10 @@ export class SystemcontactsGridComponent implements OnInit {
     }
 
     public updateCopyOrdersValue(value: any) {
-        const unselectedIndexOrders = _.findIndex(this.contactsData, (contact) => !contact.copyOrders);
+        const unselectedIndexOrders = _.findIndex(
+            this.contactsData,
+            (contact) => !contact.copyOrders
+        );
         this.copyAllOrders = unselectedIndexOrders >= 0 ? false : true;
 
         value.groupId = this.sharedService.currentUser.groupId;
@@ -230,8 +265,7 @@ export class SystemcontactsGridComponent implements OnInit {
                         }
                     });
             }
-        } catch (e) {
-        }
+        } catch (e) {}
     }
 
     initializeImporter() {
@@ -241,7 +275,7 @@ export class SystemcontactsGridComponent implements OnInit {
             disableManualInput: false,
             fields: [
                 {
-                    alternates: [ 'first name' ],
+                    alternates: ['first name'],
                     description: 'Contact First Name',
                     key: 'FirstName',
                     label: 'First Name',
@@ -253,7 +287,7 @@ export class SystemcontactsGridComponent implements OnInit {
                     ],
                 },
                 {
-                    alternates: [ 'last name' ],
+                    alternates: ['last name'],
                     description: 'Contact Last Name',
                     key: 'LastName',
                     label: 'Last Name',
@@ -265,73 +299,78 @@ export class SystemcontactsGridComponent implements OnInit {
                     ],
                 },
                 {
-                    alternates: [ 'title' ],
+                    alternates: ['title'],
                     description: 'Contact Title',
                     key: 'Title',
                     label: 'Title',
                 },
                 {
-                    alternates: [ 'email', 'email address' ],
+                    alternates: ['email', 'email address'],
                     description: 'Email Address',
                     key: 'Email',
                     label: 'Email',
                 },
                 {
-                    alternates: [ 'phone', 'phone number' ],
+                    alternates: ['phone', 'phone number'],
                     description: 'Phone Number',
                     key: 'PhoneNumber',
                     label: 'Phone Number',
                 },
                 {
-                    alternates: [ 'extension' ],
+                    alternates: ['extension'],
                     description: 'Phone Extension',
                     key: 'Extension',
                     label: 'Extension',
                 },
                 {
-                    alternates: [ 'mobile', 'cell', 'mobile phone', 'cell phone' ],
+                    alternates: [
+                        'mobile',
+                        'cell',
+                        'mobile phone',
+                        'cell phone',
+                    ],
                     description: 'Mobile Phone',
                     key: 'MobilePhone',
                     label: 'Mobile',
                 },
                 {
-                    alternates: [ 'fax' ],
+                    alternates: ['fax'],
                     description: 'Fax',
                     key: 'Fax',
                     label: 'Fax',
                 },
                 {
-                    alternates: [ 'address', 'street address' ],
+                    alternates: ['address', 'street address'],
                     description: 'Street Address',
                     key: 'Address',
                     label: 'Address',
                 },
                 {
-                    alternates: [ 'city', 'town' ],
+                    alternates: ['city', 'town'],
                     description: 'City',
                     key: 'City',
                     label: 'City',
                 },
                 {
-                    alternates: [ 'state' ],
+                    alternates: ['state'],
                     description: 'State',
                     key: 'State',
                     label: 'State',
                 },
                 {
-                    alternates: [ 'country' ],
+                    alternates: ['country'],
                     description: 'Country',
                     key: 'Country',
                     label: 'Country',
                 },
                 {
-                    alternates: [ 'primary' ],
+                    alternates: ['primary'],
                     description: 'Primary',
                     key: 'PrimaryContact',
                     label: 'Primary',
                 },
                 {
-                    alternates: [ 'copy on distribution' ],
+                    alternates: ['copy on distribution'],
                     description: 'Copy Contact on Distribution',
                     key: 'CopyAlertsContact',
                     label: 'Copy on Distribution',

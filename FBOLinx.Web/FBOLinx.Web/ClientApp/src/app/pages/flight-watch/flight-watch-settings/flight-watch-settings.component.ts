@@ -8,7 +8,7 @@ import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-flight-watch-settings',
-    styleUrls: [ './flight-watch-settings.component.scss'],
+    styleUrls: ['./flight-watch-settings.component.scss'],
     templateUrl: './flight-watch-settings.component.html',
 })
 export class FlightWatchSettingsComponent {
@@ -25,16 +25,14 @@ export class FlightWatchSettingsComponent {
         'trackingDegree',
         'verticalSpeedKts',
         'gpsAltitude',
-        'isAircraftOnGround'
+        'isAircraftOnGround',
     ];
 
-    constructor() {
-    }
+    constructor() {}
 
     get aircraftTypes() {
-        return AIRCRAFT_IMAGES
-            .filter(type => type.label !== 'Other')
-            .map(type => ({
+        return AIRCRAFT_IMAGES.filter((type) => type.label !== 'Other')
+            .map((type) => ({
                 aircraftType: type.id,
                 color: type.fillColor,
                 description: type.description,
@@ -55,13 +53,24 @@ export class FlightWatchSettingsComponent {
     toggleType(type: string) {
         if (this.filteredTypes.includes(type)) {
             if (type === 'default') {
-                this.typesFilterChanged.emit(this.filteredTypes.filter(ft => !['B0', 'B3', 'default'].includes(ft)));
+                this.typesFilterChanged.emit(
+                    this.filteredTypes.filter(
+                        (ft) => !['B0', 'B3', 'default'].includes(ft)
+                    )
+                );
             } else {
-                this.typesFilterChanged.emit(this.filteredTypes.filter(ft => ft !== type));
+                this.typesFilterChanged.emit(
+                    this.filteredTypes.filter((ft) => ft !== type)
+                );
             }
         } else {
             if (type === 'default') {
-                this.typesFilterChanged.emit([...this.filteredTypes, 'B0', 'B3', 'default']);
+                this.typesFilterChanged.emit([
+                    ...this.filteredTypes,
+                    'B0',
+                    'B3',
+                    'default',
+                ]);
             } else {
                 this.typesFilterChanged.emit([...this.filteredTypes, type]);
             }

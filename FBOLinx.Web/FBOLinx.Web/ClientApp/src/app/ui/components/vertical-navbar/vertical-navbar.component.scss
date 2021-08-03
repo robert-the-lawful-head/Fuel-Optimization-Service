@@ -1,4 +1,4 @@
-@import '../../../../assets/sass/variable';
+@import "../../../../assets/sass/variable";
 
 :host(.hideSidebar) {
     display: block;
@@ -14,8 +14,7 @@
     position: absolute;
     top: 0;
     transform: translate3d(0, 0, 0);
-    transition: left .2s $animation,
-    right .2s $animation;
+    transition: left 0.2s $animation, right 0.2s $animation;
     width: $vertical-navbar-width;
     will-change: left, right, width;
     z-index: 99999;
@@ -44,14 +43,13 @@
     }
 
     .sidebar-overlay {
-        background: rgba($vertical-navbar-bg, .2);
+        background: rgba($vertical-navbar-bg, 0.2);
         height: 100%;
         left: 0;
         opacity: 0;
         position: fixed;
         top: 0;
-        transition: .2s opacity 0s $animation,
-        0s visibility .2s $animation;
+        transition: 0.2s opacity 0s $animation, 0s visibility 0.2s $animation;
         visibility: hidden;
         width: 100%;
         z-index: 99998;

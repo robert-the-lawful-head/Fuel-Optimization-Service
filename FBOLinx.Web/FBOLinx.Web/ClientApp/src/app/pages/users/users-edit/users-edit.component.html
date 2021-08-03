@@ -2,10 +2,13 @@
     <mat-spinner></mat-spinner>
 </div>
 
-<ni-card *ngIf="userInfo" class="mb-0" title="{{userInfo.firstName}} {{userInfo.lastName}}">
+<ni-card
+    *ngIf="userInfo"
+    class="mb-0"
+    title="{{ userInfo.firstName }} {{ userInfo.lastName }}"
+>
     <div>
         <mat-tab-group>
-
             <!--FBO Info Tab-->
             <mat-tab label="User Info">
                 <div class="container-fluid">
@@ -15,42 +18,73 @@
                     <div class="row">
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input [(ngModel)]="userInfo.firstName" matInput placeholder="First Name"/>
+                                <input
+                                    [(ngModel)]="userInfo.firstName"
+                                    matInput
+                                    placeholder="First Name"
+                                />
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input [(ngModel)]="userInfo.lastName" matInput placeholder="Last Name"/>
+                                <input
+                                    [(ngModel)]="userInfo.lastName"
+                                    matInput
+                                    placeholder="Last Name"
+                                />
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input #userLoginEmail="ngModel" [(ngModel)]="userInfo.username" [email]="true"
-                                       aria-label="Email Login" matInput placeholder="Email Login"/>
+                                <input
+                                    #userLoginEmail="ngModel"
+                                    [(ngModel)]="userInfo.username"
+                                    [email]="true"
+                                    aria-label="Email Login"
+                                    matInput
+                                    placeholder="Email Login"
+                                />
                             </mat-form-field>
-                            <div *ngIf="userLoginEmail.errors?.email" style="color: red;">
+                            <div
+                                *ngIf="userLoginEmail.errors?.email"
+                                style="color: red"
+                            >
                                 Please enter a valid email address.
                             </div>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field *ngIf="availableroles">
-                                <mat-select [(ngModel)]="userInfo.role" placeholder="Role">
-                                    <mat-option *ngFor="let role of availableroles" [value]="role.value">
-                                        {{role.description}}
+                                <mat-select
+                                    [(ngModel)]="userInfo.role"
+                                    placeholder="Role"
+                                >
+                                    <mat-option
+                                        *ngFor="let role of availableroles"
+                                        [value]="role.value"
+                                    >
+                                        {{ role.description }}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input [(ngModel)]="userInfo.newPassword" matInput placeholder="New Password"
-                                       type="password"/>
+                                <input
+                                    [(ngModel)]="userInfo.newPassword"
+                                    matInput
+                                    placeholder="New Password"
+                                    type="password"
+                                />
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <input [(ngModel)]="userInfo.confirmPassword" matInput placeholder="Confirm Password"
-                                       type="password"/>
+                                <input
+                                    [(ngModel)]="userInfo.confirmPassword"
+                                    matInput
+                                    placeholder="Confirm Password"
+                                    type="password"
+                                />
                             </mat-form-field>
                         </div>
                     </div>
@@ -58,7 +92,15 @@
                     <div class="row">
                         <button
                             (click)="saveEdit()"
-                            *ngIf="(!userInfo.confirmPassword || !userInfo.newPassword || userInfo.confirmPassword.length == 0 || userInfo.newPassword.length == 0 || userInfo.newPassword === userInfo.confirmPassword)  && !userLoginEmail.errors?.email"
+                            *ngIf="
+                                (!userInfo.confirmPassword ||
+                                    !userInfo.newPassword ||
+                                    userInfo.confirmPassword.length == 0 ||
+                                    userInfo.newPassword.length == 0 ||
+                                    userInfo.newPassword ===
+                                        userInfo.confirmPassword) &&
+                                !userLoginEmail.errors?.email
+                            "
                             class="mr-1"
                             color="green"
                             mat-stroked-button
@@ -66,7 +108,9 @@
                             <mat-icon>save</mat-icon>
                             Save Changes
                         </button>
-                        <button (click)="cancelEdit()" mat-stroked-button>Cancel</button>
+                        <button (click)="cancelEdit()" mat-stroked-button>
+                            Cancel
+                        </button>
                     </div>
                 </div>
             </mat-tab>

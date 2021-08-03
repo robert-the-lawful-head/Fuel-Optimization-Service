@@ -53,6 +53,6 @@ namespace FBOLinx.Web.ViewModels
             }
         }
 
-        public string? FuelVendors { get; set; }
+        public List<string> FuelVendors { get; set; }
     }
 }

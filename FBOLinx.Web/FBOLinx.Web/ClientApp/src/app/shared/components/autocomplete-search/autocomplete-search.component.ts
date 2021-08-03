@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { isEqual } from 'lodash';
 
@@ -13,16 +20,18 @@ export interface CloseConfirmationData {
 @Component({
     providers: [
         {
-            multi:true,
+            multi: true,
             provide: NG_VALUE_ACCESSOR,
-            useExisting: AutocompleteSearchComponent
+            useExisting: AutocompleteSearchComponent,
         },
     ],
     selector: 'app-autocomplete-search',
-    styleUrls: [ './autocomplete-search.component.scss' ],
-    templateUrl: './autocomplete-search.component.html'
+    styleUrls: ['./autocomplete-search.component.scss'],
+    templateUrl: './autocomplete-search.component.html',
 })
-export class AutocompleteSearchComponent implements OnChanges, ControlValueAccessor  {
+export class AutocompleteSearchComponent
+    implements OnChanges, ControlValueAccessor
+{
     @Input() label: string;
     @Input() optionValue: string | Array<string>;
     @Input() options: Array<any>;
@@ -38,8 +47,7 @@ export class AutocompleteSearchComponent implements OnChanges, ControlValueAcces
     onChange = (val: any) => {};
     onTouched = () => {};
 
-    constructor() {
-    }
+    constructor() {}
 
     writeValue(obj: any): void {
         this.option = obj;
@@ -55,24 +63,36 @@ export class AutocompleteSearchComponent implements OnChanges, ControlValueAcces
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.options.currentValue && !isEqual(changes.options.currentValue, changes.options.previousValue)) {
+        if (
+            changes.options.currentValue &&
+            !isEqual(
+                changes.options.currentValue,
+                changes.options.previousValue
+            )
+        ) {
             this.filteredOptions = [...this.options];
         }
     }
 
     onFilterChanged() {
-        this.filteredOptions = this.options.filter(option => {
+        this.filteredOptions = this.options.filter((option) => {
             if (!this.filter) {
                 return true;
             }
             if (typeof this.optionValue === 'string') {
-                return option[this.optionValue as string].toLowerCase().includes(this.filter.toLowerCase());
+                return option[this.optionValue as string]
+                    .toLowerCase()
+                    .includes(this.filter.toLowerCase());
             }
             if (!this.optionValue) {
                 return option.toLowerCase().includes(this.filter.toLowerCase());
             }
             if (Array.isArray(this.optionValue)) {
-                return this.optionValue.map(ov => option[ov]).join(' ').toLowerCase().includes(this.filter.toLowerCase());
+                return this.optionValue
+                    .map((ov) => option[ov])
+                    .join(' ')
+                    .toLowerCase()
+                    .includes(this.filter.toLowerCase());
             }
             return false;
         });
@@ -91,6 +111,6 @@ export class AutocompleteSearchComponent implements OnChanges, ControlValueAcces
         if (!this.optionValue) {
             return option;
         }
-        return this.optionValue.map(ov => option[ov]).join(' ');
+        return this.optionValue.map((ov) => option[ov]).join(' ');
     }
 }

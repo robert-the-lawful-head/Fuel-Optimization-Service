@@ -1,5 +1,16 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Output, } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
+import {
+    Component,
+    EventEmitter,
+    Inject,
+    Input,
+    OnInit,
+    Output,
+} from '@angular/core';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
 
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
@@ -8,7 +19,7 @@ import { DialogConfirmAircraftDeleteComponent } from '../customer-aircrafts-conf
 
 @Component({
     selector: 'app-customer-aircrafts-edit',
-    styleUrls: [ './customer-aircrafts-edit.component.scss' ],
+    styleUrls: ['./customer-aircrafts-edit.component.scss'],
     templateUrl: './customer-aircrafts-edit.component.html',
 })
 export class CustomerAircraftsEditComponent implements OnInit {
@@ -27,8 +38,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
         private dialogAircraftDeleteRef: MatDialog
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         if (this.data) {
