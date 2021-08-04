@@ -6,8 +6,14 @@
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button (click)="onRemindMeLaterClick()" *ngIf="!hideRemindMeButton" class="mr-1" color="orange"
-                mat-flat-button>Remind Me Later
+        <button
+            (click)="onRemindMeLaterClick()"
+            *ngIf="!hideRemindMeButton"
+            class="mr-1"
+            color="orange"
+            mat-flat-button
+        >
+            Remind Me Later
         </button>
         <button (click)="onCancelClick()" mat-stroked-button>Dismiss</button>
     </div>

@@ -1,5 +1,9 @@
 <div class="navbar-wrap">
-    <div (click)="openSidebar()" [ngClass]="{ open: openedSidebar }" class="navbar-button">
+    <div
+        (click)="openSidebar()"
+        [ngClass]="{ open: openedSidebar }"
+        class="navbar-button"
+    >
         <span></span>
         <span></span>
         <span></span>
@@ -9,26 +13,45 @@
     </div>
 
     <h1 class="page-title">{{ title }}</h1>
-    <button (click)="showWidget()" mat-stroked-button style="margin-right:10px; width: 10%; min-width: 100px;">Live
-        Chat
+    <button
+        (click)="showWidget()"
+        mat-stroked-button
+        style="margin-right: 10px; width: 10%; min-width: 100px"
+    >
+        Live Chat
     </button>
-    <h2 *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao" class="page-info">{{ fbo.fbo }}
-        / {{ fboAirport.icao }}</h2>
+    <h2
+        *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao"
+        class="page-info"
+    >
+        {{ fbo.fbo }} / {{ fboAirport.icao }}
+    </h2>
     <div class="nav-items">
-        <div *ngIf="notificationVisible" [ngClass]="{ opened: needsAttentionMenu.isOpened }" class="nav-item">
+        <div
+            *ngIf="notificationVisible"
+            [ngClass]="{ opened: needsAttentionMenu.isOpened }"
+            class="nav-item"
+        >
             <a (click)="openUpdate()" class="nav-link">
                 <span class="icon sli-bell"></span>
                 <span
-                    [ngClass]="{marker:(needsAttentionCustomersData && needsAttentionCustomersData.length > 0) || (hasLoadedJetACost && !currrentJetACostPricing) || (hasLoadedJetARetail && !currrentJetARetailPricing)}"></span>
+                    [ngClass]="{
+                        marker:
+                            (needsAttentionCustomersData &&
+                                needsAttentionCustomersData.length > 0) ||
+                            (hasLoadedJetACost && !currrentJetACostPricing) ||
+                            (hasLoadedJetARetail && !currrentJetARetailPricing)
+                    }"
+                ></span>
             </a>
 
             <div class="dropdown-menu">
-                <h4 *ngIf="
-                    (hasLoadedJetACost && !currrentJetACostPricing) ||
-                    (hasLoadedJetARetail && !currrentJetARetailPricing) ||
-                    (needsAttentionCustomersData &&
-                    needsAttentionCustomersData.length>
-                    0)
+                <h4
+                    *ngIf="
+                        (hasLoadedJetACost && !currrentJetACostPricing) ||
+                        (hasLoadedJetARetail && !currrentJetARetailPricing) ||
+                        (needsAttentionCustomersData &&
+                            needsAttentionCustomersData.length > 0)
                     "
                     class="menu-title"
                 >
@@ -41,14 +64,18 @@
                         <a>
                             <span class="icon sli-feed"></span>
                             <div class="content">
-                                <span class="desc">Your cost pricing has expired!</span>
+                                <span class="desc"
+                                    >Your cost pricing has expired!</span
+                                >
                                 <span class="date"></span>
                                 <div class="text-right">
-                                    <button (click)="updatePricingClicked()"
-                                            [view]="'accent'"
-                                            class="mr-1"
-                                            ni-button
-                                            size="small">
+                                    <button
+                                        (click)="updatePricingClicked()"
+                                        [view]="'accent'"
+                                        class="mr-1"
+                                        ni-button
+                                        size="small"
+                                    >
                                         Update Pricing
                                     </button>
                                 </div>
@@ -57,20 +84,26 @@
                     </li>
 
                     <!--JetA Retail Notification-->
-                    <li *ngIf="
+                    <li
+                        *ngIf="
                             hasLoadedJetARetail && !currrentJetARetailPricing
-                        ">
+                        "
+                    >
                         <a>
                             <span class="icon sli-feed"></span>
                             <div class="content">
-                                <span class="desc">Your retail pricing has expired!</span>
+                                <span class="desc"
+                                    >Your retail pricing has expired!</span
+                                >
                                 <span class="date"></span>
                                 <div class="text-right">
-                                    <button (click)="updatePricingClicked()"
-                                            [view]="'accent'"
-                                            class="mr-1"
-                                            ni-button
-                                            size="small">
+                                    <button
+                                        (click)="updatePricingClicked()"
+                                        [view]="'accent'"
+                                        class="mr-1"
+                                        ni-button
+                                        size="small"
+                                    >
                                         Update Pricing
                                     </button>
                                 </div>
@@ -85,15 +118,18 @@
                             <div class="content">
                                 <span class="desc">
                                     Needs Attention for
-                                    <strong>{{ customer.company }}</strong>.
+                                    <strong>{{ customer.company }}</strong
+                                    >.
                                 </span>
                                 <span class="date"></span>
                                 <div class="text-right">
-                                    <button (click)="gotoCustomer(customer)"
-                                            [view]="'success'"
-                                            class="mr-1"
-                                            ni-button
-                                            size="small">
+                                    <button
+                                        (click)="gotoCustomer(customer)"
+                                        [view]="'success'"
+                                        class="mr-1"
+                                        ni-button
+                                        size="small"
+                                    >
                                         See customer
                                     </button>
                                 </div>
@@ -103,13 +139,17 @@
                 </ul>
 
                 <div class="menu-footer">
-                    <a (click)="viewAllNotificationsClicked()" routerLink=".">View all notifications</a>
+                    <a (click)="viewAllNotificationsClicked()" routerLink="."
+                        >View all notifications</a
+                    >
                 </div>
             </div>
         </div>
 
-        <div [ngClass]="{ opened: accountProfileMenu.isOpened }"
-             class="nav-item">
+        <div
+            [ngClass]="{ opened: accountProfileMenu.isOpened }"
+            class="nav-item"
+        >
             <a (click)="toggleProfileMenu()" class="nav-link">
                 <div *ngIf="userFullName" class="name">{{ userFullName }}</div>
             </a>
@@ -118,40 +158,68 @@
             <div *ngIf="!isLocationsLoading" class="dropdown-menu mini-menu">
                 <ul>
                     <li>
-                        <a (click)="accountProfileClicked()"
-                           style="cursor: pointer;">
+                        <a
+                            (click)="accountProfileClicked()"
+                            style="cursor: pointer"
+                        >
                             <span class="icon sli-settings"></span> Account
                             Profile
                         </a>
                     </li>
-                    <li *ngIf="currentUser && currentUser.impersonatedRole > 0 && fboAirport" class="nav-sub-item">
-                        <a style="cursor: pointer;">
+                    <li
+                        *ngIf="
+                            currentUser &&
+                            currentUser.impersonatedRole > 0 &&
+                            fboAirport
+                        "
+                        class="nav-sub-item"
+                    >
+                        <a style="cursor: pointer">
                             <span class="icon sli-arrow-left"></span>
                             Switch Location
                         </a>
                         <mat-list class="nav-sub-item-menu">
-                            <mat-list-item (click)="changeLocation(location)"
-                                           *ngFor="let location of locations">
-                                <span *ngIf="location.oid == fboAirport.fboid"
-                                      class="icon sli-flag"></span>&nbsp;
+                            <mat-list-item
+                                (click)="changeLocation(location)"
+                                *ngFor="let location of locations"
+                            >
+                                <span
+                                    *ngIf="location.oid == fboAirport.fboid"
+                                    class="icon sli-flag"
+                                ></span
+                                >&nbsp;
                                 {{ location.icao }}
                             </mat-list-item>
                         </mat-list>
                     </li>
-                    <li *ngIf="currentUser && currentUser.impersonatedRole === 1">
-                        <a (click)="stopManagingFBOClicked()" style="cursor: pointer;">
+                    <li
+                        *ngIf="
+                            currentUser && currentUser.impersonatedRole === 1
+                        "
+                    >
+                        <a
+                            (click)="stopManagingFBOClicked()"
+                            style="cursor: pointer"
+                        >
                             <span class="icon sli-settings"></span>
                             Stop Managing FBO
                         </a>
                     </li>
-                    <li *ngIf="currentUser && currentUser.impersonatedRole === 2">
-                        <a (click)="stopManagingGroupClicked()" style="cursor: pointer;">
+                    <li
+                        *ngIf="
+                            currentUser && currentUser.impersonatedRole === 2
+                        "
+                    >
+                        <a
+                            (click)="stopManagingGroupClicked()"
+                            style="cursor: pointer"
+                        >
                             <span class="icon sli-settings"></span>
                             Stop Managing Group
                         </a>
                     </li>
                     <li>
-                        <a (click)="logout()" style="cursor: pointer;">
+                        <a (click)="logout()" style="cursor: pointer">
                             <span class="icon sli-logout"></span> Log Out
                         </a>
                     </li>

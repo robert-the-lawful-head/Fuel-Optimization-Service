@@ -3,18 +3,17 @@ import * as moment from 'moment';
 
 @Component({
     selector: 'app-table-global-search',
+    styleUrls: ['table-global-search.component.scss'],
     templateUrl: 'table-global-search.component.html',
-    styleUrls: [ 'table-global-search.component.scss' ]
 })
 export class TableGlobalSearchComponent implements OnInit {
     @Input() placeholder: string;
     @Input() matDataSource: any = null;
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
 
-    public globalFilter: any = { isGlobal: true, filterValue: '' };
+    public globalFilter: any = { filterValue: '', isGlobal: true };
 
-    constructor() {
-    }
+    constructor() {}
 
     ngOnInit(): void {
         this.setupFilterPredicate();
@@ -37,7 +36,6 @@ export class TableGlobalSearchComponent implements OnInit {
     }
 
     public applyFilter(filterValue: any) {
-
         let existingFilters: any[];
         if (!this.matDataSource.filter) {
             existingFilters = [];
@@ -64,7 +62,10 @@ export class TableGlobalSearchComponent implements OnInit {
             !this.globalFilter.filterValue ||
             this.globalFilter.filterValue === ''
         ) {
-            existingFilters.splice(existingFilters.indexOf(this.globalFilter), 1);
+            existingFilters.splice(
+                existingFilters.indexOf(this.globalFilter),
+                1
+            );
         }
 
         this.matDataSource.filter = JSON.stringify(existingFilters);
@@ -82,13 +83,13 @@ export class TableGlobalSearchComponent implements OnInit {
             }
 
             filter.dateFilter = {
+                endDate: null,
                 startDate: null,
-                endDate: null
             };
             filter.stringFilter = '';
             filter.numberRangeFilter = {
+                end: null,
                 start: null,
-                end: null
             };
             filter.isFiltered = false;
         }
@@ -109,8 +110,11 @@ export class TableGlobalSearchComponent implements OnInit {
                         if (!data) {
                             return true;
                         } else {
-                            const serializedData = JSON.stringify(data).toLowerCase();
-                            return (serializedData.indexOf(element.filterValue) > -1);
+                            const serializedData =
+                                JSON.stringify(data).toLowerCase();
+                            return (
+                                serializedData.indexOf(element.filterValue) > -1
+                            );
                         }
                     }
                     for (const column of element.columns) {
@@ -161,7 +165,7 @@ export class TableGlobalSearchComponent implements OnInit {
                     }
                     columnValue = columnValue.toString();
 
-                    if ([ 2, 3, 4 ].indexOf(element.columnFormat) > -1) {
+                    if ([2, 3, 4].indexOf(element.columnFormat) > -1) {
                         return (
                             (!element.filter.dateFilter.startDate ||
                                 element.filter.dateFilter.startDate === '' ||
@@ -170,23 +174,29 @@ export class TableGlobalSearchComponent implements OnInit {
                                 )) &&
                             (!element.filter.dateFilter.endDate ||
                                 element.filter.dateFilter.endDate === '' ||
-                                moment(columnValue).isBefore(element.filter.dateFilter.endDate))
+                                moment(columnValue).isBefore(
+                                    element.filter.dateFilter.endDate
+                                ))
                         );
                     }
-                    if ([ 1, 5, 6 ].indexOf(element.columnFormat) > -1) {
+                    if ([1, 5, 6].indexOf(element.columnFormat) > -1) {
                         return (
                             (!element.filter.numberRangeFilter.start ||
                                 element.filter.numberRangeFilter.start <=
-                                parseFloat(columnValue)) &&
+                                    parseFloat(columnValue)) &&
                             (!element.filter.numberRangeFilter.end ||
-                                element.filter.numberRangeFilter.end >= parseFloat(columnValue))
+                                element.filter.numberRangeFilter.end >=
+                                    parseFloat(columnValue))
                         );
                     }
                     return (
                         columnValue
                             .toLowerCase()
-                            .indexOf(element.filter.stringFilter.toString().toLowerCase()) >
-                        -1
+                            .indexOf(
+                                element.filter.stringFilter
+                                    .toString()
+                                    .toLowerCase()
+                            ) > -1
                     );
                 }
             };

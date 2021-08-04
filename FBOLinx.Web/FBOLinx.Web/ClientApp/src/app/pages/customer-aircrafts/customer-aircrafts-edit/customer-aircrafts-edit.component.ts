@@ -1,15 +1,26 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Output, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Inject,
+    Input,
+    OnInit,
+    Output,
+} from '@angular/core';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
 
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
 import { DialogConfirmAircraftDeleteComponent } from '../customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component';
 
 @Component({
     selector: 'app-customer-aircrafts-edit',
+    styleUrls: ['./customer-aircrafts-edit.component.scss'],
     templateUrl: './customer-aircrafts-edit.component.html',
-    styleUrls: [ './customer-aircrafts-edit.component.scss' ],
 })
 export class CustomerAircraftsEditComponent implements OnInit {
     @Output() saveEditClicked = new EventEmitter<any>();
@@ -27,8 +38,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
         private dialogAircraftDeleteRef: MatDialog
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         if (this.data) {

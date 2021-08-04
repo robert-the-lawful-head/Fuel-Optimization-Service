@@ -160,6 +160,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "matchInvoicedTransactionsToScheduling")]
     public bool? MatchInvoicedTransactionsToScheduling { get; set; }
 
+    /// <summary>
+    /// Gets or Sets ForceReconcileDiscrepancyInFavor
+    /// </summary>
+    [DataMember(Name="forceReconcileDiscrepancyInFavor", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "forceReconcileDiscrepancyInFavor")]
+    public bool? ForceReconcileDiscrepancyInFavor { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -189,6 +196,7 @@ namespace IO.Swagger.Model {
       sb.Append("  ReconcileMatchingInvoicedTransactions: ").Append(ReconcileMatchingInvoicedTransactions).Append("\n");
       sb.Append("  KeepManualPriceVendorWhenInvoiced: ").Append(KeepManualPriceVendorWhenInvoiced).Append("\n");
       sb.Append("  MatchInvoicedTransactionsToScheduling: ").Append(MatchInvoicedTransactionsToScheduling).Append("\n");
+      sb.Append("  ForceReconcileDiscrepancyInFavor: ").Append(ForceReconcileDiscrepancyInFavor).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

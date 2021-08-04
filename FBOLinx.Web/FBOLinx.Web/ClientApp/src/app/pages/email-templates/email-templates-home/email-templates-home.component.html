@@ -2,11 +2,13 @@
 
 <div class="after-breadcrumb">
     <div *ngIf="emailTemplates">
-        <app-email-templates-grid (deleteEmailTemplateClicked)="deleteEmailTemplateClicked($event)"
-                                  (editEmailTemplateClicked)="editEmailTemplateClicked($event)"
-                                  (copyEmailTemplateClicked)="copyEmailTemplateClicked($event)"
-                                    (newEmailTemplateAdded)="newEmailTemplateAdded($event)"
-                                    [emailTemplatesData]="emailTemplates"></app-email-templates-grid>
+        <app-email-templates-grid
+            (deleteEmailTemplateClicked)="deleteEmailTemplateClicked($event)"
+            (editEmailTemplateClicked)="editEmailTemplateClicked($event)"
+            (copyEmailTemplateClicked)="copyEmailTemplateClicked($event)"
+            (newEmailTemplateAdded)="newEmailTemplateAdded($event)"
+            [emailTemplatesData]="emailTemplates"
+        ></app-email-templates-grid>
     </div>
     <div *ngIf="!emailTemplates">
         <mat-spinner></mat-spinner>

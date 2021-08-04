@@ -1,17 +1,28 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
 import { difference, isEqual, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
+
+import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from './aircraft-images';
-import { isCommercialAircraft } from '../../../../utils/aircraft';
 
 type LayerType = 'airway' | 'streetview' | 'icao';
 
 @Component({
-    selector: 'app-flight-watch-map',
-    templateUrl: './flight-watch-map.component.html',
-    styleUrls: [ './flight-watch-map.component.scss' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-flight-watch-map',
+    styleUrls: ['./flight-watch-map.component.scss'],
+    templateUrl: './flight-watch-map.component.html',
 })
 export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     @Input() center: mapboxgl.LngLatLike;
@@ -27,16 +38,18 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     keys: string[] = [];
     styleLoaded = false;
     isCommercialInvisible = true;
+    previousMarker: FlightWatch;
+    focusedMarker: FlightWatch;
 
-    constructor() {
-    }
+    constructor() {}
 
     ngOnInit(): void {
         this.map = new mapboxgl.Map({
-            accessToken: 'pk.eyJ1IjoidGJyZWVzZSIsImEiOiJja280a3M3dDEwMzAyMnFwbjMwZ2VleWdxIn0.CyG67L4gTlEHV9oJiH7FFw',
+            accessToken:
+                'pk.eyJ1IjoidGJyZWVzZSIsImEiOiJja280a3M3dDEwMzAyMnFwbjMwZ2VleWdxIn0.CyG67L4gTlEHV9oJiH7FFw',
+            center: this.center,
             container: 'flight-watch-map',
             style: 'mapbox://styles/tbreese/ckoj6y81613y818qfsngeei08',
-            center: this.center,
             zoom: this.zoom,
         });
         const eventHandler = () => this.refreshMap();
@@ -47,10 +60,36 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         this.map.on('load', () => eventHandler());
         this.map.on('styledata', () => this.mapStyleLoaded());
 
-        AIRCRAFT_IMAGES.forEach(image => {
-            this.map.loadImage(image.url, (err, imageData) => {
-                this.map.addImage(`aircraft_image_${image.id}`, imageData);
-            });
+        AIRCRAFT_IMAGES.forEach((image) => {
+            const img = new Image(image.size, image.size);
+            img.onload = () => {
+                this.map.addImage(`aircraft_image_${image.id}`, img);
+            };
+            img.src = image.url;
+
+            const reversedImg = new Image(image.size, image.size);
+            reversedImg.onload = () => {
+                this.map.addImage(
+                    `aircraft_image_${image.id}_reversed`,
+                    reversedImg
+                );
+            };
+            reversedImg.src = image.reverseUrl;
+
+            const blueImg = new Image(image.size, image.size);
+            blueImg.onload = () => {
+                this.map.addImage(`aircraft_image_${image.id}_blue`, blueImg);
+            };
+            blueImg.src = image.blueUrl;
+
+            const blueReversedImg = new Image(image.size, image.size);
+            blueReversedImg.onload = () => {
+                this.map.addImage(
+                    `aircraft_image_${image.id}_reversed_blue`,
+                    blueReversedImg
+                );
+            };
+            blueReversedImg.src = image.blueReverseUrl;
         });
     }
 
@@ -70,94 +109,154 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         if (this.map) {
             const bound = this.map.getBounds();
 
-            const newKeys = keys(this.data).filter(id => {
+            const newKeys = keys(this.data).filter((id) => {
                 const flightWatch = this.data[Number(id)];
                 const flightWatchPosition: mapboxgl.LngLatLike = {
                     lat: flightWatch.latitude,
                     lng: flightWatch.longitude,
                 };
-                return bound.contains(flightWatchPosition) &&
-                    (!this.isCommercialInvisible || !isCommercialAircraft(flightWatch.aircraftTypeCode, flightWatch.atcFlightNumber));
+                return (
+                    bound.contains(flightWatchPosition) &&
+                    (!this.isCommercialInvisible ||
+                        !isCommercialAircraft(
+                            flightWatch.aircraftTypeCode,
+                            flightWatch.atcFlightNumber
+                        ))
+                );
             });
 
             const removals = difference(this.keys, newKeys);
-            removals.forEach(key => {
+            removals.forEach((key) => {
                 const id = `aircraft_${key}`;
                 this.map.removeLayer(id);
                 this.map.removeSource(id);
                 this.map.off('click', id, (e) => this.clickHandler(e, this));
-                this.map.off('mouseenter', id, () => this.cursorPointer('pointer', this));
-                this.map.off('mouseleave', id, () => this.cursorPointer('', this));
+                this.map.off('mouseenter', id, () =>
+                    this.cursorPointer('pointer', this)
+                );
+                this.map.off('mouseleave', id, () =>
+                    this.cursorPointer('', this)
+                );
             });
 
             this.keys = [...newKeys];
 
-            newKeys.forEach(key => {
+            newKeys.forEach((key) => {
                 const row = this.data[key];
                 const id = `aircraft_${row.oid}`;
                 let atype = row.aircraftTypeCode;
-                if (!AIRCRAFT_IMAGES.find(ai => ai.id === atype)) {
+                if (!AIRCRAFT_IMAGES.find((ai) => ai.id === atype)) {
                     atype = 'default';
                 }
 
-                const previousSource = this.map.getSource(id) as mapboxgl.GeoJSONSource;
+                const previousSource = this.map.getSource(
+                    id
+                ) as mapboxgl.GeoJSONSource;
 
                 if (previousSource) {
                     previousSource.setData({
-                        type: 'Feature',
                         geometry: {
-                            type: 'Point',
                             coordinates: [row.longitude, row.latitude],
+                            type: 'Point',
                         },
                         properties: {
                             id: row.oid,
-                        }
+                        },
+                        type: 'Feature',
                     });
                 } else {
                     this.map.addSource(id, {
-                        type: 'geojson',
                         data: {
-                            type: 'Feature',
                             geometry: {
-                                type: 'Point',
                                 coordinates: [row.longitude, row.latitude],
+                                type: 'Point',
                             },
                             properties: {
                                 id: row.oid,
-                            }
-                        }
+                            },
+                            type: 'Feature',
+                        },
+                        type: 'geojson',
                     });
 
                     this.map.on('click', id, (e) => this.clickHandler(e, this));
 
-                    this.map.on('mouseenter', id, () => this.cursorPointer('pointer', this));
+                    this.map.on('mouseenter', id, () =>
+                        this.cursorPointer('pointer', this)
+                    );
 
                     // Change it back to a pointer when it leaves.
-                    this.map.on('mouseleave', id, () => this.cursorPointer('', this));
+                    this.map.on('mouseleave', id, () =>
+                        this.cursorPointer('', this)
+                    );
                 }
 
                 if (!previousSource) {
                     this.map.addLayer({
                         id,
-                        type: 'symbol',
                         layout: {
-                            'icon-image': `aircraft_image_${atype}`,
-                            'icon-size': 0.5,
+                            'icon-allow-overlap': true,
+                            'icon-image': `aircraft_image_${atype}${
+                                id === this.focusedMarker?.oid.toString()
+                                    ? '_reversed'
+                                    : ''
+                            }${row.hasFuelOrders ? '_blue' : ''}`,
                             'icon-rotate': row.trackingDegree ?? 0,
-                            'icon-allow-overlap': true
+                            'icon-size': 0.5,
                         },
                         source: id,
+                        type: 'symbol',
                     });
                 }
             });
         }
     }
 
-    clickHandler(e: mapboxgl.MapMouseEvent & {
-        features?: mapboxgl.MapboxGeoJSONFeature[];
-    } & mapboxgl.EventData, self: any) {
+    getAircraftTypeCode(row: FlightWatch) {
+        let atype = row.aircraftTypeCode;
+        if (!AIRCRAFT_IMAGES.find((ai) => ai.id === atype)) {
+            atype = 'default';
+        }
+        return atype;
+    }
+
+    clickHandler(
+        e: mapboxgl.MapMouseEvent & {
+            features?: mapboxgl.MapboxGeoJSONFeature[];
+        } & mapboxgl.EventData,
+        self: FlightWatchMapComponent
+    ) {
+        if (self.previousMarker) {
+            this.map.setLayoutProperty(
+                `aircraft_${self.previousMarker.oid}`,
+                'icon-image',
+                `aircraft_image_${self.getAircraftTypeCode(
+                    self.previousMarker
+                )}${self.previousMarker.hasFuelOrders ? '_blue' : ''}`
+            );
+        }
+
         const id = e.features[0].properties.id;
-        self.markerClicked.emit(this.data[id]);
+        if (self.focusedMarker?.oid === Number(id)) {
+            self.focusedMarker = undefined;
+        } else {
+            self.focusedMarker = self.data[id];
+        }
+        self.markerClicked.emit(self.data[id]);
+
+        if (self.focusedMarker) {
+            self.previousMarker = Object.assign({}, self.focusedMarker);
+        } else {
+            self.previousMarker = undefined;
+        }
+
+        this.map.setLayoutProperty(
+            `aircraft_${id}`,
+            'icon-image',
+            `aircraft_image_${self.getAircraftTypeCode(self.data[id])}${
+                self.focusedMarker ? '_reversed' : ''
+            }${self.focusedMarker?.hasFuelOrders ? '_blue' : ''}`
+        );
     }
 
     cursorPointer(cursor: string, self: any) {
@@ -172,9 +271,12 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         const airwayLayers = ['airways-lines', 'airways-labels'];
         const styleLayers = this.map
             .getStyle()
-            .layers
-            .filter(layer => !layer.id.startsWith('aircraft_') && !airwayLayers.includes(layer.id))
-            .map(layer => layer.id);
+            .layers.filter(
+                (layer) =>
+                    !layer.id.startsWith('aircraft_') &&
+                    !airwayLayers.includes(layer.id)
+            )
+            .map((layer) => layer.id);
         const icaoLayers = ['airports-names'];
 
         if (type === 'airway') {
@@ -195,29 +297,18 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
 
         const layers = this.getLayersFromType(type);
 
-        const visibility = this.map.getLayoutProperty(
-            layers[0],
-            'visibility'
-        );
+        const visibility = this.map.getLayoutProperty(layers[0], 'visibility');
 
         // Toggle layer visibility by changing the layout object's visibility property.
         if (visibility === 'visible' || visibility === undefined) {
-            layers.forEach(layer => {
-                this.map.setLayoutProperty(
-                    layer,
-                    'visibility',
-                    'none'
-                );
+            layers.forEach((layer) => {
+                this.map.setLayoutProperty(layer, 'visibility', 'none');
             });
             (event.target as any).className = '';
         } else {
             (event.target as any).className = 'active';
-            layers.forEach(layer => {
-                this.map.setLayoutProperty(
-                    layer,
-                    'visibility',
-                    'visible'
-                );
+            layers.forEach((layer) => {
+                this.map.setLayoutProperty(layer, 'visibility', 'visible');
             });
         }
     }

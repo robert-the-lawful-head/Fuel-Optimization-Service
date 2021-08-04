@@ -1,17 +1,28 @@
-import { Component, EventEmitter, Output, Inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+    Component,
+    EventEmitter,
+    Inject,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    Validators,
+} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import * as _ from 'lodash';
 
-import { ContactsService } from '../../../services/contacts.service';
-import { FbosService } from '../../../services/fbos.service';
-import { FbocontactsService } from '../../../services/fbocontacts.service';
 import { SharedService } from '../../../layouts/shared-service';
-import { UserService } from '../../../services/user.service';
 import { SystemcontactsNewContactModalComponent } from '../../../pages/contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
+import { ContactsService } from '../../../services/contacts.service';
+import { FbocontactsService } from '../../../services/fbocontacts.service';
+import { FbosService } from '../../../services/fbos.service';
+import { UserService } from '../../../services/user.service';
 
 export interface AccountProfileDialogData {
     oid: number;
@@ -27,10 +38,10 @@ export interface AccountProfileDialogData {
 }
 
 @Component({
+    providers: [SharedService],
     selector: 'app-account-profile',
+    styleUrls: ['./account-profile.component.scss'],
     templateUrl: './account-profile.component.html',
-    styleUrls: [ './account-profile.component.scss' ],
-    providers: [ SharedService ],
 })
 export class AccountProfileComponent {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -65,17 +76,17 @@ export class AccountProfileComponent {
         this.systemContactsForm = this.formBuilder.group({
             fuelDeskEmail: new FormControl('', [
                 Validators.required,
-                Validators.email
+                Validators.email,
             ]),
         });
         this.emailDistributionForm = this.formBuilder.group({
-            senderAddress: new FormControl('', [
-                Validators.required,
-                Validators.pattern('[a-zA-Z0-9-]*')
-            ]),
             replyTo: new FormControl('', [
                 Validators.required,
-                Validators.email
+                Validators.email,
+            ]),
+            senderAddress: new FormControl('', [
+                Validators.required,
+                Validators.pattern('[a-zA-Z0-9-]*'),
             ]),
         });
         this.loadFboInfo();
@@ -123,18 +134,22 @@ export class AccountProfileComponent {
 
     onSaveSystemContacts() {
         if (this.systemContactsForm.valid) {
-            this.fboInfo.fuelDeskEmail = this.systemContactsForm.value.fuelDeskEmail;
+            this.fboInfo.fuelDeskEmail =
+                this.systemContactsForm.value.fuelDeskEmail;
             this.fbosService.update(this.fboInfo).subscribe(() => {
-                this.fboContactsService.updateFuelvendor({
-                    fboId: this.fboInfo.oid
-                }).subscribe(() => {});
+                this.fboContactsService
+                    .updateFuelvendor({
+                        fboId: this.fboInfo.oid,
+                    })
+                    .subscribe(() => {});
             });
         }
     }
 
     onSaveEmailDistribution() {
         if (this.emailDistributionForm.valid) {
-            this.fboInfo.SenderAddress = this.emailDistributionForm.value.senderAddress;
+            this.fboInfo.SenderAddress =
+                this.emailDistributionForm.value.senderAddress;
             this.fboInfo.ReplyTo = this.emailDistributionForm.value.replyTo;
             this.fbosService.update(this.fboInfo).subscribe(() => {
                 this.dialogRef.close();
@@ -145,8 +160,8 @@ export class AccountProfileComponent {
     onFileChange(event) {
         this.theFile = null;
         if (event.target.files && event.target.files.length > 0) {
-                // Set theFile property
-                this.theFile = event.target.files[0];
+            // Set theFile property
+            this.theFile = event.target.files[0];
         }
     }
 
@@ -158,7 +173,8 @@ export class AccountProfileComponent {
     }
 
     deleteFile(): void {
-        this.fbosService.deleteLogo(this.fboInfo.oid)
+        this.fbosService
+            .deleteLogo(this.fboInfo.oid)
             .subscribe((logoData: any) => {
                 this.logoUrl = '';
             });
@@ -174,30 +190,41 @@ export class AccountProfileComponent {
                 height: '300px',
             }
         );
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
                 return;
             }
 
             const payload = {
                 ...result,
-                fboId: this.sharedService.currentUser.fboId
+                fboId: this.sharedService.currentUser.fboId,
             };
-            this.fboContactsService.addnewcontact(payload).subscribe(newFbocontact => {
-                this.contactsData = null;
-                this.fboContactsService.getForFbo(this.fboInfo).subscribe((data: any) => { this.contactsData = data; });
-                this.fboContactsService.updateFuelvendor(payload).subscribe();
-            });
+            this.fboContactsService
+                .addnewcontact(payload)
+                .subscribe((newFbocontact) => {
+                    this.contactsData = null;
+                    this.fboContactsService
+                        .getForFbo(this.fboInfo)
+                        .subscribe((data: any) => {
+                            this.contactsData = data;
+                        });
+                    this.fboContactsService
+                        .updateFuelvendor(payload)
+                        .subscribe();
+                });
         });
     }
 
     // Private Methods
     private readAndUploadFile(theFile: any) {
-        const file = { // Set File Information
-            FileName: theFile.name,
+        const file = {
             ContentType: theFile.type,
+
+            FboId: this.fboInfo.oid,
+
             FileData: null,
-            FboId: this.fboInfo.oid
+            // Set File Information
+            FileName: theFile.name,
         };
 
         // Use FileReader() object to get file to upload
@@ -229,22 +256,23 @@ export class AccountProfileComponent {
         }
         this.fbosService
             .get({
-                oid: this.sharedService.currentUser.fboId
+                oid: this.sharedService.currentUser.fboId,
             })
             .subscribe((fboData: any) => {
                 this.systemContactsForm.setValue({
                     fuelDeskEmail: fboData.fuelDeskEmail,
                 });
                 this.emailDistributionForm.setValue({
-                    senderAddress: fboData.senderAddress,
                     replyTo: fboData.replyTo,
+                    senderAddress: fboData.senderAddress,
                 });
                 this.fboInfo = fboData;
                 this.fboContactsService
                     .getForFbo(this.fboInfo)
                     .subscribe((data: any) => {
                         this.contactsData = data;
-                        this.fbosService.getLogo(this.fboInfo.oid)
+                        this.fbosService
+                            .getLogo(this.fboInfo.oid)
                             .subscribe((logoData: any) => {
                                 this.logoUrl = logoData.message;
                             });
@@ -254,12 +282,12 @@ export class AccountProfileComponent {
 
     private loadAvailableRoles() {
         this.usersService.getRoles().subscribe((data: any) => {
-            let supportedRoleValues = [ 4 ];
+            let supportedRoleValues = [4];
             this.availableroles = [];
             if (this.data.fboId > 0) {
-                supportedRoleValues = [ 1, 4, 5 ];
+                supportedRoleValues = [1, 4, 5];
             } else if (this.data.groupId > 0) {
-                supportedRoleValues = [ 2 ];
+                supportedRoleValues = [2];
             }
             for (const role of data) {
                 if (supportedRoleValues.indexOf(role.value) > -1) {
@@ -269,8 +297,9 @@ export class AccountProfileComponent {
 
             if (!this.data.role || this.data.role === 0) {
                 if (this.availableroles.length > 1) {
-                    this.data.role = this.availableroles[
-                    this.availableroles.length - 1
+                    this.data.role =
+                        this.availableroles[
+                            this.availableroles.length - 1
                         ].value;
                 } else {
                     this.data.role = this.availableroles[0].value;

@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'app-contacts-edit',
+    styleUrls: ['./contacts-edit.component.scss'],
     templateUrl: './contacts-edit.component.html',
-    styleUrls: [ './contacts-edit.component.scss' ],
 })
 export class ContactsEditComponent {
     @Output() saveEditClicked = new EventEmitter<any>();
@@ -31,8 +31,7 @@ export class ContactsEditComponent {
         /\d/,
     ];
 
-    constructor() {
-    }
+    constructor() {}
 
     public saveEdit() {
         this.saveEditClicked.emit();

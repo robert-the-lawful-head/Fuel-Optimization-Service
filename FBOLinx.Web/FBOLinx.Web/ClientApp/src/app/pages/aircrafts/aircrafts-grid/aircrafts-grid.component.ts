@@ -1,20 +1,27 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSelectChange } from '@angular/material/select';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
-import { SharedService } from '../../../layouts/shared-service';
 import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
 
 @Component({
     selector: 'app-aircrafts-grid',
+    styleUrls: ['./aircrafts-grid.component.scss'],
     templateUrl: './aircrafts-grid.component.html',
-    styleUrls: [ './aircrafts-grid.component.scss' ],
 })
 export class AircraftsGridComponent implements OnInit {
     // Input/Output Bindings
@@ -128,11 +135,13 @@ export class AircraftsGridComponent implements OnInit {
             const dialogRef = this.editCustomerAircraftDialog.open(
                 CustomerAircraftsEditComponent,
                 {
-                    width: '450px',
                     data: {
+                        disableDelete:
+                            customerAircraft.isFuelerlinxNetwork &&
+                            customerAircraft.addedFrom,
                         oid: customerAircraft.oid,
-                        disableDelete: customerAircraft.isFuelerlinxNetwork && customerAircraft.addedFrom,
                     },
+                    width: '450px',
                 }
             );
 
@@ -151,11 +160,13 @@ export class AircraftsGridComponent implements OnInit {
                                 )
                                 .subscribe((data: any) => {
                                     this.aircraftsData = data;
-                                    this.aircraftsDataSource = new MatTableDataSource(
-                                        this.aircraftsData
-                                    );
+                                    this.aircraftsDataSource =
+                                        new MatTableDataSource(
+                                            this.aircraftsData
+                                        );
                                     this.aircraftsDataSource.sort = this.sort;
-                                    this.aircraftsDataSource.paginator = this.paginator;
+                                    this.aircraftsDataSource.paginator =
+                                        this.paginator;
                                 });
                         });
                 }
@@ -208,28 +219,28 @@ export class AircraftsGridComponent implements OnInit {
 
     public onMarginChange(event: MatSelectChange, customerAircraft: any) {
         const {
-            oid,
             aircraftId,
-            tailNumber,
-            groupId,
             customerId,
+            groupId,
             make,
             model,
-            size,
+            oid,
             pricingTemplateId,
+            size,
+            tailNumber,
         } = customerAircraft;
         this.customerAircraftsService
             .updateTemplate(this.sharedService.currentUser.fboId, {
-                oid,
                 aircraftId,
-                tailNumber,
-                groupId,
                 customerId,
+                groupId,
                 make,
                 model,
-                size,
-                pricingTemplateId: event.value,
+                oid,
                 oldPricingTemplateId: pricingTemplateId,
+                pricingTemplateId: event.value,
+                size,
+                tailNumber,
             })
             .subscribe((data: any) => {
                 customerAircraft.pricingTemplateId = event.value;

@@ -11,7 +11,6 @@ using FBOLinx.Web.Auth;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Services.Interfaces;
-using IO.Swagger.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

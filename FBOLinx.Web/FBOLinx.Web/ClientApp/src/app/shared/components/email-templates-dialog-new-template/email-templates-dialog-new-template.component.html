@@ -3,36 +3,44 @@
     <div>
         <div *ngIf="!this.data.hideName">
             <mat-form-field>
-                <input aria-label="Name"
-                       matInput
-                       [(ngModel)]="data.name"
-                       placeholder="Name"
-                >
+                <input
+                    aria-label="Name"
+                    matInput
+                    [(ngModel)]="data.name"
+                    placeholder="Name"
+                />
             </mat-form-field>
         </div>
         <div>
-            <mat-form-field style="max-width: 600px;">
-                <input aria-label="Subject"
-                       [(ngModel)]="data.subject"
-                       matInput
-                       placeholder="Subject" />
+            <mat-form-field style="max-width: 600px">
+                <input
+                    aria-label="Subject"
+                    [(ngModel)]="data.subject"
+                    matInput
+                    placeholder="Subject"
+                />
             </mat-form-field>
         </div>
 
-        <ejs-richtexteditor #typeEmail
-                            id="rteEmail"
-                            [(ngModel)]="data.emailContentHtml"
-                            placeholder="Enter email body here..."></ejs-richtexteditor>
+        <ejs-richtexteditor
+            #typeEmail
+            id="rteEmail"
+            [(ngModel)]="data.emailContentHtml"
+            placeholder="Enter email body here..."
+        ></ejs-richtexteditor>
     </div>
-    
 </div>
 <div mat-dialog-actions>
-    <button [disabled]="isSubmitDisabled"
-            [mat-dialog-close]="data"
-            class="mr-1"
-            color="accent"
-            mat-flat-button>
-        {{submitButtonTitle}}
+    <button
+        [disabled]="isSubmitDisabled"
+        [mat-dialog-close]="data"
+        class="mr-1"
+        color="accent"
+        mat-flat-button
+    >
+        {{ submitButtonTitle }}
     </button>
-    <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>Cancel</button>
+    <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>
+        Cancel
+    </button>
 </div>

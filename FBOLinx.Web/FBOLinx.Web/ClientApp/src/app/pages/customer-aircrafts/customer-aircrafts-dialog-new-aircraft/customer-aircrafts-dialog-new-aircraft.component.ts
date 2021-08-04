@@ -18,8 +18,8 @@ export interface NewCustomerAircraftDialogData {
 
 @Component({
     selector: 'app-customer-aircrafts-dialog-new-aircraft',
+    styleUrls: ['./customer-aircrafts-dialog-new-aircraft.component.scss'],
     templateUrl: './customer-aircrafts-dialog-new-aircraft.component.html',
-    styleUrls: [ './customer-aircrafts-dialog-new-aircraft.component.scss' ],
 })
 export class CustomerAircraftsDialogNewAircraftComponent implements OnInit {
     // Public Members
@@ -30,8 +30,7 @@ export class CustomerAircraftsDialogNewAircraftComponent implements OnInit {
         public dialogRef: MatDialogRef<CustomerAircraftsDialogNewAircraftComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewCustomerAircraftDialogData,
         private aircraftsService: AircraftsService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.aircraftsService

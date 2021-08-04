@@ -1,5 +1,4 @@
 <div>
-
     <!--START DISPLAY MODES 0 and 1 - Standard calculations with name on left and cost on right-->
     <div *ngIf="displayMode == 0 || displayMode == 1" class="container-fluid">
         <div class="row font-weight-bold mb-3 pb-1">
@@ -7,7 +6,9 @@
                 <div *ngIf="displayMode == 1" class="d-inline-block">
                     <div class="ml-n2">Omit</div>
                 </div>
-                <div *ngIf="displayMode == 1" class="d-inline-block ml-4 pl-1">Name</div>
+                <div *ngIf="displayMode == 1" class="d-inline-block ml-4 pl-1">
+                    Name
+                </div>
                 <div *ngIf="displayMode == 0" class="d-inline-block">Name</div>
             </div>
             <div class="col text-right">Amount</div>
@@ -15,129 +16,182 @@
 
         <!--Top row for Cost/Retail Price - Display mode 0 and 1-->
         <div class="row mb-3">
-            <div *ngIf="displayMode == 1" class="col-1">
-
-            </div>
+            <div *ngIf="displayMode == 1" class="col-1"></div>
             <div class="col">
-                {{marginType == 0 ? 'Cost' : 'Retail'}}
+                {{ marginType == 0 ? "Cost" : "Retail" }}
             </div>
-            <div class="col">
-            </div>
-            <div class="col text-right">
-                ${{fboPrice | number: "1.4-4"}}
-            </div>
-
+            <div class="col"></div>
+            <div class="col text-right">${{ fboPrice | number: "1.4-4" }}</div>
         </div>
 
         <!--Above the line taxes - Display mode 0 and 1-->
-        <div *ngFor="let aboveLineTax of aboveTheLineTaxes" class="row font-italic">
+        <div
+            *ngFor="let aboveLineTax of aboveTheLineTaxes"
+            class="row font-italic"
+        >
             <div *ngIf="displayMode == 1" class="col-1">
-                <mat-checkbox (change)="omitChanged(aboveLineTax)" [(ngModel)]="aboveLineTax.isOmitted"
-                              type="checkbox"></mat-checkbox>
+                <mat-checkbox
+                    (change)="omitChanged(aboveLineTax)"
+                    [(ngModel)]="aboveLineTax.isOmitted"
+                    type="checkbox"
+                ></mat-checkbox>
             </div>
             <div
-                [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}"
-                class="col">
-                {{aboveLineTax.name}}
+                [ngClass]="{
+                    'strike-through':
+                        aboveLineTax.isOmitted ||
+                        validDepartureTypes.indexOf(
+                            aboveLineTax.departureType
+                        ) == -1 ||
+                        validFlightTypes.indexOf(
+                            aboveLineTax.flightTypeClassification
+                        ) == -1
+                }"
+                class="col"
+            >
+                {{ aboveLineTax.name }}
             </div>
             <div
-                [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}"
-                class="col text-right">
-                <span *ngIf="aboveLineTax.calculationType == 1">{{ aboveLineTax.value | number }}%</span>
+                [ngClass]="{
+                    'strike-through':
+                        aboveLineTax.isOmitted ||
+                        validDepartureTypes.indexOf(
+                            aboveLineTax.departureType
+                        ) == -1 ||
+                        validFlightTypes.indexOf(
+                            aboveLineTax.flightTypeClassification
+                        ) == -1
+                }"
+                class="col text-right"
+            >
+                <span *ngIf="aboveLineTax.calculationType == 1"
+                    >{{ aboveLineTax.value | number }}%</span
+                >
             </div>
             <div
-                [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}"
-                class="col text-right">
-                <span *ngIf="marginType == 0">${{ aboveLineTax.amount | number: "1.4-4" }}</span>
+                [ngClass]="{
+                    'strike-through':
+                        aboveLineTax.isOmitted ||
+                        validDepartureTypes.indexOf(
+                            aboveLineTax.departureType
+                        ) == -1 ||
+                        validFlightTypes.indexOf(
+                            aboveLineTax.flightTypeClassification
+                        ) == -1
+                }"
+                class="col text-right"
+            >
+                <span *ngIf="marginType == 0"
+                    >${{ aboveLineTax.amount | number: "1.4-4" }}</span
+                >
                 <span *ngIf="marginType == 1">Applied</span>
             </div>
-
         </div>
 
         <!--Sub-total-->
         <div *ngIf="customerMargin != null" class="row mt-3 mb-3">
-            <div *ngIf="displayMode == 1" class="col-1">
-
-            </div>
-            <div class="col font-weight-bold">
-                Sub-total
-            </div>
+            <div *ngIf="displayMode == 1" class="col-1"></div>
+            <div class="col font-weight-bold">Sub-total</div>
             <div class="col"></div>
             <div class="col text-right font-weight-bold">
                 ${{ preMarginSubTotal | number: "1.4-4" }}
             </div>
-
         </div>
 
         <!--ITP Margin-->
         <div *ngIf="customerMargin != null" class="row">
-            <div *ngIf="displayMode == 1" class="col-1">
-
-            </div>
-            <div class="col">
-                ITP-Margin
-            </div>
+            <div *ngIf="displayMode == 1" class="col-1"></div>
+            <div class="col">ITP-Margin</div>
             <div class="col"></div>
             <div class="col text-right">
                 ${{ customerMargin | number: "1.4-4" }}
             </div>
-
         </div>
 
         <!--Sub-total with Margin-->
         <div *ngIf="customerMargin != null" class="row mb-3 mt-3">
-            <div *ngIf="displayMode == 1" class="col-1">
-
-            </div>
-            <div class="col font-weight-bold">
-                Sub-total w/ Margin
-            </div>
+            <div *ngIf="displayMode == 1" class="col-1"></div>
+            <div class="col font-weight-bold">Sub-total w/ Margin</div>
             <div class="col"></div>
             <div class="col text-right font-weight-bold">
                 ${{ subTotalWithMargin | number: "1.4-4" }}
             </div>
-
         </div>
 
-        <hr *ngIf="showLineSeparator" style="margin-bottom: 10px; margin-top: 10px;"/>
+        <hr
+            *ngIf="showLineSeparator"
+            style="margin-bottom: 10px; margin-top: 10px"
+        />
 
         <!--Below the line taxes - Display mode 0 and 1-->
-        <div *ngFor="let belowLineTax of belowTheLineTaxes" class="row font-italic">
-
+        <div
+            *ngFor="let belowLineTax of belowTheLineTaxes"
+            class="row font-italic"
+        >
             <div *ngIf="displayMode == 1" class="col-1">
-                <mat-checkbox (change)="omitChanged(belowLineTax)" [(ngModel)]="belowLineTax.isOmitted"
-                              type="checkbox"></mat-checkbox>
+                <mat-checkbox
+                    (change)="omitChanged(belowLineTax)"
+                    [(ngModel)]="belowLineTax.isOmitted"
+                    type="checkbox"
+                ></mat-checkbox>
             </div>
             <div
-                [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}"
-                class="col">
-                {{belowLineTax.name}}
+                [ngClass]="{
+                    'strike-through':
+                        belowLineTax.isOmitted ||
+                        validDepartureTypes.indexOf(
+                            belowLineTax.departureType
+                        ) == -1 ||
+                        validFlightTypes.indexOf(
+                            belowLineTax.flightTypeClassification
+                        ) == -1
+                }"
+                class="col"
+            >
+                {{ belowLineTax.name }}
             </div>
             <div
-                [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}"
-                class="col text-right">
-                <span *ngIf="belowLineTax.calculationType == 1">{{ belowLineTax.value | number }}%</span>
+                [ngClass]="{
+                    'strike-through':
+                        belowLineTax.isOmitted ||
+                        validDepartureTypes.indexOf(
+                            belowLineTax.departureType
+                        ) == -1 ||
+                        validFlightTypes.indexOf(
+                            belowLineTax.flightTypeClassification
+                        ) == -1
+                }"
+                class="col text-right"
+            >
+                <span *ngIf="belowLineTax.calculationType == 1"
+                    >{{ belowLineTax.value | number }}%</span
+                >
             </div>
             <div
-                [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}"
-                class="col text-right">
-                <span *ngIf="belowLineTax.amount">${{ belowLineTax.amount | number: "1.4-4" }}</span>
+                [ngClass]="{
+                    'strike-through':
+                        belowLineTax.isOmitted ||
+                        validDepartureTypes.indexOf(
+                            belowLineTax.departureType
+                        ) == -1 ||
+                        validFlightTypes.indexOf(
+                            belowLineTax.flightTypeClassification
+                        ) == -1
+                }"
+                class="col text-right"
+            >
+                <span *ngIf="belowLineTax.amount"
+                    >${{ belowLineTax.amount | number: "1.4-4" }}</span
+                >
             </div>
-
         </div>
 
         <!--Total-->
         <div *ngIf="customerMargin != null" class="row font-weight-bold mb-3">
-            <div *ngIf="displayMode == 1" class="col-1">
-
-            </div>
-            <div class="col">
-                Total
-            </div>
+            <div *ngIf="displayMode == 1" class="col-1"></div>
+            <div class="col">Total</div>
             <div class="col"></div>
-            <div class="col text-right">
-                ${{ total | number: "1.4-4" }}
-            </div>
+            <div class="col text-right">${{ total | number: "1.4-4" }}</div>
         </div>
     </div>
 
@@ -147,59 +201,120 @@
         <div *ngIf="displayMode == 2" class="row font-weight-bold">
             <div class="col label-tax-fees">
                 <div class="d-inline-block">
-                    ${{fboPrice | number: "1.4-4"}}
+                    ${{ fboPrice | number: "1.4-4" }}
                 </div>
                 <div class="d-inline-block text-nowrap no-padding-label">
-                    {{marginType == 0 ? 'Cost' : 'Posted Retail'}}
+                    {{ marginType == 0 ? "Cost" : "Posted Retail" }}
                 </div>
             </div>
-
-
         </div>
 
         <!--Above the line taxes - Display mode 2-->
         <div *ngFor="let aboveLineTax of aboveTheLineTaxes" class="row">
             <div class="col">
                 <div
-                    [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}"
-                    class="d-inline-block">
-                    <div *ngIf="marginType == 1" class="d-inline-block text-nowrap font-italic">Applied</div>
-                    <div *ngIf="marginType == 0" class="d-inline-block text-nowrap">
-                        <div *ngIf="aboveLineTax.calculationType == 1">{{ aboveLineTax.value | number }}%</div>
-                        <div *ngIf="aboveLineTax.calculationType == 0 && aboveLineTax.amount">
-                            ${{ aboveLineTax.amount | number: "1.4-4" }}</div>
+                    [ngClass]="{
+                        'strike-through':
+                            aboveLineTax.isOmitted ||
+                            validDepartureTypes.indexOf(
+                                aboveLineTax.departureType
+                            ) == -1 ||
+                            validFlightTypes.indexOf(
+                                aboveLineTax.flightTypeClassification
+                            ) == -1
+                    }"
+                    class="d-inline-block"
+                >
+                    <div
+                        *ngIf="marginType == 1"
+                        class="d-inline-block text-nowrap font-italic"
+                    >
+                        Applied
+                    </div>
+                    <div
+                        *ngIf="marginType == 0"
+                        class="d-inline-block text-nowrap"
+                    >
+                        <div *ngIf="aboveLineTax.calculationType == 1">
+                            {{ aboveLineTax.value | number }}%
+                        </div>
+                        <div
+                            *ngIf="
+                                aboveLineTax.calculationType == 0 &&
+                                aboveLineTax.amount
+                            "
+                        >
+                            ${{ aboveLineTax.amount | number: "1.4-4" }}
+                        </div>
                     </div>
                 </div>
                 <div
-                    [ngClass]="{'strike-through': (aboveLineTax.isOmitted || validDepartureTypes.indexOf(aboveLineTax.departureType) == -1 || validFlightTypes.indexOf(aboveLineTax.flightTypeClassification) == -1)}"
-                    class="d-inline-block text-nowrap">
-                    {{aboveLineTax.name}}
+                    [ngClass]="{
+                        'strike-through':
+                            aboveLineTax.isOmitted ||
+                            validDepartureTypes.indexOf(
+                                aboveLineTax.departureType
+                            ) == -1 ||
+                            validFlightTypes.indexOf(
+                                aboveLineTax.flightTypeClassification
+                            ) == -1
+                    }"
+                    class="d-inline-block text-nowrap"
+                >
+                    {{ aboveLineTax.name }}
                 </div>
             </div>
-
-
         </div>
 
-        <hr *ngIf="showLineSeparator" style="margin-bottom: 10px; margin-top: 10px;"/>
+        <hr
+            *ngIf="showLineSeparator"
+            style="margin-bottom: 10px; margin-top: 10px"
+        />
 
         <!--Below the line taxes - Display mode 2-->
         <div *ngFor="let belowLineTax of belowTheLineTaxes" class="row">
-            <div class="col label-tax-fees" style="padding-right: 0px;">
+            <div class="col label-tax-fees" style="padding-right: 0px">
                 <div
-                    [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}"
-                    class="d-inline-block">
-                    <div *ngIf="belowLineTax.calculationType == 1">{{ belowLineTax.value | number }}%</div>
-                    <div *ngIf="belowLineTax.calculationType == 0 && belowLineTax.amount">
-                        ${{ belowLineTax.amount | number: "1.4-4" }}</div>
+                    [ngClass]="{
+                        'strike-through':
+                            belowLineTax.isOmitted ||
+                            validDepartureTypes.indexOf(
+                                belowLineTax.departureType
+                            ) == -1 ||
+                            validFlightTypes.indexOf(
+                                belowLineTax.flightTypeClassification
+                            ) == -1
+                    }"
+                    class="d-inline-block"
+                >
+                    <div *ngIf="belowLineTax.calculationType == 1">
+                        {{ belowLineTax.value | number }}%
+                    </div>
+                    <div
+                        *ngIf="
+                            belowLineTax.calculationType == 0 &&
+                            belowLineTax.amount
+                        "
+                    >
+                        ${{ belowLineTax.amount | number: "1.4-4" }}
+                    </div>
                 </div>
                 <div
-                    [ngClass]="{'strike-through': (belowLineTax.isOmitted || validDepartureTypes.indexOf(belowLineTax.departureType) == -1 || validFlightTypes.indexOf(belowLineTax.flightTypeClassification) == -1)}"
-                    class="d-inline-block text-nowrap no-padding-label">
-                    {{belowLineTax.name}}
+                    [ngClass]="{
+                        'strike-through':
+                            belowLineTax.isOmitted ||
+                            validDepartureTypes.indexOf(
+                                belowLineTax.departureType
+                            ) == -1 ||
+                            validFlightTypes.indexOf(
+                                belowLineTax.flightTypeClassification
+                            ) == -1
+                    }"
+                    class="d-inline-block text-nowrap no-padding-label"
+                >
+                    {{ belowLineTax.name }}
                 </div>
             </div>
-
         </div>
     </div>
-
 </div>

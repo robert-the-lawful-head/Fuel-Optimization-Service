@@ -1,21 +1,27 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import 'rxjs/add/operator/debounceTime';
 
+import {
+    AfterViewInit,
+    Component,
+    Input,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
+import { SharedService } from '../../../layouts/shared-service';
+// Enums
+import { EnumOptions } from '../../../models/enum-options';
+// Model
+import * as SharedEvents from '../../../models/sharedEvents';
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
-
-// Enums
-import { EnumOptions } from '../../../models/enum-options';
-
-// Model
-import * as SharedEvents from '../../../models/sharedEvents';
 
 interface TailLookupResponse {
     template?: string;
@@ -39,11 +45,12 @@ enum PriceCheckerLookupTypes {
 
 @Component({
     selector: 'price-checker',
+    styleUrls: ['./price-checker.component.scss'],
     templateUrl: './price-checker.component.html',
-    styleUrls: [ './price-checker.component.scss' ]
 })
 export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
-    @ViewChild('priceBreakdownPreview') private priceBreakdownPreview: PriceBreakdownComponent;
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
     @Input() hideFeeAndTaxGeneralBreakdown = false;
     @Input() hidePriceTierBreakdown = false;
     @Input() hideTooltips = false;
@@ -60,7 +67,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     public aircraftForCustomer: Array<any>;
     public pricingTemplateId = 0;
     public pricingTemplates: Array<any>;
-    public priceCheckerLookupType: PriceCheckerLookupTypes = PriceCheckerLookupTypes.ByCustomer;
+    public priceCheckerLookupType: PriceCheckerLookupTypes =
+        PriceCheckerLookupTypes.ByCustomer;
     public priceLookupInfo: TailLookupResponse;
     public tailLookupError: boolean;
     public strictApplicableTaxFlightOptions: Array<EnumOptions.EnumOption> =
@@ -73,13 +81,14 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     public feesAndTaxes: Array<any>;
 
-    constructor(private sharedService: SharedService,
-                private aircraftsService: AircraftsService,
-                private NgxUiLoader: NgxUiLoaderService,
-                private pricingTemplateService: PricingtemplatesService,
-                private customerInfoByGroupService: CustomerinfobygroupService,
-                private customerAircraftsService: CustomeraircraftsService,
-                private fboFeesAndTaxesService: FbofeesandtaxesService,
+    constructor(
+        private sharedService: SharedService,
+        private aircraftsService: AircraftsService,
+        private NgxUiLoader: NgxUiLoaderService,
+        private pricingTemplateService: PricingtemplatesService,
+        private customerInfoByGroupService: CustomerinfobygroupService,
+        private customerAircraftsService: CustomeraircraftsService,
+        private fboFeesAndTaxesService: FbofeesandtaxesService
     ) {}
 
     ngOnInit(): void {
@@ -87,14 +96,13 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.pricingTemplateId = 0;
                     this.resetAll();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy(): void {
@@ -120,20 +128,29 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.customerForCustomerLookup = changedValue;
         this.NgxUiLoader.startLoader(this.tailLoader);
         this.tailNumberForCustomerLookup = '';
-        this.customerAircraftsService.getCustomerAircraftsByGroupAndCustomerId(this.sharedService.currentUser.groupId,
-            this.sharedService.currentUser.fboId,
-            this.customerForCustomerLookup.customerId).subscribe((response:
-                                                                      any) => {
-            this.NgxUiLoader.stopLoader(this.tailLoader);
-            if (!response) {
-                alert('There was an issue loading aircraft for the specified company.');
-            }
-            this.aircraftForCustomer = response;
-            if (this.aircraftForCustomer.length > 0) {
-                this.tailNumberForCustomerLookup = this.aircraftForCustomer[0].tailNumber;
+
+        this.customerAircraftsService
+            .getCustomerAircraftsByGroupAndCustomerId(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId,
+                this.customerForCustomerLookup.customerId
+            )
+            .subscribe((response: any) => {
+                this.NgxUiLoader.stopLoader(this.tailLoader);
+                if (!response) {
+                    alert(
+                        'There was an issue loading aircraft for the specified company.'
+                    );
+                }
+                this.aircraftForCustomer = response;
+                if (this.aircraftForCustomer.length > 0) {
+                    this.tailNumberForCustomerLookup =
+                        this.aircraftForCustomer[0].tailNumber;
+                } else {
+                    this.tailNumberForCustomerLookup = '';
+                }
                 this.lookupPricing();
-            }
-        });
+            });
     }
 
     public tailNumberLookupChanged(changedValue: any) {
@@ -141,8 +158,11 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.customerForTailLookup = null;
         this.tailNumberForTailLookup = changedValue;
         this.aircraftsService
-            .getCustomersByTail(this.sharedService.currentUser.groupId, this.tailNumberForTailLookup).subscribe(
-            (response: any) => {
+            .getCustomersByTail(
+                this.sharedService.currentUser.groupId,
+                this.tailNumberForTailLookup
+            )
+            .subscribe((response: any) => {
                 this.NgxUiLoader.stopLoader(this.tailLoader);
                 if (!response) {
                     this.customersForTail = [];
@@ -162,15 +182,18 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         const tailNumber = this.getTailNumber();
         const customerInfoByGroupId = this.getCustomerInfoByGroupId();
 
-        if (pricingTemplateId > 0 || (tailNumber !== '' && customerInfoByGroupId > 0)) {
+        if (pricingTemplateId > 0 || customerInfoByGroupId > 0) {
             this.sampleCalculation = {
+                customerInfoByGroupId,
                 pricingTemplateId,
                 tailNumber,
-                customerInfoByGroupId
             };
         }
 
-        if (this.priceCheckerLookupType === PriceCheckerLookupTypes.ByPricingTemplate) {
+        if (
+            this.priceCheckerLookupType ===
+            PriceCheckerLookupTypes.ByPricingTemplate
+        ) {
             this.loadPricingTemplateFeesAndTaxes();
         } else {
             this.loadCustomerFeesAndTaxes();
@@ -184,7 +207,9 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.lookupPricing();
     }
 
-    public priceBreakdownCalculationsCompleted(calculationResults: any[]): void {
+    public priceBreakdownCalculationsCompleted(
+        calculationResults: any[]
+    ): void {
         if (!calculationResults || !calculationResults.length) {
             this.priceLookupInfo = null;
             return;
@@ -215,34 +240,43 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     // Private Methods
     private loadPricingTemplates(): void {
         this.NgxUiLoader.startLoader(this.tailLoader);
-        this.pricingTemplateService.getByFbo(
-            this.sharedService.currentUser.fboId,
-            this.sharedService.currentUser.groupId
-        ).subscribe((response: any) => {
-            this.NgxUiLoader.stopLoader(this.tailLoader);
-            this.pricingTemplates = response;
-            if (!this.pricingTemplateId || this.pricingTemplateId === 0) {
-                for (const pricingTemplate of this.pricingTemplates) {
-                    if (pricingTemplate.default) {
-                        this.pricingTemplateId = pricingTemplate.oid;
+        this.pricingTemplateService
+            .getByFbo(
+                this.sharedService.currentUser.fboId,
+                this.sharedService.currentUser.groupId
+            )
+            .subscribe((response: any) => {
+                this.NgxUiLoader.stopLoader(this.tailLoader);
+                this.pricingTemplates = response;
+                if (!this.pricingTemplateId || this.pricingTemplateId === 0) {
+                    for (const pricingTemplate of this.pricingTemplates) {
+                        if (pricingTemplate.default) {
+                            this.pricingTemplateId = pricingTemplate.oid;
+                        }
+                    }
+                    if (
+                        this.pricingTemplateId === 0 &&
+                        this.pricingTemplates.length > 0
+                    ) {
+                        this.pricingTemplateId = this.pricingTemplates[0].oid;
                     }
                 }
-                if (this.pricingTemplateId === 0 && this.pricingTemplates.length > 0) {
-                    this.pricingTemplateId = this.pricingTemplates[0].oid;
-                }
-            }
 
-            this.lookupPricing();
-        });
+                this.lookupPricing();
+            });
     }
 
     private loadAllCustomers(): void {
         this.customerInfoByGroupService
-            .getByGroupAndFbo(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId).subscribe(
-            (response:
-                 any) => {
+            .getByGroupAndFbo(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
+            .subscribe((response: any) => {
                 if (!response) {
-                    alert('There was an error pulling customer information for price checking.');
+                    alert(
+                        'There was an error pulling customer information for price checking.'
+                    );
                 }
                 this.allCustomers = response;
             });
@@ -250,16 +284,23 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     private loadAllTailNumbers(): void {
         this.customerAircraftsService
-            .getAircraftsListByGroupAndFbo(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
+            .getAircraftsListByGroupAndFbo(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
             .subscribe((data: Array<any>) => {
-                this.allTailNumbers = data.map(t => t.tailNumber);
+                this.allTailNumbers = data.map((t) => t.tailNumber);
             });
     }
 
     private getTailNumber(): string {
-        if (this.priceCheckerLookupType === PriceCheckerLookupTypes.ByCustomer) {
+        if (
+            this.priceCheckerLookupType === PriceCheckerLookupTypes.ByCustomer
+        ) {
             return this.tailNumberForCustomerLookup;
-        } else if (this.priceCheckerLookupType === PriceCheckerLookupTypes.ByTail) {
+        } else if (
+            this.priceCheckerLookupType === PriceCheckerLookupTypes.ByTail
+        ) {
             return this.tailNumberForTailLookup;
         } else {
             return '';
@@ -267,19 +308,31 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     private getCustomerInfoByGroupId(): number {
-        if (this.priceCheckerLookupType === PriceCheckerLookupTypes.ByCustomer) {
-            return (!this.customerForCustomerLookup ? 0 : this.customerForCustomerLookup.customerInfoByGroupId);
-        } else if (this.priceCheckerLookupType === PriceCheckerLookupTypes.ByTail) {
-            return (!this.customerForTailLookup ? 0 : this.customerForTailLookup.oid);
+        if (
+            this.priceCheckerLookupType === PriceCheckerLookupTypes.ByCustomer
+        ) {
+            return !this.customerForCustomerLookup
+                ? 0
+                : this.customerForCustomerLookup.customerInfoByGroupId;
+        } else if (
+            this.priceCheckerLookupType === PriceCheckerLookupTypes.ByTail
+        ) {
+            return !this.customerForTailLookup
+                ? 0
+                : this.customerForTailLookup.oid;
         } else {
             return 0;
         }
     }
 
     private getPricingTemplateId(): number {
-        if (this.priceCheckerLookupType === PriceCheckerLookupTypes.ByCustomer) {
+        if (
+            this.priceCheckerLookupType === PriceCheckerLookupTypes.ByCustomer
+        ) {
             return 0;
-        } else if (this.priceCheckerLookupType === PriceCheckerLookupTypes.ByTail) {
+        } else if (
+            this.priceCheckerLookupType === PriceCheckerLookupTypes.ByTail
+        ) {
             return 0;
         } else {
             return this.pricingTemplateId;
@@ -288,7 +341,10 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     private loadPricingTemplateFeesAndTaxes(): void {
         this.fboFeesAndTaxesService
-            .getByFboAndPricingTemplate(this.sharedService.currentUser.fboId, this.pricingTemplateId)
+            .getByFboAndPricingTemplate(
+                this.sharedService.currentUser.fboId,
+                this.pricingTemplateId
+            )
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
                 const self = this;
@@ -299,16 +355,20 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     private loadCustomerFeesAndTaxes(): void {
-        const customerId = this.priceCheckerLookupType === PriceCheckerLookupTypes.ByCustomer
-            ? this.customerForCustomerLookup?.customerId
-            : this.customerForTailLookup?.customerId;
+        const customerId =
+            this.priceCheckerLookupType === PriceCheckerLookupTypes.ByCustomer
+                ? this.customerForCustomerLookup?.customerId
+                : this.customerForTailLookup?.customerId;
 
         if (!customerId) {
             return;
         }
 
         this.fboFeesAndTaxesService
-            .getByFboAndCustomer(this.sharedService.currentUser.fboId, customerId)
+            .getByFboAndCustomer(
+                this.sharedService.currentUser.fboId,
+                customerId
+            )
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
                 const self = this;

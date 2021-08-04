@@ -1,30 +1,35 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { fboChangedEvent } from '../../../models/sharedEvents';
+import { FbopricesService } from '../../../services/fboprices.service';
 // Services
 import { FbosService } from '../../../services/fbos.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { FbopricesService } from '../../../services/fboprices.service';
-
-// Components
-import { FbosDialogNewFboComponent } from '../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
-import { FbosGridNewFboDialogComponent } from '../fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { ManageConfirmationComponent } from '../../../shared/components/manage-confirmation/manage-confirmation.component';
 import { PricingExpiredNotificationGroupComponent } from '../../../shared/components/pricing-expired-notification-group/pricing-expired-notification-group.component';
-
-import { fboChangedEvent } from '../../../models/sharedEvents';
+// Components
+import { FbosDialogNewFboComponent } from '../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
+import { FbosGridNewFboDialogComponent } from '../fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
 
 @Component({
     selector: 'app-fbos-grid',
+    styleUrls: ['./fbos-grid.component.scss'],
     templateUrl: './fbos-grid.component.html',
-    styleUrls: [ './fbos-grid.component.scss' ],
 })
 export class FbosGridComponent implements OnInit {
     // Input/Output Bindings
@@ -37,7 +42,7 @@ export class FbosGridComponent implements OnInit {
     // Public Members
     public pageTitle = 'FBOs';
     public fbosDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = [ 'icao', 'fbo', 'active', 'manage' ];
+    public displayedColumns: string[] = ['icao', 'fbo', 'active', 'manage'];
     public airportData: Array<any>;
     public resultsLength = 0;
     public canManageFbo = false;
@@ -59,10 +64,12 @@ export class FbosGridComponent implements OnInit {
         private manageFboDialog: MatDialog,
         private snackBar: MatSnackBar,
         private router: Router,
-        private checkPricingDialog: MatDialog,
+        private checkPricingDialog: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
-        this.canManageFbo = this.sharedService.currentUser.role === 3 || this.sharedService.currentUser.role === 2;
+        this.canManageFbo =
+            this.sharedService.currentUser.role === 3 ||
+            this.sharedService.currentUser.role === 2;
 
         if (this.sharedService.currentUser.role === 3) {
             this.displayedColumns = [
@@ -74,12 +81,7 @@ export class FbosGridComponent implements OnInit {
                 'delete',
             ];
         } else {
-            this.displayedColumns = [
-                'icao',
-                'fbo',
-                'active',
-                'edit',
-            ];
+            this.displayedColumns = ['icao', 'fbo', 'active', 'edit'];
         }
     }
 
@@ -100,8 +102,10 @@ export class FbosGridComponent implements OnInit {
                 return;
             }
 
-            if (remindMeLaterFlag &&
-                (moment(new Date(moment().format('L'))) !== moment(new Date(remindMeLaterFlag)))
+            if (
+                remindMeLaterFlag &&
+                moment(new Date(moment().format('L'))) !==
+                    moment(new Date(remindMeLaterFlag))
             ) {
                 return;
             }
@@ -116,8 +120,8 @@ export class FbosGridComponent implements OnInit {
         const dialogRef = this.deleteFboDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: record, description: 'FBO' },
                 autoFocus: false,
+                data: { description: 'FBO', item: record },
             }
         );
 
@@ -126,20 +130,23 @@ export class FbosGridComponent implements OnInit {
                 return;
             }
             this.isDeleting = true;
-            this.fboService.remove(record).subscribe(() => {
-                this.fbosData.splice(this.fbosData.indexOf(record), 1);
-                this.sort.sortChange.subscribe(() => {
-                    this.paginator.pageIndex = 0;
-                });
-                this.refreshTable();
-                this.isDeleting = false;
-                this.snackBar.open(record.fbo + ' is deleted', '', {
-                    duration: 2000,
-                    panelClass: [ 'blue-snackbar' ],
-                });
-            }, () => {
-                this.isDeleting = false;
-            });
+            this.fboService.remove(record).subscribe(
+                () => {
+                    this.fbosData.splice(this.fbosData.indexOf(record), 1);
+                    this.sort.sortChange.subscribe(() => {
+                        this.paginator.pageIndex = 0;
+                    });
+                    this.refreshTable();
+                    this.isDeleting = false;
+                    this.snackBar.open(record.fbo + ' is deleted', '', {
+                        duration: 2000,
+                        panelClass: ['blue-snackbar'],
+                    });
+                },
+                () => {
+                    this.isDeleting = false;
+                }
+            );
         });
     }
 
@@ -149,13 +156,16 @@ export class FbosGridComponent implements OnInit {
 
     public newRecord() {
         if (this.groupInfo) {
-            const dialogRef = this.newFboDialog.open(FbosDialogNewFboComponent, {
-                width: '450px',
-                data: {
-                    groupId: this.groupInfo.oid,
-                    initialSetupPhase: true
-                },
-            });
+            const dialogRef = this.newFboDialog.open(
+                FbosDialogNewFboComponent,
+                {
+                    data: {
+                        groupId: this.groupInfo.oid,
+                        initialSetupPhase: true,
+                    },
+                    width: '450px',
+                }
+            );
 
             dialogRef.afterClosed().subscribe((result) => {
                 if (result) {
@@ -164,17 +174,20 @@ export class FbosGridComponent implements OnInit {
                     this.refreshTable();
                     this.snackBar.open(result.fbo + ' is created', '', {
                         duration: 3000,
-                        panelClass: [ 'blue-snackbar' ],
+                        panelClass: ['blue-snackbar'],
                     });
                     sessionStorage.setItem('isNewFbo', 'yes');
                     this.editRecord(result);
                 }
             });
         } else {
-            const dialogRef = this.newFboDialog.open(FbosGridNewFboDialogComponent, {
-                width: '450px',
-                data: {},
-            });
+            const dialogRef = this.newFboDialog.open(
+                FbosGridNewFboDialogComponent,
+                {
+                    data: {},
+                    width: '450px',
+                }
+            );
 
             dialogRef.afterClosed().subscribe((result) => {
                 if (result) {
@@ -182,10 +195,12 @@ export class FbosGridComponent implements OnInit {
                     this.refreshTable();
                     this.snackBar.open(result.fbo + ' is created', '', {
                         duration: 3000,
-                        panelClass: [ 'blue-snackbar' ],
+                        panelClass: ['blue-snackbar'],
                     });
                     sessionStorage.setItem('isNewFbo', 'yes');
-                    this.router.navigate([ '/default-layout/fbos/' + result.oid ]);
+                    this.router.navigate([
+                        '/default-layout/fbos/' + result.oid,
+                    ]);
                 }
             });
         }
@@ -203,13 +218,14 @@ export class FbosGridComponent implements OnInit {
     }
 
     public manageFBO(fbo, $event) {
-        if ((
-            $event !== null &&
-            ($event.srcElement.nodeName.toLowerCase() === 'button' ||
-                $event.srcElement.nodeName.toLowerCase() === 'select' ||
-                ($event.srcElement.nodeName.toLowerCase() === 'input' &&
-                    $event.srcElement.getAttribute('type') === 'checkbox'))
-        ) || !this.canManageFbo
+        if (
+            ($event !== null &&
+                ($event.srcElement.nodeName.toLowerCase() === 'button' ||
+                    $event.srcElement.nodeName.toLowerCase() === 'select' ||
+                    ($event.srcElement.nodeName.toLowerCase() === 'input' &&
+                        $event.srcElement.getAttribute('type') ===
+                            'checkbox'))) ||
+            !this.canManageFbo
         ) {
             $event.stopPropagation();
             return;
@@ -218,13 +234,14 @@ export class FbosGridComponent implements OnInit {
         const dialogRef = this.manageFboDialog.open(
             ManageConfirmationComponent,
             {
-                width: '450px',
-                data: {
-                    title: 'Manage FBO?',
-                    description: 'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?',
-                    fboId: fbo.oid,
-                },
                 autoFocus: false,
+                data: {
+                    description:
+                        'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?',
+                    fboId: fbo.oid,
+                    title: 'Manage FBO?',
+                },
+                width: '450px',
             }
         );
 
@@ -232,8 +249,12 @@ export class FbosGridComponent implements OnInit {
             if (!result) {
                 return;
             }
-            localStorage.setItem('managerGroupId', this.sharedService.currentUser.groupId.toString());
-            this.sharedService.currentUser.managerGroupId = this.sharedService.currentUser.groupId;
+            localStorage.setItem(
+                'managerGroupId',
+                this.sharedService.currentUser.groupId.toString()
+            );
+            this.sharedService.currentUser.managerGroupId =
+                this.sharedService.currentUser.groupId;
 
             localStorage.setItem('groupId', fbo.groupId.toString());
             this.sharedService.currentUser.groupId = fbo.groupId;
@@ -247,12 +268,11 @@ export class FbosGridComponent implements OnInit {
             this.sharedService.currentUser.icao = fbo.icao;
 
             this.sharedService.emitChange(fboChangedEvent);
-            this.router.navigate([ '/default-layout/dashboard-fbo/' ]);
+            this.router.navigate(['/default-layout/dashboard-fbo/']);
         });
     }
 
     public checkExistingPrices() {
-
         this.fboPricesService
             .checkFboExpiredPricingGroup(this.sharedService.currentUser.groupId)
             .subscribe((data: any) => {
@@ -267,9 +287,14 @@ export class FbosGridComponent implements OnInit {
                         if (result && result.fboId) {
                             this.sharedService.currentUser.impersonatedRole = 1;
                             this.sharedService.currentUser.fboId = result.fboId;
-                            localStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+                            localStorage.setItem(
+                                'fboId',
+                                this.sharedService.currentUser.fboId.toString()
+                            );
                             this.sharedService.emitChange(fboChangedEvent);
-                            this.router.navigate([ '/default-layout/dashboard-fbo/' ]);
+                            this.router.navigate([
+                                '/default-layout/dashboard-fbo/',
+                            ]);
                         }
                     });
                 }

@@ -1,36 +1,39 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
 import FlatfileImporter from 'flatfile-csv-importer';
 
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvents from '../../../models/sharedEvents';
+import { AircraftsService } from '../../../services/aircrafts.service';
+import { Parametri } from '../../../services/paremeters.service';
 // Services
 import { RampfeesService } from '../../../services/rampfees.service';
-import { AircraftsService } from '../../../services/aircrafts.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { Parametri } from '../../../services/paremeters.service';
-
-import * as SharedEvents from '../../../models/sharedEvents';
-
+import { RampFeesCategoryComponent } from '../ramp-fees-category/ramp-fees-category.component';
 // Components
 import { RampFeesDialogNewFeeComponent } from '../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component';
 import { RampFeesImportInformationComponent } from '../ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component';
-import { RampFeesCategoryComponent } from '../ramp-fees-category/ramp-fees-category.component';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Ramp Fees',
         link: '/default-layout/ramp-fees',
+        title: 'Ramp Fees',
     },
 ];
 
 @Component({
     selector: 'app-ramp-fees-home',
+    styleUrls: ['./ramp-fees-home.component.scss'],
     templateUrl: './ramp-fees-home.component.html',
-    styleUrls: [ './ramp-fees-home.component.scss' ],
 })
 export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('customRampFeeCat')
@@ -69,14 +72,13 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.rampFees = null;
                     this.initRampfees();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {
@@ -101,15 +103,13 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     .subscribe(
                         (mymessage: any) => (this.expirationDate = mymessage)
                     );
-
-
             });
 
         FlatfileImporter.setVersion(2);
         this.initializeImporter();
         this.importer.setCustomer({
-            userId: '1',
             name: 'WebsiteImport',
+            userId: '1',
         });
     }
 
@@ -170,7 +170,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 this.launchImporter();
             }
-
         });
     }
 
@@ -200,85 +199,84 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     });
             }
-        } catch (e) {
-        }
+        } catch (e) {}
     }
 
     initializeImporter() {
         this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+            allowCustom: true,
+            allowInvalidSubmit: true,
+            disableManualInput: false,
             fields: [
                 {
-                    label: 'ICAO',
-                    alternates: [ 'Icao' ],
-                    key: 'icao',
+                    alternates: ['Icao'],
                     description: 'Icao',
+                    key: 'icao',
+                    label: 'ICAO',
                 },
                 {
-                    label: 'FBO',
-                    alternates: [ 'fbo' ],
-                    key: 'fbo',
+                    alternates: ['fbo'],
                     description: 'FBO',
+                    key: 'fbo',
+                    label: 'FBO',
                 },
                 {
-                    label: 'Make',
-                    alternates: [ 'make' ],
-                    key: 'Make',
+                    alternates: ['make'],
                     description: 'Aircraft Make',
+                    key: 'Make',
+                    label: 'Make',
                 },
                 {
-                    label: 'Model',
-                    alternates: [ 'model' ],
-                    key: 'Model',
+                    alternates: ['model'],
                     description: 'Tail',
+                    key: 'Model',
+                    label: 'Model',
                 },
                 {
-                    label: 'Ramp Fee ($)',
-                    alternates: [ 'Ramp Fee', 'ramp fee' ],
-                    key: 'RampFee',
+                    alternates: ['Ramp Fee', 'ramp fee'],
                     description: 'Ramp Fee',
+                    key: 'RampFee',
+                    label: 'Ramp Fee ($)',
                 },
                 {
-                    label: 'Waived At (gal)',
-                    alternates: [ 'Waived At', 'waived at' ],
-                    key: 'WaivedAt',
+                    alternates: ['Waived At', 'waived at'],
                     description: 'Waived Fees',
+                    key: 'WaivedAt',
+                    label: 'Waived At (gal)',
                 },
                 {
-                    label: 'Landing',
-                    alternates: [ 'landing' ],
-                    key: 'Landing',
+                    alternates: ['landing'],
                     description: 'Landing Fees',
+                    key: 'Landing',
+                    label: 'Landing',
                 },
                 {
-                    label: 'Overnight',
-                    alternates: [ 'overnight', 'overnight fees' ],
-                    key: 'Overnight',
+                    alternates: ['overnight', 'overnight fees'],
                     description: 'Overnight Fees',
+                    key: 'Overnight',
+                    label: 'Overnight',
                 },
                 {
-                    label: 'Tail Number',
-                    alternates: [ 'tail number', 'tail-number' ],
-                    key: 'TailNumber',
+                    alternates: ['tail number', 'tail-number'],
                     description: 'Tail Number',
+                    key: 'TailNumber',
+                    label: 'Tail Number',
                 },
                 {
-                    label: 'Aircraft Size',
-                    alternates: [ 'aircreft size' ],
-                    key: 'aircraftsize',
+                    alternates: ['aircreft size'],
                     description: 'Aircraft Size',
+                    key: 'aircraftsize',
+                    label: 'Aircraft Size',
                 },
                 {
-                    label: 'Avoidance',
-                    alternates: [ 'avoidance' ],
-                    key: 'avoidance',
+                    alternates: ['avoidance'],
                     description: 'Avoidance',
+                    key: 'avoidance',
+                    label: 'Avoidance',
                 },
             ],
-            type: 'RampFees',
-            allowInvalidSubmit: true,
             managed: true,
-            allowCustom: true,
-            disableManualInput: false,
+            type: 'RampFees',
         });
     }
 
@@ -288,8 +286,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             fee.fboid = this.sharedService.currentUser.fboId;
         }
         if (fee.oid && fee.oid > 0) {
-            this.rampFeesService.update(fee).subscribe((data: any) => {
-            });
+            this.rampFeesService.update(fee).subscribe((data: any) => {});
         } else {
             this.rampFeesService.add(fee).subscribe((data: any) => {
                 fee.oid = data.oid;

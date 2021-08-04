@@ -1,5 +1,5 @@
 <mat-form-field>
-    <mat-label>{{label}}</mat-label>
+    <mat-label>{{ label }}</mat-label>
     <input
         [disabled]="disabled"
         type="text"
@@ -15,8 +15,8 @@
         (optionSelected)="optionSelected($event)"
         [displayWith]="displayFn"
     >
-      <mat-option *ngFor="let option of filteredOptions" [value]="option">
-        {{renderOption(option)}}
-      </mat-option>
+        <mat-option *ngFor="let option of filteredOptions" [value]="option">
+            {{ renderOption(option) }}
+        </mat-option>
     </mat-autocomplete>
 </mat-form-field>

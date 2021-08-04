@@ -61,8 +61,6 @@
     top: 60px;
 }
 
-
-
 .bulk-update .mat-form-field-hide-placeholder .mat-select-placeholder {
     color: #2196f3;
     -webkit-text-fill-color: #2196f3;
@@ -78,8 +76,22 @@
     display: none;
 }
 
+.fuelvendors-dropdown-filter {
+    ::ng-deep {
+        .p-multiselect {
+            width: 17rem;
 
+            .p-multiselect-panel {
+                max-width: 100%;
+            }
+        }
 
+        .p-component {
+            font-size: 13px;
 
-
-
+            &.p-checkbox {
+                display: none;
+            }
+        }
+    }
+}

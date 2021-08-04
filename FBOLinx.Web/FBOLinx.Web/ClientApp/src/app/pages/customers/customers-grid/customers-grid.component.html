@@ -3,11 +3,15 @@
         <div class="row">
             <div *ngIf="anySelected()" class="col-2 bulk-update">
                 <mat-form-field>
-                    <mat-select (selectionChange)="bulkMarginTemplateUpdate($event)"
-                                class="bulk-update-select"
-                                placeholder="Bulk Update Margin Template">
-                        <mat-option *ngFor="let pricingTemplate of pricingTemplatesData"
-                                    [value]="pricingTemplate">
+                    <mat-select
+                        (selectionChange)="bulkMarginTemplateUpdate($event)"
+                        class="bulk-update-select"
+                        placeholder="Bulk Update Margin Template"
+                    >
+                        <mat-option
+                            *ngFor="let pricingTemplate of pricingTemplatesData"
+                            [value]="pricingTemplate"
+                        >
                             {{ pricingTemplate.name }}
                         </mat-option>
                     </mat-select>
@@ -21,12 +25,12 @@
             </div>
             <div class="col-2">
                 <mat-form-field>
-                    <mat-select (selectionChange)="customerFilterTypeChanged()"
-                                [(ngModel)]="customerFilterType"
-                                placeholder="Search Within">
-                        <mat-option [value]="0">
-                            All Customers
-                        </mat-option>
+                    <mat-select
+                        (selectionChange)="customerFilterTypeChanged()"
+                        [(ngModel)]="customerFilterType"
+                        placeholder="Search Within"
+                    >
+                        <mat-option [value]="0"> All Customers </mat-option>
                         <mat-option [value]="1">
                             Customers Needing Attention
                         </mat-option>
@@ -35,9 +39,11 @@
             </div>
             <div *ngIf="anySelected()" class="col-2 bulk-action-btn">
                 <div>
-                    <button (click)="exportCustomersToExcel()"
-                            [view]="'accent'"
-                            ni-button>
+                    <button
+                        (click)="exportCustomersToExcel()"
+                        [view]="'accent'"
+                        ni-button
+                    >
                         Export Selected
                     </button>
                 </div>
@@ -45,53 +51,91 @@
             <div class="export-import-menu">
                 <div class="actions-menu">
                     <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                        <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+                        <mat-icon
+                            aria-hidden="true"
+                            class="mat-icon material-icons"
+                            role="img"
+                            >more_vert</mat-icon
+                        >
                     </button>
-                    <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
-                        <button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>
+                    <mat-menu
+                        #gridActions="matMenu"
+                        class="switch-nested-menu-left-arrows"
+                        xPosition="before"
+                    >
+                        <button
+                            (click)="launchImporter()"
+                            [ngClass]="{ disabled: !LICENSE_KEY }"
+                            mat-menu-item
+                        >
                             Import
                         </button>
-                        <button [matMenuTriggerFor]="exportActions" mat-menu-item>Export</button>
-                        <button (click)="openSettings()" mat-menu-item>Settings</button>
+                        <button
+                            [matMenuTriggerFor]="exportActions"
+                            mat-menu-item
+                        >
+                            Export
+                        </button>
+                        <button (click)="openSettings()" mat-menu-item>
+                            Settings
+                        </button>
                     </mat-menu>
                     <mat-menu #exportActions="matMenu" xPosition="before">
-                        <button (click)="exportCustomersToExcel()" mat-menu-item>Export Customers</button>
-                        <button (click)="exportCustomerAircraftToExcel()" mat-menu-item>Export Aircraft</button>
+                        <button
+                            (click)="exportCustomersToExcel()"
+                            mat-menu-item
+                        >
+                            Export Customers
+                        </button>
+                        <button
+                            (click)="exportCustomerAircraftToExcel()"
+                            mat-menu-item
+                        >
+                            Export Aircraft
+                        </button>
                     </mat-menu>
                 </div>
             </div>
         </div>
     </div>
-    <div class="w-100 table-container" style="overflow-x:auto">
-        <table #customerTable
-               [dataSource]="customersDataSource"
-               class="col-md-12 mb-0"
-               mat-table
-               matSort>
+    <div class="w-100 table-container" style="overflow-x: auto">
+        <table
+            #customerTable
+            [dataSource]="customersDataSource"
+            class="col-md-12 mb-0"
+            mat-table
+            matSort
+        >
             <ng-container matColumnDef="selectAll">
                 <th *matHeaderCellDef mat-header-cell>
-                    <input (change)="selectAction()"
-                           [(ngModel)]="selectAll"
-                           class="checkboxHeight"
-                           id="a"
-                           style="position: absolute; margin-top: 8px;"
-                           type="checkbox"/>
-                    <div for="a" style="margin-left: 25px; margin-top: 0px;">
+                    <input
+                        (change)="selectAction()"
+                        [(ngModel)]="selectAll"
+                        class="checkboxHeight"
+                        id="a"
+                        style="position: absolute; margin-top: 8px"
+                        type="checkbox"
+                    />
+                    <div for="a" style="margin-left: 25px; margin-top: 0px">
                         <div>Select</div>
                         <div>All</div>
                     </div>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
-                    <input (change)="selectUnique()"
-                           [(ngModel)]="customer.selectAll"
-                           class="checkboxHeight"
-                           type="checkbox"
-                           value="{{ customer.selectAll }}"/>
+                    <input
+                        (change)="selectUnique()"
+                        [(ngModel)]="customer.selectAll"
+                        class="checkboxHeight"
+                        type="checkbox"
+                        value="{{ customer.selectAll }}"
+                    />
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="needsAttention">
-                <th *matHeaderCellDef class="text-left"
+                <th
+                    *matHeaderCellDef
+                    class="text-left"
                     mat-header-cell
                     mat-sort-header
                 >
@@ -99,46 +143,52 @@
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     <div>
-                        <ni-badge *ngIf="customer.needsAttention"
-                                  [arrow]="'right'"
-                                  [borderRadius]="false"
-                                  [color]="'warning'"
-                                  matTooltip="{{customer.needsAttentionReason}}"
-                                  matTooltipPosition="after">
+                        <ni-badge
+                            *ngIf="customer.needsAttention"
+                            [arrow]="'right'"
+                            [borderRadius]="false"
+                            [color]="'warning'"
+                            matTooltip="{{ customer.needsAttentionReason }}"
+                            matTooltipPosition="after"
+                        >
                             Needs Attention
                         </ni-badge>
-                        <a *ngIf="
-                            !customer.isFuelerLinxCustomer &&
-                            !customer.contactExists
-                        "
-                           matTooltip="This customer does not have any contacts setup to receive price distribution."
-                           matTooltipPosition="after"
-                           style="float: right;">
-                            <i class="fa fa-warning" style="color: red;"></i>
+                        <a
+                            *ngIf="
+                                !customer.isFuelerLinxCustomer &&
+                                !customer.contactExists
+                            "
+                            matTooltip="This customer does not have any contacts setup to receive price distribution."
+                            matTooltipPosition="after"
+                            style="float: right"
+                        >
+                            <i class="fa fa-warning" style="color: red"></i>
                         </a>
                     </div>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="company">
-                <th *matHeaderCellDef
-                    mat-header-cell
-                    mat-sort-header
-                >
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Company</span>
                     <span *ngIf="customersDataSource">
-                    <app-table-column-filter [matDataSource]="customersDataSource"
-                                             [matSort]="sort"
-                                             columnId="company"
-                                             propertyName="company"
-                    ></app-table-column-filter>
-                  </span>
+                        <app-table-column-filter
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="company"
+                            propertyName="company"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
-                <td *matCellDef="let customer" mat-cell>{{ customer.company }}</td>
+                <td *matCellDef="let customer" mat-cell>
+                    {{ customer.company }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="customerCompanyTypeName">
-                <th *matHeaderCellDef class="overflow-label"
+                <th
+                    *matHeaderCellDef
+                    class="overflow-label"
                     mat-header-cell
                     mat-sort-header
                 >
@@ -147,11 +197,13 @@
                         <div>Type</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                  <app-table-column-filter [matDataSource]="customersDataSource"
-                                           [matSort]="sort"
-                                           columnId="customerCompanyTypeName"
-                                           propertyName="customerCompanyTypeName"></app-table-column-filter>
-                </span>
+                        <app-table-column-filter
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="customerCompanyTypeName"
+                            propertyName="customerCompanyTypeName"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.customerCompanyTypeName }}
@@ -159,7 +211,9 @@
             </ng-container>
 
             <ng-container matColumnDef="isFuelerLinxCustomer">
-                <th *matHeaderCellDef class="overflow-label"
+                <th
+                    *matHeaderCellDef
+                    class="overflow-label"
                     mat-header-cell
                     mat-sort-header
                 >
@@ -168,20 +222,24 @@
                         <div>Network</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                  <app-table-column-filter [columnFormat]="8"
-                                           [matDataSource]="customersDataSource"
-                                           [matSort]="sort"
-                                           columnId="isFuelerLinxCustomer"
-                                           propertyName="isFuelerLinxCustomer"></app-table-column-filter>
-                </span>
+                        <app-table-column-filter
+                            [columnFormat]="8"
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="isFuelerLinxCustomer"
+                            propertyName="isFuelerLinxCustomer"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
-                    {{ customer.isFuelerLinxCustomer ? 'YES' : 'NO' }}
+                    {{ customer.isFuelerLinxCustomer ? "YES" : "NO" }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="certificateTypeDescription">
-                <th *matHeaderCellDef class="overflow-label"
+                <th
+                    *matHeaderCellDef
+                    class="overflow-label"
                     mat-header-cell
                     mat-sort-header
                 >
@@ -190,11 +248,13 @@
                         <div>Type</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                  <app-table-column-filter [matDataSource]="customersDataSource"
-                                           [matSort]="sort"
-                                           columnId="certificateTypeDescription"
-                                           propertyName="certificateTypeDescription"></app-table-column-filter>
-                </span>
+                        <app-table-column-filter
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="certificateTypeDescription"
+                            propertyName="certificateTypeDescription"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.certificateTypeDescription }}
@@ -202,10 +262,7 @@
             </ng-container>
 
             <ng-container matColumnDef="pricingTemplateName">
-                <th *matHeaderCellDef
-                    mat-header-cell
-                    mat-sort-header
-                >
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     ITP Margin Template
                     <span *ngIf="customersDataSource">
                         <app-table-column-filter
@@ -221,21 +278,88 @@
                     </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
-                    <select (ngModelChange)="onMarginChange($event, customer)"
-                            [(ngModel)]="customer.pricingTemplateId"
-                            class="dropdownHeight"
-                            id="pricingtemplates"
-                            name="ddlPricingTemplate">
-                        <option *ngFor="let pricingTemplate of pricingTemplatesData"
-                                value="{{ pricingTemplate.oid }}">
+                    <select
+                        (ngModelChange)="onMarginChange($event, customer)"
+                        [(ngModel)]="customer.pricingTemplateId"
+                        class="dropdownHeight"
+                        id="pricingtemplates"
+                        name="ddlPricingTemplate"
+                    >
+                        <option
+                            *ngFor="let pricingTemplate of pricingTemplatesData"
+                            value="{{ pricingTemplate.oid }}"
+                        >
                             {{ pricingTemplate.name }}
                         </option>
                     </select>
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="fuelVendors">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Fuel Vendors
+                    <span *ngIf="customersDataSource">
+                        <app-table-column-filter
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="fuelVendors"
+                            propertyName="fuelVendors"
+                            optionLabel="label"
+                            optionValue="value"
+                            [columnFormat]="11"
+                            [options]="fuelVendors"
+                        ></app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let customer" clickStopPropagation mat-cell>
+                    <p-multiSelect
+                        class="fuelvendors-dropdown-filter"
+                        [options]="customer.fuelVendors"
+                        [(ngModel)]="customer.fuelVendors"
+                        display="chip"
+                        placeholder="No Fuel Vendors"
+                        optionLabel="label"
+                        [virtualScroll]="true"
+                        [disabled]="
+                            !customer.fuelVendors ||
+                            !customer.fuelVendors.length
+                        "
+                        (onChange)="onFuelVendorUpdate($event, customer)"
+                        [showToggleAll]="false"
+                        itemSize="50"
+                    >
+                        <ng-template let-value pTemplate="selectedItems">
+                            <div
+                                class="p-multiselect-token"
+                                *ngFor="let fv of customer.fuelVendors"
+                            >
+                                <span class="p-multiselect-token-label">
+                                    {{ fv.value }}
+                                </span>
+                            </div>
+
+                            <div
+                                *ngIf="
+                                    !customer.fuelVendors ||
+                                    customer.fuelVendors.length === 0
+                                "
+                            >
+                                No Fuel Vendors
+                            </div>
+                        </ng-template>
+                        <ng-template let-fv pTemplate="item">
+                            <div class="fbo-item">
+                                <div>{{ fv.value }}</div>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect>
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="fleetSize">
-                <th *matHeaderCellDef class="overflow-label"
+                <th
+                    *matHeaderCellDef
+                    class="overflow-label"
                     mat-header-cell
                     mat-sort-header
                 >
@@ -244,12 +368,14 @@
                         <div>Size</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                  <app-table-column-filter [columnFormat]="1"
-                                           [matDataSource]="customersDataSource"
-                                           [matSort]="sort"
-                                           columnId="fleetSize"
-                                           propertyName="fleetSize"></app-table-column-filter>
-                </span>
+                        <app-table-column-filter
+                            [columnFormat]="1"
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="fleetSize"
+                            propertyName="fleetSize"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.fleetSize }}
@@ -257,23 +383,28 @@
             </ng-container>
 
             <ng-container matColumnDef="aircraftsVisits">
-                <th *matHeaderCellDef
+                <th
+                    *matHeaderCellDef
                     class="overflow-label"
                     mat-header-cell
                     mat-sort-header
-                    [matTooltip]="'Since ' + (airportWatchStartDate | date:'MM/dd/YYYY')"
+                    [matTooltip]="
+                        'Since ' + (airportWatchStartDate | date: 'MM/dd/YYYY')
+                    "
                 >
                     <div>
                         <div>Previous</div>
                         <div>Visits</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                  <app-table-column-filter [columnFormat]="1"
-                                           [matDataSource]="customersDataSource"
-                                           [matSort]="sort"
-                                           columnId="aircraftsVisits"
-                                           propertyName="aircraftsVisits"></app-table-column-filter>
-                </span>
+                        <app-table-column-filter
+                            [columnFormat]="1"
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="aircraftsVisits"
+                            propertyName="aircraftsVisits"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.aircraftsVisits }}
@@ -283,43 +414,51 @@
             <ng-container matColumnDef="delete">
                 <th *matHeaderCellDef mat-header-cell>
                     <div class="pull-right">
-                        <button (click)="newCustomer()"
-                                [view]="'accent'"
-                                beforeIcon="fa fa-plus"
-                                class="action-btn"
-                                ni-button>
+                        <button
+                            (click)="newCustomer()"
+                            [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            class="action-btn"
+                            ni-button
+                        >
                             Add New
                         </button>
                     </div>
-
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     <div class="pull-right">
-                        <button (click)="
-                            deleteCustomer(customer); $event.stopPropagation()
-                        "
-                                *ngIf="!customer.isFuelerLinxCustomer"
-                                [view]="'error'"
-                                beforeIcon="fa fa-trash"
-                                ni-button
-                                size="small">
+                        <button
+                            (click)="
+                                deleteCustomer(customer);
+                                $event.stopPropagation()
+                            "
+                            *ngIf="!customer.isFuelerLinxCustomer"
+                            [view]="'error'"
+                            beforeIcon="fa fa-trash"
+                            ni-button
+                            size="small"
+                        >
                             Delete
                         </button>
                     </div>
                 </td>
             </ng-container>
 
-            <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
-            <tr (click)="editCustomer(row)"
+            <tr
+                *matHeaderRowDef="getTableColumns(); sticky: true"
+                mat-header-row
+            ></tr>
+            <tr
+                (click)="editCustomer(row)"
                 *matRowDef="let row; columns: getTableColumns()"
-                mat-row></tr>
+                mat-row
+            ></tr>
         </table>
-        <mat-paginator (page)="(pageIndex); onPageChanged($event)"
-                       [length]="customersData.length"
-                       [pageSizeOptions]="[10, 25, 50, 100]"
-                       [pageSize]="pageSize"></mat-paginator>
+        <mat-paginator
+            (page)="(pageIndex); onPageChanged($event)"
+            [length]="customersData.length"
+            [pageSizeOptions]="[10, 25, 50, 100]"
+            [pageSize]="pageSize"
+        ></mat-paginator>
     </div>
-
 </div>
-
-

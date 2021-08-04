@@ -1,8 +1,15 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 
 // Services
 import { UserService } from '../../../services/user.service';
@@ -11,8 +18,8 @@ import { UsersDialogNewUserComponent } from '../users-dialog-new-user/users-dial
 
 @Component({
     selector: 'app-users-grid',
+    styleUrls: ['./users-grid.component.scss'],
     templateUrl: './users-grid.component.html',
-    styleUrls: [ './users-grid.component.scss' ],
 })
 export class UsersGridComponent implements OnInit {
     @Output() userDeleted = new EventEmitter<any>();
@@ -40,8 +47,7 @@ export class UsersGridComponent implements OnInit {
         private userService: UserService,
         public newUserDialog: MatDialog,
         public deleteUserDialog: MatDialog
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         if (!this.usersData) {
@@ -59,8 +65,8 @@ export class UsersGridComponent implements OnInit {
         const dialogRef = this.deleteUserDialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: record, description: 'user' },
                 autoFocus: false,
+                data: { description: 'user', item: record },
             }
         );
 
@@ -85,12 +91,12 @@ export class UsersGridComponent implements OnInit {
             value.copyAlerts = true;
         }
 
-        if (this.fboInfo == null)
-            {value.GroupId = this.groupInfo.oid;}
-        else
-            {value.GroupId = this.fboInfo.groupId;}
-        this.userService.update(value).subscribe((data: any) => {
-        });
+        if (this.fboInfo == null) {
+            value.GroupId = this.groupInfo.oid;
+        } else {
+            value.GroupId = this.fboInfo.groupId;
+        }
+        this.userService.update(value).subscribe((data: any) => {});
     }
 
     public UpdateCopyOrdersValue(value) {
@@ -100,12 +106,12 @@ export class UsersGridComponent implements OnInit {
             value.copyOrders = true;
         }
 
-        if (this.fboInfo == null)
-            {value.GroupId = this.groupInfo.oid;}
-        else
-            {value.GroupId = this.fboInfo.groupId;}
-        this.userService.update(value).subscribe((data: any) => {
-        });
+        if (this.fboInfo == null) {
+            value.GroupId = this.groupInfo.oid;
+        } else {
+            value.GroupId = this.fboInfo.groupId;
+        }
+        this.userService.update(value).subscribe((data: any) => {});
     }
 
     public editRecord(record, $event) {
@@ -124,7 +130,13 @@ export class UsersGridComponent implements OnInit {
     }
 
     public newRecord() {
-        const newUser = { oid: 0, fboId: 0, groupId: 0, copyAlerts: true, copyOrders: true };
+        const newUser = {
+            copyAlerts: true,
+            copyOrders: true,
+            fboId: 0,
+            groupId: 0,
+            oid: 0,
+        };
         if (this.fboInfo) {
             newUser.fboId = this.fboInfo.oid;
             newUser.groupId = this.fboInfo.groupId;
@@ -132,8 +144,8 @@ export class UsersGridComponent implements OnInit {
             newUser.groupId = this.groupInfo.oid;
         }
         const dialogRef = this.newUserDialog.open(UsersDialogNewUserComponent, {
-            width: '450px',
             data: newUser,
+            width: '450px',
         });
 
         dialogRef.afterClosed().subscribe((result) => {
@@ -150,8 +162,8 @@ export class UsersGridComponent implements OnInit {
                 if (result.newPassword && result.newPassword !== '') {
                     this.userService
                         .updatePassword({
-                            user: data,
                             newPassword: result.newPassword,
+                            user: data,
                         })
                         .subscribe(
                             (newPassData: any) => {

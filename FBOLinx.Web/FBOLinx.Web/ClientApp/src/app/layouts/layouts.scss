@@ -1,4 +1,4 @@
-@import '../../assets/sass/variable';
+@import "../../assets/sass/variable";
 
 :host {
     .site-container {
@@ -8,7 +8,7 @@
             overflow-x: hidden;
             overflow-y: auto;
             padding: $navbar-height 0 0 $vertical-navbar-width;
-            transition: padding .2s $animation;
+            transition: padding 0.2s $animation;
 
             &.full-width {
                 padding-left: 0;
@@ -25,8 +25,7 @@
         }
 
         .app-navbar {
-            transition: left .2s $animation,
-            right .2s $animation;
+            transition: left 0.2s $animation, right 0.2s $animation;
             @media only screen and (max-width: 991px) {
                 width: 100%;
             }
@@ -51,8 +50,8 @@
                 ::ng-deep .sidebar-overlay {
                     @media only screen and (max-width: 991px) {
                         opacity: 1;
-                        transition: .2s opacity 0s $animation,
-                        0s visibility 0s $animation;
+                        transition: 0.2s opacity 0s $animation,
+                            0s visibility 0s $animation;
                         visibility: visible;
                     }
                 }
@@ -82,7 +81,7 @@
 
         //Boxed
         &.boxed {
-            box-shadow: 0px 5px 5px 5px rgba(#000, .25);
+            box-shadow: 0px 5px 5px 5px rgba(#000, 0.25);
             margin: 0 auto;
             max-width: 1200px;
             position: relative;
@@ -96,7 +95,7 @@
                 }
                 .vertical-navbar {
                     overflow: hidden;
-                    transition: width .2s $animation;
+                    transition: width 0.2s $animation;
                     width: $vertical-navbar-compress-width;
                     z-index: 9997;
 
@@ -110,17 +109,23 @@
                                             .item-badge,
                                             .caret {
                                                 opacity: 0;
-                                                transition: opacity .2s $animation;
+                                                transition: opacity 0.2s
+                                                    $animation;
                                             }
                                         }
 
                                         &.menu-item-group {
-                                            background: rgba(main-color(500), .1);
-                                            transition: background .2s $animation;
+                                            background: rgba(
+                                                main-color(500),
+                                                0.1
+                                            );
+                                            transition: background 0.2s
+                                                $animation;
 
                                             .group-title {
                                                 opacity: 0;
-                                                transition: opacity .2s $animation;
+                                                transition: opacity 0.2s
+                                                    $animation;
                                             }
                                         }
 

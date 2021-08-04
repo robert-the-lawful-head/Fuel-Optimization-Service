@@ -1,21 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import * as _ from 'lodash';
+import { ActivatedRoute } from '@angular/router';
 import FlatfileImporter from 'flatfile-csv-importer';
+import * as _ from 'lodash';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
 // Services
 import { CustomercontactsService } from '../../../services/customercontacts.service';
-import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
-import { SharedService } from '../../../layouts/shared-service';
 import { ContactsDialogNewContactComponent } from '../contacts-edit-modal/contacts-edit-modal.component';
 
 @Component({
     selector: 'app-contacts-grid',
+    styleUrls: ['./contacts-grid.component.scss'],
     templateUrl: './contacts-grid.component.html',
-    styleUrls: [ './contacts-grid.component.scss' ],
 })
 export class ContactsGridComponent implements OnInit {
     @Output() contactDeleted = new EventEmitter<any>();
@@ -50,18 +57,19 @@ export class ContactsGridComponent implements OnInit {
         private customerContactsService: CustomercontactsService,
         public newContactDialog: MatDialog,
         private route: ActivatedRoute
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         if (!this.contactsData) {
             return;
         }
 
-        const foundedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
+        const foundedIndex = _.findIndex(
+            this.contactsData,
+            (contact) => !contact.copyAlerts
+        );
         this.copyAll = foundedIndex >= 0 ? false : true;
-        this.sort.sortChange.subscribe(() => {
-        });
+        this.sort.sortChange.subscribe(() => {});
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
 
@@ -127,9 +135,10 @@ export class ContactsGridComponent implements OnInit {
                                             record.customerContactId
                                     ); // find index in your array
                                     this.contactsData.splice(index, 1); // remove element from array
-                                    this.contactsDataSource = new MatTableDataSource(
-                                        this.contactsData
-                                    );
+                                    this.contactsDataSource =
+                                        new MatTableDataSource(
+                                            this.contactsData
+                                        );
                                     this.contactsDataSource.sort = this.sort;
                                 });
                         });
@@ -160,8 +169,7 @@ export class ContactsGridComponent implements OnInit {
                                             .update(
                                                 this.currentContactInfoByGroup
                                             )
-                                            .subscribe(() => {
-                                            });
+                                            .subscribe(() => {});
                                     }
                                 }
                             });
@@ -181,15 +189,17 @@ export class ContactsGridComponent implements OnInit {
         } else {
             value.copyAlerts = true;
         }
-        const unselectedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
+        const unselectedIndex = _.findIndex(
+            this.contactsData,
+            (contact) => !contact.copyAlerts
+        );
         this.copyAll = unselectedIndex >= 0 ? false : true;
 
         value.groupId = this.sharedService.currentUser.groupId;
 
         this.contactInfoByGroupsService
             .update(value)
-            .subscribe((data: any) => {
-            });
+            .subscribe((data: any) => {});
     }
 
     public UpdateAllCopyAlertsValues() {
@@ -199,8 +209,7 @@ export class ContactsGridComponent implements OnInit {
             contact.GroupId = this.sharedService.currentUser.groupId;
             this.contactInfoByGroupsService
                 .update(contact)
-                .subscribe((data: any) => {
-                });
+                .subscribe((data: any) => {});
         });
     }
 
@@ -236,120 +245,124 @@ export class ContactsGridComponent implements OnInit {
                         }
                     });
             }
-        } catch (e) {
-        }
+        } catch (e) {}
     }
 
     initializeImporter() {
         FlatfileImporter.setVersion(2);
         this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+            allowCustom: true,
+            allowInvalidSubmit: true,
+            disableManualInput: false,
             fields: [
                 {
-                    label: 'First Name',
-                    alternates: [ 'first name' ],
-                    key: 'FirstName',
+                    alternates: ['first name'],
                     description: 'Contact First Name',
+                    key: 'FirstName',
+                    label: 'First Name',
                     validators: [
                         {
-                            validate: 'required',
                             error: 'this field is required',
+                            validate: 'required',
                         },
                     ],
                 },
                 {
-                    label: 'Last Name',
-                    alternates: [ 'last name' ],
-                    key: 'LastName',
+                    alternates: ['last name'],
                     description: 'Contact Last Name',
+                    key: 'LastName',
+                    label: 'Last Name',
                     validators: [
                         {
-                            validate: 'required',
                             error: 'this field is required',
+                            validate: 'required',
                         },
                     ],
                 },
                 {
-                    label: 'Title',
-                    alternates: [ 'title' ],
-                    key: 'Title',
+                    alternates: ['title'],
                     description: 'Contact Title',
+                    key: 'Title',
+                    label: 'Title',
                 },
                 {
-                    label: 'Email',
-                    alternates: [ 'email', 'email address' ],
-                    key: 'Email',
+                    alternates: ['email', 'email address'],
                     description: 'Email Address',
+                    key: 'Email',
+                    label: 'Email',
                 },
                 {
-                    label: 'Phone Number',
-                    alternates: [ 'phone', 'phone number' ],
-                    key: 'PhoneNumber',
+                    alternates: ['phone', 'phone number'],
                     description: 'Phone Number',
+                    key: 'PhoneNumber',
+                    label: 'Phone Number',
                 },
                 {
-                    label: 'Extension',
-                    alternates: [ 'extension' ],
-                    key: 'Extension',
+                    alternates: ['extension'],
                     description: 'Phone Extension',
+                    key: 'Extension',
+                    label: 'Extension',
                 },
                 {
-                    label: 'Mobile',
-                    alternates: [ 'mobile', 'cell', 'mobile phone', 'cell phone' ],
-                    key: 'MobilePhone',
+                    alternates: [
+                        'mobile',
+                        'cell',
+                        'mobile phone',
+                        'cell phone',
+                    ],
                     description: 'Mobile Phone',
+                    key: 'MobilePhone',
+                    label: 'Mobile',
                 },
                 {
-                    label: 'Fax',
-                    alternates: [ 'fax' ],
-                    key: 'Fax',
+                    alternates: ['fax'],
                     description: 'Fax',
+                    key: 'Fax',
+                    label: 'Fax',
                 },
                 {
-                    label: 'Address',
-                    alternates: [ 'address', 'street address' ],
-                    key: 'Address',
+                    alternates: ['address', 'street address'],
                     description: 'Street Address',
+                    key: 'Address',
+                    label: 'Address',
                 },
                 {
-                    label: 'City',
-                    alternates: [ 'city', 'town' ],
-                    key: 'City',
+                    alternates: ['city', 'town'],
                     description: 'City',
+                    key: 'City',
+                    label: 'City',
                 },
                 {
-                    label: 'State',
-                    alternates: [ 'state' ],
-                    key: 'State',
+                    alternates: ['state'],
                     description: 'State',
+                    key: 'State',
+                    label: 'State',
                 },
                 {
-                    label: 'Country',
-                    alternates: [ 'country' ],
-                    key: 'Country',
+                    alternates: ['country'],
                     description: 'Country',
+                    key: 'Country',
+                    label: 'Country',
                 },
                 {
-                    label: 'Primary',
-                    alternates: [ 'primary' ],
-                    key: 'PrimaryContact',
+                    alternates: ['primary'],
                     description: 'Primary',
+                    key: 'PrimaryContact',
+                    label: 'Primary',
                 },
                 {
-                    label: 'Copy on Distribution',
-                    alternates: [ 'copy on distribution' ],
-                    key: 'CopyAlertsContact',
+                    alternates: ['copy on distribution'],
                     description: 'Copy Contact on Distribution',
+                    key: 'CopyAlertsContact',
+                    label: 'Copy on Distribution',
                 },
             ],
-            type: 'Contacts',
-            allowInvalidSubmit: true,
             managed: true,
-            allowCustom: true,
-            disableManualInput: false,
+            type: 'Contacts',
         });
         this.importer.setCustomer({
-            userId: '1',
             name: 'WebsiteImport',
+            userId: '1',
         });
     }
 }

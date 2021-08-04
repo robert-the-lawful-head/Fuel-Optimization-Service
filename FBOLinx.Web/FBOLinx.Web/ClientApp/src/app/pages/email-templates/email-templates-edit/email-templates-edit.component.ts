@@ -1,32 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { EmailcontentService } from '../../../services/emailcontent.service';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Email Templates',
         link: '/default-layout/email-templates',
+        title: 'Email Templates',
     },
     {
-        title: 'Edit Email Template',
         link: '',
+        title: 'Edit Email Template',
     },
 ];
 
 @Component({
     selector: 'app-email-templates-edit',
-    templateUrl: './email-templates-edit.component.html',
     styleUrls: ['./email-templates-edit.component.scss'],
+    templateUrl: './email-templates-edit.component.html',
 })
 export class EmailTemplatesEditComponent implements OnInit {
-
     public breadcrumb: any[] = BREADCRUMBS;
     public pageTitle = 'Edit Email Template';
     public emailTemplateForm: FormGroup;
@@ -36,28 +35,33 @@ export class EmailTemplatesEditComponent implements OnInit {
     public hasSaved = false;
     public isSaveQueued = false;
 
-    constructor(private route: ActivatedRoute,
+    constructor(
+        private route: ActivatedRoute,
         private router: Router,
         private sharedService: SharedService,
-        private emailContentService: EmailcontentService) {
+        private emailContentService: EmailcontentService
+    ) {
         this.sharedService.titleChange(this.pageTitle);
     }
 
     async ngOnInit() {
         // Check for passed in id
         const id = this.route.snapshot.paramMap.get('id');
-        this.emailTemplate = await this.emailContentService.get({ oid: id }).toPromise();
+        this.emailTemplate = await this.emailContentService
+            .get({ oid: id })
+            .toPromise();
     }
 
     public cancelEmailTemplateEdit(): void {
-        this.router.navigate(['/default-layout/email-templates/']).then(() => {
-        });
+        this.router
+            .navigate(['/default-layout/email-templates/'])
+            .then(() => {});
     }
 
     public formChanged(event): void {
         this.canSave = true;
         this.saveEmailTemplate();
-    };
+    }
 
     // Private Methods
     private saveEmailTemplate() {
@@ -78,9 +82,11 @@ export class EmailTemplatesEditComponent implements OnInit {
         this.isSaving = true;
         this.hasSaved = false;
 
-        this.emailContentService.update(this.emailTemplate).subscribe((response: any) => {
-            this.isSaving = false;
-            this.hasSaved = true;
-        });
+        this.emailContentService
+            .update(this.emailTemplate)
+            .subscribe((response: any) => {
+                this.isSaving = false;
+                this.hasSaved = true;
+            });
     }
 }

@@ -9,7 +9,7 @@
         'dead-card': bgColor === 'dead',
         'dark-card': bgColor === 'dark',
         'outline-card': outline,
-        'collapsible': collapsible
+        collapsible: collapsible
     }"
 >
     <h3
@@ -31,12 +31,14 @@
     >
         <div class="row">
             <div class="col-12">
-                <span #cardTitle>{{ title }} {{ collapsible && !opened ? " + " : "" }}</span>
+                <span #cardTitle
+                    >{{ title }} {{ collapsible && !opened ? " + " : "" }}</span
+                >
                 <h6
                     #cardSubTitle
                     class="card-subtitle"
                     [ngClass]="{
-                        'invisible': !subTitleVisible
+                        invisible: !subTitleVisible
                     }"
                 >
                     {{ subtitle }}

@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-aircraft-dialog-confirm-delete',
+    styleUrls: ['./customer-aircrafts-confirm-delete-modal.component.scss'],
     templateUrl: './customer-aircrafts-confirm-delete-modal.component.html',
-    styleUrls: [ './customer-aircrafts-confirm-delete-modal.component.scss' ],
 })
 export class DialogConfirmAircraftDeleteComponent {
     private aircraftId = 0;
@@ -12,8 +12,7 @@ export class DialogConfirmAircraftDeleteComponent {
     constructor(
         public dialogRef: MatDialogRef<DialogConfirmAircraftDeleteComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) {
-    }
+    ) {}
 
     // Public Methods
     public onCancelClick(): void {

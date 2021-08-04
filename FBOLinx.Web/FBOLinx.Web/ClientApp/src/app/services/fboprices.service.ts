@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class FbopricesService {
@@ -39,7 +39,10 @@ export class FbopricesService {
 
     public checkFboExpiredPricingGroup(groupid) {
         return this.http.get(
-            this.accessPointUrl + '/group/' + groupid + '/ispricingexpiredgroupadmin',
+            this.accessPointUrl +
+                '/group/' +
+                groupid +
+                '/ispricingexpiredgroupadmin',
             {
                 headers: this.headers,
             }
@@ -90,14 +93,10 @@ export class FbopricesService {
     }
 
     public suspendPricing(oid) {
-        return this.http.post(
-            this.accessPointUrl + '/suspendpricing/' + oid,
-            {
-                headers: this.headers,
-            }
-        );
+        return this.http.post(this.accessPointUrl + '/suspendpricing/' + oid, {
+            headers: this.headers,
+        });
     }
-
 
     public getPricesByMonthForFbo(fboId, payload) {
         return this.http.post(
@@ -111,7 +110,8 @@ export class FbopricesService {
 
     public getFuelPricesForCompany(payload) {
         return this.http.post(
-            this.accessPointUrl + '/price-lookup-for-customer/', payload,
+            this.accessPointUrl + '/price-lookup-for-customer/',
+            payload,
             {
                 headers: this.headers,
             }

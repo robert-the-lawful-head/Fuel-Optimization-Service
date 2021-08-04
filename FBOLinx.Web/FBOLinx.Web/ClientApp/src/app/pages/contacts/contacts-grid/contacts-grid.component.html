@@ -4,7 +4,7 @@
         class="mat-elevation-z8 col-md-12"
         mat-table
         matSort
-        style="box-shadow: none !important;"
+        style="box-shadow: none !important"
     >
         <ng-container matColumnDef="firstName">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>
@@ -65,7 +65,7 @@
 
         <ng-container matColumnDef="copyAlerts">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                <span style="margin-right: 15px;">Copy All</span>
+                <span style="margin-right: 15px">Copy All</span>
                 <mat-slide-toggle
                     (change)="UpdateAllCopyAlertsValues()"
                     [checked]="copyAll"
@@ -86,21 +86,39 @@
             <th *matHeaderCellDef mat-header-cell>
                 <!--<div class="actions-menu pull-right">-->
                 <div class="pull-right">
-                    <button (click)="newRecord()" [view]="'accent'" beforeIcon="fa fa-plus" class="mr-3" ni-button>
+                    <button
+                        (click)="newRecord()"
+                        [view]="'accent'"
+                        beforeIcon="fa fa-plus"
+                        class="mr-3"
+                        ni-button
+                    >
                         Add New
                     </button>
                     <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                        <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+                        <mat-icon
+                            aria-hidden="true"
+                            class="mat-icon material-icons"
+                            role="img"
+                            >more_vert</mat-icon
+                        >
                     </button>
-                    <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
-                        <button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>Import
+                    <mat-menu
+                        #gridActions="matMenu"
+                        class="switch-nested-menu-left-arrows"
+                        xPosition="before"
+                    >
+                        <button
+                            (click)="launchImporter()"
+                            [ngClass]="{ disabled: !LICENSE_KEY }"
+                            mat-menu-item
+                        >
+                            Import
                         </button>
                     </mat-menu>
                 </div>
             </th>
-            <td *matCellDef="let contact" mat-cell>
-                &nbsp;
-            </td>
+            <td *matCellDef="let contact" mat-cell>&nbsp;</td>
         </ng-container>
 
         <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>

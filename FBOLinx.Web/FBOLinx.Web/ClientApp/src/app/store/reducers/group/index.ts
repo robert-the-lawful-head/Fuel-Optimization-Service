@@ -1,4 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
+
 import { groupGridClear, groupGridSet } from '../../actions';
 
 export const groupFeatureKey = 'group';
@@ -17,7 +18,7 @@ export const groupReducer = createReducer(
         ...state,
         filter: action.filter,
     })),
-    on(groupGridClear, state => ({
+    on(groupGridClear, (state) => ({
         ...state,
         ...initialState,
     }))

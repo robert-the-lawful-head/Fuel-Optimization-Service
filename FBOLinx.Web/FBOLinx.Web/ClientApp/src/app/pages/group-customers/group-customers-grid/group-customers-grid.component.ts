@@ -1,16 +1,25 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 import { forEach, map, sortBy } from 'lodash';
 import * as XLSX from 'xlsx';
 
-// Components
-import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
-
 import { AirportWatchService } from '../../../services/airportwatch.service';
-
+// Components
+import {
+    ColumnType,
+    TableSettingsComponent,
+} from '../../../shared/components/table-settings/table-settings.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -34,8 +43,8 @@ const initialColumns: ColumnType[] = [
 
 @Component({
     selector: 'app-group-customers-grid',
+    styleUrls: ['./group-customers-grid.component.scss'],
     templateUrl: './group-customers-grid.component.html',
-    styleUrls: [ './group-customers-grid.component.scss' ],
 })
 export class GroupCustomersGridComponent implements OnInit {
     // Input/Output Bindings
@@ -66,23 +75,23 @@ export class GroupCustomersGridComponent implements OnInit {
 
     constructor(
         private tableSettingsDialog: MatDialog,
-        private airportWatchService: AirportWatchService,
-    ) {
-    }
+        private airportWatchService: AirportWatchService
+    ) {}
 
     ngOnInit() {
         if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+            this.columns = JSON.parse(
+                localStorage.getItem(this.tableLocalStorageKey)
+            );
         } else {
             this.columns = initialColumns;
         }
 
         this.refreshCustomerDataSource();
 
-        this.airportWatchService.getStartDate()
-            .subscribe((date) => {
-                this.airportWatchStartDate = new Date(date);
-            });
+        this.airportWatchService.getStartDate().subscribe((date) => {
+            this.airportWatchStartDate = new Date(date);
+        });
     }
 
     onPageChanged(event: any) {
@@ -114,7 +123,9 @@ export class GroupCustomersGridComponent implements OnInit {
 
     exportCustomersToExcel() {
         // Export the filtered results to an excel spreadsheet
-        const filteredList = this.customersDataSource.filteredData.filter((item) => item.selectAll === true);
+        const filteredList = this.customersDataSource.filteredData.filter(
+            (item) => item.selectAll === true
+        );
         let exportData;
         if (filteredList.length > 0) {
             exportData = filteredList;
@@ -122,13 +133,11 @@ export class GroupCustomersGridComponent implements OnInit {
             exportData = this.customersDataSource.filteredData;
         }
         exportData = map(exportData, (item) => ({
+            'Certificate Type': item.certificateTypeDescription,
             Company: item.company,
             'FuelerLinx Network': item.isFuelerLinxCustomer ? 'YES' : 'NO',
-            'Certificate Type': item.certificateTypeDescription,
         }));
-        exportData = sortBy(exportData, [
-            (item) => item.Company.toLowerCase(),
-        ]);
+        exportData = sortBy(exportData, [(item) => item.Company.toLowerCase()]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Customers');
@@ -138,21 +147,28 @@ export class GroupCustomersGridComponent implements OnInit {
     }
 
     anySelected() {
-        const filteredList = this.customersData.filter((item) => item.selectAll === true);
+        const filteredList = this.customersData.filter(
+            (item) => item.selectAll === true
+        );
         return filteredList.length > 0;
     }
 
     getTableColumns() {
-        return this.columns.filter(column => !column.hidden).map(column => column.id);
+        return this.columns
+            .filter((column) => !column.hidden)
+            .map((column) => column.id);
     }
 
     openSettings() {
-        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
-            data: this.columns
-        });
+        const dialogRef = this.tableSettingsDialog.open(
+            TableSettingsComponent,
+            {
+                data: this.columns,
+            }
+        );
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.columns = [ ...result ];
+                this.columns = [...result];
                 this.refreshSort();
                 this.saveSettings();
             }
@@ -160,15 +176,22 @@ export class GroupCustomersGridComponent implements OnInit {
     }
 
     saveSettings() {
-        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+        localStorage.setItem(
+            this.tableLocalStorageKey,
+            JSON.stringify(this.columns)
+        );
     }
 
     private refreshCustomerDataSource() {
         this.sort.sortChange.subscribe(() => {
-            this.columns = this.columns.map(column =>
+            this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    : {
+                          hidden: column.hidden,
+                          id: column.id,
+                          name: column.name,
+                      }
             );
             this.paginator.pageIndex = 0;
             this.saveSettings();
@@ -183,9 +206,21 @@ export class GroupCustomersGridComponent implements OnInit {
     }
 
     private refreshSort() {
-        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
-        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
+        const sortedColumn = this.columns.find(
+            (column) => !column.hidden && column.sort
+        );
+        this.sort.sort({
+            disableClear: false,
+            id: null,
+            start: sortedColumn?.sort || 'asc',
+        });
+        this.sort.sort({
+            disableClear: false,
+            id: sortedColumn?.id,
+            start: sortedColumn?.sort || 'asc',
+        });
+        (
+            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
+        )?._setAnimationTransitionState({ toState: 'active' });
     }
 }

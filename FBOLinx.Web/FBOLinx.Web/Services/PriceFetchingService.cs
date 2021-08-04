@@ -117,27 +117,28 @@ namespace FBOLinx.Web.Services
             _GroupId = groupId;
 
             try
-            {
-                var defaultPricingTemplate = await _context.PricingTemplate
-                    .Where(x => x.Fboid == fboId && x.Default.HasValue && x.Default.Value).FirstOrDefaultAsync();
+            {                                                                                
+                //Prepare default values
                 if (flightTypeClassifications == FlightTypeClassifications.NotSet ||
                     flightTypeClassifications == FlightTypeClassifications.All)
                     flightTypeClassifications = FlightTypeClassifications.Private;
                 if (departureType == ApplicableTaxFlights.Never)
                     departureType = ApplicableTaxFlights.All;
-                int defaultPricingTemplateId = 0;
-                if (defaultPricingTemplate != null)
-                    defaultPricingTemplateId = defaultPricingTemplate.Oid;
 
                 //Load all of the required information to get the quote
                 var universalTime = DateTime.UtcNow;
-                var customerInfoByGroup =
-                    await _CustomerService.GetCustomersByGroupAndFbo(groupId, fboId, customerInfoByGroupId);
+                var customerInfoByGroup = await _CustomerService.GetCustomersByGroupAndFbo(groupId, fboId, customerInfoByGroupId);
+                //#17nvxpq: Fill-in missing template IDs if one isn't properly provided
+                if (!pricingTemplateIds.Any(x => x > 0))
+                {
+                    List<PricingTemplate> templates = await GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup.FirstOrDefault(), fboId, groupId);
+                    pricingTemplateIds = templates.Select(x => x.Oid).ToList();
+                }
                 var fboPrices = await _context.Fboprices.Where(x =>
                     (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
                     (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
                     x.Expired != true && x.Fboid == fboId).ToListAsync();
-                var pricingTemplates = await _context.PricingTemplate.Where(x => x.Fboid == fboId && pricingTemplateIds.Any(pt => pt == x.Oid))
+                var pricingTemplates = await _context.PricingTemplate.Where(x => x.Fboid == fboId && pricingTemplateIds.Contains(x.Oid))
                     .Include(x => x.CustomerMargins).ToListAsync();
                 var customerMargins = await _context.CustomerMargins.Include(x => x.PricingTemplate)
                     .Where(x => x.PricingTemplate != null && x.PricingTemplate.Fboid == fboId).Include(x => x.PriceTier)
@@ -177,7 +178,7 @@ namespace FBOLinx.Web.Services
                 var customerPricingResults = (from cg in customerInfoByGroup
                     join pt in pricingTemplates on fboId equals pt.Fboid into leftJoinPT
                     from pt in leftJoinPT.DefaultIfEmpty()
-                    join ppt in customerMargins on pt.Oid equals ppt.TemplateId
+                    join ppt in customerMargins on (pt != null ? pt.Oid : 0) equals ppt.TemplateId
                         into leftJoinPPT
                     from ppt in leftJoinPPT.DefaultIfEmpty()
                     join fp in fboPrices on new

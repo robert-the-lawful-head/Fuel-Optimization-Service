@@ -2,110 +2,110 @@
     cursor: pointer;
 }
 .accent-color {
-  color: accent-color(500);
+    color: accent-color(500);
 }
 .text-danger {
-  color: $error-color !important;
+    color: $error-color !important;
 }
 .mt-module {
-  margin-top: $module-rem * 2 !important;
+    margin-top: $module-rem * 2 !important;
 }
 .mr-module {
-  margin-right: $module-rem * 2 !important;
+    margin-right: $module-rem * 2 !important;
 }
 .mb-module {
-  margin-bottom: $module-rem * 2 !important;
+    margin-bottom: $module-rem * 2 !important;
 }
 .ml-module {
-  margin-left: $module-rem * 2 !important;
+    margin-left: $module-rem * 2 !important;
 }
 .bg-facebook {
-  background: #3b5998;
+    background: #3b5998;
 }
 .bg-twitter {
-  background: #00ACED;
+    background: #00aced;
 }
 .bg-google {
-  background: #DD4B39;
+    background: #dd4b39;
 }
 .info-card {
-  position: relative;
+    position: relative;
 
-  .title {
-    line-height: 1;
-    margin: 0;
-  }
-  .count {
-    font-size: 32px;
-  }
-  .mat-icon {
-    font-size: 60px;
-    height: auto;
-    opacity: .2;
-    position: absolute;
-    right: $module-rem * 2;
-    top: $module-rem * 2;
-    width: auto;
-
-    .rtl & {
-      left: $module-rem * 2;
-      right: auto;
+    .title {
+        line-height: 1;
+        margin: 0;
     }
-  }
+    .count {
+        font-size: 32px;
+    }
+    .mat-icon {
+        font-size: 60px;
+        height: auto;
+        opacity: 0.2;
+        position: absolute;
+        right: $module-rem * 2;
+        top: $module-rem * 2;
+        width: auto;
+
+        .rtl & {
+            left: $module-rem * 2;
+            right: auto;
+        }
+    }
 }
 .chart-card {
-  .card-wrap .card-content {
-    align-items: flex-end;
-    display: flex !important;
-  }
-  .chart {
-    height: 80px;
-    margin: 0;
-    width: 80px;
+    .card-wrap .card-content {
+        align-items: flex-end;
+        display: flex !important;
+    }
+    .chart {
+        height: 80px;
+        margin: 0;
+        width: 80px;
 
-    canvas {
-      height: 100%;
+        canvas {
+            height: 100%;
+        }
     }
-  }
-  .info {
-    padding-left: 1rem;
+    .info {
+        padding-left: 1rem;
 
-    .rtl & {
-      padding-left: 0;
-      padding-right: 1rem;
+        .rtl & {
+            padding-left: 0;
+            padding-right: 1rem;
+        }
+        .title {
+            font-size: 2rem;
+            line-height: 1;
+            margin: 0 0 0.5rem;
+        }
     }
-    .title {
-      font-size: 2rem;
-      line-height: 1;
-      margin: 0 0 .5rem;
-    }
-  }
 }
 .leaflet-top,
 .leaflet-bottom {
-  z-index: 996;
+    z-index: 996;
 }
 .circle {
-  border-radius: 50%;
+    border-radius: 50%;
 }
 .indents-list {
-  display: flex;
-  flex-wrap: wrap;
-  margin: -5px;
+    display: flex;
+    flex-wrap: wrap;
+    margin: -5px;
 
-  > * {
-    margin: 5px !important;
-  }
+    > * {
+        margin: 5px !important;
+    }
 }
 .rtl {
-  .text-right {
-    text-align: left !important;
-  }
-  .text-left {
-    text-align: right !important;
-  }
+    .text-right {
+        text-align: left !important;
+    }
+    .text-left {
+        text-align: right !important;
+    }
 }
 
 .blue-snackbar {
-  background: accent-color(500) !important;
+    background: accent-color(500) !important;
 }

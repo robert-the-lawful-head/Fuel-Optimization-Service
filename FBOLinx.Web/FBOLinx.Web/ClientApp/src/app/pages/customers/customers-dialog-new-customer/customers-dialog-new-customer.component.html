@@ -1,19 +1,472 @@
-<h1 mat-dialog-title>New Customer</h1>
-<div mat-dialog-content>
-    <div>
-        <mat-form-field>
-            <input [(ngModel)]="data.company" aria-label="Customer Name" matInput placeholder="Customer Name">
-        </mat-form-field>
+<form [formGroup]="customerForm" class="d-flex flex-column">
+    <h1 mat-dialog-title>Add a New Customer</h1>
+    <div mat-dialog-content>
+        <mat-tab-group
+            [selectedIndex]="step"
+            (selectedIndexChange)="step = $event"
+        >
+            <mat-tab
+                label="1. Company info"
+                formGroupName="company"
+                [disabled]="stepDisabled(0)"
+            >
+                <h5 class="ml-2">Company Information</h5>
+
+                <div class="row ml-0 mr-0">
+                    <div class="col-6">
+                        <mat-form-field>
+                            <input
+                                matInput
+                                placeholder="Company Name *"
+                                formControlName="company"
+                            />
+                            <mat-error
+                                *ngIf="
+                                    companyFormGroup.controls.company.invalid
+                                "
+                                >Company name is required.</mat-error
+                            >
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row ml-0 mr-0">
+                    <div class="col-6">
+                        <mat-form-field>
+                            <mat-select
+                                formControlName="certificateType"
+                                placeholder="Certificate Type"
+                            >
+                                <mat-option
+                                    *ngFor="
+                                        let certificateType of certificateTypes
+                                    "
+                                    [value]="certificateType.value"
+                                >
+                                    {{ certificateType.description }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <mat-expansion-panel
+                    (opened)="companyInfoDetailOpenState = true"
+                    (closed)="companyInfoDetailOpenState = false"
+                >
+                    <mat-expansion-panel-header>
+                        <mat-panel-title> Address Detail </mat-panel-title>
+                        <mat-panel-description>
+                            Click to
+                            {{
+                                companyInfoDetailOpenState ? "close" : "expand"
+                            }}.
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input
+                                    formControlName="mainPhone"
+                                    matInput
+                                    placeholder="Main Phone"
+                                />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input
+                                    formControlName="address"
+                                    matInput
+                                    placeholder="Address"
+                                />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input
+                                    formControlName="city"
+                                    matInput
+                                    placeholder="City"
+                                />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input
+                                    formControlName="state"
+                                    matInput
+                                    placeholder="State"
+                                />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input
+                                    formControlName="zipCode"
+                                    matInput
+                                    placeholder="Zip Code"
+                                />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input
+                                    formControlName="country"
+                                    matInput
+                                    placeholder="Country"
+                                />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <input
+                                    formControlName="website"
+                                    matInput
+                                    placeholder="Website"
+                                />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-tab>
+            <mat-tab
+                label="2. Contact info"
+                formArrayName="contact"
+                [disabled]="stepDisabled(1)"
+            >
+                <div
+                    *ngFor="
+                        let contactForm of contactFormArray.controls;
+                        let i = index
+                    "
+                >
+                    <h5 class="ml-2 d-flex align-items-center">
+                        Contact Information {{ i === 0 ? "" : i + 1 }}
+
+                        <button
+                            *ngIf="i > 0"
+                            mat-icon-button
+                            color="warn"
+                            (click)="contactFormArray.removeAt(i)"
+                        >
+                            <mat-icon>delete_forever</mat-icon>
+                        </button>
+                    </h5>
+
+                    <ng-container [formGroup]="contactForm">
+                        <div class="row m-0">
+                            <div class="col-6">
+                                <mat-form-field>
+                                    <input
+                                        matInput
+                                        placeholder="First Name"
+                                        formControlName="firstName"
+                                    />
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-6">
+                                <mat-form-field>
+                                    <input
+                                        matInput
+                                        placeholder="Email *"
+                                        formControlName="email"
+                                    />
+                                    <mat-error
+                                        *ngIf="
+                                            contactForm.controls.email.invalid
+                                        "
+                                        >Invalid Email Address.</mat-error
+                                    >
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-6">
+                                <mat-form-field>
+                                    <input
+                                        matInput
+                                        placeholder="Last Name"
+                                        formControlName="lastName"
+                                    />
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-6">
+                                <mat-slide-toggle
+                                    class="mt-3"
+                                    formControlName="copyAlerts"
+                                    >Copy on Distribution</mat-slide-toggle
+                                >
+                            </div>
+                        </div>
+
+                        <mat-expansion-panel>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Address Detail
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            formControlName="phone"
+                                            matInput
+                                            placeholder="Phone"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            formControlName="extension"
+                                            matInput
+                                            placeholder="Extension"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            formControlName="mobile"
+                                            matInput
+                                            placeholder="Mobile"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            formControlName="fax"
+                                            matInput
+                                            placeholder="Fax"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            formControlName="address"
+                                            matInput
+                                            placeholder="Address"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            formControlName="city"
+                                            matInput
+                                            placeholder="City"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            formControlName="state"
+                                            matInput
+                                            placeholder="State"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <input
+                                            formControlName="country"
+                                            matInput
+                                            placeholder="Country"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-slide-toggle formControlName="primary"
+                                        >Primary</mat-slide-toggle
+                                    >
+                                </div>
+                            </div>
+                        </mat-expansion-panel>
+                    </ng-container>
+                </div>
+            </mat-tab>
+            <mat-tab
+                label="3. Company ITP Margin"
+                formGroupName="template"
+                [disabled]="stepDisabled(2)"
+            >
+                <h5 class="ml-2">Price & Margin Information</h5>
+
+                <div class="row m-0">
+                    <div class="col-6">
+                        <mat-form-field>
+                            <mat-select
+                                formControlName="customerMarginTemplate"
+                                placeholder="Margin Template"
+                            >
+                                <mat-option
+                                    *ngFor="
+                                        let pricingTemplate of pricingTemplates
+                                    "
+                                    [value]="pricingTemplate.oid"
+                                >
+                                    {{ pricingTemplate.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div
+                    *ngIf="feesAndTaxes"
+                    class="price-lookup-breakdown"
+                    style="font-size: 14px"
+                >
+                    <price-breakdown
+                        #priceBreakdownPreview
+                        [feeAndTaxDisplayMode]="2"
+                        [priceTemplateId]="
+                            templateFormGroup.get('customerMarginTemplate')
+                                .value
+                        "
+                        [showFeeAndTaxLineSeparator]="true"
+                        [feesAndTaxes]="feesAndTaxes"
+                    >
+                    </price-breakdown>
+                </div>
+            </mat-tab>
+            <mat-tab
+                label="4. Aircraft"
+                formArrayName="aircraft"
+                [disabled]="stepDisabled(3)"
+            >
+                <h5 class="ml-2">Aircraft Information</h5>
+
+                <div
+                    *ngFor="
+                        let aircraftForm of aircraftFormArray.controls;
+                        let i = index
+                    "
+                >
+                    <ng-container [formGroup]="aircraftForm">
+                        <div class="row m-0">
+                            <div class="col-3">
+                                <mat-form-field>
+                                    <input
+                                        matInput
+                                        placeholder="Tail Number"
+                                        formControlName="tailNumber"
+                                    />
+                                    <mat-error
+                                        *ngIf="
+                                            aircraftForm.controls.tailNumber
+                                                .invalid
+                                        "
+                                        >Tail Number is required.</mat-error
+                                    >
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-4">
+                                <app-autocomplete-search
+                                    label="Aircraft Make/Model"
+                                    [optionValue]="['make', 'model']"
+                                    [options]="aircraftTypes"
+                                    [displayFn]="displayAircraft"
+                                    formControlName="aircraft"
+                                    [required]="true"
+                                ></app-autocomplete-search>
+                            </div>
+
+                            <div class="col-4">
+                                <mat-form-field>
+                                    <mat-select
+                                        formControlName="aircraftPricingTemplate"
+                                        placeholder="Company Pricing"
+                                    >
+                                        <mat-option
+                                            *ngFor="
+                                                let pricingTemplate of pricingTemplates
+                                            "
+                                            [value]="pricingTemplate.oid"
+                                        >
+                                            {{ pricingTemplate.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-1 d-flex align-items-center">
+                                <button
+                                    *ngIf="i > 0"
+                                    mat-icon-button
+                                    color="warn"
+                                    (click)="aircraftFormArray.removeAt(i)"
+                                >
+                                    <mat-icon>delete_forever</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
     </div>
-</div>
-<div mat-dialog-actions>
-    <button
-        [disabled]="!data.company || !data.company.length"
-        [mat-dialog-close]="data"
-        class="mr-1"
-        color="accent"
-        mat-flat-button
-    >Add Customer
-    </button>
-    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
-</div>
+    <div mat-dialog-actions class="justify-content-between">
+        <div>
+            <button
+                *ngIf="step === 1"
+                (click)="addNewContact()"
+                [view]="'accent'"
+                beforeIcon="fa fa-plus"
+                ni-button
+            >
+                Add Contact
+            </button>
+
+            <button
+                *ngIf="step === 3"
+                (click)="addNewAircraft()"
+                [view]="'accent'"
+                beforeIcon="fa fa-plus"
+                ni-button
+            >
+                Add Aircraft
+            </button>
+        </div>
+        <div class="d-flex">
+            <button mat-stroked-button (click)="cancel()">Cancel</button>
+            <button mat-stroked-button (click)="reset()">Reset</button>
+            <button
+                mat-stroked-button
+                (click)="back()"
+                [disabled]="backDisabled"
+            >
+                Back
+            </button>
+            <button
+                *ngIf="step !== 3"
+                color="accent"
+                mat-flat-button
+                (click)="next()"
+                [disabled]="nextDisabled"
+            >
+                Next
+            </button>
+            <button
+                *ngIf="step === 3"
+                class="d-inline-flex justify-content-center align-items-center"
+                color="accent"
+                mat-flat-button
+                (click)="submit()"
+                [disabled]="submitDisabled || submitting"
+                style="height: 36px"
+            >
+                {{ submitting ? "" : "Submit" }}
+                <mat-spinner *ngIf="submitting" diameter="20"></mat-spinner>
+            </button>
+        </div>
+    </div>
+</form>

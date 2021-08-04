@@ -259,7 +259,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostCustomerAircrafts([FromBody] CustomerAircrafts customerAircrafts)
+        public async Task<IActionResult> PostCustomerAircraft([FromBody] CustomerAircrafts customerAircrafts)
         {
             if (!ModelState.IsValid)
             {
@@ -270,6 +270,44 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
+        }
+
+        [HttpPost("group/{groupId}/fbo/{fboId}/customer/{customerId}/multiple")]
+        public async Task<IActionResult> PostCustomerAircraftsWithTemplates([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int customerId, [FromBody] List<CustomerAircraftsWithTemplateRequest> request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customerAircrafts = request.Select(r => new CustomerAircrafts
+            {
+                GroupId = groupId,
+                CustomerId = customerId,
+                AircraftId = r.AircraftId,
+                Size = r.Size,
+                TailNumber = r.TailNumber,
+            }).ToList();
+
+            _context.CustomerAircrafts.AddRange(customerAircrafts);
+            await _context.SaveChangesAsync();
+
+            for(int i = 0; i< customerAircrafts.Count; i++)
+            {
+                if (request[i].PricingTemplateId > 0)
+                {
+                    AircraftPrices newAircraftPrice = new AircraftPrices
+                    {
+                        CustomerAircraftId = customerAircrafts[i].Oid,
+                        PriceTemplateId = request[i].PricingTemplateId
+                    };
+                    _context.AircraftPrices.Add(newAircraftPrice);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         [HttpPost("create-with-customer")]

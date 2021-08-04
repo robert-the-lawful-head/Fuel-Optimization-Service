@@ -2,16 +2,26 @@
 <div mat-dialog-content>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.tailNumber" aria-label="Tail Number" cdkFocusInitial matInput
-                   placeholder="Tail Number">
+            <input
+                [(ngModel)]="data.tailNumber"
+                aria-label="Tail Number"
+                cdkFocusInitial
+                matInput
+                placeholder="Tail Number"
+            />
         </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <mat-select [(ngModel)]="selectedAircraft"
-                        placeholder="Aircraft Make/Model">
-                <mat-option *ngFor="let aircraftType of aircraftTypes" [value]="aircraftType">
-                    {{aircraftType.make}} {{aircraftType.model}}
+            <mat-select
+                [(ngModel)]="selectedAircraft"
+                placeholder="Aircraft Make/Model"
+            >
+                <mat-option
+                    *ngFor="let aircraftType of aircraftTypes"
+                    [value]="aircraftType"
+                >
+                    {{ aircraftType.make }} {{ aircraftType.model }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -31,7 +41,9 @@
 </div>
 <div mat-dialog-actions class="mt-5 text-center">
     <button
-        [disabled]="loading || !data.tailNumber || !selectedAircraft || !selectedCompany"
+        [disabled]="
+            loading || !data.tailNumber || !selectedAircraft || !selectedCompany
+        "
         (click)="onSubmit()"
         class="mr-1"
         color="accent"

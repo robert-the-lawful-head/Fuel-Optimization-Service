@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <mat-tab-group (selectedTabChange)="onTabChanged($event);">
+                <mat-tab-group (selectedTabChange)="onTabChanged($event)">
                     <!--Customer searching tab-->
                     <mat-tab label="Customer">
                         <div class="container-fluid mt-4">
@@ -13,19 +13,33 @@
                                         [optionValue]="'company'"
                                         [options]="allCustomers"
                                         [displayFn]="displayCustomerName"
-                                        (selectionChanged)="customerForLookupChanged($event)"
+                                        (selectionChanged)="
+                                            customerForLookupChanged($event)
+                                        "
                                     ></app-autocomplete-search>
                                 </div>
                                 <div class="col">
                                     <mat-form-field>
                                         <mat-label>Tail Number</mat-label>
-                                        <mat-select (selectionChange)="customerForLookupTailChanged()"
-                                                    [(ngModel)]="tailNumberForCustomerLookup"
-                                                    [disabled]="!customerForCustomerLookup"
-                                                    placeholder="Customer">
-                                            <mat-option *ngFor="let aircraft of aircraftForCustomer"
-                                                        [value]="aircraft.tailNumber">
-                                                {{aircraft.tailNumber}}
+                                        <mat-select
+                                            (selectionChange)="
+                                                customerForLookupTailChanged()
+                                            "
+                                            [(ngModel)]="
+                                                tailNumberForCustomerLookup
+                                            "
+                                            [disabled]="
+                                                !customerForCustomerLookup
+                                            "
+                                            placeholder="Customer"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let aircraft of aircraftForCustomer
+                                                "
+                                                [value]="aircraft.tailNumber"
+                                            >
+                                                {{ aircraft.tailNumber }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
@@ -42,18 +56,32 @@
                                     <app-autocomplete-search
                                         label="Tail Number*"
                                         [options]="allTailNumbers"
-                                        (selectionChanged)="tailNumberLookupChanged($event)"
+                                        (selectionChanged)="
+                                            tailNumberLookupChanged($event)
+                                        "
                                     ></app-autocomplete-search>
                                 </div>
                                 <div class="col">
                                     <mat-form-field>
                                         <mat-label>Customer</mat-label>
-                                        <mat-select (selectionChange)="tailNumberLookupCustomerChanged()"
-                                                    [(ngModel)]="customerForTailLookup"
-                                                    [disabled]="!customerForTailLookup || !customersForTail"
-                                                    placeholder="Customer">
-                                            <mat-option *ngFor="let customer of customersForTail" [value]="customer">
-                                                {{customer.company}}
+                                        <mat-select
+                                            (selectionChange)="
+                                                tailNumberLookupCustomerChanged()
+                                            "
+                                            [(ngModel)]="customerForTailLookup"
+                                            [disabled]="
+                                                !customerForTailLookup ||
+                                                !customersForTail
+                                            "
+                                            placeholder="Customer"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let customer of customersForTail
+                                                "
+                                                [value]="customer"
+                                            >
+                                                {{ customer.company }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
@@ -62,22 +90,29 @@
                         </div>
                     </mat-tab>
 
-                     <!--Price template searching tab-->
-                     <mat-tab label="Template">
+                    <!--Price template searching tab-->
+                    <mat-tab label="Template">
                         <div class="mt-4">
                             <mat-form-field>
                                 <mat-label>ITP Template</mat-label>
-                                <mat-select (selectionChange)="priceTemplateChanged()" [(ngModel)]="pricingTemplateId"
-                                            class="font-weight-bold" placeholder="ITP Template">
-                                    <mat-option *ngFor="let pricingTemplate of pricingTemplates"
-                                                [value]="pricingTemplate.oid">
-                                        {{pricingTemplate.name}}
+                                <mat-select
+                                    (selectionChange)="priceTemplateChanged()"
+                                    [(ngModel)]="pricingTemplateId"
+                                    class="font-weight-bold"
+                                    placeholder="ITP Template"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let pricingTemplate of pricingTemplates
+                                        "
+                                        [value]="pricingTemplate.oid"
+                                    >
+                                        {{ pricingTemplate.name }}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
                     </mat-tab>
-
                 </mat-tab-group>
             </div>
 
@@ -94,77 +129,142 @@
             </div>-->
 
             <!--Pricing template/company information-->
-            <div class="col" style="font-size:14px;">
-                <div *ngIf="tailLookupError" class="h6 mt-0 mb-0 text-danger pl-5">No Tail Price Found!</div>
+            <div class="col" style="font-size: 14px">
+                <div
+                    *ngIf="tailLookupError"
+                    class="h6 mt-0 mb-0 text-danger pl-5"
+                >
+                    No Tail Price Found!
+                </div>
 
-                <div *ngIf="priceLookupInfo && !tailLookupError && priceCheckerLookupType != 0">
+                <div
+                    *ngIf="
+                        priceLookupInfo &&
+                        !tailLookupError &&
+                        priceCheckerLookupType != 0
+                    "
+                >
                     <div class="container-fluid">
                         <div class="row pb-2">
-                            <div class="col-4 font-weight-bold">Pricing Template:</div>
-                            <div class="col">{{ priceLookupInfo?.template ? priceLookupInfo.template : 'N/A' }}</div>
+                            <div class="col-4 font-weight-bold">
+                                Pricing Template:
+                            </div>
+                            <div class="col">
+                                {{
+                                    priceLookupInfo?.template
+                                        ? priceLookupInfo.template
+                                        : "N/A"
+                                }}
+                            </div>
                         </div>
                         <div class="row pb-2">
                             <div class="col-4 font-weight-bold">Company:</div>
-                            <div class="col">{{ priceLookupInfo?.company ? priceLookupInfo.company : 'N/A' }}</div>
+                            <div class="col">
+                                {{
+                                    priceLookupInfo?.company
+                                        ? priceLookupInfo.company
+                                        : "N/A"
+                                }}
+                            </div>
                         </div>
                         <div class="row pb-2">
-                            <div class="col-4 font-weight-bold">Make/Model:</div>
-                            <div class="col">{{ priceLookupInfo?.makeModel ? priceLookupInfo.makeModel : 'N/A' }}</div>
+                            <div class="col-4 font-weight-bold">
+                                Make/Model:
+                            </div>
+                            <div class="col">
+                                {{
+                                    priceLookupInfo?.makeModel
+                                        ? priceLookupInfo.makeModel
+                                        : "N/A"
+                                }}
+                            </div>
                         </div>
                         <div class="row pb-2">
                             <div class="col-4 font-weight-bold">Ramp Fee:</div>
                             <div *ngIf="priceLookupInfo?.rampFee" class="col">
-                                ${{priceLookupInfo?.rampFee.price | number: "1.2-4" }} waived
-                                at {{priceLookupInfo.rampFee.waived | number: "1.0"}} gal.
+                                ${{
+                                    priceLookupInfo?.rampFee.price
+                                        | number: "1.2-4"
+                                }}
+                                waived at
+                                {{
+                                    priceLookupInfo.rampFee.waived
+                                        | number: "1.0"
+                                }}
+                                gal.
                             </div>
-                            <div *ngIf="!priceLookupInfo?.rampFee" class="col">N/A</div>
+                            <div *ngIf="!priceLookupInfo?.rampFee" class="col">
+                                N/A
+                            </div>
                         </div>
                         <div *ngIf="priceLookupInfo?.rampFee" class="row">
-                            <div class="col-4 font-weight-bold">Ramp Fee Rule:</div>
-                            <div class="col">{{priceLookupInfo.rampFee.categorizationDescription}}</div>
+                            <div class="col-4 font-weight-bold">
+                                Ramp Fee Rule:
+                            </div>
+                            <div class="col">
+                                {{
+                                    priceLookupInfo.rampFee
+                                        .categorizationDescription
+                                }}
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
 <div *ngIf="sampleCalculation" class="container-fluid pb-4 sub-widget">
     <div class="row mt-4 mb-2" *ngIf="isPriceBreakdownCustomerActive">
-        <div *ngIf="!hideFeeAndTaxGeneralBreakdown" class="col font-weight-bold" style="padding-left: 53px;">
+        <div
+            *ngIf="!hideFeeAndTaxGeneralBreakdown"
+            class="col font-weight-bold"
+            style="padding-left: 53px"
+        >
             Taxes and Fees
         </div>
-        <div *ngIf="!hidePriceTierBreakdown" class="col font-weight-bold" style="padding-left: 16px;">
+        <div
+            *ngIf="!hidePriceTierBreakdown"
+            class="col font-weight-bold"
+            style="padding-left: 16px"
+        >
             Customer's All-In Rate
         </div>
     </div>
 
     <div class="row mt-4 price-lookup-breakdown">
-        <div class="col-12" style="font-size:14px;">
-            <price-breakdown #priceBreakdownPreview
-                             (calculationsComplated)="priceBreakdownCalculationsCompleted($event)"
-                             [customerInfoByGroupId]="sampleCalculation.customerInfoByGroupId"
-                             [hideFeeAndTaxGeneralBreakdown]="hideFeeAndTaxGeneralBreakdown"
-                             [hidePriceTierBreakdown]="hidePriceTierBreakdown"
-                             [feeAndTaxDisplayMode]="2"
-                             [priceTemplateId]="sampleCalculation.pricingTemplateId"
-                             [showFeeAndTaxLineSeparator]="true"
-                             [feesAndTaxes]="feesAndTaxes"
-                             [tailNumber]="sampleCalculation.tailNumber"
-                             [hideTooltips]="hideTooltips"
-                             (customerActiveCheckCompleted)="priceBreakdownCustomerActiveCheckCompleted($event)">
-
+        <div class="col-12" style="font-size: 14px">
+            <price-breakdown
+                #priceBreakdownPreview
+                (calculationsComplated)="
+                    priceBreakdownCalculationsCompleted($event)
+                "
+                [customerInfoByGroupId]="
+                    sampleCalculation.customerInfoByGroupId
+                "
+                [hideFeeAndTaxGeneralBreakdown]="hideFeeAndTaxGeneralBreakdown"
+                [hidePriceTierBreakdown]="hidePriceTierBreakdown"
+                [feeAndTaxDisplayMode]="2"
+                [priceTemplateId]="sampleCalculation.pricingTemplateId"
+                [showFeeAndTaxLineSeparator]="true"
+                [feesAndTaxes]="feesAndTaxes"
+                [tailNumber]="sampleCalculation.tailNumber"
+                [hideTooltips]="hideTooltips"
+                (customerActiveCheckCompleted)="
+                    priceBreakdownCustomerActiveCheckCompleted($event)
+                "
+            >
             </price-breakdown>
         </div>
     </div>
 </div>
 
-<ngx-ui-loader [loaderId]="tailLoader"
-               bgsPosition="center-center"
-               fgsColor="#252d47"
-               fgsType="fading-circle"
-               overlayColor="rgba(0, 0, 0, 0.06)"
-               pbColor="#252d47"></ngx-ui-loader>
+<ngx-ui-loader
+    [loaderId]="tailLoader"
+    bgsPosition="center-center"
+    fgsColor="#252d47"
+    fgsType="fading-circle"
+    overlayColor="rgba(0, 0, 0, 0.06)"
+    pbColor="#252d47"
+></ngx-ui-loader>

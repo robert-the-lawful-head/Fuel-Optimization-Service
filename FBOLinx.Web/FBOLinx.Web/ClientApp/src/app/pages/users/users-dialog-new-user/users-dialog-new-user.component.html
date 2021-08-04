@@ -3,65 +3,105 @@
     <div>
         <mat-form-field *ngIf="availableroles">
             <mat-select [(ngModel)]="data.role" placeholder="Role">
-                <mat-option *ngFor="let role of availableroles" [value]="role.value">
-                    {{role.description}}
+                <mat-option
+                    *ngFor="let role of availableroles"
+                    [value]="role.value"
+                >
+                    {{ role.description }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.firstName" aria-label="First Name" matInput placeholder="First Name">
+            <input
+                [(ngModel)]="data.firstName"
+                aria-label="First Name"
+                matInput
+                placeholder="First Name"
+            />
         </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.lastName" aria-label="Last Name" matInput placeholder="Last Name">
+            <input
+                [(ngModel)]="data.lastName"
+                aria-label="Last Name"
+                matInput
+                placeholder="Last Name"
+            />
         </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <input #userLoginEmail="ngModel" [(ngModel)]="data.username" [email]="true" aria-label="Email Login"
-                   matInput name="userLoginEmail" placeholder="Email Login">
+            <input
+                #userLoginEmail="ngModel"
+                [(ngModel)]="data.username"
+                [email]="true"
+                aria-label="Email Login"
+                matInput
+                name="userLoginEmail"
+                placeholder="Email Login"
+            />
         </mat-form-field>
     </div>
-    <div *ngIf="userLoginEmail.errors?.email" style="color: red;">
+    <div *ngIf="userLoginEmail.errors?.email" style="color: red">
         Please enter a valid email address.
     </div>
-    <div *ngIf="emailExists" style="color: red;">
+    <div *ngIf="emailExists" style="color: red">
         Email address is already in use, please select another email address.
     </div>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.newPassword" aria-label="Password" matInput placeholder="Password" type="password">
+            <input
+                [(ngModel)]="data.newPassword"
+                aria-label="Password"
+                matInput
+                placeholder="Password"
+                type="password"
+            />
         </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="data.confirmPassword" aria-label="Confirm Password" matInput
-                   placeholder="Confirm Password"
-                   type="password">
+            <input
+                [(ngModel)]="data.confirmPassword"
+                aria-label="Confirm Password"
+                matInput
+                placeholder="Confirm Password"
+                type="password"
+            />
         </mat-form-field>
     </div>
     <div
-        *ngIf="data.confirmPassword && data.confirmPassword.length > 0 && data.newPassword && data.newPassword.length > 0 && data.newPassword != data.confirmPassword"
-        class="text-danger">
+        *ngIf="
+            data.confirmPassword &&
+            data.confirmPassword.length > 0 &&
+            data.newPassword &&
+            data.newPassword.length > 0 &&
+            data.newPassword != data.confirmPassword
+        "
+        class="text-danger"
+    >
         Passwords must match
     </div>
 </div>
 <div class="mt-2 text-center">
     <button
         (click)="onSaveClick()"
-        [disabled]="!data.confirmPassword ||
-                    !data.confirmPassword.length ||
-                    !data.newPassword ||
-                    !data.newPassword.length ||
-                    data.newPassword !== data.confirmPassword ||
-                    userLoginEmail.errors?.email"
+        [disabled]="
+            !data.confirmPassword ||
+            !data.confirmPassword.length ||
+            !data.newPassword ||
+            !data.newPassword.length ||
+            data.newPassword !== data.confirmPassword ||
+            userLoginEmail.errors?.email
+        "
         class="mr-1"
         color="accent"
         mat-flat-button
-    >Add New User
+    >
+        Add New User
     </button>
     <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

@@ -6,41 +6,56 @@
         #grid
         (rowDeselected)="rowDeselected()"
         (rowSelected)="rowSelected()"
-        [dataSource]='dataSources'
+        [dataSource]="dataSources"
         [enableHover]="false"
         [allowSelection]="true"
         [selectionSettings]="selectOptions"
-        [editSettings]='editSettings'
-        allowFiltering = 'true'
-        [filterSettings]='filterOptions'
+        [editSettings]="editSettings"
+        allowFiltering="true"
+        [filterSettings]="filterOptions"
         [sortSettings]="sortSettings"
         [allowSorting]="true"
-        height=350
+        height="350"
     >
         <e-columns>
-            <e-column type='checkbox' width='50'></e-column>
-            <e-column field="customerId" headerText="Customer ID" isPrimaryKey='true' [visible]="false"></e-column>
-            <e-column field='company' headerText='Customer'></e-column>
+            <e-column type="checkbox" width="50"></e-column>
+            <e-column
+                field="customerId"
+                headerText="Customer ID"
+                isPrimaryKey="true"
+                [visible]="false"
+            ></e-column>
+            <e-column field="company" headerText="Customer"></e-column>
         </e-columns>
     </ejs-grid>
 </div>
 <div class="" mat-dialog-actions>
     <button
         (click)="onGenerate()"
-        [disabled]="!selectedCustomers || !selectedCustomers.length || downloading || emailing"
+        [disabled]="
+            !selectedCustomers ||
+            !selectedCustomers.length ||
+            downloading ||
+            emailing
+        "
         color="accent"
         mat-raised-button
     >
-        {{ !downloading ? 'Generate and Download' : '' }}
+        {{ !downloading ? "Generate and Download" : "" }}
         <mat-spinner *ngIf="downloading" diameter="20"></mat-spinner>
     </button>
     <button
         (click)="onEmail()"
-        [disabled]="!selectedCustomers || !selectedCustomers.length || emailing || emailing"
+        [disabled]="
+            !selectedCustomers ||
+            !selectedCustomers.length ||
+            emailing ||
+            emailing
+        "
         color="green"
         mat-raised-button
     >
-        {{ !emailing ? 'Email Pricing' : '' }}
+        {{ !emailing ? "Email Pricing" : "" }}
         <mat-spinner *ngIf="emailing" diameter="20"></mat-spinner>
     </button>
 </div>

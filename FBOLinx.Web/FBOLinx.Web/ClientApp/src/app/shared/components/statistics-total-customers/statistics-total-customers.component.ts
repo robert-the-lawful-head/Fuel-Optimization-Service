@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
     selector: 'app-statistics-total-customers',
-    templateUrl: './statistics-total-customers.component.html',
     styleUrls: ['./statistics-total-customers.component.scss'],
+    templateUrl: './statistics-total-customers.component.html',
 })
 // statisticsTotalCustomers component
 export class StatisticsTotalCustomersComponent implements OnInit {
@@ -23,8 +23,7 @@ export class StatisticsTotalCustomersComponent implements OnInit {
     constructor(
         private customerinfobygroupService: CustomerinfobygroupService,
         private sharedService: SharedService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.refreshData();
@@ -36,9 +35,11 @@ export class StatisticsTotalCustomersComponent implements OnInit {
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId
             )
-            .subscribe((data: any) => {
-                this.totalCustomers = data;
-            }, () => {
-            });
+            .subscribe(
+                (data: any) => {
+                    this.totalCustomers = data;
+                },
+                () => {}
+            );
     }
 }

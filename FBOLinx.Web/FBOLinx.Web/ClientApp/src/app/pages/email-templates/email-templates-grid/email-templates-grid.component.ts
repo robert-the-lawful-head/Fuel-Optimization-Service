@@ -1,19 +1,25 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-
 import { CopyConfirmationComponent } from '../../../shared/components/copy-confirmation/copy-confirmation.component';
 import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 
 @Component({
     selector: 'app-email-templates-grid',
-    templateUrl: './email-templates-grid.component.html',
     styleUrls: ['./email-templates-grid.component.scss'],
+    templateUrl: './email-templates-grid.component.html',
 })
 export class EmailTemplatesGridComponent implements OnInit {
     @Output() editEmailTemplateClicked = new EventEmitter<any>();
@@ -25,22 +31,17 @@ export class EmailTemplatesGridComponent implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     public emailTemplatesDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = [
-        'name',
-        'subject',
-        'copy',
-        'delete'
-    ];
+    public displayedColumns: string[] = ['name', 'subject', 'copy', 'delete'];
 
     public pageIndexTemplate = 0;
     public pageSizeTemplate = 50;
 
-    constructor(public newTemplateDialog: MatDialog,
+    constructor(
+        public newTemplateDialog: MatDialog,
         public copyTemplateDialog: MatDialog,
         public deleteTemplateWarningDialog: MatDialog,
-        private sharedService: SharedService) {
-
-    }
+        private sharedService: SharedService
+    ) {}
 
     ngOnInit(): void {
         if (!this.emailTemplatesData) {
@@ -76,18 +77,21 @@ export class EmailTemplatesGridComponent implements OnInit {
         this.editEmailTemplateClicked.emit({
             emailTemplateId: emailTemplate.oid,
             filter: this.emailTemplatesDataSource.filter,
-            page: this.emailTemplatesDataSource.paginator.pageIndex,
             order: this.emailTemplatesDataSource.sort.active,
             orderBy: this.emailTemplatesDataSource.sort.direction,
+            page: this.emailTemplatesDataSource.paginator.pageIndex,
         });
     }
 
     public addNewEmailTemplate() {
-        const dialogRef = this.newTemplateDialog.open(EmailTemplatesDialogNewTemplateComponent, {
-            data: {
-                fboId: this.sharedService.currentUser.fboId,
-            },
-        });
+        const dialogRef = this.newTemplateDialog.open(
+            EmailTemplatesDialogNewTemplateComponent,
+            {
+                data: {
+                    fboId: this.sharedService.currentUser.fboId,
+                },
+            }
+        );
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
@@ -118,15 +122,13 @@ export class EmailTemplatesGridComponent implements OnInit {
                     return;
                 }
 
-                this.copyEmailTemplateClicked.emit(result);;
+                this.copyEmailTemplateClicked.emit(result);
             });
         }
     }
 
     public applyFilter(filterValue: string) {
-        this.emailTemplatesDataSource.filter = filterValue
-            .trim()
-            .toLowerCase();
+        this.emailTemplatesDataSource.filter = filterValue.trim().toLowerCase();
     }
 
     onPageChanged(event: any) {

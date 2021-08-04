@@ -1,30 +1,29 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
 import { GroupsService } from '../../../services/groups.service';
 
-
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Groups',
         link: '/default-layout/groups',
+        title: 'Groups',
     },
     {
-        title: 'Edit Group',
         link: '',
+        title: 'Edit Group',
     },
 ];
 
 @Component({
     selector: 'app-groups-edit',
+    styleUrls: ['./groups-edit.component.scss'],
     templateUrl: './groups-edit.component.html',
-    styleUrls: [ './groups-edit.component.scss' ],
 })
 export class GroupsEditComponent implements OnInit {
     @Output() cancelClicked = new EventEmitter<any>();
@@ -41,8 +40,7 @@ export class GroupsEditComponent implements OnInit {
         private router: Router,
         private groupsService: GroupsService,
         private snackBar: MatSnackBar
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
@@ -61,13 +59,13 @@ export class GroupsEditComponent implements OnInit {
         this.groupsService.update(this.groupInfo).subscribe(() => {
             this.snackBar.open('Successfully updated!', '', {
                 duration: 2000,
-                panelClass: [ 'blue-snackbar' ],
+                panelClass: ['blue-snackbar'],
             });
-            this.router.navigate([ '/default-layout/groups/' ]);
+            this.router.navigate(['/default-layout/groups/']);
         });
     }
 
     public cancelEdit() {
-        this.router.navigate([ '/default-layout/groups/' ]);
+        this.router.navigate(['/default-layout/groups/']);
     }
 }

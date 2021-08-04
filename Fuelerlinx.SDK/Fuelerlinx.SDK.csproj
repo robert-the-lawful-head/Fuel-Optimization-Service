@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,7 +7,25 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="docs\**" />
+      <Compile Remove="src\**" />
+      <Compile Remove="vendor\**" />
+      <EmbeddedResource Remove="docs\**" />
+      <EmbeddedResource Remove="src\**" />
+      <EmbeddedResource Remove="vendor\**" />
+      <None Remove="docs\**" />
+      <None Remove="src\**" />
+      <None Remove="vendor\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove=".swagger-codegen-ignore" />
+      <None Remove="compile-mono.sh" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="RestSharp.Net2" Version="1.1.11" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
 
 </Project>

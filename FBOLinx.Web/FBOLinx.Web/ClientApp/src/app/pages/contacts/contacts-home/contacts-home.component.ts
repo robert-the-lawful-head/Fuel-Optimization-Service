@@ -1,13 +1,12 @@
-import { Component, Input, } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
     selector: 'app-contacts-home',
+    styleUrls: ['./contacts-home.component.scss'],
     templateUrl: './contacts-home.component.html',
-    styleUrls: [ './contacts-home.component.scss' ],
 })
 export class ContactsHomeComponent {
     @Input() contactsData: Array<any>;
 
-    constructor() {
-    }
+    constructor() {}
 }

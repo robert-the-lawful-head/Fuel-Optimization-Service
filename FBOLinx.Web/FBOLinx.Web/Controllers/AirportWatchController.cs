@@ -30,11 +30,11 @@ namespace FBOLinx.Web.Controllers
             _context = context;
         }
 
-        [HttpGet("list/fbo/{fboId}")]
-        public async Task<IActionResult> GetAirportLiveData([FromRoute] int fboId)
+        [HttpGet("list/group/{groupId}/fbo/{fboId}")]
+        public async Task<IActionResult> GetAirportLiveData([FromRoute] int groupId, [FromRoute] int fboId)
         {
             var fboLocation = await _fboService.GetFBOLocaiton(fboId);
-            var data = await _airportWatchService.GetAirportWatchLiveData(fboLocation);
+            var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
             return Ok(new
             {
                 FBOLocation = fboLocation,
