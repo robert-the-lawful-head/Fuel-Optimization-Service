@@ -13,6 +13,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
+import { UserRole } from 'src/app/enums/user-role';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { fboChangedEvent } from '../../../models/sharedEvents';
@@ -67,11 +68,11 @@ export class FbosGridComponent implements OnInit {
         private checkPricingDialog: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
-        this.canManageFbo =
-            this.sharedService.currentUser.role === 3 ||
-            this.sharedService.currentUser.role === 2;
+        this.canManageFbo = [UserRole.Conductor, UserRole.GroupAdmin].includes(
+            this.sharedService.currentUser.role
+        );
 
-        if (this.sharedService.currentUser.role === 3) {
+        if (this.sharedService.currentUser.role === UserRole.Conductor) {
             this.displayedColumns = [
                 'icao',
                 'fbo',
@@ -81,7 +82,7 @@ export class FbosGridComponent implements OnInit {
                 'delete',
             ];
         } else {
-            this.displayedColumns = ['icao', 'fbo', 'active', 'edit'];
+            this.displayedColumns = ['icao', 'fbo', 'price', 'active', 'edit'];
         }
     }
 
