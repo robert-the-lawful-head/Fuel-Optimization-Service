@@ -1,12 +1,14 @@
 import {
     Component,
     EventEmitter,
+    Inject,
     OnInit,
     Output,
     ViewChild,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BeforeRemoveEventArgs } from '@syncfusion/ej2-angular-inputs';
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { differenceBy, forOwn } from 'lodash';
 import { combineLatest } from 'rxjs';
@@ -72,6 +74,7 @@ export class PricingTemplatesEditComponent implements OnInit {
     feesAndTaxes: Array<any>;
 
     constructor(
+        @Inject('BASE_URL') private baseUrl: string,
         private route: ActivatedRoute,
         private router: Router,
         private formBuilder: FormBuilder,
@@ -89,6 +92,13 @@ export class PricingTemplatesEditComponent implements OnInit {
 
     get customerMarginsFormArray() {
         return this.pricingTemplateForm.controls.customerMargins as FormArray;
+    }
+
+    get fileSaveUrl() {
+        return this.baseUrl + 'api/file/save';
+    }
+    get fileRemoveUrl() {
+        return this.baseUrl + 'api/file/remove';
     }
 
     async ngOnInit() {
@@ -344,6 +354,12 @@ export class PricingTemplatesEditComponent implements OnInit {
                     this.recalculatePriceBreakdown();
                 });
         }
+    }
+
+    fileUploadSuccess(event: any) {}
+
+    beforeAttachmentRemove(event: BeforeRemoveEventArgs) {
+        console.log(event);
     }
 
     private loadPricingTemplateFeesAndTaxes(): void {

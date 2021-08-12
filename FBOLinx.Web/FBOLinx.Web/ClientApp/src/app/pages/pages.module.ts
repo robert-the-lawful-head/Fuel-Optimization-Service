@@ -55,6 +55,7 @@ import {
     SortService,
     ToolbarService,
 } from '@syncfusion/ej2-angular-grids';
+import { UploaderModule } from '@syncfusion/ej2-angular-inputs';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { ResizableModule } from 'angular-resizable-element';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -360,6 +361,7 @@ import { UsersHomeComponent } from './users/users-home/users-home.component';
         ListboxModule,
         DropdownModule,
         Ej2MultiSelectModule,
+        UploaderModule,
     ],
     providers: [
         ColumnMenuService,

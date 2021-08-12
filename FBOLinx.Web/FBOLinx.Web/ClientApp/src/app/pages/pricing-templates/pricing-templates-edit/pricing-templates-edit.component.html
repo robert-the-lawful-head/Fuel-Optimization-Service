@@ -282,7 +282,19 @@
                                 #typeRTE
                                 formControlName="notes"
                                 id="rteNotes"
+                                [insertImageSettings]="{
+                                    saveFormat: 'Base64'
+                                }"
                             ></ejs-richtexteditor>
+
+                            <ejs-uploader
+                                #attachmentsUpload
+                                [asyncSettings]="{
+                                    saveUrl: fileSaveUrl,
+                                    removeUrl: fileRemoveUrl
+                                }"
+                                (beforeRemove)="beforeAttachmentRemove($event)"
+                            ></ejs-uploader>
                         </mat-tab>
 
                         <mat-tab label="Scenario Pricing">

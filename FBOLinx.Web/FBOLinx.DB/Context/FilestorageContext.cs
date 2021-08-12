@@ -18,10 +18,18 @@ namespace FBOLinx.DB.Context
         }
 
         public virtual DbSet<FboLinxImageFileData> FboLinxImageFileData { get; set; }
+        public virtual DbSet<FbolinxFileData> FbolinxFileData { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<FboLinxImageFileData>(entity =>
+            {
+                entity.Property(e => e.ContentType).IsUnicode(false);
+
+                entity.Property(e => e.FileName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<FbolinxFileData>(entity =>
             {
                 entity.Property(e => e.ContentType).IsUnicode(false);
 
