@@ -67,6 +67,10 @@ const initialColumns: ColumnType[] = [
         name: 'Fuel Vendors',
     },
     {
+        id: 'allInPrice',
+        name: 'All In Price',
+    },
+    {
         id: 'fleetSize',
         name: 'Fleet Size',
     },
