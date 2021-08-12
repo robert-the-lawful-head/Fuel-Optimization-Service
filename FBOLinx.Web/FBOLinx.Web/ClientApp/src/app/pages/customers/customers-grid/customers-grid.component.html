@@ -356,6 +356,30 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="allInPrice">
+                <th
+                    *matHeaderCellDef
+                    class="overflow-label"
+                    mat-header-cell
+                    mat-sort-header
+                >
+                    <div>All In Price</div>
+
+                    <span *ngIf="customersDataSource">
+                        <app-table-column-filter
+                            [columnFormat]="1"
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="allInPrice"
+                            propertyName="allInPrice"
+                        ></app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let customer" mat-cell>
+                    {{ customer.allInPrice }}
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="fleetSize">
                 <th
                     *matHeaderCellDef
