@@ -70,10 +70,10 @@ const initialColumns: ColumnType[] = [
         id: 'fleetSize',
         name: 'Fleet Size',
     },
-    {
-        id: 'aircraftsVisits',
-        name: 'Previous Visits',
-    },
+    //{
+    //    id: 'aircraftsVisits',
+    //    name: 'Previous Visits',
+    //},
     {
         id: 'delete',
         name: 'Actions',
