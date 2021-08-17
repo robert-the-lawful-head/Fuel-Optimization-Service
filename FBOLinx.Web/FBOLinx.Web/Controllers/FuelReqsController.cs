@@ -1282,16 +1282,15 @@ namespace FBOLinx.Web.Controllers
                                                  (fr.QuotedVolume ?? 0) * (fr.QuotedPpg ?? 0)) ?? 0
                                 }).ToList();
 
-                var pricingLogs = (from icao in icaos
-                                   join cpl in _context.CompanyPricingLog on icao equals cpl.ICAO
-                                   join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
-                                   join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
-                                   where cibg.GroupId == groupId
-                                   select new
-                                   {
-                                       cibg.CustomerId,
-                                       cpl.CreatedDate
-                                   }).ToList();
+                var pricingLogs = await (from cpl in _context.CompanyPricingLog
+                                       join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
+                                       join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
+                                       where cibg.GroupId == groupId && icaos.Contains(cpl.ICAO)
+                                       select new
+                                       {
+                                           cibg.CustomerId,
+                                           cpl.CreatedDate
+                                       }).ToListAsync();
 
                 var customers = await _context.CustomerInfoByGroup
                                         .Where(c => c.GroupId.Equals(groupId))
