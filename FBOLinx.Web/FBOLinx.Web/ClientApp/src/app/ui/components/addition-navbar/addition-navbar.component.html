@@ -39,10 +39,19 @@
                             <div class="col-6">
                                 {{ pricingTemplate.name }}
                             </div>
-                            <div
-                                class="col-4"
-                                style="padding-left: 0px !important"
-                            >
+                            <div class="col-6">
+                                <span
+                                    class="font-italic"
+                                    *ngIf="
+                                        !pricingTemplate.customerEmails
+                                            .length &&
+                                        !(
+                                            pricingTemplate.changeText &&
+                                            !pricingTemplate.sent
+                                        )
+                                    "
+                                    >No emails on template</span
+                                >
                                 <button
                                     (click)="
                                         openMarginInfo(pricingTemplate.oid)
@@ -94,7 +103,11 @@
                             #selectAll
                             (change)="changeSentOption(pricingTemplate)"
                             (ngModel)="(pricingTemplate.toSend)"
-                            [checked]="pricingTemplate.toSend"
+                            [checked]="
+                                pricingTemplate.customerEmails.length > 0 &&
+                                pricingTemplate.toSend
+                            "
+                            [disabled]="!pricingTemplate.customerEmails.length"
                         ></mat-slide-toggle>
                     </td>
                 </ng-container>

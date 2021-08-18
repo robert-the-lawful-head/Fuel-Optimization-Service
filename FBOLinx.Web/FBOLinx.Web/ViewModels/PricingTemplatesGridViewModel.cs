@@ -31,5 +31,7 @@ namespace FBOLinx.Web.ViewModels
         public double? YourMargin { get; set; }
         public int? CustomersAssigned { get; set; }
         public int? EmailContentId { get; set; }
+        public EmailContent EmailContent { get; set; }
+        public List<string> CustomerEmails { get; set; }
     }
 }

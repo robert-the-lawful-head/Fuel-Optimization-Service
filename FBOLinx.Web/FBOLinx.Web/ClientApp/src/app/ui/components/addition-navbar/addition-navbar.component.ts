@@ -15,13 +15,13 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
 import * as moment from 'moment';
-import { forkJoin, Observable } from 'rxjs';
 import { DistributeEmailsConfirmationComponent } from 'src/app/shared/components/distribute-emails-confirmation/distribute-emails-confirmation.component';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
 import { DistributionService } from '../../../services/distribution.service';
 import { EmailcontentService } from '../../../services/emailcontent.service';
+import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
@@ -53,7 +53,6 @@ export class AdditionNavbarComponent
     resultsLength: any;
     marginTemplateDataSource: MatTableDataSource<any> = null;
     pricingTemplatesData: any[];
-    filteredTemplate: any;
     distributionLog: any[];
     timeLeft = 0;
     interval: any;
@@ -63,9 +62,9 @@ export class AdditionNavbarComponent
     buttontext = 'Distribute Pricing';
 
     message: string;
-    private priceTemplatesForSending: any[];
-    private priceTemplatesEmailContent: any[];
     private pricesExpired: boolean;
+    private retailPrice: number;
+    private costPrice: number;
 
     constructor(
         private pricingTemplatesService: PricingtemplatesService,
@@ -73,12 +72,17 @@ export class AdditionNavbarComponent
         private distributeConfirmationDialog: MatDialog,
         private templateDialog: MatDialog,
         private distributionService: DistributionService,
-        private customerContactsService: CustomercontactsService,
-        private emailContentService: EmailcontentService,
+        private fboPricesService: FbopricesService,
         private expiredPricingDialog: MatDialog
     ) {
         this.title = 'Distribute Prices';
         this.open = false;
+    }
+
+    get validTemplates() {
+        return this.pricingTemplatesData.filter(
+            (t) => t.emailContent && t.customerEmails.length > 0
+        );
     }
 
     ngOnInit() {}
@@ -194,16 +198,18 @@ export class AdditionNavbarComponent
             this.pricingTemplatesData = [];
 
             this.pricingTemplatesService
-                .getByFbo(
+                .getWithEmailContentByFbo(
                     this.sharedService.currentUser.fboId,
                     this.sharedService.currentUser.groupId
                 )
                 .subscribe((data: any) => {
                     if (data) {
-                        this.pricingTemplatesData = data.map((row) => ({
-                            ...row,
-                            toSend: true,
-                        }));
+                        this.pricingTemplatesData = data
+                            .filter((row) => row.customersAssigned > 0)
+                            .map((row) => ({
+                                ...row,
+                                toSend: true,
+                            }));
                     }
 
                     this.marginTemplateDataSource = new MatTableDataSource(
@@ -216,44 +222,34 @@ export class AdditionNavbarComponent
         this.open = !this.open;
     }
 
-    openMarginInfo(templateId) {
+    async openMarginInfo(templateId) {
         this.pricesExpired = false;
-        this.filteredTemplate = this.pricingTemplatesData.find(
+        const filteredTemplate = this.pricingTemplatesData.find(
             ({ oid }) => oid === templateId
         );
 
-        this.checkExpiredPrices(this.filteredTemplate);
+        await this.checkExpiredPrices();
 
         if (!this.pricesExpired) {
-            if (this.filteredTemplate.emailContentId > 0) {
-                this.emailContentService
-                    .get({ oid: this.filteredTemplate.emailContentId })
-                    .subscribe((data: any) => {
-                        if (data != null && data.oid > 0) {
-                            this.checkCustomerContacts(templateId);
-                        } else {
-                            const dialogRef = this.templateDialog.open(
-                                NotificationComponent,
-                                {
-                                    data: {
-                                        text: 'Please assign an Email Template to this ITP Template before proceeding.',
-                                    },
-                                }
-                            );
+            this.checkCustomerContacts(filteredTemplate);
 
-                            dialogRef.afterClosed().subscribe();
-                        }
-                    });
-            } else {
-                this.checkCustomerContacts(templateId);
+            if (!filteredTemplate.emailContent) {
+                const dialogRef = this.templateDialog.open(
+                    NotificationComponent,
+                    {
+                        data: {
+                            text: 'Please assign an Email Template to this ITP Template before proceeding.',
+                        },
+                    }
+                );
+
+                dialogRef.afterClosed().subscribe();
             }
         }
     }
 
     async delay(ms: number) {
-        await new Promise<void>((resolve) =>
-            setTimeout(() => resolve(), ms)
-        ).then(() => console.log('fired'));
+        await new Promise<void>((resolve) => setTimeout(() => resolve(), ms));
     }
 
     changeSentOption(item) {
@@ -261,165 +257,72 @@ export class AdditionNavbarComponent
         if (!item.toSend) {
             this.selectAll = false;
         }
+
+        if (
+            this.validTemplates.length ===
+            this.validTemplates.filter((t) => t.toSend).length
+        ) {
+            this.selectAll = true;
+        }
     }
 
-    checkCustomerContacts(templateId) {
-        this.customerContactsService
-            .getCustomerEmailsByGroupAndFBOAndPricing(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                templateId
-            )
-            .subscribe((data: any[]) => {
-                if (data.length > 0) {
-                    const dialogRef = this.templateDialog.open(
-                        DistributionWizardReviewComponent,
-                        {
-                            data: this.previewEmail,
-                            panelClass: 'wizard',
-                        }
-                    );
-
-                    dialogRef.afterClosed().subscribe((result) => {
-                        if (!result) {
-                            return;
-                        }
-
-                        this.previewEmail = result;
-                        const request = this.GetSendDistributionRequest(
-                            this.filteredTemplate
-                        );
-                        this.distributionService
-                            .previewDistribution(request)
-                            .subscribe(() => {});
-                    });
-                } else {
-                    const dialogRef = this.templateDialog.open(
-                        NotificationComponent,
-                        {
-                            data: {
-                                text: 'Please add a contact with an email to a customer assigned to this template before proceeding.',
-                            },
-                        }
-                    );
-
-                    dialogRef.afterClosed().subscribe();
+    checkCustomerContacts(template) {
+        if (template.customerEmails.length) {
+            const dialogRef = this.templateDialog.open(
+                DistributionWizardReviewComponent,
+                {
+                    data: this.previewEmail,
+                    panelClass: 'wizard',
                 }
-            });
-    }
+            );
 
-    confirmSendEmails() {
-        this.pricesExpired = false;
-        for (const template of this.pricingTemplatesData) {
-            if (template.toSend) {
-                this.checkExpiredPrices(template);
-                if (this.pricesExpired) {
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
                     return;
                 }
-            }
+
+                this.previewEmail = result;
+                const request = this.GetSendDistributionRequest(template);
+                this.distributionService
+                    .previewDistribution(request)
+                    .subscribe(() => {});
+            });
+        } else {
+            const dialogRef = this.templateDialog.open(NotificationComponent, {
+                data: {
+                    text: 'Please add a contact with an email to a customer assigned to this template before proceeding.',
+                },
+            });
+
+            dialogRef.afterClosed().subscribe();
         }
+    }
+
+    async confirmSendEmails() {
+        this.pricesExpired = false;
+        await this.checkExpiredPrices();
 
         if (!this.pricesExpired) {
-            const templatesWithEmailContent: any[] = [];
-            this.getTemplateEmailContent().subscribe((responseList: any[]) => {
-                for (const responseIndex in responseList) {
-                    if (
-                        responseList[responseIndex] == null &&
-                        this.priceTemplatesEmailContent[responseIndex]
-                            .emailContentId > 0
-                    ) {
-                        templatesWithEmailContent.push(
-                            this.priceTemplatesEmailContent[responseIndex].name
-                        );
-                    }
-                }
-
-                if (templatesWithEmailContent.length === 0) {
-                    this.sendEmails();
-                } else {
-                    const templatesList = templatesWithEmailContent.join(', ');
-                    const dialogRef = this.templateDialog.open(
-                        NotificationComponent,
-                        {
-                            data: {
-                                text:
-                                    'Please assign an Email Template to these ITP Template(s) before proceeding: ' +
-                                    templatesList,
-                            },
-                        }
-                    );
-
-                    dialogRef.afterClosed().subscribe();
-                }
-            });
+            this.sendEmails();
         }
     }
 
     sendEmails() {
-        this.getTemplatesWithCustomerCount().subscribe(
-            (responseList: any[]) => {
-                if (!responseList) {
-                    alert('No customers found for the selected distributions.');
-                }
-
-                const templateEmails = [];
-                for (let i = 0; i < responseList.length; i++) {
-                    templateEmails.push({
-                        emails: responseList[i],
-                        name: this.priceTemplatesForSending[i].name,
-                    });
-                }
-
-                const dialogRef = this.distributeConfirmationDialog.open(
-                    DistributeEmailsConfirmationComponent,
-                    {
-                        autoFocus: false,
-                        data: templateEmails,
-                    }
-                );
-
-                dialogRef.afterClosed().subscribe((result) => {
-                    if (!result) {
-                        return;
-                    }
-                    this.sendMails();
-                });
+        const dialogRef = this.distributeConfirmationDialog.open(
+            DistributeEmailsConfirmationComponent,
+            {
+                autoFocus: false,
+                data: this.validTemplates.filter((t) => t.toSend),
+                width: '700px',
             }
         );
-    }
 
-    getTemplateEmailContent(): Observable<any[]> {
-        const result: any[] = [];
-        this.priceTemplatesEmailContent = [];
-
-        this.pricingTemplatesData.forEach((x) => {
-            if (x.toSend) {
-                this.priceTemplatesEmailContent.push(x);
-                result.push(
-                    this.emailContentService.get({ oid: x.emailContentId })
-                );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
             }
+            this.sendMails();
         });
-        return forkJoin(result);
-    }
-
-    getTemplatesWithCustomerCount(): Observable<any[]> {
-        const result: any[] = [];
-        this.priceTemplatesForSending = [];
-
-        this.pricingTemplatesData.forEach((x) => {
-            if (x.toSend) {
-                this.priceTemplatesForSending.push(x);
-                result.push(
-                    this.customerContactsService.getCustomerEmailsByGroupAndFBOAndPricing(
-                        this.sharedService.currentUser.groupId,
-                        this.sharedService.currentUser.fboId,
-                        x.oid
-                    )
-                );
-            }
-        });
-        return forkJoin(result);
     }
 
     sendMails() {
@@ -473,20 +376,50 @@ export class AdditionNavbarComponent
         };
     }
 
-    private checkExpiredPrices(template) {
-        if (template.intoPlanePrice <= 0 || template.intoPlanePrice === null) {
-            const dialogRef = this.expiredPricingDialog.open(
-                PricingExpiredNotificationComponent,
-                {
-                    autoFocus: false,
-                    data: {
-                        hideRemindMeButton: true,
-                    },
-                }
-            );
+    private async checkExpiredPrices() {
+        const data: any = await this.fboPricesService
+            .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
+            .toPromise();
+
+        this.retailPrice = data.filter(
+            (r) => r.product === 'JetA Retail'
+        )?.[0].price;
+        this.costPrice = data.filter(
+            (r) => r.product === 'JetA Cost'
+        )?.[0].price;
+
+        if (!this.retailPrice && !this.costPrice) {
+            const dialogRef = this.templateDialog.open(NotificationComponent, {
+                data: {
+                    text: 'Your fuel pricing has expired. Please update your cost/retail values.',
+                    title: 'Pricing Expired',
+                },
+            });
+
             dialogRef.afterClosed().subscribe();
-            this.pricesExpired = true;
         }
+        if (this.retailPrice && !this.costPrice) {
+            const dialogRef = this.templateDialog.open(NotificationComponent, {
+                data: {
+                    text: 'You need to add a posted cost price to distribute',
+                    title: 'Cost price is expired',
+                },
+            });
+
+            dialogRef.afterClosed().subscribe();
+        }
+        if (!this.retailPrice && this.costPrice) {
+            const dialogRef = this.templateDialog.open(NotificationComponent, {
+                data: {
+                    text: 'You need to add a posted retail price to distribute',
+                    title: 'Retail price is expired',
+                },
+            });
+
+            dialogRef.afterClosed().subscribe();
+        }
+
+        this.pricesExpired = !this.retailPrice || !this.costPrice;
     }
 
     private prepareDataSource(): void {

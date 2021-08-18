@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>Distribute?</h1>
-<div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px">
+<div class="mt-1 mb-2" mat-dialog-content>
     <span>
         You are about to distribute the following templates to the customers
         assigned to them. Are you sure?
@@ -9,10 +9,10 @@
         <div *ngFor="let cell of data" class="d-flex pt-2 pb-2 border-bottom">
             <div class="template-name">{{ cell.name }}</div>
             <div class="emails-list">
-                <span *ngIf="cell.emails.length === 0">0 emails</span>
+                <span *ngIf="cell.customerEmails.length === 0">0 emails</span>
                 <p-listbox
-                    *ngIf="cell.emails.length > 0"
-                    [options]="cell.emails"
+                    *ngIf="cell.customerEmails.length > 0"
+                    [options]="cell.customerEmails"
                     [filter]="true"
                 ></p-listbox>
             </div>
