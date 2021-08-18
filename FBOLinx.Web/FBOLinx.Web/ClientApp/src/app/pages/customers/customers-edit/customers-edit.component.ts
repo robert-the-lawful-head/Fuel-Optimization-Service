@@ -45,6 +45,8 @@ const BREADCRUMBS: any[] = [
     templateUrl: './customers-edit.component.html',
 })
 export class CustomersEditComponent implements OnInit {
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
     // Members
     pageTitle = 'Edit Customer';
     breadcrumb = BREADCRUMBS;
@@ -60,8 +62,6 @@ export class CustomersEditComponent implements OnInit {
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
     isEditing: boolean;
-    @ViewChild('priceBreakdownPreview')
-    private priceBreakdownPreview: PriceBreakdownComponent;
 
     constructor(
         private formBuilder: FormBuilder,
