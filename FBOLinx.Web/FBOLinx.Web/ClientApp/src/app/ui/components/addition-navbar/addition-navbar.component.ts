@@ -105,8 +105,10 @@ export class AdditionNavbarComponent
     onClick(targetElement) {
         if (
             this.open &&
+            targetElement.target &&
             (targetElement.target.innerText === 'Clear' ||
                 (targetElement.target.nodeName !== 'svg' &&
+                    targetElement.target.offsetParent &&
                     !(
                         targetElement.target.className === 'ng-star-inserted' ||
                         targetElement.target.offsetParent.className.lastIndexOf(

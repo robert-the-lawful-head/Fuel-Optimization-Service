@@ -39,7 +39,9 @@ namespace FBOLinx.Web.Controllers
                 return null;
             }
 
-            if (JwtManager.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+            if (JwtManager.GetClaimedFboId(_HttpContextAccessor) != emailContent.FboId &&
+                JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor &&
+                JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin)
             {
                 return BadRequest();
             }
