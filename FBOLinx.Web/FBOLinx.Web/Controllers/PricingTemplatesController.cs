@@ -86,6 +86,63 @@ namespace FBOLinx.Web.Controllers
             return Ok(marginTemplates);
         }
 
+        [HttpGet("with-email-content/group/{groupId}/fbo/{fboId}")]
+        public async Task<IActionResult> GetPricingTemplatesWithEmailContentByGroupIdAndFboId([FromRoute] int groupId, [FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<PricingTemplatesGridViewModel> templates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+            var templatesWithEmailContent = (
+                from t in templates
+                join ec in _context.EmailContent on t.EmailContentId equals ec.Oid
+                into leftJoinedEC
+                from ec in leftJoinedEC.DefaultIfEmpty()
+                select new PricingTemplatesGridViewModel
+                {
+                    CustomerId = t.CustomerId,
+                    Default = t.Default,
+                    Fboid = t.Fboid,
+                    Margin = t.Margin,
+                    YourMargin = t.Margin,
+                    MarginType = t.MarginType,
+                    Name = t.Name,
+                    Notes = t.Notes,
+                    Oid = t.Oid,
+                    Type = t.Type,
+                    Subject = t.Subject,
+                    Email = t.Email,
+                    IsPricingExpired = t.IsPricingExpired,
+                    IntoPlanePrice = t.IntoPlanePrice,
+                    CustomersAssigned = t.CustomersAssigned,
+                    EmailContentId = t.EmailContentId,
+                    EmailContent = ec
+                }
+                ).ToList();
+
+            foreach (var t in templatesWithEmailContent)
+            {
+                t.CustomerEmails = await (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
+                                    join c in _context.Customers on cg.CustomerId equals c.Oid
+                                    join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
+                                    join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
+                                    join co in _context.Contacts on custc.ContactId equals co.Oid
+                                    join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
+                                    where (cg.Active ?? false)
+                                          && cc.CustomerType == t.Oid
+                                          && (cibg.CopyAlerts ?? false) == true
+                                          && !string.IsNullOrEmpty(cibg.Email)
+                                          && cibg.GroupId == groupId
+                                          && (c.Suspended ?? false) == false
+                                    select cibg.Email
+                                ).ToListAsync();
+            }
+
+            return Ok(templatesWithEmailContent);
+        }
+
         [HttpGet("getcostpluspricingtemplate/{fboId}")]
         public async Task<IActionResult> GetCostPlusPricingTemplates([FromRoute] int fboId)
         {

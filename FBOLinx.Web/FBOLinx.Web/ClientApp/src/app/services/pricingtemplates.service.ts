@@ -22,6 +22,17 @@ export class PricingtemplatesService {
         );
     }
 
+    public getWithEmailContentByFbo(fboId, groupId?) {
+        return this.http.get<PricingTemplate[]>(
+            this.accessPointUrl +
+                '/with-email-content/group/' +
+                groupId +
+                '/fbo/' +
+                fboId,
+            { headers: this.headers }
+        );
+    }
+
     public getByFboDefaultTemplate(groupId, fboId) {
         return this.http.get(
             this.accessPointUrl +
