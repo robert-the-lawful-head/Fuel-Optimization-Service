@@ -14,6 +14,7 @@ import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import FlatFileImporter from 'flatfile-csv-importer';
 import { find, forEach, map, sortBy } from 'lodash';
+import { Subscription } from 'rxjs';
 import * as XLSX from 'xlsx';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -23,7 +24,9 @@ import { CustomerinfobygroupService } from '../../../services/customerinfobygrou
 import { CustomermarginsService } from '../../../services/customermargins.service';
 // Services
 import { CustomersService } from '../../../services/customers.service';
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 import {
     ColumnType,
     TableSettingsComponent,
@@ -67,13 +70,17 @@ const initialColumns: ColumnType[] = [
         name: 'Fuel Vendors',
     },
     {
+        id: 'allInPrice',
+        name: 'All In Price',
+    },
+    {
         id: 'fleetSize',
         name: 'Fleet Size',
     },
-    {
-        id: 'aircraftsVisits',
-        name: 'Previous Visits',
-    },
+    //{
+    //    id: 'aircraftsVisits',
+    //    name: 'Previous Visits',
+    //},
     {
         id: 'delete',
         name: 'Actions',
@@ -86,6 +93,12 @@ const initialColumns: ColumnType[] = [
     templateUrl: './customers-grid.component.html',
 })
 export class CustomersGridComponent implements OnInit {
+    @ViewChild('priceBreakdownPreview')
+    priceBreakdownPreview: PriceBreakdownComponent;
+    @ViewChild('customerTableContainer') table: ElementRef;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+
     // Input/Output Bindings
     @Input() customersData: any[];
     @Input() pricingTemplatesData: any[];
@@ -97,10 +110,6 @@ export class CustomersGridComponent implements OnInit {
     @Output() customerDeleted = new EventEmitter<any>();
 
     // Members
-    @ViewChild('customerTableContainer') table: ElementRef;
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-
     tableLocalStorageKey = 'customer-manager-table-settings';
 
     customersDataSource: any = null;
@@ -116,6 +125,11 @@ export class CustomersGridComponent implements OnInit {
 
     results = '[]';
 
+    feesAndTaxes: any[];
+    focusedCustomer: any;
+
+    feesAndTaxesSubscription: Subscription;
+
     private importer: FlatFileImporter;
 
     constructor(
@@ -126,7 +140,8 @@ export class CustomersGridComponent implements OnInit {
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customerMarginsService: CustomermarginsService,
-        private airportWatchService: AirportWatchService
+        private airportWatchService: AirportWatchService,
+        private fboFeesAndTaxesService: FbofeesandtaxesService
     ) {}
 
     ngOnInit() {
@@ -553,6 +568,27 @@ export class CustomersGridComponent implements OnInit {
         }
     }
 
+    onCustomerPriceShown(customer: any) {
+        this.focusedCustomer = customer;
+        this.feesAndTaxesSubscription = this.fboFeesAndTaxesService
+            .getByFboAndCustomer(
+                this.sharedService.currentUser.fboId,
+                customer.customerId
+            )
+            .subscribe((response: any[]) => {
+                this.feesAndTaxes = response;
+            });
+    }
+
+    onCustomerPriceHidden() {
+        if (this.feesAndTaxesSubscription) {
+            this.feesAndTaxesSubscription.unsubscribe();
+            this.feesAndTaxesSubscription = null;
+        }
+        this.feesAndTaxes = null;
+        this.focusedCustomer = null;
+    }
+
     private refreshCustomerDataSource() {
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
@@ -600,5 +636,16 @@ export class CustomersGridComponent implements OnInit {
         (
             this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
         )?._setAnimationTransitionState({ toState: 'active' });
+    }
+
+    private loadCustomerFeesAndTaxes(customerInfoByGroupId: number): void {
+        this.fboFeesAndTaxesService
+            .getByFboAndCustomer(
+                this.sharedService.currentUser.fboId,
+                customerInfoByGroupId
+            )
+            .subscribe((response: any[]) => {
+                this.feesAndTaxes = response;
+            });
     }
 }

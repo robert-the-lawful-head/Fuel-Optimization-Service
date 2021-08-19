@@ -1,4 +1,4 @@
-<div #customerTableContainer class="customers-grid">
+<div #customerTableContainer class="customers-grid" style="position: relative">
     <div class="container-fluid">
         <div class="row">
             <div *ngIf="anySelected()" class="col-2 bulk-update">
@@ -98,7 +98,10 @@
             </div>
         </div>
     </div>
-    <div class="w-100 table-container" style="overflow-x: auto">
+    <div
+        class="w-100 table-container"
+        style="overflow-x: auto; position: relative"
+    >
         <table
             #customerTable
             [dataSource]="customersDataSource"
@@ -356,6 +359,27 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="allInPrice">
+                <th
+                    *matHeaderCellDef
+                    class="overflow-label"
+                    mat-header-cell
+                    mat-sort-header
+                >
+                    <div>All In Price</div>
+                </th>
+                <td *matCellDef="let customer" mat-cell>
+                    <div
+                        [popover]="feeAndTaxPopover"
+                        class="hover-mouseenter d-inline-block ml-2 pl-1 pr-3"
+                        (onShown)="onCustomerPriceShown(customer)"
+                        (onHidden)="onCustomerPriceHidden()"
+                    >
+                        <i aria-hidden="true" class="fa fa-info-circle"></i>
+                    </div>
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="fleetSize">
                 <th
                     *matHeaderCellDef
@@ -460,5 +484,22 @@
             [pageSizeOptions]="[10, 25, 50, 100]"
             [pageSize]="pageSize"
         ></mat-paginator>
+
+        <popover-content
+            #feeAndTaxPopover
+            placement="left"
+            title="Price Information"
+            [closeOnClickOutside]="true"
+        >
+            <price-breakdown
+                #priceBreakdownPreview
+                *ngIf="focusedCustomer"
+                [customerInfoByGroupId]="focusedCustomer.customerInfoByGroupId"
+                [feeAndTaxDisplayMode]="2"
+                [feesAndTaxes]="feesAndTaxes"
+                [priceTemplateId]="focusedCustomer.pricingTemplateId"
+                [hideTooltips]="true"
+            ></price-breakdown>
+        </popover-content>
     </div>
 </div>

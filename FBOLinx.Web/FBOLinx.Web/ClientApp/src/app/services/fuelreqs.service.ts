@@ -227,7 +227,7 @@ export class FuelreqsService {
                 fboId,
             {
                 endDateTime: endDate,
-                startDateTime: startDate,
+                startDateTime: startDate
             },
             {
                 headers: this.headers,
@@ -304,6 +304,8 @@ export class FuelreqsService {
             {
                 endDateTime: endDate,
                 startDateTime: startDate,
+                icaos: [],
+                fbos: []
             },
             {
                 headers: this.headers,
@@ -323,6 +325,7 @@ export class FuelreqsService {
             {
                 endDateTime: endDate,
                 startDateTime: startDate,
+                icaos: []
             },
             {
                 headers: this.headers,

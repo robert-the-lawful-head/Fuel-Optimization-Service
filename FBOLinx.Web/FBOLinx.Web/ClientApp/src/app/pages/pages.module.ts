@@ -9,7 +9,6 @@ import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { GoogleMapsModule } from '@angular/google-maps';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -304,7 +303,6 @@ import { UsersHomeComponent } from './users/users-home/users-home.component';
         CommonModule,
         BrowserAnimationsModule,
         FormsModule,
-        GoogleMapsModule,
         DragDropModule,
         A11yModule,
         ClipboardModule,

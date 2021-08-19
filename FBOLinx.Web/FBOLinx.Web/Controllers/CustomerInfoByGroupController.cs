@@ -745,7 +745,7 @@ namespace FBOLinx.Web.Controllers
                 var contactInfoByGroupForAlerts =
                     await _context.ContactInfoByGroup.Where(x => x.GroupId == groupId && x.CopyAlerts == true).Include(x => x.Contact).ToListAsync();
 
-                var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
+                //var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
 
                 var customerFuelVendors = await _fuelerLinxService.GetCustomerFuelVendors();
 
@@ -761,13 +761,13 @@ namespace FBOLinx.Web.Controllers
                             } equals new { TemplateId = ai.Oid}
                             into leftJoinAi
                         from ai in leftJoinAi.DefaultIfEmpty()
-                        join hd in historicalData on cg.CustomerId equals hd.CustomerId into leftJoinHd
-                        from hd in leftJoinHd.DefaultIfEmpty()
+                        //join hd in historicalData on cg.CustomerId equals hd.CustomerId into leftJoinHd
+                        //from hd in leftJoinHd.DefaultIfEmpty()
                         join cv in customerFuelVendors on cg.Customer.FuelerlinxId equals cv.FuelerLinxId into leftJoinCv
                         from cv in leftJoinCv.DefaultIfEmpty()
                         where cg.GroupId == groupId && !(cg.Suspended ?? false)
 
-                        group new { cg, hd } by new
+                        group new { cg } by new //, hd 
                         {
                             cg.CustomerId,
                             CustomerInfoByGroupId = cg.Oid,
@@ -804,7 +804,7 @@ namespace FBOLinx.Web.Controllers
                             PricingTemplateName = resultsGroup.Key.PricingTemplateName,
                             SelectAll = false,
                             TailNumbers = resultsGroup.Key.Tails,
-                            AircraftsVisits = resultsGroup.Count(a => a.hd != null && a.hd.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing),
+                            //AircraftsVisits = resultsGroup.Count(a => a.hd != null && a.hd.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing),
                             FuelVendors = resultsGroup.Key.FuelVendors
                                 .Split(";")
                                 .Where(a => !string.IsNullOrEmpty(a))
