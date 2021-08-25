@@ -1079,14 +1079,22 @@ namespace FBOLinx.Web.Controllers
 
                 FBOLinxGroupOrdersResponse fuelerlinxFBOsOrdersCount = await _fuelerLinxService.GetTransactionsCountForFbosAndAirports(request);
 
+                var yourOrderCount = await (from fr in _context.FuelReq
+                                            join fa in _context.Fboairports on fr.Fboid equals fa.Fboid
+                                            join f in _context.Fbos on fa.Fboid equals f.Oid
+                                            where request.Icaos.Contains(fa.Icao) && f.GroupId == groupId
+                                            select fr).ToListAsync();
+
                 var result = icaos.Select(f =>
                 {
                     var order = fuelerlinxFBOsOrdersCount.Result.Where(o => o.Icao == f.Icao).FirstOrDefault();
+                    var yourOrder = yourOrderCount.Count(y => y.Icao == f.Icao && y.Etd >= request.StartDateTime && y.Etd < request.EndDateTime.AddDays(1));
+
                     return new
                     {
                         f.Icao,
-                        order?.AirportOrders,
-                        order?.FboOrders,
+                        AirportOrders = order?.FboOrders,
+                        FboOrders = yourOrder,
                         MarketShare = Math.Round(order?.AirportOrders > 0 ? ((order?.FboOrders ?? 0) / (double)order?.AirportOrders * 100) : 0)
                     };
                 }).ToList();
