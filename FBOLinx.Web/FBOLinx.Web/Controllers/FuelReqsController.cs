@@ -1095,7 +1095,7 @@ namespace FBOLinx.Web.Controllers
                         f.Icao,
                         AirportOrders = order?.FboOrders,
                         FboOrders = yourOrder,
-                        MarketShare = Math.Round(order?.AirportOrders > 0 ? ((order?.FboOrders ?? 0) / (double)order?.AirportOrders * 100) : 0)
+                        MarketShare = Math.Round(order?.FboOrders > 0 ? ((yourOrder ?? 0) / (double)order?.FboOrders * 100) : 0)
                     };
                 }).ToList();
 
