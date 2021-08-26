@@ -46,10 +46,10 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     ngOnInit(): void {
         this.map = new mapboxgl.Map({
             accessToken:
-                'pk.eyJ1IjoidGJyZWVzZSIsImEiOiJja280a3M3dDEwMzAyMnFwbjMwZ2VleWdxIn0.CyG67L4gTlEHV9oJiH7FFw',
+                'pk.eyJ1IjoiZnVlbGVybGlueCIsImEiOiJja3NzODNqcG4wdHVrMm9rdHU3OGRpb2dmIn0.LvSvlGG0ej3PEDJOBpOoMQ',
             center: this.center,
             container: 'flight-watch-map',
-            style: 'mapbox://styles/tbreese/ckoj6y81613y818qfsngeei08',
+            style: 'mapbox://styles/fuelerlinx/ckst7bfa53xsn17okyl7gky87',
             zoom: this.zoom,
         });
         const eventHandler = () => this.refreshMap();
