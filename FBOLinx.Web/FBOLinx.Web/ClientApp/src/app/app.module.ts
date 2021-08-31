@@ -88,6 +88,7 @@ import { RequestDemoModalComponent } from './shared/components/request-demo-moda
 import { RequestDemoSuccessComponent } from './shared/components/request-demo-success/request-demo-success.component';
 import { metaReducers, reducers } from './store/reducers';
 import { UIModule } from './ui/ui.module';
+import { TagsService } from './services/tags.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -194,6 +195,7 @@ import { UIModule } from './ui/ui.module';
         UserService,
         AppService,
         AirportWatchService,
+        TagsService
     ],
 })
-export class AppModule {}
+export class AppModule { }

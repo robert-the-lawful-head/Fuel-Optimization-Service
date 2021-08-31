@@ -6,24 +6,24 @@
     </div>
 
     <div *ngIf="customerForm" [formGroup]="customerForm">
+
         <div class="card-wrap">
             <h3 class="card-header h5">
                 <div class="row">
                     <div class="col-12">
                         <span class="card-header-title">{{
                             customerForm.value.company
-                        }}</span>
-                        <button
-                            [disabled]="isEditing"
-                            (click)="cancelCustomerEdit()"
-                            class="float-right close-btn"
-                            mat-icon-button
-                        >
+                            }}</span>
+                        <button [disabled]="isEditing" (click)="cancelCustomerEdit()" class="float-right close-btn"
+                            mat-icon-button>
                             <mat-icon aria-hidden="false">close</mat-icon>
                         </button>
                     </div>
                 </div>
             </h3>
+            <div *ngIf="loading">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
             <div class="card-content edit-customer-content">
                 <mat-tab-group>
                     <mat-tab label="Customer Details">
@@ -32,60 +32,53 @@
 
                             <div class="row mb-2">
                                 <div class="col-md-6">
-                                    <mat-slide-toggle
-                                        (change)="toggleChange($event)"
-                                        color="accent"
-                                        formControlName="active"
-                                        >Active
+                                    <mat-slide-toggle (change)="toggleChange($event)" color="accent"
+                                        formControlName="active">Active
                                     </mat-slide-toggle>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input
-                                            formControlName="company"
-                                            matInput
-                                            placeholder="Company"
-                                        />
+                                        <input formControlName="company" matInput placeholder="Company" />
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <mat-select
-                                            formControlName="customerCompanyType"
-                                            placeholder="Customer Type"
-                                        >
-                                            <mat-option
-                                                *ngFor="
-                                                    let customerCompanyType of customerCompanyTypes
-                                                "
-                                                [value]="
-                                                    customerCompanyType.oid
-                                                "
-                                            >
-                                                {{ customerCompanyType.name }}
+                                        <mat-select multiple formControlName="customerTag" placeholder="Customer Tags">
+                                            <mat-select-trigger>
+                                                <mat-chip-list>
+                                                    <mat-chip *ngFor="let tag of tagsSelected" [removable]="true"
+                                                        (removed)="removeCustomerTag(tag)" [value]="tag.oid">
+                                                        {{ tag.name }}
+                                                        <mat-icon matChipRemove>cancel</mat-icon>
+                                                    </mat-chip>
+                                                </mat-chip-list>
+                                            </mat-select-trigger>
+
+                                            <mat-option [disabled]="isOptionDisabled(tag.oid)" *ngFor="
+                                                    let tag of tags
+                                                " [value]="
+                                                    tag.oid
+                                                ">
+                                                {{ tag.name }}
                                             </mat-option>
-                                            <mat-option [value]="-1">
+                                            <mat-option [value]="-1" class="hide-checkbox"
+                                                [disabled]="isOptionDisabled(-1)" (click)="newCustomTag()">
                                                 &lt;Add Custom&gt;
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
+
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <mat-select
-                                            formControlName="certificateType"
-                                            placeholder="Certificate Type"
-                                        >
-                                            <mat-option
-                                                *ngFor="
+                                        <mat-select formControlName="certificateType" placeholder="Certificate Type">
+                                            <mat-option *ngFor="
                                                     let certificateType of certificateTypes
-                                                "
-                                                [value]="certificateType.value"
-                                            >
+                                                " [value]="certificateType.value">
                                                 {{
-                                                    certificateType.description
+                                                certificateType.description
                                                 }}
                                             </mat-option>
                                         </mat-select>
@@ -93,65 +86,37 @@
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input
-                                            formControlName="mainPhone"
-                                            matInput
-                                            placeholder="Main Phone"
-                                        />
+                                        <input formControlName="mainPhone" matInput placeholder="Main Phone" />
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input
-                                            formControlName="address"
-                                            matInput
-                                            placeholder="Address"
-                                        />
+                                        <input formControlName="address" matInput placeholder="Address" />
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input
-                                            formControlName="city"
-                                            matInput
-                                            placeholder="City"
-                                        />
+                                        <input formControlName="city" matInput placeholder="City" />
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input
-                                            formControlName="state"
-                                            matInput
-                                            placeholder="State"
-                                        />
+                                        <input formControlName="state" matInput placeholder="State" />
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input
-                                            formControlName="zipCode"
-                                            matInput
-                                            placeholder="Zip Code"
-                                        />
+                                        <input formControlName="zipCode" matInput placeholder="Zip Code" />
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input
-                                            formControlName="country"
-                                            matInput
-                                            placeholder="Country"
-                                        />
+                                        <input formControlName="country" matInput placeholder="Country" />
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <input
-                                            formControlName="website"
-                                            matInput
-                                            placeholder="Website"
-                                        />
+                                        <input formControlName="website" matInput placeholder="Website" />
                                     </mat-form-field>
                                 </div>
                             </div>
@@ -159,33 +124,23 @@
                             <h5>Contacts</h5>
 
                             <!--Contacts Grid-->
-                            <div
-                                *ngIf="
+                            <div *ngIf="
                                     contactsData && !currentContactInfoByGroup
-                                "
-                            >
-                                <app-contacts-grid
-                                    (contactDeleted)="contactDeleted($event)"
-                                    (newContactClicked)="newContactClicked()"
-                                    [contactsData]="contactsData"
-                                ></app-contacts-grid>
+                                ">
+                                <app-contacts-grid (contactDeleted)="contactDeleted($event)"
+                                    (newContactClicked)="newContactClicked()" [contactsData]="contactsData">
+                                </app-contacts-grid>
                             </div>
                         </div>
                     </mat-tab>
 
                     <mat-tab label="Aircraft">
                         <!--Customer Aircraft Grid-->
-                        <div
-                            *ngIf="customerAircraftsData && customerInfoByGroup"
-                        >
-                            <app-customer-aircrafts-grid
-                                (updateCustomerPricingTemplate)="
+                        <div *ngIf="customerAircraftsData && customerInfoByGroup">
+                            <app-customer-aircrafts-grid (updateCustomerPricingTemplate)="
                                     updateCustomerPricingTemplate($event)
-                                "
-                                [customerAircraftsData]="customerAircraftsData"
-                                [customer]="customerInfoByGroup"
-                                [pricingTemplatesData]="pricingTemplatesData"
-                            ></app-customer-aircrafts-grid>
+                                " [customerAircraftsData]="customerAircraftsData" [customer]="customerInfoByGroup"
+                                [pricingTemplatesData]="pricingTemplatesData"></app-customer-aircrafts-grid>
                         </div>
                     </mat-tab>
 
@@ -201,23 +156,16 @@
                                 <tbody>
                                     <tr *ngIf="customCustomerType">
                                         <td>
-                                            <mat-form-field
-                                                class="template-dropdown"
-                                            >
-                                                <mat-select
-                                                    formControlName="customerMarginTemplate"
-                                                    placeholder="Margin Template"
-                                                >
-                                                    <mat-option
-                                                        *ngFor="
+                                            <mat-form-field class="template-dropdown">
+                                                <mat-select formControlName="customerMarginTemplate"
+                                                    placeholder="Margin Template">
+                                                    <mat-option *ngFor="
                                                             let pricingTemplate of pricingTemplatesData
-                                                        "
-                                                        [value]="
+                                                        " [value]="
                                                             pricingTemplate.oid
-                                                        "
-                                                    >
+                                                        ">
                                                         {{
-                                                            pricingTemplate.name
+                                                        pricingTemplate.name
                                                         }}
                                                     </mat-option>
                                                 </mat-select>
@@ -228,21 +176,13 @@
                             </table>
 
                             <div *ngIf="feesAndTaxes" class="sub-widget">
-                                <price-breakdown
-                                    #priceBreakdownPreview
-                                    (omitCheckChanged)="
+                                <price-breakdown #priceBreakdownPreview (omitCheckChanged)="
                                         omitFeeAndTaxCheckChanged($event)
-                                    "
-                                    [customerInfoByGroupId]="
+                                    " [customerInfoByGroupId]="
                                         customerInfoByGroup.oid
-                                    "
-                                    [feeAndTaxDisplayMode]="1"
-                                    [feesAndTaxes]="feesAndTaxes"
-                                    [priceTemplateId]="
+                                    " [feeAndTaxDisplayMode]="1" [feesAndTaxes]="feesAndTaxes" [priceTemplateId]="
                                         customCustomerType.customerType
-                                    "
-                                    tooltipPlacement="left"
-                                ></price-breakdown>
+                                    " tooltipPlacement="left"></price-breakdown>
                             </div>
                         </div>
                     </mat-tab>

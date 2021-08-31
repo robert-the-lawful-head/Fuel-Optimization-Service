@@ -40,6 +40,11 @@
     }
 }
 
+::ng-deep .hide-checkbox .mat-pseudo-checkbox {
+    display: none;
+}
+
+
 .edit-customer-content .mat-tab-body-content {
     overflow: initial !important;
 }
@@ -51,4 +56,8 @@
 
 .edit-customer-content .mat-tab-body {
     overflow: initial !important;
+}
+
+::ng-deep .mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
+    background: #2196f3;
 }

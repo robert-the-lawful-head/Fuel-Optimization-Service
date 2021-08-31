@@ -54,5 +54,6 @@ namespace FBOLinx.Web.ViewModels
         }
 
         public List<string> FuelVendors { get; set; }
+        public List<string> Tags { get; set; }
     }
 }

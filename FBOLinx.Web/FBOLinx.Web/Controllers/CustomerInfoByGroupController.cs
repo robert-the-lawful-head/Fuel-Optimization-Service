@@ -39,7 +39,6 @@ namespace FBOLinx.Web.Controllers
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
         private readonly FuelerLinxService _fuelerLinxService;
-
         public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService)
         {
             _hostingEnvironment = hostingEnvironment;
@@ -739,6 +738,8 @@ namespace FBOLinx.Web.Controllers
                      }
                      ).ToList();
 
+                var customerTags = await _context.CustomerTag.Where(x => x.GroupId == groupId).ToListAsync();
+
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
                 var customerInfoByGroup = await _customerService.GetCustomersByGroupAndFbo(groupId, fboId);
@@ -785,6 +786,7 @@ namespace FBOLinx.Web.Controllers
                             AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
                             PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid,
                             FuelVendors = cv == null ? "" : cv.FuelVendors,
+                            Tags = customerTags.Where(x=>x.CustomerId == cg.CustomerId).Select(x=>x.Name)
                         }
                         into resultsGroup
                         select new CustomersGridViewModel()
@@ -809,7 +811,8 @@ namespace FBOLinx.Web.Controllers
                                 .Split(";")
                                 .Where(a => !string.IsNullOrEmpty(a))
                                 .OrderBy(a => a)
-                                .ToList()
+                                .ToList(),
+                            Tags = resultsGroup.Key.Tags.ToList()
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())
