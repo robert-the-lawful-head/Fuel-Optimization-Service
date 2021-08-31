@@ -16,7 +16,7 @@ import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from './aircraft-images';
 
-type LayerType = 'airway' | 'streetview' | 'icao';
+type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,7 +49,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                 'pk.eyJ1IjoiZnVlbGVybGlueCIsImEiOiJja3NzODNqcG4wdHVrMm9rdHU3OGRpb2dmIn0.LvSvlGG0ej3PEDJOBpOoMQ',
             center: this.center,
             container: 'flight-watch-map',
-            style: 'mapbox://styles/fuelerlinx/ckst7bfa53xsn17okyl7gky87',
+            style: 'mapbox://styles/fuelerlinx/ckszkcycz080718l7oaqoszvd',
             zoom: this.zoom,
         });
         const eventHandler = () => this.refreshMap();
@@ -269,6 +269,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
 
     getLayersFromType(type: LayerType) {
         const airwayLayers = ['airways-lines', 'airways-labels'];
+        const taxwayLayers = ['taxiways-lines', 'taxiways-labels'];
         const styleLayers = this.map
             .getStyle()
             .layers.filter(
@@ -281,6 +282,9 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
 
         if (type === 'airway') {
             return airwayLayers;
+        }
+        if (type === 'taxiway') {
+            return taxwayLayers;
         }
         if (type === 'streetview') {
             return styleLayers;
