@@ -15,6 +15,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import FlatFileImporter from 'flatfile-csv-importer';
 import { find, forEach, map, sortBy } from 'lodash';
 import { Subscription } from 'rxjs';
+import { TagsService } from 'src/app/services/tags.service';
 import * as XLSX from 'xlsx';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -41,25 +42,25 @@ const initialColumns: ColumnType[] = [
         name: 'Select All',
     },
     {
-        id: 'needsAttention',
-        name: 'Needs Attention',
-    },
-    {
         id: 'company',
         name: 'Company',
         sort: 'asc',
     },
     {
-        id: 'customerCompanyTypeName',
-        name: 'Customer Type',
+        id: 'needsAttention',
+        name: 'Needs Attention',
+    },
+    {
+        id: 'tags',
+        name: 'Tags',
     },
     {
         id: 'isFuelerLinxCustomer',
         name: 'FuelerLinx Network',
     },
     {
-        id: 'certificateTypeDescription',
-        name: 'Certificate Type',
+        id: 'fleetSize',
+        name: 'Fleet Size',
     },
     {
         id: 'pricingTemplateName',
@@ -74,9 +75,14 @@ const initialColumns: ColumnType[] = [
         name: 'All In Price',
     },
     {
-        id: 'fleetSize',
-        name: 'Fleet Size',
+        id: 'certificateTypeDescription',
+        name: 'Certificate Type',
     },
+    {
+        id: 'customerCompanyTypeName',
+        name: 'Customer Type',
+    },
+
     //{
     //    id: 'aircraftsVisits',
     //    name: 'Previous Visits',
@@ -120,7 +126,7 @@ export class CustomersGridComponent implements OnInit {
     pageSize = 100;
     columns: ColumnType[] = [];
     airportWatchStartDate: Date = new Date();
-
+    tags: any[];
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
     results = '[]';
@@ -141,8 +147,9 @@ export class CustomersGridComponent implements OnInit {
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customerMarginsService: CustomermarginsService,
         private airportWatchService: AirportWatchService,
-        private fboFeesAndTaxesService: FbofeesandtaxesService
-    ) {}
+        private fboFeesAndTaxesService: FbofeesandtaxesService,
+        private tagsService: TagsService
+    ) { }
 
     ngOnInit() {
         this.initializeImporter();
@@ -182,6 +189,8 @@ export class CustomersGridComponent implements OnInit {
         this.airportWatchService.getStartDate().subscribe((date) => {
             this.airportWatchStartDate = new Date(date);
         });
+
+        this.loadCustomerTags();
     }
 
     onPageChanged(event: any) {
@@ -261,6 +270,17 @@ export class CustomersGridComponent implements OnInit {
                 customerInfoByGroupId,
             });
         });
+    }
+
+    private loadCustomerTags() {
+        this.tagsService.getGroupTags(this.sharedService.currentUser.groupId)
+            .subscribe((data: any) => {
+                this.tags = data;
+
+                if (!this.tags) {
+                    return;
+                }
+            });
     }
 
     exportCustomersToExcel() {
@@ -405,7 +425,7 @@ export class CustomersGridComponent implements OnInit {
                         }
                     });
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 
     initializeImporter() {
@@ -595,10 +615,10 @@ export class CustomersGridComponent implements OnInit {
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
                     : {
-                          hidden: column.hidden,
-                          id: column.id,
-                          name: column.name,
-                      }
+                        hidden: column.hidden,
+                        id: column.id,
+                        name: column.name,
+                    }
             );
             this.paginator.pageIndex = 0;
             this.saveSettings();

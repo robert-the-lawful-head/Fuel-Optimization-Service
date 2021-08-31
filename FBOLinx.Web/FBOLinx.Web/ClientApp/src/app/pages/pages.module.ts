@@ -181,6 +181,7 @@ import { UsersDialogNewUserComponent } from './users/users-dialog-new-user/users
 import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
+import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/customer-tag-dialog.component';
 
 @NgModule({
     declarations: [
@@ -297,6 +298,7 @@ import { UsersHomeComponent } from './users/users-home/users-home.component';
         FlightWatchSettingsComponent,
         CsvExportModalComponent,
         AutocompleteSearchComponent,
+        CustomerTagDialogComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
@@ -366,7 +368,7 @@ import { UsersHomeComponent } from './users/users-home/users-home.component';
         FilterService,
         GroupService,
         ToolbarService,
-        DetailRowService,
+        DetailRowService
     ],
 })
-export class PagesModule {}
+export class PagesModule { }

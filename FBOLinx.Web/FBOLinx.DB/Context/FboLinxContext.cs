@@ -76,7 +76,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchAircraftTailNumber> AirportWatchAircraftTailNumber { get; set; }
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
         public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
-
+        public virtual DbSet<CustomerTag> CustomerTag { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -924,6 +924,18 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.Oid).HasColumnName("OID");
 
                 entity.Property(e => e.DateTimeAppliedUtc).HasColumnName("DateTimeAppliedUTC");
+            });
+
+            modelBuilder.Entity<CustomerTag>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+
+                entity.Property(e => e.Name).IsUnicode(false);
+
             });
         }
     }
