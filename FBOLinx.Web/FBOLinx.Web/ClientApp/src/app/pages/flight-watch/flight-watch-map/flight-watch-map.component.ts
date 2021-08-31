@@ -16,7 +16,7 @@ import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from './aircraft-images';
 
-type LayerType = 'airway' | 'streetview' | 'icao' | 'taxway';
+type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -269,7 +269,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
 
     getLayersFromType(type: LayerType) {
         const airwayLayers = ['airways-lines', 'airways-labels'];
-        const taxwayLayers = ['taxways-lines', 'taxways-labels'];
+        const taxwayLayers = ['taxiways-lines', 'taxiways-labels'];
         const styleLayers = this.map
             .getStyle()
             .layers.filter(
@@ -283,7 +283,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         if (type === 'airway') {
             return airwayLayers;
         }
-        if (type === 'taxway') {
+        if (type === 'taxiway') {
             return taxwayLayers;
         }
         if (type === 'streetview') {
