@@ -137,6 +137,11 @@ export class GroupAnalyticsMarketShareComponent
             this.columns = JSON.parse(
                 localStorage.getItem(this.tableLocalStorageKey)
             );
+
+            if (this.columns.length == 4) {
+                var yourOrdersColumn = { id: 'yourOrders', name: 'Your Orders at Airport: Directs' };
+                this.columns.push(yourOrdersColumn);
+            }
         } else {
             this.columns = [
                 {
@@ -149,7 +154,11 @@ export class GroupAnalyticsMarketShareComponent
                 },
                 {
                     id: 'fboOrders',
-                    name: 'Your Orders at Airport',
+                    name: 'Your Orders at Airport: Contract Fuel Vendors',
+                },
+                {
+                    id: 'yourOrders',
+                    name: 'Your Orders at Airport: Directs',
                 },
                 {
                     id: 'marketShare',
@@ -216,7 +225,8 @@ export class GroupAnalyticsMarketShareComponent
                     ICAO: item.company,
                     'Market Share': item.marketShare + '%',
                     'Total Orders at Airport': item.airportOrders,
-                    'Your Orders at Airport': item.fboOrders,
+                    'Your Orders at Airport: Contract Fuel Vendors': item.fboOrders,
+                    'Your Orders at Airport: Directs': item.yourOrders
                 };
                 return row;
             });

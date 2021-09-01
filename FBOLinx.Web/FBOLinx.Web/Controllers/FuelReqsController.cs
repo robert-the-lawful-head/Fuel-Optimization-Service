@@ -958,7 +958,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                var icaos = await (from f in _context.Fbos
+                var locations = await (from f in _context.Fbos
                                    join fa in _context.Fboairports on f.Oid equals fa.Fboid
                                    where f.GroupId == groupId
                                    select new
@@ -968,7 +968,7 @@ namespace FBOLinx.Web.Controllers
                                        f.Oid,
                                    }).ToListAsync();
 
-                request.Icaos = icaos.Select(f => f.Icao).ToList();
+                request.IcaosFbos = locations.ToDictionary(f => f.Icao, f => f.Fbo);
 
                 var fbosOrders = await (from fr in _context.FuelReq
                                         join f in _context.Fbos on fr.Fboid equals f.Oid
@@ -988,11 +988,11 @@ namespace FBOLinx.Web.Controllers
                 FboLinxContractFuelVendorsCountsByAirportsResponse response = await _fuelerLinxService.GetContractFuelVendorsTransactionsCountByAirports(request);
                 ICollection<FbolinxContractFuelVendorTransactionsCountByAirport> fuelerlinxContractFuelVendorOrdersCount = response.Result;
 
-                var result = icaos.Select(fbo =>
+                var result = locations.Select(fbo =>
                 {
                     return new FBOLinxOrdersForMultipleAirportsResponse
                     {
-                        DirectOrders = fbosOrders.Where(fr => fr.Oid == fbo.Oid).Count(),
+                        DirectOrders = fbosOrders.Where(fr => fr.Oid == fbo.Oid).Select(s=>s.DirectOrders).FirstOrDefault(),
                         Icao = fbo.Icao,
                         VendorOrders = fuelerlinxContractFuelVendorOrdersCount.Where(f => f.Icao == fbo.Icao).ToList()
                     };
@@ -1089,13 +1089,17 @@ namespace FBOLinx.Web.Controllers
                 {
                     var order = fuelerlinxFBOsOrdersCount.Result.Where(o => o.Icao == f.Icao).FirstOrDefault();
                     var yourOrder = yourOrderCount.Count(y => y.Icao == f.Icao && y.Etd >= request.StartDateTime && y.Etd < request.EndDateTime.AddDays(1));
+                    var airportOrder = order == null ? 0 : order?.AirportOrders;
+                    var fboOrder = (order == null ? 0 : order?.FboOrders);
+                    var marketShare = (double)(airportOrder == 0 ? 0 : (((double)fboOrder + (double)yourOrder) / (double)airportOrder) * 100);
 
                     return new
                     {
                         f.Icao,
-                        AirportOrders = order?.FboOrders,
-                        FboOrders = yourOrder,
-                        MarketShare = Math.Round(order?.FboOrders > 0 ? ((yourOrder == 0 ? 0 : yourOrder) / (double)order?.FboOrders * 100) : 0)
+                        AirportOrders = airportOrder,
+                        FboOrders = fboOrder,
+                        YourOrders = yourOrder,
+                        MarketShare = Math.Round(marketShare)
                     };
                 }).ToList();
 
@@ -1315,7 +1319,7 @@ namespace FBOLinx.Web.Controllers
                 FBOLinxOrdersForMultipleAirportsRequest fbolinxOrdersRequest = new FBOLinxOrdersForMultipleAirportsRequest();
                 fbolinxOrdersRequest.StartDateTime = request.StartDateTime;
                 fbolinxOrdersRequest.EndDateTime = request.EndDateTime;
-                fbolinxOrdersRequest.Icaos = icaos;
+                fbolinxOrdersRequest.IcaosFbos = icaos.ToDictionary(x => x, x => x);
 
                 FboLinxCustomerTransactionsCountAtAirportResponse response = await _fuelerLinxService.GetCustomerTransactionsCountForMultipleAirports(fbolinxOrdersRequest);
                 ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount = response.Result;
