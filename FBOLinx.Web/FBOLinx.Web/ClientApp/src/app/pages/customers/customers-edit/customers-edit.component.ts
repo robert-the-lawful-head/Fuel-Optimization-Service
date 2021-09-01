@@ -3,8 +3,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { combineLatest, EMPTY, of } from 'rxjs';
 import { catchError, debounceTime, map, switchMap } from 'rxjs/operators';
+import { TagsService } from 'src/app/services/tags.service';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
@@ -23,6 +25,7 @@ import { PriceBreakdownComponent } from '../../../shared/components/price-breakd
 import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-modal/contacts-edit-modal.component';
 // Components
 import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
+import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-dialog.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -62,7 +65,10 @@ export class CustomersEditComponent implements OnInit {
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
     isEditing: boolean;
-
+    tags: any[];
+    tagsSelected: any[] = [];
+    tagSubsctiption: Subscription;
+    loading: boolean = false;
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
@@ -81,7 +87,8 @@ export class CustomersEditComponent implements OnInit {
         private newContactDialog: MatDialog,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private tagsService: TagsService
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
@@ -144,6 +151,7 @@ export class CustomersEditComponent implements OnInit {
             state: [this.customerInfoByGroup.state],
             website: [this.customerInfoByGroup.website],
             zipCode: [this.customerInfoByGroup.zipCode],
+            customerTag: [this.customerInfoByGroup.customerTag]
         });
         this.customerForm.valueChanges
             .pipe(
@@ -159,7 +167,6 @@ export class CustomersEditComponent implements OnInit {
                     this.customCustomerType.customerType =
                         this.customerForm.value.customerMarginTemplate;
 
-                    console.log(this.customCustomerType);
 
                     await this.customerInfoByGroupService
                         .update(customerInfoByGroup)
@@ -204,7 +211,10 @@ export class CustomersEditComponent implements OnInit {
             }
         );
 
+
+
         this.loadCustomerFeesAndTaxes();
+        this.loadCustomerTags();
     }
 
     // Methods
@@ -294,6 +304,50 @@ export class CustomersEditComponent implements OnInit {
         });
     }
 
+    addCustomerTag(tag) {
+        this.loading = true;
+        tag['groupId'] = this.sharedService.currentUser.groupId;
+        tag['customerId'] = this.customerInfoByGroup.customerId;
+        tag['oid'] = 0;
+        this.tagsService.add(tag).subscribe(response => {
+            this.loading = false;
+            this.tagSubsctiption.unsubscribe();
+            this.loadCustomerTags();
+        });
+    }
+
+    removeCustomerTag(tag) {
+        this.loading = true;
+        this.tagsSelected = this.tagsSelected.filter(obj => obj.oid !== tag.oid);
+        this.tagsService.remove(tag).subscribe(response => {
+            this.loading = false;
+
+            this.tagSubsctiption.unsubscribe();
+            this.loadCustomerTags();
+        })
+    }
+
+    newCustomTag() {
+        const data = {
+            customerId: this.customerInfoByGroup.customerId,
+            groupId: this.sharedService.currentUser.groupId,
+        };
+        const dialogRef = this.dialog.open(CustomerTagDialogComponent, {
+            data,
+        });
+
+        dialogRef.afterClosed().subscribe((response) => {
+            if (!response) {
+                return;
+            }
+            this.tagsService
+                .add(response)
+                .subscribe((result: any) => {
+                    this.loadCustomerTags();
+                });
+        });
+    }
+
     toggleChange($event) {
         if ($event.checked) {
             this.customerInfoByGroup.showJetA = true;
@@ -357,6 +411,43 @@ export class CustomersEditComponent implements OnInit {
                 this.contactsData = data;
                 this.currentContactInfoByGroup = null;
                 if (!this.contactsData) {
+                    return;
+                }
+            });
+    }
+    isOptionDisabled(opt: any): boolean {
+        return this.tagsSelected.length >= 10 && !this.tagsSelected.find(el => el.oid == opt)
+    }
+
+    private loadCustomerTags() {
+        this.tagsService.getTags({
+            groupId: this.sharedService.currentUser.groupId,
+            customerId: this.customerInfoByGroup.customerId,
+            isFuelerLinx: this.customerInfoByGroup.customer.fuelerlinxId > 0 ? true : false
+        })
+            .subscribe((data: any) => {
+                this.tags = data;
+                this.tagsSelected = this.tags.filter(x => x.customerId == this.customerInfoByGroup.customerId);
+                this.customerForm.controls.customerTag.setValue(this.tagsSelected.map(x => x.oid));
+
+                this.tagSubsctiption = this.customerForm.controls.customerTag.valueChanges.subscribe(
+                    (selectedValue) => {
+                        if (selectedValue.includes(-1)) {
+                            this.newCustomTag();
+                        } else {
+                            let addTags = this.tags.filter(x => selectedValue.includes(x.oid) && x.customerId != this.customerInfoByGroup.customerId);
+                            let removeTags = this.tags.filter(x => !selectedValue.includes(x.oid) && x.customerId == this.customerInfoByGroup.customerId);
+                            for (const tag of addTags) {
+                                this.addCustomerTag(tag);
+                            }
+
+                            for (const tag of removeTags) {
+                                this.removeCustomerTag(tag);
+                            }
+                        }
+                    }
+                );
+                if (!this.tags) {
                     return;
                 }
             });

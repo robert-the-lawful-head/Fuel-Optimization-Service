@@ -325,7 +325,7 @@ export class FuelreqsService {
             {
                 endDateTime: endDate,
                 startDateTime: startDate,
-                icaos: []
+                icaosfbos: {}
             },
             {
                 headers: this.headers,
