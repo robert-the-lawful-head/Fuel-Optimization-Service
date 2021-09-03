@@ -124,7 +124,7 @@
                     </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
-                    <p-multiSelect class="tags-dropdown-filter" [options]="customer.avaibleTags" #multiInput
+                    <p-multiSelect class="tags-dropdown-filter" [options]="customer.availableTags" #multiInput
                         [(ngModel)]="customer.tags" display="chip" placeholder="No tags" optionLabel="label"  autofocusFilter="true"
                         [virtualScroll]="true" (onChange)="onCustomerTagUpdate($event, customer)"  maxSelectedLabels="10" filterBy="name" 
                         (onPanelShow)="onCustomerTagPanelShow($event, customer)" [showToggleAll]="false" itemSize="50" resetFilterOnHide="true" 

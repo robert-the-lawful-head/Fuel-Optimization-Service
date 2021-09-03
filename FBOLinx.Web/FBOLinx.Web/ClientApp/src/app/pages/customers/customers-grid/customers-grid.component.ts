@@ -614,8 +614,8 @@ export class CustomersGridComponent implements OnInit {
             customerId: customer.customerId,
             isFuelerLinx: customer.isFuelerLinxCustomer
         }).subscribe(response => {
-            customer.avaibleTags = response;
-            customer.tags = customer.avaibleTags.filter(x=>x.customerId == customer.customerId);
+            customer.availableTags = response;
+            customer.tags = customer.availableTags.filter(x=>x.customerId == customer.customerId);
         })
     }
 
