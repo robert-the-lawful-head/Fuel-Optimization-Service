@@ -9,7 +9,12 @@
     </div>
 </div>
 <div class="mt-2 text-center">
-    <button (click)="sendTag(data)" class="mr-1" color="accent" mat-flat-button>
+    <button
+        [mat-dialog-close]="data"
+        class="mr-1"
+        color="accent"
+        mat-flat-button
+    >
         Add Tag
     </button>
     <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
