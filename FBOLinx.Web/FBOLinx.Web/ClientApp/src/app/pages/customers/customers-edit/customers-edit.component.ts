@@ -211,8 +211,6 @@ export class CustomersEditComponent implements OnInit {
             }
         );
 
-
-
         this.loadCustomerFeesAndTaxes();
         this.loadCustomerTags();
     }
@@ -327,7 +325,7 @@ export class CustomersEditComponent implements OnInit {
         })
     }
 
-    newCustomTag() {
+    newCustomTag() {        
         const data = {
             customerId: this.customerInfoByGroup.customerId,
             groupId: this.sharedService.currentUser.groupId,
@@ -431,9 +429,13 @@ export class CustomersEditComponent implements OnInit {
                 this.customerForm.controls.customerTag.setValue(this.tagsSelected.map(x => x.oid));
 
                 this.tagSubsctiption = this.customerForm.controls.customerTag.valueChanges.subscribe(
-                    (selectedValue) => {
+                    (selectedValue) => {         
                         if (selectedValue.includes(-1)) {
                             this.newCustomTag();
+                            this.customerForm.controls.customerTag
+                            .setValue(this.customerForm.controls.customerTag.value.filter(function(item) {
+                                return item !== -1
+                            }));
                         } else {
                             let addTags = this.tags.filter(x => selectedValue.includes(x.oid) && x.customerId != this.customerInfoByGroup.customerId);
                             let removeTags = this.tags.filter(x => !selectedValue.includes(x.oid) && x.customerId == this.customerInfoByGroup.customerId);

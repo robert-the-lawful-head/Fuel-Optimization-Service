@@ -14,6 +14,7 @@ import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import FlatFileImporter from 'flatfile-csv-importer';
 import { find, forEach, map, sortBy } from 'lodash';
+import { MultiSelect } from 'primeng/multiselect';
 import { Subscription } from 'rxjs';
 import { TagsService } from 'src/app/services/tags.service';
 import * as XLSX from 'xlsx';
@@ -33,6 +34,7 @@ import {
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
 import { CustomerGridState } from '../../../store/reducers/customer';
+import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-dialog.component';
 // Components
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
 
@@ -104,7 +106,7 @@ export class CustomersGridComponent implements OnInit {
     @ViewChild('customerTableContainer') table: ElementRef;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
-
+    @ViewChild("multiInput") multiInput: MultiSelect;
     // Input/Output Bindings
     @Input() customersData: any[];
     @Input() pricingTemplatesData: any[];
@@ -128,7 +130,7 @@ export class CustomersGridComponent implements OnInit {
     airportWatchStartDate: Date = new Date();
     tags: any[];
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
-
+    dialogOpen : boolean = false;
     results = '[]';
 
     feesAndTaxes: any[];
@@ -148,7 +150,8 @@ export class CustomersGridComponent implements OnInit {
         private customerMarginsService: CustomermarginsService,
         private airportWatchService: AirportWatchService,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
-        private tagsService: TagsService
+        private tagsService: TagsService,
+        private dialog: MatDialog
     ) { }
 
     ngOnInit() {
@@ -188,10 +191,10 @@ export class CustomersGridComponent implements OnInit {
         }
         this.airportWatchService.getStartDate().subscribe((date) => {
             this.airportWatchStartDate = new Date(date);
-        });
-
-        this.loadCustomerTags();
+        });        
     }
+
+    
 
     onPageChanged(event: any) {
         localStorage.setItem('pageIndex', event.pageIndex);
@@ -270,17 +273,6 @@ export class CustomersGridComponent implements OnInit {
                 customerInfoByGroupId,
             });
         });
-    }
-
-    private loadCustomerTags() {
-        this.tagsService.getGroupTags(this.sharedService.currentUser.groupId)
-            .subscribe((data: any) => {
-                this.tags = data;
-
-                if (!this.tags) {
-                    return;
-                }
-            });
     }
 
     exportCustomersToExcel() {
@@ -588,6 +580,73 @@ export class CustomersGridComponent implements OnInit {
         }
     }
 
+    onCustomerTagUpdate(event: any, customer: any) {
+        if (event.itemValue.customerId != customer.customerId)
+        {
+            this.addCustomerTag(event.itemValue, customer);                     
+        }
+        else{
+            this.removeCustomerTag(event.itemValue, customer);
+        }
+    }
+
+    onCustomerTagPanelShow(event: any, customer: any){
+        this.loadCustomerTags(customer);
+    }
+
+    removeCustomerTag(tag, customer) {
+        this.tagsService.remove(tag).subscribe(response => {
+            this.loadCustomerTags(customer);
+        })
+    }
+    addCustomerTag(tag, customer) {
+        tag['groupId'] = this.sharedService.currentUser.groupId;
+        tag['customerId'] = customer.customerId;
+        tag['oid'] = 0;
+        this.tagsService.add(tag).subscribe(response => {
+            this.loadCustomerTags(customer);   
+        });
+    }
+
+    loadCustomerTags(customer: any){
+        this.tagsService.getTags({
+            groupId: this.sharedService.currentUser.groupId,
+            customerId: customer.customerId,
+            isFuelerLinx: customer.isFuelerLinxCustomer
+        }).subscribe(response => {
+            customer.availableTags = response;
+            customer.tags = customer.availableTags.filter(x=>x.customerId == customer.customerId);
+        })
+    }
+
+    newCustomTag(customer: any) {    
+        this.dialogOpen = true;    
+        const data = {
+            customerId: customer.customerId,
+            groupId: this.sharedService.currentUser.groupId,
+        };
+        const dialogRef = this.dialog.open(CustomerTagDialogComponent, {
+            data,
+        });
+
+        dialogRef.afterClosed().subscribe((response) => {
+            this.dialogOpen = false;            
+            if (!response) {
+                return;
+            }
+            this.tagsService
+                .add(response)
+                .subscribe((result: any) => {
+                    this.loadCustomerTags(customer);
+                });
+        });
+    }
+
+    checkState() {
+        if (this.dialogOpen)
+            this.multiInput.show();      
+    }
+
     onCustomerPriceShown(customer: any) {
         this.focusedCustomer = customer;
         this.feesAndTaxesSubscription = this.fboFeesAndTaxesService
@@ -634,6 +693,7 @@ export class CustomersGridComponent implements OnInit {
                 return element.needsAttention;
             }
         );
+        
         this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
         this.customersDataSource.paginator = this.paginator;

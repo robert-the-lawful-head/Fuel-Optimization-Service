@@ -786,7 +786,7 @@ namespace FBOLinx.Web.Controllers
                             AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
                             PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid,
                             FuelVendors = cv == null ? "" : cv.FuelVendors,
-                            Tags = customerTags.Where(x=>x.CustomerId == cg.CustomerId).Select(x=>x.Name)
+                            Tags = customerTags.Where(x=>x.CustomerId == cg.CustomerId)
                         }
                         into resultsGroup
                         select new CustomersGridViewModel()
