@@ -362,17 +362,24 @@ export class CustomersEditComponent implements OnInit {
         if (!feeAndTax.omitsByCustomer) {
             feeAndTax.omitsByCustomer = [];
         }
+        let matchingOmitRecords = feeAndTax.omitsByCustomer.filter(x => x.customerId == this.customerInfoByGroup.customerId &&
+            x.fboFeeAndTaxId == feeAndTax.oid);
         let omitRecord: any = {
             customerId: this.customerInfoByGroup.customerId,
             fboFeeAndTaxId: feeAndTax.oid,
             oid: 0,
         };
-        if (feeAndTax.omitsByCustomer.length > 0) {
-            omitRecord = feeAndTax.omitsByCustomer[0];
+        if (matchingOmitRecords && matchingOmitRecords.length > 0) {
+            omitRecord = matchingOmitRecords[0];
         } else {
             feeAndTax.omitsByCustomer.push(omitRecord);
         }
-        omitRecord.fboFeeAndTaxId = feeAndTax.oid;
+        //if (feeAndTax.omitsByCustomer.length > 0) {
+        //    omitRecord = feeAndTax.omitsByCustomer[0];
+        //} else {
+        //    feeAndTax.omitsByCustomer.push(omitRecord);
+        //}
+        //omitRecord.fboFeeAndTaxId = feeAndTax.oid;
         if (feeAndTax.isOmitted) {
             this.fboFeeAndTaxOmitsbyCustomerService
                 .add(omitRecord)

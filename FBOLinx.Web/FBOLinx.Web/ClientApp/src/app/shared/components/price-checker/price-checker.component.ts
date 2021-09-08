@@ -215,6 +215,11 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
             return;
         }
         this.priceLookupInfo = calculationResults[0];
+        try {
+            this.feesAndTaxes = this.priceLookupInfo.pricingList[0].feesAndTaxes;
+        } catch (e) {
+
+        }
     }
 
     public priceTemplateChanged(): void {
