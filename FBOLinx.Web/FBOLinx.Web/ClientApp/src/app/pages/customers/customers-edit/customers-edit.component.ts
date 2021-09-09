@@ -397,6 +397,24 @@ export class CustomersEditComponent implements OnInit {
         }
     }
 
+    public priceBreakdownCalculationsCompleted(
+        calculationResults: any[]
+    ): void {
+        if (!calculationResults || !calculationResults.length) {
+            return;
+        }
+        
+        try {
+            calculationResults[0].pricingList[0].feesAndTaxes.forEach(calculatedTax => {
+                var matchingTaxes = this.feesAndTaxes.filter(feeAndTax => feeAndTax.oid == calculatedTax.oid);
+                if (matchingTaxes && matchingTaxes.length > 0)
+                    matchingTaxes[0].omittedFor = calculatedTax.omittedFor;
+            });
+        } catch (e) {
+
+        }
+    }
+
     // Private Methods
     private recalculatePriceBreakdown(): void {
         // Set a timeout so the child component is aware of model changes

@@ -182,7 +182,8 @@
                                         customerInfoByGroup.oid
                                     " [feeAndTaxDisplayMode]="1" [feesAndTaxes]="feesAndTaxes" [priceTemplateId]="
                                         customCustomerType.customerType
-                                    " tooltipPlacement="left"></price-breakdown>
+                                    " tooltipPlacement="left"
+                                                 (calculationsComplated)="priceBreakdownCalculationsCompleted($event)"></price-breakdown>
                             </div>
                         </div>
                     </mat-tab>

@@ -324,6 +324,12 @@ button.mat-icon-button {
 /*Tax and Fee Breakdown*/
 
 /*Price Lookup*/
+.faded-text {
+    background: -webkit-linear-gradient(#eee, #333);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: gray;
+}
+
 .price-lookup-breakdown .d-inline-block.text-nowrap {
     text-overflow: ellipsis;
     overflow: hidden;

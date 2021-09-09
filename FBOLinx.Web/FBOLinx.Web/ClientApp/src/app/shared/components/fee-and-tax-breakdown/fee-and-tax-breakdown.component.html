@@ -26,7 +26,8 @@
 
         <!--Above the line taxes - Display mode 0 and 1-->
         <div *ngFor="let aboveLineTax of aboveTheLineTaxes"
-             class="row font-italic">
+             class="row font-italic"
+             [ngClass]="{'faded-text': aboveLineTax.omittedFor && aboveLineTax.omittedFor.length > 0}">
             <div *ngIf="displayMode == 1" class="col-1">
                 <mat-checkbox (change)="omitChanged(aboveLineTax)"
                               [(ngModel)]="aboveLineTax.isOmitted"
@@ -43,7 +44,7 @@
                         validFlightTypes.indexOf(
                             aboveLineTax.flightTypeClassification
                         ) == -1
-                }">{{ aboveLineTax.name }}</span> <sup class="pl-1" *ngIf="aboveLineTax.isOmitted && displayMode != 1 && aboveLineTax.omittedFor && aboveLineTax.omittedFor.length > 0">{{aboveLineTax.omittedFor}}</sup>
+                }">{{ aboveLineTax.name }}</span> <sup class="pl-1" *ngIf="aboveLineTax.omittedFor && aboveLineTax.omittedFor.length > 0">{{aboveLineTax.omittedFor}}</sup>
             </div>
             <div [ngClass]="{
                     'strike-through':
@@ -109,7 +110,8 @@
 
         <!--Below the line taxes - Display mode 0 and 1-->
         <div *ngFor="let belowLineTax of belowTheLineTaxes"
-             class="row font-italic">
+             class="row font-italic"
+             [ngClass]="{'faded-text': belowLineTax.omittedFor && belowLineTax.omittedFor.length > 0}">
             <div *ngIf="displayMode == 1" class="col-1">
                 <mat-checkbox (change)="omitChanged(belowLineTax)"
                               [(ngModel)]="belowLineTax.isOmitted"
@@ -125,7 +127,7 @@
                         validFlightTypes.indexOf(
                             belowLineTax.flightTypeClassification
                         ) == -1
-                }">{{ belowLineTax.name }}</span> <sup class="pl-1" *ngIf="belowLineTax.isOmitted && displayMode != 1 && belowLineTax.omittedFor && belowLineTax.omittedFor.length > 0">{{belowLineTax.omittedFor}}</sup>
+                }">{{ belowLineTax.name }}</span> <sup class="pl-1" *ngIf="belowLineTax.omittedFor && belowLineTax.omittedFor.length > 0">{{belowLineTax.omittedFor}}</sup>
             </div>
             <div [ngClass]="{
                     'strike-through':
@@ -268,7 +270,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="displayMode == 0" class="container-fluid">
+    <div *ngIf="displayMode == 0 || displayMode == 1" class="container-fluid">
         <div class="row">
             <div class="col">
                 <sub>C - Omitted for customer</sub>
