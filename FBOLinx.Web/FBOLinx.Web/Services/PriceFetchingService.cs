@@ -319,19 +319,19 @@ namespace FBOLinx.Web.Services
                 {
                     x.FeesAndTaxes.ForEach(fee =>
                     {
-                        if ((fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o =>
-                            o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId)))
-                        {
-                            fee.IsOmitted = true;
-                            fee.OmittedFor = "C";
-                        }
-
                         if (fee.OmitsByPricingTemplate != null &&
                             fee.OmitsByPricingTemplate.Any(o =>
                                 o.PricingTemplateId == x.PricingTemplateId))
                         {
                             fee.IsOmitted = true;
                             fee.OmittedFor = "P";
+                        }
+
+                        if ((fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o =>
+                            o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId)))
+                        {
+                            fee.IsOmitted = true;
+                            fee.OmittedFor = "C";
                         }
                     });
                 });

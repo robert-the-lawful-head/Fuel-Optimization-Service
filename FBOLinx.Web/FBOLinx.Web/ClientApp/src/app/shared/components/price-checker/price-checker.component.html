@@ -233,7 +233,7 @@
         </div>
     </div>
 
-    <div class="row mt-4 price-lookup-breakdown">
+    <div class="row mt-4 price-lookup-breakdown" *ngIf="feesAndTaxes">
         <div class="col-12" style="font-size: 14px">
             <price-breakdown
                 #priceBreakdownPreview

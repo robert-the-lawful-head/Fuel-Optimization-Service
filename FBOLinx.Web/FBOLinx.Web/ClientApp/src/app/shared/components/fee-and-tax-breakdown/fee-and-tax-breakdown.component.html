@@ -31,7 +31,8 @@
             <div *ngIf="displayMode == 1" class="col-1">
                 <mat-checkbox (change)="omitChanged(aboveLineTax)"
                               [(ngModel)]="aboveLineTax.isOmitted"
-                              type="checkbox"></mat-checkbox>
+                              type="checkbox"
+                              *ngIf="marginType != 1"></mat-checkbox>
             </div>
             <div
                  class="col">
