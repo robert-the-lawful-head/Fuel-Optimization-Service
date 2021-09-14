@@ -88,8 +88,12 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
                             lng: data.fboLocation.longitude,
                         };
                     }
-                    this.flightWatchData = data.flightWatchData;
-                    this.setFilteredFlightWatchData();
+                    if (data && data != null) {
+                        this.flightWatchData = data.flightWatchData;
+                        this.setFilteredFlightWatchData();
+                    }
+                    this.loading = false;
+                }, (error: any) => {
                     this.loading = false;
                 });
         }
