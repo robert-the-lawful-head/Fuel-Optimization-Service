@@ -33,13 +33,20 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("list/group/{groupId}/fbo/{fboId}")]
         public async Task<IActionResult> GetAirportLiveData([FromRoute] int groupId, [FromRoute] int fboId)
         {
-            var fboLocation = await _fboService.GetFBOLocaiton(fboId);
-            var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
-            return Ok(new
+            try
             {
-                FBOLocation = fboLocation,
-                FlightWatchData = data,
-            });
+                var fboLocation = await _fboService.GetFBOLocaiton(fboId);
+                var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
+                return Ok(new
+                {
+                    FBOLocation = fboLocation,
+                    FlightWatchData = data,
+                });
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(null);
+            }
         }
 
         [HttpPost("group/{groupId}/fbo/{fboId}/arrivals-depatures")]

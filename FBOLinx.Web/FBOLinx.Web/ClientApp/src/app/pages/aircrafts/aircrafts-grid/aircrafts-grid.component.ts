@@ -57,6 +57,9 @@ export class AircraftsGridComponent implements OnInit {
         this.aircraftsService.getAll().subscribe((data: any) => {
             this.aircraftTypes = data;
             this.isLoadingAircraftTypes = false;
+        }, (error: any) => {
+            //Error from service - set the loading flag to false so it tries again momentarily
+            this.isLoadingAircraftTypes = false;
         });
     }
 
