@@ -201,7 +201,7 @@
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <select (ngModelChange)="onMarginChange($event, customer)" [(ngModel)]="customer.pricingTemplateId"
-                        class="dropdownHeight" id="pricingtemplates" name="ddlPricingTemplate">
+                        class="dropdownHeight select-dropdown" id="pricingtemplates" name="ddlPricingTemplate">
                         <option *ngFor="let pricingTemplate of pricingTemplatesData" value="{{ pricingTemplate.oid }}">
                             {{ pricingTemplate.name }}
                         </option>

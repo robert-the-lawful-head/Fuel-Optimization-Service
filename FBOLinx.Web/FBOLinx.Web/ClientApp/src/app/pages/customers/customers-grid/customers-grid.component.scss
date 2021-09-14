@@ -58,8 +58,8 @@
 
 .export-import-menu {
     position: absolute;
-    right: -40px;
-    top: 60px;
+    right: -30px;
+    top: 30px;
 }
 
 .bulk-update .mat-form-field-hide-placeholder .mat-select-placeholder {
@@ -95,6 +95,12 @@
             }
         }
     }
+}
+
+
+select.select-dropdown {
+    background: #ffffff !important;
+    border: 1px solid #dadada !important;
 }
 
 .tags-dropdown-filter {

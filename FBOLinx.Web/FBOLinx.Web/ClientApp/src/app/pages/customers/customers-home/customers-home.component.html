@@ -1,9 +1,9 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb">
-    <mat-tab-group>
+    <mat-tab-group style="background: white;">
         <mat-tab label="Customers">
-            <div class="table-container">
+            <div class="table-container customers-grid-container">
                 <div *ngIf="customersData && pricingTemplatesData">
                     <app-customers-grid
                         (customerDeleted)="customerDeleted()"
