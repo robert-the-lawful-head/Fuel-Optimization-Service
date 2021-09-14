@@ -1,13 +1,14 @@
 <div class="customer-aircraft-table">
     <div>
-        <mat-form-field>
-            <input
-                (keyup)="applyFilter($event.target.value)"
-                matInput
-                placeholder="Search by Tail, Make, Model, etc."
-            />
-            <span matPrefix><i class="fa fa-search"></i></span>
-        </mat-form-field>
+        <div style="padding-left: 15px; padding-right: 15px;">
+            <mat-form-field>
+                <input (keyup)="applyFilter($event.target.value)"
+                       matInput
+                       placeholder="Search by Tail, Make, Model, etc." />
+                <span matPrefix><i class="fa fa-search"></i></span>
+            </mat-form-field>
+        </div>
+     
 
         <table
             [dataSource]="customerAircraftsDataSource"

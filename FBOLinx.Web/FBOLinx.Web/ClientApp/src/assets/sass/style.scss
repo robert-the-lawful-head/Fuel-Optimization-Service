@@ -547,6 +547,17 @@ div.customer-aircraft-table {
     padding-bottom: 15px;
 }
 
+.edit-customer-content .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+
+}
+
+.edit-customer-content .mat-tab-body-content {
+    overflow: auto !important;
+}
+
 /*div.table-container.aircrafts-grid {
     height: calc(100vh - 357px);
     min-height: 300px;
