@@ -216,7 +216,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.priceLookupInfo = calculationResults[0];
         try {
-            this.feesAndTaxes = this.priceLookupInfo.pricingList[0].feesAndTaxes;
+            if (this.priceLookupInfo.pricingList[0].feesAndTaxes != null)
+                this.feesAndTaxes = this.priceLookupInfo.pricingList[0].feesAndTaxes;
         } catch (e) {
 
         }
@@ -352,6 +353,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
             )
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
+                if (!response)
+                    this.feesAndTaxes = [];
                 const self = this;
                 setTimeout(() => {
                     self.priceBreakdownPreview?.performRecalculation();
@@ -376,6 +379,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
             )
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
+                if (!response)
+                    this.feesAndTaxes = [];
                 const self = this;
                 setTimeout(() => {
                     self.priceBreakdownPreview?.performRecalculation();
