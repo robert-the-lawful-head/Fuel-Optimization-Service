@@ -25,8 +25,4 @@ export class CustomerTagDialogComponent {
     public onCancelClick(): void {
         this.dialogRef.close();
     }
-
-    public sendTag(data) {
-        this.dialogRef.close(data);
-    }
 }

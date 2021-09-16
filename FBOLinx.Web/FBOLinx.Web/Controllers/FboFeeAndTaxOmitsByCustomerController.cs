@@ -39,8 +39,11 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.FboFeeAndTaxOmitsByCustomer.Add(fboFeeAndTaxOmitsByCustomer);
-            await _context.SaveChangesAsync();
+            if (fboFeeAndTaxOmitsByCustomer.Oid == 0)
+            {
+                _context.FboFeeAndTaxOmitsByCustomer.Add(fboFeeAndTaxOmitsByCustomer);
+                await _context.SaveChangesAsync();
+            }
 
             return CreatedAtAction("GetFboFeeAndTaxOmitsByCustomer", new { id = fboFeeAndTaxOmitsByCustomer.Oid }, fboFeeAndTaxOmitsByCustomer);
         }

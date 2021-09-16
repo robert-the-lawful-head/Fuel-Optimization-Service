@@ -330,7 +330,8 @@ export class PricingTemplatesEditComponent implements OnInit {
         }
         omitRecord.fboFeeAndTaxId = feeAndTax.oid;
         if (feeAndTax.isOmitted) {
-            this.fboFeeAndTaxOmitsbyPricingTemplateService
+            omitRecord.oid = 0;
+            this.fboFeeAndTaxOmitsbyPricingTemplateService 
                 .add(omitRecord)
                 .subscribe((response: any) => {
                     omitRecord.oid = response.oid;

@@ -317,9 +317,23 @@ namespace FBOLinx.Web.Services
                 //Each collection of fees is cloned so updating the flag of one collection does not affect other pricing results where the template did not omit it
                 resultsWithFees.ForEach(x =>
                 {
-                    x.FeesAndTaxes.ForEach(fee => fee.IsOmitted = (fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o => o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId)) 
-                                                                  || 
-                                                                  (fee.OmitsByPricingTemplate != null && fee.OmitsByPricingTemplate.Any(o => o.PricingTemplateId == x.PricingTemplateId)));
+                    x.FeesAndTaxes.ForEach(fee =>
+                    {
+                        if (fee.OmitsByPricingTemplate != null &&
+                            fee.OmitsByPricingTemplate.Any(o =>
+                                o.PricingTemplateId == x.PricingTemplateId))
+                        {
+                            fee.IsOmitted = true;
+                            fee.OmittedFor = "P";
+                        }
+
+                        if ((fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o =>
+                            o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId)))
+                        {
+                            fee.IsOmitted = true;
+                            fee.OmittedFor = "C";
+                        }
+                    });
                 });
                 return resultsWithFees;
             }

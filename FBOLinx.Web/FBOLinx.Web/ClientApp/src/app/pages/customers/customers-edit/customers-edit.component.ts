@@ -211,8 +211,6 @@ export class CustomersEditComponent implements OnInit {
             }
         );
 
-
-
         this.loadCustomerFeesAndTaxes();
         this.loadCustomerTags();
     }
@@ -327,7 +325,7 @@ export class CustomersEditComponent implements OnInit {
         })
     }
 
-    newCustomTag() {
+    newCustomTag() {        
         const data = {
             customerId: this.customerInfoByGroup.customerId,
             groupId: this.sharedService.currentUser.groupId,
@@ -364,17 +362,24 @@ export class CustomersEditComponent implements OnInit {
         if (!feeAndTax.omitsByCustomer) {
             feeAndTax.omitsByCustomer = [];
         }
+        let matchingOmitRecords = feeAndTax.omitsByCustomer.filter(x => x.customerId == this.customerInfoByGroup.customerId &&
+            x.fboFeeAndTaxId == feeAndTax.oid);
         let omitRecord: any = {
             customerId: this.customerInfoByGroup.customerId,
             fboFeeAndTaxId: feeAndTax.oid,
             oid: 0,
         };
-        if (feeAndTax.omitsByCustomer.length > 0) {
-            omitRecord = feeAndTax.omitsByCustomer[0];
+        if (matchingOmitRecords && matchingOmitRecords.length > 0) {
+            omitRecord = matchingOmitRecords[0];
         } else {
             feeAndTax.omitsByCustomer.push(omitRecord);
         }
-        omitRecord.fboFeeAndTaxId = feeAndTax.oid;
+        //if (feeAndTax.omitsByCustomer.length > 0) {
+        //    omitRecord = feeAndTax.omitsByCustomer[0];
+        //} else {
+        //    feeAndTax.omitsByCustomer.push(omitRecord);
+        //}
+        //omitRecord.fboFeeAndTaxId = feeAndTax.oid;
         if (feeAndTax.isOmitted) {
             this.fboFeeAndTaxOmitsbyCustomerService
                 .add(omitRecord)
@@ -389,6 +394,24 @@ export class CustomersEditComponent implements OnInit {
                     feeAndTax.omitsByCustomer = [];
                     this.recalculatePriceBreakdown();
                 });
+        }
+    }
+
+    public priceBreakdownCalculationsCompleted(
+        calculationResults: any[]
+    ): void {
+        if (!calculationResults || !calculationResults.length) {
+            return;
+        }
+        
+        try {
+            calculationResults[0].pricingList[0].feesAndTaxes.forEach(calculatedTax => {
+                var matchingTaxes = this.feesAndTaxes.filter(feeAndTax => feeAndTax.oid == calculatedTax.oid);
+                if (matchingTaxes && matchingTaxes.length > 0)
+                    matchingTaxes[0].omittedFor = calculatedTax.omittedFor;
+            });
+        } catch (e) {
+
         }
     }
 
@@ -431,9 +454,13 @@ export class CustomersEditComponent implements OnInit {
                 this.customerForm.controls.customerTag.setValue(this.tagsSelected.map(x => x.oid));
 
                 this.tagSubsctiption = this.customerForm.controls.customerTag.valueChanges.subscribe(
-                    (selectedValue) => {
+                    (selectedValue) => {         
                         if (selectedValue.includes(-1)) {
                             this.newCustomTag();
+                            this.customerForm.controls.customerTag
+                            .setValue(this.customerForm.controls.customerTag.value.filter(function(item) {
+                                return item !== -1
+                            }));
                         } else {
                             let addTags = this.tags.filter(x => selectedValue.includes(x.oid) && x.customerId != this.customerInfoByGroup.customerId);
                             let removeTags = this.tags.filter(x => !selectedValue.includes(x.oid) && x.customerId == this.customerInfoByGroup.customerId);

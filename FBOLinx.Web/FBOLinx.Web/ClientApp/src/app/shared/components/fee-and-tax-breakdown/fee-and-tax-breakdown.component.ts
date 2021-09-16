@@ -127,7 +127,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     }
 
     private isFeeValidForTotal(fee: any): boolean {
-        if (fee.isOmitted) {
+        if (fee.isOmitted || (fee.omittedFor && fee.omittedFor.length > 0)) {
             return false;
         }
         if (this.validDepartureTypes.indexOf(fee.departureType) === -1) {

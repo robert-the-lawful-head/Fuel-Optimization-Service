@@ -16,14 +16,14 @@ namespace FBOLinx.Job.AirportWatch
         private string _lastWatchedFile = "";
         private int _lastWatchedFileRecordIndex = 0;
         private readonly IConfiguration _config;
-        private readonly ApiClient _apiClient;
         private bool _isPostingData = false;
         private DateTime? _LastPostDateTimeUTC;
+        private List<string> _apiClientUrls;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
             _config = config;
-            _apiClient = new ApiClient(config["FBOLinxApiUrl"]);
+            _apiClientUrls = config["FBOLinxApiUrls"].ToString().Split(";").ToList();
         }
 
         public async Task Run()
@@ -75,15 +75,19 @@ namespace FBOLinx.Job.AirportWatch
 
             if (airportWatchData.Count > 0)
             {
-                try
+                foreach (var apiClientUrl in _apiClientUrls)
                 {
-                    _apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
-                    logger.Information("Fbolinx api call succeed!");
-                    _LastPostDateTimeUTC = DateTime.UtcNow;
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, $"Failed to call Fbolinx api!");
+                    try
+                    {
+                        var apiClient = new ApiClient(apiClientUrl.Trim());
+                        apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
+                        logger.Information("Fbolinx api call succeed!");
+                        _LastPostDateTimeUTC = DateTime.UtcNow;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, $"Failed to call Fbolinx api!");
+                    }
                 }
             }
 

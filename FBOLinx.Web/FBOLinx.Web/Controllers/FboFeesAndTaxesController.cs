@@ -64,6 +64,8 @@ namespace FBOLinx.Web.Controllers
             result.ForEach(x =>
             {
                 x.IsOmitted = (x.OmitsByCustomer != null && x.OmitsByCustomer.Any(o => o.CustomerId == customerId));
+                if (x.IsOmitted)
+                    x.OmittedFor = "C";
             });
             return Ok(result);
         }
@@ -78,6 +80,8 @@ namespace FBOLinx.Web.Controllers
             result.ForEach(x =>
             {
                 x.IsOmitted = (x.OmitsByPricingTemplate != null && x.OmitsByPricingTemplate.Any(o => o.PricingTemplateId == pricingTemplateId));
+                if (x.IsOmitted)
+                    x.OmittedFor = "P";
             });
             return Ok(result);
         }

@@ -150,6 +150,8 @@ namespace FBOLinx.Web.Services
                 .Include(x => x.Customer.CustomerContacts)
                 .ToListAsync();
 
+            customerInfoByGroup.RemoveAll(x => x.Customer == null);
+
             return customerInfoByGroup;
         }
 

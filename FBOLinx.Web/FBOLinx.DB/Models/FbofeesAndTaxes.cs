@@ -25,6 +25,8 @@ namespace FBOLinx.Web
 
         [NotMapped]
         public bool IsOmitted { get;set; }
+        [NotMapped]
+        public string OmittedFor { get; set; }
 
         #region Relationships
         [InverseProperty("FboFeeAndTax")]

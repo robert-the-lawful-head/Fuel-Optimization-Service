@@ -324,6 +324,12 @@ button.mat-icon-button {
 /*Tax and Fee Breakdown*/
 
 /*Price Lookup*/
+.faded-text {
+    background: -webkit-linear-gradient(#eee, #333);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: gray;
+}
+
 .price-lookup-breakdown .d-inline-block.text-nowrap {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -443,3 +449,127 @@ button.mat-icon-button {
         overflow: visible;
     }
 }
+
+
+/* Start Customer Manager Tables */
+
+div.mat-tab-labels .mat-tab-label.mat-tab-label-active {
+    background: #ffffff !important;
+    color: #252d47 !important;
+    font-weight: 600 !important;
+    opacity: .9;
+    border-top: 3px solid #252d47;
+}
+
+.mat-tab-label {
+    background: #f8f8f8;
+    border-top: 1px solid #dadada;
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+}
+
+.mat-tab-label .mat-tab-label-content {
+    opacity: .4 !important;
+}
+
+.mat-tab-label.mat-tab-label-active .mat-tab-label-content {
+    opacity: .9 !important;
+}
+
+.mat-tab-group.mat-primary .mat-ink-bar {
+    background-color: transparent !important;
+}
+
+.mat-tab-header  {
+  border: none;
+}
+
+.table-container.customers-grid-container {
+    padding-top: 5px !important;
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+}
+
+.table-container.aircrafts-grid {
+    padding-top: 0px !important;
+}
+
+
+body .mat-tab-body-content {
+    overflow: hidden !important;
+}
+
+div.customer-aircraft-table {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+}
+
+/*End Customer Manager Tables*/
+
+
+
+.price-checker {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+}
+
+
+.price-checker .mat-tab-body {
+    padding-left: 15px !important;
+}
+
+.pricing-template-edit .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+}
+
+.pricing-template-edit .mat-tab-body {
+   padding-left: 15px;
+}
+
+
+.pricing-template-edit .mat-tab-body-content {
+    overflow: auto !important;
+}
+
+.email-template .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+    padding-left: 15px;
+    padding-bottom: 15px;
+}
+
+.email-template .mat-tab-body-content {
+    overflow: auto !important;
+}
+
+.statistics-tab .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+    padding-bottom: 15px;
+}
+
+.edit-customer-content .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+
+}
+
+.edit-customer-content .mat-tab-body-content {
+    overflow: auto !important;
+}
+
+/*div.table-container.aircrafts-grid {
+    height: calc(100vh - 357px);
+    min-height: 300px;
+}
+**/
+
+/** {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}*/

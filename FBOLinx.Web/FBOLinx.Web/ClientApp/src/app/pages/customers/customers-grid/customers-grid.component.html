@@ -124,28 +124,33 @@
                     </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
-                    <p-multiSelect class="fuelvendors-dropdown-filter" [options]="customer.tags"
-                        [(ngModel)]="customer.tags" display="chip" placeholder="No Tags" optionLabel="label"
-                        [virtualScroll]="true" [disabled]="
-                        !customer.tags || customer.tags.length == 0
-                        " (onChange)="onFuelVendorUpdate($event, customer)" [showToggleAll]="false" itemSize="30">
-                        <ng-template let-value pTemplate="selectedItems">
+                    <p-multiSelect class="tags-dropdown-filter" [options]="customer.availableTags" #multiInput
+                        [(ngModel)]="customer.tags" display="chip" placeholder="No tags" optionLabel="label"  autofocusFilter="true"
+                        [virtualScroll]="true" (onChange)="onCustomerTagUpdate($event, customer)"  maxSelectedLabels="10" filterBy="name" 
+                        (onPanelShow)="onCustomerTagPanelShow($event, customer)" [showToggleAll]="false" itemSize="50" resetFilterOnHide="true" 
+                        (onPanelHide)="checkState()">
+                        <ng-template let-value pTemplate="selectedItems">                            
                             <div class="p-multiselect-token" *ngFor="let tag of customer.tags">
                                 <span class="p-multiselect-token-label">
-                                    {{ tag }}
+                                    {{ tag.name }}
                                 </span>
                             </div>
 
                             <div *ngIf="
                                     !customer.tags || customer.tags.length == 0
                                 ">
-                                No Tags
+                                Select a Tag
                             </div>
                         </ng-template>
                         <ng-template let-tag pTemplate="item">
                             <div class="fbo-item">
-                                <div>{{ tag }}</div>
+                                <div>{{ tag.name }}</div>
                             </div>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <div class="fbo-item addCustom">
+                           <a (click)="newCustomTag(customer)">&lt;Add Custom&gt;</a>
+                        </div>
                         </ng-template>
                     </p-multiSelect>
                 </td>
@@ -196,7 +201,7 @@
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <select (ngModelChange)="onMarginChange($event, customer)" [(ngModel)]="customer.pricingTemplateId"
-                        class="dropdownHeight" id="pricingtemplates" name="ddlPricingTemplate">
+                        class="dropdownHeight select-dropdown" id="pricingtemplates" name="ddlPricingTemplate">
                         <option *ngFor="let pricingTemplate of pricingTemplatesData" value="{{ pricingTemplate.oid }}">
                             {{ pricingTemplate.name }}
                         </option>
