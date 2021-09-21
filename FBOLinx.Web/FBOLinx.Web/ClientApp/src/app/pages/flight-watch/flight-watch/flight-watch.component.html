@@ -1,42 +1,47 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb">
-    <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
+    <mat-tab-group>
+        <mat-tab label="Flight Watch">
+            <div>
+                <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
 
-    <div class="flight-watch-container" *ngIf="flightWatchData">
-        <app-flight-watch-aircraft-info
-            [flightWatch]="selectedFlightWatch"
-            (closed)="onAircraftInfoClose()"
-        ></app-flight-watch-aircraft-info>
+                <div class="flight-watch-container" *ngIf="flightWatchData">
+                    <app-flight-watch-aircraft-info [flightWatch]="selectedFlightWatch"
+                                                    (closed)="onAircraftInfoClose()"></app-flight-watch-aircraft-info>
 
-        <app-flight-watch-map
-            #map
-            [isStable]="flightWatchData.length > 0"
-            [data]="filteredFlightWatchData"
-            [center]="center"
-            (markerClicked)="onFlightWatchClick($event)"
-            [style.width]="mapWidth"
-        ></app-flight-watch-map>
+                    <app-flight-watch-map #map
+                                          [isStable]="flightWatchData.length > 0"
+                                          [data]="filteredFlightWatchData"
+                                          [center]="center"
+                                          (markerClicked)="onFlightWatchClick($event)"
+                                          [style.width]="mapWidth"></app-flight-watch-map>
 
-        <div
-            class="flight-watch-settings"
-            [ngStyle]="style"
-            mwlResizable
-            [enableGhostResize]="true"
-            (resizeEnd)="onResizeEnd($event)"
-            [validateResize]="validate"
-        >
-            <div
-                class="resize-handle-left"
-                mwlResizeHandle
-                [resizeEdges]="{ left: true }"
-            ></div>
-            <app-flight-watch-settings
-                [filteredTypes]="filteredTypes"
-                [tableData]="flightWatchDataObservable$"
-                (filterChanged)="onFilterChanged($event)"
-                (typesFilterChanged)="onTypesFilterChanged($event)"
-            ></app-flight-watch-settings>
-        </div>
-    </div>
+                    <div class="flight-watch-settings"
+                         [ngStyle]="style"
+                         mwlResizable
+                         [enableGhostResize]="true"
+                         (resizeEnd)="onResizeEnd($event)"
+                         [validateResize]="validate">
+                        <div class="resize-handle-left"
+                             mwlResizeHandle
+                             [resizeEdges]="{ left: true }"></div>
+                        <app-flight-watch-settings [filteredTypes]="filteredTypes"
+                                                   [tableData]="flightWatchDataObservable$"
+                                                   (filterChanged)="onFilterChanged($event)"
+                                                   (typesFilterChanged)="onTypesFilterChanged($event)"></app-flight-watch-settings>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="Takeoff/Landing Cycles">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <app-analytics-airport-arrivals-depatures></app-analytics-airport-arrivals-depatures>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+
 </div>
+

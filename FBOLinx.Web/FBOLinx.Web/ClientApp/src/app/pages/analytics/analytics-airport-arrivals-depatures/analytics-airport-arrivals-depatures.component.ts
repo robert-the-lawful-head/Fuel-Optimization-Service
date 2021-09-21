@@ -28,6 +28,7 @@ import {
     FlightWatchStatus,
 } from '../../../models/flight-watch-historical';
 import { AirportWatchService } from '../../../services/airportwatch.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
@@ -88,7 +89,8 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         private tableSettingsDialog: MatDialog,
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
-        private ngxLoader: NgxUiLoaderService
+        private ngxLoader: NgxUiLoaderService,
+        private customerInfoByGroupService: CustomerinfobygroupService
     ) {
         this.filterStartDate = new Date(
             moment().add(-1, 'M').format('MM/DD/YYYY')
@@ -109,6 +111,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.getCustomersList();
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
@@ -124,6 +127,19 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         });
 
         this.refreshData();
+    }
+
+    getCustomersList() {
+        if (this.customers && this.customers.length > 0)
+            return;
+        this.customerInfoByGroupService
+            .getCustomersListByGroupAndFbo(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
+            .subscribe((customers: any[]) => {
+                this.customers = customers;
+            });
     }
 
     fetchData(startDate: Date, endDate: Date) {
