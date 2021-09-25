@@ -40,6 +40,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     isCommercialInvisible = true;
     previousMarker: FlightWatch;
     focusedMarker: FlightWatch;
+    showLayers: boolean = false;
 
     constructor() {}
 
