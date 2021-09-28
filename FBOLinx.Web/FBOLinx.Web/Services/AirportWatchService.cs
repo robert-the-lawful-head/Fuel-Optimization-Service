@@ -54,23 +54,72 @@ namespace FBOLinx.Web.Services
                 new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted },
                 TransactionScopeAsyncFlowOption.Enabled))
             {
-                var fuelOrders = await (from fr in _context.FuelReq
-                                       join ca in _context.CustomerAircrafts on fr.CustomerAircraftId equals ca.Oid
-                                       where fr.Fboid == fboId && fr.Eta > DateTime.UtcNow && fr.Cancelled == false
-                                       select new { TailNumber = ca.TailNumber }).ToListAsync();
+                var fuelOrders = await _context.FuelReq
+                    .Where(x => x.Fboid == fboId && x.Eta > DateTime.UtcNow && x.Cancelled == false)
+                    .Include(x => x.CustomerAircraft).ToListAsync();
 
-                filteredResult = await _context.AirportWatchLiveData
-                       .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
-                       .Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
-                       .Where(x => x.AircraftPositionDateTimeUtc >= timelimit)
-                       .OrderBy(x => x.AircraftPositionDateTimeUtc)
-                       .ThenBy(x => x.AircraftHexCode)
-                       .ThenBy(x => x.AtcFlightNumber)
-                       .ThenBy(x => x.GpsAltitude)
-                       .ToListAsync();
+                filteredResult = await (from awhd in _context.AirportWatchLiveData
+                    join ca in (
+                            from ca in _context.CustomerAircrafts
+                            join cig in _context.CustomerInfoByGroup on new {ca.CustomerId, GroupId = ca.GroupId ?? 0}
+                                equals new {cig.CustomerId, cig.GroupId}
+                            join cu in _context.Customers on cig.CustomerId equals cu.Oid
+                            where ca.GroupId == groupId
+                            select new
+                            {
+                                ca.GroupId,
+                                ca.CustomerId,
+                                ca.TailNumber,
+                                ca.AircraftId,
+                                cig.Company,
+                                CustomerInfoByGroupID = cig.Oid,
+                                cu.FuelerlinxId
+                            }
+                        ) on awhd.AtcFlightNumber equals ca.TailNumber
+                        into leftJoinedCustomers
+                    from ca in leftJoinedCustomers.DefaultIfEmpty()
+                    where awhd.Latitude >= minLatitude && awhd.Latitude <= maxLatitude &&
+                          awhd.Longitude >= minLongitude && awhd.Longitude <= maxLongitude
+                          && awhd.AircraftPositionDateTimeUtc >= timelimit
+                    select new AirportWatchLiveData
+                    {
+                        Oid = awhd.Oid,
+                        Longitude = awhd.Longitude,
+                        Latitude = awhd.Latitude,
+                        GpsAltitude = awhd.GpsAltitude,
+                        GroundSpeedKts = awhd.GroundSpeedKts,
+                        IsAircraftOnGround = awhd.IsAircraftOnGround,
+                        TrackingDegree = awhd.TrackingDegree,
+                        VerticalSpeedKts = awhd.VerticalSpeedKts,
+                        TransponderCode = awhd.TransponderCode,
+                        AtcFlightNumber = awhd.AtcFlightNumber,
+                        AircraftHexCode = awhd.AircraftHexCode,
+                        BoxName = awhd.BoxName,
+                        BoxTransmissionDateTimeUtc = awhd.BoxTransmissionDateTimeUtc,
+                        AircraftPositionDateTimeUtc = awhd.AircraftPositionDateTimeUtc,
+                        AircraftTypeCode = awhd.AircraftTypeCode,
+                        AltitudeInStandardPressure = awhd.AltitudeInStandardPressure,
+                        IsFuelerLinxCustomer = (ca.FuelerlinxId.HasValue && ca.FuelerlinxId.Value > 0)
+                    })
+                    .OrderBy(x => x.AircraftPositionDateTimeUtc)
+                    .ThenBy(x => x.AircraftHexCode)
+                    .ThenBy(x => x.AtcFlightNumber)
+                    .ThenBy(x => x.GpsAltitude)
+                    .ToListAsync(); ;
+                                            
+
+                //filteredResult = await _context.AirportWatchLiveData
+                //       .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
+                //       .Where(x => x.Longitude >= minLongitude && x.Longitude <= maxLongitude)
+                //       .Where(x => x.AircraftPositionDateTimeUtc >= timelimit)
+                //       .OrderBy(x => x.AircraftPositionDateTimeUtc)
+                //       .ThenBy(x => x.AircraftHexCode)
+                //       .ThenBy(x => x.AtcFlightNumber)
+                //       .ThenBy(x => x.GpsAltitude)
+                //       .ToListAsync();
 
                 filteredResult = (from fr in filteredResult
-                                 join fo in fuelOrders on fr.AtcFlightNumber equals fo.TailNumber into fos
+                                 join fo in fuelOrders on fr.AtcFlightNumber equals (fo.CustomerAircraft == null ? "" : fo.CustomerAircraft.TailNumber) into fos
                                  from fo in fos.DefaultIfEmpty()
                                  where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.Latitude, fr.Longitude, 1, DistanceUnit.Miles) <= distance
                                  select new AirportWatchLiveData {
@@ -90,9 +139,10 @@ namespace FBOLinx.Web.Services
                                      AircraftPositionDateTimeUtc = fr.AircraftPositionDateTimeUtc,
                                      AircraftTypeCode = fr.AircraftTypeCode,
                                      AltitudeInStandardPressure = fr.AltitudeInStandardPressure,
-                                     HasFuelOrders = fo != null
+                                     FuelOrder = fo
                                  })
                             .ToList();
+
 
                 scope.Complete();
             }

@@ -30,7 +30,10 @@ namespace FBOLinx.DB.Models
         public int? GpsAltitude { get; set; }
         public bool IsAircraftOnGround { get; set; }
         [NotMapped]
-        public bool? HasFuelOrders { get; set; }
+        //public bool? HasFuelOrders { get; set; }
+        public FuelReq FuelOrder { get; set; }
+        [NotMapped]
+        public bool? IsFuelerLinxCustomer { get; set; }
 
         public static void CopyEntity(AirportWatchLiveData oldRecord, AirportWatchLiveData newRecord)
         {

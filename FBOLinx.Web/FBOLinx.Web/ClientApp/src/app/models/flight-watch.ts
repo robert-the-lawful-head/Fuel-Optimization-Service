@@ -15,5 +15,6 @@ export type FlightWatch = {
     aircraftTypeCode: string;
     gpsAltitude?: number;
     isAircraftOnGround: boolean;
-    hasFuelOrders?: boolean;
+    fuelOrder?: boolean;
+    isFuelerLinxCustomer: boolean;
 };
