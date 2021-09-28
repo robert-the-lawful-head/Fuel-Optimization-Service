@@ -18,12 +18,12 @@ export class FlightWatchSettingsComponent {
     @Output() filterChanged = new EventEmitter<string>();
 
     displayedColumns: string[] = [
-        'aircraftHexCode',
+        /*'aircraftHexCode',*/
         'atcFlightNumber',
-        'aircraftTypeCode',
-        'groundSpeedKts',
-        'trackingDegree',
-        'verticalSpeedKts',
+        /*'aircraftTypeCode',*/
+        /*'groundSpeedKts',*/
+        /*'trackingDegree',*/
+       /* 'verticalSpeedKts',*/
         'gpsAltitude',
         'isAircraftOnGround',
     ];
