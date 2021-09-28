@@ -583,7 +583,7 @@ div.customer-aircraft-table {
     color: white;
 }
 
-.map-controls-button .mat-flat-button.mat-black {
+.mat-flat-button.mat-black {
     display: inline-block;
     white-space: nowrap;
     text-decoration: none;
@@ -598,7 +598,34 @@ div.customer-aircraft-table {
 }
 
 
-.map-controls-button .mat-flat-button.mat-black .mat-icon {
+.mat-flat-button.mat-black .mat-icon {
+    display: inline-block;
+    fill: currentColor;
+    height: 20px;
+    width: 22px;
+}
+
+.mat-flat-button.mat-dark-blue {
+    background-color: #1d497f;
+    color: white;
+}
+
+.mat-flat-button.mat-dark-blue {
+    display: inline-block;
+    white-space: nowrap;
+    text-decoration: none;
+    vertical-align: baseline;
+    text-align: center;
+    margin: 0;
+    min-width: auto;
+    line-height: 20px;
+    padding: 0 0px;
+    border-radius: 0px;
+    overflow: visible;
+}
+
+
+.mat-flat-button.mat-dark-blue .mat-icon {
     display: inline-block;
     fill: currentColor;
     height: 20px;
@@ -763,8 +790,23 @@ background-color: white;
 
     /*End Flight Watch map controls*/
 
+    /*Flight watch settings container*/
+
+.flight-watch-settings-container {
+    color: #676767 !important;
+    font-weight: 500 !important;
+}
+
+.flight-watch-settings-container .mat-card-header-text {
+    margin: 0 0px !important;
+}
+
+body .mat-card.flight-watch-settings-container .mat-card-header {
+    margin-bottom: 0px;
+}
 
 
+/*End Flight watch settings container*/
 
 
     /*div.table-container.aircrafts-grid {

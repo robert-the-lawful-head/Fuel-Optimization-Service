@@ -26,9 +26,14 @@
         <mat-icon>layers</mat-icon>
     </button>
 </div>
-<div class="map-controls-container" style="position: absolute; top: 20px" *ngIf="showLayers">
+<div class="map-controls-container" style="position: absolute; top: 20px;" *ngIf="showLayers">
     <mat-card>
-        <mat-card-title>Layout Settings</mat-card-title>
+        <mat-card-title>
+            <div>Layout Settings</div>
+            <div style="position: absolute; top: 5px; right: 9px; cursor: pointer;" (click)="showLayers = !showLayers">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+        </mat-card-title>
         <mat-card-content>
             <div class="map-control-content">
                 <div class="font-weight-bold">App Layout</div>
