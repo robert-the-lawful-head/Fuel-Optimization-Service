@@ -204,7 +204,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                                 id === this.focusedMarker?.oid.toString()
                                     ? '_reversed'
                                     : ''
-                            }${row.hasFuelOrders ? '_blue' : ''}`,
+                            }${row.fuelOrder != null ? '_blue' : ''}`,
                             'icon-rotate': row.trackingDegree ?? 0,
                             'icon-size': 0.5,
                         },
@@ -236,7 +236,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                 'icon-image',
                 `aircraft_image_${self.getAircraftTypeCode(
                     self.previousMarker
-                )}${self.previousMarker.hasFuelOrders ? '_blue' : ''}`
+                )}${self.previousMarker.fuelOrder != null ? '_blue' : ''}`
             );
         }
 
@@ -259,7 +259,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             'icon-image',
             `aircraft_image_${self.getAircraftTypeCode(self.data[id])}${
                 self.focusedMarker ? '_reversed' : ''
-            }${self.focusedMarker?.hasFuelOrders ? '_blue' : ''}`
+            }${self.focusedMarker?.fuelOrder != null ? '_blue' : ''}`
         );
     }
 
