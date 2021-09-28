@@ -792,6 +792,19 @@ background-color: white;
     color: #3887be;
     font-weight: bold;
 }
+
+
+.mat-slide-toggle-content {
+    vertical-align: top;
+    display: inline-block;
+    line-height: 24px;
+    font-size: 7px;
+    color: white;
+    position:absolute;
+    z-index: 1000;
+}
+
+
 /*End Flight Watch map controls*/
 /*Flight watch settings container*/
 .flight-watch-settings-container {

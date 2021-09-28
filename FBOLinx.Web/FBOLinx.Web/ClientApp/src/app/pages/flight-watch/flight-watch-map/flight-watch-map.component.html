@@ -40,25 +40,31 @@
                 <div>
                     <div class="slide-toggle-label" [ngClass]="isCommercialInvisible ? '' : 'slide-toggle-label-on'">Hide Commercial Aircraft</div>
                     <div class="slide-toggle">
+                        <span class="mat-slide-toggle-content"  style="margin-left: 6px;" *ngIf="!isCommercialInvisible">ON</span>
                         <mat-slide-toggle [checked]="!isCommercialInvisible" (toggleChange)="toggleCommercial($event)"></mat-slide-toggle>
+                        <span class="mat-slide-toggle-content" style="margin-left: -20px;" *ngIf="isCommercialInvisible">OFF</span>
                     </div>
                 </div>
                 <div>
-                    <div class="slide-toggle-label"[ngClass]="isShowAirportCodesEnabled ? 'slide-toggle-label-on' : ''">Show Airport Codes</div>
+                    <div class="slide-toggle-label"[ngClass]="isShowAirportCodesEnabled ? 'slide-toggle-label-on' : ''">Show Airport Identifier</div>
                     <div class="slide-toggle">
+                        <span class="mat-slide-toggle-content" style="margin-left: 6px;" *ngIf="isShowAirportCodesEnabled">ON</span>
                         <mat-slide-toggle [checked]="isShowAirportCodesEnabled" (toggleChange)="toggleLayer('icao', $event)"></mat-slide-toggle>
+                        <span class="mat-slide-toggle-content" style="margin-left: -20px;" *ngIf="!isShowAirportCodesEnabled">OFF</span>
                     </div>
                 </div>
-                <div>
+                <!--<div>
                     <div class="slide-toggle-label"[ngClass]="isShowAirwaysEnabled ? 'slide-toggle-label-on' : ''">Show Airways</div>
                     <div class="slide-toggle">
                         <mat-slide-toggle [checked]="isShowAirwaysEnabled" (toggleChange)="toggleLayer('airway', $event)"></mat-slide-toggle>
                     </div>
-                </div>
+                </div>-->
                 <div>
                     <div class="slide-toggle-label"[ngClass]="isExtendedAirwaysEnabled ? 'slide-toggle-label-on' : ''">Extended Runway</div>
                     <div class="slide-toggle">
+                        <span class="mat-slide-toggle-content" style="margin-left: 6px;" *ngIf="isExtendedAirwaysEnabled">ON</span>
                         <mat-slide-toggle [checked]="isExtendedAirwaysEnabled" (toggleChange)="toggleLayer('taxiway', $event)"></mat-slide-toggle>
+                        <span class="mat-slide-toggle-content" style="margin-left: -20px;" *ngIf="!isExtendedAirwaysEnabled">OFF</span>
                     </div>
                 </div>
             </div>
