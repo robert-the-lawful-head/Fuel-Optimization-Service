@@ -23,6 +23,7 @@ import { FboairportsService } from '../../../services/fboairports.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FbosService } from '../../../services/fbos.service';
 import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { AirportWatchService } from '../../../services/airportwatch.service';
 // Services
 import { UserService } from '../../../services/user.service';
 // Components
@@ -74,6 +75,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     needsAttentionCustomersData: any[];
     subscription: any;
     fuelOrders: any[];
+    flightWatchData: any[];
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -87,7 +89,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         private fboAirportsService: FboairportsService,
         private fbosService: FbosService,
         private fuelReqsService: FuelreqsService,
-        private winRef: WindowRef
+        private winRef: WindowRef,
+        private airportWatchService: AirportWatchService
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
@@ -451,23 +454,45 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     loadUpcomingOrders() {
-        this.fuelReqsService
-            .getForGroupFboAndDateRange(
+
+        this.airportWatchService
+            .getAll(
                 this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                moment().toDate(),
-                moment().add(2, 'h').toDate()
+                this.sharedService.currentUser.fboId
             )
             .subscribe((data: any) => {
-                this.fuelOrders = data;
-                this.fuelOrders.forEach(x => {
-                    try {
-                        x.minutesUntilArrival = moment.duration(x.eta.diff(moment())).asMinutes();
-                    } catch (e) {
-
-                    }
-                });
+                if (data && data != null) {
+                    var fuelOrders = this.fuelOrders = [];
+                    this.flightWatchData = data.flightWatchData;
+                    this.flightWatchData.forEach(x => {
+                        if (!x.fuelOrder)
+                            return;
+                        x.fuelOrder.minutesUntilArrival = moment.duration(x.fuelOrder.eta.diff(moment())).asMinutes();
+                        fuelOrders.push(x.fuelOrder);
+                    });
+                }
+            }, (error: any) => {
+                
             });
+
+        //**Use this commented out code if they ever decide to show order notifications for FBOs that don't have flight watch.
+        //this.fuelReqsService
+        //    .getForGroupFboAndDateRange(
+        //        this.sharedService.currentUser.groupId,
+        //        this.sharedService.currentUser.fboId,
+        //        moment().toDate(),
+        //        moment().add(2, 'h').toDate()
+        //    )
+        //    .subscribe((data: any) => {
+        //        this.fuelOrders = data;
+        //        this.fuelOrders.forEach(x => {
+        //            try {
+        //                x.minutesUntilArrival = moment.duration(x.eta.diff(moment())).asMinutes();
+        //            } catch (e) {
+
+        //            }
+        //        });
+        //    });
     }
 
     // Private Methods

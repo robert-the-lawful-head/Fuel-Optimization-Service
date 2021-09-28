@@ -1,7 +1,15 @@
-import { ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, OnInit, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
-
+import {
+    ColumnType,
+    TableSettingsComponent,
+} from 'src/app/shared/components/table-settings/table-settings.component';
+import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
 
@@ -11,24 +19,101 @@ import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
     styleUrls: ['./flight-watch-settings.component.scss'],
     templateUrl: './flight-watch-settings.component.html',
 })
-export class FlightWatchSettingsComponent {
+export class FlightWatchSettingsComponent implements OnInit {
     @Input() tableData: Observable<FlightWatch[]>;
     @Input() filteredTypes: string[];
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<string>();
 
-    displayedColumns: string[] = [
-        /*'aircraftHexCode',*/
-        'atcFlightNumber',
-        /*'aircraftTypeCode',*/
-        /*'groundSpeedKts',*/
-        /*'trackingDegree',*/
-       /* 'verticalSpeedKts',*/
-        'gpsAltitude',
-        'isAircraftOnGround',
-    ];
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
 
-    constructor() {}
+    displayedColumns: string[] = [
+        'aircraftHexCode',
+        'atcFlightNumber',
+        'aircraftTypeCode',
+        'groundSpeedKts',
+        'trackingDegree',
+        'verticalSpeedKts',
+        'gpsAltitude',
+        'isAircraftOnGround'
+    ];
+    tableLocalStorageKey: string;
+    columns: ColumnType[] = [];
+
+    constructor(private tableSettingsDialog: MatDialog,
+        private sharedService: SharedService) {
+        this.initColumns();
+    }
+
+    get visibleColumns() {
+        return (
+            this.columns
+                .filter((column) => !column.hidden)
+                .map((column) => column.id) || []
+        );
+    }
+
+    ngOnInit() {
+        this.sort.sortChange.subscribe(() => {
+            this.columns = this.columns.map((column) =>
+                column.id === this.sort.active
+                ? { ...column, sort: this.sort.direction }
+                : {
+                    hidden: column.hidden,
+                    id: column.id,
+                    name: column.name,
+                }
+            );
+
+            this.saveSettings();
+        });
+    }
+
+    initColumns() {
+        this.tableLocalStorageKey = `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            this.columns = JSON.parse(
+                localStorage.getItem(this.tableLocalStorageKey)
+            );
+        } else {
+            this.columns = [
+                {
+                    id: 'aircraftHexCode',
+                    name: 'Hex Code',
+                },
+                {
+                    id: 'atcFlightNumber',
+                    name: 'Flight Number',
+                    sort: 'desc',
+                },
+                {
+                    id: 'aircraftTypeCode',
+                    name: 'Type',
+                },
+                {
+                    id: 'groundSpeedKts',
+                    name: 'Ground Speed Kts',
+                },
+                {
+                    id: 'trackingDegree',
+                    name: `Tracking Degree`,
+                },
+                {
+                    id: 'verticalSpeedKts',
+                    name: 'Vertical Speed Kts',
+                },
+                {
+                    id: 'gpsAltitude',
+                    name: 'GPS Altitude'
+                },
+                {
+                    id: 'isAircraftOnGround',
+                    name: 'Is on Ground',
+                }
+            ];
+        }
+    }
 
     get aircraftTypes() {
         return AIRCRAFT_IMAGES.filter((type) => type.label !== 'Other')
@@ -75,5 +160,50 @@ export class FlightWatchSettingsComponent {
                 this.typesFilterChanged.emit([...this.filteredTypes, type]);
             }
         }
+    }
+
+    refreshSort() {
+        const sortedColumn = this.columns.find(
+            (column) => !column.hidden && column.sort
+        );
+        this.sort.sort({
+            disableClear: false,
+            id: null,
+            start: sortedColumn?.sort || 'asc',
+        });
+        this.sort.sort({
+            disableClear: false,
+            id: sortedColumn?.id,
+            start: sortedColumn?.sort || 'asc',
+        });
+        (
+            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
+        )?._setAnimationTransitionState({ toState: 'active' });
+    }
+
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(
+            TableSettingsComponent,
+            {
+                data: this.columns,
+            }
+        );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.columns = [...result];
+
+            this.refreshSort();
+            this.saveSettings();
+        });
+    }
+
+    saveSettings() {
+        localStorage.setItem(
+            this.tableLocalStorageKey,
+            JSON.stringify(this.columns)
+        );
     }
 }
