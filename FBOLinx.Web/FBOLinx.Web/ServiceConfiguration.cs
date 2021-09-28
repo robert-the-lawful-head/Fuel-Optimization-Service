@@ -112,6 +112,7 @@ namespace FBOLinx.Web
             services.AddTransient<IPriceFetchingService, PriceFetchingService>();
             services.AddTransient<ResetPasswordService, ResetPasswordService>();
             services.AddTransient<FbopricesService, FbopricesService>();
+            services.AddTransient<EmailContentService, EmailContentService>();
 
             //Business Services
             services.AddTransient<AircraftService, AircraftService>();
