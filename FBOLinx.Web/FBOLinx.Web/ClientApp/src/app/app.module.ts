@@ -3,6 +3,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -107,6 +108,7 @@ import { TagsService } from './services/tags.service';
         FormsModule,
         DragDropModule,
         ReactiveFormsModule,
+        MatBadgeModule,
         MatIconModule,
         MatAutocompleteModule,
         MatButtonModule,

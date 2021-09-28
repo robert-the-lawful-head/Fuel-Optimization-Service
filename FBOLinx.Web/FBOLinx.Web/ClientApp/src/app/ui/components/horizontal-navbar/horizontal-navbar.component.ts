@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -21,11 +22,15 @@ import { CustomerinfobygroupService } from '../../../services/customerinfobygrou
 import { FboairportsService } from '../../../services/fboairports.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FbosService } from '../../../services/fbos.service';
+import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { AirportWatchService } from '../../../services/airportwatch.service';
 // Services
 import { UserService } from '../../../services/user.service';
 // Components
 import { AccountProfileComponent } from '../../../shared/components/account-profile/account-profile.component';
 import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
+
+import * as moment from 'moment';
 
 @Component({
     host: {
@@ -47,12 +52,16 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     window: any;
 
+    fuelOrdersSubscription: Subscription;
     userFullName: string;
     accountProfileMenu: any = {
         isOpened: false,
     };
     needsAttentionMenu: any = {
         isOpened: false,
+    };
+    fuelOrderNotificationsMenu: any = {
+        isOpened: false
     };
     currrentJetACostPricing: any;
     currrentJetARetailPricing: any;
@@ -65,6 +74,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     currentUser: any;
     needsAttentionCustomersData: any[];
     subscription: any;
+    fuelOrders: any[];
+    flightWatchData: any[];
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -77,7 +88,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         private fboPricesService: FbopricesService,
         private fboAirportsService: FboairportsService,
         private fbosService: FbosService,
-        private winRef: WindowRef
+        private fuelReqsService: FuelreqsService,
+        private winRef: WindowRef,
+        private airportWatchService: AirportWatchService
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
@@ -127,11 +140,18 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                 }
             }
         );
+
+        this.fuelOrdersSubscription = timer(0, 120000).subscribe(() =>
+            this.loadUpcomingOrders()
+        );
     }
 
     ngOnDestroy() {
         if (this.subscription) {
             this.subscription.unsubscribe();
+        }
+        if (this.fuelOrdersSubscription) {
+            this.fuelOrdersSubscription.unsubscribe();
         }
     }
 
@@ -161,9 +181,14 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.needsAttentionMenu.isOpened = !this.needsAttentionMenu.isOpened;
     }
 
+    openFuelOrdersUpdate() {
+        this.fuelOrderNotificationsMenu.isOpened = !this.fuelOrderNotificationsMenu.isOpened;
+    }
+
     close() {
         this.accountProfileMenu.isOpened = false;
         this.needsAttentionMenu.isOpened = false;
+        this.fuelOrderNotificationsMenu.isOpened = false;
         this.isOpened = false;
     }
 
@@ -284,6 +309,12 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     viewAllNotificationsClicked() {
         this.needsAttentionMenu.isOpened = false;
         this.router.navigate(['/default-layout/customers']);
+        this.close();
+    }
+
+    viewAllFuelOrdersClicked() {
+        this.fuelOrderNotificationsMenu.isOpened = false;
+        this.router.navigate(['/default-layout/fuelreqs']);
         this.close();
     }
 
@@ -421,6 +452,52 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         if (this.window) {
             this.window.$zoho.salesiq.floatwindow.visible('hide');
         }
+    }
+
+    loadUpcomingOrders() {
+
+        this.airportWatchService
+            .getAll(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
+            .subscribe((data: any) => {
+                if (data && data != null) {
+                    var fuelOrders = this.fuelOrders = [];
+                    this.flightWatchData = data.flightWatchData;
+                    this.flightWatchData.forEach(x => {
+                        if (!x.fuelOrder)
+                            return;
+                        if (x.fuelOrder.timeStandard != null && x.fuelOrder.timeStandard.toLowerCase() == 'z' || x.fuelOrder.timeStandard == '0')
+                            x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment().utc())).asMinutes();
+                        else
+                            x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment())).asMinutes();
+                        x.fuelOrder.minutesUntilArrival = Math.round(x.fuelOrder.minutesUntilArrival);
+                        fuelOrders.push(x.fuelOrder);
+                    });
+                }
+            }, (error: any) => {
+                
+            });
+
+        //**Use this commented out code if they ever decide to show order notifications for FBOs that don't have flight watch.
+        //this.fuelReqsService
+        //    .getForGroupFboAndDateRange(
+        //        this.sharedService.currentUser.groupId,
+        //        this.sharedService.currentUser.fboId,
+        //        moment().toDate(),
+        //        moment().add(2, 'h').toDate()
+        //    )
+        //    .subscribe((data: any) => {
+        //        this.fuelOrders = data;
+        //        this.fuelOrders.forEach(x => {
+        //            try {
+        //                x.minutesUntilArrival = moment.duration(x.eta.diff(moment())).asMinutes();
+        //            } catch (e) {
+
+        //            }
+        //        });
+        //    });
     }
 
     // Private Methods

@@ -39,9 +39,9 @@
                         <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
                     </button>
                     <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
-                        <button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>
+                        <!--<button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>
                             Import
-                        </button>
+                        </button>-->
                         <button [matMenuTriggerFor]="exportActions" mat-menu-item>
                             Export
                         </button>
