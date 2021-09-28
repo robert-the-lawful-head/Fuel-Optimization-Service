@@ -6,7 +6,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import FlatfileImporter from 'flatfile-csv-importer';
+/*import FlatfileImporter from 'flatfile-csv-importer';*/
 
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
@@ -47,11 +47,11 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     public locationChangedSubscription: any;
     public aircraftTypes: any[];
 
-    LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
+    /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
 
     results = '[]';
 
-    private importer: FlatfileImporter;
+    /*private importer: FlatfileImporter;*/
 
     constructor(
         private rampFeesService: RampfeesService,
@@ -105,12 +105,12 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     );
             });
 
-        FlatfileImporter.setVersion(2);
-        this.initializeImporter();
-        this.importer.setCustomer({
-            name: 'WebsiteImport',
-            userId: '1',
-        });
+        //FlatfileImporter.setVersion(2);
+        //this.initializeImporter();
+        //this.importer.setCustomer({
+        //    name: 'WebsiteImport',
+        //    userId: '1',
+        //});
     }
 
     public addNewRampFeeClicked() {
@@ -158,127 +158,129 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.requiresUpdate = false;
     }
 
-    public informForRampFees() {
-        const dialogRef = this.importFeesInfoDialog.open(
-            RampFeesImportInformationComponent,
-            {}
-        );
+    //public informForRampFees() {
+    //    const dialogRef = this.importFeesInfoDialog.open(
+    //        RampFeesImportInformationComponent,
+    //        {}
+    //    );
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            } else {
-                this.launchImporter();
-            }
-        });
-    }
+    //    dialogRef.afterClosed().subscribe((result) => {
+    //        if (!result) {
+    //            return;
+    //        } else {
+    //            this.launchImporter();
+    //        }
+    //    });
+    //}
 
-    async launchImporter() {
-        if (!this.LICENSE_KEY) {
-            return alert('Set LICENSE_KEY on Line 13 before continuing.');
-        }
-        try {
-            const results = await this.importer.requestDataFromUser();
-            this.importer.displayLoader();
 
-            if (results) {
-                results.data.forEach((result) => {
-                    result.fboid = this.sharedService.currentUser.fboId;
-                });
+    //[#hz0jtd] FlatFile importer was requested to be removed
+    //async launchImporter() {
+    //    if (!this.LICENSE_KEY) {
+    //        return alert('Set LICENSE_KEY on Line 13 before continuing.');
+    //    }
+    //    try {
+    //        const results = await this.importer.requestDataFromUser();
+    //        this.importer.displayLoader();
 
-                this.rampFeesService
-                    .importrampfees(results.data)
-                    .subscribe((data: any) => {
-                        if (data) {
-                            this.importer.displaySuccess(
-                                'Data successfully imported!'
-                            );
-                            setTimeout(() => {
-                                this.loadRampFees();
-                            }, 1500);
-                        }
-                    });
-            }
-        } catch (e) {}
-    }
+    //        if (results) {
+    //            results.data.forEach((result) => {
+    //                result.fboid = this.sharedService.currentUser.fboId;
+    //            });
 
-    initializeImporter() {
-        this.importer = new FlatfileImporter(this.LICENSE_KEY, {
-            allowCustom: true,
-            allowInvalidSubmit: true,
-            disableManualInput: false,
-            fields: [
-                {
-                    alternates: ['Icao'],
-                    description: 'Icao',
-                    key: 'icao',
-                    label: 'ICAO',
-                },
-                {
-                    alternates: ['fbo'],
-                    description: 'FBO',
-                    key: 'fbo',
-                    label: 'FBO',
-                },
-                {
-                    alternates: ['make'],
-                    description: 'Aircraft Make',
-                    key: 'Make',
-                    label: 'Make',
-                },
-                {
-                    alternates: ['model'],
-                    description: 'Tail',
-                    key: 'Model',
-                    label: 'Model',
-                },
-                {
-                    alternates: ['Ramp Fee', 'ramp fee'],
-                    description: 'Ramp Fee',
-                    key: 'RampFee',
-                    label: 'Ramp Fee ($)',
-                },
-                {
-                    alternates: ['Waived At', 'waived at'],
-                    description: 'Waived Fees',
-                    key: 'WaivedAt',
-                    label: 'Waived At (gal)',
-                },
-                {
-                    alternates: ['landing'],
-                    description: 'Landing Fees',
-                    key: 'Landing',
-                    label: 'Landing',
-                },
-                {
-                    alternates: ['overnight', 'overnight fees'],
-                    description: 'Overnight Fees',
-                    key: 'Overnight',
-                    label: 'Overnight',
-                },
-                {
-                    alternates: ['tail number', 'tail-number'],
-                    description: 'Tail Number',
-                    key: 'TailNumber',
-                    label: 'Tail Number',
-                },
-                {
-                    alternates: ['aircreft size'],
-                    description: 'Aircraft Size',
-                    key: 'aircraftsize',
-                    label: 'Aircraft Size',
-                },
-                {
-                    alternates: ['avoidance'],
-                    description: 'Avoidance',
-                    key: 'avoidance',
-                    label: 'Avoidance',
-                },
-            ],
-            managed: true,
-            type: 'RampFees',
-        });
-    }
+    //            this.rampFeesService
+    //                .importrampfees(results.data)
+    //                .subscribe((data: any) => {
+    //                    if (data) {
+    //                        this.importer.displaySuccess(
+    //                            'Data successfully imported!'
+    //                        );
+    //                        setTimeout(() => {
+    //                            this.loadRampFees();
+    //                        }, 1500);
+    //                    }
+    //                });
+    //        }
+    //    } catch (e) {}
+    //}
+
+    //initializeImporter() {
+    //    this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+    //        allowCustom: true,
+    //        allowInvalidSubmit: true,
+    //        disableManualInput: false,
+    //        fields: [
+    //            {
+    //                alternates: ['Icao'],
+    //                description: 'Icao',
+    //                key: 'icao',
+    //                label: 'ICAO',
+    //            },
+    //            {
+    //                alternates: ['fbo'],
+    //                description: 'FBO',
+    //                key: 'fbo',
+    //                label: 'FBO',
+    //            },
+    //            {
+    //                alternates: ['make'],
+    //                description: 'Aircraft Make',
+    //                key: 'Make',
+    //                label: 'Make',
+    //            },
+    //            {
+    //                alternates: ['model'],
+    //                description: 'Tail',
+    //                key: 'Model',
+    //                label: 'Model',
+    //            },
+    //            {
+    //                alternates: ['Ramp Fee', 'ramp fee'],
+    //                description: 'Ramp Fee',
+    //                key: 'RampFee',
+    //                label: 'Ramp Fee ($)',
+    //            },
+    //            {
+    //                alternates: ['Waived At', 'waived at'],
+    //                description: 'Waived Fees',
+    //                key: 'WaivedAt',
+    //                label: 'Waived At (gal)',
+    //            },
+    //            {
+    //                alternates: ['landing'],
+    //                description: 'Landing Fees',
+    //                key: 'Landing',
+    //                label: 'Landing',
+    //            },
+    //            {
+    //                alternates: ['overnight', 'overnight fees'],
+    //                description: 'Overnight Fees',
+    //                key: 'Overnight',
+    //                label: 'Overnight',
+    //            },
+    //            {
+    //                alternates: ['tail number', 'tail-number'],
+    //                description: 'Tail Number',
+    //                key: 'TailNumber',
+    //                label: 'Tail Number',
+    //            },
+    //            {
+    //                alternates: ['aircreft size'],
+    //                description: 'Aircraft Size',
+    //                key: 'aircraftsize',
+    //                label: 'Aircraft Size',
+    //            },
+    //            {
+    //                alternates: ['avoidance'],
+    //                description: 'Avoidance',
+    //                key: 'avoidance',
+    //                label: 'Avoidance',
+    //            },
+    //        ],
+    //        managed: true,
+    //        type: 'RampFees',
+    //    });
+    //}
 
     // Private Methods
     private updateRampFee(fee) {
