@@ -38,9 +38,9 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     keys: string[] = [];
     styleLoaded = false;
     isCommercialInvisible = true;
-    isShowAirportCodesEnabled = false;
+    isShowAirportCodesEnabled = true;
     isShowAirwaysEnabled = false;
-    isExtendedAirwaysEnabled = false;
+    isExtendedAirwaysEnabled = true;
     previousMarker: FlightWatch;
     focusedMarker: FlightWatch;
     showLayers: boolean = false;
@@ -242,7 +242,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
 
         const id = e.features[0].properties.id;
         if (self.focusedMarker?.oid === Number(id)) {
-            self.focusedMarker = undefined;
+            //self.focusedMarker = undefined;
         } else {
             self.focusedMarker = self.data[id];
         }
