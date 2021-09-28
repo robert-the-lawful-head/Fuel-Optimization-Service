@@ -786,12 +786,14 @@ background-color: white;
     line-height: 27px;
 }
 
-
-
-    /*End Flight Watch map controls*/
-
-    /*Flight watch settings container*/
-
+.slide-toggle-label-on {
+    display: inline-block;
+    width: 200px;
+    color: #3887be;
+    font-weight: bold;
+}
+/*End Flight Watch map controls*/
+/*Flight watch settings container*/
 .flight-watch-settings-container {
     color: #676767 !important;
     font-weight: 500 !important;
