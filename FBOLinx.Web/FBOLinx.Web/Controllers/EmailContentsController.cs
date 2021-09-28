@@ -21,9 +21,12 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private IHttpContextAccessor _HttpContextAccessor;
+        private EmailContentService _emailContentService;
 
-        public EmailContentsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor)
+        public EmailContentsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
+            EmailContentService emailContentService)
         {
+            _emailContentService = emailContentService;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
         }
@@ -60,7 +63,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            var emailContent = await _context.EmailContent.Where((x => x.FboId == fboId)).OrderBy(x => x.Name).ToListAsync();
+            var emailContent = await _emailContentService.GetEmailContentsForFbo(fboId);
 
             if (emailContent == null)
             {
