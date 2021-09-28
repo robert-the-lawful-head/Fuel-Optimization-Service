@@ -38,27 +38,27 @@
             <div class="map-control-content">
                 <div class="font-weight-bold">App Layout</div>
                 <div>
-                    <div class="slide-toggle-label">Hide Commercial Aircraft</div>
+                    <div class="slide-toggle-label" [ngClass]="isCommercialInvisible ? '' : 'mat-card mat-card-title'">Hide Commercial Aircraft</div>
                     <div class="slide-toggle">
-                        <mat-slide-toggle (toggleChange)="toggleCommercial($event)"></mat-slide-toggle>
+                        <mat-slide-toggle [checked]="!isCommercialInvisible" (toggleChange)="toggleCommercial($event)"></mat-slide-toggle>
                     </div>
                 </div>
                 <div>
-                    <div class="slide-toggle-label">Show Airport Codes</div>
+                    <div class="slide-toggle-label"[ngClass]="isShowAirportCodesEnabled ? 'mat-card mat-card-title' : ''">Show Airport Codes</div>
                     <div class="slide-toggle">
-                        <mat-slide-toggle (toggleChange)="toggleLayer('icao', $event)"></mat-slide-toggle>
+                        <mat-slide-toggle [checked]="isShowAirportCodesEnabled" (toggleChange)="toggleLayer('icao', $event)"></mat-slide-toggle>
                     </div>
                 </div>
                 <div>
-                    <div class="slide-toggle-label">Show Airways</div>
+                    <div class="slide-toggle-label"[ngClass]="isShowAirwaysEnabled ? 'mat-card mat-card-title' : ''">Show Airways</div>
                     <div class="slide-toggle">
-                        <mat-slide-toggle (toggleChange)="toggleLayer('airway', $event)"></mat-slide-toggle>
+                        <mat-slide-toggle [checked]="isShowAirwaysEnabled" (toggleChange)="toggleLayer('airway', $event)"></mat-slide-toggle>
                     </div>
                 </div>
                 <div>
-                    <div class="slide-toggle-label">Extended Runway</div>
+                    <div class="slide-toggle-label"[ngClass]="isExtendedAirwaysEnabled ? 'mat-card mat-card-title' : ''">Extended Runway</div>
                     <div class="slide-toggle">
-                        <mat-slide-toggle (toggleChange)="toggleLayer('taxiway', $event)"></mat-slide-toggle>
+                        <mat-slide-toggle [checked]="isExtendedAirwaysEnabled" (toggleChange)="toggleLayer('taxiway', $event)"></mat-slide-toggle>
                     </div>
                 </div>
             </div>

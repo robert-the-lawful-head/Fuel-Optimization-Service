@@ -38,6 +38,9 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     keys: string[] = [];
     styleLoaded = false;
     isCommercialInvisible = true;
+    isShowAirportCodesEnabled = false;
+    isShowAirwaysEnabled = false;
+    isExtendedAirwaysEnabled = false;
     previousMarker: FlightWatch;
     focusedMarker: FlightWatch;
     showLayers: boolean = false;
@@ -297,9 +300,6 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     toggleLayer(type: LayerType, event: MouseEvent) {
-        event.preventDefault();
-        event.stopPropagation();
-
         const layers = this.getLayersFromType(type);
 
         const visibility = this.map.getLayoutProperty(layers[0], 'visibility');
@@ -309,27 +309,21 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             layers.forEach((layer) => {
                 this.map.setLayoutProperty(layer, 'visibility', 'none');
             });
-            (event.target as any).className = '';
         } else {
-            (event.target as any).className = 'active';
             layers.forEach((layer) => {
                 this.map.setLayoutProperty(layer, 'visibility', 'visible');
             });
         }
+        if (type == "icao")
+            this.isShowAirportCodesEnabled = !this.isShowAirportCodesEnabled;
+        else if (type == "airway")
+            this.isShowAirwaysEnabled = !this.isShowAirwaysEnabled;
+        else if (type == "taxiway")
+            this.isExtendedAirwaysEnabled = !this.isExtendedAirwaysEnabled;
     }
 
     toggleCommercial(event: MouseEvent) {
-        event.preventDefault();
-        event.stopPropagation();
-
         this.isCommercialInvisible = !this.isCommercialInvisible;
-
-        if (this.isCommercialInvisible) {
-            (event.target as any).className = '';
-        } else {
-            (event.target as any).className = 'active';
-        }
-
         this.refreshMap();
     }
 
