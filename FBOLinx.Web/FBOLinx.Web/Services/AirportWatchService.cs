@@ -14,6 +14,8 @@ using System.Transactions;
 using EFCore.BulkExtensions;
 using FBOLinx.DB;
 using System.Collections;
+using FBOLinx.Web.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Services
 {
@@ -28,9 +30,11 @@ namespace FBOLinx.Web.Services
         private List<AirportWatchHistoricalData> _HistoricalDataToUpdate;
         private List<AirportWatchHistoricalData> _HistoricalDataToInsert;
         private List<AirportWatchAircraftTailNumber> _TailNumberDataToInsert;
+        private IOptions<DemoData> _demoData;
 
-        public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService)
+        public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, IOptions<DemoData> demoData)
         {
+            _demoData = demoData;
             _context = context;
             _degaContext = degaContext;
             _aircraftService = aircraftService;
@@ -143,6 +147,7 @@ namespace FBOLinx.Web.Services
                                  })
                             .ToList();
 
+                AddDemoDataToAirportWatchResult(filteredResult, fboId);
 
                 scope.Complete();
             }
@@ -439,6 +444,19 @@ namespace FBOLinx.Web.Services
                               CustomerInfoByGroupID = h.CustomerInfoByGroupID,
                           }).ToList();
             return result;
+        }
+
+        private void AddDemoDataToAirportWatchResult(List<AirportWatchLiveData> result, int fboId)
+        {
+            if (_demoData == null || _demoData.Value == null || _demoData.Value.FlightWatch == null)
+                return;
+            if (_demoData.Value.FlightWatch.FuelOrder.Fboid != fboId)
+                return;
+            _demoData.Value.FlightWatch.AircraftPositionDateTimeUtc = DateTime.UtcNow.AddSeconds(-5);
+            _demoData.Value.FlightWatch.BoxTransmissionDateTimeUtc = DateTime.UtcNow.AddSeconds(-5);
+            _demoData.Value.FlightWatch.FuelOrder.Eta = DateTime.UtcNow.AddMinutes(25);
+            _demoData.Value.FlightWatch.FuelOrder.Etd = DateTime.UtcNow.AddHours(2);
+            result.Add(_demoData.Value.FlightWatch);
         }
 
         private void AddPossibleParkingOccurrence(AirportWatchHistoricalData oldAirportWatchHistoricalData, AirportWatchHistoricalData airportWatchHistoricalData)

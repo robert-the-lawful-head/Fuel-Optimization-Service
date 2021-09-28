@@ -80,20 +80,35 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             };
             reversedImg.src = image.reverseUrl;
 
-            const blueImg = new Image(image.size, image.size);
-            blueImg.onload = () => {
-                this.map.addImage(`aircraft_image_${image.id}_blue`, blueImg);
+            const releaseImg = new Image(image.size, image.size);
+            releaseImg.onload = () => {
+                this.map.addImage(`aircraft_image_${image.id}_release`, releaseImg);
             };
-            blueImg.src = image.blueUrl;
+            releaseImg.src = image.blueUrl;
 
-            const blueReversedImg = new Image(image.size, image.size);
-            blueReversedImg.onload = () => {
+            const releaseReversedImg = new Image(image.size, image.size);
+            releaseReversedImg.onload = () => {
                 this.map.addImage(
-                    `aircraft_image_${image.id}_reversed_blue`,
-                    blueReversedImg
+                    `aircraft_image_${image.id}_reversed_release`,
+                    releaseReversedImg
                 );
             };
-            blueReversedImg.src = image.blueReverseUrl;
+            releaseReversedImg.src = image.blueReverseUrl;
+
+            const fuelerlinxImg = new Image(image.size, image.size);
+            fuelerlinxImg.onload = () => {
+                this.map.addImage(`aircraft_image_${image.id}_fuelerlinx`, fuelerlinxImg);
+            };
+            fuelerlinxImg.src = image.blueUrl;
+
+            const fuelerlinxReversedImg = new Image(image.size, image.size);
+            fuelerlinxReversedImg.onload = () => {
+                this.map.addImage(
+                    `aircraft_image_${image.id}_reversed_fuelerlinx`,
+                    fuelerlinxReversedImg
+                );
+            };
+            fuelerlinxReversedImg.src = image.blueReverseUrl;
         });
     }
 
@@ -204,7 +219,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                                 id === this.focusedMarker?.oid.toString()
                                     ? '_reversed'
                                     : ''
-                            }${row.fuelOrder != null ? '_blue' : ''}`,
+                                }${row.fuelOrder != null ? '_release' : (row.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`,
                             'icon-rotate': row.trackingDegree ?? 0,
                             'icon-size': 0.5,
                         },
@@ -236,7 +251,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                 'icon-image',
                 `aircraft_image_${self.getAircraftTypeCode(
                     self.previousMarker
-                )}${self.previousMarker.fuelOrder != null ? '_blue' : ''}`
+                )}${self.previousMarker.fuelOrder != null ? '_release' : (self.previousMarker.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
             );
         }
 
@@ -259,7 +274,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             'icon-image',
             `aircraft_image_${self.getAircraftTypeCode(self.data[id])}${
                 self.focusedMarker ? '_reversed' : ''
-            }${self.focusedMarker?.fuelOrder != null ? '_blue' : ''}`
+            }${self.focusedMarker?.fuelOrder != null ? '_release' : (self.focusedMarker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
         );
     }
 

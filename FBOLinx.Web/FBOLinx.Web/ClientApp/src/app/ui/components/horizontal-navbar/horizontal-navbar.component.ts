@@ -188,6 +188,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     close() {
         this.accountProfileMenu.isOpened = false;
         this.needsAttentionMenu.isOpened = false;
+        this.fuelOrderNotificationsMenu.isOpened = false;
         this.isOpened = false;
     }
 
@@ -467,7 +468,11 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     this.flightWatchData.forEach(x => {
                         if (!x.fuelOrder)
                             return;
-                        x.fuelOrder.minutesUntilArrival = moment.duration(x.fuelOrder.eta.diff(moment())).asMinutes();
+                        if (x.fuelOrder.timeStandard != null && x.fuelOrder.timeStandard.toLowerCase() == 'z' || x.fuelOrder.timeStandard == '0')
+                            x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment().utc())).asMinutes();
+                        else
+                            x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment())).asMinutes();
+                        x.fuelOrder.minutesUntilArrival = Math.round(x.fuelOrder.minutesUntilArrival);
                         fuelOrders.push(x.fuelOrder);
                     });
                 }
