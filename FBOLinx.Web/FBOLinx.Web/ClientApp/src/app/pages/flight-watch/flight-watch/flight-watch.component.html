@@ -1,5 +1,32 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
+<div class="custom-key-tab">
+    <div class="custom-key-content">
+        <div class="d-inline-block">
+            <img src="/assets/img/airplane_FUELERLINX.png" style="width: 75%; height: 75%;">
+        </div>
+        <div class="d-inline-block">
+            <span>FuelerLinx Client</span>
+        </div>
+    </div>
+    <div class="custom-key-content">
+        <div class="d-inline-block">
+            <img src="/assets/img/airplane-FUEL_RELEASE.png" style="width: 75%; height: 75%;">
+        </div>
+        <div class="d-inline-block">
+            <span>Active Fuel Release</span>
+        </div>
+    </div>
+    <div class="custom-key-content">
+        <div class="d-inline-block">
+            <img src="/assets/img/airplane_ACTIVE.png" style="width: 75%; height: 75%;">
+        </div>
+        <div class="d-inline-block">
+            <span>Out of Network</span>
+        </div>
+    </div>
+</div>
+
 <div class="after-breadcrumb flight-watch-tabs">
     <mat-tab-group>
         <mat-tab label="Flight Watch">
@@ -26,16 +53,16 @@
                                                   style="width: 100%;"></app-flight-watch-map>
 
                             <!--<div class="flight-watch-settings"
-             [ngStyle]="style"
-             mwlResizable
-             [enableGhostResize]="true"
-             (resizeEnd)="onResizeEnd($event)"
-             [validateResize]="validate">
-            <div class="resize-handle-left"
-                 mwlResizeHandle
-                 [resizeEdges]="{ left: true }"></div>
+                             [ngStyle]="style"
+                             mwlResizable
+                             [enableGhostResize]="true"
+                             (resizeEnd)="onResizeEnd($event)"
+                             [validateResize]="validate">
+                            <div class="resize-handle-left"
+                                 mwlResizeHandle
+                                 [resizeEdges]="{ left: true }"></div>
 
-        </div>-->
+                        </div>-->
                         </div>
                     </div>
                 </mat-drawer-content>
@@ -47,7 +74,7 @@
                                                    [tableData]="flightWatchDataObservable$"
                                                    (filterChanged)="onFilterChanged($event)"
                                                    (typesFilterChanged)="onTypesFilterChanged($event)"></app-flight-watch-settings>
-                    </div>                    
+                    </div>
                 </mat-drawer>
 
             </mat-drawer-container>
@@ -59,7 +86,11 @@
                 </div>
             </div>
         </mat-tab>
+        
     </mat-tab-group>
 
+
 </div>
+
+
 
