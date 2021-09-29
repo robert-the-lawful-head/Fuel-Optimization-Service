@@ -32,8 +32,8 @@
              [ngClass]="{ opened: fuelOrderNotificationsMenu.isOpened }"
              class="nav-item">
             <a (click)="openFuelOrdersUpdate()" class="nav-link">
-                <span matBadge="fuelOrders.length" matBadgeOverlap="false">
-                    <mat-icon aria-hidden="false" aria-label="Fuel orders">local_gas_station</mat-icon>
+                <span>
+                    <mat-icon [matBadge]="fuelOrders.length" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Fuel orders">local_gas_station</mat-icon>
                 </span>
             </a>
 
@@ -49,10 +49,8 @@
                             <mat-icon aria-hidden="false" aria-label="Inbound visit">flight</mat-icon>
                             <div class="content">
                                 <span class="desc">Fueling Alert <strong>{{fuelOrder.customerAircraft.tailNumber}}</strong></span>
-                                <span class="date">Gallons: {{(fuelOrder.quotedVolume <= 1 ? 'Captain\'s Request' : fuelOrder.quotedVolume)}} ({{fuelOrder.product}})</span>
-                                <div class="text-right">
-                                    ETA: {{fuelOrder.minutesUntilArrival}} minutes
-                                </div>
+                                <span class="date">Gallons: {{(fuelOrder.quotedVolume <= 1 ? 'Captain\'s Request' : fuelOrder.quotedVolume)}} ({{(!fuelOrder.product || fuelOrder.product == '' ? 'JetA' : fuelOrder.product)}})</span>
+                                <span class="date">ETA: {{fuelOrder.minutesUntilArrival}} minutes</span>
                             </div>
                         </a>
                     </li>
@@ -70,7 +68,7 @@
          [ngClass]="{ opened: needsAttentionMenu.isOpened }"
          class="nav-item">
             <a (click)="openUpdate()" class="nav-link">
-                <span class="icon sli-bell"></span>
+                <mat-icon aria-hidden="false" aria-label="Notifications">notifications</mat-icon>
                 <span [ngClass]="{
                       marker:
                       (needsAttentionCustomersData &&
