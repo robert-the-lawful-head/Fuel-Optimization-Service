@@ -49,7 +49,7 @@ namespace FBOLinx.Web.ViewModels
             QuotedVolume = item.DispatchedVolume.Amount;
             Source = item.FuelVendor;
             SourceId = item.Id;
-            TimeStandard = item.TimeStandard.GetValueOrDefault().ToString();
+            TimeStandard = item.TimeStandard.GetValueOrDefault().ToString() == "0" ? "Z" : "L";
             CustomerName = item.CustomerName;
             TailNumber = item.TailNumber;
             FboName = item.Fbo;

@@ -141,7 +141,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             }
         );
 
-        this.fuelOrdersSubscription = timer(0, 120000).subscribe(() =>
+        this.fuelOrdersSubscription = timer(0, 60000).subscribe(() =>
             this.loadUpcomingOrders()
         );
     }
