@@ -819,12 +819,18 @@ body .mat-card.flight-watch-settings-container .mat-card-header {
     margin-bottom: 0px;
 }
 
+.flight-list-settings-button {
+    position: absolute;
+    right: 0px;
+    top: 10px;
+}
 
+
+.flight-list-settings-button .mat-button-wrapper .mat-icon {
+    font-size: 25px;
+}
 /*End Flight watch settings container*/
-
-
 /*Map Plane Key*/
-
 div.custom-key-tab {
     position: absolute;
     z-index: 100000;
