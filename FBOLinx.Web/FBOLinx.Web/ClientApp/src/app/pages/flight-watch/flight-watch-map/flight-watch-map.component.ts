@@ -39,8 +39,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     styleLoaded = false;
     isCommercialInvisible = true;
     isShowAirportCodesEnabled = true;
-    isShowAirwaysEnabled = false;
-    isExtendedAirwaysEnabled = true;
+    isShowTaxiwaysEnabled = true;
     previousMarkerId: number = 0;
     focusedMarkerId: number = 0;
     showLayers: boolean = false;
@@ -348,10 +347,8 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         }
         if (type == "icao")
             this.isShowAirportCodesEnabled = !this.isShowAirportCodesEnabled;
-        else if (type == "airway")
-            this.isShowAirwaysEnabled = !this.isShowAirwaysEnabled;
         else if (type == "taxiway")
-            this.isExtendedAirwaysEnabled = !this.isExtendedAirwaysEnabled;
+            this.isShowTaxiwaysEnabled = !this.isShowTaxiwaysEnabled;
     }
 
     toggleCommercial(event: MouseEvent) {
