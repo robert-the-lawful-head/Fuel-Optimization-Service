@@ -1,8 +1,31 @@
-<mat-card>
+<mat-card class="flight-watch-settings-container">
     <mat-card-header>
-        <mat-card-title
-            >Total Aircrafts: {{ (tableData | async).length }}</mat-card-title
-        >
+        <mat-card-title>
+            <div class="container-fluid">
+                <div class="row" style="padding-bottom: 25px;">
+                    <div class="float-left">Flight List</div>
+                    <div class="flight-list-settings-button">
+                        <div class="actions">
+                            <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                                <mat-icon aria-hidden="true"
+                                          class="mat-icon material-icons"
+                                          role="img">more_vert</mat-icon>
+                            </button>
+                            <mat-menu #gridActions="matMenu"
+                                      xPosition="before">
+                                <button (click)="openSettings()" mat-menu-item>
+                                    Settings
+                                </button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                </div>
+                <!--<div style="position: absolute; top: 5px; right: 9px; cursor: pointer; " (click)="mapfilters.toggle()">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </div>-->
+            </div>
+            <div style="font-size: 14px;">Total Aircrafts: {{ (tableData | async).length }}</div>
+        </mat-card-title>
         <!-- <mat-card-subtitle></mat-card-subtitle> -->
     </mat-card-header>
 
@@ -12,7 +35,7 @@
             <input #input matInput (keyup)="applyFilter($event)" />
         </mat-form-field>
 
-        <div class="aircraft-types">
+        <!--<div class="aircraft-types">
             <mat-label>Filter by type</mat-label>
             <div class="aircraft-types-filter">
                 <ng-container *ngFor="let type of aircraftTypes">
@@ -31,10 +54,11 @@
                     </div>
                 </ng-container>
             </div>
-        </div>
+        </div>-->
 
         <div class="flight-watch-container">
-            <table mat-table [dataSource]="tableData">
+            <table mat-table [dataSource]="tableData"
+                   matSort>
                 <ng-container matColumnDef="aircraftHexCode">
                     <th mat-header-cell *matHeaderCellDef>Hex Code</th>
                     <td mat-cell *matCellDef="let element">
@@ -95,11 +119,11 @@
 
                 <tr
                     mat-header-row
-                    *matHeaderRowDef="displayedColumns; sticky: true"
+                    *matHeaderRowDef="visibleColumns; sticky: true"
                 ></tr>
                 <tr
                     mat-row
-                    *matRowDef="let row; columns: displayedColumns"
+                    *matRowDef="let row; columns: visibleColumns"
                 ></tr>
 
                 <!-- Row shown when there is no matching data. -->

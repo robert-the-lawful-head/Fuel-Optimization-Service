@@ -128,7 +128,7 @@
         },
         "tooltip": "Flight Watch",
         "routing": "/default-layout/flight-watch",
-        "roles": [1, 4]
+        "roles": [1, 4, 5]
     },
     {
         "title": "Analytics",
