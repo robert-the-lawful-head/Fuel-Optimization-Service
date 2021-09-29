@@ -38,8 +38,11 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     keys: string[] = [];
     styleLoaded = false;
     isCommercialInvisible = true;
-    previousMarker: FlightWatch;
-    focusedMarker: FlightWatch;
+    isShowAirportCodesEnabled = true;
+    isShowTaxiwaysEnabled = true;
+    previousMarkerId: number = 0;
+    focusedMarkerId: number = 0;
+    showLayers: boolean = false;
 
     constructor() {}
 
@@ -76,20 +79,35 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             };
             reversedImg.src = image.reverseUrl;
 
-            const blueImg = new Image(image.size, image.size);
-            blueImg.onload = () => {
-                this.map.addImage(`aircraft_image_${image.id}_blue`, blueImg);
+            const releaseImg = new Image(image.size, image.size);
+            releaseImg.onload = () => {
+                this.map.addImage(`aircraft_image_${image.id}_release`, releaseImg);
             };
-            blueImg.src = image.blueUrl;
+            releaseImg.src = image.blueUrl;
 
-            const blueReversedImg = new Image(image.size, image.size);
-            blueReversedImg.onload = () => {
+            const releaseReversedImg = new Image(image.size, image.size);
+            releaseReversedImg.onload = () => {
                 this.map.addImage(
-                    `aircraft_image_${image.id}_reversed_blue`,
-                    blueReversedImg
+                    `aircraft_image_${image.id}_reversed_release`,
+                    releaseReversedImg
                 );
             };
-            blueReversedImg.src = image.blueReverseUrl;
+            releaseReversedImg.src = image.blueReverseUrl;
+
+            const fuelerlinxImg = new Image(image.size, image.size);
+            fuelerlinxImg.onload = () => {
+                this.map.addImage(`aircraft_image_${image.id}_fuelerlinx`, fuelerlinxImg);
+            };
+            fuelerlinxImg.src = image.fuelerlinxUrl;
+
+            const fuelerlinxReversedImg = new Image(image.size, image.size);
+            fuelerlinxReversedImg.onload = () => {
+                this.map.addImage(
+                    `aircraft_image_${image.id}_reversed_fuelerlinx`,
+                    fuelerlinxReversedImg
+                );
+            };
+            fuelerlinxReversedImg.src = image.fuelerlinxReverseUrl;
         });
     }
 
@@ -197,10 +215,10 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                         layout: {
                             'icon-allow-overlap': true,
                             'icon-image': `aircraft_image_${atype}${
-                                id === this.focusedMarker?.oid.toString()
+                                id === this.focusedMarkerId.toString()
                                     ? '_reversed'
                                     : ''
-                            }${row.hasFuelOrders ? '_blue' : ''}`,
+                                }${row.fuelOrder != null ? '_release' : (row.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`,
                             'icon-rotate': row.trackingDegree ?? 0,
                             'icon-size': 0.5,
                         },
@@ -226,37 +244,54 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         } & mapboxgl.EventData,
         self: FlightWatchMapComponent
     ) {
-        if (self.previousMarker) {
-            this.map.setLayoutProperty(
-                `aircraft_${self.previousMarker.oid}`,
-                'icon-image',
-                `aircraft_image_${self.getAircraftTypeCode(
-                    self.previousMarker
-                )}${self.previousMarker.hasFuelOrders ? '_blue' : ''}`
-            );
+        const id = e.features[0].properties.id;
+        if (self.focusedMarkerId !== Number(id)) {
+            self.focusedMarkerId = id;
+        }
+        if (self.previousMarkerId && self.data[self.previousMarkerId] != null) {
+            var previousMarker = self.data[self.previousMarkerId];
+            self.setFlightWatchMarkerLayout(previousMarker);
+
+            //this.map.setLayoutProperty(
+            //    `aircraft_${previousMarker.oid}`,
+            //    'icon-image',
+            //    `aircraft_image_${self.getAircraftTypeCode(
+            //        previousMarker
+            //    )}${previousMarker.fuelOrder != null ? '_release' : (previousMarker.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
+            //);
         }
 
-        const id = e.features[0].properties.id;
-        if (self.focusedMarker?.oid === Number(id)) {
-            self.focusedMarker = undefined;
-        } else {
-            self.focusedMarker = self.data[id];
-        }
+        var focusedMarker = self.data[id];
         self.markerClicked.emit(self.data[id]);
 
-        if (self.focusedMarker) {
-            self.previousMarker = Object.assign({}, self.focusedMarker);
+        if (self.focusedMarkerId > 0) {
+            self.previousMarkerId = self.focusedMarkerId;
         } else {
-            self.previousMarker = undefined;
+            self.previousMarkerId = 0;
         }
 
-        this.map.setLayoutProperty(
-            `aircraft_${id}`,
-            'icon-image',
-            `aircraft_image_${self.getAircraftTypeCode(self.data[id])}${
-                self.focusedMarker ? '_reversed' : ''
-            }${self.focusedMarker?.hasFuelOrders ? '_blue' : ''}`
-        );
+        self.setFlightWatchMarkerLayout(focusedMarker);
+
+        //this.map.setLayoutProperty(
+        //    `aircraft_${id}`,
+        //    'icon-image',
+        //    `aircraft_image_${self.getAircraftTypeCode(self.data[id])}${
+        //    self.focusedMarkerId > 0 ? '_reversed' : ''
+        //    }${focusedMarker?.fuelOrder != null ? '_release' : (focusedMarker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
+        //);
+    }
+
+    setFlightWatchMarkerLayout(marker: FlightWatch) {
+        try {
+            this.map.setLayoutProperty(
+                `aircraft_${marker.oid}`,
+                'icon-image',
+                `aircraft_image_${this.getAircraftTypeCode(marker)}${this.focusedMarkerId == marker.oid ? '_reversed' : ''
+                }${marker?.fuelOrder != null ? '_release' : (marker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
+            );
+        } catch (e) {
+            //Do nothing
+        }
     }
 
     cursorPointer(cursor: string, self: any) {
@@ -296,9 +331,6 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     toggleLayer(type: LayerType, event: MouseEvent) {
-        event.preventDefault();
-        event.stopPropagation();
-
         const layers = this.getLayersFromType(type);
 
         const visibility = this.map.getLayoutProperty(layers[0], 'visibility');
@@ -308,27 +340,19 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             layers.forEach((layer) => {
                 this.map.setLayoutProperty(layer, 'visibility', 'none');
             });
-            (event.target as any).className = '';
         } else {
-            (event.target as any).className = 'active';
             layers.forEach((layer) => {
                 this.map.setLayoutProperty(layer, 'visibility', 'visible');
             });
         }
+        if (type == "icao")
+            this.isShowAirportCodesEnabled = !this.isShowAirportCodesEnabled;
+        else if (type == "taxiway")
+            this.isShowTaxiwaysEnabled = !this.isShowTaxiwaysEnabled;
     }
 
     toggleCommercial(event: MouseEvent) {
-        event.preventDefault();
-        event.stopPropagation();
-
         this.isCommercialInvisible = !this.isCommercialInvisible;
-
-        if (this.isCommercialInvisible) {
-            (event.target as any).className = '';
-        } else {
-            (event.target as any).className = 'active';
-        }
-
         this.refreshMap();
     }
 
