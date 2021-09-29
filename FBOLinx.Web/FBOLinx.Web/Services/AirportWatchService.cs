@@ -14,6 +14,7 @@ using System.Transactions;
 using EFCore.BulkExtensions;
 using FBOLinx.DB;
 using System.Collections;
+using Fuelerlinx.SDK;
 
 namespace FBOLinx.Web.Services
 {
@@ -28,19 +29,25 @@ namespace FBOLinx.Web.Services
         private List<AirportWatchHistoricalData> _HistoricalDataToUpdate;
         private List<AirportWatchHistoricalData> _HistoricalDataToInsert;
         private List<AirportWatchAircraftTailNumber> _TailNumberDataToInsert;
+        private FuelerLinxService _fuelerLinxService;
 
-        public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService)
+        public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxService fuelerLinxService)
         {
             _context = context;
             _degaContext = degaContext;
             _aircraftService = aircraftService;
             _fboService = fboService;
+            _fuelerLinxService = fuelerLinxService;
         }
 
         public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData(int groupId, int fboId, Coordinate coordinate)
         {
+            var fbo = await (from f in _context.Fbos
+                            join fa in _context.Fboairports on f.Oid equals fa.Fboid
+                            select new { f, fa }).FirstOrDefaultAsync();
+
             var distance = 250;
-            CoordinateBoundaries boundaries = new CoordinateBoundaries(coordinate, distance, DistanceUnit.Miles);
+            CoordinateBoundaries boundaries = new CoordinateBoundaries(coordinate, distance, Geolocation.DistanceUnit.Miles);
             double minLatitude = boundaries.MinLatitude;
             double maxLatitude = boundaries.MaxLatitude;
             double minLongitude = boundaries.MinLongitude;
@@ -57,6 +64,34 @@ namespace FBOLinx.Web.Services
                 var fuelOrders = await _context.FuelReq
                     .Where(x => x.Fboid == fboId && x.Eta > DateTime.UtcNow && x.Cancelled == false)
                     .Include(x => x.CustomerAircraft).ToListAsync();
+
+                FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
+                { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.fa.Icao, Fbo = fbo.f.Fbo });
+
+                foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
+                {
+                    FuelReq fuelReq = new FuelReq();
+                    fuelReq.Oid = 0;
+                    fuelReq.ActualPpg = 0;
+                    fuelReq.ActualVolume = transaction.InvoicedVolume.Amount;
+                    fuelReq.Archived = transaction.Archived;
+                    fuelReq.Cancelled = false;
+                    fuelReq.DateCreated = transaction.CreationDate;
+                    fuelReq.DispatchNotes = "";
+                    fuelReq.Eta = transaction.ArrivalDateTime;
+                    fuelReq.Etd = transaction.DepartureDateTime;
+                    fuelReq.Icao = transaction.Icao;
+                    fuelReq.Notes = "";
+                    fuelReq.QuotedPpg = 0;
+                    fuelReq.QuotedVolume = transaction.DispatchedVolume.Amount;
+                    fuelReq.Source = transaction.FuelVendor;
+                    fuelReq.SourceId = transaction.Id;
+                    fuelReq.TimeStandard = transaction.TimeStandard.GetValueOrDefault().ToString() == "0" ? "Z" : "L";
+                    fuelReq.Email = "";
+                    fuelReq.PhoneNumber = "";
+                    fuelReq.CustomerAircraft = new CustomerAircrafts() { TailNumber = transaction.TailNumber };
+                    fuelOrders.Add(fuelReq);
+                }
 
                 filteredResult = await (from awhd in _context.AirportWatchLiveData
                     join ca in (
@@ -121,7 +156,7 @@ namespace FBOLinx.Web.Services
                 filteredResult = (from fr in filteredResult
                                  join fo in fuelOrders on fr.AtcFlightNumber equals (fo.CustomerAircraft == null ? "" : fo.CustomerAircraft.TailNumber) into fos
                                  from fo in fos.DefaultIfEmpty()
-                                 where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.Latitude, fr.Longitude, 1, DistanceUnit.Miles) <= distance
+                                 where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.Latitude, fr.Longitude, 1, Geolocation.DistanceUnit.Miles) <= distance
                                  select new AirportWatchLiveData {
                                      Oid = fr.Oid,
                                      Longitude = fr.Longitude,
