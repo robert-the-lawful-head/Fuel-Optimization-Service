@@ -134,6 +134,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     this.loadLocations();
                     this.loadFboInfo();
                     this.loadNeedsAttentionCustomers();
+                    this.loadUpcomingOrders();
                 }
                 if (message === customerUpdatedEvent) {
                     this.loadNeedsAttentionCustomers();

@@ -28,22 +28,25 @@
     </h2>
     <div class="nav-items">
         <!--Fuel order notifications-->
-        <div *ngIf="fuelOrders && fuelOrders.length > 0"
+        <div
              [ngClass]="{ opened: fuelOrderNotificationsMenu.isOpened }"
              class="nav-item">
             <a (click)="openFuelOrdersUpdate()" class="nav-link">
-                <span>
+                <span *ngIf="fuelOrders && fuelOrders.length > 0">
                     <mat-icon [matBadge]="fuelOrders.length" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Fuel orders">local_gas_station</mat-icon>
+                </span>
+                <span *ngIf="!fuelOrders || fuelOrders.length == 0">
+                    <mat-icon aria-hidden="false" aria-label="Fuel orders">local_gas_station</mat-icon>
                 </span>
             </a>
 
             <div class="dropdown-menu">
                 <h4 *ngIf="fuelOrders && fuelOrders.length > 0"
                     class="menu-title">
-                    Notifications
+                    Incoming Orders
                 </h4>
 
-                <ul class="notifications-list">
+                <ul class="notifications-list" *ngIf="fuelOrders && fuelOrders.length > 0">
                     <li *ngFor="let fuelOrder of fuelOrders">
                         <a>
                             <mat-icon aria-hidden="false" aria-label="Inbound visit">flight</mat-icon>
@@ -58,7 +61,7 @@
                 </ul>
 
                 <div class="menu-footer">
-                    <a (click)="viewAllFuelOrdersClicked()" routerLink=".">View all notifications</a>
+                    <a (click)="viewAllFuelOrdersClicked()" routerLink=".">View all orders</a>
                 </div>
             </div>
         </div>
