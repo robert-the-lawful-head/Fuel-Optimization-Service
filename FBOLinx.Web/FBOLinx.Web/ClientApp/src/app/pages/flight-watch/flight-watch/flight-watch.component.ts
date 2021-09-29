@@ -100,10 +100,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     onFlightWatchClick(flightWatch: FlightWatch) {
-        if (this.selectedFlightWatch?.oid === flightWatch.oid) {
-            this.selectedFlightWatch = undefined;
-        } else {
+        if (this.selectedFlightWatch?.oid !== flightWatch.oid) {
             this.selectedFlightWatch = flightWatch;
+        } else if (!flightWatch.oid) {
+            this.selectedFlightWatch = undefined;
         }
     }
 

@@ -41,8 +41,8 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     isShowAirportCodesEnabled = true;
     isShowAirwaysEnabled = false;
     isExtendedAirwaysEnabled = true;
-    previousMarker: FlightWatch;
-    focusedMarker: FlightWatch;
+    previousMarkerId: number = 0;
+    focusedMarkerId: number = 0;
     showLayers: boolean = false;
 
     constructor() {}
@@ -216,7 +216,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                         layout: {
                             'icon-allow-overlap': true,
                             'icon-image': `aircraft_image_${atype}${
-                                id === this.focusedMarker?.oid.toString()
+                                id === this.focusedMarkerId.toString()
                                     ? '_reversed'
                                     : ''
                                 }${row.fuelOrder != null ? '_release' : (row.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`,
@@ -245,37 +245,54 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         } & mapboxgl.EventData,
         self: FlightWatchMapComponent
     ) {
-        if (self.previousMarker) {
-            this.map.setLayoutProperty(
-                `aircraft_${self.previousMarker.oid}`,
-                'icon-image',
-                `aircraft_image_${self.getAircraftTypeCode(
-                    self.previousMarker
-                )}${self.previousMarker.fuelOrder != null ? '_release' : (self.previousMarker.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
-            );
+        const id = e.features[0].properties.id;
+        if (self.focusedMarkerId !== Number(id)) {
+            self.focusedMarkerId = id;
+        }
+        if (self.previousMarkerId && self.data[self.previousMarkerId] != null) {
+            var previousMarker = self.data[self.previousMarkerId];
+            self.setFlightWatchMarkerLayout(previousMarker);
+
+            //this.map.setLayoutProperty(
+            //    `aircraft_${previousMarker.oid}`,
+            //    'icon-image',
+            //    `aircraft_image_${self.getAircraftTypeCode(
+            //        previousMarker
+            //    )}${previousMarker.fuelOrder != null ? '_release' : (previousMarker.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
+            //);
         }
 
-        const id = e.features[0].properties.id;
-        if (self.focusedMarker?.oid === Number(id)) {
-            //self.focusedMarker = undefined;
-        } else {
-            self.focusedMarker = self.data[id];
-        }
+        var focusedMarker = self.data[id];
         self.markerClicked.emit(self.data[id]);
 
-        if (self.focusedMarker) {
-            self.previousMarker = Object.assign({}, self.focusedMarker);
+        if (self.focusedMarkerId > 0) {
+            self.previousMarkerId = self.focusedMarkerId;
         } else {
-            self.previousMarker = undefined;
+            self.previousMarkerId = 0;
         }
 
-        this.map.setLayoutProperty(
-            `aircraft_${id}`,
-            'icon-image',
-            `aircraft_image_${self.getAircraftTypeCode(self.data[id])}${
-                self.focusedMarker ? '_reversed' : ''
-            }${self.focusedMarker?.fuelOrder != null ? '_release' : (self.focusedMarker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
-        );
+        self.setFlightWatchMarkerLayout(focusedMarker);
+
+        //this.map.setLayoutProperty(
+        //    `aircraft_${id}`,
+        //    'icon-image',
+        //    `aircraft_image_${self.getAircraftTypeCode(self.data[id])}${
+        //    self.focusedMarkerId > 0 ? '_reversed' : ''
+        //    }${focusedMarker?.fuelOrder != null ? '_release' : (focusedMarker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
+        //);
+    }
+
+    setFlightWatchMarkerLayout(marker: FlightWatch) {
+        try {
+            this.map.setLayoutProperty(
+                `aircraft_${marker.oid}`,
+                'icon-image',
+                `aircraft_image_${this.getAircraftTypeCode(marker)}${this.focusedMarkerId == marker.oid ? '_reversed' : ''
+                }${marker?.fuelOrder != null ? '_release' : (marker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
+            );
+        } catch (e) {
+            //Do nothing
+        }
     }
 
     cursorPointer(cursor: string, self: any) {
