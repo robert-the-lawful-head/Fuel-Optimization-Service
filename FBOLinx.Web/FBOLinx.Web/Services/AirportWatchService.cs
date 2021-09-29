@@ -14,6 +14,7 @@ using System.Transactions;
 using EFCore.BulkExtensions;
 using FBOLinx.DB;
 using System.Collections;
+using System.Diagnostics;
 using FBOLinx.Web.Configurations;
 using Fuelerlinx.SDK;
 using Microsoft.Extensions.Options;
@@ -178,7 +179,8 @@ namespace FBOLinx.Web.Services
                                      AircraftPositionDateTimeUtc = fr.AircraftPositionDateTimeUtc,
                                      AircraftTypeCode = fr.AircraftTypeCode,
                                      AltitudeInStandardPressure = fr.AltitudeInStandardPressure,
-                                     FuelOrder = fo
+                                     FuelOrder = fo,
+                                     IsFuelerLinxCustomer = fr.IsFuelerLinxCustomer
                                  })
                             .ToList();
 

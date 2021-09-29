@@ -99,7 +99,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             fuelerlinxImg.onload = () => {
                 this.map.addImage(`aircraft_image_${image.id}_fuelerlinx`, fuelerlinxImg);
             };
-            fuelerlinxImg.src = image.blueUrl;
+            fuelerlinxImg.src = image.fuelerlinxUrl;
 
             const fuelerlinxReversedImg = new Image(image.size, image.size);
             fuelerlinxReversedImg.onload = () => {
@@ -108,7 +108,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                     fuelerlinxReversedImg
                 );
             };
-            fuelerlinxReversedImg.src = image.blueReverseUrl;
+            fuelerlinxReversedImg.src = image.fuelerlinxReverseUrl;
         });
     }
 
