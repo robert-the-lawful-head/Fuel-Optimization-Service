@@ -37,7 +37,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     zoom = 13;
     keys: string[] = [];
     styleLoaded = false;
-    isCommercialInvisible = true;
+    isCommercialVisible = true;
     isShowAirportCodesEnabled = true;
     isShowTaxiwaysEnabled = true;
     previousMarkerId: number = 0;
@@ -135,7 +135,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
                 };
                 return (
                     bound.contains(flightWatchPosition) &&
-                    (!this.isCommercialInvisible ||
+                    (this.isCommercialVisible ||
                         !isCommercialAircraft(
                             flightWatch.aircraftTypeCode,
                             flightWatch.atcFlightNumber
@@ -352,7 +352,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     toggleCommercial(event: MouseEvent) {
-        this.isCommercialInvisible = !this.isCommercialInvisible;
+        this.isCommercialVisible = !this.isCommercialVisible;
         this.refreshMap();
     }
 
