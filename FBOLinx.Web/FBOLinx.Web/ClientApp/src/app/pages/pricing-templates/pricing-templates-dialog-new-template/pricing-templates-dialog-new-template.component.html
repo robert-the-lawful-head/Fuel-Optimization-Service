@@ -271,6 +271,7 @@
                             <mat-select
                                 formControlName="emailContentId"
                                 placeholder="Select Email Template"
+                                (selectionChange)="onEmailConentTemplateChanged($event)"
                             >
                                 <mat-option
                                     *ngFor="
@@ -312,6 +313,7 @@
                     (click)="addTemplateClicked()"
                     class="mr-1"
                     color="green"
+                    (disabled)="form.value.thirdStep.emailContentId <= 0"
                     mat-stroked-button
                 >
                     Save Template
