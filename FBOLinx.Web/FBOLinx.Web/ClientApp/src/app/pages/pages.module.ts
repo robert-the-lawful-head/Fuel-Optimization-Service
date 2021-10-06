@@ -165,6 +165,7 @@ import { AppPipesModule } from '../app-pipes.module';
 import { ClickStopPropagationDirective } from '../shared/directives/click-stop-propagation.directive';
 import { FlightWatchMapMarkerIconPipe } from './flight-watch/flight-watch-map/flight-watch-map-marker.pipe';
 import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-airport-watch-table/analytics-airport-watch-status-marker.pipe';
+import { CustomersAnalyticsComponent } from './customers/customers-analytics/customers-analytics.component';
 
 @NgModule({
     imports: [
@@ -323,6 +324,8 @@ import { AnalyticsAirportWatchStatusMarkerPipe } from './analytics/analytics-air
         FlightWatchSettingsComponent,
         FlightWatchMapMarkerIconPipe,
         AnalyticsAirportWatchStatusMarkerPipe,
+        CustomersAnalyticsComponent,
+
     ],
     exports: [
         ClickStopPropagationDirective,

@@ -14,6 +14,7 @@ import { getCustomerGridState } from '../../../store/selectors';
 import { State } from '../../../store/reducers';
 import { customerGridSet } from '../../../store/actions';
 import { CustomerGridState } from '../../../store/reducers/customer';
+import { MatTableDataSource } from '@angular/material/table';
 
 const BREADCRUMBS: any[] = [
     {
@@ -41,9 +42,16 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     locationChangedSubscription: any;
     customerGridState: CustomerGridState;
 
+    public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
+    public dataSource:       MatTableDataSource<any[]>;
+    public icao:             string;
+    public fbo:              string;
+    public id:               string;
+
     constructor(
         private store: Store<State>,
         private router: Router,
+
         private customerInfoByGroupService: CustomerinfobygroupService,
         private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
@@ -53,6 +61,8 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         this.loadCustomers();
         this.loadPricingTemplates();
         this.loadCustomerAircraft();
+
+
     }
 
     ngOnInit(): void {

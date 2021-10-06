@@ -1,22 +1,20 @@
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import * as moment from 'moment';
-
-// Services
-import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { FbosService } from '../../../services/fbos.service';
-import * as SharedEvent from '../../../models/sharedEvents';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { SharedService } from 'src/app/layouts/shared-service';
+import { FbosService } from 'src/app/services/fbos.service';
+import * as SharedEvent from '../../../models/sharedEvents';
+import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 
 @Component({
-    selector: 'app-analytics-companies-quotes-deal',
-    templateUrl: './analytics-companies-quotes-deal-table.component.html',
-    styleUrls: ['./analytics-companies-quotes-deal-table.component.scss'],
+  selector: 'app-customers-analytics',
+  templateUrl: './customers-analytics.component.html',
+  styleUrls: ['./customers-analytics.component.scss']
 })
-export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CustomersAnalyticsComponent implements OnInit , AfterViewInit, OnDestroy  {
     @ViewChild(MatSort) sort: MatSort;
 
     public filterStartDate: Date;
@@ -27,13 +25,13 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
     public chartName = 'companies-quotes-deal-table';
     public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
     public dataSource: MatTableDataSource<any[]>;
-
+    public customerId: number;
     constructor(
         private fuelreqsService: FuelreqsService,
         private fbosService: FbosService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
-        private router: Router
+        private route: ActivatedRoute
     ) {
         this.icao = this.sharedService.currentUser.icao;
         this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
@@ -67,12 +65,15 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
 
     refreshData() {
         this.ngxLoader.startLoader(this.chartName);
+        this.customerId = this.route.snapshot.params.id;
+
         this.fuelreqsService
-            .getCompaniesQuotingDealStatistics(
+            .getCompanyQuotingDealStatistics(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
                 this.filterStartDate,
-                this.filterEndDate
+                this.filterEndDate,
+                this.customerId
             )
             .subscribe((data: any) => {
                 this.dataSource = new MatTableDataSource(data);
@@ -103,10 +104,4 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
         this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
-
-    CustomerAnalitycs(element: any )
-    {
-
-       this.router.navigate(['/default-layout/customers' , element.customerId ], {state : {tab : 3}});
-    }
 }

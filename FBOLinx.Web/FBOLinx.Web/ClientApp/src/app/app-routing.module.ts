@@ -39,6 +39,7 @@ const defaultRoutes: Routes = [{
     path: 'customers/:id',
     component: CustomersEditComponent,
     canActivate: [AuthGuard],
+
   },
   {
     path: 'dashboard',

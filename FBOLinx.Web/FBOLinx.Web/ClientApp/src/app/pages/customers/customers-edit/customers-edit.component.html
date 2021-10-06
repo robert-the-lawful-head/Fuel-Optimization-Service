@@ -22,7 +22,7 @@
                 </div>
             </h3>
             <div class="card-content edit-customer-content">
-                <mat-tab-group>
+                <mat-tab-group [selectedIndex]="selectedIndex">
                     <mat-tab label="Customer Details">
                         <div class="container-fluid">
                             <h5>General Information</h5>
@@ -194,6 +194,11 @@
                             </div>
                         </div>
                     </mat-tab>
+
+
+                    <mat-tab label="Customer Analytics">
+                        <app-customers-analytics></app-customers-analytics>
+                   </mat-tab>
                 </mat-tab-group>
             </div>
         </div>

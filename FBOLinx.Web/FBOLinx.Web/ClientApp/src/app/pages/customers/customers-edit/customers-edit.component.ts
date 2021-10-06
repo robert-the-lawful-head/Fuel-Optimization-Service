@@ -59,10 +59,12 @@ export class CustomersEditComponent implements OnInit {
     currentContactInfoByGroup: any;
     customCustomerType: any;
     certificateTypes: any[];
+    selectedIndex: any  = 0;
     customerCompanyTypes: any[];
     hasContactForPriceDistribution = false;
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
+
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
 
@@ -85,9 +87,13 @@ export class CustomersEditComponent implements OnInit {
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService,
         private snackBar: MatSnackBar,
+
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
+
+        this.selectedIndex = this.router.getCurrentNavigation().extras.state.tab;
+
     }
 
     async ngOnInit() {
@@ -306,6 +312,9 @@ export class CustomersEditComponent implements OnInit {
                 this.recalculatePriceBreakdown();
             });
         }
+
+
+
     }
 
     // Private Methods
