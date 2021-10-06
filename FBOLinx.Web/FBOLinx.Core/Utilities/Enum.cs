@@ -23,7 +23,7 @@ namespace FBOLinx.Core.Utilities
             var values = System.Enum.GetValues(type);
             foreach (object value in values)
             {
-                var field = type.GetField(value.ToString());
+                var field =       type.GetField(value.ToString());
                 var description = field.GetCustomAttributes(typeof(DescriptionAttribute), true);
                 descriptions.Add(new EnumDescriptionValue() {
                     Description = ((DescriptionAttribute) description[0]).Description,
