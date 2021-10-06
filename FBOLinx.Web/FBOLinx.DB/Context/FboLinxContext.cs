@@ -32,6 +32,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<PriceTiers> PriceTiers { get; set; }
         public virtual DbSet<PricingTemplate> PricingTemplate { get; set; }
         public virtual DbSet<CompaniesByGroup> CompaniesByGroup { get; set; }
+        public virtual DbSet<ContactInfoByFbo> ContactInfoByFbo { get; set; }
         public virtual DbSet<ContactInfoByGroup> ContactInfoByGroup { get; set; }
         public virtual DbSet<CustomerContacts> CustomerContacts { get; set; }
         public virtual DbSet<AircraftPrices> AircraftPrices { get; set; }
@@ -936,6 +937,15 @@ namespace FBOLinx.DB.Context
 
                 entity.Property(e => e.Name).IsUnicode(false);
 
+            });
+
+            modelBuilder.Entity<ContactInfoByFbo>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+                entity.Property(e => e.Oid).HasColumnName("Oid");
+                entity.Property(e => e.ContactId).HasColumnName("ContactId");
+                entity.Property(e => e.FboId).HasColumnName("FboId");
+                entity.Property(e => e.CopyAlerts).HasColumnName("CopyAlerts");
             });
         }
     }

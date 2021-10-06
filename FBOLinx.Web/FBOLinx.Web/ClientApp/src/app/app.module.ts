@@ -54,6 +54,7 @@ import { AircraftsService } from './services/aircrafts.service';
 import { AirportWatchService } from './services/airportwatch.service';
 import { AppService } from './services/app.service';
 import { AuthenticationService } from './services/authentication.service';
+import { ContactinfobyfboService } from './services/contactinfobyfbo.service';
 import { ContactinfobygroupsService } from './services/contactinfobygroups.service';
 import { ContactsService } from './services/contacts.service';
 import { CustomcustomertypesService } from './services/customcustomertypes.service';
@@ -164,6 +165,7 @@ import { TagsService } from './services/tags.service';
         AircraftsService,
         AircraftpricesService,
         AuthenticationService,
+        ContactinfobyfboService,
         ContactinfobygroupsService,
         ContactsService,
         CustomcustomertypesService,

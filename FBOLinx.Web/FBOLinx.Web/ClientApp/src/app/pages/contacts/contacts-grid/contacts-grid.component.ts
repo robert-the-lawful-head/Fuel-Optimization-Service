@@ -13,11 +13,13 @@ import { ActivatedRoute } from '@angular/router';
 /*import FlatfileImporter from 'flatfile-csv-importer';*/
 import * as _ from 'lodash';
 
+import { ContactsDialogNewContactComponent } from '../contacts-edit-modal/contacts-edit-modal.component';
+
+// Services
 import { SharedService } from '../../../layouts/shared-service';
 import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
-// Services
+import { ContactinfobyfboService } from '../../../services/contactinfobyfbo.service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
-import { ContactsDialogNewContactComponent } from '../contacts-edit-modal/contacts-edit-modal.component';
 
 @Component({
     selector: 'app-contacts-grid',
@@ -56,7 +58,8 @@ export class ContactsGridComponent implements OnInit {
         private sharedService: SharedService,
         private customerContactsService: CustomercontactsService,
         public newContactDialog: MatDialog,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private contactInfoByFboService: ContactinfobyfboService
     ) {}
 
     ngOnInit() {
@@ -81,8 +84,8 @@ export class ContactsGridComponent implements OnInit {
         this.customerContactsService
             .remove(record.customerContactId)
             .subscribe(() => {
-                this.contactInfoByGroupsService
-                    .remove(record.contactInfoByGroupId)
+                this.customerContactsService
+                    .remove(record.customerContactId)
                     .subscribe(() => {
                         const index = this.contactsData.findIndex(
                             (d) =>
@@ -197,9 +200,19 @@ export class ContactsGridComponent implements OnInit {
 
         value.groupId = this.sharedService.currentUser.groupId;
 
-        this.contactInfoByGroupsService
-            .update(value)
-            .subscribe((data: any) => {});
+        this.contactInfoByFboService.getCustomerContactInfoByFbo(this.sharedService.currentUser.fboId, value.contactid)
+            .subscribe((data: any) => {
+                if (data) {
+                    this.contactInfoByFboService
+                        .update(value)
+                        .subscribe((data: any) => { });
+                }
+                else {
+                    this.contactInfoByGroupsService
+                        .update(value)
+                        .subscribe((data: any) => { });
+                }
+            });
     }
 
     public UpdateAllCopyAlertsValues() {
