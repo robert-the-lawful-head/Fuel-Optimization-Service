@@ -64,7 +64,7 @@ export class CustomersEditComponent implements OnInit {
     hasContactForPriceDistribution = false;
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
-
+    public customerId: number;
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
 
@@ -92,7 +92,15 @@ export class CustomersEditComponent implements OnInit {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
 
-        this.selectedIndex = this.router.getCurrentNavigation().extras.state.tab;
+        if( ! this.router.getCurrentNavigation().extras)
+         {
+              this.selectedIndex = 0;
+          }
+          else
+          {
+           this.selectedIndex = this.router.getCurrentNavigation().extras.state?.tab ;
+           this.customerId = this.router.getCurrentNavigation().extras.state.customerId;
+          }
 
     }
 

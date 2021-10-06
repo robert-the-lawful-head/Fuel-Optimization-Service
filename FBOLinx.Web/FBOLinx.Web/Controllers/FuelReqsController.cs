@@ -1130,6 +1130,7 @@ namespace FBOLinx.Web.Controllers
                                         .Where(x => (x.Customer != null && x.Customer.Suspended != true))
                                         .Select(c => new
                                         {
+                                            c.Oid,
                                             c.CustomerId,
                                             Company = c.Company.Trim(),
                                             Customer = c.Customer
@@ -1161,6 +1162,7 @@ namespace FBOLinx.Web.Controllers
 
                     tableData.Add(new
                     {
+                        customer.Oid,
                         customer.CustomerId,
                         customer.Company,
                         CompanyQuotesTotal = companyQuotes,
@@ -1182,8 +1184,6 @@ namespace FBOLinx.Web.Controllers
 
 
         }
-
-
 
 
         [HttpPost("analysis/customer-quoting-deal-statistics/group/{groupId}/fbo/{fboId}/CustomerId/{CustomerId}")]
@@ -1231,6 +1231,7 @@ namespace FBOLinx.Web.Controllers
                                         .Select(c => new
                                         {
                                             c.CustomerId,
+                                            c.Oid,
                                             Company = c.Company.Trim(),
                                             Customer = c.Customer
                                         })
@@ -1261,6 +1262,7 @@ namespace FBOLinx.Web.Controllers
                     tableData.Add(new
                     {
                         customer.CustomerId,
+                        customer.Oid,
                         customer.Company,
                         CompanyQuotesTotal = companyQuotes,
                         DirectOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
