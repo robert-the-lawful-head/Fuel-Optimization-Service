@@ -19,7 +19,11 @@ export class FuelreqsService {
         });
     }
 
-    public getForFboAndDateRange(fboId: number, startDate: Date, endDate: Date) {
+    public getForFboAndDateRange(
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
             this.accessPointUrl + '/fbo/' + fboId + '/daterange',
             {
@@ -32,9 +36,19 @@ export class FuelreqsService {
         );
     }
 
-    public getForGroupFboAndDateRange(groupId: number, fboId: number, startDate: Date, endDate: Date) {
+    public getForGroupFboAndDateRange(
+        groupId: number,
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId + '/daterange',
+            this.accessPointUrl +
+                '/group/' +
+                groupId +
+                '/fbo/' +
+                fboId +
+                '/daterange',
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -46,13 +60,15 @@ export class FuelreqsService {
     }
 
     public getForFboCount(fboId: number, startDate: Date) {
-      return this.http.post(this.accessPointUrl + '/fbo/' + fboId + '/count' + '/startdate',
-        {
-          startDateTime: startDate,
-        },
-        {
-            headers: this.headers,
-        });
+        return this.http.post(
+            this.accessPointUrl + '/fbo/' + fboId + '/count' + '/startdate',
+            {
+                startDateTime: startDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public get(payload) {
@@ -127,7 +143,9 @@ export class FuelreqsService {
 
     public getQuotesAndOrders(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/quotes-orders-over-time/fbo/' + fboId,
+            this.accessPointUrl +
+                '/analysis/quotes-orders-over-time/fbo/' +
+                fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -153,9 +171,16 @@ export class FuelreqsService {
         );
     }
 
-    public getVolumesNearbyAirport(fboId: number, startDate: Date, endDate: Date, mile: number) {
+    public getVolumesNearbyAirport(
+        fboId: number,
+        startDate: Date,
+        endDate: Date,
+        mile: number
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/volumes-nearby-airport/fbo/' + fboId,
+            this.accessPointUrl +
+                '/analysis/volumes-nearby-airport/fbo/' +
+                fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -167,7 +192,11 @@ export class FuelreqsService {
         );
     }
 
-    public getMarketShareAirport(fboId: number, startDate: Date, endDate: Date) {
+    public getMarketShareAirport(
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
             this.accessPointUrl + '/analysis/market-share-airport/fbo/' + fboId,
             {
@@ -180,7 +209,12 @@ export class FuelreqsService {
         );
     }
 
-    public getFBOCustomersBreakdown(fboId: number, startDate: Date, endDate: Date, chartType: string) {
+    public getFBOCustomersBreakdown(
+        fboId: number,
+        startDate: Date,
+        endDate: Date,
+        chartType: string
+    ) {
         return this.http.post(
             this.accessPointUrl + '/analysis/customers-breakdown/fbo/' + fboId,
             {
@@ -194,9 +228,18 @@ export class FuelreqsService {
         );
     }
 
-    public getCompaniesQuotingDealStatistics(groupId: number, fboId: number, startDate: Date, endDate: Date) {
+    public getCompaniesQuotingDealStatistics(
+        groupId: number,
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId,
+            this.accessPointUrl +
+                '/analysis/company-quoting-deal-statistics/group/' +
+                groupId +
+                '/fbo/' +
+                fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -208,9 +251,21 @@ export class FuelreqsService {
     }
 
     //Get Customer Analytics Id
-    public getCompanyQuotingDealStatistics(groupId: number, fboId: number, startDate: Date, endDate: Date , customerId: number) {
+    public getCompanyQuotingDealStatistics(
+        groupId: number,
+        fboId: number,
+        startDate: Date,
+        endDate: Date,
+        customerId: number
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/customer-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId+'/CustomerId/'+customerId,
+            this.accessPointUrl +
+                '/analysis/company-quoting-deal-statistics/group/' +
+                groupId +
+                '/fbo/' +
+                fboId +
+                '/CustomerId/' +
+                customerId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -223,7 +278,9 @@ export class FuelreqsService {
 
     public getFuelVendorSources(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/fbo-fuel-vendor-sources/fbo/' + fboId,
+            this.accessPointUrl +
+                '/analysis/fbo-fuel-vendor-sources/fbo/' +
+                fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -234,9 +291,15 @@ export class FuelreqsService {
         );
     }
 
-    public getMarketShareFboAirport(fboId: number, startDate: Date, endDate: Date) {
+    public getMarketShareFboAirport(
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/market-share-fbos-airport/fbo/' + fboId,
+            this.accessPointUrl +
+                '/analysis/market-share-fbos-airport/fbo/' +
+                fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
