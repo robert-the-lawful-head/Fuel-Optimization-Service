@@ -18,6 +18,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using System.Web;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -258,7 +259,7 @@ namespace FBOLinx.Web.Controllers
                 user.ResetPasswordTokenExpiration = DateTime.UtcNow.AddDays(7);
                 await _context.SaveChangesAsync();
 
-                await _ResetPasswordService.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, token);
+                await _ResetPasswordService.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, HttpUtility.UrlEncode(token));
             }
 
             return Ok();
