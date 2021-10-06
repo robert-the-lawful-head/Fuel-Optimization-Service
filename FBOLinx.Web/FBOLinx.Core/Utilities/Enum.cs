@@ -14,7 +14,7 @@ namespace FBOLinx.Core.Utilities
             if (attributes.Length > 0)
                 return attributes[0].Description;
             else
-            return value.ToString();
+                return value.ToString();
         }
 
         public static IEnumerable<EnumDescriptionValue> GetDescriptions(Type type)

@@ -1,5 +1,4 @@
-import { ActivatedRoute } from '@angular/router';
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
@@ -16,7 +15,7 @@ import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 })
 export class CustomersAnalyticsComponent implements OnInit , AfterViewInit, OnDestroy  {
     @ViewChild(MatSort) sort: MatSort;
-
+    @Input() customerId;
     public filterStartDate: Date;
     public filterEndDate: Date;
     public icao: string;
@@ -25,13 +24,13 @@ export class CustomersAnalyticsComponent implements OnInit , AfterViewInit, OnDe
     public chartName = 'companies-quotes-deal-table';
     public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
     public dataSource: MatTableDataSource<any[]>;
-    public customerId: number;
+
     constructor(
         private fuelreqsService: FuelreqsService,
         private fbosService: FbosService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
-        private route: ActivatedRoute
+
     ) {
         this.icao = this.sharedService.currentUser.icao;
         this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
@@ -65,9 +64,7 @@ export class CustomersAnalyticsComponent implements OnInit , AfterViewInit, OnDe
 
     refreshData() {
         this.ngxLoader.startLoader(this.chartName);
-        this.customerId = this.route.snapshot.params.id;
-
-        this.fuelreqsService
+       this.fuelreqsService
             .getCompanyQuotingDealStatistics(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,

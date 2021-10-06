@@ -76,7 +76,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
             )
             .subscribe((data: any) => {
                 this.dataSource = new MatTableDataSource(data);
-                this.dataSource.sortingDataAccessor = (item, property) => {
+                 this.dataSource.sortingDataAccessor = (item, property) => {
                     switch (property) {
                         case 'lastPullDate':
                             if (item[property] === 'N/A') {
@@ -107,6 +107,6 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
     CustomerAnalitycs(element: any )
     {
 
-       this.router.navigate(['/default-layout/customers' , element.customerId ], {state : {tab : 3}});
+       this.router.navigate(['/default-layout/customers' , element.oid ], {state : {tab : 3  , customerId : element.customerId}  });
     }
 }
