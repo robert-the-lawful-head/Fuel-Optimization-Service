@@ -1,5 +1,5 @@
+import { Router } from '@angular/router';
 import {
-    Router,
     AfterViewInit,
     Component,
     OnDestroy,

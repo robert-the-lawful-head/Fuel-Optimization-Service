@@ -364,7 +364,7 @@ import { CustomersAnalyticsComponent } from './customers/customers-analytics/cus
         MultiSelectModule,
         ListboxModule,
         DropdownModule,
-        Ej2MultiSelectModule,
+        Ej2MultiSelectModule
     ],
     providers: [
         ColumnMenuService,
